@@ -177,17 +177,15 @@ void SoldierBanner::commandFormation(const int facing,
     }
 
     const auto onCid = onCityId();
-    const auto cid = cityId();
-    const auto onTid = mBoard.cityIdToTeamId(onCid);
-    const auto tid = mBoard.cityIdToTeamId(cid);
     const auto walkable = [&](eTile* const tt) {
         if(!tt) return false;
         if(tt->cityId() != onCid) return false;
-        if(onTid == tid) {
-            return eWalkableHelpers::sDefaultWalkable(tt);
-        } else {
-            return eWalkableHelpers::sBuildingsWalkable(tt);
-        }
+        // Slots must land on a tile NOT occupied by a razable building, even for
+        // enemy banners. sDefaultWalkable rejects building tiles; this forces the
+        // formation adjacent to a building parked on, so soldiers stop at the wall
+        // and the fighting-action building pass bulldozes inward toward the banner
+        // instead of phasing through the structure.
+        return eWalkableHelpers::sDefaultWalkable(tt);
     };
 
     const int depthDX = -sideDY;
@@ -543,6 +541,41 @@ bool SoldierBanner::fighting() const {
         const auto at = s->actionType();
         if(at == eCharacterActionType::fight ||
            at == eCharacterActionType::fight2) return true;
+    }
+    return false;
+}
+
+void SoldierBanner::cancelSoldiersAttack() {
+    for(const auto s : mSoldiers) {
+        const auto a = s->soldierAction();
+        if(a) a->cancelAndClearAction();
+    }
+}
+
+int SoldierBanner::soldierRange() const {
+    for(const auto s : mSoldiers) {
+        if(!s->dead()) return s->range();
+    }
+    return 0;
+}
+
+bool SoldierBanner::fightingRealEnemy() const {
+    for(const auto s : mSoldiers) {
+        const auto at = s->actionType();
+        if(at != eCharacterActionType::fight &&
+           at != eCharacterActionType::fight2) continue;
+        const auto fa = dynamic_cast<FightingAction*>(s->action());
+        if(!fa) continue;
+        const auto tgt = fa->attackTargetCharacter();
+        if(!tgt) continue;
+        const auto ts = dynamic_cast<eSoldier*>(tgt);
+        if(ts && ts->banner()) {
+            printf("[banner] fightingRealEnemy: soldier attacking '%s' (has banner)\n",
+                   ts->banner()->name().c_str());
+            return true;
+        }
+        printf("[banner] fightingRealEnemy: soldier attacking non-banner unit type=%d\n",
+               (int)tgt->type());
     }
     return false;
 }
@@ -1004,19 +1037,15 @@ void SoldierBanner::updatePlaces() {
     const int slds = mSoldiers.size();
 
     const auto onCid = onCityId();
-    const auto cid = cityId();
-    const auto onTid = mBoard.cityIdToTeamId(onCid);
-    const auto tid = mBoard.cityIdToTeamId(cid);
 
     const auto walkable = [&](eTile* const tt) {
         if(!tt) return false;
         const auto cid = tt->cityId();
         if(cid != onCid) return false;
-        if(onTid == tid) {
-            return eWalkableHelpers::sDefaultWalkable(tt);
-        } else {
-            return eWalkableHelpers::sBuildingsWalkable(tt);
-        }
+        // Reject building-occupied tiles (incl. enemy banners). Keeps formation
+        // slots adjacent to a building parked on so soldiers bulldoze in from the
+        // wall rather than phasing into the structure. See commandFormation.
+        return eWalkableHelpers::sDefaultWalkable(tt);
     };
 
     const auto rotateOffset = [this](const int side, const int depth,
@@ -1219,9 +1248,9 @@ bool SoldierBanner::enemyNear(const int by) {
 }
 
 void SoldierBanner::updateRetaliation(const int by) {
-    // Pure retaliation: only if this banner was hit recently, move the whole
-    // banner toward a nearby defender. Otherwise keep the general's objective.
-    if(mType != eBannerType::enemy) return; // player banners: manual command
+    // Ticks the retaliation timer and updates combat assignments.
+    // Movement is owned by InvasionGeneral — no moveTo here.
+    if(mType != eBannerType::enemy) return;
     if(mHome || mAbroad || !mTile) {
         mCombatAssignments.clear();
         return;
@@ -1235,51 +1264,30 @@ void SoldierBanner::updateRetaliation(const int by) {
     mCombatRetargetCountdown = 500;
 
     if(mRetaliationTime <= 0) {
+        if(mRetaliationTime > -1) printf("[banner] retaliation EXPIRED\n");
+        mRetaliationTime = -1;
         mCombatAssignments.clear();
         return;
     }
 
-    const auto invaderTid = teamId();
-    const auto defendCid = onCityId();
-    const int range = eNumbers::sInvasionEngageDefenderRange;
-    int dx;
-    int dy;
-    const bool found = InvasionTargeting::nearestDefender(
-        mBoard, defendCid, invaderTid, mRetaliationX, mRetaliationY, range, dx, dy);
-    if(!found) {
-        mCombatAssignments.clear();
-        return; // no defender near: hold the strategic destination
-    }
-
-    int meleeCount = 0;
-    int rangedCount = 0;
-    int minRange = 0;
-    for(const auto s : mSoldiers) {
-        if(s->dead()) continue;
-        const int sr = s->range();
-        if(sr > 0) {
-            rangedCount++;
-            if(!minRange || sr < minRange) minRange = sr;
-        } else {
-            meleeCount++;
-        }
-    }
-
-    if(rangedCount > 0 && meleeCount == 0 && minRange > 1) {
-        const auto t = findRangedBannerTile(mBoard, mTile, dx, dy, minRange);
-        if(t) moveTo(t->x(), t->y());
-    } else {
-        // Walk the banner to a tile adjacent to the defender so the line closes
-        // and melee soldiers engage by adjacency. moveTo no-ops if already there.
-        moveTo(dx, dy);
-    }
     updateCombatAssignments();
+}
+
+void SoldierBanner::clearCombatBlockages() {
+    mCombatBlockages.clear();
+}
+
+bool SoldierBanner::retaliationPoint(int& x, int& y) const {
+    if(mRetaliationTime <= 0) return false;
+    x = mRetaliationX;
+    y = mRetaliationY;
+    return true;
 }
 
 void SoldierBanner::signalRetaliationTarget(const int tx, const int ty) {
     mRetaliationX = tx;
     mRetaliationY = ty;
-    mRetaliationTime = 3000;
+    mRetaliationTime = 8000;
 }
 
 bool SoldierBanner::needsHelp() const {

@@ -31,13 +31,10 @@ std::shared_ptr<eTexture> FireFighter::getTexture(const eTileSize size) const {
     case eCharacterActionType::stand: {
         return charTexs.fWalk[oid].getTexture(0);
     } break;
+    case eCharacterActionType::fight:
     case eCharacterActionType::collect:
     case eCharacterActionType::walk: {
         coll = &charTexs.fWalk[oid];
-    } break;
-    case eCharacterActionType::fight: {
-        coll = &charTexs.fPutOut[oid];
-        boomerang = true;
     } break;
     case eCharacterActionType::carry: {
         coll = &charTexs.fCarry[oid];

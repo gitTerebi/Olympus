@@ -36,11 +36,11 @@ bool sCanStandOn(eTile* const t) {
     return eBuilding::sWalkableBuilding(ubt);
 }
 
-int sAttackerTileDistance(eTileBase* const tile) {
+int sBulldozeTileCost(eTileBase* const tile) {
     const auto ubt = tile->underBuildingType();
     if(ubt == eBuildingType::none) return 1;
     if(eBuilding::sWalkableBuilding(ubt)) return 1;
-    return 100;
+    return 500;
 }
 
 // Best firing tile for a ranged unit: a tile within `spread` of its own anchor
@@ -803,7 +803,7 @@ void FightingAction::goToInternal(const int fx, const int fy,
     a->setFindFailAction(failAct);
     if(attackBuildings && !pathAround) {
         a->setObsticleHandler(obsticleHandler());
-        a->setTileDistance(sAttackerTileDistance);
+        a->setTileDistance(sBulldozeTileCost);
     }
 
     const stdptr<eCharacter> cptr(character());

@@ -96,8 +96,8 @@ void drawLabel(ePainter& p,
                const std::string& text,
                const SDL_Color bg)
 {
+    (void)bg;
     const SDL_Rect rect{c.x - 26, c.y - 38, 52, 18};
-    p.fillRect(rect, bg);
     p.drawText(rect, text, eFontColor::light,
                eAlignment::hcenter | eAlignment::vcenter);
 }
@@ -129,8 +129,8 @@ void paintInvasionDebugTargets(GameBoard& board,
         drawLine(p, a, b, line);
         drawDiamond(p, a, tileW, tileH, start);
         drawDiamond(p, b, tileW, tileH, end);
-        drawLabel(p, a, "FROM", SDL_Color{80, 70, 0, 210});
-        drawLabel(p, b, "GOAL", SDL_Color{90, 0, 0, 220});
+        drawLabel(p, a, "FROM", {});
+        drawLabel(p, b, "GOAL", {});
 
         const int pulse = 10 + (animFrame / 8) % 8;
         drawCross(p, b, pulse, SDL_Color{255, 255, 255, 240});

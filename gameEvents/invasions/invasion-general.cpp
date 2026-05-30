@@ -1,5 +1,7 @@
 #include "invasion-general.h"
 
+#include <cmath>
+
 #include "engine/game-board.h"
 #include "engine/eknownendpathfinder.h"
 #include "engine/etile.h"
@@ -48,6 +50,33 @@ bool InvasionGeneral::advance(eGeneralState& s,
     }
     if(ss == 0) return false; // handler handles a wiped force
 
+    // Banners that took fire chase their attacker first — checked before any
+    // wait drain so attacks during spawn-wait or midpoint-wait are not ignored.
+    if(attackEnemiesNear(banners, by)) {
+        if(!s.fDefending) {
+            printf("[general] DEFEND start phase=%d\n", (int)s.fPhase);
+            s.fDefending = true;
+            s.fDefendHold = 8000;
+            for(const auto b : banners) { if(b) b->setDefending(true); }
+            issueDefensiveOrders(banners);
+        } else if(s.fDefendHold > 0) {
+            s.fDefendHold -= by;
+            if(s.fDefendHold < 0) s.fDefendHold = 0;
+        }
+        return false;
+    }
+    if(s.fDefending) {
+        if(s.fDefendHold > 0) {
+            s.fDefendHold -= by;
+            if(s.fDefendHold < 0) s.fDefendHold = 0;
+            return false; // hold minimum duration before exiting
+        }
+        printf("[general] DEFEND end -> resume phase=%d\n", (int)s.fPhase);
+        s.fDefending = false;
+        for(const auto b : banners) { if(b) b->setDefending(false); }
+        s.fWait = 0;
+    }
+
     // 14-day pre-invade wait during the initial spread phase.
     if(s.fPhase == eGeneralPhase::spread && drainWait(s.fSpawnWait, by)) {
         return false;
@@ -62,9 +91,6 @@ bool InvasionGeneral::advance(eGeneralState& s,
     if(s.fPhase == eGeneralPhase::march && drainWait(s.fMoveWait, by)) {
         return false;
     }
-
-    // Banners that took fire chase their attacker first.
-    if(attackEnemiesNear(banners)) return false;
 
     // Drop a stale target (building destroyed) so the phase logic below sees
     // the kill. Do NOT repick here: invade owns the repick + march-on order,
@@ -106,8 +132,10 @@ bool InvasionGeneral::advance(eGeneralState& s,
         if(target) {
             const auto from = s.fCurrentTile ? s.fCurrentTile : landingTile;
             // Two orders back to back, no wait: formation move all banners up to
-            // the building, then shove one banner onto the building tile so its
-            // soldiers bump it and the fighting-action building pass razes it.
+            // the building, then park one banner ON the building tile. Slots land
+            // adjacent (sDefaultWalkable rejects building tiles); soldiers path
+            // toward those slots, hit the wall, obstacle handler fires, and the
+            // clearObstacle combat assignment directs them to attack the building.
             moveToTarget(from, target, banners);
             pinOnTarget(s, banners);
             s.fMoveFrom = from;
@@ -230,30 +258,121 @@ bool InvasionGeneral::pinOnTarget(
         if(bestD < 0 || d < bestD) { bestD = d; best = b; }
     }
     if(!best) return false;
-    // Park it ON the building tile: soldiers home onto it, bump the building and
-    // the fighting-action building pass razes it.
+    // Park ON the building tile. updatePlaces uses sDefaultWalkable so formation
+    // slots land outside the building; soldiers path toward those adjacent slots,
+    // hit the wall, the obstacle handler fires setCombatBlockage, and the
+    // clearObstacle combat assignment directs them to attack the building.
     best->moveTo(target->x(), target->y());
     return true;
 }
 
 bool InvasionGeneral::attackEnemiesNear(
-        const std::vector<SoldierBanner*>& banners) const {
+        const std::vector<SoldierBanner*>& banners,
+        const int by) const {
+    (void)by;
+    // Find any banner under fire and get its retaliation point.
+    int rx = 0, ry = 0;
     bool helpNeeded = false;
     for(const auto b : banners) {
         if(!b) continue;
-        if(b->needsHelp()) {
+        if(b->needsHelp() && b->retaliationPoint(rx, ry)) {
             helpNeeded = true;
             break;
         }
     }
-    if(!helpNeeded) return false;
+    return helpNeeded;
+}
 
-    bool ordered = false;
+void InvasionGeneral::issueDefensiveOrders(
+        const std::vector<SoldierBanner*>& banners) const {
+    // Find contact point from any banner under fire.
+    int rx = 0, ry = 0;
+    bool hasPoint = false;
     for(const auto b : banners) {
         if(!b) continue;
-        if(b->attackEnemyNearRetaliationPoint()) ordered = true;
+        if(b->needsHelp() && b->retaliationPoint(rx, ry)) {
+            hasPoint = true;
+            break;
+        }
     }
-    return ordered;
+    if(!hasPoint) return;
+    printf("[general] DEFENSIVE orders: rally all to %d,%d\n", rx, ry);
+
+    // All banners get formation orders. Hit banners also clear stale strategic
+    // blockages (accumulated during march/invade) so soldiers don't keep attacking
+    // buildings when the general has switched them to defensive pursuit.
+    // Combat slot assignments refill via updateRetaliation on the next tick.
+    std::vector<SoldierBanner*> meleeRally;
+    for(const auto b : banners) {
+        if(!b || b->count() <= 0) continue;
+        if(b->formationRole() == eBannerFormationRole::missile) {
+            if(b->fightingRealEnemy()) continue; // engaging banner soldier, leave alone
+            b->signalRetaliationTarget(rx, ry);
+            // Move to a firing position: stop ~range tiles short of the threat.
+            const int firingRange = b->soldierRange();
+            const auto bt = b->tile();
+            int tx = rx, ty = ry;
+            if(bt && firingRange > 0) {
+                const int dx = rx - bt->x();
+                const int dy = ry - bt->y();
+                const float dist = std::sqrt((float)(dx*dx + dy*dy));
+                if(dist > firingRange) {
+                    const float t = (dist - firingRange) / dist;
+                    tx = bt->x() + (int)(dx * t);
+                    ty = bt->y() + (int)(dy * t);
+                }
+            }
+            const int bx = bt ? bt->x() : -1, by2 = bt ? bt->y() : -1;
+            printf("[general]   missile '%s' banner@%d,%d -> firing pos %d,%d (threat %d,%d) range=%d\n",
+                   b->name().c_str(), bx, by2, tx, ty, rx, ry, firingRange);
+            b->cancelSoldiersAttack();
+            b->moveTo(tx, ty);
+            b->attackEnemyNearRetaliationPoint();
+        } else {
+            if(b->fighting()) continue; // melee engaged, never interrupt
+            printf("[general]   melee '%s' -> rally\n", b->name().c_str());
+            b->cancelSoldiersAttack();
+            if(b->needsHelp()) b->clearCombatBlockages();
+            meleeRally.push_back(b);
+        }
+    }
+
+    if(meleeRally.empty()) return;
+    // Formation move for melee/cavalry: centroid as "from", contact as target.
+    int cx = 0, cy = 0, n = 0;
+    for(const auto b : meleeRally) {
+        const auto t = b->tile();
+        if(t) { cx += t->x(); cy += t->y(); n++; }
+    }
+    if(n == 0) return;
+    cx /= n; cy /= n;
+    const auto fromTile = mBoard.tile(cx, cy);
+    const auto targetTile = mBoard.tile(rx, ry);
+    if(fromTile && targetTile) moveToTarget(fromTile, targetTile, meleeRally);
+}
+
+void InvasionGeneral::reissueCurrentOrder(
+        eGeneralState& s,
+        eTile* const landingTile,
+        const std::vector<SoldierBanner*>& banners) const {
+    printf("[general] reissue phase=%d\n", (int)s.fPhase);
+    switch(s.fPhase) {
+    case eGeneralPhase::march: {
+        // Banners drifted during retaliation; walk them back to the half-step tile.
+        const auto from = s.fMoveFrom ? s.fMoveFrom : landingTile;
+        if(s.fCurrentTile) moveToTarget(from, s.fCurrentTile, banners);
+    } break;
+    case eGeneralPhase::invade: {
+        // Resume assault: re-order formation move + pin on the building.
+        const auto from = s.fMoveFrom ? s.fMoveFrom : landingTile;
+        if(s.fTargetTile) {
+            moveToTarget(from, s.fTargetTile, banners);
+            pinOnTarget(s, banners);
+        }
+    } break;
+    default:
+        break;
+    }
 }
 
 bool InvasionGeneral::generalTargetValid(const eGeneralState& s) const {

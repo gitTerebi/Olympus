@@ -89,6 +89,7 @@ public:
     void setOverwrittableAction(const bool o)
     { mOverwrittableAction = o; }
     bool overwrittableAction() const { return mOverwrittableAction; }
+    eCharacter* attackTargetCharacter() const { return mAttackTarget.character(); }
 protected:
     bool isAttacking() const { return mAttack; }
     void cancelAttack();

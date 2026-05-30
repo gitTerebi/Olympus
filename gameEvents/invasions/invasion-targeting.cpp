@@ -14,7 +14,7 @@ namespace {
 // building types. First tier with an attackable building wins; closest in that
 // tier is chosen. Terminated by eBuildingType::none.
 const eBuildingType kFood[] = {
-    eBuildingType::granary, eBuildingType::warehouse,
+    eBuildingType::granary,
     eBuildingType::wheatFarm, eBuildingType::carrotsFarm,
     eBuildingType::onionsFarm, eBuildingType::growersLodge,
     eBuildingType::vine, eBuildingType::oliveTree, eBuildingType::orangeTree,
