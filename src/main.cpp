@@ -183,10 +183,15 @@ int main() {
     checkTextureSize(eGameDir::i45BinaryPath(), settings.fMediumTextures);
     checkTextureSize(eGameDir::i60BinaryPath(), settings.fLargeTextures);
     if(!found) {
-        printf("Could not find any textures!\n"
-               "Make sure you have i15.e, i30.e, i45.e, or i60.e file in eZeus directory.\n");
-        close();
-        return 1;
+        settings.fSmallTextures = std::filesystem::exists(eGameDir::i30BinaryPath());
+        if(settings.fSmallTextures) {
+            found = true;
+        } else {
+            printf("Could not find any textures!\n"
+                   "Make sure you have i15.e, i30.e, i45.e, or i60.e file in eZeus directory.\n");
+            close();
+            return 1;
+        }
     }
 
     int r = 0;
