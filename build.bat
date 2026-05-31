@@ -42,7 +42,7 @@ cmake --build "%BUILD_DIR%" --config Release -j "%JOBS%"
 if errorlevel 1 exit /b %errorlevel%
 
 if exist "%DEPLOY_DIR%" (
-    copy /Y "%BUILD_DIR%\eZeus.exe" "%DEPLOY_DIR%\eZeus-0.8.2-beta.exe" >nul
+    copy /Y "%BUILD_DIR%\Olympus.exe" "%DEPLOY_DIR%\Olympus.exe" >nul
     copy /Y "%BUILD_DIR%\SDL2.dll" "%DEPLOY_DIR%\" >nul
     copy /Y "%BUILD_DIR%\SDL2_image.dll" "%DEPLOY_DIR%\" >nul
     copy /Y "%BUILD_DIR%\SDL2_mixer.dll" "%DEPLOY_DIR%\" >nul
@@ -54,4 +54,4 @@ if exist "%DEPLOY_DIR%" (
     echo Deploy dir not found "%DEPLOY_DIR%"
 )
 
-echo Built "%BUILD_DIR%\eZeus.exe"
+echo Built "%BUILD_DIR%\Olympus.exe"
