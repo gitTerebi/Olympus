@@ -956,6 +956,7 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("gMoveWait", mGState.fMoveWait, 0);
     ar.field("gDefendHold", mGState.fDefendHold, 0);
     ar.field("gDefendEnemyWait", mGState.fDefendEnemyWait, 0);
+    ar.field("gRepinWait", mGState.fRepinWait, 0);
 
 
     ar.arrayField("banners", mBanners,

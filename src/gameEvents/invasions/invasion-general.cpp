@@ -14,8 +14,7 @@
 namespace {
 
 // Counts a day-length countdown down by one tick. Returns true while the timer
-// is still running (caller should hold), false once it hits zero. Shared by the
-// 14-day spawn wait and the 7-day half-step move wait.
+// is still running (caller should hold), false once it hits zero.
 bool drainWait(int& counter, const int by) {
     if(counter <= 0) return false;
     counter -= by;
@@ -25,6 +24,7 @@ bool drainWait(int& counter, const int by) {
 }
 
 const int defendHoldMs = 3000;
+const int stallMaxWait = 7*eNumbers::sDayLength;
 
 eTile* bannerCenterTile(GameBoard& board,
                         const std::vector<SoldierBanner*>& banners) {
@@ -220,7 +220,7 @@ bool InvasionGeneral::advance(eGeneralState& s,
             const auto from = s.fCurrentTile ? s.fCurrentTile : landingTile;
             const auto halfTile = moveHalfwayToTarget(s, from, target, banners);
             if(halfTile) {
-                s.fMoveWait = 7*eNumbers::sDayLength;
+                s.fMoveWait = stallMaxWait;
             }
         } else {
             printf("[invasion-general] spread->march: no target found, stuck\n");
@@ -228,6 +228,7 @@ bool InvasionGeneral::advance(eGeneralState& s,
     } break;
     case eGeneralPhase::march: {
         s.fPhase = eGeneralPhase::invade;
+        s.fRepinWait = stallMaxWait;
         const auto target = ensureTarget(s, landingTile);
         if(target) {
             const auto from = s.fCurrentTile ? s.fCurrentTile : landingTile;
@@ -244,9 +245,15 @@ bool InvasionGeneral::advance(eGeneralState& s,
     } break;
     case eGeneralPhase::invade: {
         if(generalTargetValid(s)) {
-            // Target still stands: hold. The formation move + pin already landed;
-            // re-issuing every cycle re-homes soldiers and jiggles the formation.
-            // Local defenders are handled by banner combat brains.
+            // Target still stands. Re-pin every 7 days so idle soldiers re-walk
+            // toward the building, bump the wall, and get clearObstacle assignments.
+            if(s.fRepinWait <= 0) {
+                s.fRepinWait = stallMaxWait;
+                printf("[invasion-general] invade: re-pinning on target\n");
+                pinOnTarget(s, banners);
+            } else {
+                s.fRepinWait -= 3000; // cycle-gate period
+            }
         } else {
             // Building fell: route back through march to re-run the formation
             // move + pin on the next objective (no half-step, so no wait). Pick
