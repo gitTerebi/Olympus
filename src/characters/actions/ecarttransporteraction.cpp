@@ -268,7 +268,9 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
 
 void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                                         eBuilding* const avoided,
-                                        const bool preferGranaryFirst) {
+                                        const bool preferGranaryFirst,
+                                        const bool preferEmptyFirst,
+                                        const bool preferGetsFirst) {
     if(!mBuilding) return;
     if(tasks.empty()) { enterIdle(); return; }
     const auto c = character();
@@ -298,10 +300,24 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
     const auto preferGranary = std::make_shared<bool>(preferGranaryFirst &&
                                                     isProducer &&
                                                     hasGiveTasks);
+    const bool hasGetTasks = std::any_of(tasks.begin(), tasks.end(),
+        [](const eCartTask& t) { return t.fType == eCartActionType::get; });
+    const auto preferEmpty = std::make_shared<bool>(preferEmptyFirst && hasGetTasks);
+
+    // EMPTY-mode home: deliver carts prefer targets with GET orders
+    const auto homeStorage = dynamic_cast<eStorageBuilding*>(mBuilding.get());
+    const bool hasDeliverTasks = std::any_of(tasks.begin(), tasks.end(),
+        [](const eCartTask& t) { return t.fType == eCartActionType::deliver; });
+    const bool homeEmpties = hasDeliverTasks && homeStorage &&
+        std::any_of(tasks.begin(), tasks.end(), [this, homeStorage](const eCartTask& t) {
+            return t.fType == eCartActionType::deliver &&
+                   homeStorage->empties(t.fResource);
+        });
+    const auto preferGets = std::make_shared<bool>(preferGetsFirst && homeEmpties);
 
     // 2. Check each tile for valid target buildings
     const auto finalTile = [this, buildingRect, bType, ttask, tasks, bx, by,
-                            preferGranary, hasAvoided, avoidedRect]
+                            preferGranary, preferEmpty, preferGets, hasAvoided, avoidedRect]
                            (eThreadTile* const t) {
         // 2.1 Skip tiles without buildings
         if(!t->isUnderBuilding()) return false;
@@ -318,6 +334,26 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
 
         // 2.3 Producers: first pass accepts only granaries
         if(*preferGranary && ub.type() != eBuildingType::granary) return false;
+
+        // 2.3b GET first pass: only buildings set to empty
+        if(*preferEmpty) {
+            bool anyGetRes = false;
+            for(const auto& task : tasks) {
+                if(task.fType != eCartActionType::get) continue;
+                if(ub.empties(task.fResource)) { anyGetRes = true; break; }
+            }
+            if(!anyGetRes) return false;
+        }
+
+        // 2.3c EMPTY-home first pass: deliver only to buildings with GET orders
+        if(*preferGets) {
+            bool anyGetsRes = false;
+            for(const auto& task : tasks) {
+                if(task.fType != eCartActionType::deliver) continue;
+                if(ub.gets(task.fResource)) { anyGetsRes = true; break; }
+            }
+            if(!anyGetsRes) return false;
+        }
 
         // 2.4 Skip trading posts for agora vendors when setting disabled
         if(ub.type() == eBuildingType::tradePost) {
@@ -376,7 +412,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                                   board(), this);
 
     const auto startSearch = [this, tptr, c, tasks, finalTile, finishAction,
-                               ttask, bx, by, preferGranary, avoidedPtr]() {
+                               ttask, bx, by, preferGranary, preferEmpty, preferGets, avoidedPtr]() {
         const auto a = e::make_shared<eMoveToAction>(c);
         a->setStateRelevance(eStateRelevance::resourcesInBuildings |
                              eStateRelevance::buildings);
@@ -394,12 +430,17 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             c->setActionType(eCharacterActionType::walk);
             onFoundTarget();
         });
-        a->setFindFailAction([tptr, this, preferGranary, tasks, avoidedPtr]() {
+        a->setFindFailAction([tptr, this, preferGranary, preferEmpty, preferGets, tasks, avoidedPtr]() {
             if(!tptr) return;
             if(*preferGranary) {
-                // No granary found — retry without granary restriction
                 *preferGranary = false;
-                findTarget(tasks, avoidedPtr.get(), false);
+                findTarget(tasks, avoidedPtr.get(), false, *preferEmpty, *preferGets);
+            } else if(*preferEmpty) {
+                *preferEmpty = false;
+                findTarget(tasks, avoidedPtr.get(), false, false, *preferGets);
+            } else if(*preferGets) {
+                *preferGets = false;
+                findTarget(tasks, avoidedPtr.get(), false, false, false);
             } else {
                 onFindTargetFail();
             }

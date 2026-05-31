@@ -1,7 +1,7 @@
 #include "ebuttonslistwidget.h"
 
 #include "elabel.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "ecancelbutton.h"
 
 #include "elanguage.h"
@@ -22,7 +22,7 @@ void eListButton::initialize(const std::string& text, const int id,
 
     setId(id);
 
-    mButton = new eFramedButton(text, window());
+    mButton = new FramedButton(text, window());
     if(small) {
         mButton->setFontSizeXS();
         mButton->setPaddingXS();
@@ -75,7 +75,7 @@ void eButtonsListWidget::initialize(const bool newButton,
                                     const bool closeButtons) {
     if(newButton) {
         const auto addStr = eLanguage::text("add");
-        mNewButton = new eFramedButton(addStr, window());
+        mNewButton = new FramedButton(addStr, window());
         if(mSmallSize) {
             mNewButton->setFontSizeS();
             mNewButton->setPaddingS();

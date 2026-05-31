@@ -1,6 +1,6 @@
 #include "eeditorsettingsmenu.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 
 #include "characters/gods/egod.h"
@@ -39,7 +39,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         addWidget(dateButt);
         dateButt->align(eAlignment::hcenter);
 
-        const auto fundsButt = new eFramedButton(window());
+        const auto fundsButt = new FramedButton(window());
         fundsButt->setText(eLanguage::zeusText(44, 39));
         fundsButt->fitContent();
         fundsButt->setUnderline(false);
@@ -138,7 +138,7 @@ void eEditorSettingsMenu::initialize(const bool first,
             }
 
             if(column) {
-                const auto resetButt = new eFramedButton(window());
+                const auto resetButt = new FramedButton(window());
                 resetButt->setUnderline(false);
                 resetButt->setText(eLanguage::zeusText(44, 214));
                 resetButt->fitContent();
@@ -166,7 +166,7 @@ void eEditorSettingsMenu::initialize(const bool first,
             priceMenu->layoutHorizontally();
         };
 
-        const auto pricesButt = new eFramedButton(window());
+        const auto pricesButt = new FramedButton(window());
         pricesButt->setUnderline(false);
         pricesButt->setText(eLanguage::zeusText(54, 9));
         pricesButt->fitContent();
@@ -196,7 +196,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                 choose->align(eAlignment::center);
             };
 
-            const auto friendGodsButt = new eFramedButton(window());
+            const auto friendGodsButt = new FramedButton(window());
             friendGodsButt->setUnderline(false);
             const auto name = board->cityName(cid);
             friendGodsButt->setText(name);
@@ -211,7 +211,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         mythMenu->layoutVertically();
     };
 
-    const auto mythButt = new eFramedButton(window());
+    const auto mythButt = new FramedButton(window());
     mythButt->setUnderline(false);
     mythButt->setText(eLanguage::zeusText(44, 162));
     mythButt->fitContent();
@@ -254,7 +254,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                 choose->align(eAlignment::center);
             };
 
-            const auto friendGodsButt = new eFramedButton(window());
+            const auto friendGodsButt = new FramedButton(window());
             friendGodsButt->setUnderline(false);
             const auto name = board->cityName(cid);
             friendGodsButt->setText(name);
@@ -269,7 +269,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         mythMenu->layoutVertically();
     };
 
-    const auto eventsButt = new eFramedButton(window());
+    const auto eventsButt = new FramedButton(window());
     eventsButt->setUnderline(false);
     eventsButt->setText(eLanguage::zeusText(44, 94));
     eventsButt->fitContent();
@@ -297,7 +297,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         choose->align(eAlignment::center);
     };
 
-    const auto goalsButt = new eFramedButton(window());
+    const auto goalsButt = new FramedButton(window());
     goalsButt->setUnderline(false);
     goalsButt->setText(eLanguage::zeusText(44, 45));
     goalsButt->fitContent();
@@ -398,7 +398,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                 window()->execDialog(buildMenu);
                 buildMenu->align(eAlignment::center);
             };
-            const auto cButt = new eFramedButton(window());
+            const auto cButt = new FramedButton(window());
             cButt->setUnderline(false);
             cButt->setText(board->cityName(cid));
             cButt->fitContent();
@@ -411,7 +411,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         buildMenu->layoutVertically();
     };
 
-    const auto buildingsButt = new eFramedButton(window());
+    const auto buildingsButt = new FramedButton(window());
     buildingsButt->setUnderline(false);
     buildingsButt->setText(eLanguage::zeusText(44, 44));
     buildingsButt->fitContent();
@@ -470,7 +470,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                 window()->execDialog(choose);
                 choose->align(eAlignment::center);
             };
-            const auto cButt = new eFramedButton(window());
+            const auto cButt = new FramedButton(window());
             cButt->setUnderline(false);
             cButt->setText(board->cityName(cid));
             cButt->fitContent();
@@ -483,7 +483,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         buildMenu->layoutVertically();
     };
 
-    const auto pyramidsButt = new eFramedButton(window());
+    const auto pyramidsButt = new FramedButton(window());
     pyramidsButt->setUnderline(false);
     pyramidsButt->setText(eLanguage::zeusText(44, 378));
     pyramidsButt->fitContent();
@@ -529,7 +529,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                 window()->execDialog(maxMenu);
                 maxMenu->align(eAlignment::center);
             };
-            const auto cButt = new eFramedButton(window());
+            const auto cButt = new FramedButton(window());
             cButt->setUnderline(false);
             cButt->setText(board->cityName(cid));
             cButt->fitContent();
@@ -542,7 +542,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         buildMenu->layoutVertically();
     };
 
-    const auto maxSanctButt = new eFramedButton(window());
+    const auto maxSanctButt = new FramedButton(window());
     maxSanctButt->setUnderline(false);
     maxSanctButt->setText(eLanguage::zeusText(44, 291));
     maxSanctButt->fitContent();

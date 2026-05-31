@@ -1,13 +1,13 @@
 #ifndef ERESOURCEBUTTON_H
 #define ERESOURCEBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 #include "engine/eresourcetype.h"
 
-class eResourceButton : public eFramedButton {
+class eResourceButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     using eResourceAction = std::function<void(const eResourceType)>;
     void initialize(const eResourceAction& ract,

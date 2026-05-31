@@ -1,6 +1,6 @@
 #include "echoosebutton.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 void eChooseButton::initialize(
         const int nRows,
@@ -11,11 +11,11 @@ void eChooseButton::initialize(
 
     if(small) setPaddingS();
 
-    std::vector<eFramedButton*> buttons;
+    std::vector<FramedButton*> buttons;
 
     int i = 0;
     for(const auto& l : labels) {
-        const auto b = new eFramedButton(window());
+        const auto b = new FramedButton(window());
         b->setUnderline(false);
         if(small) {
             b->setFontSizeS();

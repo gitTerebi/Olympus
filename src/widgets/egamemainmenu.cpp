@@ -1,6 +1,6 @@
 #include "egamemainmenu.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 #include "elanguage.h"
 
@@ -14,7 +14,7 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
                                const eAction& exitAct) {
     setType(eFrameType::message);
 
-    const auto resButt = new eFramedButton(window());
+    const auto resButt = new FramedButton(window());
     resButt->setUnderline(false);
     resButt->setText(eLanguage::text("resume_game"));
     resButt->fitContent();
@@ -22,7 +22,7 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
     addWidget(resButt);
     resButt->align(eAlignment::hcenter);
 
-    const auto saveButt = new eFramedButton(window());
+    const auto saveButt = new FramedButton(window());
     saveButt->setUnderline(false);
     saveButt->setText(eLanguage::zeusText(1, 4));
     saveButt->fitContent();
@@ -30,7 +30,7 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
     addWidget(saveButt);
     saveButt->align(eAlignment::hcenter);
 
-    const auto loadButt = new eFramedButton(window());
+    const auto loadButt = new FramedButton(window());
     loadButt->setUnderline(false);
     loadButt->setText(eLanguage::zeusText(1, 3));
     loadButt->fitContent();
@@ -38,7 +38,7 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
     addWidget(loadButt);
     loadButt->align(eAlignment::hcenter);
 
-    const auto optionsButt = new eFramedButton(window());
+    const auto optionsButt = new FramedButton(window());
     optionsButt->setUnderline(false);
     optionsButt->setText("Options");
     optionsButt->fitContent();
@@ -46,7 +46,7 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
     addWidget(optionsButt);
     optionsButt->align(eAlignment::hcenter);
 
-    const auto exitButt = new eFramedButton(window());
+    const auto exitButt = new FramedButton(window());
     exitButt->setUnderline(false);
     exitButt->setText(eLanguage::zeusText(1, 5));
     exitButt->fitContent();

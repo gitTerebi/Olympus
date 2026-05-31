@@ -4,7 +4,7 @@
 #include "eframedwidget.h"
 #include "eokbutton.h"
 #include "eexclamationbutton.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 #include <stdexcept>
 #include <algorithm>
@@ -200,7 +200,7 @@ void eMessageBox::initialize(GameBoard& board,
         wid = new eWidget(window());
         wid->setNoPadding();
 
-        const auto surrenderB = new eFramedButton(window());
+        const auto surrenderB = new FramedButton(window());
         surrenderB->setFontSizeS();
         surrenderB->setUnderline(false);
         surrenderB->setText(eLanguage::zeusText(44, 282));
@@ -215,7 +215,7 @@ void eMessageBox::initialize(GameBoard& board,
 
         const bool canBribe = ed.fSecondaryResponse >= 0;
         const auto bribeB = canBribe ?
-            static_cast<eButton*>(new eFramedButton(window())) :
+            static_cast<eButton*>(new FramedButton(window())) :
             new eButton(window());
         bribeB->setFontSizeS();
         bribeB->setUnderline(false);
@@ -236,7 +236,7 @@ void eMessageBox::initialize(GameBoard& board,
         bribeB->setTooltip(ed.fSecondaryResponse >= 0 ? "Bribe demanded: " + bribeAmount :
                            "Need " + bribeAmount + " to bribe");
 
-        const auto fightToDefend = new eFramedButton(window());
+        const auto fightToDefend = new FramedButton(window());
         fightToDefend->setFontSizeS();
         fightToDefend->setUnderline(false);
         fightToDefend->setText(eLanguage::zeusText(44, 283));
@@ -272,7 +272,7 @@ void eMessageBox::initialize(GameBoard& board,
         wid = new eWidget(window());
         wid->setNoPadding();
 
-            const auto acceptB = new eFramedButton(window());
+            const auto acceptB = new FramedButton(window());
             acceptB->setFontSizeS();
             acceptB->setUnderline(false);
             acceptB->setText(eLanguage::zeusText(44, 209));
@@ -330,7 +330,7 @@ void eMessageBox::initialize(GameBoard& board,
                 wid->addWidget(acceptB);
             }
 
-            const auto postponeB = new eFramedButton(window());
+            const auto postponeB = new FramedButton(window());
             postponeB->setFontSizeS();
             postponeB->setUnderline(false);
             postponeB->setText(eLanguage::zeusText(44, 211));
@@ -343,7 +343,7 @@ void eMessageBox::initialize(GameBoard& board,
             });
             postponeB->setVisible(ed.fSecondaryResponse >= 0 && type != eResourceType::drachmas);
 
-            const auto declineB = new eFramedButton(window());
+            const auto declineB = new FramedButton(window());
             declineB->setFontSizeS();
             declineB->setUnderline(false);
             declineB->setText(eLanguage::zeusText(44, 210));
@@ -396,7 +396,7 @@ void eMessageBox::initialize(GameBoard& board,
         wid = new eWidget(window());
         wid->setNoPadding();
 
-        const auto a0B = new eFramedButton(window());
+        const auto a0B = new FramedButton(window());
         a0B->setFontSizeS();
         a0B->setUnderline(false);
         a0B->setText(eLanguage::zeusText(44, 275));
@@ -446,7 +446,7 @@ void eMessageBox::initialize(GameBoard& board,
             wid->addWidget(a0B);
         }
 
-        const auto a1B = new eFramedButton(window());
+        const auto a1B = new FramedButton(window());
         a1B->setFontSizeS();
         a1B->setUnderline(false);
         a1B->setText(eLanguage::zeusText(44, 211));
@@ -463,7 +463,7 @@ void eMessageBox::initialize(GameBoard& board,
         if(ed.fType == eMessageEventType::generalRequestGranted && ed.fTime == 0) {
             a2B = new eOkButton(window());
         } else {
-            a2B = new eFramedButton(window());
+            a2B = new FramedButton(window());
             a2B->setFontSizeS();
             a2B->setUnderline(false);
             a2B->setText(eLanguage::zeusText(44, 212));
@@ -498,7 +498,7 @@ void eMessageBox::initialize(GameBoard& board,
         wid = new eWidget(window());
         wid->setNoPadding();
 
-        const auto a0B = new eFramedButton(window());
+        const auto a0B = new FramedButton(window());
         a0B->setFontSizeS();
         a0B->setUnderline(false);
         a0B->setText(eLanguage::zeusText(44, 275));
@@ -519,7 +519,7 @@ void eMessageBox::initialize(GameBoard& board,
         }
         a0B->setVisible(ed.fPrimaryResponse >= 0 || ed.fCloseResponse >= 0);
 
-        const auto a1B = new eFramedButton(window());
+        const auto a1B = new FramedButton(window());
         a1B->setFontSizeS();
         a1B->setUnderline(false);
         a1B->setText(eLanguage::zeusText(44, 211));
@@ -532,7 +532,7 @@ void eMessageBox::initialize(GameBoard& board,
         });
         a1B->setVisible(ed.fSecondaryResponse >= 0);
 
-        const auto a2B = new eFramedButton(window());
+        const auto a2B = new FramedButton(window());
         a2B->setFontSizeS();
         a2B->setUnderline(false);
         a2B->setText(eLanguage::zeusText(44, 212));

@@ -2,7 +2,7 @@
 
 #include "eframedwidget.h"
 #include "emainwindow.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elabel.h"
 #include "echeckbox.h"
 #include "edifficultywidget.h"
@@ -87,14 +87,14 @@ private:
     eChangeAction mAction;
 };
 
-class eOptionsHotkeyButton : public eFramedButton {
+class eOptionsHotkeyButton : public FramedButton {
 public:
     using eChangeAction = std::function<void(const SDL_Scancode)>;
 
     eOptionsHotkeyButton(const SDL_Scancode value,
                          const eChangeAction& action,
                          eMainWindow* const window) :
-        eFramedButton(window),
+        FramedButton(window),
         mValue(value),
         mAction(action) {
         setPadding(2 * resolution().multiplier());
@@ -189,7 +189,7 @@ void eOptionsMenu::initialize() {
     categories->move(2*p, contentY);
 
     for(int i = 0; i < static_cast<int>(mPages.size()); i++) {
-        const auto button = new eFramedButton(window());
+        const auto button = new FramedButton(window());
         button->setUnderline(false);
         button->setText(mPages[i].fButtonLabel);
         button->fitContent();

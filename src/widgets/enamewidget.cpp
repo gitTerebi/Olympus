@@ -2,7 +2,7 @@
 
 #include "emainwindow.h"
 #include "elineedit.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 #include "echoosebutton.h"
 #include "eproceedbutton.h"
@@ -45,7 +45,7 @@ void eNameWidget::initialize(const std::string& ini,
     const auto buttonsW = new eWidget(window());
     buttonsW->setNoPadding();
 
-    const auto chooseButton = new eFramedButton(window());
+    const auto chooseButton = new FramedButton(window());
     chooseButton->setUnderline(false);
     chooseButton->setFontSizeS();
     chooseButton->setPaddingS();

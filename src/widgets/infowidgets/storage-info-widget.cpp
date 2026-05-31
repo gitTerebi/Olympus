@@ -216,14 +216,14 @@ public:
             }
         }
 
-        eFramedButton *resetBtn = nullptr;
+        FramedButton *resetBtn = nullptr;
         {
             const auto it = buttons.begin();
             const auto b0 = it->second;
             const int w = b0->width();
             const int h = b0->height();
 
-            const auto b = new eFramedButton(window());
+            const auto b = new FramedButton(window());
             b->setUnderline(false);
             b->setFontSizeS();
             b->setText(eLanguage::zeusText(130, 1));
@@ -247,7 +247,7 @@ public:
             spacerS->resize(1, mult * 8);
             spinsW->addWidget(spacerS);
 
-            const auto be = new eFramedButton(window());
+            const auto be = new FramedButton(window());
             be->setUnderline(false);
             be->setFontSizeS();
             be->setText("Reset");
@@ -266,7 +266,7 @@ public:
             spacerN->resize(1, mult * 8);
             namesW->addWidget(spacerN);
 
-            const auto emptyBtn = new eFramedButton(window());
+            const auto emptyBtn = new FramedButton(window());
             emptyBtn->setUnderline(false);
             emptyBtn->setFontSizeS();
             emptyBtn->setText("Empty");

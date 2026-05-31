@@ -8,7 +8,7 @@
 #include "gameEvents/requests/e-fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "buildings/eheroshall.h"
-#include "widgets/eframedbutton.h"
+#include "widgets/framed-button.h"
 #include "widgets/equestionwidget.h"
 #include "widgets/emessagewidget.h"
 #include "widgets/eworldwidget.h"
@@ -48,7 +48,7 @@ void eFulfillDialog::initialize(GameBoard* const board,
         const auto resource = q->resourceType();
         const int count = q->count();
         const auto countStr = std::to_string(count);
-        const auto b = new eFramedButton(window());
+        const auto b = new FramedButton(window());
         b->setNoPadding();
         b->setRenderBg(true);
 
@@ -175,7 +175,7 @@ void eFulfillDialog::initialize(GameBoard* const board,
     for(const auto q : qqs) {
         const bool c = city == q->city();
         if(!c) continue;
-        const auto b = new eFramedButton(window());
+        const auto b = new FramedButton(window());
         b->setNoPadding();
         b->setRenderBg(true);
         b->setPressAction([q]() {

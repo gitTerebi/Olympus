@@ -1,15 +1,15 @@
 #ifndef ECITYBUTTON_H
 #define ECITYBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 #include "engine/e-worldcity.h"
 
 class GameBoard;
 
-class eCityButton : public eFramedButton {
+class eCityButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     using eCityAction = std::function<void(const stdsptr<eWorldCity>&)>;
     void initialize(eWorldBoard* const board,

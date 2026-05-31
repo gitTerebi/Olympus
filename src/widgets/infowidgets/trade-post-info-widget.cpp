@@ -387,6 +387,23 @@ void TradePostInfoWidget::initialize(TradePost* const stor,
 
     stWid->layoutVertically();
 
+    // grey out buttons for goods blocked in distribution popup
+    const auto thisCid = stor->cityId();
+    const auto thisC = stor->getBoard().boardCityWithId(thisCid);
+    if(thisC) {
+        auto blockBtn = [](eSwitchButton* b) {
+            b->setValue(0);
+            b->setDarkFontColor();
+            b->setNoBorder(true);
+            b->setPressAction([](){});
+            b->setRightPressAction([](){});
+        };
+        for(const auto& [t, b] : mImportButtons)
+            if(thisC->isNoTrading(t)) blockBtn(b);
+        for(const auto& [t, b] : mExportButtons)
+            if(thisC->isNoTrading(t)) blockBtn(b);
+    }
+
     if(prevNext) {
         const auto w = new eWidget(window());
         w->setNoPadding();

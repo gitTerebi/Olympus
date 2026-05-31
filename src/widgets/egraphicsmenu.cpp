@@ -3,7 +3,7 @@
 #include "eframedwidget.h"
 #include "echeckbox.h"
 #include "elabeledwidget.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "ecancelbutton.h"
 #include "eacceptbutton.h"
 #include "emainwindow.h"
@@ -96,11 +96,11 @@ void eGraphicsMenu::initialize(const eApplyAction& settingsA,
         const auto& ress = eResolution::sResolutions;
         int y = 0;
         eWidget* col = col2;
-        const auto currentButton = std::make_shared<eFramedButton*>();
+        const auto currentButton = std::make_shared<FramedButton*>();
         const int iMax = ress.size();
         for(int i = 0; i < iMax; i++) {
             const auto& r = ress[i];
-            const auto b = new eFramedButton(window());
+            const auto b = new FramedButton(window());
             b->setPaddingS();
             b->setUnderline(false);
             b->setText(r.name());
@@ -130,7 +130,7 @@ void eGraphicsMenu::initialize(const eApplyAction& settingsA,
     }
 
     {
-        const auto fs = new eFramedButton(window());
+        const auto fs = new FramedButton(window());
         fs->setUnderline(false);
         fs->setText(mSettings.fFullscreen ?
                         eLanguage::zeusText(42, 2) : // windowed screen

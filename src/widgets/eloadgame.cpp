@@ -9,7 +9,7 @@
 
 #include "elineedit.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "equestionwidget.h"
 #include "ebuttonbase.h"
 
@@ -67,7 +67,7 @@ void eLoadGame::intialize(const std::string& title,
         if(r) closeAction();
     });
 
-    const auto deleteB = new eFramedButton(window());
+    const auto deleteB = new FramedButton(window());
     deleteB->setUnderline(false);
     deleteB->setFontSizeXS();
     deleteB->setLightFontColor();

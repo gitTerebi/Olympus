@@ -192,10 +192,19 @@ void StorageDistributionWidget::initialize(
             else                 { c->addShutDown(t);    mothballBtn->setText("disabled"); mothballBtn->setDarkFontColor(); } });
         mMothballButtons.push_back(mothballBtn);
 
-        const auto twLabel = new eLabel("-", window());
-        twLabel->setFontSizeXS();
-        twLabel->setNoPadding();
-        twLabel->fitContent();
+        const bool noTrade = city && city->isNoTrading(t);
+        const auto tradeBtn = new eMicroButton(window());
+        tradeBtn->setNoPadding();
+        tradeBtn->setFontSizeXS();
+        if(noTrade) { tradeBtn->setText("disabled"); tradeBtn->setDarkFontColor(); }
+        else        { tradeBtn->setText("trading");  tradeBtn->setLightFontColor(); }
+        tradeBtn->fitHeight();
+        tradeBtn->setPressAction([&board, cid, t, tradeBtn]() {
+            const auto c = board.boardCityWithId(cid);
+            if(!c) return;
+            if(c->isNoTrading(t)) { c->removeNoTrading(t); tradeBtn->setText("trading");  tradeBtn->setLightFontColor(); }
+            else                  { c->addNoTrading(t);    tradeBtn->setText("disabled"); tradeBtn->setDarkFontColor(); }
+        });
 
         const auto impLabel = new eLabel(city ? std::to_string(city->totalImported(t)) : "-", window());
         impLabel->setFontSizeXS();
@@ -209,7 +218,7 @@ void StorageDistributionWidget::initialize(
 
         const auto row = eLayoutHelpers::flexRow(
             window(), ww,
-            {{iconClick, iconW, 0}, {nameClick, nameW, 0}, {amountLabel, amtW, 0}, {stockpileBtn, btnW, 0}, {mothballBtn, btnW, 0}, {twLabel, tradeW, 0}, {impLabel, tradeW, 0}, {expLabel, tradeW, 0}, {new eWidget(window()), 0, 1}},
+            {{iconClick, iconW, 0}, {nameClick, nameW, 0}, {amountLabel, amtW, 0}, {stockpileBtn, btnW, 0}, {mothballBtn, btnW, 0}, {tradeBtn, tradeW, 0}, {impLabel, tradeW, 0}, {expLabel, tradeW, 0}, {new eWidget(window()), 0, 1}},
             {.gap = p, .align = eLayoutHelpers::eAlign::center});
 
         rowItems.push_back({row, 0, 0});

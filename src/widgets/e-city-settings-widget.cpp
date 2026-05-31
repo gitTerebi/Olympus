@@ -1,6 +1,6 @@
 #include "ecitysettingswidget.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 #include "etradeeditwidget.h"
 #include "emainwindow.h"
@@ -104,7 +104,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     buttonsW3->move(2 * ww + 6 * p, 2 * p);
     buttonsW3->resize(ww, hh);
 
-    const auto nameButton = new eFramedButton(window());
+    const auto nameButton = new FramedButton(window());
     nameButton->setUnderline(false);
     const auto n = c->name();
     nameButton->setText(n.empty() ? eLanguage::text("name") : n);
@@ -125,7 +125,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     buttonsW1->addWidget(nameButton);
     nameButton->align(eAlignment::hcenter);
 
-    const auto leaderButton = new eFramedButton(window());
+    const auto leaderButton = new FramedButton(window());
     leaderButton->setUnderline(false);
     const auto l = c->leader();
     leaderButton->setText(l.empty() ? eLanguage::text("leader") : l);
@@ -146,15 +146,15 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     buttonsW1->addWidget(leaderButton);
     leaderButton->align(eAlignment::hcenter);
 
-    const auto relationshipButton = new eFramedButton(window());
-    const auto nationalityButton = new eFramedButton(window());
+    const auto relationshipButton = new FramedButton(window());
+    const auto nationalityButton = new FramedButton(window());
     const auto stateButton = new eSwitchButton(window());
     const auto visibleButton = new eSwitchButton(window());
-    const auto attitudeButton = new eFramedButton(window());
-    const auto directionButton = new eFramedButton(window());
-    const auto teamButton = new eFramedButton(window());
-    const auto playerButton = new eFramedButton(window());
-    const auto capitalButton = new eFramedButton(window());
+    const auto attitudeButton = new FramedButton(window());
+    const auto directionButton = new FramedButton(window());
+    const auto teamButton = new FramedButton(window());
+    const auto playerButton = new FramedButton(window());
+    const auto capitalButton = new FramedButton(window());
     const auto type = c->type();
     relationshipButton->setVisible(type == eCityType::foreignCity);
     nationalityButton->setVisible(type == eCityType::foreignCity ||
@@ -212,7 +212,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
         }
     };
 
-    const auto typeButton = new eFramedButton(window());
+    const auto typeButton = new FramedButton(window());
     typeButton->setUnderline(false);
     const auto typeName = eWorldCity::sTypeName(type);
     typeButton->setText(typeName);
@@ -564,7 +564,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     buttonsW1->addWidget(directionButton);
     directionButton->align(eAlignment::hcenter);
 
-    const auto buysButton = new eFramedButton(window());
+    const auto buysButton = new FramedButton(window());
     buysButton->setUnderline(false);
     buysButton->setText(eLanguage::zeusText(47, 1));
     buysButton->fitContent();
@@ -582,7 +582,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     buttonsW2->addWidget(buysButton);
     buysButton->align(eAlignment::hcenter);
 
-    const auto sellsButton = new eFramedButton(window());
+    const auto sellsButton = new FramedButton(window());
     sellsButton->setUnderline(false);
     sellsButton->setText(eLanguage::zeusText(47, 2));
     sellsButton->fitContent();
@@ -600,7 +600,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     buttonsW2->addWidget(sellsButton);
     sellsButton->align(eAlignment::hcenter);
 
-    const auto receiveTributeButton = new eFramedButton(window());
+    const auto receiveTributeButton = new FramedButton(window());
     receiveTributeButton->setUnderline(false);
     receiveTributeButton->setText(eLanguage::text("receive_tribute"));
     receiveTributeButton->fitContent();
@@ -614,7 +614,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     buttonsW2->addWidget(receiveTributeButton);
     receiveTributeButton->align(eAlignment::hcenter);
 
-    const auto payTributeButton = new eFramedButton(window());
+    const auto payTributeButton = new FramedButton(window());
     payTributeButton->setUnderline(false);
     payTributeButton->setText(eLanguage::text("pay_tribute"));
     payTributeButton->fitContent();
@@ -628,7 +628,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     buttonsW2->addWidget(payTributeButton);
     payTributeButton->align(eAlignment::hcenter);
 
-    const auto waterTradeButton = new eFramedButton(window());
+    const auto waterTradeButton = new FramedButton(window());
     waterTradeButton->setUnderline(false);
     waterTradeButton->setText(eLanguage::text("water_trade"));
     waterTradeButton->fitContent();

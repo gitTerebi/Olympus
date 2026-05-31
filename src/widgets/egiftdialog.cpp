@@ -2,7 +2,7 @@
 
 #include "elanguage.h"
 #include "elabel.h"
-#include "eframedbuttonwithicon.h"
+#include "framed-button-with-icon.h"
 #include "engine/game-board.h"
 #include "engine/egifthelpers.h"
 #include "estringhelpers.h"
@@ -62,7 +62,7 @@ void eGiftDialog::initialize(const stdsptr<eWorldCity>& c,
             w->addWidget(label);
         } else {
             for(const auto s : gifts) {
-                const auto b = new eFramedButtonWithIcon(window());
+                const auto b = new FramedButtonWithIcon(window());
                 b->setPressAction([s, func, cid]() {
                     func(s, cid);
                 });

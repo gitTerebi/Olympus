@@ -3,7 +3,7 @@
 #include "eviewmodebutton.h"
 
 #include "widgets/game-widget.h"
-#include "widgets/eframedbutton.h"
+#include "widgets/framed-button.h"
 #include "widgets/escrollwidget.h"
 
 #include "elanguage.h"

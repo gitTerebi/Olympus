@@ -533,7 +533,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         const int ec = e->triggerEventsCount();
         const auto ecStr = std::to_string(ec);
         const auto str = eLanguage::text("triggers") + " (" + ecStr + ")";
-        const auto triggersButt = new eFramedButton(str, window());
+        const auto triggersButt = new FramedButton(str, window());
         triggersButt->setUnderline(false);
         triggersButt->fitContent();
         triggersButt->setPressAction([this, e]() {

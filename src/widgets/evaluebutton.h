@@ -1,11 +1,11 @@
 #ifndef EVALUEBUTTON_H
 #define EVALUEBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
-class eValueButton : public eFramedButton {
+class eValueButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     void initialize(const int min, const int max);
 

@@ -1,7 +1,7 @@
 #include "erosterofleaders.h"
 
 #include "eframedwidget.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 #include "escrollwidgetcomplete.h"
 #include "estringhelpers.h"
@@ -53,7 +53,7 @@ void eRosterOfLeaders::initialize() {
 
     const int bw = (inner->width() - 2*p)/3;
 
-    const auto createB = new eFramedButton(window());
+    const auto createB = new FramedButton(window());
     createB->setFontSizeS();
     createB->setPaddingS();
     createB->setUnderline(false);
@@ -80,7 +80,7 @@ void eRosterOfLeaders::initialize() {
 
     const auto selected = std::make_shared<std::string>();
 
-    const auto deleteB = new eFramedButton(window());
+    const auto deleteB = new FramedButton(window());
     deleteB->setFontSizeS();
     deleteB->setPaddingS();
     deleteB->setUnderline(false);
@@ -99,7 +99,7 @@ void eRosterOfLeaders::initialize() {
         w->showRosterOfLeaders();
     });
 
-    const auto proceedB = new eFramedButton(window());
+    const auto proceedB = new FramedButton(window());
     proceedB->setFontSizeS();
     proceedB->setPaddingS();
     proceedB->setUnderline(false);
@@ -121,7 +121,7 @@ void eRosterOfLeaders::initialize() {
     const auto w = window();
     const auto leader = w->leader();
     if(!leader.empty()) {
-        const auto returnB = new eFramedButton(window());
+        const auto returnB = new FramedButton(window());
         returnB->setFontSizeS();
         returnB->setPaddingS();
         returnB->setUnderline(false);

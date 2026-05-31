@@ -1,7 +1,7 @@
 ﻿#include "esanctuaryinfowidget.h"
 
 #include "elanguage.h"
-#include "widgets/eframedbutton.h"
+#include "widgets/framed-button.h"
 #include "characters/gods/egod.h"
 #include "estringhelpers.h"
 #include "buildings/sanctuaries/sanctuary.h"
@@ -117,7 +117,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             buttonsW->addWidget(bw);
             const int string = 10 + godId;
             const auto txt = eLanguage::zeusText(132, string);
-            const auto pb = new eFramedButton(txt, window());
+            const auto pb = new FramedButton(txt, window());
             pb->setUnderline(false);
             pb->fitContent();
             bw->addWidget(pb);
@@ -171,7 +171,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             bw->setNoPadding();
             buttonsW->addWidget(bw);
             const auto txt = eLanguage::zeusText(156, 27);
-            const auto pb = new eFramedButton(txt, window());
+            const auto pb = new FramedButton(txt, window());
             pb->setUnderline(false);
             pb->fitContent();
             bw->addWidget(pb);
@@ -454,7 +454,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         }
 
         const auto cw = addCentralWidget();
-        const auto haltB = new eFramedButton(window());
+        const auto haltB = new FramedButton(window());
         haltB->setUnderline(false);
         haltB->setText(h ? eLanguage::zeusText(132, 113) :
                            eLanguage::zeusText(132, 112));

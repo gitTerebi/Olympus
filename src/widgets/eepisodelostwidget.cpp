@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 
 #include "eframedlabel.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 
 void eEpisodeLostWidget::initialize(const eAction& proceedA) {
@@ -21,7 +21,7 @@ void eEpisodeLostWidget::initialize(const eAction& proceedA) {
     addWidget(defeatLabel);
     defeatLabel->align(eAlignment::center);
 
-    const auto proceedButton = new eFramedButton(window());
+    const auto proceedButton = new FramedButton(window());
     proceedButton->setRenderBg(true);
     proceedButton->setUnderline(false);
     proceedButton->setText(eLanguage::zeusText(62, 2));

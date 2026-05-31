@@ -105,7 +105,7 @@ void formatStoredMessage(eMessage& msg,
 #include "emainwindow.h"
 #include "esettings.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "eframedwidget.h"
 #include "elabel.h"
 #include "eoptionsmenu.h"
@@ -518,7 +518,7 @@ void GameWidget::initialize()
     if (mEditorMode)
     {
         const auto str = eLanguage::text("settings");
-        const auto settingsButt = new eFramedButton(str, window());
+        const auto settingsButt = new FramedButton(str, window());
         settingsButt->fitContent();
         addWidget(settingsButt);
         settingsButt->move(mGm->x() - settingsButt->width() - p,
@@ -536,7 +536,7 @@ void GameWidget::initialize()
             settingsMenu->align(eAlignment::center); });
 
         {
-            const auto editorSwitch = new eFramedButton(window());
+            const auto editorSwitch = new FramedButton(window());
             editorSwitch->setRenderBg(true);
             editorSwitch->setUnderline(false);
             editorSwitch->setText(eLanguage::text("editor"));
@@ -557,7 +557,7 @@ void GameWidget::initialize()
 
         const auto cityEditorWidget = new eWidget(window());
 
-        const auto condButton = new eFramedButton(window());
+        const auto condButton = new FramedButton(window());
         condButton->setRenderBg(true);
         condButton->setUnderline(false);
         condButton->setText(eLanguage::text("conditions"));
@@ -597,7 +597,7 @@ void GameWidget::initialize()
             window()->execDialog(condsMenu);
             condsMenu->align(eAlignment::center); });
 
-        const auto saveButton = new eFramedButton(window());
+        const auto saveButton = new FramedButton(window());
         saveButton->setRenderBg(true);
         saveButton->setUnderline(false);
         saveButton->setText(eLanguage::zeusText(44, 74));
@@ -606,7 +606,7 @@ void GameWidget::initialize()
         saveButton->setPressAction([this]()
                                    { mBoard->saveEditorCityPlan(); });
 
-        const auto restoreButton = new eFramedButton(window());
+        const auto restoreButton = new FramedButton(window());
         restoreButton->setRenderBg(true);
         restoreButton->setUnderline(false);
         restoreButton->setText(eLanguage::text("restore"));
@@ -620,7 +620,7 @@ void GameWidget::initialize()
         cityEditorWidget->stackVertically(p);
         addWidget(cityEditorWidget);
 
-        const auto cityEditorSwitch = new eFramedButton(window());
+        const auto cityEditorSwitch = new FramedButton(window());
         cityEditorSwitch->setRenderBg(true);
         cityEditorSwitch->setUnderline(false);
         cityEditorSwitch->setText(eLanguage::text("city_editor"));
@@ -650,10 +650,10 @@ void GameWidget::initialize()
             const int y0 = restoreButton->y() + restoreButton->height() + p;
             int y = y0;
             const int iMax = 21;
-            std::vector<eFramedButton *> iButtons;
+            std::vector<FramedButton *> iButtons;
             for (int i = 0; i < iMax; i++)
             {
-                const auto iButton = new eFramedButton(window());
+                const auto iButton = new FramedButton(window());
                 iButton->setUnderline(false);
                 iButton->setRenderBg(true);
                 iButton->setText(std::to_string(i));
@@ -730,7 +730,7 @@ void GameWidget::initialize()
         priceWidget->fitContent();
         innerWidget->addWidget(priceWidget);
 
-        const auto button = new eFramedButton(window());
+        const auto button = new FramedButton(window());
         mBuyCityButton = button;
         button->setUnderline(false);
         button->setText(eLanguage::zeusText(44, 5));
@@ -2982,7 +2982,7 @@ void GameWidget::beginStampTemplateCreate()
     panel->addWidget(mStampTemplateStats);
     mStampTemplateStats->move(p, p);
 
-    const auto saveB = new eFramedButton(window());
+    const auto saveB = new FramedButton(window());
     saveB->setUnderline(false);
     saveB->setFontSizeS();
     saveB->setPaddingS();
@@ -2993,7 +2993,7 @@ void GameWidget::beginStampTemplateCreate()
     });
     panel->addWidget(saveB);
 
-    const auto cancelB = new eFramedButton(window());
+    const auto cancelB = new FramedButton(window());
     cancelB->setUnderline(false);
     cancelB->setFontSizeS();
     cancelB->setPaddingS();
@@ -3109,7 +3109,7 @@ void GameWidget::showStampTemplateNameDialog()
     d->addWidget(edit);
     edit->move(p, title->y() + title->height() + p);
 
-    const auto okB = new eFramedButton(window());
+    const auto okB = new FramedButton(window());
     okB->setUnderline(false);
     okB->setFontSizeS();
     okB->setPaddingS();
@@ -3122,7 +3122,7 @@ void GameWidget::showStampTemplateNameDialog()
     });
     d->addWidget(okB);
 
-    const auto cancelB = new eFramedButton(window());
+    const auto cancelB = new FramedButton(window());
     cancelB->setUnderline(false);
     cancelB->setFontSizeS();
     cancelB->setPaddingS();

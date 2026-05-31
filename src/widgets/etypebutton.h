@@ -1,11 +1,11 @@
 #ifndef ETYPEBUTTON_H
 #define ETYPEBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
-class eTypeButton : public eFramedButton {
+class eTypeButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     void initialize(const int value,
                     const std::vector<std::string>& values,

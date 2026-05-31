@@ -167,6 +167,11 @@ public:
     void addStockpile(const eResourceType type);
     void removeStockpile(const eResourceType type);
 
+    bool isNoTrading(const eResourceType type) const;
+    void addNoTrading(const eResourceType type);
+    void removeNoTrading(const eResourceType type);
+    eResourceType tradingAllowed(eResourceType mask) const;
+
     using eBuildingValidator = std::function<bool(eBuilding*)>;
     std::vector<eBuilding*> buildings(const eBuildingValidator& v) const;
     std::vector<eBuilding*> buildings(const eBuildingType type) const;
@@ -624,6 +629,7 @@ private:
     eEmploymentDistributor mEmplDistributor;
     std::vector<eResourceType> mShutDown;
     std::vector<eResourceType> mStockpiled;
+    std::vector<eResourceType> mNoTrading;
     std::map<eSector, std::vector<eEmployingBuilding*>> mSectorBuildings;
 
     eAvailableBuildings mAvailableBuildings;

@@ -7,9 +7,9 @@
 #include "echoosebutton.h"
 #include "emainwindow.h"
 
-class eConditionTypeButton : public eFramedButton {
+class eConditionTypeButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     using eType = eDistrictReadyCondition::eType;
     using eCondAction = std::function<void(const eType)>;

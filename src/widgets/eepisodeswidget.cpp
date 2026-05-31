@@ -3,7 +3,7 @@
 #include "evectorhelpers.h"
 
 #include "elabel.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 #include "echoosebutton.h"
 #include "emainwindow.h"
@@ -133,7 +133,7 @@ public:
             const auto editW = new eWidget(window());
             editW->setNoPadding();
             editW->setWidth(colW - idL->width());
-            const auto editB = new eFramedButton(window());
+            const auto editB = new FramedButton(window());
             editB->setUnderline(false);
             editB->setFontSizeXS();
             editB->setPaddingXS();
@@ -173,7 +173,7 @@ public:
             const auto nextEpisodeW = new eWidget(window());
             nextEpisodeW->setNoPadding();
             nextEpisodeW->setWidth(colW);
-            const auto nextEpisodeB = new eFramedButton(window());
+            const auto nextEpisodeB = new FramedButton(window());
             nextEpisodeB->setUnderline(false);
             nextEpisodeB->setFontSizeXS();
             nextEpisodeB->setPaddingXS();
@@ -235,7 +235,7 @@ public:
         const auto settingsW = new eWidget(window());
         settingsW->setNoPadding();
         settingsW->setWidth(colW);
-        const auto settingsB = new eFramedButton(window());
+        const auto settingsB = new FramedButton(window());
         settingsB->setUnderline(false);
         settingsB->setFontSizeXS();
         settingsB->setPaddingXS();
@@ -314,7 +314,7 @@ public:
         const auto textW = new eWidget(window());
         textW->setNoPadding();
         textW->setWidth(colW);
-        mTextB = new eFramedButton(window());
+        mTextB = new FramedButton(window());
         mTextB->setUnderline(false);
         mTextB->setFontSizeXS();
         mTextB->setPaddingXS();
@@ -342,7 +342,7 @@ public:
         mTextB->setText("");
     }
 private:
-    eFramedButton* mTextB = nullptr;
+    FramedButton* mTextB = nullptr;
 };
 
 void eEpisodesWidget::deselectText(const int skipId) {

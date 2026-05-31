@@ -44,7 +44,7 @@ void eMainMenu::initialize(const eAction& continueGameA,
 
     buttons->layoutVertically();
 
-    const auto leader = new eFramedButton(w);
+    const auto leader = new FramedButton(w);
     leader->setRenderBg(true);
     leader->setUnderline(false);
     leader->setPressAction(leaderA);

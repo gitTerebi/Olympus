@@ -47,6 +47,9 @@ void BoardCity::serialize(eSaveArchive& ar) {
     ar.arrayField("stockpiledResources", mStockpiled,
         [](eSaveArchive& itemAr, eResourceType& r) { itemAr.field("resource", r); });
 
+    ar.arrayField("noTradingResources", mNoTrading,
+        [](eSaveArchive& itemAr, eResourceType& r) { itemAr.field("resource", r); });
+
     ar.field("manTowers", mManTowers);
     ar.field("shutdownLandTrade", mShutdownLandTrade);
     ar.field("shutdownSeaTrade", mShutdownSeaTrade);

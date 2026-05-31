@@ -1,13 +1,13 @@
 #ifndef EPYRAMIDBUTTON_H
 #define EPYRAMIDBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 #include "buildings/ebuilding.h"
 
-class ePyramidButton : public eFramedButton {
+class ePyramidButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     using ePyramidAction = std::function<void(const eBuildingType)>;
     void initialize(const ePyramidAction& pact);

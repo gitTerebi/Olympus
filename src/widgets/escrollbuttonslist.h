@@ -30,7 +30,7 @@ private:
 
     eWidget* mSA = nullptr;
     eButtonsListWidget* mBLW = nullptr;
-    eFramedButton* mNewButton = nullptr;
+    FramedButton* mNewButton = nullptr;
 };
 
 #endif // ESCROLLBUTTONSLIST_H

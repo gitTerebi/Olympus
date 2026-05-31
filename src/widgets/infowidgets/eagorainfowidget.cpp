@@ -1,6 +1,6 @@
 #include "eagorainfowidget.h"
 
-#include "widgets/eframedbutton.h"
+#include "widgets/framed-button.h"
 
 #include "buildings/ecommonagora.h"
 #include "buildings/egrandagora.h"
@@ -10,9 +10,9 @@
 
 #include "elanguage.h"
 
-class eAgoraButton : public eFramedButton {
+class eAgoraButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     void initialize(eAgoraBase* const a,
                     const eResourceType res);
