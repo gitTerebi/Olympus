@@ -199,7 +199,7 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
     if (data.empty())
         return buildings;
 
-    eReadSource source(const_cast<void *>(static_cast<const void *>(data.data())));
+    eReadSource source(const_cast<void *>(static_cast<const void *>(data.data())), data.size());
     eReadStream src(source);
     src.readFormat();
     std::vector<std::pair<eBuilding *, int>> oldBuildingIds;
@@ -218,41 +218,45 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
         oldCharacterIds.push_back({c, c->ioID()});
         c->setIOID(-1);
     }
-    eSaveArchive ar(src);
-    int marker;
-    ar.field("bundleMarker", marker);
-    if (marker == -1)
     {
-        int n;
-        ar.field("buildingCount", n);
-        for (int i = 0; i < n; i++)
+        eSaveArchive ar(src);
+        int marker;
+        ar.field("bundleMarker", marker);
+        if (marker == -1)
         {
-            int size;
-            ar.field("snapshotSize", size);
-            if (size == 0 || size > data.size())
-                continue;
-            std::vector<uint8_t> snapshot;
-            snapshot.reserve(size);
-            for (size_t j = 0; j < size; j++)
+            int n;
+            ar.field("buildingCount", n);
+            printf("[repair] bundle: %d buildings, bundle total %zu bytes\n", n, data.size());
+            for (int i = 0; i < n; i++)
             {
-                int byte;
-                ar.field("snapshotByte", byte);
-                snapshot.push_back(static_cast<uint8_t>(byte));
+                int size;
+                ar.field("snapshotSize", size);
+                printf("[repair] building %d snapshot size %d\n", i, size);
+                if (size == 0 || size > (int)data.size())
+                    continue;
+                std::vector<uint8_t> snapshot;
+                snapshot.reserve(size);
+                for (size_t j = 0; j < size; j++)
+                {
+                    int byte;
+                    ar.field("snapshotByte", byte);
+                    snapshot.push_back(static_cast<uint8_t>(byte));
+                }
+                eReadSource bs(const_cast<void *>(
+                    static_cast<const void *>(snapshot.data())), snapshot.size());
+                eReadStream bsrc(bs);
+                bsrc.readFormat();
+                eBuildingType type;
+                eSaveArchive bar(bsrc);
+                bar.field("buildingType", type);
+                const auto b = BuildingArchive::load(board, type, bar);
+                if (!b)
+                    continue;
+                buildings.push_back(b);
             }
-            eReadSource bs(const_cast<void *>(
-                static_cast<const void *>(snapshot.data())));
-            eReadStream bsrc(bs);
-            bsrc.readFormat();
-            eBuildingType type;
-            eSaveArchive bar(bsrc);
-            bar.field("buildingType", type);
-            const auto b = BuildingArchive::load(board, type, bar);
-            if (!b)
-                continue;
-            buildings.push_back(b);
         }
-        src.handlePostFuncs();
     }
+    src.handlePostFuncs();
     for (const auto &b : buildings)
         b->setIOID(-1);
     for (const auto &p : oldBuildingIds)
