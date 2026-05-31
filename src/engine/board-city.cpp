@@ -1869,13 +1869,13 @@ void BoardCity::updateMaxSoldiers() {
         } else if(bt == eBuildingType::eliteHousing) {
             const auto eh = static_cast<EliteHousing*>(b);
             const int l = eh->level();
-            if(l < 2) continue;
+            if(l < 1) continue;
             const int a = eh->arms();
-            if(l == 2) {
+            if(l == 1) {
                 mMaxHoplites += std::min(2, a);
-            } else if(l == 3) {
+            } else if(l == 2) {
                 mMaxHoplites += std::min(4, a);
-            } else if(l == 4) {
+            } else if(l == 3) {
                 const int h = eh->horses();
                 const int hh = std::min(std::min(a, 4), h);
                 mMaxHorsemen += hh;
