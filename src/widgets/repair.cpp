@@ -442,6 +442,16 @@ static std::vector<sRepairGroup> collectRepairGroups(
     std::set<std::tuple<int, int, int, int>> processed;
     std::set<eRuins *> processedRuins;
     const auto diff = board.difficulty(ppid);
+    auto repairFee = [](const Difficulty d) -> double {
+        switch (d) {
+        case Difficulty::beginner: return 1.1;
+        case Difficulty::mortal:   return 1.2;
+        case Difficulty::hero:     return 1.3;
+        case Difficulty::titan:    return 1.4;
+        case Difficulty::olympian: return 1.5;
+        }
+        return 1.1;
+    };
 
     for (int x = minX; x <= maxX; x++)
     {
@@ -511,7 +521,7 @@ static std::vector<sRepairGroup> collectRepairGroups(
                     continue;
                 g.ow = right - g.ox;
                 g.oh = bottom - g.oy;
-                g.cost = DifficultyHelpers::buildingCost(diff, wasType) * 1.10;
+                g.cost = DifficultyHelpers::buildingCost(diff, wasType) * repairFee(diff);
                 groups.push_back(std::move(g));
                 continue;
             }
@@ -585,7 +595,7 @@ static std::vector<sRepairGroup> collectRepairGroups(
             canRepair = addBundleRuins(board, g);
             if (!canRepair)
                 continue;
-            g.cost = DifficultyHelpers::buildingCost(diff, wasType) * 1.10;
+            g.cost = DifficultyHelpers::buildingCost(diff, wasType) * repairFee(diff);
             groups.push_back(std::move(g));
         }
     }
@@ -608,7 +618,8 @@ void handleRepair(GameBoard &board, GameWidget *const widget,
     if (totalCost > 0)
     {
         const auto title = "Repair buildings";
-        const auto text = "Repair cost " + std::to_string(totalCost) + " drachmas (10% fee). Proceed?";
+        const int feePercent = static_cast<int>((repairFee(diff) - 1.0) * 100 + 0.5);
+        const auto text = "Repair cost " + std::to_string(totalCost) + " drachmas (" + std::to_string(feePercent) + "% fee). Proceed?";
         const auto acceptA = [groups, totalCost, ppid, cid, &board, editorMode]()
         {
             for (const auto &g : groups)
