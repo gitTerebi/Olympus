@@ -747,13 +747,24 @@ void eInvasionHandler::incTime(const int by) {
     const auto goBack = [&]() {
         const int tx = mTile->x();
         const int ty = mTile->y();
-        SoldierBanner::sPlace(solds, tx, ty, mBoard, 3, 0);
+        for(const auto& b : solds) {
+            b->moveTo(tx, ty);
+        }
         mGState.fCurrentTile = mTile;
         mGState.fTargetTile = nullptr;
         tellHeroesAndGodsToGoBack();
     };
 
     if(mStage == eInvasionStage::comeback) {
+        bool allArrived = true;
+        for(const auto& b : mBanners) {
+            if(b->count() <= 0) continue;
+            if(b->tile() != mTile || !b->stationary()) {
+                allArrived = false;
+                b->moveTo(mTile->x(), mTile->y());
+            }
+        }
+        if(!allArrived) return;
         for(const auto& b : mBanners) {
             b->killAll();
         }
@@ -776,6 +787,28 @@ void eInvasionHandler::incTime(const int by) {
     const auto invadedTid = mBoard.cityIdToTeamId(mTargetCity);
     if(invadingTid == invadedTid) {
         goBack();
+        mStage = eInvasionStage::comeback;
+        return;
+    }
+
+    // Palace destroyed mid-campaign: city is taken immediately.
+    if(!mBoard.palace(mTargetCity)) {
+        goBack();
+        if(mConquestEvent) {
+            const auto& forces = mConquestEvent->forces();
+            const int iniCount = forces.count();
+            if(iniCount > 0) {
+                int count = 0;
+                for(const auto& b : mBanners) {
+                    count += b->count();
+                }
+                forces.kill(1 - double(count)/iniCount);
+            }
+        }
+        const auto targetWCity = mBoard.world().cityWithId(mTargetCity);
+        mBoard.conqueredBy(mCity->cityId(), targetWCity);
+        assert(mEvent);
+        mEvent->invadersWon();
         mStage = eInvasionStage::comeback;
         return;
     }

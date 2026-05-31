@@ -289,15 +289,8 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
         }
         return LookForEnemyState::none;
     }
-    const int rangeAttackCheck = 500;
-    const int lookForEnemyCheck = 500;
-    // Building engage is checked every scan, not throttled. The old 5s gate meant
-    // each soldier only got a chance to START hitting a wall once per 5 seconds,
-    // and only if already adjacent — so razing a building crawled and most of the
-    // formation stood idle between gate openings. Actual damage is still paced by
-    // the melee/missile cycle once an attack locks; this gate only governed when a
-    // soldier may begin, so opening it every tick just lets them all engage.
-    const int buildingCheck = 0;
+    const int rangeAttackCheck = 250;
+    const int lookForEnemyCheck = 250;
 
     const auto c = character();
     if(c->dead()) return LookForEnemyState::dead;
@@ -415,77 +408,61 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
         c->setOrientation(o);
     };
 
-    mBuildingAttack += by;
-    const bool buildingAttack = mBuildingAttack > buildingCheck;
-    if(buildingAttack) {
-        mBuildingAttack -= buildingCheck;
-    }
     stdsptr<eCharacter> secondOption;
     stdsptr<eCharacter> thirdOption;
     stdsptr<eCharacter> cappedAdjacent; // already-full foe, but it's right here
-    // Throttle the 3x3 unit pass: it ran every tick. A short gate cuts per-tick
-    // cost while keeping engage lag under ~150ms (the melee/missile cycle paces
-    // actual damage anyway once a target locks).
-    const int adjacencyCheckMs = 150;
+    const int adjacencyCheckMs = 250;
     mAdjacencyCheck += by;
     const bool adjacencyScan = mAdjacencyCheck > adjacencyCheckMs;
     if(adjacencyScan) mAdjacencyCheck -= adjacencyCheckMs;
     // Unit pass first: enemy units always win over buildings, so a soldier
     // turns on whoever is hitting him instead of clubbing an adjacent house.
-    if(adjacencyScan) for(int i = -1; i <= 1; i++) {
-        for(int j = -1; j <= 1; j++) {
-            const auto t = brd.tile(tx + i, ty + j);
-            if(!t) continue;
-            const auto& chars = t->characters();
-            for(const auto& cc : chars) {
-                const auto cctype = cc->type();
-                const auto cctid = cc->teamId();
-                if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
-                if(cc->dead()) continue;
-                // FightAction allows all neighboring tiles, including
-                // diagonals. Keep this scan on the same Chebyshev rule; using
-                // real distance made diagonal foes look "not adjacent", then
-                // the close logic below held forever because tile distance was
-                // already <= 1.
-                if(!sCanAttackCharacter(cc.get())) continue;
-                if(!cc->isSoldier() && cctype != eCharacterType::wolf) {
-                    if(cc->isImmortal()) {
-                        thirdOption = cc;
-                    } else if(cctype == eCharacterType::enemyBoat ||
-                               cctype == eCharacterType::trireme) {
-                        secondOption = cc;
+    if(adjacencyScan) {
+        for(int i = -1; i <= 1; i++) {
+            for(int j = -1; j <= 1; j++) {
+                const auto t = brd.tile(tx + i, ty + j);
+                if(!t) continue;
+                const auto& chars = t->characters();
+                for(const auto& cc : chars) {
+                    const auto cctype = cc->type();
+                    const auto cctid = cc->teamId();
+                    if(!eTeamIdHelpers::isEnemy(cctid, tid)) continue;
+                    if(cc->dead()) continue;
+                    if(!sCanAttackCharacter(cc.get())) continue;
+                    if(!cc->isSoldier() && cctype != eCharacterType::wolf) {
+                        if(cc->isImmortal()) {
+                            thirdOption = cc;
+                        } else if(cctype == eCharacterType::enemyBoat ||
+                                   cctype == eCharacterType::trireme) {
+                            secondOption = cc;
+                        }
+                        continue;
                     }
-                    continue;
+                    if(cc->targetedByCount() >= sMaxAttackersPerEnemy) {
+                        if(!cappedAdjacent) cappedAdjacent = cc;
+                        continue;
+                    }
+                    setAttackTarget(cc, false);
+                    return LookForEnemyState::attacking;
                 }
-                // Soft 2-cap: prefer not to be the 3rd to lock onto this foe
-                // (Augustus num_attackers >= 2) so the line spreads. But the cap
-                // only steers spreading — a unit already standing adjacent must
-                // still fight rather than stand idle. Remember the capped foe and
-                // attack it if no uncapped adjacent enemy turns up this scan.
-                if(cc->targetedByCount() >= sMaxAttackersPerEnemy) {
-                    if(!cappedAdjacent) cappedAdjacent = cc;
-                    continue;
-                }
-                setAttackTarget(cc, false);
-                return LookForEnemyState::attacking;
             }
         }
-    }
-    if(cappedAdjacent) {
-        setAttackTarget(cappedAdjacent, false);
-        return LookForEnemyState::attacking;
-    }
-    if(secondOption) {
-        setAttackTarget(secondOption, false);
-        return LookForEnemyState::attacking;
-    }
-    if(thirdOption) {
-        setAttackTarget(thirdOption, false);
-        return LookForEnemyState::attacking;
+        if(cappedAdjacent) {
+            setAttackTarget(cappedAdjacent, false);
+            return LookForEnemyState::attacking;
+        }
+        if(secondOption) {
+            setAttackTarget(secondOption, false);
+            return LookForEnemyState::attacking;
+        }
+        if(thirdOption) {
+            setAttackTarget(thirdOption, false);
+            return LookForEnemyState::attacking;
+        }
     }
     // Building pass only after no enemy unit was attackable this tick. Ranged
     // units skip melee building pass — they shoot from range or hold.
-    if(buildingAttack) {
+    if(adjacencyScan && range == 0) {
         for(int i = -1; i <= 1; i++) {
             for(int j = -1; j <= 1; j++) {
                 const auto t = brd.tile(tx + i, ty + j);
@@ -863,7 +840,6 @@ void FightingAction::serializeFields(eSaveArchive& ar) {
     ar.field("missile", mMissile);
     ar.field("meleeTime", mMeleeTime);
     ar.field("rangeAttack", mRangeAttack);
-    ar.field("buildingAttack", mBuildingAttack);
     ar.field("lookForEnemy", mLookForEnemy);
     ar.field("attackTime", mAttackTime);
     ar.field("attack", mAttack);
