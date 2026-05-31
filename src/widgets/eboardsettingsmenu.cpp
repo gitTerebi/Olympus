@@ -1,6 +1,6 @@
 ﻿#include "eboardsettingsmenu.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 
 #include "engine/emapgenerator.h"
@@ -36,7 +36,7 @@ void eBoardSettingsMenu::initialize(
     addWidget(fogButt);
     fogButt->align(eAlignment::hcenter);
 
-    const auto citiesButt = new eFramedButton(window());
+    const auto citiesButt = new FramedButton(window());
     citiesButt->setUnderline(false);
     citiesButt->setText(eLanguage::text("cities_on_board"));
     citiesButt->fitContent();
@@ -75,7 +75,7 @@ void eBoardSettingsMenu::initialize(
     addWidget(citiesButt);
     citiesButt->align(eAlignment::hcenter);
 
-    const auto resizeButt = new eFramedButton(window());
+    const auto resizeButt = new FramedButton(window());
     resizeButt->setUnderline(false);
     resizeButt->setText(eLanguage::text("resize"));
     resizeButt->fitContent();
@@ -169,7 +169,7 @@ void eBoardSettingsMenu::initialize(
     resizeButt->align(eAlignment::hcenter);
 
 #ifdef __unix__
-    const auto generateButt = new eFramedButton(window());
+    const auto generateButt = new FramedButton(window());
     generateButt->setUnderline(false);
     generateButt->setText(eLanguage::text("generate"));
     generateButt->fitContent();
@@ -342,7 +342,7 @@ void eBoardSettingsMenu::initialize(
     generateButt->align(eAlignment::hcenter);
 #endif
 
-    const auto clearButt = new eFramedButton(window());
+    const auto clearButt = new FramedButton(window());
     clearButt->setUnderline(false);
     clearButt->setText(eLanguage::text("clear"));
     clearButt->fitContent();

@@ -86,7 +86,7 @@ void eTradeEditWidget::initialize(std::vector<eResourceTrade>* const trade) {
     mButtonsWidget->stackVertically();
     mButtonsWidget->fitHeight();
 
-    const auto addButton = new eFramedButton(window());
+    const auto addButton = new FramedButton(window());
     addButton->setPressAction([this, changeAction]() {
         const auto b = new eTradeResourceButton(window());
         const auto r = eResourceType::marble;

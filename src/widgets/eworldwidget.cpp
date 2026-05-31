@@ -8,7 +8,7 @@
 #include "game-widget.h"
 #include "egiftsizedialog.h"
 #include "evectorhelpers.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 #include "ecitysettingswidget.h"
 #include "efulfilldialog.h"
@@ -182,7 +182,7 @@ void eWorldWidget::initialize() {
 
     const int p = padding();
 
-    mMapButton = new eFramedButton(window());
+    mMapButton = new FramedButton(window());
     mMapButton->setUnderline(false);
     mMapButton->setRenderBg(true);
     mMapButton->setText(eLanguage::text("map"));
@@ -203,7 +203,7 @@ void eWorldWidget::initialize() {
     const int x = width() - mWM->width() - p - mMapButton->width();
     mMapButton->move(x, p);
 
-    mAddCityButton = new eFramedButton(window());
+    mAddCityButton = new FramedButton(window());
     mAddCityButton->setUnderline(false);
     mAddCityButton->setRenderBg(true);
     mAddCityButton->setText(eLanguage::text("add_city"));
@@ -226,7 +226,7 @@ void eWorldWidget::initialize() {
     const int xx = width() - mWM->width() - p - mAddCityButton->width();
     mAddCityButton->move(xx, mMapButton->y() + mMapButton->height() + p);
 
-    mSettingsButton = new eFramedButton(window());
+    mSettingsButton = new FramedButton(window());
     mSettingsButton->setUnderline(false);
     mSettingsButton->setRenderBg(true);
     mSettingsButton->setText(eLanguage::text("settings"));

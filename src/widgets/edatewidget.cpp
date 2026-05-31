@@ -1,7 +1,7 @@
 #include "edatewidget.h"
 
 #include "echoosebutton.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "enumlineedit.h"
 #include "eokbutton.h"
 
@@ -22,7 +22,7 @@ void eDateWidget::initialize(const eDateAction& a,
         });
     }
 
-    mMonthEdit = new eFramedButton(window());
+    mMonthEdit = new FramedButton(window());
     mMonthEdit->fitContent();
     std::vector<std::string> monthStrs;
     int w = 0;

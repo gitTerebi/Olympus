@@ -1,7 +1,7 @@
 ﻿#include "eeditormainmenu.h"
 
 #include "eframedwidget.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 #include "eworldwidget.h"
 #include "game-widget.h"
@@ -35,7 +35,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     const auto topButtons = new eWidget(window());
     topButtons->setNoPadding();
 
-    const auto editParentMap = new eFramedButton(window());
+    const auto editParentMap = new FramedButton(window());
     editParentMap->setFontSizeS();
     editParentMap->setPaddingS();
     editParentMap->setText(eLanguage::zeusText(195, 3));
@@ -60,7 +60,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     });
     topButtons->addWidget(editParentMap);
 
-    const auto editWorldMap = new eFramedButton(window());
+    const auto editWorldMap = new FramedButton(window());
     editWorldMap->setFontSizeS();
     editWorldMap->setPaddingS();
     editWorldMap->setText(eLanguage::zeusText(195, 4));
@@ -79,7 +79,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     });
     topButtons->addWidget(editWorldMap);
 
-//    const auto nationality = new eFramedButton(window());
+//    const auto nationality = new FramedButton(window());
 //    nationality->setFontSizeS();
 //    nationality->setPaddingS();
 //    nationality->setUnderline(false);
@@ -96,7 +96,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
 //    });
 //    topButtons->addWidget(nationality);
 
-    const auto bitmap = new eFramedButton(window());
+    const auto bitmap = new FramedButton(window());
     bitmap->setFontSizeS();
     bitmap->setPaddingS();
     bitmap->setUnderline(false);
@@ -111,10 +111,10 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
 
         if(small) setPaddingS();
 
-        std::vector<eFramedButton*> buttons;
+        std::vector<FramedButton*> buttons;
 
         for(int i = 0; i < 18; i++) {
-            const auto b = new eFramedButton(window());
+            const auto b = new FramedButton(window());
             b->setPaddingS();
             b->setUnderline(false);
             if(small) {
@@ -168,7 +168,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     });
     topButtons->addWidget(bitmap);
 
-    const auto advTextB = new eFramedButton(window());
+    const auto advTextB = new FramedButton(window());
     advTextB->setUnderline(false);
     advTextB->setPaddingS();
     advTextB->setFontSizeS();
@@ -184,7 +184,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     advTextL->fitContent();
     topButtons->addWidget(advTextL);
 
-    const auto saveButton = new eFramedButton(window());
+    const auto saveButton = new FramedButton(window());
     saveButton->setUnderline(false);
     saveButton->setFontSizeS();
     saveButton->setPaddingS();
@@ -195,7 +195,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
         campaign->save();
     });
 
-    const auto quitButton = new eFramedButton(window());
+    const auto quitButton = new FramedButton(window());
     quitButton->setUnderline(false);
     quitButton->setFontSizeS();
     quitButton->setPaddingS();
@@ -485,7 +485,7 @@ bool eEditorMainMenu::mouseReleaseEvent(const eMouseEvent& e) {
 }
 
 void eEditorMainMenu::addGoBackButton(eWidget* const to) {
-    const auto b = new eFramedButton(window());
+    const auto b = new FramedButton(window());
     b->setUnderline(false);
     b->setText(eLanguage::text("return"));
     b->fitContent();

@@ -1,15 +1,15 @@
 #ifndef EGODBUTTON_H
 #define EGODBUTTON_H
 
-#include "widgets/eframedbutton.h"
+#include "widgets/framed-button.h"
 
 #include "characters/gods/egod.h"
 
 class GameBoard;
 
-class eGodButton : public eFramedButton {
+class eGodButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     using eGodAction = std::function<void(const eGodType)>;
     void initialize(const eGodAction& gact);

@@ -1,15 +1,15 @@
 #include "ebuttonutils.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "eframedwidget.h"
 #include "emainwindow.h"
 #include "ewidget.h"
 
-eFramedButton* addPlainButton(const std::string& text,
+FramedButton* addPlainButton(const std::string& text,
                               const eAction& a,
                               eWidget* const buttons,
                               eMainWindow* const window) {
-    const auto b = new eFramedButton(window);
+    const auto b = new FramedButton(window);
     b->setRenderBg(true);
     b->setUnderline(false);
     b->setPressAction(a);
@@ -20,11 +20,11 @@ eFramedButton* addPlainButton(const std::string& text,
     return b;
 }
 
-eFramedButton* addFramedButton(const std::string& text,
+FramedButton* addFramedButton(const std::string& text,
                                const eAction& a,
                                eWidget* const buttons,
                                eMainWindow* const window) {
-    const auto b = new eFramedButton(window);
+    const auto b = new FramedButton(window);
     b->setRenderBg(true);
     b->setUnderline(false);
     b->setPressAction(a);

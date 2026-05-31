@@ -5,7 +5,7 @@
 #include "textures/egametextures.h"
 #include "eworldgoodswidget.h"
 #include "engine/game-board.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "eresourcebutton.h"
 #include "evaluebutton.h"
 #include "evectorhelpers.h"

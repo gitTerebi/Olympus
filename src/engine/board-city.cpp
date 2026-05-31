@@ -1418,6 +1418,23 @@ void BoardCity::removeStockpile(const eResourceType type) {
     eVectorHelpers::remove(mStockpiled, type);
 }
 
+bool BoardCity::isNoTrading(const eResourceType type) const {
+    return eVectorHelpers::contains(mNoTrading, type);
+}
+
+void BoardCity::addNoTrading(const eResourceType type) {
+    if(!isNoTrading(type)) mNoTrading.push_back(type);
+}
+
+void BoardCity::removeNoTrading(const eResourceType type) {
+    eVectorHelpers::remove(mNoTrading, type);
+}
+
+eResourceType BoardCity::tradingAllowed(eResourceType mask) const {
+    for(const auto t : mNoTrading) mask = mask & ~t;
+    return mask;
+}
+
 int BoardCity::industryJobVacancies(const eResourceType type) const {
     const auto bs = eIndustryHelpers::sBuildings(type);
     int result = 0;

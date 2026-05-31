@@ -2,7 +2,7 @@
 
 #include "ebuttonbase.h"
 #include "ecancelbutton.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "eframedwidget.h"
 #include "elabel.h"
 #include "emainwindow.h"
@@ -67,7 +67,7 @@ void eStampManager::initialize(eStampTool *const stampTool, const Difficulty dif
     closeB->setPressAction([this]()
                            { close(); });
 
-    const auto createB = new eFramedButton(window());
+    const auto createB = new FramedButton(window());
     createB->setUnderline(false);
     createB->setFontSizeS();
     createB->setPaddingS();
@@ -82,7 +82,7 @@ void eStampManager::initialize(eStampTool *const stampTool, const Difficulty dif
         close();
         if(action) action(); });
 
-    const auto deleteB = new eFramedButton(window());
+    const auto deleteB = new FramedButton(window());
     deleteB->setUnderline(false);
     deleteB->setFontSizeS();
     deleteB->setPaddingS();

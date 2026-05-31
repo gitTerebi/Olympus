@@ -1,15 +1,15 @@
 #ifndef EMONSTERBUTTON_H
 #define EMONSTERBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 #include "characters/monsters/emonstertype.h"
 
 class GameBoard;
 
-class eMonsterButton : public eFramedButton {
+class eMonsterButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     using eMonsterAction = std::function<void(const eMonsterType)>;
     void initialize(const eMonsterAction& mact,

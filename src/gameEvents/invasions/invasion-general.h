@@ -26,6 +26,7 @@ struct eGeneralState {
     int fWait = 0;                  // 3000ms cycle gate
     int fSpawnWait = 0;             // 14-day pre-invade countdown
     int fMoveWait = 0;              // 7-day pause after a repositioning move
+    bool fDefendIssued = false;     // defensive reposition already sent this combat pause
 };
 
 class InvasionGeneral {

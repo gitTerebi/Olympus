@@ -3,7 +3,7 @@
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "elabel.h"
-#include "eframedbuttonwithicon.h"
+#include "framed-button-with-icon.h"
 #include "engine/game-board.h"
 #include "engine/egifthelpers.h"
 
@@ -50,7 +50,7 @@ void eGiftSizeDialog::initialize(const eResourceType type,
         eStringHelpers::replace(giftStr, "[amount]", countStr);
         eStringHelpers::replace(giftStr, "[item]", typeStr);
 
-        const auto b = new eFramedButtonWithIcon(window());
+        const auto b = new FramedButtonWithIcon(window());
         b->setPressAction([type, count, func, cid]() {
             func(type, count, cid);
         });

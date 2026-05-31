@@ -2,7 +2,7 @@
 
 #include "elanguage.h"
 #include "elabel.h"
-#include "eframedbuttonwithicon.h"
+#include "framed-button-with-icon.h"
 #include "estringhelpers.h"
 #include "textures/egametextures.h"
 #include "eboardcityswitchbutton.h"
@@ -88,7 +88,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
         }
     } else {
         for(const auto s : sells) {
-            const auto b = new eFramedButtonWithIcon(window());
+            const auto b = new FramedButtonWithIcon(window());
             b->setPressAction([s, func, currentCid]() {
                 func(*currentCid, s);
             });
@@ -166,7 +166,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
             const auto& coll = intrfc[icoll];
 
             {
-                const auto b = new eFramedButtonWithIcon(window());
+                const auto b = new FramedButtonWithIcon(window());
                 b->setPressAction([requestDefensiveAid, currentCid]() {
                     requestDefensiveAid(*currentCid);
                 });
@@ -176,7 +176,7 @@ void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
             }
 
             {
-                const auto b = new eFramedButtonWithIcon(window());
+                const auto b = new FramedButtonWithIcon(window());
                 b->setPressAction(requestStrike);
                 const auto request = eLanguage::zeusText(41, 8); // request military strike
                 b->initialize(coll.fTroopsRequestIcon, request);

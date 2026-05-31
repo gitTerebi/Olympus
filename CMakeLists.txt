@@ -647,8 +647,8 @@ set(SOURCES
     src/widgets/estampmanager.cpp
     src/widgets/eflatbutton.cpp
     src/widgets/efonts.cpp
-    src/widgets/eframedbutton.cpp
-    src/widgets/eframedbuttonwithicon.cpp
+    src/widgets/framed-button.cpp
+    src/widgets/framed-button-with-icon.cpp
     src/widgets/eframedlabel.cpp
     src/widgets/ebuttonutils.cpp
     src/widgets/eframedwidget.cpp

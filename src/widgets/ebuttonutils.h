@@ -3,16 +3,16 @@
 
 #include <string>
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "emainwindow.h"
 #include "ewidget.h"
 
-eFramedButton* addPlainButton(const std::string& text,
+FramedButton* addPlainButton(const std::string& text,
                               const eAction& a,
                               eWidget* buttons,
                               eMainWindow* window);
 
-eFramedButton* addFramedButton(const std::string& text,
+FramedButton* addFramedButton(const std::string& text,
                                const eAction& a,
                                eWidget* buttons,
                               eMainWindow* window);

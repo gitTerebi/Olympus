@@ -12,7 +12,7 @@
 #include "emainwindow.h"
 #include "edifficultywidget.h"
 #include "game-widget.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "estringhelpers.h"
 
 #include "audio/music.h"
@@ -124,9 +124,9 @@ void eEpisodeIntroductionWidget::initialize(
             l->fitContent();
             w->addWidget(l);
 
-            eFramedButton* complete = nullptr;
+            FramedButton* complete = nullptr;
             if(type == eEpisodeIntroType::goals && !g->met()) {
-                complete = new eFramedButton(window());
+                complete = new FramedButton(window());
                 complete->setUnderline(false);
                 complete->setRenderBg(true);
                 complete->setPaddingXS();
@@ -162,7 +162,7 @@ void eEpisodeIntroductionWidget::initialize(
                         has += board->resourceCount(cid, res);
                     }
                     if(!g->met() && has >= g->fRequiredCount) {
-                        const auto setAside = new eFramedButton(window());
+                        const auto setAside = new FramedButton(window());
                         setAside->setUnderline(false);
                         setAside->setRenderBg(true);
                         setAside->setPaddingXS();
@@ -257,7 +257,7 @@ void eEpisodeIntroductionWidget::initialize(
 
     } else if(type == eEpisodeIntroType::victory ||
               type == eEpisodeIntroType::campaingVictory) {
-        const auto p = new eFramedButton(window());
+        const auto p = new FramedButton(window());
         p->setUnderline(false);
         p->setText(eLanguage::zeusText(62, 2));
         p->fitContent();

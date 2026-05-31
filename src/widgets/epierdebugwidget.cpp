@@ -1,6 +1,6 @@
 #include "epierdebugwidget.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "buildings/epier.h"
 
 #include <cstdio>
@@ -24,13 +24,13 @@ void ePierDebugWidget::initialize() {
         row->setNoPadding();
         addWidget(row);
 
-        mLabels[r] = new eFramedButton("pier", window());
+        mLabels[r] = new FramedButton("pier", window());
         mLabels[r]->setUnderline(false);
         mLabels[r]->fitContent();
         row->addWidget(mLabels[r]);
         updateLabel(r);
 
-        const auto bXm = new eFramedButton("X-", window());
+        const auto bXm = new FramedButton("X-", window());
         bXm->fitContent();
         bXm->setPressAction([this, r, xs, f]() {
             xs[f] -= 0.1;
@@ -38,7 +38,7 @@ void ePierDebugWidget::initialize() {
         });
         row->addWidget(bXm);
 
-        const auto bXp = new eFramedButton("X+", window());
+        const auto bXp = new FramedButton("X+", window());
         bXp->fitContent();
         bXp->setPressAction([this, r, xs, f]() {
             xs[f] += 0.1;
@@ -46,7 +46,7 @@ void ePierDebugWidget::initialize() {
         });
         row->addWidget(bXp);
 
-        const auto bYm = new eFramedButton("Y-", window());
+        const auto bYm = new FramedButton("Y-", window());
         bYm->fitContent();
         bYm->setPressAction([this, r, ys, f]() {
             ys[f] -= 0.1;
@@ -54,7 +54,7 @@ void ePierDebugWidget::initialize() {
         });
         row->addWidget(bYm);
 
-        const auto bYp = new eFramedButton("Y+", window());
+        const auto bYp = new FramedButton("Y+", window());
         bYp->fitContent();
         bYp->setPressAction([this, r, ys, f]() {
             ys[f] += 0.1;
@@ -66,7 +66,7 @@ void ePierDebugWidget::initialize() {
         row->fitContent();
     }
 
-    const auto bCopy = new eFramedButton("Copy", window());
+    const auto bCopy = new FramedButton("Copy", window());
     bCopy->fitContent();
     bCopy->setPressAction([]() {
         char buf[512];

@@ -64,7 +64,9 @@ protected:
     void findTarget(const std::vector<eCartTask>& tasks, eBuilding* avoided);
     void findTarget(const std::vector<eCartTask>& tasks,
                     eBuilding* avoided,
-                    bool preferGranaryFirst);
+                    bool preferGranaryFirst,
+                    bool preferEmptyFirst = true,
+                    bool preferGetsFirst = true);
     void throttleDropoffRetry();
     void goBack();
 

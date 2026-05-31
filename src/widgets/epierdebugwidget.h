@@ -3,7 +3,7 @@
 
 #include "ewidget.h"
 
-class eFramedButton;
+class FramedButton;
 
 class ePierDebugWidget : public eWidget {
 public:
@@ -14,7 +14,7 @@ public:
 private:
     void updateLabel(const int row);
 
-    eFramedButton* mLabels[8] = {nullptr};
+    FramedButton* mLabels[8] = {nullptr};
 };
 
 #endif // EPIERDEBUGWIDGET_H

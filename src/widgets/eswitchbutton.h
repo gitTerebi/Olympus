@@ -1,9 +1,9 @@
 #ifndef ESWITCHBUTTON_H
 #define ESWITCHBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
-class eSwitchButton : public eFramedButton {
+class eSwitchButton : public FramedButton {
 public:
     eSwitchButton(eMainWindow* const window);
 

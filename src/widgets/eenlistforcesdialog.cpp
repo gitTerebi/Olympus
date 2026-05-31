@@ -1,6 +1,6 @@
 #include "eenlistforcesdialog.h"
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "elanguage.h"
 #include "evectorhelpers.h"
 #include "escrollwidget.h"
@@ -524,7 +524,7 @@ void eEnlistForcesDialog::initialize(
             titleLabel->fitContent();
             plunderW->addWidget(titleLabel);
 
-            const auto button = new eFramedButton(window());
+            const auto button = new FramedButton(window());
             button->setUnderline(false);
             button->setPaddingS();
             button->setFontSizeS();
@@ -600,7 +600,7 @@ void eEnlistForcesDialog::initialize(
 
     const auto buttonsWid = new eWidget(window());
     {
-        const auto cancelButt = new eFramedButton(window());
+        const auto cancelButt = new FramedButton(window());
         cancelButt->setFontSizeXS();
         cancelButt->setUnderline(false);
         cancelButt->setText(eLanguage::zeusText(283, 18));
@@ -611,7 +611,7 @@ void eEnlistForcesDialog::initialize(
         cancelButt->setPressAction(cancelAct);
         buttonsWid->addWidget(cancelButt);
 
-        const auto enlistAllButt = new eFramedButton(window());
+        const auto enlistAllButt = new FramedButton(window());
         enlistAllButt->setFontSizeXS();
         enlistAllButt->setUnderline(false);
         enlistAllButt->setText(eLanguage::zeusText(283, 19));
@@ -635,7 +635,7 @@ void eEnlistForcesDialog::initialize(
         enlistAllButt->setPressAction(enlistAllAct);
         buttonsWid->addWidget(enlistAllButt);
 
-        const auto clearAllButt = new eFramedButton(window());
+        const auto clearAllButt = new FramedButton(window());
         clearAllButt->setFontSizeXS();
         clearAllButt->setUnderline(false);
         clearAllButt->setText(eLanguage::zeusText(283, 20));
@@ -658,7 +658,7 @@ void eEnlistForcesDialog::initialize(
         clearAllButt->setPressAction(clearAllAct);
         buttonsWid->addWidget(clearAllButt);
 
-        const auto dispatchButt = new eFramedButton(window());
+        const auto dispatchButt = new FramedButton(window());
         dispatchButt->setFontSizeXS();
         dispatchButt->setUnderline(false);
         dispatchButt->setText(eLanguage::zeusText(283, 21));

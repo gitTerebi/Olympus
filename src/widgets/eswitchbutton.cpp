@@ -1,7 +1,7 @@
 #include "eswitchbutton.h"
 
 eSwitchButton::eSwitchButton(eMainWindow* const window) :
-    eFramedButton(window) {
+    FramedButton(window) {
     setPressAction([this]() {
         switchValue();
         if(mSwitchAction) mSwitchAction(mCurrentValue);

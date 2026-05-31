@@ -1,7 +1,7 @@
 #include "echoosegameeditmenu.h"
 
 #include "eframedwidget.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 #include "escrollbar.h"
 #include "ebuttonbase.h"
 #include "ecancelbutton.h"
@@ -189,7 +189,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         const auto buttonsW = new eWidget(window());
         buttonsW->setNoPadding();
 
-        const auto newB = new eFramedButton(window());
+        const auto newB = new FramedButton(window());
         newB->setUnderline(false);
         newB->setFontSizeS();
         newB->setPaddingS();
@@ -283,7 +283,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             edit->grabKeyboard();
         });
 
-        const auto deleteB = new eFramedButton(window());
+        const auto deleteB = new FramedButton(window());
         deleteB->setUnderline(false);
         deleteB->setFontSizeS();
         deleteB->setPaddingS();

@@ -329,9 +329,10 @@ int TradePost::buy(const int cash, std::map<eResourceType, int>& bought) {
     const bool targetOnBoard = brd.boardCityWithId(targetCid);
     const auto thisCid = cityId();
     const auto thisPid = playerId();
+    const auto thisC = brd.boardCityWithId(thisCid);
+    const auto allowedExports = thisC ? thisC->tradingAllowed(mExports) : mExports;
     if(targetOnBoard && targetPid == thisPid) {
-        const auto thisC = brd.boardCityWithId(thisCid);
-        const auto es = eResourceTypeHelpers::extractResourceTypes(mExports);
+        const auto es = eResourceTypeHelpers::extractResourceTypes(allowedExports);
         for(const auto e : es) {
             const int price = brd.price(e);
             if(price > cash) continue;
@@ -347,7 +348,7 @@ int TradePost::buy(const int cash, std::map<eResourceType, int>& bought) {
         }
     } else {
         for(auto& b : mCity.buys()) {
-            const auto expt = mExports & b.fType;
+            const auto expt = allowedExports & b.fType;
             const int price = brd.price(b.fType);
             const bool exp = static_cast<bool>(expt);
             if(!exp) continue;
@@ -375,10 +376,13 @@ int TradePost::sell(const int items, std::map<eResourceType, int>& sold) {
     const bool targetOnBoard = brd.boardCityWithId(srcCid);
     const auto thisCid = cityId();
     const auto thisPid = playerId();
+    const auto thisC = brd.boardCityWithId(thisCid);
+    const auto allowedImports = thisC ? thisC->tradingAllowed(mImports) : mImports;
     if(targetOnBoard && srcPid == thisPid) {
         const auto srcC = brd.boardCityWithId(srcCid);
         const auto es = srcC->exported(thisCid);
         for(const auto& e : es) {
+            if(!static_cast<bool>(allowedImports & e.first)) continue;
             if(e.second < 1) continue;
             const int price = brd.price(e.first);
             if(price > items) continue;
@@ -391,7 +395,7 @@ int TradePost::sell(const int items, std::map<eResourceType, int>& sold) {
         }
     } else {
         for(auto& b : mCity.sells()) {
-            const auto impt = mImports & b.fType;
+            const auto impt = allowedImports & b.fType;
             const bool imp = static_cast<bool>(impt);
             const int price = brd.price(b.fType);
             if(!imp) continue;

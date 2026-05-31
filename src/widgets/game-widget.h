@@ -51,7 +51,7 @@ class GameBoard;
 class eAgoraBase;
 class ePatrolSourceBuilding;
 class eInfoWidget;
-class eFramedButton;
+class FramedButton;
 class eFramedWidget;
 class eBuildingRenderer;
 class eTilePainter;
@@ -566,7 +566,7 @@ private:
     eWidget* mBuyCityWidget = nullptr;
     eLabel* mBuyCityName = nullptr;
     eLabel* mBuyCityPrice = nullptr;
-    eFramedButton* mBuyCityButton = nullptr;
+    FramedButton* mBuyCityButton = nullptr;
 };
 
 #endif // GameWidget_H

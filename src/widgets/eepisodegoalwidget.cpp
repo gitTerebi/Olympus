@@ -113,7 +113,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         detailsW->addWidget(b);
     } break;
     case eEpisodeGoalType::support: {
-        const auto type = new eFramedButton(window());
+        const auto type = new FramedButton(window());
         type->setUnderline(false);
         type->setPressAction([this, e, type, updateText]() {
             const auto choose = new eChooseButton(window());
@@ -232,7 +232,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         detailsW->addWidget(cityButton);
     } break;
     case eEpisodeGoalType::housing: {
-        const auto type = new eFramedButton(window());
+        const auto type = new FramedButton(window());
         type->setUnderline(false);
         const auto nameGetter = [e]() {
             std::string name;

@@ -3,7 +3,7 @@
 #include "escrollwidgetcomplete.h"
 
 #include "elanguage.h"
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 void eScrollButtonsList::initialize() {
     setType(eFrameType::message);
@@ -11,7 +11,7 @@ void eScrollButtonsList::initialize() {
     const int p = padding();
 
     const auto addStr = eLanguage::text("add");
-    mNewButton = new eFramedButton(addStr, window());
+    mNewButton = new FramedButton(addStr, window());
     if(mSmallSize) {
         mNewButton->setFontSizeS();
         mNewButton->setPaddingS();

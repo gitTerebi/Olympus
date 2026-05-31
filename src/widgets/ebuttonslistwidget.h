@@ -4,7 +4,7 @@
 #include "ewidget.h"
 
 class eLabel;
-class eFramedButton;
+class FramedButton;
 class eCancelButton;
 
 class eListButton : public eWidget {
@@ -30,7 +30,7 @@ public:
     void fitToWidth(const int w);
 private:
     eLabel* mIdLabel = nullptr;
-    eFramedButton* mButton = nullptr;
+    FramedButton* mButton = nullptr;
     eCancelButton* mCloseButton = nullptr;
 
     eCloseAction mCloseAction;
@@ -70,7 +70,7 @@ private:
     eButtonRemoveEvent mRemoveE;
 
     std::vector<eListButton*> mButtons;
-    eFramedButton* mNewButton = nullptr;
+    FramedButton* mNewButton = nullptr;
 };
 
 #endif // EBUTTONSLISTWIDGET_H

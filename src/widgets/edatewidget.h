@@ -6,7 +6,7 @@
 #include "engine/edate.h"
 
 class eNumLineEdit;
-class eFramedButton;
+class FramedButton;
 
 class eDateWidget : public eFramedWidget {
 public:
@@ -21,7 +21,7 @@ public:
 private:
     bool mActOnChange = false;
     eNumLineEdit* mDayEdit = nullptr;
-    eFramedButton* mMonthEdit = nullptr;
+    FramedButton* mMonthEdit = nullptr;
     eMonth mMonth = eMonth::january;
     eNumLineEdit* mYearEdit = nullptr;
 };

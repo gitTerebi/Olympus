@@ -1,15 +1,15 @@
 #ifndef EHEROBUTTON_H
 #define EHEROBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 #include "characters/heroes/ehero.h"
 
 class GameBoard;
 
-class eHeroButton : public eFramedButton {
+class eHeroButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     using eHeroAction = std::function<void(const eHeroType)>;
     void initialize(const eHeroAction& hact);

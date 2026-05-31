@@ -1,13 +1,13 @@
 #ifndef EDATEBUTTON_H
 #define EDATEBUTTON_H
 
-#include "eframedbutton.h"
+#include "framed-button.h"
 
 #include "engine/edate.h"
 
-class eDateButton : public eFramedButton {
+class eDateButton : public FramedButton {
 public:
-    using eFramedButton::eFramedButton;
+    using FramedButton::FramedButton;
 
     void initialize();
 

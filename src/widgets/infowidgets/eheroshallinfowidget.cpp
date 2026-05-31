@@ -2,7 +2,7 @@
 
 #include "buildings/eheroshall.h"
 #include "widgets/elabel.h"
-#include "widgets/eframedbutton.h"
+#include "widgets/framed-button.h"
 #include "textures/egametextures.h"
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -93,7 +93,7 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
     const int reqC = reqs.size();
     const auto stage = b->stage();
     if(met >= reqC && stage == eHeroSummoningStage::none) {
-        const auto summonButton = new eFramedButton(window());
+        const auto summonButton = new FramedButton(window());
         const auto txt = eLanguage::zeusText(185, 62) + " " + eHero::sHeroName(ht);
         summonButton->setText(txt);
         summonButton->setFontSizeS();

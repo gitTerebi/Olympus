@@ -21,7 +21,7 @@ void eGodAttackEventWidget::initialize(eWidget* const parent,
     addWidget(randomButton);
 
     const auto godsStr = eLanguage::zeusText(44, 360);
-    const auto godsButton = new eFramedButton(godsStr, window());
+    const auto godsButton = new FramedButton(godsStr, window());
     godsButton->fitContent();
     godsButton->setUnderline(false);
     godsButton->setPressAction([this, parent, e]() {
