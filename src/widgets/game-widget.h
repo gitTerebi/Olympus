@@ -491,6 +491,7 @@ private:
     int mPressedTX = -1;
     int mPressedTY = -1;
     eRoadTool mRoadTool;
+    eRoadTool mColumnTool;
     int mLastX = -1;
     int mLastY = -1;
 

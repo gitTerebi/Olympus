@@ -6,19 +6,23 @@
 class GameBoard;
 class eTile;
 
-// Builds the L-shape road preview/build path from a press tile to the hover
-// tile. Unbuildable tiles are left in the list; the caller (GameWidget::
-// roadBlocked) draws them red in preview and skips them when building.
-//
-// Stateful: remembers which axis the drag moved first so the fixed leg stays
-// put and the L extends instead of flipping when the pointer crosses the
-// diagonal. Call reset() on mouse press/release; noteDrag() on motion.
+namespace LShapeTool {
+
+// Tile list press -> hover along L-path. firstAxis: 0=unlatched, 1=x-first, 2=y-first.
+std::vector<eTile*> tiles(GameBoard* board,
+                          int pressedTX, int pressedTY,
+                          int hoverTX, int hoverTY,
+                          int firstAxis);
+
+} // namespace LShapeTool
+
+// Stateful wrapper: remembers which axis the drag moved first so the fixed leg
+// stays put and the L extends instead of flipping. Call reset() on press;
+// noteDrag() on motion.
 class eRoadTool {
 public:
     void reset() { mFirstAxis = 0; }
 
-    // Latch the first axis the drag moved along (once per drag). No-op until
-    // hover leaves the press tile.
     void noteDrag(int pressedTX, int pressedTY, int hoverTX, int hoverTY);
 
     // Tile list press -> hover. Empty if start tile invalid.
@@ -30,6 +34,8 @@ public:
     std::vector<eTile*> tilesHoverToPress(GameBoard* board,
                                           int pressedTX, int pressedTY,
                                           int hoverTX, int hoverTY) const;
+
+    int firstAxis() const { return mFirstAxis; }
 
 private:
     int mFirstAxis = 0; // 0 unset, 1 x-first, 2 y-first

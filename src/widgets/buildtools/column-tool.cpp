@@ -1,7 +1,7 @@
 #include "column-tool.h"
 
+#include "road-tool.h"
 #include "engine/game-board.h"
-#include "engine/epathfinder.h"
 #include "engine/etile.h"
 
 namespace ColumnTool {
@@ -9,28 +9,27 @@ namespace ColumnTool {
 bool path(GameBoard* const board,
           const int ptx, const int pty,
           const int htx, const int hty,
+          const int firstAxis,
           std::vector<eOrientation>& out)
 {
     if(!board) return false;
-    ePathFinder p([](eTileBase* const t) {
-        const auto terr = t->terrain();
-        const bool tr = static_cast<bool>(eTerrain::buildable & terr);
-        if(!tr) return false;
-        if(t->isElevationTile()) return false;
-        const auto bt = t->underBuildingType();
-        const bool r = bt == eBuildingType::doricColumn ||
-                       bt == eBuildingType::ionicColumn ||
-                       bt == eBuildingType::corinthianColumn ||
-                       bt == eBuildingType::none;
-        return r;
-    }, [&](eTileBase* const t) {
-        return t->x() == ptx && t->y() == pty;
-    });
-    const auto startTile = board->tile(htx, hty);
-    const int w = board->width();
-    const int h = board->height();
-    if(!p.findPath({0, 0, w, h}, startTile, 100, true, w, h)) return false;
-    return p.extractPath(out);
+    const auto ts = LShapeTool::tiles(board, ptx, pty, htx, hty, firstAxis);
+    if(ts.empty()) return false;
+    out.clear();
+    out.reserve(ts.size() - 1);
+    for(int i = 0; i + 1 < static_cast<int>(ts.size()); ++i) {
+        const auto a = ts[i];
+        const auto b = ts[i + 1];
+        const int dx = b->x() - a->x();
+        const int dy = b->y() - a->y();
+        eOrientation o;
+        if(dx > 0)      o = eOrientation::bottomRight;
+        else if(dx < 0) o = eOrientation::topLeft;
+        else if(dy > 0) o = eOrientation::bottomLeft;
+        else             o = eOrientation::topRight;
+        out.push_back(!o);
+    }
+    return true;
 }
 
 } // namespace ColumnTool
