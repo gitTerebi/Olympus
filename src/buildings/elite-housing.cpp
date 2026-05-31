@@ -271,48 +271,43 @@ void EliteHousing::removeHorse() {
 
 eHouseMissing EliteHousing::missing() const {
     const double appeal = eHouseBase::appeal();
+    const int pts = culturePoints();
     int nVenues = 0;
     if(mPhilosophers > 0) nVenues++;
     if(mActors > 0) nVenues++;
     if(mAthletes > 0) nVenues++;
     if(mCompetitors > 0) nVenues++;
-    if(mFood > 0) {
-        if(mFleece > 0) {
-            if(mOil > 0) {
-                if(nVenues > 2) {
-                    if(appeal > 5.0) {
-                        if(mArms > 0) {
-                            if(appeal > 7.0) {
-                                if(mWine > 0) {
-                                    if(appeal > 9.0) {
-                                        if(mHorses > 0) {
-                                            if(nVenues > 3) {
-                                                if(appeal > 10.) {
-                                                    return eHouseMissing::nothing;
-                                                }
-                                                return eHouseMissing::appeal;
-                                            }
-                                            return eHouseMissing::venues;
-                                        }
-                                        return eHouseMissing::horse;
-                                    }
-                                    return eHouseMissing::appeal;
-                                }
-                                return eHouseMissing::wine;
-                            }
-                            return eHouseMissing::appeal;
-                        }
-                        return eHouseMissing::arms;
-                    }
-                    return eHouseMissing::appeal;
-                }
-                return eHouseMissing::venues;
-            }
-            return eHouseMissing::oil;
-        }
-        return eHouseMissing::fleece;
+
+    const auto& board = getBoard();
+    const auto pid = board.cityIdToPlayerId(cityId());
+    const auto diff = board.difficulty(pid);
+
+    // find the next level this house is trying to reach
+    const int target = std::min(mLevel + 1, 3);
+
+    // appeal threshold comes from the source row (same as canEvolveTo)
+    DifficultyHelpers::eHouseLevelReq srcReq;
+    if(target == 0) {
+        srcReq = DifficultyHelpers::houseLevelReq(diff, false, 6); // Townhouse
+    } else {
+        srcReq = DifficultyHelpers::houseLevelReq(diff, true, target - 1);
     }
-    return eHouseMissing::food;
+    const auto tgt = DifficultyHelpers::houseLevelReq(diff, true, target);
+    const auto mr = ModelData::instance().houseReq(diff, target, true);
+
+    if(mFood <= 0)   return eHouseMissing::food;
+    if(mFleece <= 0) return eHouseMissing::fleece;
+    if(mOil <= 0)    return eHouseMissing::oil;
+    if(nVenues < 3)  return eHouseMissing::venues;
+    if(appeal < srcReq.fAppE) return eHouseMissing::appeal;
+    if(pts < tgt.fEnt) return eHouseMissing::venues;
+    if(mr) {
+        if(mr->armor  > 0 && mArms   < mr->armor)  return eHouseMissing::arms;
+        if(mr->wine   > 0 && mWine   < mr->wine)   return eHouseMissing::wine;
+        if(mr->horses > 0 && mHorses < mr->horses) return eHouseMissing::horse;
+        if(target == 3 && nVenues < 4) return eHouseMissing::venues;
+    }
+    return eHouseMissing::nothing;
 }
 
 void EliteHousing::serializeFields(eSaveArchive& ar) {
