@@ -433,6 +433,18 @@ static bool isHousingPlotType(const eBuildingType type)
            type == eBuildingType::eliteHousing;
 }
 
+static double repairFee(const Difficulty d)
+{
+    switch (d) {
+    case Difficulty::beginner: return 1.0;
+    case Difficulty::mortal:   return 1.25;
+    case Difficulty::hero:     return 1.5;
+    case Difficulty::titan:    return 1.75;
+    case Difficulty::olympian: return 2.0;
+    }
+    return 1.0;
+}
+
 static std::vector<sRepairGroup> collectRepairGroups(
     GameBoard &board, const ePlayerId ppid,
     const int minX, const int minY,
@@ -442,16 +454,6 @@ static std::vector<sRepairGroup> collectRepairGroups(
     std::set<std::tuple<int, int, int, int>> processed;
     std::set<eRuins *> processedRuins;
     const auto diff = board.difficulty(ppid);
-    auto repairFee = [](const Difficulty d) -> double {
-        switch (d) {
-        case Difficulty::beginner: return 1.1;
-        case Difficulty::mortal:   return 1.2;
-        case Difficulty::hero:     return 1.3;
-        case Difficulty::titan:    return 1.4;
-        case Difficulty::olympian: return 1.5;
-        }
-        return 1.1;
-    };
 
     for (int x = minX; x <= maxX; x++)
     {
@@ -609,6 +611,7 @@ void handleRepair(GameBoard &board, GameWidget *const widget,
                   const bool editorMode)
 {
     const auto ppid = board.personPlayer();
+    const auto diff = board.difficulty(ppid);
 
     auto groups = collectRepairGroups(board, ppid, minX, minY, maxX, maxY);
     int totalCost = 0;

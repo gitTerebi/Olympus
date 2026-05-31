@@ -23,7 +23,7 @@ enum class eGeneralPhase {
     defend = 5
 };
 
-inline constexpr int stallMaxWait = 7*eNumbers::sDayLength;
+inline const int stallMaxWait = 7*eNumbers::sDayLength;
 
 struct eGeneralState {
     eGeneralPhase fPhase = eGeneralPhase::spread;

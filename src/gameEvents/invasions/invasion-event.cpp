@@ -178,11 +178,15 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, GameBoard &boar
     if (!attackingCity)
         return false;
 
+    const int bannerBonus =
+        board.countBanners(eBannerType::hoplite,     targetCid) * 8 +
+        board.countBanners(eBannerType::horseman,    targetCid) * 8 +
+        board.countBanners(eBannerType::rockThrower, targetCid) * 4;
     const int unitCount =
         static_cast<int>(attacker.militaryStrength() *
                          DifficultyHelpers::costMultiplier(
                              board.difficulty(attackingCity->playerId()))) *
-        8;
+        8 + bannerBonus;
 
     e->setSingleCity(attackingCity);
     // Land invasion points are ids 1-8 (sea points are 9-16, which spawn far
