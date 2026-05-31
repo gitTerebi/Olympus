@@ -45,16 +45,14 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         }
     } else { // elite
         if(people <= 0) {
-            titleString = 7;
-        } else if(level == 0) {
             titleString = 8;
-        } else if(level == 1) {
+        } else if(level == 0) {
             titleString = 9;
-        } else if(level == 2) {
+        } else if(level == 1) {
             titleString = 10;
-        } else if(level == 3) {
+        } else if(level == 2) {
             titleString = 11;
-        } else if(level == 4) {
+        } else if(level == 3) {
             titleString = 12;
         }
     }

@@ -17,13 +17,12 @@
 static std::vector<int> sEliteCapacity(GameBoard& board, const eCityId cid) {
     const auto pid = board.cityIdToPlayerId(cid);
     const auto diff = board.difficulty(pid);
-    std::vector<int> v(5, 0);
+    std::vector<int> v(4, 0);
     for(int i = 0; i < 4; i++) {
         if(const auto r = ModelData::instance().houseReq(diff, i, true)) {
-            v[i + 1] = r->capacity;
+            v[i] = r->capacity;
         }
     }
-    v[0] = v[1];
     return v;
 }
 
@@ -319,7 +318,7 @@ void EliteHousing::serializeFields(eSaveArchive& ar) {
 }
 
 std::string EliteHousing::sName(const int level) {
-    return eLanguage::zeusText(28, 10 + level);
+    return eLanguage::zeusText(28, 11 + level);
 }
 
 const eTextureCollection& EliteHousing::getTextureCollection(
