@@ -240,7 +240,6 @@ void GameWidget::paintEvent(ePainter &p)
             {
                 const auto w = window();
                 w->episodeLost();
-                return;
             }
             else
             {
@@ -2732,6 +2731,25 @@ void GameWidget::paintEvent(ePainter &p)
         tex->clearColorMod();
     };
 
+    const auto t = mBoard->tile(mHoverTX, mHoverTY);
+    const int tx = mHoverTX;
+    const int ty = mHoverTY;
+    const int a = t ? t->altitude() : 0;
+    const auto drawAgoraRoadAccessPreview = [&](const std::vector<eTile *> &p)
+    {
+        int ri = 0;
+        for (const auto t : p)
+        {
+            if (!t || !t->hasRoad())
+                continue;
+            if (ri++ != 3)
+                continue;
+            drawRoadBands({t});
+            return;
+        }
+    };
+
+    [&]{
     if ((mode == eBuildingMode::road ||
          mode == eBuildingMode::doricColumn ||
          mode == eBuildingMode::ionicColumn ||
@@ -2999,30 +3017,13 @@ void GameWidget::paintEvent(ePainter &p)
         return;
     }
 
-    const auto t = mBoard->tile(mHoverTX, mHoverTY);
-    const int tx = mHoverTX;
-    const int ty = mHoverTY;
-    const int a = t ? t->altitude() : 0;
-    const auto drawAgoraRoadAccessPreview = [&](const std::vector<eTile *> &p)
-    {
-        int ri = 0;
-        for (const auto t : p)
-        {
-            if (!t || !t->hasRoad())
-                continue;
-            if (ri++ != 3)
-                continue;
-            drawRoadBands({t});
-            return;
-        }
-    };
-
     if (mode == eBuildingMode::stamp)
     {
         paintStampPreview(tp, trrTexs, builTexs, tx, ty, ppid);
         drawStampCostEstimate();
         return;
     }
+    }();
 
     switch (mode)
     {
@@ -5027,6 +5028,7 @@ void GameWidget::paintEvent(ePainter &p)
     }
 
     SDL_SetRenderTarget(r, nullptr);
+    SDL_RenderSetClipRect(r, nullptr);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     const int srcW = std::round(w / mZoom);
     const int srcH = std::round(h / mZoom);
