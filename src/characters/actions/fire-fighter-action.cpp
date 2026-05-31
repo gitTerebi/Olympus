@@ -1,4 +1,4 @@
-#include "efirefighteraction.h"
+#include "fire-fighter-action.h"
 #include "fileIO/esavearchive.h"
 
 #include "../echaracter.h"
@@ -6,7 +6,7 @@
 #include "emovetoaction.h"
 #include "ewaitaction.h"
 
-eFireFighterAction::eFireFighterAction(
+FireFighterAction::FireFighterAction(
         eCharacter* const c,
         ePatrolBuildingBase* const b,
         const std::vector<eOrientation>& path,
@@ -14,10 +14,10 @@ eFireFighterAction::eFireFighterAction(
     ePatrolAction(c, b, path, dirTimes,
                   eCharActionType::fireFighterAction) {}
 
-eFireFighterAction::eFireFighterAction(eCharacter* const c) :
+FireFighterAction::FireFighterAction(eCharacter* const c) :
     ePatrolAction(c, eCharActionType::fireFighterAction) {}
 
-void eFireFighterAction::increment(const int by) {
+void FireFighterAction::increment(const int by) {
     if(!mFireFighting) {
         const int fireCheckInc = 1000;
         mFireCheck += by;
@@ -66,7 +66,7 @@ eTile* neighbourOnFire(eTile* const tile, eOrientation& oo) {
     return n;
 }
 
-bool eFireFighterAction::decide() {
+bool FireFighterAction::decide() {
     const auto c = character();
     if(mFireFighting) {
         const auto tile = c->tile();
@@ -94,7 +94,7 @@ bool eFireFighterAction::decide() {
     return true;
 }
 
-void eFireFighterAction::serializeFields(eSaveArchive& ar) {
+void FireFighterAction::serializeFields(eSaveArchive& ar) {
     ePatrolAction::serializeFields(ar);
     ar.field("fireFighting", mFireFighting);
     ar.field("fireCheck", mFireCheck);
@@ -103,26 +103,26 @@ void eFireFighterAction::serializeFields(eSaveArchive& ar) {
     ar.tileField("fireTile", board(), mFireTile);
 }
 
-void eFireFighterAction::resumeFromSavedState() {
+void FireFighterAction::resumeFromSavedState() {
     switch(mStage) {
-    case eFireFighterActionStage::idle:
+    case FireFighterActionStage::idle:
         ePatrolAction::resumeFromSavedState();
         break;
-    case eFireFighterActionStage::lookingForFire:
+    case FireFighterActionStage::lookingForFire:
         lookForFire(true);
         break;
-    case eFireFighterActionStage::puttingOutFire:
+    case FireFighterActionStage::puttingOutFire:
         if(mFireTile && mFireTile->onFire()) putOutFire(mFireTile);
         else ePatrolAction::resumeFromSavedState();
         break;
     }
 }
 
-bool eFireFighterAction::lookForFire(const bool second) {
+bool FireFighterAction::lookForFire(const bool second) {
     const auto c = character();
-    mStage = eFireFighterActionStage::lookingForFire;
+    mStage = FireFighterActionStage::lookingForFire;
 
-    const auto failFunc = std::make_shared<eFFA_lookForFireFail>(
+    const auto failFunc = std::make_shared<FFA_lookForFireFail>(
                               board(), this);
 
     const auto onFire = [](eTileBase* const tile) {
@@ -132,7 +132,7 @@ bool eFireFighterAction::lookForFire(const bool second) {
     const auto a = e::make_shared<eMoveToAction>(c);
     a->setFailAction(failFunc);
     a->setMaxFindDistance(50);
-    const stdptr<eFireFighterAction> tptr(this);
+    const stdptr<FireFighterAction> tptr(this);
     a->setFoundAction([tptr, a, second, this]() {
         if(!tptr) return;
         if(second) {
@@ -155,12 +155,12 @@ bool eFireFighterAction::lookForFire(const bool second) {
     return true;
 }
 
-void eFireFighterAction::putOutFire(eTile* const tile) {
-    mStage = eFireFighterActionStage::puttingOutFire;
+void FireFighterAction::putOutFire(eTile* const tile) {
+    mStage = FireFighterActionStage::puttingOutFire;
     mFireTile = tile;
     const auto c = character();
-    c->setActionType(eCharacterActionType::fight);
-    const auto finish = std::make_shared<eFFA_putOutFireFinish>(
+    c->setActionType(eCharacterActionType::firefight);
+    const auto finish = std::make_shared<FFA_putOutFireFinish>(
                             board(), c, tile);
     const auto a = e::make_shared<eWaitAction>(c);
     a->setFinishAction(finish);

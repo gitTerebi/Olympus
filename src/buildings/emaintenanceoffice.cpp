@@ -1,7 +1,7 @@
 #include "emaintenanceoffice.h"
 
 #include "characters/fire-fighter.h"
-#include "characters/actions/efirefighteraction.h"
+#include "characters/actions/fire-fighter-action.h"
 #include "textures/egametextures.h"
 
 stdsptr<eCharacterAction> gFireFighterActGenerator(
@@ -9,7 +9,7 @@ stdsptr<eCharacterAction> gFireFighterActGenerator(
            ePatrolBuildingBase* const b,
            const std::vector<eOrientation>& path,
            const stdsptr<eDirectionTimes>& dirTimes) {
-    return e::make_shared<eFireFighterAction>(c, b, path, dirTimes);
+    return e::make_shared<FireFighterAction>(c, b, path, dirTimes);
 }
 
 eMaintenanceOffice::eMaintenanceOffice(GameBoard& board,

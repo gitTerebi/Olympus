@@ -2716,15 +2716,14 @@ double eBuilding::sMaxHp(const eBuildingType bt) {
 
 bool eBuilding::takeDamage(const double a) {
     if(mHp <= 0) return true;
-    const double hp0 = mHp;
     mHp -= a;
     if(mHp <= 0) {
         collapse();
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
+
 
 bool eBuilding::dead() const {
     return mHp <= 0;

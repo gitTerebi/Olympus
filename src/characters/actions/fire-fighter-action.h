@@ -1,5 +1,5 @@
-#ifndef EFIREFIGHTERACTION_H
-#define EFIREFIGHTERACTION_H
+#ifndef FIRE_FIGHTER_ACTION_H
+#define FIRE_FIGHTER_ACTION_H
 
 #include "epatrolaction.h"
 
@@ -8,18 +8,18 @@
 
 class eSaveArchive;
 
-enum class eFireFighterActionStage {
+enum class FireFighterActionStage {
     idle, lookingForFire, puttingOutFire
 };
 
-class eFireFighterAction : public ePatrolAction {
-    friend class eFFA_lookForFireFail;
+class FireFighterAction : public ePatrolAction {
+    friend class FFA_lookForFireFail;
 public:
-    eFireFighterAction(eCharacter* const c,
+    FireFighterAction(eCharacter* const c,
                       ePatrolBuildingBase* const b,
                       const std::vector<eOrientation>& path,
                       const stdsptr<eDirectionTimes>& dirTimes = {});
-    eFireFighterAction(eCharacter* const c);
+    FireFighterAction(eCharacter* const c);
 
     bool decide() override;
     void increment(const int by) override;
@@ -34,16 +34,16 @@ private:
     int mFireCheck{0};
 
     int mUsedWater = 0;
-    eFireFighterActionStage mStage = eFireFighterActionStage::idle;
+    FireFighterActionStage mStage = FireFighterActionStage::idle;
     eTile* mFireTile = nullptr;
 };
 
-class eFFA_lookForFireFail : public eCharActFunc {
+class FFA_lookForFireFail : public eCharActFunc {
 public:
-    eFFA_lookForFireFail(GameBoard& board) :
+    FFA_lookForFireFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::FFA_lookForFireFail) {}
-    eFFA_lookForFireFail(GameBoard& board,
-                         eFireFighterAction* const ca) :
+    FFA_lookForFireFail(GameBoard& board,
+                        FireFighterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::FFA_lookForFireFail),
         mPtr(ca) {}
 
@@ -62,15 +62,15 @@ protected:
         ar.characterActionAsField("target", &board(), mPtr);
     }
 private:
-    stdptr<eFireFighterAction> mPtr;
+    stdptr<FireFighterAction> mPtr;
 };
 
-class eFFA_putOutFireFinish : public eCharActFunc {
+class FFA_putOutFireFinish : public eCharActFunc {
 public:
-    eFFA_putOutFireFinish(GameBoard& board) :
+    FFA_putOutFireFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::FFA_putOutFireFinish) {}
-    eFFA_putOutFireFinish(GameBoard& board, eCharacter* const c,
-                          eTile* const t) :
+    FFA_putOutFireFinish(GameBoard& board, eCharacter* const c,
+                         eTile* const t) :
         eCharActFunc(board, eCharActFuncType::FFA_putOutFireFinish),
         mCptr(c), mTile(t) {}
 
@@ -92,4 +92,4 @@ private:
     eTile* mTile = nullptr;
 };
 
-#endif // EFIREFIGHTERACTION_H
+#endif // FIRE_FIGHTER_ACTION_H
