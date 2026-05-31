@@ -317,6 +317,10 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         showMessage(ed, inst.fInvasionBribedMonument);
         return;
     } break;
+    case eEvent::invasionRaidOver: {
+        showMessage(ed, inst.fInvasionRaidOver);
+        return;
+    } break;
     case eEvent::invasionDefeat: {
         showMessage(ed, inst.fInvasionDefeat);
         return;

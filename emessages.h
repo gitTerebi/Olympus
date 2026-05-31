@@ -201,6 +201,7 @@ public:
     eMessageType fInvasion;
     std::string fInvasionNoReason;
     eMessageType fInvasionBribed;
+    eMessageType fInvasionRaidOver;
     eMessageType fInvasionDefeat;
     eMessageType fInvasionVictory;
     eMessageType fInvasionVictoryMonument;

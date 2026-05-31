@@ -503,6 +503,13 @@ void SoldierBanner::decCount() {
     updateCount();
 }
 
+bool SoldierBanner::soldiersOnMap() const {
+    for(const auto s : mSoldiers) {
+        if(s->tile()) return true;
+    }
+    return false;
+}
+
 bool SoldierBanner::stationary() const {
     for(const auto s : mSoldiers) {
         const auto at = s->actionType();

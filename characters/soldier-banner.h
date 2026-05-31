@@ -112,6 +112,7 @@ public:
     int count() const { return mCount; }
     void incCount();
     void decCount();
+    bool soldiersOnMap() const;
 
     int facing() const { return mFacing; }
     eOrientation soldierOrientation() const;

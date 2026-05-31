@@ -131,3 +131,7 @@ one_direction "One directions"
 can_accept "Can accept"
 
 greetings "Greetings,"
+
+raid_over_title "Raid Over!"
+raid_over_text "Woe, [player_name]! The forces of [city_name] have raided our city and returned home. Our city stands, but we have suffered losses."
+raid_over_condensed_text "Raided by [city_name]. City stands."
