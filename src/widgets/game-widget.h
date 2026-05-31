@@ -126,6 +126,8 @@ public:
     // falls back to the banner/default cursor. Call after any setMode change.
     void syncModeCursor();
 
+    void screenToWorld(const int sx, const int sy,
+                       int &wx, int &wy) const;
     void pixToId(const int pixX, const int pixY,
                  int& idX, int& idY) const;
 
@@ -463,6 +465,8 @@ private:
     int mTileW = 60;
     int mTileH = 30;
     int mScale = 100;
+    double mZoom = 1.0;
+    std::shared_ptr<eTexture> mWorldTex;
 
     int mUpdateRect = 0;
     std::vector<SDL_Rect> mUpdateRects;
@@ -486,6 +490,8 @@ private:
     eFramedLabel* mPausedLabel = nullptr;
     eFramedLabel* mSpeedLabel = nullptr;
     int mSpeedLabelHideFrame = 0;
+    eFramedLabel* mZoomLabel = nullptr;
+    int mZoomLabelHideFrame = 0;
 
     eTopBarWidget* mTopBar = nullptr;
     eMessageBox* mMsgBox = nullptr;

@@ -137,6 +137,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
                         TTF_Font& font,
                         const int width,
                         const eAlignment align) {
+    SDL_Texture* const prevTarget = SDL_GetRenderTarget(r);
     reset();
 
     if(width) {
@@ -197,7 +198,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
                     }
                 }
 
-                SDL_SetRenderTarget(r, nullptr);
+                SDL_SetRenderTarget(r, prevTarget);
             }
 
             return true;
@@ -258,7 +259,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
         SDL_DestroyTexture(tex2);
         SDL_DestroyTexture(tex1);
 
-        SDL_SetRenderTarget(r, nullptr);
+        SDL_SetRenderTarget(r, prevTarget);
     }
     return true;
 }
