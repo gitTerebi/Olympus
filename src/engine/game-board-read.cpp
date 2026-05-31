@@ -12,6 +12,7 @@
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
 #include "characters/soldier-banner.h"
+#include "evectorhelpers.h"
 
 void GameBoard::serializeYearlyProduction(eSaveArchive& ar) {
     int productionCount = ar.writing() ? static_cast<int>(mYearlyProduction.size()) : 0;
@@ -389,6 +390,18 @@ void GameBoard::serialize(eSaveArchive& ar) {
     if(ar.reading()) {
         updateMarbleTiles();
         updateTerritoryBorders();
+        mTimedBuildings.clear();
+        for(const auto b : mAllBuildings) {
+            if(!b) continue;
+            if(b->type() != eBuildingType::ruins &&
+               b->dead() && !b->tilesUnder().empty()) {
+                b->setHP(eBuilding::sMaxHp(b->type()));
+            }
+            const auto bt = b->type();
+            if(!eBuilding::sTimedBuilding(bt)) continue;
+            if(eVectorHelpers::contains(mTimedBuildings, b)) continue;
+            mTimedBuildings.push_back(b);
+        }
         for(const auto& c : mCitiesOnBoard) {
             c->updateResources();
         }

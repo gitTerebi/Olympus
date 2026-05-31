@@ -2496,6 +2496,13 @@ void GameBoard::registerBuilding(eBuilding *const b)
 {
     if (!mRegisterBuildingsEnabled)
         return;
+    if (eVectorHelpers::contains(mAllBuildings, b)) {
+        const auto bt = b->type();
+        if (eBuilding::sTimedBuilding(bt) &&
+            !eVectorHelpers::contains(mTimedBuildings, b))
+            mTimedBuildings.push_back(b);
+        return;
+    }
     mAllBuildings.push_back(b);
     const auto bt = b->type();
     if (eBuilding::sTimedBuilding(bt))
@@ -2540,6 +2547,8 @@ void GameBoard::registerEmplBuilding(eEmployingBuilding *const b)
         return;
     const auto cid = b->cityId();
     const auto city = boardCityWithId(cid);
+    if (!city)
+        return;
     city->registerEmplBuilding(b);
 }
 

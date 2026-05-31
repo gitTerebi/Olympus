@@ -4,7 +4,6 @@
 
 #include "buildings/allbuildings.h"
 #include "buildings/eruins.h"
-
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "audio/sounds.h"
@@ -128,6 +127,9 @@ static void placeBuildingOnTiles(GameBoard &board,
             }
         }
     }
+    if (b->dead())
+        b->setHP(eBuilding::sMaxHp(b->type()));
+    board.registerBuilding(b.get());
 }
 
 // Replace a bundle-restored pier (pier-type TradePost + its ePier) with a
