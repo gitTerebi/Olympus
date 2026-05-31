@@ -23,7 +23,7 @@ enum class eCityId;
 enum class eNationality;
 
 enum class eInvasionStage {
-    arrive, active, comeback
+    arrive, active, comeback, walkOff
 };
 
 enum class ePlayerSoldierType {
@@ -131,6 +131,7 @@ private:
     stdptr<ePlayerConquestEvent> mConquestEvent;
     eTile* mTile = nullptr;
     eInvasionStage mStage = eInvasionStage::arrive;
+    bool mFireRaidOverOnExit = false;
     InvasionAttackType mAttackType = InvasionAttackType::food;
     std::vector<stdsptr<SoldierBanner>> mBanners;
     std::vector<stdptr<eCharacter>> mHeroesAndGods;

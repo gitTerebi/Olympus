@@ -1,6 +1,7 @@
 #include "emessages.h"
 
 #include "egamedir.h"
+#include "elanguage.h"
 
 #include "eloadtexthelper.h"
 #include "estringhelpers.h"
@@ -623,6 +624,11 @@ bool eMessages::loadImpl() {
 
     fInvasionBribed.fCondensed.fTitle = loadMessage("PHRASE_CONDENSED_players_city_saved_bribery_title");
     fInvasionBribed.fCondensed.fText = loadMessage("PHRASE_CONDENSED_players_city_saved_bribery_initial_announcement");
+
+    fInvasionRaidOver.fFull.fTitle = eLanguage::text("raid_over_title");
+    fInvasionRaidOver.fFull.fText = eLanguage::text("raid_over_text");
+    fInvasionRaidOver.fCondensed.fTitle = eLanguage::text("raid_over_title");
+    fInvasionRaidOver.fCondensed.fText = eLanguage::text("raid_over_condensed_text");
 
     fInvasionDefeat.fFull.fTitle = loadMessage("PHRASE_enemy_victorious_title");
     fInvasionDefeat.fFull.fText = loadMessage("PHRASE_enemy_victorious_initial_announcement");

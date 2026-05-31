@@ -4,6 +4,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "engine/eeventdata.h"
+#include "engine/eevent.h"
 
 #include "characters/actions/soldier-action.h"
 
@@ -692,7 +693,8 @@ void eInvasionHandler::incTime(const int by) {
     // Retaliation brain: enemy banners only chase defenders after being hit.
     // Strategic building movement stays with InvasionGeneral.
     if(mStage != eInvasionStage::arrive &&
-       mStage != eInvasionStage::comeback) {
+       mStage != eInvasionStage::comeback &&
+       mStage != eInvasionStage::walkOff) {
         for(const auto& b : mBanners) {
             if(b->count() <= 0) continue;
             b->tickCombat(by);
@@ -748,8 +750,11 @@ void eInvasionHandler::incTime(const int by) {
         const int tx = mTile->x();
         const int ty = mTile->y();
         for(const auto& b : solds) {
+            b->cancelSoldiersAttack();
             b->moveTo(tx, ty);
         }
+        mGState.fMoveFrom = mGState.fCurrentTile;
+        mGState.fMoveTo = mTile;
         mGState.fCurrentTile = mTile;
         mGState.fTargetTile = nullptr;
         tellHeroesAndGodsToGoBack();
@@ -758,14 +763,36 @@ void eInvasionHandler::incTime(const int by) {
     if(mStage == eInvasionStage::comeback) {
         bool allArrived = true;
         for(const auto& b : mBanners) {
-            if(b->count() <= 0) continue;
+            if(!b->soldiersOnMap()) continue;
             if(!b->stationary()) {
                 allArrived = false;
             }
         }
         if(!allArrived) return;
         for(const auto& b : mBanners) {
-            b->killAll();
+            if(b->count() > 0) b->goAbroad();
+        }
+        mGState.fMoveFrom = mTile;
+        mGState.fMoveTo = mBoard.exitPoint(mTargetCity);
+        mWait = 0;
+        mStage = eInvasionStage::walkOff;
+        return;
+    }
+
+    if(mStage == eInvasionStage::walkOff) {
+        bool anyOnMap = false;
+        for(const auto& b : mBanners) {
+            if(b->soldiersOnMap()) { anyOnMap = true; break; }
+        }
+        if(anyOnMap) {
+            mWait += by;
+            if(mWait < 30000) return;
+            for(const auto& b : mBanners) b->killAll();
+        }
+        if(mFireRaidOverOnExit) {
+            eEventData ed(mTargetCity);
+            ed.fCity = mCity;
+            mBoard.event(eEvent::invasionRaidOver, ed);
         }
         delete this;
         return;
@@ -840,6 +867,7 @@ void eInvasionHandler::incTime(const int by) {
     } else {
         // Palace stands: raid over, troops retreat. City NOT conquered.
         goBack();
+        mFireRaidOverOnExit = true;
     }
     mStage = eInvasionStage::comeback;
 }
