@@ -9,11 +9,13 @@ class GameBoard;
 
 namespace ColumnTool {
 
-// A* path along buildable tiles that already host columns or are empty.
-// From hover to press. Returns false if no path within search budget.
+// L-shape path (same algo as road) from hover to press.
+// firstAxis: 0=unlatched, 1=x-first, 2=y-first (from eRoadTool::firstAxis()).
+// Returns false if start tile is invalid.
 bool path(GameBoard* board,
           int pressedTX, int pressedTY,
           int hoverTX, int hoverTY,
+          int firstAxis,
           std::vector<eOrientation>& out);
 
 } // namespace ColumnTool

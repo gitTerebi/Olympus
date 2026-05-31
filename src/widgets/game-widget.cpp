@@ -1429,7 +1429,8 @@ bool GameWidget::roadBlocked(eTile *const t, const eCityId cid,
 bool GameWidget::columnPath(std::vector<eOrientation> &path)
 {
     return ColumnTool::path(mBoard, mPressedTX, mPressedTY,
-                            mHoverTX, mHoverTY, path);
+                            mHoverTX, mHoverTY,
+                            mColumnTool.firstAxis(), path);
 }
 
 bool GameWidget::bridgeTiles(eTile *const t, const eTerrain terr,
@@ -2324,6 +2325,7 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
         mPressedX = e.x();
         mPressedY = e.y();
         mRoadTool.reset();
+        mColumnTool.reset();
         const auto tile = mBoard->tile(tx, ty);
         if (mCreatingStampTemplate)
         {
@@ -2603,6 +2605,12 @@ bool GameWidget::mouseMoveEvent(const eMouseEvent &e)
         const bool left = static_cast<bool>(e.buttons() & eMouseButton::left);
         if(left && mGm->mode() == eBuildingMode::road) {
             mRoadTool.noteDrag(mPressedTX, mPressedTY, mHoverTX, mHoverTY);
+        }
+        const auto colMode = mGm->mode();
+        if(left && (colMode == eBuildingMode::doricColumn ||
+                    colMode == eBuildingMode::ionicColumn ||
+                    colMode == eBuildingMode::corinthianColumn)) {
+            mColumnTool.noteDrag(mPressedTX, mPressedTY, mHoverTX, mHoverTY);
         }
 
         if (mGm->mode() == eBuildingMode::stamp) {
