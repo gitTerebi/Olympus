@@ -69,6 +69,7 @@ void GameWidget::paintEvent(ePainter &p)
     if (!mWorldTex || mWorldTex->width() != w || mWorldTex->height() != h) {
         mWorldTex = std::make_shared<eTexture>();
         mWorldTex->create(r, w, h);
+        SDL_SetTextureScaleMode(mWorldTex->tex(), SDL_ScaleModeNearest);
     }
     mWorldTex->setAsRenderTarget(r);
     SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
@@ -224,8 +225,8 @@ void GameWidget::paintEvent(ePainter &p)
     if (mAnimFrame != prevAnimFrame)
         mBoard->incFrame();
 
-    const bool iterate = mSpeedId == sMaxSpeedId;
-    const int iMax = (iterate ? 5 : 1) * simTicks;
+    const bool turbo = mSpeedId == sMaxSpeedId;
+    const int iMax = turbo ? 4 : simTicks;
     for (int i = 0; i < iMax; i++)
     {
         mBoard->scheduleDataUpdate();
