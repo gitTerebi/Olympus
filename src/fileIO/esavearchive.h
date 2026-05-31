@@ -53,6 +53,10 @@ public:
     bool reading() const { return mSrc; }
     bool writing() const { return mDst; }
 
+    void stopReadingFields() {
+        if(reading()) mTaggedEnded = true;
+    }
+
     // Subclasses needing a post-load fixup hook call this on the archive
     // instead of reaching for readStream(). No-op while writing.
     template <typename Func>

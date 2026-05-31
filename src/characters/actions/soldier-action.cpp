@@ -166,10 +166,6 @@ bool SoldierAction::followBannerDirector() {
         if(!a.targetBuilding) return false;
         const auto bt = a.targetBuilding->centerTile();
         if(!bt) return false;
-        printf("[invasion-soldier] clearObstacle soldier=%p from=%d,%d building=%d,%d\n",
-               (void*)c,
-               ct ? ct->x() : -1, ct ? ct->y() : -1,
-               bt->x(), bt->y());
         exitChase();
         setCurrentAction(nullptr);
         attackBuilding(bt, false);
@@ -194,10 +190,6 @@ bool SoldierAction::followBannerDirector() {
     mStage = SoldierActionStage::chase;
     mChaseTarget = a.standTile;
     setOverwrittableAction(false);
-    printf("[invasion-soldier] directorMove soldier=%p from=%d,%d to=%d,%d\n",
-           (void*)c,
-           ct ? ct->x() : -1, ct ? ct->y() : -1,
-           a.standTile->x(), a.standTile->y());
     goTo(a.standTile->x(), a.standTile->y(), 0);
     return true;
 }
@@ -236,6 +228,28 @@ void SoldierAction::tickBannerReturn(const int by) {
     const auto taskFindFailed = [tptr]() {
         if(!tptr) return;
         tptr->mGoToBannerCountdown = 1000;
+        const auto c = tptr->character();
+        const auto ct = c ? c->tile() : nullptr;
+        if(ct == tptr->mLastFailTile) {
+            tptr->mPathFailCount++;
+        } else {
+            tptr->mPathFailCount = 1;
+            tptr->mLastFailTile = ct;
+        }
+        printf("[invasion-soldier] stuck x%d soldier=%p at=%d,%d\n",
+               tptr->mPathFailCount, (void*)c,
+               ct ? ct->x() : -1, ct ? ct->y() : -1);
+        if(tptr->mPathFailCount >= 5) {
+            const auto s = static_cast<eSoldier*>(c);
+            const auto b = s ? s->banner() : nullptr;
+            if(b) {
+                const auto slot = b->place(s);
+                const auto dest = slot ? slot : b->tile();
+                if(dest) c->changeTile(dest);
+            }
+            tptr->mPathFailCount = 0;
+            tptr->mLastFailTile = nullptr;
+        }
     };
 
     const auto s = static_cast<eSoldier*>(character());
@@ -260,11 +274,6 @@ void SoldierAction::tickBannerReturn(const int by) {
                 }
             }
         }
-        const auto ct = character()->tile();
-        printf("[invasion-soldier] returnToBanner soldier=%p from=%d,%d to=%d,%d\n",
-               (void*)character(),
-               ct ? ct->x() : -1, ct ? ct->y() : -1,
-               slot ? slot->x() : -1, slot ? slot->y() : -1);
         goBackToBanner(b->soldierOrientation(),
                        taskFindFailed, taskFinished);
     }
