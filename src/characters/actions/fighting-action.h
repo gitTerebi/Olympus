@@ -97,6 +97,7 @@ public:
 protected:
     bool isAttacking() const { return mAttack; }
     void cancelAttack();
+    void clearSavedMovement();
 
     // Claim/release a melee retaliation target so attackers spread across the
     // enemy line instead of dogpiling one foe (Augustus targeted_by model).

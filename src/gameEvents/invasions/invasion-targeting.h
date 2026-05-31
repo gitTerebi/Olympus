@@ -18,7 +18,7 @@ enum class eTeamId;
 enum class InvasionAttackType {
     food,       // granaries, warehouses, farms
     political,  // palace (the senate equivalent), agoras
-    rich,       // elite/common housing, temples
+    cultural,   // elite/common housing, temples
     military,   // towers, gatehouses, walls, armory
     count
 };
@@ -29,6 +29,9 @@ namespace InvasionTargeting {
 // tiers top-down, and within the first tier that has any attackable building,
 // return the one closest to (fromX,fromY). Null if the city has none left.
 eBuilding* pickPriorityTarget(GameBoard& board, const eCityId target,
+                              const InvasionAttackType type,
+                              const int fromX, const int fromY);
+eBuilding* pickFallbackTarget(GameBoard& board, const eCityId target,
                               const InvasionAttackType type,
                               const int fromX, const int fromY);
 

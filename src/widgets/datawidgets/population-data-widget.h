@@ -5,7 +5,6 @@
 
 class GameBoard;
 class eLabel;
-class eMultiLineLabel;
 class GameWidget;
 class eViewModeButton;
 
@@ -24,8 +23,15 @@ private:
 
     eLabel* mPeopleDirection = nullptr;
 
+    eWidget* mPeopleDirectionSeparator = nullptr;
     eWidget* mImiLimitedW = nullptr;
-    eLabel* mImiLimitedReason = nullptr;
+    eWidget* mImiLimitedTitleW = nullptr;
+    eWidget* mImiLimitedReasonW1 = nullptr;
+    eWidget* mImiLimitedReasonW2 = nullptr;
+    eWidget* mImiLimitedReasonW3 = nullptr;
+    eLabel* mImiLimitedReason1 = nullptr;
+    eLabel* mImiLimitedReason2 = nullptr;
+    eLabel* mImiLimitedReason3 = nullptr;
     eWidget* mNewcomersW = nullptr;
 };
 

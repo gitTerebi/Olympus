@@ -124,6 +124,10 @@ public:
     bool fighting() const;
     int soldierRange() const;
     void cancelSoldiersAttack();
+    void cancelSoldierActions();
+    void noteAttackFrom(int tx, int ty);
+    eTile* lastAttackTile() const { return mLastAttackTile; }
+    void clearLastAttackTile() { mLastAttackTile = nullptr; }
 
     // Retaliation brain for enemy banners: only moves the whole banner toward a
     // defender after this banner was attacked. Strategic movement stays with
@@ -138,6 +142,8 @@ public:
     bool combatAssignment(eSoldier* const s,
                           CombatAssignment& a) const;
     void setCombatBlockage(eSoldier* const s, eBuilding* const b);
+
+    const std::vector<eSoldier*>& soldiers() const { return mSoldiers; }
 
     const std::string& name() const { return mName; }
     void setName(const std::string& n) { mName = n; }
@@ -238,6 +244,7 @@ private:
     // Never serialized; re-derived next tick.
     int mEnemyNearCountdown = 0;
     bool mEnemyNear = false;
+    eTile* mLastAttackTile = nullptr;
 
     eCityId mCityId = eCityId::neutralFriendly;
     eCityId mOnCityId = eCityId::neutralFriendly;

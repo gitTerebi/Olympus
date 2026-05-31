@@ -4,7 +4,6 @@
 
 #include "eviewmodebutton.h"
 #include "widgets/elinewidget.h"
-#include "widgets/emultilinelabel.h"
 #include "widgets/elayouthelpers.h"
 
 #include "elanguage.h"
@@ -85,6 +84,7 @@ void PopulationDataWidget::initialize() {
     l2->setWidth(iw);
     inner->addWidget(l2);
     l2->setY(mPeopleDirection->y() + mPeopleDirection->height() + pp);
+    mPeopleDirectionSeparator = l2;
 
     {
         const auto il1 = new eLabel(window());
@@ -93,16 +93,34 @@ void PopulationDataWidget::initialize() {
         il1->setNoPadding();
         il1->setText(eLanguage::zeusText(55, 12)); // immigration limited by
 
-        mImiLimitedReason = new eLabel(window());
-        mImiLimitedReason->setWrapAlignment(eAlignment::hcenter);
-        mImiLimitedReason->setYellowFontColor();
-        mImiLimitedReason->setFontSizeXS();
-        mImiLimitedReason->setNoPadding();
-        mImiLimitedReason->setText(eLanguage::zeusText(55, 13)); // lack of housing vacancies
+        const auto makeReasonLabel = [&]() {
+            const auto label = new eLabel(window());
+            label->setWrapAlignment(eAlignment::hcenter);
+            label->setYellowFontColor();
+            label->setFontSizeXS();
+            label->setNoPadding();
+            return label;
+        };
+        mImiLimitedReason1 = makeReasonLabel();
+        mImiLimitedReason2 = makeReasonLabel();
+        mImiLimitedReason3 = makeReasonLabel();
 
-        mImiLimitedW = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
-            {{il1, 0, 0}, {mImiLimitedReason, 0, 0}},
-            {.gap = pp, .align = eLayoutHelpers::eAlign::stretch});
+        mImiLimitedTitleW = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+            {{il1, 0, 0}}, {.align = eLayoutHelpers::eAlign::stretch});
+        mImiLimitedReasonW1 = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+            {{mImiLimitedReason1, 0, 0}}, {.align = eLayoutHelpers::eAlign::stretch});
+        mImiLimitedReasonW2 = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+            {{mImiLimitedReason2, 0, 0}}, {.align = eLayoutHelpers::eAlign::stretch});
+        mImiLimitedReasonW3 = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+            {{mImiLimitedReason3, 0, 0}}, {.align = eLayoutHelpers::eAlign::stretch});
+
+        mImiLimitedW = new eWidget(window());
+        mImiLimitedW->setNoPadding();
+        mImiLimitedW->setWidth(iw - 2*pp);
+        mImiLimitedW->addWidget(mImiLimitedTitleW);
+        mImiLimitedW->addWidget(mImiLimitedReasonW1);
+        mImiLimitedW->addWidget(mImiLimitedReasonW2);
+        mImiLimitedW->addWidget(mImiLimitedReasonW3);
 
         inner->addWidget(mImiLimitedW);
         mImiLimitedW->setY(l2->y() + l2->height() + pp);
@@ -146,55 +164,94 @@ void PopulationDataWidget::initialize() {
 void PopulationDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
+        const int pp = spacing();
         const auto cid = viewedCity();
         const auto popData = mBoard.populationData(cid);
 
         if(popData) {
             const int a = popData->arrived();
-            mImiLimitedW->setVisible(a <= 0);
             mNewcomersW->setVisible(a > 0);
             mNewcomersLabel->setText(std::to_string(a));
             mNewcomersLabel->fitContent();
             mNewcomersLabel->align(eAlignment::hcenter);
 
+            const auto limit = mBoard.immigrationLimit(cid);
+            const bool activeInvasion = mBoard.hasActiveInvasions(cid);
+            const bool pendingInvasion = mBoard.invasionToDefend(cid);
+            const bool war = activeInvasion || pendingInvasion;
+
             const int l = popData->left();
             std::string pdtxt;
-            if(l > a) {
+            if(war || limit != eImmigrationLimitedBy::none) {
+                pdtxt = eLanguage::zeusText(55, 24); // immigrants aren't coming
+            } else if(l > a) {
                 pdtxt = eLanguage::zeusText(55, 21); // people are leaving the city
             } else if(a > l) {
                 pdtxt = eLanguage::zeusText(55, 20); // people wish to come to the city
+            } else {
+                pdtxt = eLanguage::zeusText(55, 22); // population migration is stable
             }
-            if(!pdtxt.empty()) {
-                mPeopleDirection->setText(pdtxt);
-                mPeopleDirection->fitContent();
-                mPeopleDirection->align(eAlignment::hcenter);
-            }
+            mPeopleDirection->setText(pdtxt);
+            mPeopleDirection->fitContent();
+            mPeopleDirection->align(eAlignment::hcenter);
+            mPeopleDirectionSeparator->setY(
+                mPeopleDirection->y() + mPeopleDirection->height() + pp);
 
             const int v = popData->vacancies();
             mVacLabel->setText(std::to_string(v));
             mVacLabel->fitContent();
             mVacLabel->align(eAlignment::hcenter);
 
-            const auto limit = mBoard.immigrationLimit(cid);
-            std::string ilrtxt;
-            if(v <= 0) {
-                ilrtxt = eLanguage::zeusText(55, 13); // lack of housing vacancies
+            std::string ilrtxt1;
+            std::string ilrtxt2;
+            std::string ilrtxt3;
+            if(war) {
+                ilrtxt1 = "The threat of";
+                ilrtxt2 = "war scares";
+                ilrtxt3 = "immigrants";
+            } else if(v <= 0) {
+                ilrtxt1 = eLanguage::zeusText(55, 13); // lack of housing vacancies
             } else if(limit == eImmigrationLimitedBy::lowWages) {
-                ilrtxt = eLanguage::zeusText(55, 14);
+                ilrtxt1 = eLanguage::zeusText(55, 14);
             } else if(limit == eImmigrationLimitedBy::unemployment) {
-                ilrtxt = eLanguage::zeusText(55, 15);
+                ilrtxt1 = eLanguage::zeusText(55, 15);
             } else if(limit == eImmigrationLimitedBy::lackOfFood) {
-                ilrtxt = eLanguage::zeusText(55, 16);
+                ilrtxt1 = eLanguage::zeusText(55, 16);
             } else if(limit == eImmigrationLimitedBy::highTaxes) {
-                ilrtxt = eLanguage::zeusText(55, 17);
+                ilrtxt1 = eLanguage::zeusText(55, 17);
             } else if(limit == eImmigrationLimitedBy::prolongedDebt) {
-                ilrtxt = eLanguage::zeusText(55, 18);
+                ilrtxt1 = eLanguage::zeusText(55, 18);
             } else if(limit == eImmigrationLimitedBy::excessiveMilitaryService) {
-                ilrtxt = eLanguage::zeusText(55, 19);
-            } else {
-                ilrtxt = eLanguage::zeusText(55, 13); // lack of housing vacancies
+                ilrtxt1 = eLanguage::zeusText(55, 19);
+            } else if(limit == eImmigrationLimitedBy::unpopularity) {
+                ilrtxt1 = eLanguage::zeusText(54, 58);
             }
-            mImiLimitedReason->setText(ilrtxt);
+            const auto setupLine = [&](eWidget* const w, eLabel* const label,
+                                       const std::string& text, const int y) {
+                label->setText(text);
+                label->fitContent();
+                label->align(eAlignment::hcenter);
+                w->setHeight(label->height());
+                w->setVisible(!text.empty());
+                w->setY(y);
+                return text.empty() ? y : y + w->height();
+            };
+            int y = 0;
+            mImiLimitedTitleW->setY(y);
+            y += mImiLimitedTitleW->height() + pp;
+            y = setupLine(mImiLimitedReasonW1, mImiLimitedReason1, ilrtxt1, y);
+            y = setupLine(mImiLimitedReasonW2, mImiLimitedReason2, ilrtxt2, y);
+            y = setupLine(mImiLimitedReasonW3, mImiLimitedReason3, ilrtxt3, y);
+            mImiLimitedW->setHeight(y);
+            const bool hasReason = !ilrtxt1.empty() ||
+                                   !ilrtxt2.empty() ||
+                                   !ilrtxt3.empty();
+            mImiLimitedW->setVisible(hasReason &&
+                                     (a <= 0 || war));
+            mImiLimitedW->setY(
+                mPeopleDirectionSeparator->y() +
+                mPeopleDirectionSeparator->height() + pp);
+            mNewcomersW->setY(mImiLimitedW->y());
         }
     }
     eWidget::paintEvent(p);

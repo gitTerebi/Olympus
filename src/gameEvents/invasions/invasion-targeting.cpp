@@ -17,8 +17,6 @@ const eBuildingType kFood[] = {
     eBuildingType::granary,
     eBuildingType::wheatFarm, eBuildingType::carrotsFarm,
     eBuildingType::onionsFarm, eBuildingType::growersLodge,
-    eBuildingType::vine, eBuildingType::oliveTree, eBuildingType::orangeTree,
-    eBuildingType::fishery, eBuildingType::corral, eBuildingType::dairy,
     eBuildingType::huntingLodge, eBuildingType::none
 };
 
@@ -31,10 +29,12 @@ const eBuildingType kPolitical[] = {
     eBuildingType::palace, eBuildingType::none
 };
 
-const eBuildingType kRich[] = {
-    eBuildingType::eliteHousing, eBuildingType::commonHouse,
-    eBuildingType::templeZeus, eBuildingType::templeAthena,
-    eBuildingType::templePoseidon, eBuildingType::templeOfOlympus,
+const eBuildingType kCultural[] = {
+    eBuildingType::gymnasium, eBuildingType::college,
+    eBuildingType::dramaSchool, eBuildingType::podium,
+    eBuildingType::bibliotheke, eBuildingType::observatory,
+    eBuildingType::university, eBuildingType::laboratory,
+    eBuildingType::inventorsWorkshop, eBuildingType::museum,
     eBuildingType::none
 };
 
@@ -48,7 +48,7 @@ const eBuildingType* tiersFor(const InvasionAttackType type) {
     switch(type) {
     case InvasionAttackType::food:      return kFood;
     case InvasionAttackType::political: return kPolitical;
-    case InvasionAttackType::rich:      return kRich;
+    case InvasionAttackType::cultural:  return kCultural;
     case InvasionAttackType::military:  return kMilitary;
     default:                            return kFood;
     }
@@ -89,6 +89,27 @@ eBuilding* pickPriorityTarget(GameBoard& board, const eCityId target,
     for(int i = 0; tiers[i] != eBuildingType::none; i++) {
         const auto b = closestOfType(board, target, tiers[i], fromX, fromY);
         if(b) return b;
+    }
+    return nullptr;
+}
+
+eBuilding* pickFallbackTarget(GameBoard& board, const eCityId target,
+                              const InvasionAttackType type,
+                              const int fromX, const int fromY) {
+    const InvasionAttackType fallbacks[] = {
+        InvasionAttackType::food,
+        InvasionAttackType::cultural,
+        InvasionAttackType::military,
+        InvasionAttackType::political
+    };
+    for(const auto fallback : fallbacks) {
+        if(fallback == type) continue;
+        const auto tiers = tiersFor(fallback);
+        for(int i = 0; tiers[i] != eBuildingType::none; i++) {
+            const auto b = closestOfType(board, target, tiers[i],
+                                         fromX, fromY);
+            if(b) return b;
+        }
     }
     return nullptr;
 }

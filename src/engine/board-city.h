@@ -49,14 +49,16 @@ class eHippodrome;
 class eSaveArchive;
 
 enum class eImmigrationLimitedBy {
-    none,
-    lackOfVacancies,
-    lowWages,
-    unemployment,
-    lackOfFood,
-    highTaxes,
-    prolongedDebt,
-    excessiveMilitaryService
+    none = 0,
+    lackOfVacancies = 1,
+    lowWages = 2,
+    unemployment = 3,
+    lackOfFood = 4,
+    highTaxes = 5,
+    prolongedDebt = 6,
+    excessiveMilitaryService = 7,
+    war = 8,
+    unpopularity = 9
 };
 
 enum class eGames {

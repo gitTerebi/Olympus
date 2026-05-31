@@ -859,6 +859,11 @@ eCharMessage gCharMessage(eCharacter *const c)
             {
                 stringId = 4;
             }
+            else if (limit == eImmigrationLimitedBy::war ||
+                     limit == eImmigrationLimitedBy::unpopularity)
+            {
+                stringId = 0;
+            }
             else if (limit == eImmigrationLimitedBy::lackOfVacancies)
             {
                 stringId = 5;
@@ -931,6 +936,11 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 4;
         }
+        else if (limit == eImmigrationLimitedBy::war ||
+                 limit == eImmigrationLimitedBy::unpopularity)
+        {
+            stringId = 0;
+        }
         else if (limit == eImmigrationLimitedBy::lackOfVacancies)
         {
             stringId = 5;
@@ -974,6 +984,11 @@ eCharMessage gCharMessage(eCharacter *const c)
         else if (limit == eImmigrationLimitedBy::lowWages)
         {
             stringId = 4;
+        }
+        else if (limit == eImmigrationLimitedBy::war ||
+                 limit == eImmigrationLimitedBy::unpopularity)
+        {
+            stringId = 0;
         }
         else if (limit == eImmigrationLimitedBy::lackOfVacancies)
         {

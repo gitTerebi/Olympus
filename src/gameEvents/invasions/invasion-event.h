@@ -109,6 +109,7 @@ private:
 
     bool mWarned = false;
     bool mWaitingForResponse = false;
+    bool mInvadersWon = false;
     eDate mFirstWarning;
 
     ePlayerId mSentByPlayer = ePlayerId::neutralFriendly;

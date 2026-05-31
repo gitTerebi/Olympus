@@ -90,6 +90,23 @@ eTile* findRangedBannerTile(GameBoard& board,
     return best;
 }
 
+void formationDepthAxis(const int facing,
+                        const int lineDX,
+                        const int lineDY,
+                        int& depthDX,
+                        int& depthDY) {
+    depthDX = -lineDY;
+    depthDY =  lineDX;
+
+    int frontX = 0;
+    int frontY = 0;
+    eFormationFacing::facingFrontVector(facing, frontX, frontY);
+    if(depthDX*frontX + depthDY*frontY > 0) {
+        depthDX = -depthDX;
+        depthDY = -depthDY;
+    }
+}
+
 }
 
 SoldierBanner::SoldierBanner(const eBannerType type,
@@ -163,8 +180,9 @@ void SoldierBanner::commandFormation(const int facing,
         return eWalkableHelpers::sDefaultWalkable(tt);
     };
 
-    const int depthDX = -sideDY;
-    const int depthDY = sideDX;
+    int depthDX = 0;
+    int depthDY = 0;
+    formationDepthAxis(facing, sideDX, sideDY, depthDX, depthDY);
     const int slds = mSoldiers.size();
     const bool missile = mType == eBannerType::rockThrower;
     const int files = slds > 1 ? (missile ? 2 : (slds + 1) / 2) : 1;
@@ -512,6 +530,7 @@ bool SoldierBanner::soldiersOnMap() const {
 
 bool SoldierBanner::stationary() const {
     for(const auto s : mSoldiers) {
+        if(s->dead()) continue;
         const auto at = s->actionType();
         if(at != eCharacterActionType::stand) return false;
     }
@@ -532,6 +551,18 @@ void SoldierBanner::cancelSoldiersAttack() {
         const auto a = s->soldierAction();
         if(a) a->cancelAndClearAction();
     }
+}
+
+void SoldierBanner::cancelSoldierActions() {
+    for(const auto s : mSoldiers) {
+        if(s->dead()) continue;
+        const auto a = s->soldierAction();
+        if(a) a->cancelAndClearAction();
+    }
+}
+
+void SoldierBanner::noteAttackFrom(const int tx, const int ty) {
+    mLastAttackTile = mBoard.tile(tx, ty);
 }
 
 int SoldierBanner::soldierRange() const {
@@ -821,15 +852,9 @@ SoldierBanner::sFormationPositions(
 
     // Depth must grow behind the facing direction so the leading group (melee)
     // sits at the front and missiles fall to the rear, regardless of facing.
-    int depthDX = -lineDY;
-    int depthDY =  lineDX;
-    int frontX = 0;
-    int frontY = 0;
-    eFormationFacing::facingFrontVector(facing, frontX, frontY);
-    if(depthDX*frontX + depthDY*frontY > 0) {
-        depthDX = -depthDX;
-        depthDY = -depthDY;
-    }
+    int depthDX = 0;
+    int depthDY = 0;
+    formationDepthAxis(facing, lineDX, lineDY, depthDX, depthDY);
 
     const bool cardinal = (lineDX == 0 || lineDY == 0);
     const int missileSlot = cardinal ? 2 : 1;
@@ -1013,17 +1038,17 @@ void SoldierBanner::updatePlaces() {
                                      int& i, int& j) {
         const int facing = ((mFacing % 360) + 360) % 360;
         if(facing == 90) {
-            i = depth;
+            i = -depth;
             j = side;
         } else if(facing == 180) {
             i = -side;
-            j = depth;
+            j = -depth;
         } else if(facing == 270) {
-            i = -depth;
+            i = depth;
             j = -side;
         } else {
             i = side;
-            j = -depth;
+            j = depth;
         }
     };
 
