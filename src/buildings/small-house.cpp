@@ -370,7 +370,26 @@ bool SmallHouse::lowFood() const
 eHouseMissing SmallHouse::missing() const
 {
     const int next = mLevel + 1;
-    if (next > 6) return eHouseMissing::nothing;
+    const bool devolving = !canStayAtLevel(mLevel);
+
+    // At max level missing() is only used to explain a devolve; check stay reqs.
+    if (next > 6) {
+        if (!devolving) return eHouseMissing::nothing;
+        // fall through to report why canStayAtLevel failed
+        const double appeal = eHouseBase::appeal();
+        const int pts = culturePoints();
+        const auto& board = getBoard();
+        const auto pid = board.cityIdToPlayerId(cityId());
+        const auto diff = board.difficulty(pid);
+        const auto req = DifficultyHelpers::houseLevelReq(diff, false, mLevel);
+        if (mFood <= 0) return eHouseMissing::food;
+        if (mWater <= 0) return eHouseMissing::water;
+        if (mFleece <= 0) return eHouseMissing::fleece;
+        if (mOil <= 0) return eHouseMissing::oil;
+        if (appeal < req.fAppD) return eHouseMissing::appeal;
+        if (pts < req.fEnt) return eHouseMissing::venues;
+        return eHouseMissing::nothing;
+    }
 
     if (mFood <= 0) return eHouseMissing::food;
     if (next >= 2 && mWater <= 0) return eHouseMissing::water;
@@ -382,9 +401,10 @@ eHouseMissing SmallHouse::missing() const
     const auto& board = getBoard();
     const auto pid = board.cityIdToPlayerId(cityId());
     const auto diff = board.difficulty(pid);
-    // Evolve threshold lives on current row (b = appeal to leave).
+    // When devolving use stay threshold (fAppD); otherwise use evolve threshold (fAppE).
     const auto req = DifficultyHelpers::houseLevelReq(diff, false, mLevel);
-    if (appeal < req.fAppE) return eHouseMissing::appeal;
+    const double appReq = devolving ? req.fAppD : req.fAppE;
+    if (appeal < appReq) return eHouseMissing::appeal;
     if (pts < req.fEnt) return eHouseMissing::venues;
     return eHouseMissing::nothing;
 }
@@ -465,7 +485,7 @@ void SmallHouse::updateLevel(const int by)
 {
     // 3 in-game days below requirement before a single level drops.
     const int devolveTicks = 3 * eNumbers::sDayLength;
-    if (hasRequiredForLevel(mLevel + 1))
+    if (hasRequiredForLevel(mLevel + 1) && canStayAtLevel(mLevel + 1))
     {
         setLevel(mLevel + 1);
         mDevolveDelay = 0;

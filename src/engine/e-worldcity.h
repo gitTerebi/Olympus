@@ -266,6 +266,9 @@ public:
     void setBribed() { mBribeMonthsAgo = 0; }
     int bribeMonthsAgo() const { return mBribeMonthsAgo; }
 
+    void setLastInvasionEnded() { mLastInvasionEndMonthsAgo = 0; }
+    int lastInvasionEndMonthsAgo() const { return mLastInvasionEndMonthsAgo; }
+
     void setWaterTrade(const bool w, const eCityId cid);
     bool waterTrade(const eCityId cid) const;
     const std::set<eCityId>& waterTrades() const
@@ -360,6 +363,7 @@ private:
     int mYearsElapsed = 0;
     int mWealth = 1; // 1-5
     int mBribeMonthsAgo = -1;
+    int mLastInvasionEndMonthsAgo = -1;
 
     std::set<eCityId> mWaterTrade;
     bool mVisible = true;

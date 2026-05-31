@@ -33,6 +33,7 @@ namespace
     constexpr int kInvaderWonAttitudeRestore = 35;
     constexpr int kInvaderBribedAttitudeRestore = 25;
     constexpr int bribeAttackCooldownMonths = 12;
+    constexpr int invasionEndCooldownMonths = 12;
     constexpr int kInvasionVictoryMonumentId = 1;
 
     bool hasCommemorativeMonument(GameBoard &board, const eCityId cid, const int id)
@@ -145,6 +146,14 @@ bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, GameBoard &boar
         targetCid == eCityId::neutralAggresive)
     {
         targetCid = board.world().currentCityId();
+    }
+    {
+        const auto targetCity = board.world().cityWithId(targetCid);
+        if (targetCity) {
+            const int endMonthsAgo = targetCity->lastInvasionEndMonthsAgo();
+            if (endMonthsAgo >= 0 && endMonthsAgo < invasionEndCooldownMonths)
+                return false;
+        }
     }
     const auto targetCity = board.world().cityWithId(targetCid);
     if (!targetCity)
@@ -647,6 +656,14 @@ void eInvasionEvent::addInvasionHandler(eInvasionHandler *const i)
 void eInvasionEvent::removeInvasionHandler(eInvasionHandler *const i)
 {
     eVectorHelpers::remove(mHandlers, i);
+    if (mHandlers.empty() && !mInvadersWon) {
+        const auto board = gameBoard();
+        if (board) {
+            const auto targetCity = board->world().cityWithId(cityId());
+            if (targetCity)
+                targetCity->setLastInvasionEnded();
+        }
+    }
 }
 
 bool eInvasionEvent::nearestSoldier(const int fromX, const int fromY,
@@ -788,6 +805,7 @@ void eInvasionEvent::restoreAttitudeAfterInvasion(
 
 void eInvasionEvent::invadersWon()
 {
+    mInvadersWon = true;
     auto &board = *gameBoard();
     const auto targetCity = cityId();
     board.conqueredBy(targetCity, mCity);

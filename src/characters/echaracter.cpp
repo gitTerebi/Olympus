@@ -12,6 +12,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "esoldier.h"
+#include "soldier-banner.h"
 
 #include "engine/vanilla-stats.h"
 
@@ -293,6 +294,20 @@ bool eCharacter::takeDamage(const double a, eCharacter* const attacker) {
         const bool allow = attacker && attacker->isImmortal();
         if(!allow) {
             return false;
+        }
+    }
+
+    if(attacker) {
+        const auto attackedSoldier = dynamic_cast<eSoldier*>(this);
+        const auto attackerTile = attacker->tile();
+        if(attackedSoldier && attackerTile) {
+            const auto banner = attackedSoldier->banner();
+            const bool attackerCanDivertInvasion =
+                    attacker->isSoldier() || attacker->isImmortal();
+            if(banner && banner->type() == eBannerType::enemy &&
+               attackerCanDivertInvasion) {
+                banner->noteAttackFrom(attackerTile->x(), attackerTile->y());
+            }
         }
     }
 

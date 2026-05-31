@@ -233,6 +233,14 @@ void FightingAction::cancelAttack() {
     c->setActionType(mSavedAction);
 }
 
+void FightingAction::clearSavedMovement() {
+    mSavedMove = FightingSavedMove::none;
+    mSavedMoveX = 0;
+    mSavedMoveY = 0;
+    mSavedMoveDistance = 0;
+    mWaitGoHomeRemaining = 0;
+}
+
 void FightingAction::releaseClaim() {
     if(!mClaimedTarget) return;
     mClaimedTarget->decTargetedBy();

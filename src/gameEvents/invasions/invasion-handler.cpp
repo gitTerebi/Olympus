@@ -761,15 +761,44 @@ void eInvasionHandler::incTime(const int by) {
         tellHeroesAndGodsToGoBack();
     };
 
+    const auto walkOff = [&]() {
+        const auto exit = mBoard.exitPoint(mTargetCity);
+        const auto from = mGState.fCurrentTile ? mGState.fCurrentTile :
+                          (solds.empty() ? mTile : solds.front()->tile());
+        for(const auto& b : solds) {
+            b->cancelSoldierActions();
+            if(b->count() > 0) b->goAbroad();
+        }
+        mGState.fMoveFrom = from;
+        mGState.fMoveTo = exit;
+        mGState.fCurrentTile = exit;
+        mGState.fTargetTile = nullptr;
+        mWait = 0;
+        tellHeroesAndGodsToGoBack();
+        mStage = eInvasionStage::walkOff;
+    };
+
     if(mStage == eInvasionStage::comeback) {
+        const int tx = mTile->x();
+        const int ty = mTile->y();
         bool allArrived = true;
+        mWait += by;
+        mComebackTimeout += by;
         for(const auto& b : mBanners) {
             if(!b->soldiersOnMap()) continue;
             if(!b->stationary()) {
+                if(mWait >= 2000) {
+                    b->cancelSoldiersAttack();
+                    b->moveTo(tx, ty);
+                }
                 allArrived = false;
             }
         }
-        if(!allArrived) return;
+        if(mWait >= 2000) mWait = 0;
+        if(!allArrived && mComebackTimeout < 60000) return;
+        if(!allArrived) {
+            for(const auto& b : mBanners) b->killAll();
+        }
         for(const auto& b : mBanners) {
             if(b->count() > 0) b->goAbroad();
         }
@@ -808,6 +837,31 @@ void eInvasionHandler::incTime(const int by) {
         return;
     }
 
+    // Stall detection: ss unchanged means no soldiers died — troops are stuck.
+    // Every 2 min: teleport stuck soldiers to their banner tile so combat can resolve.
+    if(ss == mLastSs) {
+        mStallTime += by;
+        if(mStallTime >= 120000) {
+            mStallTime = 0;
+            printf("[invasion-handler] stall 2min ss=%d, teleporting soldiers to banner\n", ss);
+            for(const auto& b : mBanners) {
+                if(b->count() <= 0) continue;
+                const auto bt = b->tile();
+                if(!bt) continue;
+                for(const auto s : b->soldiers()) {
+                    if(!s) continue;
+                    const auto slot = b->place(s);
+                    s->changeTile(slot ? slot : bt);
+                    const auto a = s->soldierAction();
+                    if(a) a->setCurrentAction(nullptr);
+                }
+            }
+        }
+    } else {
+        mLastSs = ss;
+        mStallTime = 0;
+    }
+
     // Friendly team (e.g. ally turned non-hostile): break off, go home.
     const auto invadingPid = mBoard.cityIdToPlayerId(mCity->cityId());
     const auto invadingTid = mBoard.playerIdToTeamId(invadingPid);
@@ -820,7 +874,6 @@ void eInvasionHandler::incTime(const int by) {
 
     // Palace destroyed mid-campaign: city is taken immediately.
     if(!mBoard.palace(mTargetCity)) {
-        goBack();
         if(mConquestEvent) {
             const auto& forces = mConquestEvent->forces();
             const int iniCount = forces.count();
@@ -832,11 +885,11 @@ void eInvasionHandler::incTime(const int by) {
                 forces.kill(1 - double(count)/iniCount);
             }
         }
+        walkOff();
         const auto targetWCity = mBoard.world().cityWithId(mTargetCity);
         mBoard.conqueredBy(mCity->cityId(), targetWCity);
         assert(mEvent);
         mEvent->invadersWon();
-        mStage = eInvasionStage::comeback;
         return;
     }
 
@@ -849,7 +902,6 @@ void eInvasionHandler::incTime(const int by) {
     // Campaign complete: no attackable targets of the attack type remain.
     if(!mBoard.palace(mTargetCity)) {
         // Palace gone: the city is taken.
-        goBack();
         if(mConquestEvent) {
             const auto& forces = mConquestEvent->forces();
             const int iniCount = forces.count();
@@ -861,6 +913,7 @@ void eInvasionHandler::incTime(const int by) {
                 forces.kill(1 - double(count)/iniCount);
             }
         }
+        walkOff();
         const auto targetWCity = mBoard.world().cityWithId(mTargetCity);
         mBoard.conqueredBy(mCity->cityId(), targetWCity);
         assert(mEvent);
@@ -869,8 +922,8 @@ void eInvasionHandler::incTime(const int by) {
         // Palace stands: raid over, troops retreat. City NOT conquered.
         goBack();
         mFireRaidOverOnExit = true;
+        mStage = eInvasionStage::comeback;
     }
-    mStage = eInvasionStage::comeback;
 }
 
 void eInvasionHandler::spawnFacingTowardTarget(
@@ -892,6 +945,8 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
 
     // General campaign state (general is stateless; handler owns + persists it).
     ar.field("gPhase", mGState.fPhase, eGeneralPhase::spread);
+    ar.field("gPhaseBeforeDefend", mGState.fPhaseBeforeDefend,
+             eGeneralPhase::spread);
     ar.tileField("gTargetTile", mBoard, mGState.fTargetTile);
     ar.tileField("gCurrentTile", mBoard, mGState.fCurrentTile);
     ar.tileField("gMoveFrom", mBoard, mGState.fMoveFrom);
@@ -899,6 +954,9 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("gWait", mGState.fWait, 0);
     ar.field("gSpawnWait", mGState.fSpawnWait, 0);
     ar.field("gMoveWait", mGState.fMoveWait, 0);
+    ar.field("gDefendHold", mGState.fDefendHold, 0);
+    ar.field("gDefendEnemyWait", mGState.fDefendEnemyWait, 0);
+
 
     ar.arrayField("banners", mBanners,
         [this](eSaveArchive& itemAr, stdsptr<SoldierBanner>& b) {
@@ -911,6 +969,8 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
         });
 
     ar.field("wait", mWait);
+    ar.field("stallTime", mStallTime, 0);
+    ar.field("lastSs", mLastSs, -1);
     ar.gameEventField("event", &mBoard, mEvent);
     if(ar.reading()) {
         ar.addPostFunc([this]() {

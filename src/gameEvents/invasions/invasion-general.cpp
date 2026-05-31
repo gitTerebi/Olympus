@@ -1,6 +1,7 @@
 #include "invasion-general.h"
 
 #include <cmath>
+#include <cstdio>
 
 #include "engine/game-board.h"
 #include "engine/eknownendpathfinder.h"
@@ -23,6 +24,29 @@ bool drainWait(int& counter, const int by) {
     return false;
 }
 
+const int defendHoldMs = 3000;
+
+eTile* bannerCenterTile(GameBoard& board,
+                        const std::vector<SoldierBanner*>& banners) {
+    int cx = 0;
+    int cy = 0;
+    int n = 0;
+    eTile* first = nullptr;
+    for(const auto b : banners) {
+        if(!b || !b->tile()) continue;
+        const auto t = b->tile();
+        if(!first) first = t;
+        cx += t->x();
+        cy += t->y();
+        n++;
+    }
+    if(n <= 0) return nullptr;
+    cx /= n;
+    cy /= n;
+    const auto center = board.tile(cx, cy);
+    return center ? center : first;
+}
+
 }
 
 InvasionGeneral::InvasionGeneral(GameBoard& board,
@@ -33,6 +57,18 @@ InvasionGeneral::InvasionGeneral(GameBoard& board,
     mTargetCity(targetCity),
     mInvadingCity(invadingCity),
     mAttackType(attackType) {}
+
+static const char* phaseName(eGeneralPhase p) {
+    switch(p) {
+    case eGeneralPhase::spread:  return "spread";
+    case eGeneralPhase::wait:    return "wait";
+    case eGeneralPhase::march:   return "march";
+    case eGeneralPhase::invade:  return "invade";
+    case eGeneralPhase::done:    return "done";
+    case eGeneralPhase::defend:  return "defend";
+    default:                     return "?";
+    }
+}
 
 bool InvasionGeneral::advance(eGeneralState& s,
                               eTile* const landingTile,
@@ -50,10 +86,91 @@ bool InvasionGeneral::advance(eGeneralState& s,
     }
     if(ss == 0) return false; // handler handles a wiped force
 
-    // Pause while any banner has enemies nearby — let combat assignments play out
-    // before issuing formation moves that would cancel ongoing fights.
+    static eGeneralPhase sLastPhase = eGeneralPhase::spread;
+    if(s.fPhase != sLastPhase) {
+        sLastPhase = s.fPhase;
+        printf("[invasion-general] phase->%s ss=%d cur=%d,%d target=%d,%d\n",
+               phaseName(s.fPhase), ss,
+               s.fCurrentTile ? s.fCurrentTile->x() : -1,
+               s.fCurrentTile ? s.fCurrentTile->y() : -1,
+               s.fTargetTile ? s.fTargetTile->x() : -1,
+               s.fTargetTile ? s.fTargetTile->y() : -1);
+    }
+
+    // Defend is a latched FSM state. Once inside, ignore fresh hit pings; the
+    // state exits only after the hold timer drains and nearby enemies clear.
+    if(s.fPhase == eGeneralPhase::defend) {
+        for(const auto b : banners) {
+            if(b) b->clearLastAttackTile();
+        }
+        if(drainWait(s.fDefendHold, by)) {
+            return false;
+        }
+        // Pass `by` (not 0) so the cache is allowed to refresh here; passing 0
+        // never decrements the countdown so a stale true-cache never clears,
+        // causing permanent defend lock when soldiers aren't ticking the banner.
+        bool anyEnemy = false;
+        for(const auto b : banners) {
+            if(b && b->enemyNear(by)) { anyEnemy = true; break; }
+        }
+        if(anyEnemy) {
+            // Hard cap: if enemies are still near 10s after hold drained, force
+            // exit anyway to avoid permanent lock when the cache is stale.
+            s.fDefendEnemyWait += by;
+            if(s.fDefendEnemyWait < 10000) {
+                return false;
+            }
+            printf("[invasion-general] defend: force-exiting after enemy-near timeout -> %s\n",
+                   phaseName(s.fPhaseBeforeDefend));
+        }
+        s.fDefendEnemyWait = 0;
+        printf("[invasion-general] defend: exiting -> %s\n", phaseName(s.fPhaseBeforeDefend));
+        s.fPhase = s.fPhaseBeforeDefend;
+        s.fWait = 0;
+        return false;
+    }
+
+    // Enter defense from any campaign phase when a real defender hits.
+    eTile* attackTile = nullptr;
     for(const auto b : banners) {
-        if(b && b->enemyNear(0)) return false;
+        if(b && b->lastAttackTile()) {
+            attackTile = b->lastAttackTile();
+            break;
+        }
+    }
+    for(const auto b : banners) {
+        if(b) b->clearLastAttackTile();
+    }
+    if(attackTile) {
+        s.fPhaseBeforeDefend = s.fPhase;
+        s.fPhase = eGeneralPhase::defend;
+        s.fDefendHold = defendHoldMs;
+        s.fDefendEnemyWait = 0;
+        s.fMoveWait = 0;
+        const auto fromTile = bannerCenterTile(mBoard, banners);
+        s.fMoveFrom = fromTile;
+        s.fMoveTo = attackTile;
+        s.fCurrentTile = fromTile;
+        for(const auto b : banners) {
+            if(b) b->cancelSoldierActions();
+        }
+        if(fromTile) {
+            s.fCurrentTile = attackTile;
+            printf("[invasion-move] defend from=%d,%d to=%d,%d banners=%d\n",
+                   fromTile->x(), fromTile->y(),
+                   attackTile->x(), attackTile->y(),
+                   static_cast<int>(banners.size()));
+            int facing, lineDX, lineDY;
+            eFormationFacing::facingAndLineToward(
+                attackTile->x() - fromTile->x(),
+                attackTile->y() - fromTile->y(),
+                facing, lineDX, lineDY);
+            SoldierBanner::sPlaceFacing(
+                const_cast<std::vector<SoldierBanner*>&>(banners),
+                attackTile->x(), attackTile->y(),
+                mBoard, facing, lineDX, lineDY, 3, 3);
+        }
+        return false;
     }
 
     // 14-day pre-invade wait during the initial spread phase.
@@ -85,6 +202,11 @@ bool InvasionGeneral::advance(eGeneralState& s,
         return false;
     }
     if(wait > 0) s.fWait -= wait; else s.fWait = 0;
+    printf("[invasion-general] cycle-gate passed phase=%s ss=%d target=%d,%d targetValid=%s\n",
+           phaseName(s.fPhase), ss,
+           s.fTargetTile ? s.fTargetTile->x() : -1,
+           s.fTargetTile ? s.fTargetTile->y() : -1,
+           generalTargetValid(s) ? "yes" : "no");
 
     switch(s.fPhase) {
     case eGeneralPhase::spread:
@@ -96,13 +218,12 @@ bool InvasionGeneral::advance(eGeneralState& s,
             // after invade does not yank units back to the landing tile. This is
             // a repositioning move: pause 7 days once units arrive.
             const auto from = s.fCurrentTile ? s.fCurrentTile : landingTile;
-            const auto halfTile = moveHalfwayToTarget(from, target, banners);
+            const auto halfTile = moveHalfwayToTarget(s, from, target, banners);
             if(halfTile) {
-                s.fMoveFrom = from;
-                s.fMoveTo = halfTile;
-                s.fCurrentTile = halfTile;
                 s.fMoveWait = 7*eNumbers::sDayLength;
             }
+        } else {
+            printf("[invasion-general] spread->march: no target found, stuck\n");
         }
     } break;
     case eGeneralPhase::march: {
@@ -115,11 +236,10 @@ bool InvasionGeneral::advance(eGeneralState& s,
             // adjacent (sDefaultWalkable rejects building tiles); soldiers path
             // toward those slots, hit the wall, obstacle handler fires, and the
             // clearObstacle combat assignment directs them to attack the building.
-            moveToTarget(from, target, banners);
+            moveToTarget(s, from, target, banners);
             pinOnTarget(s, banners);
-            s.fMoveFrom = from;
-            s.fMoveTo = target;
-            s.fCurrentTile = target;
+        } else {
+            printf("[invasion-general] march->invade: no target found, stuck\n");
         }
     } break;
     case eGeneralPhase::invade: {
@@ -138,15 +258,14 @@ bool InvasionGeneral::advance(eGeneralState& s,
                 s.fPhase = eGeneralPhase::done;
                 return true;
             }
-            moveToTarget(cur, target, banners);
+            moveToTarget(s, cur, target, banners);
             pinOnTarget(s, banners);
-            s.fMoveFrom = cur;
-            s.fMoveTo = target;
-            s.fCurrentTile = target;
         }
     } break;
     case eGeneralPhase::done:
         return true;
+    case eGeneralPhase::defend:
+        return false;
     }
     return false;
 }
@@ -162,16 +281,13 @@ eTile* InvasionGeneral::ensureTarget(
 
 eTile* InvasionGeneral::chooseTargetTile(
         const int fromX, const int fromY) const {
-    // The general owns strategy, so it picks buildings. Nearby defenders are
-    // handled by banner/unit combat code and should not pull the whole invasion
-    // off its objective every few seconds.
     const auto b = InvasionTargeting::pickPriorityTarget(
                 mBoard, mTargetCity, mAttackType, fromX, fromY);
-    if(b) return b->centerTile();
-    return nullptr;
+    return b ? b->centerTile() : nullptr;
 }
 
 eTile* InvasionGeneral::moveHalfwayToTarget(
+        eGeneralState& s,
         eTile* const from,
         eTile* const target,
         const std::vector<SoldierBanner*>& banners) const {
@@ -193,12 +309,23 @@ eTile* InvasionGeneral::moveHalfwayToTarget(
     eFormationFacing::facingAndLineToward(target->x() - halfTile->x(),
                                           target->y() - halfTile->y(),
                                           facing, lineDX, lineDY);
+    const auto debugFrom = bannerCenterTile(mBoard, banners);
+    s.fMoveFrom = debugFrom ? debugFrom : from;
+    s.fMoveTo = halfTile;
+    s.fCurrentTile = halfTile;
+    printf("[invasion-move] half from=%d,%d to=%d,%d target=%d,%d banners=%d\n",
+           s.fMoveFrom ? s.fMoveFrom->x() : -1,
+           s.fMoveFrom ? s.fMoveFrom->y() : -1,
+           halfTile->x(), halfTile->y(),
+           target->x(), target->y(),
+           static_cast<int>(banners.size()));
     SoldierBanner::sPlaceFacing(banners, halfTile->x(), halfTile->y(), mBoard,
                                 facing, lineDX, lineDY, 3, 3);
     return halfTile;
 }
 
 void InvasionGeneral::moveToTarget(
+        eGeneralState& s,
         eTile* const from,
         eTile* const target,
         const std::vector<SoldierBanner*>& banners) const {
@@ -214,6 +341,15 @@ void InvasionGeneral::moveToTarget(
     eFormationFacing::facingAndLineToward(target->x() - anchorX,
                                           target->y() - anchorY,
                                           facing, lineDX, lineDY);
+    const auto debugFrom = bannerCenterTile(mBoard, banners);
+    s.fMoveFrom = debugFrom ? debugFrom : from;
+    s.fMoveTo = target;
+    s.fCurrentTile = target;
+    printf("[invasion-move] target from=%d,%d to=%d,%d banners=%d\n",
+           s.fMoveFrom ? s.fMoveFrom->x() : -1,
+           s.fMoveFrom ? s.fMoveFrom->y() : -1,
+           target->x(), target->y(),
+           static_cast<int>(banners.size()));
     SoldierBanner::sPlaceFacing(banners, target->x(), target->y(), mBoard,
                                 facing, lineDX, lineDY, 3, 3);
 }
@@ -256,28 +392,6 @@ bool InvasionGeneral::pinOnTarget(
     return true;
 }
 
-void InvasionGeneral::reissueCurrentOrder(
-        eGeneralState& s,
-        eTile* const landingTile,
-        const std::vector<SoldierBanner*>& banners) const {
-    switch(s.fPhase) {
-    case eGeneralPhase::march: {
-        // Banners drifted during retaliation; walk them back to the half-step tile.
-        const auto from = s.fMoveFrom ? s.fMoveFrom : landingTile;
-        if(s.fCurrentTile) moveToTarget(from, s.fCurrentTile, banners);
-    } break;
-    case eGeneralPhase::invade: {
-        // Resume assault: re-order formation move + pin on the building.
-        const auto from = s.fMoveFrom ? s.fMoveFrom : landingTile;
-        if(s.fTargetTile) {
-            moveToTarget(from, s.fTargetTile, banners);
-            pinOnTarget(s, banners);
-        }
-    } break;
-    default:
-        break;
-    }
-}
 
 bool InvasionGeneral::generalTargetValid(const eGeneralState& s) const {
     const auto t = s.fTargetTile;

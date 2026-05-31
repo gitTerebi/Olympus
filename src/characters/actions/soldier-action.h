@@ -37,8 +37,11 @@ public:
 
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
     void cancelAndClearAction() {
+        mSpreadPeriod = false;
         cancelAttack();
+        clearSavedMovement();
         setCurrentAction(nullptr);
+        character()->setActionType(eCharacterActionType::stand);
     }
 protected:
     void serializeFields(eSaveArchive& ar) override;
@@ -58,6 +61,7 @@ private:
     bool mSpreadPeriod = false; // for spreading invasion forces
     bool mArrivedAtBanner = false;
     SoldierActionStage mStage = SoldierActionStage::idle;
+    eTile* mChaseTarget = nullptr;
 };
 
 class SoldierObsticleHandler : public eObsticleHandler {

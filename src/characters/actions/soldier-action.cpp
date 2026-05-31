@@ -4,6 +4,7 @@
 #include "characters/esoldier.h"
 #include "engine/game-board.h"
 
+#include <cstdio>
 #include <math.h>
 
 #include "characters/soldier-banner.h"
@@ -118,6 +119,7 @@ bool SoldierAction::followBannerDirector() {
     const auto exitChase = [&]() {
         if(mStage == SoldierActionStage::chase) {
             mStage = SoldierActionStage::idle;
+            mChaseTarget = nullptr;
             if(!isAttacking()) {
                 setCurrentAction(nullptr);
                 setOverwrittableAction(true);
@@ -164,6 +166,10 @@ bool SoldierAction::followBannerDirector() {
         if(!a.targetBuilding) return false;
         const auto bt = a.targetBuilding->centerTile();
         if(!bt) return false;
+        printf("[invasion-soldier] clearObstacle soldier=%p from=%d,%d building=%d,%d\n",
+               (void*)c,
+               ct ? ct->x() : -1, ct ? ct->y() : -1,
+               bt->x(), bt->y());
         exitChase();
         setCurrentAction(nullptr);
         attackBuilding(bt, false);
@@ -177,15 +183,21 @@ bool SoldierAction::followBannerDirector() {
         return false;
     }
 
-    // Already chasing this tile — let the walk continue.
+    // Already chasing THIS exact tile — let the walk continue.
     if(mStage == SoldierActionStage::chase &&
-       currentAction() && !overwrittableAction()) {
+       currentAction() && !overwrittableAction() &&
+       mChaseTarget == a.standTile) {
         return true;
     }
 
     // Enter chase state and issue the walk.
     mStage = SoldierActionStage::chase;
+    mChaseTarget = a.standTile;
     setOverwrittableAction(false);
+    printf("[invasion-soldier] directorMove soldier=%p from=%d,%d to=%d,%d\n",
+           (void*)c,
+           ct ? ct->x() : -1, ct ? ct->y() : -1,
+           a.standTile->x(), a.standTile->y());
     goTo(a.standTile->x(), a.standTile->y(), 0);
     return true;
 }
@@ -232,6 +244,27 @@ void SoldierAction::tickBannerReturn(const int by) {
         // Already at formation slot: stand, no walk needed.
         const auto slot = b->place(s);
         if(slot && character()->tile() == slot) return;
+        // No slot: fall back to banner tile. If already there, nothing to do.
+        if(!slot && character()->tile() == b->tile()) return;
+        // No slot and banner is pinned on an enemy building: don't walk toward
+        // the unwalkable building tile. Let the idle attack path in increment()
+        // fire attackBuilding directly on the next tick instead.
+        if(!slot && b->type() == eBannerType::enemy) {
+            const auto bt = b->tile();
+            if(bt) {
+                const auto ub = bt->underBuilding();
+                const auto tid = character()->teamId();
+                if(ub && eBuilding::sAttackable(ub->type()) &&
+                   eTeamIdHelpers::isEnemy(ub->teamId(), tid)) {
+                    return;
+                }
+            }
+        }
+        const auto ct = character()->tile();
+        printf("[invasion-soldier] returnToBanner soldier=%p from=%d,%d to=%d,%d\n",
+               (void*)character(),
+               ct ? ct->x() : -1, ct ? ct->y() : -1,
+               slot ? slot->x() : -1, slot ? slot->y() : -1);
         goBackToBanner(b->soldierOrientation(),
                        taskFindFailed, taskFinished);
     }
@@ -285,7 +318,8 @@ void SoldierAction::rebuildCurrentStage() {
         return;
     }
     case SoldierActionStage::chase:
-        mStage = SoldierActionStage::idle; // re-derive on next tick
+        mStage = SoldierActionStage::idle;
+        mChaseTarget = nullptr;
         return FightingAction::resumeFromSavedState();
     case SoldierActionStage::idle:
         return FightingAction::resumeFromSavedState();
@@ -322,7 +356,10 @@ void SoldierAction::beingAttacked(int ttx, int tty) {
     // adjacent engages via lookForEnemy regardless.
     const auto s = static_cast<eSoldier*>(character());
     const auto b = s->banner();
-    if(b && b->type() == eBannerType::enemy) return;
+    if(b && b->type() == eBannerType::enemy) {
+        b->noteAttackFrom(ttx, tty);
+        return;
+    }
     FightingAction::beingAttacked(ttx, tty);
 }
 
@@ -381,15 +418,10 @@ void SoldierAction::goAbroad() {
     setCurrentAction(a);
     c->setActionType(eCharacterActionType::walk);
 
-    const auto exitPoint = board.exitPoint(cid);
-    if(exitPoint) {
-        a->start(exitPoint);
-    } else {
-        const auto edgeTile = [](eTileBase* const tile) {
-            return tile->isCityEdge();
-        };
-        a->start(edgeTile);
-    }
+    const auto edgeTile = [](eTileBase* const tile) {
+        return tile->isCityEdge();
+    };
+    a->start(edgeTile);
 }
 
 eBuilding* SoldierAction::sFindHome(const eCharacterType t,

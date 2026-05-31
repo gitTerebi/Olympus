@@ -173,7 +173,11 @@ void BoardCity::incTime(const int by) {
         drachmas = p->drachmas();
         inDebtSince = p->inDebtSince();
     }
-    if(prolongedNoFood) {
+    if(hasActiveInvasions() || mBoard.invasionToDefend(mId)) {
+        mImmigrationLimit = eILB::war;
+    } else if(mPopularity < 40) {
+        mImmigrationLimit = eILB::unpopularity;
+    } else if(prolongedNoFood) {
         mImmigrationLimit = eILB::lackOfFood;
     } else if(drachmas < 0 && date.year() - inDebtSince.year() > 1) {
         mImmigrationLimit = eILB::prolongedDebt;
@@ -212,6 +216,12 @@ void BoardCity::incTime(const int by) {
             break;
         case eILB::lackOfVacancies:
             mBoard.showTip(mId, eLanguage::zeusText(19, 111));
+            break;
+        case eILB::war:
+            mBoard.showTip(mId, eLanguage::zeusText(19, 110));
+            break;
+        case eILB::unpopularity:
+            mBoard.showTip(mId, eLanguage::zeusText(19, 125));
             break;
         case eILB::none:
             mBoard.showTip(mId, eLanguage::zeusText(19, 124));

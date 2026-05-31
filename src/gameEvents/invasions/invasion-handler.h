@@ -141,6 +141,9 @@ private:
     eGeneralState mGState;
 
     int mWait = 0;
+    int mComebackTimeout = 0;
+    int mStallTime = 0;
+    int mLastSs = -1;
 
     int mInfantryLeft = 0;
     int mCavalryLeft = 0;

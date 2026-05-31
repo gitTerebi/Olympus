@@ -103,7 +103,8 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
     }
     std::string msg;
     const auto sh = dynamic_cast<SmallHouse*>(house);
-    if(sh && (sh->devolveDelay() > 0 || sh->evictDelay() > 0 || sh->pendingEvict() > 0)) {
+    if(sh && miss != eHouseMissing::nothing &&
+       (sh->devolveDelay() > 0 || sh->evictDelay() > 0)) {
         msg = "This house is devolving. It needs ";
         switch(miss) {
         case eHouseMissing::food:
@@ -220,9 +221,12 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
     auto occstr = std::to_string(house->people()) + " " +
                   eLanguage::zeusText(127, 15);
     const int vacs = house->vacancies();
-    if(vacs) {
+    if(vacs > 0) {
         occstr += "  " + eLanguage::zeusText(127, 17) + " " +
                   std::to_string(vacs);
+    } else if(vacs < 0) {
+        occstr += "  " + std::to_string(-vacs) + " " +
+                  eLanguage::zeusText(127, 16);
     }
     occ->setText(occstr);
     occ->fitContent();

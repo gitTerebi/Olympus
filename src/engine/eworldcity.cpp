@@ -450,6 +450,8 @@ void eWorldCity::nextMonth(GameBoard *const board)
     eInvasionEvent::tryCreateCityInvasion(*this, *board);
     if (mBribeMonthsAgo >= 0)
         mBribeMonthsAgo++;
+    if (mLastInvasionEndMonthsAgo >= 0)
+        mLastInvasionEndMonthsAgo++;
 
     const auto diff = board->personPlayerDifficulty();
     double mult;
@@ -811,6 +813,7 @@ void eWorldCity::serialize(eSaveArchive &ar, eWorldBoard *board)
     ar.field("payTributeType", mPayTributeType);
     ar.field("payTributeCount", mPayTributeCount);
     ar.field("bribeMonthsAgo", mBribeMonthsAgo);
+    ar.field("lastInvasionEndMonthsAgo", mLastInvasionEndMonthsAgo, -1);
 
     if (ar.reading()) {
         if (mNameString > -1 && mNameString < 82) {
