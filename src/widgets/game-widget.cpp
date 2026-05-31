@@ -754,10 +754,21 @@ void GameWidget::initialize()
     setTileSize(sizes.front());
 }
 
+void GameWidget::screenToWorld(const int sx, const int sy,
+                               int &wx, int &wy) const
+{
+    const double cx = width()  / 2.0;
+    const double cy = height() / 2.0;
+    wx = std::round((sx - cx) / mZoom + cx);
+    wy = std::round((sy - cy) / mZoom + cy);
+}
+
 void GameWidget::pixToId(const int pixX, const int pixY,
                           int &idX, int &idY) const
 {
-    ::pixToId(pixX, pixY, idX, idY, mScale, mTileW, mTileH, mDX, mDY, mMaxAltitude, mMinAltitude, mBoard);
+    int wx, wy;
+    screenToWorld(pixX, pixY, wx, wy);
+    ::pixToId(wx, wy, idX, idY, mScale, mTileW, mTileH, mDX, mDY, mMaxAltitude, mMinAltitude, mBoard);
 }
 
 void GameWidget::setViewMode(const eViewMode m)
@@ -1386,6 +1397,11 @@ void GameWidget::updateTipPositions()
     {
         mSpeedLabel->setY(y);
         y += mSpeedLabel->height() + 2 * p;
+    }
+    if (mZoomLabel && mZoomLabel->visible())
+    {
+        mZoomLabel->setY(y);
+        y += mZoomLabel->height() + 2 * p;
     }
     for (const auto &tip : mTips)
     {
@@ -2571,8 +2587,8 @@ bool GameWidget::mouseMoveEvent(const eMouseEvent &e)
     }
     if (middle || (right && mRightPanning))
     {
-        const int dx = e.x() - mLastX;
-        const int dy = e.y() - mLastY;
+        const int dx = std::round((e.x() - mLastX) / mZoom);
+        const int dy = std::round((e.y() - mLastY) / mZoom);
         setDX(mDX + dx);
         setDY(mDY + dy);
         updateMinimap();
@@ -2818,64 +2834,35 @@ bool GameWidget::mouseWheelEvent(const eMouseWheelEvent &e)
 {
     if (mLocked)
         return true;
-    const bool wheel = std::abs(mWheel) > 0.5;
-    if (!wheel)
-    {
-        mWheel += e.dy();
-        return true;
-    }
-    mWheel = 0;
-    const auto &sett = window()->settings();
-    std::vector<eTileSize> sizes;
-    int currSize = 0;
-    if (sett.fTinyTextures)
-    {
-        sizes.push_back(eTileSize::s15);
-        if (mTileSize == eTileSize::s15)
-        {
-            currSize = sizes.size() - 1;
+    const double delta = e.dy() > 0 ? 0.1 : -0.1;
+    const double newZoom = std::clamp(std::round((mZoom + delta) * 10.0) / 10.0, 1.0, 4.0);
+    if (newZoom != mZoom) {
+        const double cx = width()  / 2.0;
+        const double cy = height() / 2.0;
+        const double worldX = (e.x() - cx) / mZoom - mDX;
+        const double worldY = (e.y() - cy) / mZoom - mDY;
+        mZoom = newZoom;
+        mDX = std::round((e.x() - cx) / mZoom - worldX);
+        mDY = std::round((e.y() - cy) / mZoom - worldY);
+        clampViewBox();
+        updateMinimap();
+
+        const int pct = std::round(mZoom * 100.0);
+        const auto text = std::string("  Zoom ") + std::to_string(pct) + "%  ";
+        if (!mZoomLabel) {
+            mZoomLabel = new eFramedLabel(text, window());
+            mZoomLabel->setType(eFrameType::message);
+            mZoomLabel->setFontSizeS();
+            mZoomLabel->setPaddingXL();
+            addWidget(mZoomLabel);
+        } else {
+            mZoomLabel->setText(text);
         }
-    }
-    if (sett.fSmallTextures)
-    {
-        sizes.push_back(eTileSize::s30);
-        if (mTileSize == eTileSize::s30)
-        {
-            currSize = sizes.size() - 1;
-        }
-    }
-    if (sett.fMediumTextures)
-    {
-        sizes.push_back(eTileSize::s45);
-        if (mTileSize == eTileSize::s45)
-        {
-            currSize = sizes.size() - 1;
-        }
-    }
-    if (sett.fLargeTextures)
-    {
-        sizes.push_back(eTileSize::s60);
-        if (mTileSize == eTileSize::s60)
-        {
-            currSize = sizes.size() - 1;
-        }
-    }
-    const int sizesC = sizes.size();
-    if (e.dy() > 0)
-    {
-        const int newSize = currSize + 1;
-        if (newSize < sizesC)
-        {
-            setTileSize(sizes[newSize]);
-        }
-    }
-    else
-    {
-        const int newSize = currSize - 1;
-        if (newSize >= 0)
-        {
-            setTileSize(sizes[newSize]);
-        }
+        mZoomLabel->fitContent();
+        const int vw = width() - mGm->width();
+        mZoomLabel->setX((vw - mZoomLabel->width()) / 2);
+        mZoomLabelHideFrame = mFrame + 120;
+        updateTipPositions();
     }
     return true;
 }
@@ -2883,6 +2870,7 @@ bool GameWidget::mouseWheelEvent(const eMouseWheelEvent &e)
 void GameWidget::renderTargetsReset()
 {
     eWidget::renderTargetsReset();
+    mWorldTex.reset();
     initializeNumbers();
 }
 

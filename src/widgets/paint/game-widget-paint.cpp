@@ -63,6 +63,17 @@ private:
 
 void GameWidget::paintEvent(ePainter &p)
 {
+    auto* r = p.renderer();
+    const int w = width();
+    const int h = height();
+    if (!mWorldTex || mWorldTex->width() != w || mWorldTex->height() != h) {
+        mWorldTex = std::make_shared<eTexture>();
+        mWorldTex->create(r, w, h);
+    }
+    mWorldTex->setAsRenderTarget(r);
+    SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+    SDL_RenderClear(r);
+
     if (mUpdateViewedTileScheduled)
     {
         mUpdateViewedTileScheduled = false;
@@ -203,6 +214,12 @@ void GameWidget::paintEvent(ePainter &p)
     {
         mSpeedLabel->deleteLater();
         mSpeedLabel = nullptr;
+    }
+    if (mZoomLabel && mFrame > mZoomLabelHideFrame)
+    {
+        mZoomLabel->deleteLater();
+        mZoomLabel = nullptr;
+        updateTipPositions();
     }
     if (mAnimFrame != prevAnimFrame)
         mBoard->incFrame();
@@ -5007,4 +5024,14 @@ void GameWidget::paintEvent(ePainter &p)
         SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
         SDL_RenderDrawRect(r, &box);
     }
+
+    SDL_SetRenderTarget(r, nullptr);
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+    const int srcW = std::round(w / mZoom);
+    const int srcH = std::round(h / mZoom);
+    const int srcX = (w - srcW) / 2;
+    const int srcY = (h - srcH) / 2;
+    const SDL_Rect srcRect{srcX, srcY, srcW, srcH};
+    const SDL_Rect dstRect{0, 0, w, h};
+    SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
 }
