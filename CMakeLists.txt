@@ -673,6 +673,8 @@ set(SOURCES
      src/widgets/egamewidgetevents.cpp
     src/widgets/game-widget-info.cpp
     src/widgets/paint/build-preview-paint.cpp
+    src/widgets/paint/road-band-paint.cpp
+    src/widgets/paint/paint-build-preview.cpp
     src/widgets/paint/draw-xy.cpp
     src/widgets/paint/draw/draw-column.cpp
     src/widgets/paint/draw/dont-draw-appeal.cpp

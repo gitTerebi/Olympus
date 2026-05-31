@@ -10,6 +10,8 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 
 #include <chrono>
 #include <deque>
+#include <map>
+#include <memory>
 
 #include "emainwidget.h"
 #include "eframedlabel.h"
@@ -36,6 +38,7 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 
 #include "engine/eeventdata.h"
 
+class eWalkableObject;
 class eTerrainEditMenu;
 class eDomesticatedAnimal;
 struct eSanctBlueprint;
@@ -210,6 +213,38 @@ private:
                                  eBuilding* building,
                                  eBuildingRenderer* renderer,
                                  int tx, int ty);
+    void paintBuildPreview(eTilePainter& tp,
+                           ePainter& painter,
+                           const eTerrainTextures& trrTexs,
+                           const eBuildingTextures& builTexs,
+                           ePlayerId ppid,
+                           eBuildingMode mode,
+                           eWorldDirection dir,
+                           int boardw, int boardh,
+                           bool bridgeValid,
+                           const std::vector<eTile*>& bridgetTs,
+                           int sMinX, int sMaxX, int sMinY, int sMaxY);
+
+    using eRoadPreviewPath = std::map<eTile*, int>;
+
+    void drawRoadFootprint(eTile* tile, SDL_Color color,
+                           eTilePainter& tp,
+                           const eTerrainTextures& trrTexs);
+    static bool isRoadBandTile(eTile* tile);
+    void addRoamerPreview(eTile* start, eRoadPreviewPath& path,
+                         const std::shared_ptr<eWalkableObject>& walkable);
+    static void addPathBands(const std::vector<eTile*>& tiles,
+                             eRoadPreviewPath& path);
+    static eTile* firstPathRoad(const std::vector<eTile*>& tiles);
+    static eTile* lastPathRoad(const std::vector<eTile*>& tiles);
+    static SDL_Color roadBandColor(int freq);
+    void drawRoadBandTile(eTile* tile, eTile* start, eTile* ret,
+                          const eRoadPreviewPath& path,
+                          eTilePainter& tp,
+                          const eTerrainTextures& trrTexs);
+    void drawRoadBands(const std::vector<eTile*>& roads,
+                       eTilePainter& tp,
+                       const eTerrainTextures& trrTexs);
 
     void createGameMenu();
     void showGoals();
