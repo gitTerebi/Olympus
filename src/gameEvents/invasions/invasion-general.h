@@ -34,6 +34,7 @@ struct eGeneralState {
     int fMoveWait = 0;              // 7-day pause after a repositioning move
     int fDefendHold = 0;            // minimum quiet time before leaving defense
     int fDefendEnemyWait = 0;       // hard cap on "enemy still near" stall after hold drains
+    int fRepinWait = 0;             // countdown to re-issue pinOnTarget during invade hold
 };
 
 class InvasionGeneral {
