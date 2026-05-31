@@ -759,9 +759,8 @@ void eInvasionHandler::incTime(const int by) {
         bool allArrived = true;
         for(const auto& b : mBanners) {
             if(b->count() <= 0) continue;
-            if(b->tile() != mTile || !b->stationary()) {
+            if(!b->stationary()) {
                 allArrived = false;
-                b->moveTo(mTile->x(), mTile->y());
             }
         }
         if(!allArrived) return;

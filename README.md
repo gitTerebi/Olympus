@@ -7,7 +7,13 @@ https://github.com/MaurycyLiebner/eZeus
 
 Based on their work I have been using AI tools to code many personal UI improvements I wanted to see happen.
 
-Hotkeys, smooth map scroll, 60FPS mode etc.
+Hotkeys, smooth map scroll, 240FPS mode etc.
+
+The goal of this project is to get vanilla systems in place as much as possible.
+
+Many functions and features still need to be added to get it to parity with the vanilla game.
+
+Its entirely playable though, but some systems are still missing or not reproduced 100% faithfully.
 
 ## Changes
 
