@@ -159,6 +159,7 @@ static void rebuildPierFresh(std::vector<stdsptr<eBuilding>> &buildings,
     eResourceType imports, exports, empty, cartGet, cartAccept, cartDontAccept;
     oldPost->getOrders(imports, exports, empty, cartGet,
                        cartAccept, cartDontAccept);
+    const auto savedMaxCount = oldPost->maxCount();
 
     // TradePost::erase also erases its unpack building (the pier), so a
     // single call tears the whole pair down.
@@ -184,6 +185,7 @@ static void rebuildPierFresh(std::vector<stdsptr<eBuilding>> &buildings,
     pier->setTradePost(post.get());
     post->setOrders(imports, exports, empty, cartGet,
                     cartAccept, cartDontAccept);
+    post->setMaxCount(savedMaxCount);
 
     buildings.push_back(pier);
     buildings.push_back(post);

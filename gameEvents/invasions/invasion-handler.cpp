@@ -73,8 +73,8 @@ eInvasionHandler::eInvasionHandler(GameBoard& board,
     mBoard(board), mTargetCity(targetCity), mCity(city), mEvent(event) {
     board.addInvasionHandler(targetCity, this);
     if(event) event->addInvasionHandler(this);
-    // Test mode: always raid food buildings first.
-    mAttackType = InvasionAttackType::food;
+    mAttackType = static_cast<InvasionAttackType>(
+            rand() % static_cast<int>(InvasionAttackType::count));
 }
 
 eInvasionHandler::~eInvasionHandler() {
