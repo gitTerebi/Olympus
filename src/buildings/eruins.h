@@ -16,7 +16,7 @@ public:
     void setWasType(const eBuildingType type) { mWasType = type; }
     eBuildingType wasType() const { return mWasType; }
 
-    void setOrigin(int x, int y, int w, int h) { mOriginX=x; mOriginY=y; mOriginW=w; mOriginH=h; }
+    void setOrigin(int x, int y, int w, int h);
     int originX() const { return mOriginX; }
     int originY() const { return mOriginY; }
     int originW() const { return mOriginW; }

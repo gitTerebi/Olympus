@@ -8,6 +8,13 @@ eRuins::eRuins(GameBoard& board, const eCityId cid) :
 
 }
 
+void eRuins::setOrigin(const int x, const int y, const int w, const int h) {
+    mOriginX = x;
+    mOriginY = y;
+    mOriginW = w;
+    mOriginH = h;
+}
+
 stdsptr<eTexture> eRuins::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::terrain();

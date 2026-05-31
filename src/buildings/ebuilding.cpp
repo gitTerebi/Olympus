@@ -23,6 +23,9 @@
 #include "fileIO/esavearchive.h"
 #include "fileIO/ewritestream.h"
 
+#include <algorithm>
+#include <limits>
+
 eBuilding::eBuilding(GameBoard& board,
                      const eBuildingType type,
                      const int sw, const int sh,
@@ -2506,6 +2509,35 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
     return std::vector<uint8_t>(mem.begin(), mem.end());
 }
 
+struct sByteVecRef {
+    std::vector<uint8_t>& fVec;
+};
+
+static eWriteStream& operator<<(eWriteStream& dst, const sByteVecRef& ref) {
+    const int32_t sz = static_cast<int32_t>(ref.fVec.size());
+    dst.write(&sz, sizeof(sz));
+    if(sz > 0) dst.write(ref.fVec.data(), sz);
+    return dst;
+}
+
+static eReadStream& operator>>(eReadStream& src, sByteVecRef& ref) {
+    int32_t sz;
+    src.read(&sz, sizeof(sz));
+    ref.fVec.clear();
+    if(sz < 0) return src;
+    if(sz > 0) {
+        ref.fVec.resize(sz);
+        src.read(ref.fVec.data(), sz);
+    }
+    return src;
+}
+
+static void byteVecField(eSaveArchive& ar, const char* const name,
+                         std::vector<uint8_t>& v) {
+    sByteVecRef ref{v};
+    ar.field(name, ref);
+}
+
 static std::vector<uint8_t> sBuildingRestoreBundle(
         const std::vector<eBuilding*>& buildings,
         GameBoard& board) {
@@ -2528,18 +2560,15 @@ static std::vector<uint8_t> sBuildingRestoreBundle(
     }
 
     dst.writeFormat("eZeus.ez2");
-    eSaveArchive ar(dst);
-    int marker = -1;
-    ar.field("bundleMarker", marker);
-    ar.field("buildingCount", id);
-    for(const auto b : buildings) {
-        if(!b) continue;
-        const auto snapshot = sBuildingSnapshot(b);
-        int snapshotSize = snapshot.size();
-        ar.field("snapshotSize", snapshotSize);
-        for(const auto byte : snapshot) {
-            int snapshotByte = byte;
-            ar.field("snapshotByte", snapshotByte);
+    {
+        eSaveArchive ar(dst);
+        int marker = -1;
+        ar.field("bundleMarker", marker);
+        ar.field("buildingCount", id);
+        for(const auto b : buildings) {
+            if(!b) continue;
+            auto snapshot = sBuildingSnapshot(b);
+            byteVecField(ar, "buildingSnapshot", snapshot);
         }
     }
 
@@ -2620,8 +2649,25 @@ void eBuilding::collapse() {
 
     erase();
     if(noRuins) return;
-    const int ox = mTileRect.x, oy = mTileRect.y, ow = mTileRect.w, oh = mTileRect.h;
+    int minX = std::numeric_limits<int>::max();
+    int minY = std::numeric_limits<int>::max();
+    int maxX = std::numeric_limits<int>::min();
+    int maxY = std::numeric_limits<int>::min();
     for(const auto t : tiles) {
+        if(!t) continue;
+        minX = std::min(minX, t->x());
+        minY = std::min(minY, t->y());
+        maxX = std::max(maxX, t->x());
+        maxY = std::max(maxY, t->y());
+    }
+    if(minX == std::numeric_limits<int>::max()) return;
+
+    const int ox = minX;
+    const int oy = minY;
+    const int ow = maxX - minX + 1;
+    const int oh = maxY - minY + 1;
+    for(const auto t : tiles) {
+        if(!t) continue;
         const auto terrain = t->terrain();
         const bool r = static_cast<bool>(eTerrain::buildable & terrain);
         if(!r) continue;

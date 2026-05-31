@@ -18,9 +18,11 @@
 #include "fileIO/esavearchive.h"
 
 #include <algorithm>
+#include <cstdint>
 
 static const std::set<eBuildingType> sRepairableTypes = {
     eBuildingType::commonHouse,
+    eBuildingType::eliteHousing,
     eBuildingType::maintenanceOffice,
     eBuildingType::wheatFarm,
     eBuildingType::carrotsFarm,
@@ -192,6 +194,43 @@ static void rebuildPierFresh(std::vector<stdsptr<eBuilding>> &buildings,
     buildings.push_back(post);
 }
 
+struct sRepairByteVecRef
+{
+    std::vector<uint8_t> &fVec;
+};
+
+static eWriteStream &operator<<(eWriteStream &dst,
+                                const sRepairByteVecRef &ref)
+{
+    const int32_t sz = static_cast<int32_t>(ref.fVec.size());
+    dst.write(&sz, sizeof(sz));
+    if (sz > 0)
+        dst.write(ref.fVec.data(), sz);
+    return dst;
+}
+
+static eReadStream &operator>>(eReadStream &src, sRepairByteVecRef &ref)
+{
+    int32_t sz;
+    src.read(&sz, sizeof(sz));
+    ref.fVec.clear();
+    if (sz < 0)
+        return src;
+    if (sz > 0)
+    {
+        ref.fVec.resize(sz);
+        src.read(ref.fVec.data(), sz);
+    }
+    return src;
+}
+
+static bool byteVecField(eSaveArchive &ar, const char *const name,
+                         std::vector<uint8_t> &v)
+{
+    sRepairByteVecRef ref{v};
+    return ar.field(name, ref);
+}
+
 static std::vector<stdsptr<eBuilding>> restoreFromBundle(
     const std::vector<uint8_t> &data, GameBoard &board)
 {
@@ -226,35 +265,34 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
         {
             int n;
             ar.field("buildingCount", n);
-            printf("[repair] bundle: %d buildings, bundle total %zu bytes\n", n, data.size());
             for (int i = 0; i < n; i++)
             {
-                int size;
-                ar.field("snapshotSize", size);
-                printf("[repair] building %d snapshot size %d\n", i, size);
-                if (size == 0 || size > (int)data.size())
-                    continue;
                 std::vector<uint8_t> snapshot;
-                snapshot.reserve(size);
-                for (size_t j = 0; j < size; j++)
+                byteVecField(ar, "buildingSnapshot", snapshot);
+                const int size = static_cast<int>(snapshot.size());
+                if (size == 0 || size > (int)data.size())
                 {
-                    int byte;
-                    ar.field("snapshotByte", byte);
-                    snapshot.push_back(static_cast<uint8_t>(byte));
+                    continue;
                 }
                 eReadSource bs(const_cast<void *>(
                     static_cast<const void *>(snapshot.data())), snapshot.size());
                 eReadStream bsrc(bs);
                 bsrc.readFormat();
                 eBuildingType type;
-                eSaveArchive bar(bsrc);
-                bar.field("buildingType", type);
-                const auto b = BuildingArchive::load(board, type, bar);
+                stdsptr<eBuilding> b;
+                {
+                    eSaveArchive bar(bsrc);
+                    bar.field("buildingType", type);
+                    b = BuildingArchive::load(board, type, bar);
+                }
                 if (!b)
+                {
                     continue;
+                }
                 buildings.push_back(b);
             }
         }
+        ar.stopReadingFields();
     }
     src.handlePostFuncs();
     for (const auto &b : buildings)
@@ -353,11 +391,11 @@ static bool addBundleRuins(GameBoard &board, sRepairGroup &g)
     if (!g.originRuins || !g.originRuins->hasRestoreBundle())
         return true;
     const auto &bundle = g.originRuins->restoreBundle();
-    for (int x = 0; x < board.width(); x++)
+    for (int dx = 0; dx < board.width(); dx++)
     {
-        for (int y = 0; y < board.height(); y++)
+        for (int dy = 0; dy < board.height(); dy++)
         {
-            const auto tile = board.tile(x, y);
+            const auto tile = board.dtile(dx, dy);
             if (!tile)
                 continue;
             const auto b = tile->underBuilding();
@@ -376,6 +414,25 @@ static bool addBundleRuins(GameBoard &board, sRepairGroup &g)
     return true;
 }
 
+static bool hasUsableOrigin(GameBoard &board,
+                            const int ox, const int oy,
+                            const int ow, const int oh)
+{
+    if (ow < 1 || oh < 1)
+        return false;
+    for (int rx = ox; rx < ox + ow; rx++)
+        for (int ry = oy; ry < oy + oh; ry++)
+            if (board.tile(rx, ry))
+                return true;
+    return false;
+}
+
+static bool isHousingPlotType(const eBuildingType type)
+{
+    return type == eBuildingType::commonHouse ||
+           type == eBuildingType::eliteHousing;
+}
+
 static std::vector<sRepairGroup> collectRepairGroups(
     GameBoard &board, const ePlayerId ppid,
     const int minX, const int minY,
@@ -383,6 +440,7 @@ static std::vector<sRepairGroup> collectRepairGroups(
 {
     std::vector<sRepairGroup> groups;
     std::set<std::tuple<int, int, int, int>> processed;
+    std::set<eRuins *> processedRuins;
     const auto diff = board.difficulty(ppid);
 
     for (int x = minX; x <= maxX; x++)
@@ -398,6 +456,8 @@ static std::vector<sRepairGroup> collectRepairGroups(
             const auto ruins = static_cast<eRuins *>(b);
             if (ruins->isOnFire())
                 continue;
+            if (processedRuins.count(ruins))
+                continue;
             const auto wasType = ruins->wasType();
             if (!sRepairableTypes.count(wasType))
                 continue;
@@ -406,6 +466,57 @@ static std::vector<sRepairGroup> collectRepairGroups(
             const int oy = ruins->originY();
             const int ow = ruins->originW();
             const int oh = ruins->originH();
+            const bool badOrigin = !hasUsableOrigin(board, ox, oy, ow, oh);
+            if (badOrigin && ruins->hasRestoreBundle())
+            {
+                sRepairGroup g;
+                g.wasType = wasType;
+                g.originRuins = ruins;
+                g.ox = 1000000;
+                g.oy = 1000000;
+                int right = -1;
+                int bottom = -1;
+                const auto &bundle = ruins->restoreBundle();
+                bool canRepair = true;
+                for (int dx = 0; dx < board.width(); dx++)
+                {
+                    for (int dy = 0; dy < board.height(); dy++)
+                    {
+                        const auto bt = board.dtile(dx, dy);
+                        if (!bt)
+                            continue;
+                        const auto bb = bt->underBuilding();
+                        if (!bb || bb->type() != eBuildingType::ruins)
+                            continue;
+                        const auto br = static_cast<eRuins *>(bb);
+                        if (!br->hasRestoreBundle() ||
+                            br->restoreBundle() != bundle)
+                            continue;
+                        if (br->isOnFire() || !bt->characters().empty())
+                        {
+                            canRepair = false;
+                            break;
+                        }
+                        processedRuins.insert(br);
+                        g.tiles.push_back(br);
+                        g.ox = std::min(g.ox, bt->x());
+                        g.oy = std::min(g.oy, bt->y());
+                        right = std::max(right, bt->x() + 1);
+                        bottom = std::max(bottom, bt->y() + 1);
+                    }
+                    if (!canRepair)
+                        break;
+                }
+                if (!canRepair || g.tiles.empty())
+                    continue;
+                g.ow = right - g.ox;
+                g.oh = bottom - g.oy;
+                g.cost = DifficultyHelpers::buildingCost(diff, wasType) * 1.10;
+                groups.push_back(std::move(g));
+                continue;
+            }
+            if (badOrigin)
+                continue;
             auto key = std::make_tuple(ox, oy, ow, oh);
             if (processed.count(key))
                 continue;
@@ -439,7 +550,9 @@ static std::vector<sRepairGroup> collectRepairGroups(
                         const auto terrain = rt->terrain();
                         const bool buildable = static_cast<bool>(eTerrain::buildable & terrain);
                         if (!buildable)
+                        {
                             canRepair = false;
+                        }
                         continue;
                     }
                     if (rb->type() != eBuildingType::ruins)
@@ -459,13 +572,14 @@ static std::vector<sRepairGroup> collectRepairGroups(
                         break;
                     }
                     g.tiles.push_back(rr);
+                    processedRuins.insert(rr);
                     if (rr->hasRestoreBundle())
                         g.originRuins = rr;
                 }
             }
             if (!canRepair || g.tiles.empty())
                 continue;
-            if (wasType != eBuildingType::commonHouse &&
+            if (!isHousingPlotType(wasType) &&
                 (!g.originRuins || !g.originRuins->hasRestoreBundle()))
                 continue;
             canRepair = addBundleRuins(board, g);
@@ -511,16 +625,28 @@ void handleRepair(GameBoard &board, GameWidget *const widget,
                 if (hasUnit)
                     continue;
 
-                if (g.wasType == eBuildingType::commonHouse)
+                if (isHousingPlotType(g.wasType))
                 {
                     for (auto rr : g.tiles)
                         rr->erase();
                     const auto cid2 = board.tile(g.ox, g.oy) ? board.tile(g.ox, g.oy)->cityId() : cid;
-                    board.buildBase(g.ox, g.oy, g.ox + g.ow - 1, g.oy + g.oh - 1, [&board, cid2]()
-                                    { return e::make_shared<SmallHouse>(board, cid2); }, ppid, cid2, true, false, true);
+                    if (g.wasType == eBuildingType::eliteHousing)
+                    {
+                        board.buildBase(g.ox, g.oy, g.ox + g.ow - 1, g.oy + g.oh - 1, [&board, cid2]()
+                                        { return e::make_shared<EliteHousing>(board, cid2); }, ppid, cid2, true, false, true);
+                    }
+                    else
+                    {
+                        board.buildBase(g.ox, g.oy, g.ox + g.ow - 1, g.oy + g.oh - 1, [&board, cid2]()
+                                        { return e::make_shared<SmallHouse>(board, cid2); }, ppid, cid2, true, false, true);
+                    }
                 }
                 else if (g.originRuins && g.originRuins->hasRestoreBundle())
                 {
+                    if (!hasUsableOrigin(board, g.ox, g.oy, g.ow, g.oh))
+                    {
+                        continue;
+                    }
                     const auto bundle = g.originRuins->restoreBundle();
                     for (auto rr : g.tiles)
                         rr->erase();

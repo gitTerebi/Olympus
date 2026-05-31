@@ -246,8 +246,9 @@ void PopulationDataWidget::paintEvent(ePainter& p) {
             const bool hasReason = !ilrtxt1.empty() ||
                                    !ilrtxt2.empty() ||
                                    !ilrtxt3.empty();
-            mImiLimitedW->setVisible(hasReason &&
-                                     (a <= 0 || war));
+            const bool showLimited = hasReason && (a <= 0 || war);
+            mImiLimitedW->setVisible(showLimited);
+            mNewcomersW->setVisible(a > 0 && !showLimited);
             mImiLimitedW->setY(
                 mPeopleDirectionSeparator->y() +
                 mPeopleDirectionSeparator->height() + pp);

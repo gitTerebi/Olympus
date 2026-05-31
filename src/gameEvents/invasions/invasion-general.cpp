@@ -24,7 +24,6 @@ bool drainWait(int& counter, const int by) {
 }
 
 const int defendHoldMs = 3000;
-const int stallMaxWait = 7*eNumbers::sDayLength;
 
 eTile* bannerCenterTile(GameBoard& board,
                         const std::vector<SoldierBanner*>& banners) {
@@ -58,17 +57,6 @@ InvasionGeneral::InvasionGeneral(GameBoard& board,
     mInvadingCity(invadingCity),
     mAttackType(attackType) {}
 
-static const char* phaseName(eGeneralPhase p) {
-    switch(p) {
-    case eGeneralPhase::spread:  return "spread";
-    case eGeneralPhase::wait:    return "wait";
-    case eGeneralPhase::march:   return "march";
-    case eGeneralPhase::invade:  return "invade";
-    case eGeneralPhase::done:    return "done";
-    case eGeneralPhase::defend:  return "defend";
-    default:                     return "?";
-    }
-}
 
 bool InvasionGeneral::advance(eGeneralState& s,
                               eTile* const landingTile,
@@ -86,16 +74,6 @@ bool InvasionGeneral::advance(eGeneralState& s,
     }
     if(ss == 0) return false; // handler handles a wiped force
 
-    static eGeneralPhase sLastPhase = eGeneralPhase::spread;
-    if(s.fPhase != sLastPhase) {
-        sLastPhase = s.fPhase;
-        printf("[invasion-general] phase->%s ss=%d cur=%d,%d target=%d,%d\n",
-               phaseName(s.fPhase), ss,
-               s.fCurrentTile ? s.fCurrentTile->x() : -1,
-               s.fCurrentTile ? s.fCurrentTile->y() : -1,
-               s.fTargetTile ? s.fTargetTile->x() : -1,
-               s.fTargetTile ? s.fTargetTile->y() : -1);
-    }
 
     // Defend is a latched FSM state. Once inside, ignore fresh hit pings; the
     // state exits only after the hold timer drains and nearby enemies clear.
@@ -120,11 +98,8 @@ bool InvasionGeneral::advance(eGeneralState& s,
             if(s.fDefendEnemyWait < 10000) {
                 return false;
             }
-            printf("[invasion-general] defend: force-exiting after enemy-near timeout -> %s\n",
-                   phaseName(s.fPhaseBeforeDefend));
         }
         s.fDefendEnemyWait = 0;
-        printf("[invasion-general] defend: exiting -> %s\n", phaseName(s.fPhaseBeforeDefend));
         s.fPhase = s.fPhaseBeforeDefend;
         s.fWait = 0;
         return false;
@@ -156,10 +131,6 @@ bool InvasionGeneral::advance(eGeneralState& s,
         }
         if(fromTile) {
             s.fCurrentTile = attackTile;
-            printf("[invasion-move] defend from=%d,%d to=%d,%d banners=%d\n",
-                   fromTile->x(), fromTile->y(),
-                   attackTile->x(), attackTile->y(),
-                   static_cast<int>(banners.size()));
             int facing, lineDX, lineDY;
             eFormationFacing::facingAndLineToward(
                 attackTile->x() - fromTile->x(),
@@ -202,11 +173,6 @@ bool InvasionGeneral::advance(eGeneralState& s,
         return false;
     }
     if(wait > 0) s.fWait -= wait; else s.fWait = 0;
-    printf("[invasion-general] cycle-gate passed phase=%s ss=%d target=%d,%d targetValid=%s\n",
-           phaseName(s.fPhase), ss,
-           s.fTargetTile ? s.fTargetTile->x() : -1,
-           s.fTargetTile ? s.fTargetTile->y() : -1,
-           generalTargetValid(s) ? "yes" : "no");
 
     switch(s.fPhase) {
     case eGeneralPhase::spread:
@@ -245,14 +211,13 @@ bool InvasionGeneral::advance(eGeneralState& s,
     } break;
     case eGeneralPhase::invade: {
         if(generalTargetValid(s)) {
-            // Target still stands. Re-pin every 7 days so idle soldiers re-walk
-            // toward the building, bump the wall, and get clearObstacle assignments.
+            // Target still stands. Re-pin every stallMaxWait days: teleport
+            // soldiers to their slots then re-issue the pin so they re-walk
+            // toward the building and get clearObstacle assignments.
+            s.fRepinWait -= by;
             if(s.fRepinWait <= 0) {
                 s.fRepinWait = stallMaxWait;
-                printf("[invasion-general] invade: re-pinning on target\n");
                 pinOnTarget(s, banners);
-            } else {
-                s.fRepinWait -= 3000; // cycle-gate period
             }
         } else {
             // Building fell: route back through march to re-run the formation
@@ -320,12 +285,6 @@ eTile* InvasionGeneral::moveHalfwayToTarget(
     s.fMoveFrom = debugFrom ? debugFrom : from;
     s.fMoveTo = halfTile;
     s.fCurrentTile = halfTile;
-    printf("[invasion-move] half from=%d,%d to=%d,%d target=%d,%d banners=%d\n",
-           s.fMoveFrom ? s.fMoveFrom->x() : -1,
-           s.fMoveFrom ? s.fMoveFrom->y() : -1,
-           halfTile->x(), halfTile->y(),
-           target->x(), target->y(),
-           static_cast<int>(banners.size()));
     SoldierBanner::sPlaceFacing(banners, halfTile->x(), halfTile->y(), mBoard,
                                 facing, lineDX, lineDY, 3, 3);
     return halfTile;
@@ -352,11 +311,6 @@ void InvasionGeneral::moveToTarget(
     s.fMoveFrom = debugFrom ? debugFrom : from;
     s.fMoveTo = target;
     s.fCurrentTile = target;
-    printf("[invasion-move] target from=%d,%d to=%d,%d banners=%d\n",
-           s.fMoveFrom ? s.fMoveFrom->x() : -1,
-           s.fMoveFrom ? s.fMoveFrom->y() : -1,
-           target->x(), target->y(),
-           static_cast<int>(banners.size()));
     SoldierBanner::sPlaceFacing(banners, target->x(), target->y(), mBoard,
                                 facing, lineDX, lineDY, 3, 3);
 }

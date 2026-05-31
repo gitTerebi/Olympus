@@ -795,9 +795,9 @@ void eInvasionHandler::incTime(const int by) {
             }
         }
         if(mWait >= 2000) mWait = 0;
-        if(!allArrived && mComebackTimeout < 60000) return;
+        if(!allArrived && mComebackTimeout < stallMaxWait) return;
         if(!allArrived) {
-            for(const auto& b : mBanners) b->killAll();
+            for(const auto& b : mBanners) b->teleportSoldiersToPlaces();
         }
         for(const auto& b : mBanners) {
             if(b->count() > 0) b->goAbroad();
@@ -816,8 +816,13 @@ void eInvasionHandler::incTime(const int by) {
         }
         if(anyOnMap) {
             mWait += by;
-            if(mWait < 30000) return;
-            for(const auto& b : mBanners) b->killAll();
+            if(mWait < stallMaxWait) return;
+            mWait = 0;
+            for(const auto& b : mBanners) {
+                b->teleportSoldiersToPlaces();
+                if(b->count() > 0) b->goAbroad();
+            }
+            return;
         }
         if(mFireRaidOverOnExit) {
             eEventData ed(mTargetCity);
@@ -843,8 +848,7 @@ void eInvasionHandler::incTime(const int by) {
         mStallTime += by;
         if(mStallTime >= 120000) {
             mStallTime = 0;
-            printf("[invasion-handler] stall 2min ss=%d, teleporting soldiers to banner\n", ss);
-            for(const auto& b : mBanners) {
+for(const auto& b : mBanners) {
                 if(b->count() <= 0) continue;
                 const auto bt = b->tile();
                 if(!bt) continue;

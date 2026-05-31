@@ -57,6 +57,8 @@ private:
     bool followBannerDirector();
 
     int mGoToBannerCountdown = 0;
+    int mPathFailCount = 0;
+    eTile* mLastFailTile = nullptr;
     int mFollowDirectorCooldown = 0;
     bool mSpreadPeriod = false; // for spreading invasion forces
     bool mArrivedAtBanner = false;
