@@ -452,7 +452,7 @@ eBuilding* SoldierAction::sFindHome(const eCharacterType t,
             const auto bt = b->type();
             if(bt != eBuildingType::eliteHousing) return false;
             const auto eh = static_cast<EliteHousing*>(b);
-            if(eh->level() < 2) return false;
+            if(eh->level() < 1) return false;
             return true;
         };
      } else if(t == eCharacterType::horseman ||
@@ -461,7 +461,7 @@ eBuilding* SoldierAction::sFindHome(const eCharacterType t,
             const auto bt = b->type();
             if(bt != eBuildingType::eliteHousing) return false;
             const auto eh = static_cast<EliteHousing*>(b);
-            if(eh->level() < 4) return false;
+            if(eh->level() < 3) return false;
             return true;
         };
     } else if(t == eCharacterType::amazon) {
