@@ -2496,7 +2496,7 @@ static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
     std::vector<char> mem;
     eWriteTarget target(&mem);
     eWriteStream dst(target);
-    dst.writeFormat("eZeus");
+    dst.writeFormat("eZeus.ez2");
     {
         eSaveArchive ar(dst);
         auto btype = b->type();
@@ -2527,7 +2527,7 @@ static std::vector<uint8_t> sBuildingRestoreBundle(
         c->setIOID(-1);
     }
 
-    dst.writeFormat("eZeus");
+    dst.writeFormat("eZeus.ez2");
     eSaveArchive ar(dst);
     int marker = -1;
     ar.field("bundleMarker", marker);

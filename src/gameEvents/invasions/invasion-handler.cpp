@@ -63,6 +63,7 @@
 #include "engine/boardData/eheatmaptask.h"
 
 #include "eiteratesquare.h"
+#include "erand.h"
 
 const int boatSpawnPeriod = 825;
 const int spawnWaitDays = 14;
@@ -75,7 +76,7 @@ eInvasionHandler::eInvasionHandler(GameBoard& board,
     board.addInvasionHandler(targetCity, this);
     if(event) event->addInvasionHandler(this);
     mAttackType = static_cast<InvasionAttackType>(
-            rand() % static_cast<int>(InvasionAttackType::count));
+            eRand::rand() % static_cast<int>(InvasionAttackType::count));
 }
 
 eInvasionHandler::~eInvasionHandler() {

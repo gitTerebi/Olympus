@@ -34,8 +34,10 @@ class eReadSource {
 public:
     eReadSource(std::ifstream* const file) :
         fFile(file) {}
+    eReadSource(void* mem, size_t size) :
+        fMem(mem), fMemSize(size) {}
     eReadSource(void* mem) :
-        fMem(mem) {}
+        fMem(mem), fMemSize(SIZE_MAX) {}
 
     inline size_t read(void* const data, const size_t len) {
         assert(fFile || fMem);
@@ -43,7 +45,10 @@ public:
             fFile->read(static_cast<char*>(data), len);
             return len;
         } else if(fMem) {
-            std::memcpy(data, static_cast<char*>(fMem) + fMemPos, len);
+            const size_t avail = (fMemPos < fMemSize) ? (fMemSize - fMemPos) : 0;
+            const size_t actual = len < avail ? len : avail;
+            if(actual > 0) std::memcpy(data, static_cast<char*>(fMem) + fMemPos, actual);
+            if(actual < len) std::memset(static_cast<char*>(data) + actual, 0, len - actual);
             fMemPos += len;
             return len;
         }
@@ -66,6 +71,7 @@ private:
     std::ifstream* fFile = nullptr;
     void* fMem = nullptr;
     size_t fMemPos = 0;
+    size_t fMemSize = SIZE_MAX;
 };
 
 #define EREAD_TAG(name) (name "@" __FILE__ ":" EREAD_STRINGIFY(__LINE__))
