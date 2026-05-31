@@ -14,7 +14,7 @@
 #include "ecollectresourceaction.h"
 #include "edieaction.h"
 #include "fight-action.h"
-#include "efirefighteraction.h"
+#include "fire-fighter-action.h"
 #include "efollowaction.h"
 #include "dionysus-follow-action.h"
 #include "characters/gods/actions/egodattackaction.h"
@@ -90,7 +90,7 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
     case eCharActionType::fightAction:
         return e::make_shared<FightAction>(c);
     case eCharActionType::fireFighterAction:
-        return e::make_shared<eFireFighterAction>(c);
+        return e::make_shared<FireFighterAction>(c);
     case eCharActionType::followAction:
         return e::make_shared<eFollowAction>(c);
     case eCharActionType::dionysusFollowAction:

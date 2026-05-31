@@ -31,6 +31,9 @@ std::shared_ptr<eTexture> FireFighter::getTexture(const eTileSize size) const {
     case eCharacterActionType::stand: {
         return charTexs.fWalk[oid].getTexture(0);
     } break;
+    case eCharacterActionType::firefight: {
+        coll = &charTexs.fPutOut[oid];
+    } break;
     case eCharacterActionType::fight:
     case eCharacterActionType::collect:
     case eCharacterActionType::walk: {

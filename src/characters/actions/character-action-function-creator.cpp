@@ -5,7 +5,7 @@
 #include "eartisanaction.h"
 #include "ecarttransporteraction.h"
 #include "ecollectresourceaction.h"
-#include "efirefighteraction.h"
+#include "fire-fighter-action.h"
 #include "characters/gods/actions/god-action.h"
 #include "characters/gods/actions/egodattackaction.h"
 #include "characters/gods/actions/egodmonsteraction.h"
@@ -73,9 +73,9 @@ stdsptr<eCharActFunc> eCharActFunc::sCreate(
         return std::make_shared<eCRA_callCollectedActionFinish>(board);
 
     case eCharActFuncType::FFA_lookForFireFail:
-        return std::make_shared<eFFA_lookForFireFail>(board);
+        return std::make_shared<FFA_lookForFireFail>(board);
     case eCharActFuncType::FFA_putOutFireFinish:
-        return std::make_shared<eFFA_putOutFireFinish>(board);
+        return std::make_shared<FFA_putOutFireFinish>(board);
 
     case eCharActFuncType::GA_lookForRangeActionFinish:
         return std::make_shared<eGA_lookForRangeActionFinish>(board);

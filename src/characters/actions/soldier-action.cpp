@@ -482,6 +482,7 @@ void SoldierAction::goBackToBanner(const eOrientation facing,
 
     if(b->type() == eBannerType::enemy) {
         setOverwrittableAction(true);
+        c->setActionType(eCharacterActionType::walk);
     } else {
         const bool isPersonPlayer = board().cityIdToPlayerId(cityId()) == board().personPlayer();
         if(!mArrivedAtBanner && isPersonPlayer) c->setSpeed(105.0);

@@ -192,7 +192,7 @@ set(SOURCES
     src/characters/actions/combat-timing.cpp
     src/characters/actions/fight-action.cpp
     src/characters/actions/fighting-action.cpp
-    src/characters/actions/efirefighteraction.cpp
+    src/characters/actions/fire-fighter-action.cpp
     src/characters/actions/efollowaction.cpp
     src/characters/actions/egodactcreator.cpp
     src/characters/gods/actions/god-action.cpp

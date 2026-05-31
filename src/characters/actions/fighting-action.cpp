@@ -3,6 +3,8 @@
 #include <math.h>
 #include <cstdio>
 #include <algorithm>
+#include "erand.h"
+
 
 #include "characters/actions/ewaitaction.h"
 #include "characters/efightingcharacter.h"
@@ -185,6 +187,10 @@ bool AttackTarget::building() const {
     return mB;
 }
 
+eBuilding* AttackTarget::buildingPtr() const {
+    return mB.get();
+}
+
 double AttackTarget::absX() const {
     if(mC) return mC->absX();
     if(mB) {
@@ -339,7 +345,18 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                     const double atk = c->missileAttack() > 0 ? c->missileAttack() : c->attack();
                     const double dmg = atk - arm;
                     const double att = dmg > 0 ? dmg : 0.01;
-                    const bool d = mAttackTarget.takeDamage(att, c);
+                    bool d;
+                    if(const auto b = mAttackTarget.buildingPtr()) {
+                        d = b->takeDamage(att);
+                        if(!d && !b->isOnFire() &&
+                           b->hp() <= eBuilding::sMaxHp(b->type()) * 0.5 &&
+                           eRand::rand() % 2 == 0) {
+                            b->setOnFire(true);
+                            d = true;
+                        }
+                    } else {
+                        d = mAttackTarget.takeDamage(att, c);
+                    }
                     if(d) finishAttack = true;
                 }
             }
@@ -365,7 +382,18 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                 if(c->actionType() != eCharacterActionType::fight) {
                     c->setActionType(eCharacterActionType::fight);
                 }
-                const bool d = mAttackTarget.takeMeleeDamage(per, c);
+                bool d;
+                if(const auto b = mAttackTarget.buildingPtr()) {
+                    d = b->takeDamage(per);
+                    if(!d && !b->isOnFire() &&
+                       b->hp() <= eBuilding::sMaxHp(b->type()) * 0.5 &&
+                       eRand::rand() % 2 == 0) {
+                        b->setOnFire(true);
+                        d = true;
+                    }
+                } else {
+                    d = mAttackTarget.takeMeleeDamage(per, c);
+                }
                 if(d) finishAttack = true;
             }
         }
@@ -467,6 +495,8 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
             for(int j = -1; j <= 1; j++) {
                 const auto t = brd.tile(tx + i, ty + j);
                 if(!t) continue;
+                const auto ub = t->underBuilding();
+                if(ub && ub->isOnFire()) continue;
                 const bool r = attackBuilding(t, false);
                 if(r) return LookForEnemyState::attacking;
             }

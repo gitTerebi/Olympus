@@ -363,6 +363,7 @@ public:
     void setCityId(const eCityId cid) { mCityId = cid; }
 
     bool takeDamage(const double a);
+    double hp() const { return mHp; }
     bool dead() const;
 
     // Max/starting HP by type: fortifications tank, ordinary buildings fall fast.

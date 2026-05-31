@@ -193,7 +193,7 @@ SOURCES += \
         characters/actions/dionysus-follow-action.cpp \
         characters/actions/fight-action.cpp \
         characters/actions/fighting-action.cpp \
-        characters/actions/efirefighteraction.cpp \
+        characters/actions/fire-fighter-action.cpp \
         characters/actions/efollowaction.cpp \
         characters/actions/egodactcreator.cpp \
         characters/gods/actions/god-action.cpp \
@@ -906,7 +906,7 @@ HEADERS += \
     characters/actions/dionysus-follow-action.h \
     characters/actions/fight-action.h \
     characters/actions/fighting-action.h \
-    characters/actions/efirefighteraction.h \
+    characters/actions/fire-fighter-action.h \
     characters/actions/efollowaction.h \
     characters/gods/actions/god-action.h \
     characters/gods/actions/egodattackaction.h \
