@@ -2571,6 +2571,12 @@ void eBuilding::collapse() {
             tiles.insert(tiles.end(), rtiles.begin(), rtiles.end());
             restoreBuildings.push_back(r);
         }
+    } else if(const auto p = dynamic_cast<ePalace*>(this)) {
+        for(const auto pt : p->tiles()) {
+            const auto ptiles = pt->mUnderBuilding;
+            tiles.insert(tiles.end(), ptiles.begin(), ptiles.end());
+            restoreBuildings.push_back(pt);
+        }
     }
     auto& b = getBoard();
     const auto tp = type();

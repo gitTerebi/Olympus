@@ -976,7 +976,7 @@ void eSounds::playDieSound(eCharacter* const c) {
         break;
     case eCharacterType::greekRockThrower:
     case eCharacterType::rockThrower:
-        sInstance->mRockthrowerDie.playRandomSound(eSoundType::voice);
+        sInstance->mRockthrowerDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::boar:
         sInstance->mBoarDie.playRandomSound(eSoundType::voice);
@@ -1004,22 +1004,22 @@ void eSounds::playDieSound(eCharacter* const c) {
     case eCharacterType::greekHoplite:
     case eCharacterType::hoplite:
     case eCharacterType::hoplitePoseidon:
-        sInstance->mHopliteDie.playRandomSound(eSoundType::voice);
+        sInstance->mHopliteDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::persianHoplite:
-        sInstance->mPersianHopliteDie.playRandomSound(eSoundType::voice);
+        sInstance->mPersianHopliteDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::oceanidHoplite:
-        sInstance->mMerchantInfantryDie.playRandomSound(eSoundType::voice);
+        sInstance->mMerchantInfantryDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::egyptianHoplite:
-        sInstance->mEgyptianHopliteDie.playRandomSound(eSoundType::voice);
+        sInstance->mEgyptianHopliteDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::atlanteanHoplite:
-        sInstance->mAtlanteanHopliteDie.playRandomSound(eSoundType::voice);
+        sInstance->mAtlanteanHopliteDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::mayanHoplite:
-        sInstance->mMayanHopliteDie.playRandomSound(eSoundType::voice);
+        sInstance->mMayanHopliteDie.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::archer:
@@ -1054,20 +1054,20 @@ void eSounds::playDieSound(eCharacter* const c) {
         break;
 
     case eCharacterType::aresWarrior:
-        sInstance->mAresWarriorDie.playRandomSound(eSoundType::voice);
+        sInstance->mAresWarriorDie.playRandomSound(eSoundType::event);
         break;
 
     case eCharacterType::trojanHorseman:
-        sInstance->mTrojanHorseDie.playRandomSound(eSoundType::voice);
+        sInstance->mTrojanHorseDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::trojanSpearthrower:
-        sInstance->mTrojanSpearthrowerDie.playRandomSound(eSoundType::voice);
+        sInstance->mTrojanSpearthrowerDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::oceanidSpearthrower:
-        sInstance->mMerchantSpearDie.playRandomSound(eSoundType::voice);
+        sInstance->mMerchantSpearDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::trojanHoplite:
-        sInstance->mTrojanSwordDie.playRandomSound(eSoundType::voice);
+        sInstance->mTrojanSwordDie.playRandomSound(eSoundType::event);
         break;
     case eCharacterType::calydonianBoar:
         sInstance->mCalydonianBoar.playDie();
@@ -1121,7 +1121,7 @@ void eSounds::playDieSound(eCharacter* const c) {
         sInstance->mSatyr.playDie();
         break;
     default:
-        sInstance->mGenDie.playRandomSound(eSoundType::voice);
+        sInstance->mGenDie.playRandomSound(eSoundType::event);
         break;
     }
 }

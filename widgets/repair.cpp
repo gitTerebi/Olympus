@@ -94,6 +94,7 @@ static const std::set<eBuildingType> sRepairableTypes = {
     eBuildingType::stoneCircle,
     eBuildingType::commonAgora,
     eBuildingType::grandAgora,
+    eBuildingType::palace,
 };
 
 struct sRepairGroup

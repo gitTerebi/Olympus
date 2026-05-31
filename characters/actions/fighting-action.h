@@ -129,7 +129,6 @@ private:
     int mMeleeTime = 0;
 
     int mRangeAttack = 0;
-    int mBuildingAttack = 0;
 
     int mLookForEnemy = 0;
     int mAdjacencyCheck = 0;
