@@ -2,6 +2,7 @@
 
 #include "characters/actions/walkable/ewalkableobject.h"
 #include "engine/etile.h"
+#include "buildings/eroad.h"
 #include "enumbers.h"
 #include "evectorhelpers.h"
 #include "widgets/etilepainter.h"
@@ -32,7 +33,10 @@ void GameWidget::drawRoadFootprint(eTile* const tile, const SDL_Color color,
 bool GameWidget::isRoadBandTile(eTile* const tile)
 {
     if (!tile) return false;
-    return tile->hasRoad() || tile->underBuildingType() == eBuildingType::avenue;
+    if (tile->underBuildingType() == eBuildingType::avenue) return true;
+    if (!tile->hasRoad()) return false;
+    const auto r = static_cast<eRoad*>(tile->underBuilding());
+    return !r->underAgora();
 }
 
 void GameWidget::addRoamerPreview(eTile* const start,
@@ -49,8 +53,12 @@ void GameWidget::addRoamerPreview(eTile* const start,
              time < eNumbers::sPatrolerMaxDistance && tile;
              time++)
         {
-            auto& freq = path[tile];
-            freq = std::min(freq + 1, 8);
+            const bool agRoad = tile->hasRoad() &&
+                                static_cast<eRoad*>(tile->underBuilding())->underAgora();
+            if(!agRoad) {
+                auto& freq = path[tile];
+                freq = std::min(freq + 1, 8);
+            }
             const auto valid = [&](eTileBase* const t) {
                 const auto tt = static_cast<eTile*>(t);
                 return walkable->walkable(tt) &&
@@ -92,7 +100,7 @@ void GameWidget::addPathBands(const std::vector<eTile*>& tiles,
                               eRoadPreviewPath& path)
 {
     for (const auto tile : tiles) {
-        if (!isRoadBandTile(tile)) continue;
+if (!isRoadBandTile(tile)) continue;
         auto& freq = path[tile];
         freq = std::min(freq + 1, 8);
     }
@@ -129,7 +137,7 @@ void GameWidget::drawRoadBandTile(eTile* const tile,
 {
     if (!tile || !start) return;
     if (tile == start && tile == ret) {
-        drawRoadFootprint(tile, SDL_Color{255, 80, 255, 220}, tp, trrTexs);
+        drawRoadFootprint(tile, SDL_Color{80, 80, 255, 220}, tp, trrTexs);
         return;
     }
     if (tile == start) {

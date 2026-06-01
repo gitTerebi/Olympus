@@ -57,7 +57,7 @@ void eVendorCartAction::enterWaitAtHome() {
     clearTask();
     const auto b = building();
     const auto c = cart();
-    if(b && c) c->changeTile(b->centerTile());
+    if(b && c) c->changeTile(startTile() ? startTile() : b->centerTile());
     wait(kFindRetryWait);
 }
 
