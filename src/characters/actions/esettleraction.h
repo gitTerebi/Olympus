@@ -31,6 +31,7 @@ protected:
     int mNPeople = 0;
     int mInitialWait = 0;
     bool mNoHouses = false;
+    bool mEliteOnly = true;
     eSettlerActionStage mStage = eSettlerActionStage::idle;
 };
 

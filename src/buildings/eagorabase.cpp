@@ -261,19 +261,64 @@ eVendor* eAgoraBase::vendor(const eResourceType r) const {
     return nullptr;
 }
 
-eTile* eAgoraBase::patrolStartTile() const {
+std::vector<eTile*> eAgoraBase::agoraRoadEnds() const {
     auto& brd = const_cast<eAgoraBase*>(this)->getBoard();
     const auto rect = tileRect();
+
+    std::vector<eTile*> roadTiles;
     for(int x = rect.x; x < rect.x + rect.w; x++) {
         for(int y = rect.y; y < rect.y + rect.h; y++) {
             const auto t = brd.tile(x, y);
             if(!t) continue;
             const auto ub = t->underBuilding();
             if(!ub) continue;
-            if(ub->type() == eBuildingType::road) return t;
+            if(ub->type() == eBuildingType::road) roadTiles.push_back(t);
         }
     }
-    return centerTile();
+    if(roadTiles.empty()) return {};
+
+    auto isAgoraRoad = [&](eTile* t) {
+        for(auto* r : roadTiles) if(r == t) return true;
+        return false;
+    };
+
+    std::vector<eTile*> ends;
+    for(auto* t : roadTiles) {
+        int n = 0;
+        for(int i = 0; i < 8; i++) {
+            const auto nb = t->neighbour<eTile>(static_cast<eOrientation>(i));
+            if(nb && isAgoraRoad(nb)) n++;
+        }
+        if(n <= 1) ends.push_back(t);
+    }
+
+    // return external unblocked road neighbors of each end
+    std::vector<eTile*> result;
+    for(auto* end : ends) {
+        for(int i = 0; i < 8; i++) {
+            const auto nb = end->neighbour<eTile>(static_cast<eOrientation>(i));
+            if(!nb || isAgoraRoad(nb)) continue;
+            if(nb->hasRoad() && !nb->hasRoadblock()) {
+                result.push_back(nb);
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+eTile* eAgoraBase::agoraRoadStart() const {
+    const auto ends = agoraRoadEnds();
+    return ends.empty() ? centerTile() : ends.front();
+}
+
+eTile* eAgoraBase::agoraRoadEnd() const {
+    const auto ends = agoraRoadEnds();
+    return ends.size() >= 2 ? ends[1] : agoraRoadStart();
+}
+
+eTile* eAgoraBase::patrolStartTile() const {
+    return agoraRoadStart();
 }
 
 eDiagonalOrientation eAgoraBase::diagonalOrientation() const {

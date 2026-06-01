@@ -91,8 +91,10 @@ void eSettlerAction::findHouse() {
     mStage = eSettlerActionStage::findingHouse;
     const auto c = character();
 
-    const auto finalTile = [](eThreadTile* const t) {
+    const bool eliteOnly = mEliteOnly;
+    const auto finalTile = [eliteOnly](eThreadTile* const t) {
         const auto ut = t->underBuildingType();
+        if(eliteOnly) return ut == eBuildingType::eliteHousing && t->houseVacancies() > 0;
         const bool h = ut == eBuildingType::commonHouse ||
                        ut == eBuildingType::eliteHousing;
         return h && t->houseVacancies() > 0;
@@ -113,7 +115,12 @@ void eSettlerAction::findHouse() {
     a->setFinishAction(finishAction);
     a->setFindFailAction([tptr, this]() {
         if(!tptr) return;
-        mNoHouses = true;
+        if(mEliteOnly) {
+            mEliteOnly = false;
+            findHouse();
+        } else {
+            mNoHouses = true;
+        }
     });
     a->setFoundAction([tptr, this]() {
         if(!tptr) return;

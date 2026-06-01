@@ -644,11 +644,13 @@ void GameWidget::paintEvent(ePainter &p)
                                bt == eBuildingType::grandAgora;
             if (agora)
             {
-                const auto start = mPatrolBuilding->patrolStartTile();
+                const auto ab = static_cast<eAgoraBase*>(mPatrolBuilding.get());
+                const auto start = ab->agoraRoadStart();
+                const auto ret = ab->agoraRoadEnd();
                 if (start)
                 {
                     patrolRoadStart = start;
-                    patrolRoadReturn = start;
+                    patrolRoadReturn = ret;
                     const auto walkable = eWalkableObject::sCreateRoadblock();
                     addRoamerPreview(start, patrolRoadPreview, walkable);
                 }
@@ -2453,6 +2455,7 @@ void GameWidget::paintEvent(ePainter &p)
             tp.drawPolygon(polygon, {0, 0, 0, 255});
         }
     }
+
 
     paintBuildPreview(tp, p, trrTexs, builTexs, ppid, mode, dir,
                       boardw, boardh, bridgeValid, bridgetTs,
