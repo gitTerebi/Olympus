@@ -1318,17 +1318,11 @@ bool SoldierBanner::enemyNear(const int by) {
                 if(!eTeamIdHelpers::isEnemy(cc->teamId(), tid)) continue;
                 if(!cc->isSoldier() && cc->type() != eCharacterType::wolf &&
                    !cc->isImmortal()) continue;
-                if(playerBanner)
-                    printf("[banner %d] enemyNear=true: enemy at (%d,%d), banner at (%d,%d)\n",
-                           mId, t->x(), t->y(), tx, ty);
                 mEnemyNear = true;
                 return true;
             }
         }
     }
-    if(playerBanner)
-        printf("[banner %d] enemyNear=false: banner at (%d,%d) range=%d\n",
-               mId, tx, ty, hrange);
     mEnemyNear = false;
     return false;
 }

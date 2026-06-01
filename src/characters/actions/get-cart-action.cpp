@@ -4,7 +4,7 @@
 
 eGetCartAction::eGetCartAction(eCharacter* const c,
                                eBuildingWithResource* const b)
-    : eCartTransporterAction(c, b, eCharActionType::getCartAction) {}
+    : CartTransporterAction(c, b, eCharActionType::getCartAction) {}
 
 // ── decide: pure state transition ────────────────────────────────────────────
 
@@ -80,7 +80,7 @@ void eGetCartAction::onFindTargetFail() {
 // ── serialize ────────────────────────────────────────────────────────────────
 
 void eGetCartAction::serializeFields(eSaveArchive& ar) {
-    eCartTransporterAction::serializeFields(ar);
+    CartTransporterAction::serializeFields(ar);
     ar.field("getState", mGetState);
 }
 

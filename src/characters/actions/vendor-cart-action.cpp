@@ -6,7 +6,7 @@
 
 eVendorCartAction::eVendorCartAction(eCharacter* const c,
                                      eBuildingWithResource* const b)
-    : eCartTransporterAction(c, b, eCharActionType::vendorCartAction) {}
+    : CartTransporterAction(c, b, eCharActionType::vendorCartAction) {}
 
 // ── decide ────────────────────────────────────────────────────────────────────
 
@@ -87,7 +87,7 @@ void eVendorCartAction::onFindTargetFail() {
 // ── serialize ─────────────────────────────────────────────────────────────────
 
 void eVendorCartAction::serializeFields(eSaveArchive& ar) {
-    eCartTransporterAction::serializeFields(ar);
+    CartTransporterAction::serializeFields(ar);
     ar.field("vendorState", mState);
 }
 

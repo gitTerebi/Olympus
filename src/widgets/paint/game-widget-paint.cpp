@@ -28,7 +28,7 @@
 
 #include "characters/esoldier.h"
 #include "characters/actions/soldier-action.h"
-#include "characters/actions/ecarttransporteraction.h"
+#include "characters/actions/cart-transporter-action.h"
 
 #include "evectorhelpers.h"
 #include "etilehelper.h"
@@ -1519,7 +1519,7 @@ void GameWidget::paintEvent(ePainter &p)
                             c.get() == mPatrolHighlightBuilding->patroler();
                     const bool walkerSelected = [&]() {
                         if(!mWalkerBuilding) return false;
-                        const auto ca = dynamic_cast<eCartTransporterAction*>(c->action());
+                        const auto ca = dynamic_cast<CartTransporterAction*>(c->action());
                         return ca && ca->src() == mWalkerBuilding.get();
                     }();
                     const bool charHighlighted = walkerSelected || patrolerSelected;
@@ -1546,7 +1546,7 @@ void GameWidget::paintEvent(ePainter &p)
                         if(mViewMode == eViewMode::distribution &&
                            ct == eCharacterType::cartTransporter) {
                             const auto cart = static_cast<eCartTransporter*>(c.get());
-                            const auto ca = dynamic_cast<eCartTransporterAction*>(c->action());
+                            const auto ca = dynamic_cast<CartTransporterAction*>(c->action());
                             if(cart->hasResource() && ca && ca->noDestination()) {
                                 cartProblemBoxes.push_back({dx, dy});
                             }

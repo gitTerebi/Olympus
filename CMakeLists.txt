@@ -173,7 +173,7 @@ set(SOURCES
     src/characters/actions/eartisanaction.cpp
     src/characters/actions/eattackcityaction.cpp
     src/characters/actions/ebuildaction.cpp
-    src/characters/actions/ecarttransporteraction.cpp
+    src/characters/actions/cart-transporter-action.cpp
     src/characters/actions/deliver-cart-action.cpp
     src/characters/actions/get-cart-action.cpp
     src/characters/actions/storage-delivery-cart.cpp

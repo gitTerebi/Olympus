@@ -1,9 +1,9 @@
 #ifndef STORAGE_DELIVERY_CART_H
 #define STORAGE_DELIVERY_CART_H
 
-#include "ecarttransporteraction.h"
+#include "cart-transporter-action.h"
 
-class eStorageDeliveryCartAction : public eCartTransporterAction {
+class eStorageDeliveryCartAction : public CartTransporterAction {
 public:
     eStorageDeliveryCartAction(eCharacter* const c,
                                eBuildingWithResource* const b);
