@@ -68,7 +68,7 @@ public:
     // enemy_fighting per-figure approach) so back ranks engage instead of
     // standing in slots while only the front two fight.
     static int sRangedDetectRange(const int range)
-    { return range > 0 ? range + 2 : 4; }
+    { return range > 0 ? range + 2 : 15; }
 
     using eAction = std::function<void()>;
     void goTo(const int fx, const int fy,

@@ -654,8 +654,10 @@ SOURCES += \
         widgets/GameWidgetevents.cpp \
         widgets/game-widget-info.cpp \
         widgets/paint/build-preview-paint.cpp \
+        widgets/paint/build-preview-render.cpp \
         widgets/paint/game-widget-paint.cpp \
         widgets/paint/patrol-path-data.cpp \
+        widgets/paint/sanctuary-preview.cpp \
         widgets/egiftdialog.cpp \
         widgets/egiftsizedialog.cpp \
         widgets/egodbutton.cpp \
