@@ -14,6 +14,7 @@ class eCharacter;
 class eBuilding;
 class GameBoard;
 class eTile;
+class ePalace;
 class eSaveArchive;
 enum class eCharacterType;
 enum class eOrientation;
@@ -157,9 +158,9 @@ public:
 
     void teleportSoldiersToPlaces();
 
-    static void sPlaceDefault(std::vector<SoldierBanner*>& bs,
-                              const int ctx, const int cty,
-                              GameBoard& board);
+    static void sHandleHomeBuildingPlacement(std::vector<SoldierBanner*>& bs,
+                                             const int ctx, const int cty,
+                                             GameBoard& board);
     static void sPlaceNoPathTrace(std::vector<SoldierBanner*> bs,
                                   const int ctx, const int cty,
                                   GameBoard& board, const int dist,
@@ -207,6 +208,11 @@ public:
             const int minDistFromEdge);
     static std::string sName(const eBannerType type,
                              const bool atlantean);
+    static int sPalaceUnitSortRank(const eBannerType type);
+    static std::vector<stdsptr<SoldierBanner>> sSortedPalaceBannersByUnitType(
+            std::vector<stdsptr<SoldierBanner>> banners);
+    static std::vector<eTile*> sFixedPalaceBannerPathTiles(
+            const ePalace& palace);
 protected:
     void serializeFields(eSaveArchive& ar);
 private:
@@ -216,6 +222,10 @@ private:
     void callSoldier(eSoldier* const s);
     void purgeDead();
     void updateCombatAssignments();
+    static void sSendPalaceBannersHomeAndRepack(
+            std::vector<SoldierBanner*>& bs,
+            const eCityId cid,
+            GameBoard& board);
 
     const eBannerType mType;
     const int mId;

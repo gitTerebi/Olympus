@@ -296,28 +296,22 @@ void SoldierBanner::moveToPalace() {
     case eBannerType::horseman: {
         const auto palace = mBoard.palace(cid);
         if(!palace) return;
-        auto ts = palace->tiles();
-        // iso N view: screenY ~ (x+y), screenX ~ (x-y).
-        // bottom-left = max screenY, min screenX.
-        const auto screenY = [](eTile* const t) { return t->x() + t->y(); };
-        const auto screenX = [](eTile* const t) { return t->x() - t->y(); };
-        std::sort(ts.begin(), ts.end(),
-                  [&](ePalaceTile* const a, ePalaceTile* const b) {
-            const auto ta = a->centerTile();
-            const auto tb = b->centerTile();
-            if(!ta || !tb) return false;
-            const int aY = screenY(ta); const int bY = screenY(tb);
-            if(aY != bY) return aY > bY;
-            return screenX(ta) < screenX(tb);
-        });
-        for(const auto t : ts) {
-            if(t->other()) continue;
-            const auto tt = t->centerTile();
-            if(!tt) continue;
+        const auto slots = sFixedPalaceBannerPathTiles(*palace);
+        if(slots.empty()) return;
+
+        const auto bs = sSortedPalaceBannersByUnitType(mBoard.banners(cid));
+
+        int slot = -1;
+        for(int i = 0; i < static_cast<int>(bs.size()); i++) {
+            if(bs[i].get() == this) {
+                slot = i;
+                break;
+            }
+        }
+        if(slot >= 0 && slot < static_cast<int>(slots.size())) {
+            const auto tt = slots[slot];
             const auto bb = tt->soldierBanner();
-            if(bb) continue;
-            moveTo(tt->x(), tt->y());
-            break;
+            if(!bb || bb == this) moveTo(tt->x(), tt->y());
         }
     } break;
     case eBannerType::amazon:
@@ -364,6 +358,8 @@ void SoldierBanner::goHome() {
         const auto a = s->soldierAction();
         if(a) a->goHome();
     }
+    const auto c = mBoard.boardCityWithId(cid);
+    if(c) c->repackPalaceBanners();
 }
 
 void SoldierBanner::goAbroad() {
@@ -511,6 +507,101 @@ eBannerFormationRole SoldierBanner::formationRole() const {
     return eBannerFormationRole::other;
 }
 
+int SoldierBanner::sPalaceUnitSortRank(const eBannerType type) {
+    switch(type) {
+    case eBannerType::horseman:
+        return 0;
+    case eBannerType::hoplite:
+        return 1;
+    case eBannerType::rockThrower:
+        return 2;
+    default:
+        return 3;
+    }
+}
+
+std::vector<stdsptr<SoldierBanner>> SoldierBanner::sSortedPalaceBannersByUnitType(
+        std::vector<stdsptr<SoldierBanner>> banners) {
+    banners.erase(std::remove_if(banners.begin(), banners.end(),
+        [](const stdsptr<SoldierBanner>& b) {
+            if(!b) return true;
+            if(b->isAbroad()) return true;
+            switch(b->type()) {
+            case eBannerType::rockThrower:
+            case eBannerType::hoplite:
+            case eBannerType::horseman:
+                return false;
+            default:
+                return true;
+            }
+        }), banners.end());
+    std::sort(banners.begin(), banners.end(),
+        [](const stdsptr<SoldierBanner>& a,
+           const stdsptr<SoldierBanner>& b) {
+            const int ar = SoldierBanner::sPalaceUnitSortRank(a->type());
+            const int br = SoldierBanner::sPalaceUnitSortRank(b->type());
+            if(ar != br) return ar < br;
+            return a->id() < b->id();
+        });
+    return banners;
+}
+
+std::vector<eTile*> SoldierBanner::sFixedPalaceBannerPathTiles(
+        const ePalace& palace) {
+    std::vector<eTile*> pathTiles;
+    const auto& palaceTiles = palace.tiles();
+    if(palaceTiles.empty()) return pathTiles;
+
+    int minX = 0;
+    int maxX = 0;
+    int minY = 0;
+    int maxY = 0;
+    bool first = true;
+    std::vector<eTile*> perimeterTiles;
+    perimeterTiles.reserve(palaceTiles.size());
+    for(const auto palaceTile : palaceTiles) {
+        if(!palaceTile) continue;
+        const auto tile = palaceTile->centerTile();
+        if(!tile) continue;
+        if(first) {
+            minX = maxX = tile->x();
+            minY = maxY = tile->y();
+            first = false;
+        } else {
+            minX = std::min(minX, tile->x());
+            maxX = std::max(maxX, tile->x());
+            minY = std::min(minY, tile->y());
+            maxY = std::max(maxY, tile->y());
+        }
+        perimeterTiles.push_back(tile);
+    }
+    if(perimeterTiles.empty()) return pathTiles;
+
+    const auto addTile = [&](const int x, const int y) {
+        for(const auto tile : perimeterTiles) {
+            if(tile->x() == x && tile->y() == y) {
+                pathTiles.push_back(tile);
+                return;
+            }
+        }
+    };
+
+    // Fixed palace home slots use world tile coords, not current camera view.
+    // Include palace corner tiles; they are part of the visible banner path.
+    if(palace.rotated()) {
+        for(int y = maxY; y >= minY; y--) addTile(maxX, y);
+        for(int x = maxX - 1; x >= minX; x--) addTile(x, minY);
+        for(int y = minY + 1; y <= maxY; y++) addTile(minX, y);
+        for(int x = minX + 1; x < maxX; x++) addTile(x, maxY);
+    } else {
+        for(int x = maxX; x >= minX; x--) addTile(x, maxY);
+        for(int y = maxY - 1; y >= minY; y--) addTile(minX, y);
+        for(int x = minX + 1; x <= maxX; x++) addTile(x, minY);
+        for(int y = minY + 1; y < maxY; y++) addTile(maxX, y);
+    }
+    return pathTiles;
+}
+
 void SoldierBanner::incCount() {
     mCount++;
     updateCount();
@@ -653,9 +744,34 @@ void SoldierBanner::serialize(eSaveArchive& ar) {
     }
 }
 
-void SoldierBanner::sPlaceDefault(std::vector<SoldierBanner*>& bs,
-                                   const int ctx, const int cty,
-                                   GameBoard& board) {
+void SoldierBanner::sSendPalaceBannersHomeAndRepack(
+        std::vector<SoldierBanner*>& bs,
+        const eCityId cid,
+        GameBoard& board) {
+    bool changed = false;
+    for(int i = 0; i < (int)bs.size(); i++) {
+        const auto bb = bs[i];
+        const auto bbt = bb->type();
+        if(bbt == eBannerType::hoplite ||
+           bbt == eBannerType::rockThrower ||
+           bbt == eBannerType::horseman) {
+            bb->goHome();
+            eVectorHelpers::remove(bs, bb);
+            changed = true;
+            i--;
+        }
+    }
+    if(changed) {
+        const auto c = board.boardCityWithId(cid);
+        if(c) c->repackPalaceBanners();
+    }
+}
+
+void SoldierBanner::sHandleHomeBuildingPlacement(
+        std::vector<SoldierBanner*>& bs,
+        const int ctx,
+        const int cty,
+        GameBoard& board) {
     if(bs.empty()) return;
     const auto bsFirst = bs[0];
     const auto cid = bsFirst->cityId();
@@ -668,18 +784,9 @@ void SoldierBanner::sPlaceDefault(std::vector<SoldierBanner*>& bs,
             const auto bt = b->type();
             if(bt == eBuildingType::palace ||
                bt == eBuildingType::palaceTile) {
-                for(int i = 0; i < (int)bs.size(); i++) {
-                    const auto bb = bs[i];
-                    const auto bbt = bb->type();
-                    if(bbt == eBannerType::hoplite ||
-                       bbt == eBannerType::rockThrower ||
-                       bbt == eBannerType::horseman) {
-                        bb->moveToPalace();
-                        bb->goHome();
-                        eVectorHelpers::remove(bs, bb);
-                        i--;
-                    }
-                }
+                // Right-clicking selected banners onto the palace sends them
+                // home, then repacks all palace banners into fixed slots.
+                sSendPalaceBannersHomeAndRepack(bs, cid, board);
             } else if(const auto sb = dynamic_cast<eSanctBuilding*>(b)) {
                 const auto s = dynamic_cast<eSanctuary*>(sb->monument());
                 if(!s) return;
@@ -704,7 +811,7 @@ void SoldierBanner::sPlaceNoPathTrace(std::vector<SoldierBanner*> bs,
                                        const int ctx, const int cty,
                                        GameBoard& board, const int dist,
                                        const int minDistFromEdge) {
-    sPlaceDefault(bs, ctx, cty, board);
+    sHandleHomeBuildingPlacement(bs, ctx, cty, board);
     if(bs.empty()) return;
     const int bannerDist = bs.size() > 1 ? dist + 1 : dist;
 
@@ -755,7 +862,7 @@ void SoldierBanner::sPlace(std::vector<SoldierBanner*> bs,
                             const int ctx, const int cty,
                             GameBoard& board, const int dist,
                             const int minDistFromEdge) {
-    sPlaceDefault(bs, ctx, cty, board);
+    sHandleHomeBuildingPlacement(bs, ctx, cty, board);
     if(bs.empty()) return;
     const int bannerDist = bs.size() > 1 ? dist + 1 : dist;
 
@@ -906,7 +1013,7 @@ void SoldierBanner::sPlaceFacing(std::vector<SoldierBanner*> bs,
                                   const int dist,
                                   const int minDistFromEdge) {
     if(bs.empty()) return;
-    sPlaceDefault(bs, ctx, cty, board);
+    sHandleHomeBuildingPlacement(bs, ctx, cty, board);
     if(bs.empty()) return;
 
     const auto slots = sFormationPositions(bs, ctx, cty, facing, lineDX, lineDY, dist);

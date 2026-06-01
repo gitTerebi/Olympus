@@ -2077,45 +2077,24 @@ bool BoardCity::unregisterSoldierBanner(const stdsptr<SoldierBanner>& b) {
 
 void BoardCity::repackPalaceBanners() {
     if(!mPalace) return;
-    auto ts = mPalace->tiles();
+    const auto ts = SoldierBanner::sFixedPalaceBannerPathTiles(*mPalace);
     if(ts.empty()) return;
-    // iso N view: screenY ~ (x+y), screenX ~ (x-y).
-    // bottom-left = max screenY, min screenX.
-    const auto screenY = [](eTile* const t) { return t->x() + t->y(); };
-    const auto screenX = [](eTile* const t) { return t->x() - t->y(); };
-    std::sort(ts.begin(), ts.end(),
-              [&](ePalaceTile* const a, ePalaceTile* const b) {
-        const auto ta = a->centerTile();
-        const auto tb = b->centerTile();
-        if(!ta || !tb) return false;
-        const int aY = screenY(ta); const int bY = screenY(tb);
-        if(aY != bY) return aY > bY;
-        return screenX(ta) < screenX(tb);
-    });
     for(const auto& b : mPalacSoldierBanners) {
         if(b->isAbroad()) continue;
         if(!b->isHome()) continue;
         b->detachFromTile();
     }
-    const eBannerType order[3] = {
-        eBannerType::rockThrower,
-        eBannerType::hoplite,
-        eBannerType::horseman
-    };
+    const auto bs = SoldierBanner::sSortedPalaceBannersByUnitType(mPalacSoldierBanners);
     size_t ti = 0;
-    for(const auto bt : order) {
-        for(const auto& b : mPalacSoldierBanners) {
-            if(b->type() != bt) continue;
-            if(b->isAbroad()) continue;
-            if(!b->isHome()) continue;
-            while(ti < ts.size()) {
-                const auto pt = ts[ti++];
-                if(pt->other()) continue;
-                const auto tt = pt->centerTile();
-                if(!tt) continue;
+    for(const auto& b : bs) {
+        if(b->isAbroad()) continue;
+        while(ti < ts.size()) {
+            const auto tt = ts[ti++];
+            if(!tt) continue;
+            if(b->isHome()) {
                 b->moveTo(tt->x(), tt->y());
-                break;
             }
+            break;
         }
     }
 }
