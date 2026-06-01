@@ -1,4 +1,4 @@
-#include "ecarttransporteraction.h"
+#include "cart-transporter-action.h"
 
 #include "../echaracter.h"
 #include "buildings/ebuildingwithresource.h"
@@ -11,22 +11,22 @@
 #include "emovetoaction.h"
 #include "ewaitaction.h"
 
-eCartTransporterAction::eCartTransporterAction(
+CartTransporterAction::CartTransporterAction(
         eCharacter* const c,
         eBuildingWithResource* const b,
         const eCharActionType type) :
     eActionWithComeback(c, type),
     mBuilding(b) {}
 
-eCartTransporterAction::eCartTransporterAction(
+CartTransporterAction::CartTransporterAction(
         eCharacter* const c,
         eBuildingWithResource* const b) :
-    eCartTransporterAction(c, b, eCharActionType::cartTransporterAction) {}
+    CartTransporterAction(c, b, eCharActionType::cartTransporterAction) {}
 
-eCartTransporterAction::eCartTransporterAction(eCharacter* const c) :
-    eCartTransporterAction(c, nullptr){}
+CartTransporterAction::CartTransporterAction(eCharacter* const c) :
+    CartTransporterAction(c, nullptr){}
 
-void eCartTransporterAction::increment(const int by) {
+void CartTransporterAction::increment(const int by) {
     if(!mBuilding) {
         return;
     }
@@ -37,7 +37,7 @@ void eCartTransporterAction::increment(const int by) {
     }
 }
 
-bool eCartTransporterAction::decide() {
+bool CartTransporterAction::decide() {
     if(!mBuilding) return true;
     const auto c = static_cast<eCartTransporter*>(character());
 
@@ -159,13 +159,13 @@ bool eCartTransporterAction::decide() {
     return true;
 }
 
-void eCartTransporterAction::enterIdle() {
+void CartTransporterAction::enterIdle() {
     mState = eCartState::idle;
     mTarget = nullptr;
     clearTask();
 }
 
-void eCartTransporterAction::enterLoadingDeliver() {
+void CartTransporterAction::enterLoadingDeliver() {
     mState = eCartState::loadingDeliver;
     mTarget = nullptr;
     const auto c = static_cast<eCartTransporter*>(character());
@@ -187,46 +187,46 @@ void eCartTransporterAction::enterLoadingDeliver() {
     }
 }
 
-void eCartTransporterAction::enterLoadingGet() {
+void CartTransporterAction::enterLoadingGet() {
     mState = eCartState::loadingGet;
     mTarget = nullptr;
     findTarget(); // BFS for GET target
 }
 
-void eCartTransporterAction::enterWaitOutside() {
+void CartTransporterAction::enterWaitOutside() {
     mState = eCartState::waitOutside;
     waitOutside(); // moves cart to adjacent road tile; on arrive → spread() → decide()
 }
 
-void eCartTransporterAction::enterMovingToTarget(const eCartTask& task) {
+void CartTransporterAction::enterMovingToTarget(const eCartTask& task) {
     mState = eCartState::movingToTarget;
     findTarget(task);
 }
 
-void eCartTransporterAction::enterReturning() {
+void CartTransporterAction::enterReturning() {
     mState = eCartState::returning;
     goBack(); // sets mTarget = mBuilding internally
 }
 
-eCartActionTypeSupport eCartTransporterAction::support() const {
+eCartActionTypeSupport CartTransporterAction::support() const {
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
     return ct->support();
 }
 
-eResourceType eCartTransporterAction::supportsResource() const {
+eResourceType CartTransporterAction::supportsResource() const {
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
     return ct->supportsResource();
 }
 
-int eCartTransporterAction::cartCapacity(const eResourceType res) const {
+int CartTransporterAction::cartCapacity(const eResourceType res) const {
     if(!mBuilding) return eResourceTypeHelpers::transportSize(
         res, board().doubleCartCapacity());
     return mBuilding->cartCapacity(res, board().doubleCartCapacity());
 }
 
-void eCartTransporterAction::findTarget() {
+void CartTransporterAction::findTarget() {
     if(!mBuilding) return;
     const auto tasks = mBuilding->cartTasks();
     const auto supp = support();
@@ -248,25 +248,25 @@ void eCartTransporterAction::findTarget() {
     }
 }
 
-void eCartTransporterAction::findTarget(const eCartTask& task) {
+void CartTransporterAction::findTarget(const eCartTask& task) {
     findTarget(std::vector<eCartTask>{task});
 }
 
-void eCartTransporterAction::findTarget(const eCartTask& task,
+void CartTransporterAction::findTarget(const eCartTask& task,
                                         eBuilding* const avoided) {
     findTarget(std::vector<eCartTask>{task}, avoided);
 }
 
-void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
+void CartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
     findTarget(tasks, nullptr);
 }
 
-void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
+void CartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                                         eBuilding* const avoided) {
     findTarget(tasks, avoided, true);
 }
 
-void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
+void CartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                                         eBuilding* const avoided,
                                         const bool preferGranaryFirst,
                                         const bool preferEmptyFirst,
@@ -372,9 +372,6 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
             if(task.fType == eCartActionType::get) {
                 const auto city = board().boardCityWithId(t->cityId());
                 if(city && city->isStockpiled(res)) continue;
-                // from a trade post, pull only imported goods
-                if(ub.type() == eBuildingType::tradePost &&
-                   !static_cast<bool>(ub.imports() & res)) continue;
                 if(ub.resourceHas(res)) found = true;
             } else { // give
                 if(ub.empties(res)) continue;
@@ -406,7 +403,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
         }
         return false;
     };
-    const stdptr<eCartTransporterAction> tptr(this);
+    const stdptr<CartTransporterAction> tptr(this);
 
     const auto finishAction = std::make_shared<eCTA_findTargetFinish>(
                                   board(), this);
@@ -470,7 +467,7 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
     startSearch();
 }
 
-void eCartTransporterAction::throttleDropoffRetry() {
+void CartTransporterAction::throttleDropoffRetry() {
     if(!mBuilding) return;
     if(mRetryCount >= kMaxDropoffRetries) {
         mRetryCount = 0;
@@ -481,7 +478,7 @@ void eCartTransporterAction::throttleDropoffRetry() {
     wait(kRetryWaitTicks);
 }
 
-void eCartTransporterAction::onFindTargetFail() {
+void CartTransporterAction::onFindTargetFail() {
     const auto c = cart();
     if(c->hasResource()) {
         enterReturning();
@@ -490,14 +487,14 @@ void eCartTransporterAction::onFindTargetFail() {
     }
 }
 
-void eCartTransporterAction::goBack() {
+void CartTransporterAction::goBack() {
     if(!mBuilding) return;
     const auto w = getWalkable();
     eActionWithComeback::goBack(w);
     mTarget = mBuilding;
 }
 
-void eCartTransporterAction::targetResourceAction(const int bx, const int by) {
+void CartTransporterAction::targetResourceAction(const int bx, const int by) {
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
     auto& brd = ct->getBoard();
@@ -508,7 +505,7 @@ void eCartTransporterAction::targetResourceAction(const int bx, const int by) {
     targetResourceAction(rb);
 }
 
-void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const rb) {
+void CartTransporterAction::targetResourceAction(eBuildingWithResource* const rb) {
     if(!mBuilding) return;
     if(!rb) return;
     mState = eCartState::atTarget;
@@ -543,7 +540,7 @@ void eCartTransporterAction::targetResourceAction(eBuildingWithResource* const r
     // subclass FSM drives next transition via decide()
 }
 
-int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
+int CartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
                                               const eCartTask& task) {
     if(task.fMaxCount <= 0) return 0;
     const auto c = static_cast<eCartTransporter*>(character());
@@ -582,7 +579,7 @@ int eCartTransporterAction::targetProcessTask(eBuildingWithResource* const rb,
     return 0;
 }
 
-void eCartTransporterAction::startResourceAction(const eCartTask& task) {
+void CartTransporterAction::startResourceAction(const eCartTask& task) {
     if(!mBuilding) return;
     const auto c = static_cast<eCartTransporter*>(character());
     if(task.fMaxCount <= 0) return;
@@ -602,7 +599,7 @@ void eCartTransporterAction::startResourceAction(const eCartTask& task) {
     }
 }
 
-void eCartTransporterAction::finishResourceAction(const eCartTask& task) {
+void CartTransporterAction::finishResourceAction(const eCartTask& task) {
     if(!mBuilding) return disappear();
     const auto c = static_cast<eCartTransporter*>(character());
     if(c->resCount() <= 0) return disappear();
@@ -618,7 +615,7 @@ void eCartTransporterAction::finishResourceAction(const eCartTask& task) {
     }
 }
 
-bool eCartTransporterAction::acceptsTargetForTask(
+bool CartTransporterAction::acceptsTargetForTask(
         const eCartTask& task,
         const eThreadBuilding& target) const {
     const bool storageHome = dynamic_cast<eStorageBuilding*>(mBuilding.get());
@@ -635,7 +632,7 @@ bool eCartTransporterAction::acceptsTargetForTask(
     return true;
 }
 
-void eCartTransporterAction::serializeFields(eSaveArchive& ar) {
+void CartTransporterAction::serializeFields(eSaveArchive& ar) {
     // skip mCurrentAction (walk/wait "feet") on write; rebuilt from FSM state on load.
     const bool writing = ar.writing();
     stdsptr<eCharacterAction> savedFeet;
@@ -663,7 +660,7 @@ void eCartTransporterAction::serializeFields(eSaveArchive& ar) {
     ar.buildingField("targetBuilding", &board(), mTarget);
 }
 
-void eCartTransporterAction::resumeFromSavedState() {
+void CartTransporterAction::resumeFromSavedState() {
     setCurrentAction(nullptr);
     switch(mState) {
     case eCartState::idle:
@@ -687,11 +684,11 @@ void eCartTransporterAction::resumeFromSavedState() {
     }
 }
 
-bool eCartTransporterAction::savesCartState() const {
+bool CartTransporterAction::savesCartState() const {
     return true;
 }
 
-stdsptr<eWalkableObject> eCartTransporterAction::getWalkableForTask(
+stdsptr<eWalkableObject> CartTransporterAction::getWalkableForTask(
         bool excludeHomeRect, eCartActionType taskType) const {
     if(!mBuilding) return eWalkableObject::sCreateRoadAvenue();
     const auto supp = support();
@@ -734,11 +731,11 @@ stdsptr<eWalkableObject> eCartTransporterAction::getWalkableForTask(
     return w;
 }
 
-stdsptr<eWalkableObject> eCartTransporterAction::getWalkable(bool excludeHomeRect) const {
+stdsptr<eWalkableObject> CartTransporterAction::getWalkable(bool excludeHomeRect) const {
     return getWalkableForTask(excludeHomeRect, mTask.fType);
 }
 
-void eCartTransporterAction::updateWaiting() {
+void CartTransporterAction::updateWaiting() {
     if(!mBuilding) return;
     const auto c = static_cast<eCartTransporter*>(character());
     const bool r = eWalkableHelpers::sTileUnderBuilding(
@@ -746,7 +743,7 @@ void eCartTransporterAction::updateWaiting() {
     c->setWaiting(mState == eCartState::waitOutside || r);
 }
 
-void eCartTransporterAction::waitOutside() {
+void CartTransporterAction::waitOutside() {
     if(!mBuilding) return;
     // guard removed — enterWaitOutside() is the sole caller; it sets state first
     const auto neighs = mBuilding->neighbours();
@@ -773,7 +770,7 @@ void eCartTransporterAction::waitOutside() {
     setCurrentAction(a);
 }
 
-void eCartTransporterAction::spread() {
+void CartTransporterAction::spread() {
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
     if(!ct->isOx()) {
@@ -805,14 +802,14 @@ void eCartTransporterAction::spread() {
     setCurrentAction(a);
 }
 
-void eCartTransporterAction::clearTask() {
+void CartTransporterAction::clearTask() {
     mTask.fMaxCount = 0;
     setCurrentAction(nullptr);
     mTarget = nullptr;
     character()->setActionType(eCharacterActionType::stand);
 }
 
-void eCartTransporterAction::disappear() {
+void CartTransporterAction::disappear() {
     const auto c = character();
     const auto ct = static_cast<eCartTransporter*>(c);
     if(ct->resCount() == 0) ct->setResource(eResourceType::wine, 0);

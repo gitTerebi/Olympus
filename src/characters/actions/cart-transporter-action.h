@@ -1,5 +1,5 @@
-#ifndef ECARTTRANSPORTERACTION_H
-#define ECARTTRANSPORTERACTION_H
+#ifndef CART_TRANSPORTER_ACTION_H
+#define CART_TRANSPORTER_ACTION_H
 
 #include "eactionwithcomeback.h"
 
@@ -21,13 +21,13 @@ enum class eCartState {
     returning        // walking home
 };
 
-class eCartTransporterAction : public eActionWithComeback {
+class CartTransporterAction : public eActionWithComeback {
     friend class eCTA_findTargetFinish;
     friend class eCTA_waitOutsideFinish;
 public:
-    eCartTransporterAction(eCharacter* const c,
+    CartTransporterAction(eCharacter* const c,
                            eBuildingWithResource* const b);
-    eCartTransporterAction(eCharacter* const c);
+    CartTransporterAction(eCharacter* const c);
 
     void increment(const int by) override;
     bool decide() override;
@@ -44,7 +44,7 @@ public:
     eCartState state() const { return mState; }
     bool waiting();
 protected:
-    eCartTransporterAction(eCharacter* const c,
+    CartTransporterAction(eCharacter* const c,
                            eBuildingWithResource* const b,
                            const eCharActionType type);
 
@@ -129,7 +129,7 @@ public:
     eCTA_findTargetFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::CTA_findTargetFinish) {}
     eCTA_findTargetFinish(GameBoard& board,
-                          eCartTransporterAction* const ca) :
+                          CartTransporterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::CTA_findTargetFinish),
         mTptr(ca) {}
 
@@ -151,7 +151,7 @@ public:
         mBy = y;
     }
 private:
-    stdptr<eCartTransporterAction> mTptr;
+    stdptr<CartTransporterAction> mTptr;
     int mBx = -1;
     int mBy = -1;
 };
@@ -161,7 +161,7 @@ public:
     eCTA_waitOutsideFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::CTA_waitOutsideFinish) {}
     eCTA_waitOutsideFinish(GameBoard& board,
-                           eCartTransporterAction* const ca) :
+                           CartTransporterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::CTA_waitOutsideFinish),
         mTptr(ca) {}
 
@@ -176,7 +176,7 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eCartTransporterAction> mTptr;
+    stdptr<CartTransporterAction> mTptr;
 };
 
 class eCTA_spreadFinish : public eCharActFunc {
@@ -201,4 +201,4 @@ private:
     stdptr<eCharacter> mCptr;
 };
 
-#endif // ECARTTRANSPORTERACTION_H
+#endif // CART_TRANSPORTER_ACTION_H

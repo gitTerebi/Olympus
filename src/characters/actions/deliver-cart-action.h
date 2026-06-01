@@ -1,7 +1,7 @@
 #ifndef DELIVER_CART_ACTION_H
 #define DELIVER_CART_ACTION_H
 
-#include "ecarttransporteraction.h"
+#include "cart-transporter-action.h"
 
 enum class eDeliverState {
     idle,
@@ -14,7 +14,7 @@ enum class eDeliverState {
     returning
 };
 
-class eDeliverCartAction : public eCartTransporterAction {
+class eDeliverCartAction : public CartTransporterAction {
 public:
     eDeliverCartAction(eCharacter* const c, eBuildingWithResource* const b);
 

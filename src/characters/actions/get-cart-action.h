@@ -1,7 +1,7 @@
 #ifndef GET_CART_ACTION_H
 #define GET_CART_ACTION_H
 
-#include "ecarttransporteraction.h"
+#include "cart-transporter-action.h"
 
 enum class eGetState {
     idle,
@@ -11,7 +11,7 @@ enum class eGetState {
     returning
 };
 
-class eGetCartAction : public eCartTransporterAction {
+class eGetCartAction : public CartTransporterAction {
 public:
     eGetCartAction(eCharacter* const c, eBuildingWithResource* const b);
 

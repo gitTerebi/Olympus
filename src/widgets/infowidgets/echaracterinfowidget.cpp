@@ -1,7 +1,7 @@
 ﻿#include "echaracterinfowidget.h"
 
 #include "characters/ecarttransporter.h"
-#include "characters/actions/ecarttransporteraction.h"
+#include "characters/actions/cart-transporter-action.h"
 #include "characters/actions/trader-action.h"
 #include "engine/eresourcetype.h"
 #include "characters/egrower.h"
@@ -2220,7 +2220,7 @@ void eCharacterInfoWidget::setCharacter(eCharacter *const c)
         mTradeWidget->stackVertically(res.paddingXS());
         mTradeWidget->fitContent();
     }
-    else if (const auto cta = dynamic_cast<eCartTransporterAction *>(c->action()))
+    else if (const auto cta = dynamic_cast<CartTransporterAction *>(c->action()))
     {
         const auto from = cta->src();
         const auto to = cta->target();

@@ -15,7 +15,7 @@ int storageTransportSize(const eResourceType type,
 eStorageDeliveryCartAction::eStorageDeliveryCartAction(
         eCharacter* const c,
         eBuildingWithResource* const b) :
-    eCartTransporterAction(c, b, eCharActionType::storageDeliveryCartAction) {
+    CartTransporterAction(c, b, eCharActionType::storageDeliveryCartAction) {
     if(c) c->setVisible(false);
 }
 
@@ -136,7 +136,7 @@ int eStorageDeliveryCartAction::cartCapacity(const eResourceType res) const {
 }
 
 void eStorageDeliveryCartAction::serializeFields(eSaveArchive& ar) {
-    eCartTransporterAction::serializeFields(ar);
+    CartTransporterAction::serializeFields(ar);
     ar.field("taskStoragePush", mTask.fStoragePush, false);
 }
 

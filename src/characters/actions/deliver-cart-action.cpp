@@ -4,7 +4,7 @@
 
 eDeliverCartAction::eDeliverCartAction(eCharacter* const c,
                                        eBuildingWithResource* const b)
-    : eCartTransporterAction(c, b, eCharActionType::deliverCartAction) {}
+    : CartTransporterAction(c, b, eCharActionType::deliverCartAction) {}
 
 // ── decide: pure state transition ────────────────────────────────────────────
 
@@ -144,7 +144,7 @@ void eDeliverCartAction::onAtTarget() {
 // ── serialize ────────────────────────────────────────────────────────────────
 
 void eDeliverCartAction::serializeFields(eSaveArchive& ar) {
-    eCartTransporterAction::serializeFields(ar);
+    CartTransporterAction::serializeFields(ar);
     ar.field("deliverState", mDeliverState);
     ar.field("findRetry", mFindRetry);
 }

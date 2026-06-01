@@ -10,7 +10,7 @@
 #include "eprocessingbuilding.h"
 #include "etriremewharf.h"
 #include "characters/ecarttransporter.h"
-#include "characters/actions/ecarttransporteraction.h"
+#include "characters/actions/cart-transporter-action.h"
 #include "characters/actions/storage-delivery-cart.h"
 #include "trade-post.h"
 
@@ -59,7 +59,7 @@ void eStorageBuilding::timeChanged(const int by) {
         const auto idleAndEmpty = [](eCartTransporter* const c) {
             if(!c) return false;
             if(c->hasResource()) return false;
-            const auto act = dynamic_cast<eCartTransporterAction*>(c->action());
+            const auto act = dynamic_cast<CartTransporterAction*>(c->action());
             if(!act) return false;
             return act->state() == eCartState::idle;
         };
@@ -426,7 +426,7 @@ int eStorageBuilding::incomingReservedFor(const eBuilding* target,
             if(!cart) continue;
             if(!cart->hasResource()) continue;
             if(cart->resType() != res) continue;
-            const auto act = dynamic_cast<eCartTransporterAction*>(
+            const auto act = dynamic_cast<CartTransporterAction*>(
                                  cart->action());
             if(!act) continue;
             if(act->target() != target) continue;

@@ -5,7 +5,7 @@
 #include "earcheraction.h"
 #include "eartisanaction.h"
 #include "ebuildaction.h"
-#include "ecarttransporteraction.h"
+#include "cart-transporter-action.h"
 #include "deliver-cart-action.h"
 #include "get-cart-action.h"
 #include "vendor-cart-action.h"
@@ -72,7 +72,7 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
     case eCharActionType::buildAction:
         return e::make_shared<eBuildAction>(c);
     case eCharActionType::cartTransporterAction:
-        return e::make_shared<eCartTransporterAction>(c);
+        return e::make_shared<CartTransporterAction>(c);
     case eCharActionType::deliverCartAction:
         return e::make_shared<eDeliverCartAction>(c, nullptr);
     case eCharActionType::getCartAction:

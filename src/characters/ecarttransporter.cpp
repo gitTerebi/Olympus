@@ -5,7 +5,7 @@
 #include "textures/egametextures.h"
 
 #include "characters/actions/efollowaction.h"
-#include "characters/actions/ecarttransporteraction.h"
+#include "characters/actions/cart-transporter-action.h"
 #include "buildings/ebuildingwithresource.h"
 #include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
@@ -319,7 +319,7 @@ int eCartTransporter::add(const eResourceType type, const int count) {
     if(!comp) return 0;
     int maxResource = eResourceTypeHelpers::transportSize(type, getBoard().doubleCartCapacity());
     // home building may override (storage yards use 4-per-resource rule)
-    const auto act = dynamic_cast<eCartTransporterAction*>(action());
+    const auto act = dynamic_cast<CartTransporterAction*>(action());
     if(act) {
         maxResource = act->cartCapacity(type);
     }

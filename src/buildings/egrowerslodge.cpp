@@ -1,7 +1,7 @@
 #include "egrowerslodge.h"
 
 #include "textures/egametextures.h"
-#include "characters/actions/ecarttransporteraction.h"
+#include "characters/actions/cart-transporter-action.h"
 #include "characters/actions/egroweraction.h"
 #include "buildings/eresourcebuilding.h"
 #include "engine/game-board.h"

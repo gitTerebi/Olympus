@@ -1,7 +1,7 @@
 #ifndef VENDOR_CART_ACTION_H
 #define VENDOR_CART_ACTION_H
 
-#include "ecarttransporteraction.h"
+#include "cart-transporter-action.h"
 
 enum class eVendorCartState {
     waitAtHome,
@@ -11,7 +11,7 @@ enum class eVendorCartState {
     returning
 };
 
-class eVendorCartAction : public eCartTransporterAction {
+class eVendorCartAction : public CartTransporterAction {
 public:
     eVendorCartAction(eCharacter* const c, eBuildingWithResource* const b);
 
