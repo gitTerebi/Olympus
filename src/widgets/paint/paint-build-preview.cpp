@@ -17,7 +17,10 @@
 #include "etilehelper.h"
 #include "textures/etiletotexture.h"
 #include "widgets/gamebuild/ecommonhousingbuild.h"
+#include "widgets/paint/build-preview-render.h"
+#include "widgets/paint/sanctuary-preview.h"
 
+#include <algorithm>
 #include <set>
 
 void GameWidget::paintBuildPreview(
@@ -1077,6 +1080,9 @@ void GameWidget::paintBuildPreview(
         };
 
         std::vector<eB> ebs;
+        SDL_Rect previewFootprint{0, 0, 0, 0};
+        std::vector<SanctuaryPreviewCell> previewSanctuaryCells;
+        stdsptr<eMonument> previewMonument;
         switch (mode)
         {
         case eBuildingMode::modestPyramid:
@@ -1188,38 +1194,141 @@ void GameWidget::paintBuildPreview(
         case eBuildingMode::templePoseidon:
         case eBuildingMode::templeZeus:
         {
-            const auto &tex = trrTexs.fBuildingBase;
             const auto type = eBuildingModeHelpers::toBuildingType(mode);
+            const auto god = static_cast<eGodType>(
+                static_cast<int>(mode) -
+                static_cast<int>(eBuildingMode::templeAphrodite));
             const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, mRotate);
             const int sw = h->fW;
             const int sh = h->fH;
             const int xMin = mHoverTX - sw / 2;
             const int yMin = mHoverTY - sh / 2;
-            const int xMax = xMin + sw;
-            const int yMax = yMin + sh;
-            const bool cb = mBoard->canBuildBase(xMin, xMax, yMin, yMax,
-                                                 mEditorMode,
-                                                 mViewedCityId, ppid);
-            if (!cb)
-                tex->setColorMod(255, 0, 0);
-            for (int x = xMin; x < xMax; x++)
+            const auto sanctuary = e::make_shared<eMonument>(
+                *mBoard, type, sw, sh, 0, mViewedCityId);
+            previewMonument = sanctuary;
+            sanctuary->setRotated(mRotate);
+            sanctuary->setTileRect({xMin, yMin, sw, sh});
+            eGameTextures::loadZeusSanctuary();
+            eSanctuary::sLoadMonumentTextures(god);
+            eGameTextures::loadSanctuary();
+            const int d = mRotate ? 1 : 0;
+            const auto finishSanctuaryPart = [](eSanctBuilding* const part)
             {
-                for (int y = yMin; y < yMax; y++)
+                while (!part->finished())
+                    part->incProgress();
+            };
+            for (const auto &tv : h->fTiles)
+            {
+                for (const auto &te : tv)
                 {
-                    double rx;
-                    double ry;
-                    const auto t = mBoard->tile(x, y);
-                    if (!t)
-                        continue;
-                    if (t->underBuilding())
-                        continue;
-                    const int a = t->altitude();
-                    drawXY(x, y, rx, ry, 1, 1, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    const int tx = xMin + te.fX;
+                    const int ty = yMin + te.fY;
+                    previewSanctuaryCells.push_back({
+                        tx, ty, te.fId, te.fA, te.fType});
+                    switch (te.fType)
+                    {
+                    case eSanctEleType::tile:
+                    case eSanctEleType::copper:
+                    case eSanctEleType::silver:
+                    case eSanctEleType::oliveTree:
+                    case eSanctEleType::vine:
+                    case eSanctEleType::orangeTree:
+                    {
+                        const auto b1 = e::make_shared<eTempleTileBuilding>(
+                            te.fId, *mBoard, mViewedCityId);
+                        b1->setMonument(sanctuary.get());
+                        finishSanctuaryPart(b1.get());
+                        sanctuary->registerElement(b1);
+                        ebs.emplace_back(tx, ty, b1);
+                    }
+                    break;
+                    case eSanctEleType::sanctuary:
+                    {
+                        const int stx = mRotate ? tx - 2 : tx + 1;
+                        const int sty = mRotate ? ty + 2 : ty - 1;
+                        const auto b1 = e::make_shared<eTempleBuilding>(
+                            te.fId, *mBoard, mViewedCityId);
+                        b1->setMonument(sanctuary.get());
+                        finishSanctuaryPart(b1.get());
+                        sanctuary->registerElement(b1);
+                        ebs.emplace_back(stx, sty, b1);
+                    }
+                    break;
+                    case eSanctEleType::monument:
+                    {
+                        const auto b1 = e::make_shared<eTempleMonumentBuilding>(
+                            god, te.fId, *mBoard, mViewedCityId);
+                        b1->setMonument(sanctuary.get());
+                        finishSanctuaryPart(b1.get());
+                        sanctuary->registerElement(b1);
+                        ebs.emplace_back(tx - d, ty + d, b1);
+                    }
+                    break;
+                    case eSanctEleType::altar:
+                    {
+                        const auto b1 = e::make_shared<eTempleAltarBuilding>(
+                            *mBoard, mViewedCityId);
+                        b1->setMonument(sanctuary.get());
+                        finishSanctuaryPart(b1.get());
+                        sanctuary->registerElement(b1);
+                        ebs.emplace_back(tx - d, ty + d, b1);
+                    }
+                    break;
+                    case eSanctEleType::defaultStatue:
+                    case eSanctEleType::aphroditeStatue:
+                    case eSanctEleType::apolloStatue:
+                    case eSanctEleType::aresStatue:
+                    case eSanctEleType::artemisStatue:
+                    case eSanctEleType::athenaStatue:
+                    case eSanctEleType::atlasStatue:
+                    case eSanctEleType::demeterStatue:
+                    case eSanctEleType::dionysusStatue:
+                    case eSanctEleType::hadesStatue:
+                    case eSanctEleType::hephaestusStatue:
+                    case eSanctEleType::heraStatue:
+                    case eSanctEleType::hermesStatue:
+                    case eSanctEleType::poseidonStatue:
+                    case eSanctEleType::zeusStatue:
+                    {
+                        eGodType statueType;
+                        switch (te.fType)
+                        {
+                        case eSanctEleType::aphroditeStatue: statueType = eGodType::aphrodite; break;
+                        case eSanctEleType::apolloStatue:    statueType = eGodType::apollo;    break;
+                        case eSanctEleType::aresStatue:      statueType = eGodType::ares;      break;
+                        case eSanctEleType::artemisStatue:   statueType = eGodType::artemis;   break;
+                        case eSanctEleType::athenaStatue:    statueType = eGodType::athena;    break;
+                        case eSanctEleType::atlasStatue:     statueType = eGodType::atlas;     break;
+                        case eSanctEleType::demeterStatue:   statueType = eGodType::demeter;   break;
+                        case eSanctEleType::dionysusStatue:  statueType = eGodType::dionysus;  break;
+                        case eSanctEleType::hadesStatue:     statueType = eGodType::hades;     break;
+                        case eSanctEleType::hephaestusStatue: statueType = eGodType::hephaestus; break;
+                        case eSanctEleType::heraStatue:      statueType = eGodType::hera;      break;
+                        case eSanctEleType::hermesStatue:    statueType = eGodType::hermes;    break;
+                        case eSanctEleType::poseidonStatue:  statueType = eGodType::poseidon;  break;
+                        case eSanctEleType::zeusStatue:      statueType = eGodType::zeus;      break;
+                        default:                             statueType = god;                 break;
+                        }
+                        const auto b1 = e::make_shared<eTempleStatueBuilding>(
+                            statueType, te.fId, *mBoard, mViewedCityId);
+                        b1->setMonument(sanctuary.get());
+                        finishSanctuaryPart(b1.get());
+                        sanctuary->registerElement(b1);
+                        ebs.emplace_back(tx, ty, b1);
+                    }
+                    break;
+                    default:
+                        break;
+                    }
                 }
             }
-            if (!cb)
-                tex->clearColorMod();
+            canBuildFunc = [&, xMin, yMin, sw, sh](
+                               const int, const int, const int, const int)
+            {
+                return mBoard->canBuildBase(xMin, xMin + sw, yMin, yMin + sh,
+                                            mEditorMode, mViewedCityId, ppid);
+            };
+            previewFootprint = {xMin, yMin, sw, sh};
         }
         break;
         case eBuildingMode::road:
@@ -2323,89 +2432,55 @@ void GameWidget::paintBuildPreview(
             if (!cb)
                 cbg = false;
         }
+        std::stable_sort(ebs.begin(), ebs.end(),
+                         [&](const eB &a, const eB &b)
+                         {
+                             const int saw = a.fBR ? a.fBR->spanW() : 1;
+                             const int sah = a.fBR ? a.fBR->spanH() : 1;
+                             const int sbw = b.fBR ? b.fBR->spanW() : 1;
+                             const int sbh = b.fBR ? b.fBR->spanH() : 1;
+                             const SDL_Rect ra{a.fTx, a.fTy, saw, sah};
+                             const SDL_Rect rb{b.fTx, b.fTy, sbw, sbh};
+                             const auto rra = eTileHelper::toRotatedRect(ra, dir, boardw, boardh);
+                             const auto rrb = eTileHelper::toRotatedRect(rb, dir, boardw, boardh);
+                             const int fitA = (rra.x + rra.w - 1) + (rra.y + rra.h - 1);
+                             const int fitB = (rrb.x + rrb.w - 1) + (rrb.y + rrb.h - 1);
+                             if (fitA != fitB)
+                                 return fitA < fitB;
+                             return (saw + sah) < (sbw + sbh);
+                         });
         for (const auto &eb : ebs)
         {
             drawAppealRangePreview(eb);
         }
+        if (previewFootprint.w > 0 && previewFootprint.h > 0)
+        {
+            std::vector<SanctuaryPreviewBuilding> previewBuildings;
+            previewBuildings.reserve(ebs.size());
+            for (const auto &eb : ebs)
+            {
+                previewBuildings.push_back({eb.fTx, eb.fTy, eb.fB, eb.fBR});
+            }
+            drawSanctuaryTerrainPreview(
+                *mBoard, tp, trrTexs, builTexs,
+                previewMonument,
+                previewSanctuaryCells, previewBuildings, previewFootprint,
+                dir, boardw, boardh, mDrawElevation, cbg);
+        }
+        const bool isSanctuaryPreview = previewFootprint.w > 0 &&
+                                        previewFootprint.h > 0;
         for (auto &eb : ebs)
         {
-            if (!eb.fB)
+            if (!eb.fB || !eb.fBR)
                 continue;
-            const auto b = eb.fB;
-            b->setFrameShift(0);
-            b->setSeed(0);
-            b->addUnderBuilding(t);
-            b->setCenterTile(t);
-            double rx;
-            double ry;
-            const int sw = eb.fBR->spanW();
-            const int sh = eb.fBR->spanH();
-            drawXY(eb.fTx, eb.fTy, rx, ry, sw, sh, a);
-            if (dir == eWorldDirection::E)
-            {
-                if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2))
-                {
-                    rx -= 1;
-                }
-                else if (sw == 6 && sh == 6)
-                {
-                    ry -= 1;
-                }
-            }
-            else if (dir == eWorldDirection::S)
-            {
-                if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2))
-                {
-                    rx -= 1;
-                    ry += 1;
-                }
-                else if (sw == 6 && sh == 6)
-                {
-                    rx -= 1;
-                    ry -= 1;
-                }
-            }
-            else if (dir == eWorldDirection::W)
-            {
-                if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2))
-                {
-                    ry += 1;
-                }
-                else if (sw == 6 && sh == 6)
-                {
-                    rx -= 1;
-                }
-            }
-            const auto tex = eb.fBR->getTexture(tp.size());
-
-            if (tex)
-            {
-                if (cbg)
-                    tex->setColorMod(0, 255, 0);
-                else
-                    tex->setColorMod(255, 0, 0);
-                tp.drawTexture(rx, ry, tex, eAlignment::top);
-                tex->clearColorMod();
-            }
-
-            const bool skipOverlays = dynamic_cast<ePatrolBuilding*>(eb.fB.get()) != nullptr;
-            if (!skipOverlays) {
-                const auto overlays = eb.fBR->getOverlays(tp.size());
-                for (const auto &o : overlays)
-                {
-                    const auto &ttex = o.fTex;
-                    if (cbg)
-                        ttex->setColorMod(0, 255, 0);
-                    else
-                        ttex->setColorMod(255, 0, 0);
-                    if (o.fAlignTop)
-                        tp.drawTexture(rx + o.fX, ry + o.fY, ttex,
-                                       eAlignment::top);
-                    else
-                        tp.drawTexture(rx + o.fX, ry + o.fY, ttex);
-                    ttex->clearColorMod();
-                }
-            }
+            if (isSanctuaryPreview)
+                drawSanctuaryBuildPreviewPart(
+                    tp, eb.fB.get(), eb.fBR.get(), t, eb.fTx, eb.fTy,
+                    a, dir, boardw, boardh, cbg);
+            else
+                drawGenericBuildPreviewPart(
+                    tp, eb.fB.get(), eb.fBR.get(), t, eb.fTx, eb.fTy,
+                    a, dir, cbg);
         }
         drawRoadAccessPreview(ebs, cbg);
     }
