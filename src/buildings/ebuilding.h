@@ -386,6 +386,7 @@ public:
     int ioID() const { return mIOID; }
 
     void setHP(const int hp);
+    void resetRisks();
 
     bool isPersonPlayer() const;
     ePlayerId playerId() const;

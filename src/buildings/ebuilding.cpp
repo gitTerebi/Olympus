@@ -2909,6 +2909,11 @@ void eBuilding::setHP(const int hp) {
     mHp = hp;
 }
 
+void eBuilding::resetRisks() {
+    mMaintance = 100;
+    mFireRiskUpdate = 999999;
+}
+
 double eBuilding::appeal() const {
     const auto& b = getBoard();
     const auto& tiles = tilesUnder();

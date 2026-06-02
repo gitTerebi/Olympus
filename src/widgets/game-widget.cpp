@@ -1320,7 +1320,7 @@ void GameWidget::showTip(const ePlayerCityTarget &target,
     etip.fTarget = target;
     etip.fText = tip;
     etip.fWid = msgb;
-    etip.fLastTick = mBoard->totalTime() + 7 * eNumbers::sDayLength;
+    etip.fLastTick = mBoard->totalTime() + 14 * eNumbers::sDayLength;
     const auto etipPtr = &etip;
     msgb->setPressAction([etipPtr]()
                          { etipPtr->fLastTick = 0; });

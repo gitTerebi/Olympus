@@ -668,7 +668,8 @@ void handleRepair(GameBoard &board, GameWidget *const widget,
                         rr->erase();
                     const auto restored = restoreFromBundle(
                         bundle, board);
-                    (void)restored;
+                    for (const auto &rb : restored)
+                        rb->resetRisks();
                     continue;
                 }
             }
