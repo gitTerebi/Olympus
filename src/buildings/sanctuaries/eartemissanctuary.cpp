@@ -50,7 +50,7 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
             id++;
         }
         mSoldierSpawn += by;
-        const int ssr = 20000;
+        const int ssr = 7 * eNumbers::sDayLength;
         if(mSoldierSpawn > ssr) {
             mSoldierSpawn -= ssr;
             for(const auto& b : mSoldierBanners) {
