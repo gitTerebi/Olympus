@@ -1,4 +1,5 @@
 ﻿#include "board-city.h"
+#include "enumbers.h"
 
 #include "buildings/ebuilding.h"
 #include "buildings/eemployingbuilding.h"
@@ -151,9 +152,15 @@ void BoardCity::incTime(const int by) {
         updateResources();
     }
 
+    const auto date = mBoard.date();
+    const auto p = owningPlayer();
+
+    mImmigrationUpdate += by;
+    if(mImmigrationUpdate > eNumbers::sDayLength) {
+        mImmigrationUpdate -= eNumbers::sDayLength;
+
     const int food = resourceCount(eResourceType::food);
     bool prolongedNoFood = false;
-    const auto date = mBoard.date();
     if(mNoFood && food < 1 && pop > 10) {
         prolongedNoFood = date.year() - mNoFoodSince.year() > 1;
     } else if(food < 1 && pop > 10) {
@@ -166,7 +173,6 @@ void BoardCity::incTime(const int by) {
     const int e = mEmplData.employable();
     const int v = mPopData.vacancies();
     const auto oldLimit = mImmigrationLimit;
-    const auto p = owningPlayer();
     int drachmas = 0;
     eDate inDebtSince = date;
     if(p) {
@@ -227,6 +233,7 @@ void BoardCity::incTime(const int by) {
             mBoard.showTip(mId, eLanguage::zeusText(19, 124));
         }
     }
+    } // mImmigrationUpdate
 
     // Augustus-style emigration: very low popularity (sentiment) pushes
     // people out, shrinking a miserable city instead of just freezing
