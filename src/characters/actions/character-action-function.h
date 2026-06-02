@@ -97,6 +97,8 @@ enum class eCharacterActionFunctionType {
 
     GWA_huntMonsterFinish,
     GMinA_huntMonsterFinish,
+    GMinA_huntSoldierFinish,
+    GMinA_fightSoldierDie,
 
     enemyBoatFinish
 };
