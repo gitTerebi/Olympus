@@ -625,6 +625,7 @@ public:
     eTextureCollection fSanctuaryTiles;
     eTextureCollection fSanctuarySpace;
     std::shared_ptr<eTexture> fSanctuaryAltar;
+    std::shared_ptr<eTexture> fSanctuaryAltarFlipped;
     eTextureCollection fAltarBullOverlay;
     eTextureCollection fAltarSheepOverlay;
     eTextureCollection fAltarGoodsOverlay;

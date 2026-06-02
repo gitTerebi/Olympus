@@ -1913,6 +1913,25 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
         return true;
     const auto k = e.key();
     const auto &hotkeys = window()->settings();
+    if(e.ctrlPressed()) {
+        if(k == SDL_Scancode::SDL_SCANCODE_J) {
+            adjustSanctuaryTemplePreviewDebugOffset(
+                mGm->mode(), mRotateId, -1, 0);
+            return true;
+        } else if(k == SDL_Scancode::SDL_SCANCODE_L) {
+            adjustSanctuaryTemplePreviewDebugOffset(
+                mGm->mode(), mRotateId, 1, 0);
+            return true;
+        } else if(k == SDL_Scancode::SDL_SCANCODE_I) {
+            adjustSanctuaryTemplePreviewDebugOffset(
+                mGm->mode(), mRotateId, 0, -1);
+            return true;
+        } else if(k == SDL_Scancode::SDL_SCANCODE_K) {
+            adjustSanctuaryTemplePreviewDebugOffset(
+                mGm->mode(), mRotateId, 0, 1);
+            return true;
+        }
+    }
     if (updateSmoothScrollKey(k, true))
         return true;
     if (k == hotkeys.fHotkeySpeedUp ||
@@ -1943,8 +1962,6 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
         mRotateId++;
         if (mRotateId > 3)
             mRotateId = 0;
-        printSanctuaryPreviewTiles(mGm->mode(), mRotateId,
-                                   mHoverTX, mHoverTY);
         if (mGm->mode() == eBuildingMode::stamp)
             mStampTool->setRotation(mStampTool->rotation() + 1);
     }

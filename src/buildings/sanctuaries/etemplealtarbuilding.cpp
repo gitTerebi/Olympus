@@ -22,6 +22,7 @@ eTempleAltarBuilding::getTexture(const eTileSize size) const {
     if(p <= 0) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    if(mId == 1) return blds.fSanctuaryAltarFlipped;
     return blds.fSanctuaryAltar;
 }
 
@@ -75,6 +76,7 @@ void eTempleAltarBuilding::timeChanged(const int by) {
 
 void eTempleAltarBuilding::serializeFields(eSaveArchive& ar) {
     eSanctBuilding::serializeFields(ar);
+    ar.field("id", mId);
     ar.field("sacrifice", mSacrifice);
     ar.field("sacrificeTime", mSacrificeTime);
 }

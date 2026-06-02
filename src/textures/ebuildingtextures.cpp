@@ -2083,6 +2083,13 @@ void eBuildingTextures::loadSanctuary() {
         }
 
         fSanctuaryAltar = loader.load(1, 61);
+        {
+            const auto& src = fSanctuaryAltar;
+            auto flipped = std::make_shared<eTexture>();
+            flipped->setFlipTex(src);
+            flipped->setOffset(src->width() - src->offsetX(), src->offsetY());
+            fSanctuaryAltarFlipped = flipped;
+        }
     }
 
     {
