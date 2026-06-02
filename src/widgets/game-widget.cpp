@@ -1425,7 +1425,7 @@ bool GameWidget::roadBlocked(eTile *const t, const eCityId cid,
 {
     if (!t) return true;
     if (t->hasRoad()) return false; // already road, fine to overlay
-    return !mBoard->canBuild(t->x(), t->y(), 1, 1, mEditorMode, cid, pid);
+    return !mBoard->canBuild(t->x(), t->y(), 1, 1, mEditorMode, cid, pid, false, true);
 }
 
 bool GameWidget::columnPath(std::vector<eOrientation> &path)
