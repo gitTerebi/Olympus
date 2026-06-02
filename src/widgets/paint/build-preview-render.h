@@ -17,6 +17,7 @@ void drawGenericBuildPreviewPart(
     int ty,
     int altitude,
     eWorldDirection dir,
-    bool canBuild);
+    bool canBuild,
+    bool drawOverlays = true);
 
 #endif // BUILD_PREVIEW_RENDER_H

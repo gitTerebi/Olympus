@@ -5495,6 +5495,7 @@ bool GameBoard::buildSanctuary(const int minX, const int maxX,
             {
                 const auto tt = e::make_shared<eTempleAltarBuilding>(
                     *this, cid);
+                tt->setId(rotate ? 1 : 0);
                 tt->setMonument(b.get());
                 const int d = rotate ? 1 : 0;
                 this->build(tx - d, ty + d, 2, 2, cid, pid, editorDisplay, [tt]()

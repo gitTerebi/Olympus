@@ -51,7 +51,8 @@ void drawPreviewTextureAndOverlays(eTilePainter& tp,
                                    eBuildingRenderer* const renderer,
                                    const double drawX,
                                    const double drawY,
-                                   const bool canBuild)
+                                   const bool canBuild,
+                                   const bool drawOverlays)
 {
     const auto tex = renderer->getTexture(tp.size());
     if (tex)
@@ -60,6 +61,9 @@ void drawPreviewTextureAndOverlays(eTilePainter& tp,
         tp.drawTexture(drawX, drawY, tex, eAlignment::top);
         tex->clearColorMod();
     }
+
+    if (!drawOverlays)
+        return;
 
     const bool skipOverlays = dynamic_cast<ePatrolBuilding*>(building) != nullptr;
     if (skipOverlays)
@@ -89,7 +93,8 @@ void drawGenericBuildPreviewPart(
     const int ty,
     const int altitude,
     const eWorldDirection dir,
-    const bool canBuild)
+    const bool canBuild,
+    const bool drawOverlays)
 {
     if (!building || !renderer || !centerTile)
         return;
@@ -130,6 +135,6 @@ void drawGenericBuildPreviewPart(
     }
 
     drawPreviewTextureAndOverlays(tp, building, renderer,
-                                  drawX, drawY, canBuild);
+                                  drawX, drawY, canBuild, drawOverlays);
 }
 
