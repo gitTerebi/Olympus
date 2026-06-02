@@ -10,6 +10,7 @@
 #include "fileIO/esavearchive.h"
 #include "emovetoaction.h"
 #include "ewaitaction.h"
+#include "ewalkablehelpers.h"
 
 CartTransporterAction::CartTransporterAction(
         eCharacter* const c,
@@ -31,6 +32,19 @@ void CartTransporterAction::increment(const int by) {
         return;
     }
     updateWaiting();
+    const bool outdoors = mState == eCartState::waitOutside ||
+                          mState == eCartState::movingToTarget ||
+                          mState == eCartState::atTarget ||
+                          mState == eCartState::idleOutside;
+    if(outdoors) {
+        const auto c = character();
+        const auto t = c->tile();
+        if(t && !t->hasRoad() && !t->hasAvenue() &&
+           !eWalkableHelpers::sTileUnderBuilding(t, mBuilding)) {
+            enterReturning();
+            return;
+        }
+    }
     eActionWithComeback::increment(by);
     if(dynamic_cast<eWaitAction*>(currentAction())) {
         character()->setActionType(eCharacterActionType::stand);
