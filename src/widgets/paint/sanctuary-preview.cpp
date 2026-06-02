@@ -1,111 +1,43 @@
 #include "widgets/paint/sanctuary-preview.h"
 
-#include "buildings/ebuilding.h"
-#include "buildings/ebuildingrenderer.h"
 #include "engine/etile.h"
-#include "engine/etileterrainpainter.h"
 #include "engine/game-board.h"
 #include "etilehelper.h"
-#include "textures/ebuildingtextures.h"
 #include "textures/eterraintextures.h"
-#include "textures/etiletotexture.h"
 #include "widgets/etilepainter.h"
 
 #include <algorithm>
 
 namespace {
 
-struct TileState
+struct PreviewTile
 {
-    eTile* fTile;
-    stdsptr<eBuilding> fUnderBuilding;
-    int fSeed;
-    int fAltitude;
-    bool fWalkableElev;
-    bool fUpdateTerrain;
-    eTileTerrainPainter fPainter;
+    int fX;
+    int fY;
 };
 
-using TileStates = std::vector<TileState>;
-
-void saveTile(eTile* const tile, TileStates& states)
-{
-    if (!tile)
-        return;
-    for (const auto& state : states)
-    {
-        if (state.fTile == tile)
-            return;
-    }
-    const auto ub = tile->underBuilding();
-    states.push_back({tile,
-                      ub ? ub->ref<eBuilding>() : nullptr,
-                      tile->seed(),
-                      tile->altitude(),
-                      tile->walkableElev(),
-                      tile->updateTerrain(),
-                      tile->terrainPainter()});
-}
-
-void restoreTiles(const TileStates& states)
-{
-    for (const auto& state : states)
-    {
-        state.fTile->terrainPainter() = state.fPainter;
-        state.fTile->setUnderBuilding(state.fUnderBuilding);
-        state.fTile->setSeed(state.fSeed);
-        state.fTile->setAltitude(state.fAltitude, false);
-        state.fTile->setWalkableElev(state.fWalkableElev);
-        if (state.fUpdateTerrain)
-            state.fTile->scheduleTerrainUpdate();
-        else
-            state.fTile->terrainUpdated();
-    }
-}
-
-void sortByDrawOrder(TileStates& states,
+void sortByDrawOrder(std::vector<PreviewTile>& tiles,
                      const eWorldDirection dir,
                      const int boardw,
                      const int boardh)
 {
-    std::stable_sort(states.begin(), states.end(),
-                     [&](const TileState& a, const TileState& b)
+    std::stable_sort(tiles.begin(), tiles.end(),
+                     [&](const PreviewTile& lhs, const PreviewTile& rhs)
                      {
                          int ax;
                          int ay;
                          int bx;
                          int by;
                          eTileHelper::dTileIdToRotatedDTileId(
-                             a.fTile->dx(), a.fTile->dy(), ax, ay,
+                             lhs.fX, lhs.fY, ax, ay,
                              dir, boardw, boardh);
                          eTileHelper::dTileIdToRotatedDTileId(
-                             b.fTile->dx(), b.fTile->dy(), bx, by,
+                             rhs.fX, rhs.fY, bx, by,
                              dir, boardw, boardh);
                          if (ay != by)
                              return ay < by;
                          return ax < bx;
                      });
-}
-
-void setPreviewBuilding(GameBoard& board,
-                        TileStates& states,
-                        const int x,
-                        const int y,
-                        const int w,
-                        const int h,
-                        const stdsptr<eBuilding>& b)
-{
-    for (int dx = 0; dx < w; dx++)
-    {
-        for (int dy = 0; dy < h; dy++)
-        {
-            const auto tile = board.tile(x + dx, y + dy);
-            if (!tile)
-                continue;
-            saveTile(tile, states);
-            tile->setUnderBuilding(b);
-        }
-    }
 }
 
 void previewDrawXY(GameBoard& board,
@@ -114,8 +46,7 @@ void previewDrawXY(GameBoard& board,
                    double& rx,
                    double& ry,
                    const int wSpan,
-                   const int hSpan,
-                   const int a)
+                   const int hSpan)
 {
     const auto dir = board.direction();
     if (dir != eWorldDirection::N)
@@ -132,8 +63,6 @@ void previewDrawXY(GameBoard& board,
     else if (wSpan == 4 && hSpan == 4)  { rx += 0.5; ry += 2.5; }
     else if (wSpan == 5 && hSpan == 5)  { rx += 0.0; ry += 4.0; }
     else if (wSpan == 6 && hSpan == 6)  { rx += 0.5; ry += 5.5; }
-    rx -= a;
-    ry -= a;
 }
 
 }
@@ -142,69 +71,42 @@ void drawSanctuaryTerrainPreview(
     GameBoard& board,
     eTilePainter& tp,
     const eTerrainTextures& trrTexs,
-    const eBuildingTextures& builTexs,
-    const stdsptr<eBuilding>& sanctuary,
-    const std::vector<SanctuaryPreviewCell>& cells,
-    const std::vector<SanctuaryPreviewBuilding>& buildings,
     const SDL_Rect footprint,
     const eWorldDirection dir,
     const int boardw,
     const int boardh,
-    const bool drawElevation,
     const bool canBuild)
 {
-    if (footprint.w <= 0 || footprint.h <= 0 || !sanctuary)
+    if (footprint.w <= 0 || footprint.h <= 0)
         return;
 
-    TileStates states;
-    states.reserve(footprint.w * footprint.h);
+    const auto& baseTexture = trrTexs.fBuildingBase;
+    std::vector<PreviewTile> tiles;
+    tiles.reserve(footprint.w * footprint.h);
 
-    for (const auto& cell : cells)
+    for (int dx = 0; dx < footprint.w; dx++)
     {
-        const auto tile = board.tile(cell.fX, cell.fY);
-        if (!tile)
-            continue;
-        saveTile(tile, states);
-        tile->setUnderBuilding(sanctuary);
-        tile->setAltitude(tile->altitude() + cell.fAltitude, false);
-        tile->setSeed(cell.fId);
-        if (cell.fType == eSanctEleType::stairs)
-            tile->setWalkableElev(true);
+        for (int dy = 0; dy < footprint.h; dy++)
+        {
+            const int x = footprint.x + dx;
+            const int y = footprint.y + dy;
+            if (!board.tile(x, y))
+                continue;
+            tiles.push_back({x, y});
+        }
     }
 
-    for (const auto& building : buildings)
+    sortByDrawOrder(tiles, dir, boardw, boardh);
+    if (canBuild)
+        baseTexture->setColorMod(0, 255, 0);
+    else
+        baseTexture->setColorMod(255, 0, 0);
+    for (const auto& tile : tiles)
     {
-        if (!building.fBuilding)
-            continue;
-        const int sw = building.fRenderer ?
-            building.fRenderer->spanW() : building.fBuilding->spanW();
-        const int sh = building.fRenderer ?
-            building.fRenderer->spanH() : building.fBuilding->spanH();
-        setPreviewBuilding(board, states, building.fX, building.fY,
-                           sw, sh, building.fBuilding);
-    }
-
-    sortByDrawOrder(states, dir, boardw, boardh);
-    for (const auto& state : states)
-    {
-        int drawDim = 1;
-        const auto tex = eTileToTexture::get(
-            state.fTile, trrTexs, builTexs, tp.size(),
-            drawElevation, drawDim, nullptr, dir);
-        if (!tex)
-            continue;
         double rx;
         double ry;
-        previewDrawXY(board, state.fTile->x(), state.fTile->y(), rx, ry,
-                      drawDim, drawDim,
-                      drawElevation ? state.fTile->altitude() : 0);
-        if (canBuild)
-            tex->setColorMod(0, 255, 0);
-        else
-            tex->setColorMod(255, 0, 0);
-        tp.drawTexture(rx, ry, tex, eAlignment::top);
-        tex->clearColorMod();
+        previewDrawXY(board, tile.fX, tile.fY, rx, ry, 1, 1);
+        tp.drawTexture(rx, ry, baseTexture, eAlignment::top);
     }
-
-    restoreTiles(states);
+    baseTexture->clearColorMod();
 }
