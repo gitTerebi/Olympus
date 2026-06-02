@@ -78,18 +78,6 @@ void drawPreviewTextureAndOverlays(eTilePainter& tp,
     }
 }
 
-void getSanctuaryDisplacement(const int w, const int h,
-                              double& dx, double& dy)
-{
-    if (w == 1 && h == 1)       { dx = -0.5; dy =  0.5; }
-    else if (w == 2 && h == 2)  { dx = -1.;  dy =  1.;  }
-    else if (w == 3 && h == 3)  { dx = -1.5; dy =  1.5; }
-    else if (w == 4 && h == 4)  { dx = -2.;  dy =  2.;  }
-    else if (w == 5 && h == 5)  { dx = -2.5; dy =  2.5; }
-    else if (w == 6 && h == 6)  { dx = -3.;  dy =  3.;  }
-    else                        { dx =  0.;  dy =  0.;  }
-}
-
 }
 
 void drawGenericBuildPreviewPart(
@@ -145,43 +133,3 @@ void drawGenericBuildPreviewPart(
                                   drawX, drawY, canBuild);
 }
 
-void drawSanctuaryBuildPreviewPart(
-    eTilePainter& tp,
-    eBuilding* const building,
-    eBuildingRenderer* const renderer,
-    eTile* const centerTile,
-    const int tx,
-    const int ty,
-    const int altitude,
-    const eWorldDirection dir,
-    const int boardw,
-    const int boardh,
-    const bool canBuild)
-{
-    if (!building || !renderer || !centerTile)
-        return;
-
-    building->setFrameShift(0);
-    building->setSeed(0);
-    building->addUnderBuilding(centerTile);
-    building->setCenterTile(centerTile);
-
-    const int sw = renderer->spanW();
-    const int sh = renderer->spanH();
-    building->setTileRect({tx, ty, sw, sh});
-
-    const auto ts = building->getTextureSpace(tx, ty, tp.size());
-    const auto& tsRect = ts.fRect;
-    const auto rtsRect = eTileHelper::toRotatedRect(
-        tsRect, dir, boardw, boardh);
-    const int fitX = rtsRect.x + rtsRect.w - 1;
-    const int fitY = rtsRect.y + rtsRect.h - 1;
-    double dx;
-    double dy;
-    getSanctuaryDisplacement(tsRect.w, tsRect.h, dx, dy);
-    const double drawX = fitX + dx + 1 - altitude * 0.5;
-    const double drawY = fitY + dy + 1 - altitude * 0.5;
-
-    drawPreviewTextureAndOverlays(tp, building, renderer,
-                                  drawX, drawY, canBuild);
-}

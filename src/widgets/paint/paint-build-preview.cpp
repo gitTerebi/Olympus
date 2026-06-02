@@ -1081,8 +1081,6 @@ void GameWidget::paintBuildPreview(
 
         std::vector<eB> ebs;
         SDL_Rect previewFootprint{0, 0, 0, 0};
-        std::vector<SanctuaryPreviewCell> previewSanctuaryCells;
-        stdsptr<eMonument> previewMonument;
         switch (mode)
         {
         case eBuildingMode::modestPyramid:
@@ -1205,7 +1203,6 @@ void GameWidget::paintBuildPreview(
             const int yMin = mHoverTY - sh / 2;
             const auto sanctuary = e::make_shared<eMonument>(
                 *mBoard, type, sw, sh, 0, mViewedCityId);
-            previewMonument = sanctuary;
             sanctuary->setRotated(mRotate);
             sanctuary->setTileRect({xMin, yMin, sw, sh});
             eGameTextures::loadZeusSanctuary();
@@ -1223,8 +1220,6 @@ void GameWidget::paintBuildPreview(
                 {
                     const int tx = xMin + te.fX;
                     const int ty = yMin + te.fY;
-                    previewSanctuaryCells.push_back({
-                        tx, ty, te.fId, te.fA, te.fType});
                     switch (te.fType)
                     {
                     case eSanctEleType::tile:
@@ -2419,8 +2414,8 @@ void GameWidget::paintBuildPreview(
             paintAppealBuildPreview(tp, trrTexs, eb.fB.get(), eb.fBR.get(),
                                     eb.fTx, eb.fTy);
         };
-        bool cbg = true;
-        const int a = t->altitude();
+        bool canBuildPreview = true;
+        const int previewAltitude = t->altitude();
         for (auto &eb : ebs)
         {
             if (!eb.fBR)
@@ -2430,24 +2425,44 @@ void GameWidget::paintBuildPreview(
             const int sh = b->spanH();
             const bool cb = canBuildFunc(eb.fTx, eb.fTy, sw, sh);
             if (!cb)
-                cbg = false;
+                canBuildPreview = false;
         }
+        const bool isSanctuaryPreview = previewFootprint.w > 0 &&
+                                        previewFootprint.h > 0;
         std::stable_sort(ebs.begin(), ebs.end(),
-                         [&](const eB &a, const eB &b)
+                         [&](const eB &lhs, const eB &rhs)
                          {
-                             const int saw = a.fBR ? a.fBR->spanW() : 1;
-                             const int sah = a.fBR ? a.fBR->spanH() : 1;
-                             const int sbw = b.fBR ? b.fBR->spanW() : 1;
-                             const int sbh = b.fBR ? b.fBR->spanH() : 1;
-                             const SDL_Rect ra{a.fTx, a.fTy, saw, sah};
-                             const SDL_Rect rb{b.fTx, b.fTy, sbw, sbh};
-                             const auto rra = eTileHelper::toRotatedRect(ra, dir, boardw, boardh);
-                             const auto rrb = eTileHelper::toRotatedRect(rb, dir, boardw, boardh);
-                             const int fitA = (rra.x + rra.w - 1) + (rra.y + rra.h - 1);
-                             const int fitB = (rrb.x + rrb.w - 1) + (rrb.y + rrb.h - 1);
-                             if (fitA != fitB)
-                                 return fitA < fitB;
-                             return (saw + sah) < (sbw + sbh);
+                             const int lhsSpanW = lhs.fBR ? lhs.fBR->spanW() : 1;
+                             const int lhsSpanH = lhs.fBR ? lhs.fBR->spanH() : 1;
+                             const int rhsSpanW = rhs.fBR ? rhs.fBR->spanW() : 1;
+                             const int rhsSpanH = rhs.fBR ? rhs.fBR->spanH() : 1;
+                             const SDL_Rect lhsRect{lhs.fTx, lhs.fTy,
+                                                    lhsSpanW, lhsSpanH};
+                             const SDL_Rect rhsRect{rhs.fTx, rhs.fTy,
+                                                    rhsSpanW, rhsSpanH};
+                             const auto rotatedLhsRect = eTileHelper::toRotatedRect(
+                                 lhsRect, dir, boardw, boardh);
+                             const auto rotatedRhsRect = eTileHelper::toRotatedRect(
+                                 rhsRect, dir, boardw, boardh);
+                             if (isSanctuaryPreview)
+                             {
+                                 if (rotatedLhsRect.y != rotatedRhsRect.y)
+                                     return rotatedLhsRect.y < rotatedRhsRect.y;
+                                 if (rotatedLhsRect.x != rotatedRhsRect.x)
+                                     return rotatedLhsRect.x < rotatedRhsRect.x;
+                                 return (lhsSpanW + lhsSpanH) <
+                                        (rhsSpanW + rhsSpanH);
+                             }
+                             const int lhsDrawOrder =
+                                 (rotatedLhsRect.x + rotatedLhsRect.w - 1) +
+                                 (rotatedLhsRect.y + rotatedLhsRect.h - 1);
+                             const int rhsDrawOrder =
+                                 (rotatedRhsRect.x + rotatedRhsRect.w - 1) +
+                                 (rotatedRhsRect.y + rotatedRhsRect.h - 1);
+                             if (lhsDrawOrder != rhsDrawOrder)
+                                 return lhsDrawOrder < rhsDrawOrder;
+                             return (lhsSpanW + lhsSpanH) <
+                                    (rhsSpanW + rhsSpanH);
                          });
         for (const auto &eb : ebs)
         {
@@ -2455,33 +2470,36 @@ void GameWidget::paintBuildPreview(
         }
         if (previewFootprint.w > 0 && previewFootprint.h > 0)
         {
-            std::vector<SanctuaryPreviewBuilding> previewBuildings;
-            previewBuildings.reserve(ebs.size());
-            for (const auto &eb : ebs)
-            {
-                previewBuildings.push_back({eb.fTx, eb.fTy, eb.fB, eb.fBR});
-            }
             drawSanctuaryTerrainPreview(
-                *mBoard, tp, trrTexs, builTexs,
-                previewMonument,
-                previewSanctuaryCells, previewBuildings, previewFootprint,
-                dir, boardw, boardh, mDrawElevation, cbg);
+                *mBoard, tp, trrTexs, previewFootprint,
+                dir, boardw, boardh, canBuildPreview);
         }
-        const bool isSanctuaryPreview = previewFootprint.w > 0 &&
-                                        previewFootprint.h > 0;
-        for (auto &eb : ebs)
+        if (isSanctuaryPreview)
         {
-            if (!eb.fB || !eb.fBR)
-                continue;
-            if (isSanctuaryPreview)
-                drawSanctuaryBuildPreviewPart(
-                    tp, eb.fB.get(), eb.fBR.get(), t, eb.fTx, eb.fTy,
-                    a, dir, boardw, boardh, cbg);
-            else
+            for (auto &eb : ebs)
+            {
+                if (!eb.fB || !eb.fBR)
+                    continue;
+                const auto type = eb.fB->type();
+                if (type == eBuildingType::temple ||
+                    type == eBuildingType::templeTile)
+                    continue;
                 drawGenericBuildPreviewPart(
                     tp, eb.fB.get(), eb.fBR.get(), t, eb.fTx, eb.fTy,
-                    a, dir, cbg);
+                    0, dir, canBuildPreview);
+            }
         }
-        drawRoadAccessPreview(ebs, cbg);
+        else
+        {
+            for (auto &eb : ebs)
+            {
+                if (!eb.fB || !eb.fBR)
+                    continue;
+                drawGenericBuildPreviewPart(
+                    tp, eb.fB.get(), eb.fBR.get(), t, eb.fTx, eb.fTy,
+                    previewAltitude, dir, canBuildPreview);
+            }
+        }
+        drawRoadAccessPreview(ebs, canBuildPreview);
     }
 }
