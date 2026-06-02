@@ -205,7 +205,7 @@ void GameWidget::paintEvent(ePainter &p)
         {
             eToast toast = mPendingToasts.front();
             mPendingToasts.pop_front();
-            toast.fExpireTick = mBoard->totalTime() + 7 * eNumbers::sDayLength;
+            toast.fExpireTick = mBoard->totalTime() + 14 * eNumbers::sDayLength;
             createToastWidget(toast);
             mToasts.push_back(toast);
             updateToasts = true;
