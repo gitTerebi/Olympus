@@ -205,6 +205,10 @@ stdsptr<eCharActFunc> eCharActFunc::sCreate(
         return std::make_shared<eGWA_huntMonsterFinish>(board);
     case eCharActFuncType::GMinA_huntMonsterFinish:
         return std::make_shared<eGMinA_huntMonsterFinish>(board);
+    case eCharActFuncType::GMinA_huntSoldierFinish:
+        return std::make_shared<eGMinA_huntSoldierFinish>(board);
+    case eCharActFuncType::GMinA_fightSoldierDie:
+        return std::make_shared<eGMinA_fightSoldierDie>(board);
 
     case eCharActFuncType::enemyBoatFinish:
         return std::make_shared<eEnemyBoatFinish>(board);
