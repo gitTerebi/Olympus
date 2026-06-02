@@ -57,7 +57,7 @@ void GameWidget::showToast(eEventData &ed, const eMessage &msg)
     pendingToast.fEd = ed;
     pendingToast.fMsg = msg;
     pendingToast.fDate = mBoard->date();
-    pendingToast.fExpireFrame = 0;
+    pendingToast.fExpireTick = 0;
     pendingToast.fQueued = false;
     mPendingToasts.push_back(pendingToast);
 }

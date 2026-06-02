@@ -2,6 +2,8 @@
 
 #include <functional>
 
+#include "enumbers.h"
+
 #include "characters/actions/walkable/ewalkableobject.h"
 
 #include "widgets/eterraineditmenu.h"
@@ -172,7 +174,7 @@ void GameWidget::paintEvent(ePainter &p)
     for (int i = 0; i < int(mTips.size()); i++)
     {
         const auto &tip = mTips[i];
-        if (mFrame > tip.fLastFrame)
+        if (mBoard->totalTime() > tip.fLastTick)
         {
             tip.fWid->deleteLater();
             mTips.erase(mTips.begin() + i);
@@ -188,7 +190,7 @@ void GameWidget::paintEvent(ePainter &p)
     for (int i = 0; i < int(mToasts.size()); i++)
     {
         const auto &toast = mToasts[i];
-        if (mFrame > toast.fExpireFrame)
+        if (mBoard->totalTime() > toast.fExpireTick)
         {
             toast.fWid->deleteLater();
             mToasts.erase(mToasts.begin() + i);
@@ -203,7 +205,7 @@ void GameWidget::paintEvent(ePainter &p)
         {
             eToast toast = mPendingToasts.front();
             mPendingToasts.pop_front();
-            toast.fExpireFrame = mFrame + (turbo ? 60 : 300);
+            toast.fExpireTick = mBoard->totalTime() + 7 * eNumbers::sDayLength;
             createToastWidget(toast);
             mToasts.push_back(toast);
             updateToasts = true;
