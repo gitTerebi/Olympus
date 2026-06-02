@@ -1,10 +1,12 @@
 ﻿#include "game-widget.h"
+#include "enumbers.h"
 #include "buildtools/road-tool.h"
 #include "buildtools/column-tool.h"
 #include "buildtools/bridge-tool.h"
 #include "buildtools/build-validity.h"
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/stamp-template-writer.h"
+#include "widgets/paint/sanctuary-preview.h"
 #include "cursors.h"
 
 #include "emodal.h"
@@ -1318,10 +1320,10 @@ void GameWidget::showTip(const ePlayerCityTarget &target,
     etip.fTarget = target;
     etip.fText = tip;
     etip.fWid = msgb;
-    etip.fLastFrame = mFrame + 200;
+    etip.fLastTick = mBoard->totalTime() + 7 * eNumbers::sDayLength;
     const auto etipPtr = &etip;
     msgb->setPressAction([etipPtr]()
-                         { etipPtr->fLastFrame -= 200; });
+                         { etipPtr->fLastTick = 0; });
     updateTipPositions();
 }
 
@@ -1941,6 +1943,8 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
         mRotateId++;
         if (mRotateId > 3)
             mRotateId = 0;
+        printSanctuaryPreviewTiles(mGm->mode(), mRotateId,
+                                   mHoverTX, mHoverTY);
         if (mGm->mode() == eBuildingMode::stamp)
             mStampTool->setRotation(mStampTool->rotation() + 1);
     }

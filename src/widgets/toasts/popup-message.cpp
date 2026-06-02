@@ -100,7 +100,7 @@ void GameWidget::showMessage(eEventData &ed,
         pendingToast.fMsg = msg;
         pendingToast.fWid = nullptr;
         pendingToast.fDate = mBoard->date();
-        pendingToast.fExpireFrame = 0;
+        pendingToast.fExpireTick = 0;
         pendingToast.fQueued = false;
         mPendingToasts.push_back(pendingToast);
         return;
@@ -112,7 +112,7 @@ void GameWidget::showMessage(eEventData &ed,
         pendingToast.fMsg = msg;
         pendingToast.fWid = nullptr;
         pendingToast.fDate = mBoard->date();
-        pendingToast.fExpireFrame = 0;
+        pendingToast.fExpireTick = 0;
         pendingToast.fQueued = false;
         mPendingToasts.push_back(pendingToast);
         return;

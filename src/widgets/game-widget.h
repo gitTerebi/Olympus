@@ -550,7 +550,7 @@ private:
         ePlayerCityTarget fTarget;
         std::string fText;
         eWidget* fWid = nullptr;
-        int fLastFrame = 0;
+        int fLastTick = 0;
     };
 
     std::deque<eTip> mTips;

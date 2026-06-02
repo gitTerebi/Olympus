@@ -10,7 +10,7 @@ struct eToast {
     eEventData fEd;
     eMessage fMsg;
     eWidget* fWid = nullptr;
-    int fExpireFrame = 0;
+    int fExpireTick = 0;
     eDate fDate;
     bool fQueued = false;
 };
