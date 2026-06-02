@@ -74,6 +74,8 @@ double eNumbers::sFireRiskPeriodExponent;
 double eNumbers::sCollapseRiskPeriodMultiplier;
 double eNumbers::sCollapseRiskPeriodBaseIncrement;
 double eNumbers::sCollapseRiskPeriodExponent;
+int eNumbers::sFireRiskPeriodTable[101];
+int eNumbers::sCollapseRiskPeriodTable[101];
 
 int eNumbers::sHouseCultureDecrementPeriod;
 int eNumbers::sHouseWaterDecrementPeriod;
@@ -385,6 +387,10 @@ void eNumbers::sLoad(const std::string& path) {
     loadD("collapse_risk_period_multiplier_d", sCollapseRiskPeriodMultiplier, 10, 1, 100);
     loadD("collapse_risk_period_base_increment_d", sCollapseRiskPeriodBaseIncrement, 10, 1, 1000);
     loadD("collapse_risk_period_exponent_d", sCollapseRiskPeriodExponent, 4, 1, 9);
+    for(int m = 0; m <= 100; m++) {
+        sFireRiskPeriodTable[m] = static_cast<int>(sFireRiskPeriodMultiplier * pow(sFireRiskPeriodBaseIncrement + m, sFireRiskPeriodExponent));
+        sCollapseRiskPeriodTable[m] = static_cast<int>(sCollapseRiskPeriodMultiplier * pow(sCollapseRiskPeriodBaseIncrement + m, sCollapseRiskPeriodExponent));
+    }
 
     loadI("house_culture_decrement_period_i", sHouseCultureDecrementPeriod, 20000, 1, 1000000);
     loadI("house_water_decrement_period_i", sHouseWaterDecrementPeriod, 7500, 1, 1000000);

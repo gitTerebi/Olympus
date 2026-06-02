@@ -75,6 +75,8 @@ struct eNumbers {
     static double sCollapseRiskPeriodMultiplier;
     static double sCollapseRiskPeriodBaseIncrement;
     static double sCollapseRiskPeriodExponent;
+    static int sFireRiskPeriodTable[101];
+    static int sCollapseRiskPeriodTable[101];
 
     static int sHouseCultureDecrementPeriod;
     static int sHouseWaterDecrementPeriod;

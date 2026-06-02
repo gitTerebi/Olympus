@@ -428,6 +428,7 @@ private:
 
     double mBlessed = 0;
     int mBlessTime = 0;
+    int mFireRiskUpdate = 999999;
 };
 
 #endif // EBUILDING_H

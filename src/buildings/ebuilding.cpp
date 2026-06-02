@@ -2443,35 +2443,34 @@ void eBuilding::incTime(const int by) {
             mMaintance = std::max(0, mMaintance - 1);
         }
     } else if(!isEmptyHome()) {
-        const auto pid = playerId();
-        const auto diff = b.difficulty(pid);
-        const int fireRisk = DifficultyHelpers::fireRisk(diff, mType);
-        if(fireRisk && by && sFlammable(type())) {
-            const double pm = eNumbers::sFireRiskPeriodMultiplier;
-            const double pbi = eNumbers::sFireRiskPeriodBaseIncrement;
-            const double pe = eNumbers::sFireRiskPeriodExponent;
-            const int m4 = pm*pow(pbi + mMaintance, pe);
-            const int firePeriod = m4/(by*fireRisk);
-            if(firePeriod && eRand::rand() % firePeriod == 0) {
-                setOnFire(true);
-                eEventData ed(cityId());
-                ed.fTile = centerTile();
-                b.event(eEvent::fire, ed);
+        mFireRiskUpdate += by;
+        if(mFireRiskUpdate > eNumbers::sDayLength) {
+            const int accBy = mFireRiskUpdate;
+            mFireRiskUpdate = 0;
+            const auto pid = playerId();
+            const auto diff = b.difficulty(pid);
+            const int fireRisk = DifficultyHelpers::fireRisk(diff, mType);
+            if(fireRisk && accBy && sFlammable(type())) {
+                const int m4 = eNumbers::sFireRiskPeriodTable[mMaintance];
+                const int firePeriod = m4/(accBy*fireRisk);
+                if(firePeriod && eRand::rand() % firePeriod == 0) {
+                    setOnFire(true);
+                    eEventData ed(cityId());
+                    ed.fTile = centerTile();
+                    b.event(eEvent::fire, ed);
+                }
             }
-        }
-        const int damageRisk = DifficultyHelpers::damageRisk(diff, mType);
-        if(damageRisk && by) {
-            const double pm = eNumbers::sCollapseRiskPeriodMultiplier;
-            const double pbi = eNumbers::sCollapseRiskPeriodBaseIncrement;
-            const double pe = eNumbers::sCollapseRiskPeriodExponent;
-            const int m4 = pm*pow(pbi + mMaintance, pe);
-            const int damagePeriod = m4/(by*damageRisk);
-            if(damagePeriod && eRand::rand() % damagePeriod == 0) {
-                eEventData ed(cityId());
-                ed.fTile = centerTile();
-                b.event(eEvent::collapse, ed);
-                collapse();
-                return;
+            const int damageRisk = DifficultyHelpers::damageRisk(diff, mType);
+            if(damageRisk && accBy) {
+                const int m4 = eNumbers::sCollapseRiskPeriodTable[mMaintance];
+                const int damagePeriod = m4/(accBy*damageRisk);
+                if(damagePeriod && eRand::rand() % damagePeriod == 0) {
+                    eEventData ed(cityId());
+                    ed.fTile = centerTile();
+                    b.event(eEvent::collapse, ed);
+                    collapse();
+                    return;
+                }
             }
         }
     }
