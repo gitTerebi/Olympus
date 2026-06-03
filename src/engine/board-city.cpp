@@ -1686,11 +1686,23 @@ int BoardCity::addResource(const eResourceType type, const int count) {
             if(rem <= 0) break;
         }
     };
+    const auto addFuncNotAccept = [&](const eValidator& v) {
+        if(rem <= 0) return;
+        for(const auto s : mStorBuildings) {
+            if(!v(s)) continue;
+            const int c = s->addNotAccept(type, rem);
+            rem -= c;
+            if(rem <= 0) break;
+        }
+    };
     addFunc([&](eStorageBuilding* const s) {
         return !isTradePost(s) && s->get(type);
     });
     addFunc([&](eStorageBuilding* const s) {
         return !isTradePost(s);
+    });
+    addFuncNotAccept([&](eStorageBuilding* const s) {
+        return isTradePost(s) && s->importsResource(type);
     });
     addFunc([&](eStorageBuilding* const s) {
         return isTradePost(s) && s->get(type);
@@ -1708,7 +1720,10 @@ int BoardCity::spaceForResource(const eResourceType type) const {
     }
     int r = 0;
     for(const auto s : mStorBuildings) {
-        r += s->spaceLeft(type);
+        if(s->type() == eBuildingType::tradePost && s->importsResource(type))
+            r += s->spaceLeftDontAccept(type);
+        else
+            r += s->spaceLeft(type);
     }
     return r;
 }

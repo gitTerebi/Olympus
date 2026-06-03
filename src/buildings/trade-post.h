@@ -67,6 +67,8 @@ public:
     eBuilding* unpackBuilding() const { return mUnpackBuilding; }
 
     bool trades() const;
+    bool importsResource(const eResourceType res) const override
+    { return static_cast<bool>((mImports | mExports) & res); }
 protected:
     void serializeFields(eSaveArchive& ar) override;
     // trade post pushes out imported goods only, never exports it holds
