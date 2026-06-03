@@ -22,16 +22,18 @@ void eEmployingBuildingInfoWidget::initialize(
         const std::string& subText) {
     eInfoWidget::initialize(title);
     if(!info.empty()) addText(info);
-    addEmploymentWidget(b, text);
-    if(!subText.empty()) addText(subText);
+    addEmploymentWidget(b, text, subText);
 }
 
 void eEmployingBuildingInfoWidget::addEmploymentWidget(
         eEmployingBuilding* const b,
-        const std::string& infoStr) {
+        const std::string& infoStr,
+        const std::string& preInfoStr) {
     const int p = padding();
 
-    const int frameH = infoStr.empty() ? 6*p : 10*p;
+    const bool hasInfo = !infoStr.empty();
+    const bool hasPre = !preInfoStr.empty();
+    const int frameH = (!hasInfo && !hasPre) ? 6*p : (hasInfo && hasPre) ? 20*p : 10*p;
     const auto wid = addFramedWidget(frameH);
     const int e = b->employed();
     const int me = b->maxEmployees();
@@ -46,17 +48,26 @@ void eEmployingBuildingInfoWidget::addEmploymentWidget(
     empl->setPaddingS();
     empl->fitContent();
     wid->addWidget(empl);
-    if(infoStr.empty()) {
+    if(!hasInfo && !hasPre) {
         empl->align(eAlignment::hcenter);
     } else {
-        const auto info = new eLabel(infoStr, window());
-        info->setFontSizeS();
-        info->setPaddingS();
-        info->setWrapWidth(wid->width());
-        info->fitContent();
-        wid->addWidget(info);
+        if(hasPre) {
+            const auto pre = new eLabel(preInfoStr, window());
+            pre->setFontSizeS();
+            pre->setPaddingS();
+            pre->setWrapWidth(wid->width());
+            pre->fitContent();
+            wid->addWidget(pre);
+        }
+        if(hasInfo) {
+            const auto info = new eLabel(infoStr, window());
+            info->setFontSizeS();
+            info->setPaddingS();
+            info->setWrapWidth(wid->width());
+            info->fitContent();
+            wid->addWidget(info);
+        }
         wid->stackVertically(p);
         empl->align(eAlignment::hcenter);
-        info->align(eAlignment::hcenter);
     }
 }

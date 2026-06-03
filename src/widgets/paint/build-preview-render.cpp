@@ -75,13 +75,13 @@ void drawPreviewTextureAndOverlays(eTilePainter& tp,
     const auto overlays = renderer->getOverlays(tp.size());
     for (const auto& o : overlays)
     {
-        const auto& ttex = o.fTex;
-        modPreviewTexture(ttex, canBuild);
+        const auto& overlayTexture = o.fTex;
+        modPreviewTexture(overlayTexture, canBuild);
         if (o.fAlignTop)
-            tp.drawTexture(drawX + o.fX, drawY + o.fY, ttex, eAlignment::top);
+            tp.drawTexture(drawX + o.fX, drawY + o.fY, overlayTexture, eAlignment::top);
         else
-            tp.drawTexture(drawX + o.fX, drawY + o.fY, ttex);
-        ttex->clearColorMod();
+            tp.drawTexture(drawX + o.fX, drawY + o.fY, overlayTexture);
+        overlayTexture->clearColorMod();
     }
 }
 

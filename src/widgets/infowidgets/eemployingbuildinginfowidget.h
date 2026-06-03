@@ -19,7 +19,8 @@ public:
                     const std::string& subText);
 
     void addEmploymentWidget(eEmployingBuilding* const b,
-                             const std::string& infoStr = std::string());
+                             const std::string& infoStr = std::string(),
+                             const std::string& preInfoStr = std::string());
 };
 
 #endif // EEMPLOYINGBUILDINGINFOWIDGET_H
