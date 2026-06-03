@@ -3,6 +3,7 @@
 #include "fileIO/esavearchive.h"
 #include "buildings/ebuildingwithresource.h"
 #include "characters/ecarttransporter.h"
+#include "engine/game-board.h"
 
 eVendorCartAction::eVendorCartAction(eCharacter* const c,
                                      eBuildingWithResource* const b)
@@ -25,8 +26,20 @@ bool eVendorCartAction::decide() {
 // ── transitions ───────────────────────────────────────────────────────────────
 
 void eVendorCartAction::toFindTarget() {
-    const auto tasks = building() ? building()->cartTasks() : std::vector<eCartTask>{};
+    const auto b = building();
+    const auto tasks = b ? b->cartTasks() : std::vector<eCartTask>{};
     if(tasks.empty()) { enterWaitAtHome(); return; }
+    // don't leave home unless the city actually holds stock to fetch
+    if(b) {
+        auto& board = b->getBoard();
+        const auto cid = b->cityId();
+        bool anyStock = false;
+        for(const auto& t : tasks) {
+            if(t.fType != eCartActionType::get) continue;
+            if(board.resourceCount(cid, t.fResource) > 0) { anyStock = true; break; }
+        }
+        if(!anyStock) { enterWaitAtHome(); return; }
+    }
     mState = eVendorCartState::findTarget;
     findTarget();
 }
@@ -57,7 +70,8 @@ void eVendorCartAction::enterWaitAtHome() {
     clearTask();
     const auto b = building();
     const auto c = cart();
-    if(b && c) c->changeTile(startTile() ? startTile() : b->centerTile());
+    // park inside the building, not on the outside road start — no loitering
+    if(b && c) c->changeTile(b->centerTile());
     wait(kFindRetryWait);
 }
 
