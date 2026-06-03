@@ -5,6 +5,7 @@
 #include "fileIO/building-writer.h"
 #include "gameEvents/invasions/invasion-handler.h"
 #include "missiles/emissile.h"
+#include "destruction-puff.h"
 #include "gameEvents/egameevent.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"
 #include "gameEvents/requests/e-fulfill-request-event.h"
@@ -281,6 +282,31 @@ void GameBoard::serialize(eSaveArchive& ar) {
                         it.field("missileType", type);
                         it.archiveField("missileData",
                             [c](eSaveArchive& childAr) { c->serialize(childAr); });
+                    });
+            }
+        }
+    }
+
+    // destruction puffs
+    {
+        int puffCount = ar.writing() ? static_cast<int>(mDestructionPuffs.size()) : 0;
+        ar.field("destructionPuffs.count", puffCount);
+        if(ar.reading()) {
+            for(int i = 0; i < puffCount; i++) {
+                ar.archiveField(("destructionPuff." + std::to_string(i)).c_str(),
+                    [&](eSaveArchive& it) {
+                        const auto p = new DestructionPuff(*this);
+                        it.archiveField("puffData",
+                            [p](eSaveArchive& childAr) { p->serialize(childAr); });
+                    });
+            }
+        } else {
+            int i = 0;
+            for(const auto p : mDestructionPuffs) {
+                ar.archiveField(("destructionPuff." + std::to_string(i++)).c_str(),
+                    [p](eSaveArchive& it) {
+                        it.archiveField("puffData",
+                            [p](eSaveArchive& childAr) { p->serialize(childAr); });
                     });
             }
         }

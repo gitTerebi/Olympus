@@ -31,7 +31,8 @@ enum class eGodActType {
     lookForPlague,
     lookForEvict,
     lookForTargetedBless,
-    lookForTargetedAttack
+    lookForTargetedAttack,
+    spawnImpactPuffs
 };
 
 class eGodAct {
@@ -624,6 +625,32 @@ protected:
     }
 private:
     stdptr<eGodMonsterAction> mTptr;
+};
+
+class eSpawnImpactPuffsGodAct : public eGodAct {
+public:
+    eSpawnImpactPuffsGodAct(GameBoard& board) :
+        eGodAct(board, eGodActType::spawnImpactPuffs) {}
+    eSpawnImpactPuffsGodAct(GameBoard& board,
+                             const double impactX, const double impactY,
+                             const stdsptr<eGodAct>& wrappedAct) :
+        eGodAct(board, eGodActType::spawnImpactPuffs),
+        mImpactX(impactX), mImpactY(impactY), mWrappedAct(wrappedAct) {}
+
+    eMissileTarget find(eTile* const) override { return static_cast<eTile*>(nullptr); }
+
+    void act() override;
+
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.field("impactX", mImpactX);
+        ar.field("impactY", mImpactY);
+        ar.godActField("wrappedAct", board(), mWrappedAct);
+    }
+private:
+    double mImpactX = 0;
+    double mImpactY = 0;
+    stdsptr<eGodAct> mWrappedAct;
 };
 
 #endif // GOD_ACTION_H

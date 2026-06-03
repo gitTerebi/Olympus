@@ -12,7 +12,6 @@ public:
     getTexture(const eTileSize size) const override;
 private:
     mutable int mCollId;
-    mutable int mTexTimeShift = 0;
 };
 
 #endif // EDUSTMISSILE_H

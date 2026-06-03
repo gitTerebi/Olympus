@@ -35,6 +35,8 @@
 #include "engine/boardData/eheatmaptask.h"
 
 #include "missiles/emissile.h"
+#include "destruction-puff.h"
+#include <algorithm>
 #include "missiles/ewavemissile.h"
 #include "missiles/elavamissile.h"
 #include "missiles/edustmissile.h"
@@ -242,6 +244,7 @@ void GameBoard::clear()
     mCharacters.clear();
     mSoldiers.clear();
     mMissiles.clear();
+    mDestructionPuffs.clear();
     mSelectedBanners.clear();
     mSelectedTriremes.clear();
     mPlannedActions.clear();
@@ -2740,6 +2743,16 @@ bool GameBoard::unregisterMissile(eMissile *const m)
     return eVectorHelpers::remove(mMissiles, m);
 }
 
+void GameBoard::registerDestructionPuff(DestructionPuff* const p)
+{
+    mDestructionPuffs.push_back(p);
+}
+
+bool GameBoard::unregisterDestructionPuff(DestructionPuff* const p)
+{
+    return eVectorHelpers::remove(mDestructionPuffs, p);
+}
+
 bool GameBoard::hasStadium(const eCityId cid) const
 {
     const auto city = boardCityWithId(cid);
@@ -3173,6 +3186,15 @@ void GameBoard::incTime(const int by)
     for (const auto m : missiles)
     {
         m->incTime(by);
+    }
+
+    {
+        const auto puffs = mDestructionPuffs;
+        for(const auto p : puffs) p->incTime(by);
+        mDestructionPuffs.erase(
+            std::remove_if(mDestructionPuffs.begin(), mDestructionPuffs.end(),
+                           [](DestructionPuff* p) { return p->dead(); }),
+            mDestructionPuffs.end());
     }
 
     const int goalsCheckWait = 5050;

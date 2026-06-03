@@ -28,6 +28,7 @@ set(SDL2_MIXER_LIBRARY "${SDL2_DIR}/SDL2_mixer-2.8.0/x86_64-w64-mingw32/lib/libS
 
 # Add all source files
 set(SOURCES
+    src/destruction-puff.cpp
     src/main.cpp
     src/app.rc
     src/debug/windows-dump.cpp

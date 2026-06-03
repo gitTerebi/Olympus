@@ -14,6 +14,7 @@
 #include "missiles/egodmissile.h"
 
 #include "characters/gods/actions/egodattackaction.h"
+#include "characters/gods/actions/god-action.h"
 #include "characters/actions/monster-action.h"
 #include "characters/actions/epatrolmoveaction.h"
 
@@ -504,46 +505,51 @@ stdsptr<eFindFailFunc> eFindFailFunc::sCreate(
 
 void eGMA_spawnMissileFinish::call() {
     if(!mCptr) return;
-    const auto c = mCptr;
-    const auto charType = c->type();
-    const auto ct = c->tile();
-    const int tx = ct->x();
-    const int ty = ct->y();
-    const int ttx = mTarget->x();
-    const int tty = mTarget->y();
+    const auto character = mCptr;
+    const auto charType = character->type();
+    const auto charTile = character->tile();
+    const int charTileX = charTile->x();
+    const int charTileY = charTile->y();
+    const int targetTileX = mTarget->x();
+    const int targetTileY = mTarget->y();
     const auto finishAttackA = mFinishAttackA;
-    if(tx == ttx && ty == tty) {
+    if(charTileX == targetTileX && charTileY == targetTileY) {
         const auto hitAct = mHitAct;
         if(finishAttackA) finishAttackA->call();
         if(hitAct) hitAct->act();
     } else {
-        auto& brd = c->getBoard();
-        double h;
+        auto& brd = character->getBoard();
+        double height;
         if(mAt == eCharacterActionType::fight ||
            mAt == eCharacterActionType::fight2) {
             switch(charType) {
             case eCharacterType::apollo:
             case eCharacterType::atalanta:
-                h = -0.5;
+                height = -0.5;
                 break;
             case eCharacterType::calydonianBoar:
-                h = -1;
+                height = -1;
                 break;
             default:
-                h = 0;
+                height = 0;
                 break;
             }
         } else {
-            h = 0;
+            height = 0;
         }
 
-        const auto m = eMissile::sCreate<eGodMissile>(
-                    brd, tx, ty, h,
-                    ttx, tty, h, 0);
+        const auto missile = eMissile::sCreate<eGodMissile>(
+                    brd, charTileX, charTileY, height,
+                    targetTileX, targetTileY, height, 0);
 
-        if(m) {
-            m->setTexture(mChart, mAt);
-            m->setFinishAction(mHitAct);
+        if(missile) {
+            missile->setTexture(mChart, mAt);
+            stdsptr<eGodAct> hitAct = mHitAct;
+            if(mChart == eCharacterType::hydra) {
+                hitAct = std::make_shared<eSpawnImpactPuffsGodAct>(
+                             brd, (double)targetTileX, (double)targetTileY, mHitAct);
+            }
+            missile->setFinishAction(hitAct);
         }
 
         if(finishAttackA) finishAttackA->call();
