@@ -40,6 +40,7 @@
 #include "widgets/gamebuild/ecommonhousingbuild.h"
 
 #include "eiteratesquare.h"
+#include "widgets/efonts.h"
 
 #include <array>
 #include <cmath>
@@ -2577,4 +2578,22 @@ void GameWidget::paintEvent(ePainter &p)
     const SDL_Rect srcRect{srcX, srcY, srcW, srcH};
     const SDL_Rect dstRect{0, 0, w, h};
     SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
+
+    {
+        const char* letters[] = {"N", "W", "S", "E"};
+        const int idx = static_cast<int>(dir);
+        const auto letter = letters[idx % 4];
+        const auto tex = std::make_shared<eTexture>();
+        auto* font = eFonts::defaultFont(45);
+        if(font) {
+            tex->loadText(r, letter, eFontColor::light, *font);
+            SDL_SetTextureBlendMode(tex->tex(), SDL_BLENDMODE_BLEND);
+            tex->setAlpha(140);
+            const int sideW = mGm ? mGm->width() : 0;
+        const int px = w - sideW - tex->width() - 20;
+            const int topH = mTopBar ? mTopBar->height() : 0;
+            const int py = topH + 10;
+            tex->render(r, px, py);
+        }
+    }
 }
