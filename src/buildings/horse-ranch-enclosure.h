@@ -17,7 +17,8 @@ public:
     int provide(const eProvide p, const int n) override;
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::vector<BuildingContainedActorDraw>
+    getActorsDrawnAfterBuildingTexture(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 

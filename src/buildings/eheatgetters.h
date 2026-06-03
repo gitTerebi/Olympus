@@ -4,6 +4,8 @@
 #include "buildings/ebuilding.h"
 #include "engine/boardData/eheatmap.h"
 
+class eTileBase;
+
 enum class eGodType;
 enum class Difficulty;
 

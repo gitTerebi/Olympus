@@ -11,10 +11,7 @@
 #include "pointers/estdpointer.h"
 
 #include "etileterrainpainter.h"
-
-enum class eTileSize : int {
-    s15, s30, s45, s60
-};
+#include "etilesize.h"
 
 class eMissile;
 class eCharacter;

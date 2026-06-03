@@ -2,7 +2,7 @@
 #define ETILEPAINTER_H
 
 #include "epainter.h"
-#include "engine/etile.h"
+#include "engine/etilesize.h"
 
 class eTilePainter {
     struct eTilePainterSave {

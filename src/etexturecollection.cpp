@@ -1,4 +1,5 @@
 #include "etexturecollection.h"
+#include "widgets/epainter.h"
 
 eTextureCollection::eTextureCollection(SDL_Renderer* const r) :
     mRenderer(r) {

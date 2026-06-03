@@ -277,7 +277,7 @@ eTextureSpace eHippodromePiece::getTextureSpace(
         result.fX += 1.5;
         result.fY += 4.5;
         result.fRect = {x, y, 1, 1};
-        result.fOvelays = false;
+        result.fHasOverlays = false;
         return result;
     } else {
         const auto& ns = neighbours();

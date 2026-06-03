@@ -1,4 +1,5 @@
 #include "ebuildingrenderer.h"
+#include "widgets/etilepainter.h"
 
 eBuildingRenderer::eBuildingRenderer(const stdsptr<eBuilding>& b,
                                      const eBuildingRendererType type) :

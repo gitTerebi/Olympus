@@ -1,4 +1,5 @@
 #include "etilebase.h"
+#include "erand.h"
 
 #include "buildings/ebuilding.h"
 #include "spawners/ebanner.h"

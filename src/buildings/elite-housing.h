@@ -3,6 +3,8 @@
 
 #include "ehousebase.h"
 
+class eTextureCollection;
+
 class eSaveArchive;
 
 class EliteHousing : public eHouseBase {

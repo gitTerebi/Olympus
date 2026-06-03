@@ -4,12 +4,11 @@
 #include "pointers/eobject.h"
 
 #include "eoverlay.h"
-#include "etexturecollection.h"
-#include "widgets/etilepainter.h"
-#include "engine/emovedirection.h"
+#include "engine/etilesize.h"
+#include "engine/ecityid.h"
 #include "engine/eprovide.h"
 
-#include "erand.h"
+enum class eMoveDirection;
 
 class GameBoard;
 class eSaveArchive;
@@ -256,11 +255,19 @@ enum class eBuildingType {
 
 struct eTextureSpace {
     std::shared_ptr<eTexture> fTex;
-    bool fOvelays = false;
+    bool fHasOverlays = false;
     SDL_Rect fRect{0, 0, 0, 0};
     double fX = 0;
     double fY = 0;
     bool fClamp = true;
+};
+
+struct BuildingContainedActorDraw {
+    std::shared_ptr<eTexture> fTexture;
+    double fViewTileX = 0;
+    double fViewTileY = 0;
+    bool fUseAlignment = false;
+    eAlignment fAlignment = eAlignment::top;
 };
 
 class eBuilding : public eObject {
@@ -277,6 +284,12 @@ public:
     getOverlays(const eTileSize size) const {
         (void)size;
         return std::vector<eOverlay>();
+    }
+    // Characters/animals owned by this building but drawn after its texture.
+    virtual std::vector<BuildingContainedActorDraw>
+    getActorsDrawnAfterBuildingTexture(const eTileSize size) const {
+        (void)size;
+        return std::vector<BuildingContainedActorDraw>();
     }
 
     virtual eTextureSpace
@@ -420,7 +433,7 @@ private:
     bool mOnFire = false;
 
     int mTime = 0;
-    int mFrameShift = eRand::rand() % 100;
+    int mFrameShift = 0;
 
     bool mEnabled = false;
     std::function<bool()> mOverlayEnabled = [this]() {
