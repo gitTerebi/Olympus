@@ -7,6 +7,8 @@
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/stamp-template-writer.h"
 #include "widgets/paint/sanctuary-preview.h"
+#include "buildings/emonument.h"
+#include "buildings/sanctuaries/esanctbuilding.h"
 #include "cursors.h"
 
 #include "emodal.h"
@@ -1914,21 +1916,42 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
     const auto k = e.key();
     const auto &hotkeys = window()->settings();
     if(e.ctrlPressed()) {
+        if(mDebugWomanTempleIdx >= 0) {
+            int rotateId = mRotateId;
+            const auto t = mBoard->tile(mHoverTX, mHoverTY);
+            const auto ub = t ? t->underBuilding() : nullptr;
+            if(const auto sb = dynamic_cast<eSanctBuilding*>(ub))
+                if(sb->monument()) rotateId = sb->monument()->rotateId();
+            const int dirIdx = static_cast<int>(mBoard->direction());
+            if(k == SDL_Scancode::SDL_SCANCODE_J) {
+                adjustWomanDebugOffset(rotateId, dirIdx, -1, 0);
+                return true;
+            } else if(k == SDL_Scancode::SDL_SCANCODE_L) {
+                adjustWomanDebugOffset(rotateId, dirIdx, 1, 0);
+                return true;
+            } else if(k == SDL_Scancode::SDL_SCANCODE_I) {
+                adjustWomanDebugOffset(rotateId, dirIdx, 0, -1);
+                return true;
+            } else if(k == SDL_Scancode::SDL_SCANCODE_K) {
+                adjustWomanDebugOffset(rotateId, dirIdx, 0, 1);
+                return true;
+            }
+        }
         if(k == SDL_Scancode::SDL_SCANCODE_J) {
             adjustSanctuaryTemplePreviewDebugOffset(
-                mGm->mode(), mRotateId, -1, 0);
+                mGm->mode(), mRotateId, 0, -1, 0);
             return true;
         } else if(k == SDL_Scancode::SDL_SCANCODE_L) {
             adjustSanctuaryTemplePreviewDebugOffset(
-                mGm->mode(), mRotateId, 1, 0);
+                mGm->mode(), mRotateId, 0, 1, 0);
             return true;
         } else if(k == SDL_Scancode::SDL_SCANCODE_I) {
             adjustSanctuaryTemplePreviewDebugOffset(
-                mGm->mode(), mRotateId, 0, -1);
+                mGm->mode(), mRotateId, 0, 0, -1);
             return true;
         } else if(k == SDL_Scancode::SDL_SCANCODE_K) {
             adjustSanctuaryTemplePreviewDebugOffset(
-                mGm->mode(), mRotateId, 0, 1);
+                mGm->mode(), mRotateId, 0, 0, 1);
             return true;
         }
     }
@@ -2735,6 +2758,22 @@ bool GameWidget::mouseReleaseEvent(const eMouseEvent &e)
                 {
                     if (const auto b = tile->underBuilding())
                     {
+                        if (e.ctrlPressed()) {
+                            eMonument* mon = nullptr;
+                            if (const auto sb = dynamic_cast<eSanctBuilding*>(b))
+                                mon = sb->monument();
+                            else if (const auto m = dynamic_cast<eMonument*>(b))
+                                mon = m;
+                            if (mon) {
+                                mDebugWomanTempleIdx = static_cast<int>(mon->type()) -
+                                    static_cast<int>(eBuildingType::templeAphrodite);
+                                const int r = mon->rotateId() % 4;
+                                printf("womanDebug locked temple=%d rot=%d\n",
+                                       mDebugWomanTempleIdx, r);
+                                adjustWomanDebugOffset(r, static_cast<int>(mBoard->direction()), 0, 0);
+                                return true;
+                            }
+                        }
                         if (mPierDebugPanel) {
                             if (dynamic_cast<ePier*>(b)) {
                                 mPierDebugPanel->show();

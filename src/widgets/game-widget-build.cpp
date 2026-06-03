@@ -1884,7 +1884,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 return false;
             }
 
-            const auto h = eSanctBlueprints::sSanctuaryBlueprint(bt, mRotate);
+            const auto h = eSanctBlueprints::sSanctuaryBlueprint(bt, mRotateId);
 
             const int sw = h->fW;
             const int sh = h->fH;
@@ -1896,7 +1896,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
             r = mBoard->buildSanctuary(
                 minX, maxX, minY, maxY,
-                bt, mRotate, mViewedCityId, pid, mEditorMode);
+                bt, mRotateId, mViewedCityId, pid, mEditorMode);
         } break;
         case eBuildingMode::modestPyramid:
         case eBuildingMode::pyramid:

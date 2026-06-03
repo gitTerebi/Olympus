@@ -16,16 +16,6 @@ eTempleAltarBuilding::eTempleAltarBuilding(GameBoard& board,
     });
 }
 
-std::shared_ptr<eTexture>
-eTempleAltarBuilding::getTexture(const eTileSize size) const {
-    const int p = progress();
-    if(p <= 0) return nullptr;
-    const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
-    if(mId == 1) return blds.fSanctuaryAltarFlipped;
-    return blds.fSanctuaryAltar;
-}
-
 std::vector<eOverlay> eTempleAltarBuilding::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];

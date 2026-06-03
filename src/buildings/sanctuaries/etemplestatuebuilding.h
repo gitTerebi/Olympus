@@ -11,8 +11,7 @@ public:
                           const int id, GameBoard& board,
                           const eCityId cid);
 
-    std::shared_ptr<eTexture>
-        getTexture(const eTileSize size) const;
+    std::shared_ptr<eTexture> getTexture(const eTileSize) const override { return nullptr; }
 
     eGodType godType() const { return mGod; }
     int id() const { return mId; }

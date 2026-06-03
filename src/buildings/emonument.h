@@ -33,8 +33,13 @@ public:
 
     virtual void buildingProgressed() {}
 
-    void setRotated(const bool r) { mRotated = r; }
-    bool rotated() const { return mRotated; }
+    void setRotated(const bool r) { mRotateId = r ? 1 : 0; }
+    void setRotateId(const int r) { mRotateId = r; }
+    bool rotated() const { return mRotateId == 1 || mRotateId == 3; }
+    int rotateId() const { return mRotateId; }
+
+    void setWomanTile(eTile* t) { mWomanTile = t; }
+    eTile* womanTile() const { return mWomanTile; }
 
     void registerElement(const stdsptr<eSanctBuilding>& e);
 
@@ -56,12 +61,13 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 
     stdptr<eCartTransporter> mCart;
+    eTile* mWomanTile = nullptr;
 
     bool mHaltConstruction = false;
     eSanctCost mStored{0, 0, 0};
     eSanctCost mUsed{0, 0, 0};
     int mAltitude = 0;
-    bool mRotated = false;
+    int mRotateId = 0;
 
     std::vector<stdsptr<eSanctBuilding>> mElements;
 };

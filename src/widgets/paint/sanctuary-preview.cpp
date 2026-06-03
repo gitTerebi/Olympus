@@ -1,6 +1,7 @@
 #include "widgets/paint/sanctuary-preview.h"
 
 #include "buildings/allbuildings.h"
+#include "buildings/sanctuaries/esanctbuilding.h"
 #include "buildings/sanctuaries/esanctuaryblueprint.h"
 #include "textures/egametextures.h"
 #include "engine/etile.h"
@@ -18,8 +19,10 @@ namespace {
 static const double gAltarOffsetX[4] = {0, 2, 0, 2};
 static const double gAltarOffsetY[4] = {0, -2, 0, -2};
 
-static const double gWomanOffsetX[4] = {1.30, -0.20, 1.80, 1.80};
-static const double gWomanOffsetY[4] = {-4.30, -2.70, -0.80, -0.80};
+// world-tile offsets from b-tile per [rotateId][dirIdx] (tunable via JKLI)
+// dirIdx: N=0, W=1, S=2, E=3
+static double gWomanTileDX[4][4] = {{3.00,-1.50,0,0},{1.00,0,0,3.00},{0,0, 0.00,1.50},{0, 0.00,-2.00,0}};
+static double gWomanTileDY[4][4] = {{0.50, 2.00,0,0},{2.00,0,0,-3.00},{0,0,-2.50,-1.00},{0, 0.50,-1.00,0}};
 
 struct PreviewTile
 {
@@ -181,75 +184,6 @@ eGodType statueGod(const eSanctEleType type, const eGodType fallback)
     }
 }
 
-int templeOverlayDirId(const int templeId,
-                       const bool rotated,
-                       const eWorldDirection dir)
-{
-    if(dir == eWorldDirection::N) {
-        return templeId;
-    } else if(dir == eWorldDirection::E) {
-        if(templeId == 0) return 1;
-        if(templeId == 1) return 0;
-        if(templeId == 2) return rotated ? 3 : 1;
-        return rotated ? 2 : 0;
-    } else if(dir == eWorldDirection::S) {
-        if(templeId == 0) return 0;
-        if(templeId == 1) return 1;
-        if(templeId == 2) return 0;
-        return 1;
-    } else {
-        if(templeId == 0) return 1;
-        if(templeId == 1) return 0;
-        if(templeId == 2) return rotated ? 1 : 3;
-        return rotated ? 0 : 2;
-    }
-}
-
-int templeTextureDirId(const int rotateId)
-{
-    if(rotateId == 0) return 1;
-    if(rotateId == 1) return 0;
-    if(rotateId == 2) return 3;
-    return 0;
-}
-
-int templeTextureOverlayDirId(const int rotateId)
-{
-    if(rotateId == 0) return -1;
-    if(rotateId == 1) return -1;
-    if(rotateId == 2) return 1;
-    return -1;
-}
-
-int statueTextureIdForRotate(const int rotateId)
-{
-    if(rotateId == 0) return 1;
-    if(rotateId == 1) return 2;
-    if(rotateId == 2) return 3;
-    return 0;
-}
-
-int statueInputIdForFinalId(const int finalId, const eWorldDirection dir)
-{
-    if(dir == eWorldDirection::N) {
-        return finalId;
-    } else if(dir == eWorldDirection::E) {
-        if(finalId == 0) return 1;
-        if(finalId == 1) return 2;
-        if(finalId == 2) return 3;
-        return 0;
-    } else if(dir == eWorldDirection::S) {
-        if(finalId == 0) return 2;
-        if(finalId == 1) return 0;
-        if(finalId == 2) return 3;
-        return 1;
-    } else {
-        if(finalId == 0) return 3;
-        if(finalId == 1) return 0;
-        if(finalId == 2) return 1;
-        return 2;
-    }
-}
 
 void applyPreviewSpanCameraOffset(double& drawX,
                                   double& drawY,
@@ -282,14 +216,11 @@ void sortByDrawOrder(std::vector<PreviewTile>& tiles,
     std::stable_sort(tiles.begin(), tiles.end(),
                      [&](const PreviewTile& lhs, const PreviewTile& rhs)
                      {
-                         int ax;
-                         int ay;
-                         int bx;
-                         int by;
-                         eTileHelper::dTileIdToRotatedDTileId(
+                         int ax, ay, bx, by;
+                         eTileHelper::tileIdToRotatedTileId(
                              lhs.fX, lhs.fY, ax, ay,
                              dir, boardw, boardh);
-                         eTileHelper::dTileIdToRotatedDTileId(
+                         eTileHelper::tileIdToRotatedTileId(
                              rhs.fX, rhs.fY, bx, by,
                              dir, boardw, boardh);
                          if (ay != by)
@@ -385,10 +316,6 @@ bool isTempleFloorTile(const eSanctEleType type)
            type == eSanctEleType::orangeTree;
 }
 
-void modPreviewTexture(const std::shared_ptr<eTexture>&,
-                       const bool)
-{
-}
 
 std::shared_ptr<eTexture> sanctuaryTerrainTexture(
     const PreviewTile& tile,
@@ -492,8 +419,7 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
     const auto god = static_cast<eGodType>(
         static_cast<int>(mode) -
         static_cast<int>(eBuildingMode::templeAphrodite));
-    const bool transposed = rotateId == 1 || rotateId == 3;
-    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, transposed);
+    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotateId);
     const int sw = h->fW;
     const int sh = h->fH;
     const int xMin = hoverTX - sw/2;
@@ -502,7 +428,7 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
 
     const auto sanctuary = e::make_shared<eMonument>(
         board, type, sw, sh, 0, viewedCityId);
-    sanctuary->setRotated(transposed);
+    sanctuary->setRotateId(rotateId);
     sanctuary->setTileRect(footprint);
     eGameTextures::loadZeusSanctuary();
     eSanctuary::sLoadMonumentTextures(god);
@@ -551,13 +477,8 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
             b->setMonument(sanctuary.get());
             finishSanctuaryPart(b.get());
             sanctuary->registerElement(b);
-            const int overlayDirId = templeTextureDirId(rotateId);
-            const int textureOverlayId = templeTextureOverlayDirId(rotateId);
-            const int textureKey = textureOverlayId < 0 ?
-                                       overlayDirId :
-                                       overlayDirId * 10 + textureOverlayId;
             result.emplace_back(tileOrder, previewX, previewY, altitude,
-                                textureKey * 10 + rotateId,
+                                rotateId,
                                 god, -1, -1, false, b);
         } break;
         case eSanctEleType::monument:
@@ -568,7 +489,7 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
             finishSanctuaryPart(b.get());
             sanctuary->registerElement(b);
             result.emplace_back(tileOrder, previewX, previewY, altitude, -1,
-                                god, -1, te.fId, false, b);
+                                god, -1, rotateId, false, b);
         } break;
         case eSanctEleType::altar:
         {
@@ -597,7 +518,7 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
         case eSanctEleType::zeusStatue:
         {
             const eGodType sg = statueGod(te.fType, god);
-            const int statueTextureId = statueTextureIdForRotate(rotateId);
+            const int statueTextureId = rotateId;
             const auto b = e::make_shared<eTempleStatueBuilding>(
                 sg,
                 statueTextureId,
@@ -626,13 +547,13 @@ void printSanctuaryPreviewTiles(
         return;
     }
 
-    const bool transposed = rotateId == 1 || rotateId == 3;
-    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, transposed);
+    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotateId);
     const int xMin = hoverTX - h->fW/2;
     const int yMin = hoverTY - h->fH/2;
+    const int templeTex = (rotateId == 0 ? 1 : rotateId == 2 ? 3 : 0) + 1;
     printf("sanctuary preview rotate after-key mode=%d rotateId=%d templeTex=%05d hover=(%d,%d) origin=(%d,%d) size=%dx%d\n",
            static_cast<int>(mode), rotateId,
-           templeTextureDirId(rotateId) + 1,
+           templeTex,
            hoverTX, hoverTY, xMin, yMin, h->fW, h->fH);
 
     const auto tiles = sanctuaryPreviewTiles(*h, rotateId);
@@ -654,10 +575,134 @@ void printSanctuaryPreviewTiles(
 void adjustSanctuaryTemplePreviewDebugOffset(
     const eBuildingMode mode,
     const int rotateId,
+    const int dirIdx,
     const int dx,
     const int dy)
 {
-    (void)mode; (void)rotateId; (void)dx; (void)dy;
+    (void)mode;
+    adjustWomanDebugOffset(rotateId, dirIdx, dx, dy);
+}
+
+void adjustWomanDebugOffset(
+    const int rotateId,
+    const int dirIdx,
+    const int dx,
+    const int dy)
+{
+    const int r = rotateId % 4;
+    const int d = dirIdx % 4;
+    gWomanTileDX[r][d] += dx * 0.5;
+    gWomanTileDY[r][d] += dy * 0.5;
+    printf("womanTile rot=%d dir=%d tile=(%.2f,%.2f)\n",
+           r, d, gWomanTileDX[r][d], gWomanTileDY[r][d]);
+}
+
+double sanctuaryWomanTileDX(const int rotateId, const int dirIdx) { return gWomanTileDX[rotateId % 4][dirIdx % 4]; }
+double sanctuaryWomanTileDY(const int rotateId, const int dirIdx) { return gWomanTileDY[rotateId % 4][dirIdx % 4]; }
+
+SanctuaryTempleTextures sanctuaryTempleGetTextures(
+    const eBuildingTextures& builTexs,
+    const int rotateId,
+    const eWorldDirection dir,
+    const int animFrame,
+    const int stage)
+{
+    const int baseDirId = sanctuaryTempleDirId(rotateId, dir);
+    SanctuaryTempleTextures result;
+    if(baseDirId == 1)
+        result.fBase = builTexs.fSanctuary[1].getTexture(stage);
+    else if(baseDirId == 0) {
+        result.fBase = builTexs.fSanctuary[2].getTexture(stage);
+        if(stage == 2) result.fFlip = builTexs.fSanctuaryFlippedSW.getTexture(0);
+    } else if(baseDirId == 2)
+        result.fBase = builTexs.fSanctuary[0].getTexture(stage);
+    else {
+        result.fBase = builTexs.fSanctuary[3].getTexture(stage);
+        if(stage == 2) result.fFlip = builTexs.fSanctuaryFlippedNW.getTexture(0);
+    }
+    if(stage == 2 && sanctuaryTempleFrontFacing(rotateId, dir) &&
+       (baseDirId == 0 || baseDirId == 1)) {
+        if(baseDirId == 0) {
+            const auto& coll = builTexs.fSanctuaryHOverlay;
+            result.fWoman = coll.getTexture(animFrame % coll.size());
+        } else {
+            const auto& coll = builTexs.fSanctuaryWOverlay;
+            result.fWoman = coll.getTexture(animFrame % coll.size());
+        }
+    }
+    return result;
+}
+
+
+std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
+    const eBuildingTextures& builTexs,
+    const eGodType god,
+    const int rotateId,
+    const eWorldDirection dir)
+{
+    const auto coll = statueTextureCollection(builTexs, god);
+    if(!coll) return nullptr;
+    return coll->getTexture(sanctuaryFigureDirId(rotateId, dir));
+}
+
+std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
+    const eBuildingTextures& builTexs,
+    const eGodType god,
+    const int rotateId,
+    const eWorldDirection dir)
+{
+    const auto coll = monumentTextureCollection(builTexs, god);
+    if(!coll) return nullptr;
+    return coll->getTexture(sanctuaryFigureDirId(rotateId, dir));
+}
+
+std::shared_ptr<eTexture> sanctuaryAltarGetTexture(
+    const eBuildingTextures& builTexs,
+    const int rotateId)
+{
+    return (rotateId % 2 == 1) ? builTexs.fSanctuaryAltarFlipped
+                               : builTexs.fSanctuaryAltar;
+}
+
+void sanctuaryTempleDrawOrigin(
+    const eBuildingType type,
+    const int rotateId,
+    const int xMin,
+    const int yMin,
+    int& outTx,
+    int& outTy)
+{
+    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotateId);
+    const bool flipped = rotateId >= 2;
+    for(const auto& column : h->fTiles) {
+        for(auto ele : column) {
+            if(ele.fType != eSanctEleType::sanctuary) continue;
+            int previewX = ele.fX;
+            int previewY = ele.fY;
+            if(flipped) {
+                ele = rotateId180(ele);
+                ele.fX = h->fW - 1 - ele.fX;
+                ele.fY = h->fH - 1 - ele.fY;
+                previewX = ele.fX;
+                previewY = ele.fY;
+            }
+            int dx = rotateId == 1 || rotateId == 3 ? -2 : 1;
+            int dy = rotateId == 1 || rotateId == 3 ? 2 : -1;
+            if(flipped) {
+                dx = -dx - 3;
+                dy = -dy - 3;
+                dx += 2;
+                dy += 4;
+            }
+            previewX += dx;
+            previewY += dy;
+            outTx = xMin + previewX;
+            outTy = yMin + previewY;
+            return;
+        }
+    }
+    outTx = xMin;
+    outTy = yMin;
 }
 
 void drawSanctuaryTempleBuildingPreview(
@@ -667,23 +712,16 @@ void drawSanctuaryTempleBuildingPreview(
     const int tx,
     const int ty,
     const int altitude,
-    const int templeOverlayDirId,
+    const int placementRotateId,
     const eWorldDirection dir,
     const int animFrame,
-    const bool canBuild)
+    const bool canBuild,
+    const int stage)
 {
-    if(templeOverlayDirId < 0) {
+    if(placementRotateId < 0) {
         return;
     }
-    const int rotateId = templeOverlayDirId % 10;
-    const int textureKey = templeOverlayDirId / 10;
-    const bool splitTexture = textureKey >= 10;
-    const int baseDirId = splitTexture ?
-                              textureKey / 10 :
-                              textureKey;
-    const int textureOverlayDirId = splitTexture ?
-                                        textureKey % 10 :
-                                        -1;
+    const int rotateId = placementRotateId;
 
     double drawX;
     double drawY;
@@ -692,43 +730,23 @@ void drawSanctuaryTempleBuildingPreview(
 
     const auto drawLayer = [&](const std::shared_ptr<eTexture>& tex) {
         if(!tex) return;
-        modPreviewTexture(tex, canBuild);
         tp.drawTexture(drawX, drawY, tex, eAlignment::top);
         tex->clearColorMod();
     };
 
-    if(static_cast<int>(builTexs.fSanctuary.size()) > baseDirId) {
-        const auto& coll = builTexs.fSanctuary[baseDirId];
-        const int maxLayer = splitTexture ? 2 : coll.size();
-        for(int i = 0; i < maxLayer; i++) {
-            drawLayer(coll.getTexture(i));
-        }
+    const auto t = sanctuaryTempleGetTextures(builTexs, rotateId, dir, animFrame, stage);
+    drawLayer(t.fBase);
+    drawLayer(t.fFlip);
+    if(t.fWoman) {
+        const int r = placementRotateId % 4;
+        const int d = static_cast<int>(dir);
+        double wdrawX, wdrawY;
+        previewDrawXY(board, tx, ty, wdrawX, wdrawY, 1, 1, altitude);
+        wdrawX += sanctuaryWomanTileDX(r, d);
+        wdrawY += sanctuaryWomanTileDY(r, d);
+        tp.drawTexture(wdrawX, wdrawY, t.fWoman, eAlignment::bottom);
+        t.fWoman->clearColorMod();
     }
-
-    if(splitTexture &&
-       static_cast<int>(builTexs.fSanctuary.size()) > textureOverlayDirId) {
-        const auto& coll = builTexs.fSanctuary[textureOverlayDirId];
-        if(coll.size() > 2) drawLayer(coll.getTexture(2));
-    }
-
-    if(rotateId != 0 && rotateId != 1) {
-        return;
-    }
-
-    std::shared_ptr<eTexture> tex;
-    const double offX = gWomanOffsetX[rotateId % 4];
-    const double offY = gWomanOffsetY[rotateId % 4];
-    if(baseDirId == 0) {
-        const auto& coll = builTexs.fSanctuaryHOverlay;
-        tex = coll.getTexture(animFrame % coll.size());
-    } else {
-        const auto& coll = builTexs.fSanctuaryWOverlay;
-        tex = coll.getTexture(animFrame % coll.size());
-    }
-    if(!tex) return;
-    modPreviewTexture(tex, canBuild);
-    tp.drawTexture(drawX + offX, drawY + offY, tex);
-    tex->clearColorMod();
 }
 
 void drawSanctuaryStatuePreview(
@@ -743,16 +761,15 @@ void drawSanctuaryStatuePreview(
     const eWorldDirection dir,
     const bool canBuild)
 {
-    (void)dir;
     const auto coll = statueTextureCollection(builTexs, god);
     if(!coll || statueTextureId < 0 || statueTextureId >= coll->size()) {
         return;
     }
+    const int dirId = sanctuaryFigureDirId(statueTextureId, dir);
     double drawX;
     double drawY;
     previewDrawXY(board, tx, ty, drawX, drawY, 1, 1, altitude);
-    const auto tex = coll->getTexture(statueTextureId);
-    modPreviewTexture(tex, canBuild);
+    const auto tex = coll->getTexture(dirId);
     tp.drawTexture(drawX, drawY, tex, eAlignment::top);
     tex->clearColorMod();
 }
@@ -769,17 +786,16 @@ void drawSanctuaryMonumentPreview(
     const eWorldDirection dir,
     const bool canBuild)
 {
-    (void)dir;
     const auto coll = monumentTextureCollection(builTexs, god);
     if(!coll || monumentTextureId < 0 || monumentTextureId >= coll->size()) {
         return;
     }
+    const int dirId = sanctuaryFigureDirId(monumentTextureId, dir);
     double drawX;
     double drawY;
     previewDrawXY(board, tx, ty, drawX, drawY, 2, 2, altitude);
     applyPreviewSpanCameraOffset(drawX, drawY, 2, 2, dir);
-    const auto tex = coll->getTexture(monumentTextureId);
-    modPreviewTexture(tex, canBuild);
+    const auto tex = coll->getTexture(dirId);
     tp.drawTexture(drawX, drawY, tex, eAlignment::top);
     tex->clearColorMod();
 }
@@ -804,7 +820,6 @@ void drawSanctuaryAltarPreview(
     const auto tex = (rotateId % 2 == 1) ? builTexs.fSanctuaryAltarFlipped
                                           : builTexs.fSanctuaryAltar;
     if(!tex) return;
-    modPreviewTexture(tex, canBuild);
     tp.drawTexture(drawX, drawY, tex, eAlignment::top);
     tex->clearColorMod();
 }
@@ -853,8 +868,7 @@ void drawSanctuaryTerrainPreview(
         return;
     }
 
-    const bool transposed = rotateId == 1 || rotateId == 3;
-    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, transposed);
+    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotateId);
     const int xMin = hoverTX - h->fW/2;
     const int yMin = hoverTY - h->fH/2;
     const auto sanctuaryTiles = sanctuaryPreviewTiles(*h, rotateId);

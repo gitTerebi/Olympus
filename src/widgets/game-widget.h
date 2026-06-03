@@ -439,6 +439,8 @@ private:
     bool mRotate = false;
     int mRotateId = 0;
 
+    int mDebugWomanTempleIdx = -1;
+
     const int sSpeeds[7] = {10, 15, 20, 40, 60, 80, 100};
     const char* const sSpeedLabels[7] = {"0.5x", "0.75x", "1x", "2x", "3x", "4x", "TURBO"};
     const int sMaxSpeedId = int(std::size(sSpeeds)) - 1;

@@ -267,6 +267,10 @@ void GameBoard::setWorldDirection(const eWorldDirection dir)
 {
     mDirection = dir;
     scheduleTerrainUpdate();
+    const char* name = dir == eWorldDirection::N ? "N" :
+                       dir == eWorldDirection::W ? "W" :
+                       dir == eWorldDirection::S ? "S" : "E";
+    printf("camera dir = %s\n", name);
 }
 
 eTile *GameBoard::rotateddtile(const int x, const int y) const
@@ -5348,7 +5352,7 @@ bool GameBoard::buildPyramid(const int minX, const int maxX,
 bool GameBoard::buildSanctuary(const int minX, const int maxX,
                                 const int minY, const int maxY,
                                 const eBuildingType type,
-                                const bool rotate,
+                                const int rotateId,
                                 const eCityId cid,
                                 const ePlayerId pid,
                                 const bool editorDisplay)
@@ -5358,13 +5362,14 @@ bool GameBoard::buildSanctuary(const int minX, const int maxX,
     if (!cb)
         return false;
 
-    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotate);
+    const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotateId);
+    const bool rotate = rotateId == 1 || rotateId == 2;
 
     const int sw = h->fW;
     const int sh = h->fH;
 
     const auto b = eSanctuary::sCreate(type, sw, sh, *this, cid);
-    b->setRotated(rotate);
+    b->setRotateId(rotateId);
     const auto god = b->godType();
 
     if (!editorDisplay)
@@ -5387,10 +5392,12 @@ bool GameBoard::buildSanctuary(const int minX, const int maxX,
     const auto ct = this->tile((minX + maxX) / 2, (minY + maxY) / 2);
     b->setCenterTile(ct);
 
+    const bool flipped = rotateId >= 2;
     for (const auto &tv : h->fTiles)
     {
-        for (const auto &t : tv)
+        for (auto t : tv)
         {
+            if(flipped) t = sanctEleFlip180(t, sw, sh);
             const int tx = minX + t.fX;
             const int ty = minY + t.fY;
             const auto tile = this->tile(tx, ty);
@@ -5521,6 +5528,9 @@ bool GameBoard::buildSanctuary(const int minX, const int maxX,
                 }
             }
             break;
+            case eSanctEleType::woman:
+                b->setWomanTile(tile);
+            break;
             case eSanctEleType::tile:
             {
                 const auto tt = e::make_shared<eTempleTileBuilding>(
@@ -5546,8 +5556,9 @@ bool GameBoard::buildSanctuary(const int minX, const int maxX,
     }
     for (const auto &tv : h->fTiles)
     {
-        for (const auto &t : tv)
+        for (auto t : tv)
         {
+            if(flipped) t = sanctEleFlip180(t, sw, sh);
             const int tx = minX + t.fX;
             const int ty = minY + t.fY;
             const auto tile = this->tile(tx, ty);

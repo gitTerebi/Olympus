@@ -2445,14 +2445,13 @@ void eBuilding::incTime(const int by) {
     } else if(!isEmptyHome()) {
         mFireRiskUpdate += by;
         if(mFireRiskUpdate > eNumbers::sDayLength) {
-            const int accBy = mFireRiskUpdate;
             mFireRiskUpdate = 0;
             const auto pid = playerId();
             const auto diff = b.difficulty(pid);
             const int fireRisk = DifficultyHelpers::fireRisk(diff, mType);
-            if(fireRisk && accBy && sFlammable(type())) {
+            if(fireRisk && sFlammable(type())) {
                 const int m4 = eNumbers::sFireRiskPeriodTable[mMaintance];
-                const int firePeriod = m4/(accBy*fireRisk);
+                const int firePeriod = m4/(eNumbers::sDayLength*fireRisk);
                 if(firePeriod && eRand::rand() % firePeriod == 0) {
                     setOnFire(true);
                     eEventData ed(cityId());
@@ -2461,9 +2460,9 @@ void eBuilding::incTime(const int by) {
                 }
             }
             const int damageRisk = DifficultyHelpers::damageRisk(diff, mType);
-            if(damageRisk && accBy) {
+            if(damageRisk) {
                 const int m4 = eNumbers::sCollapseRiskPeriodTable[mMaintance];
-                const int damagePeriod = m4/(accBy*damageRisk);
+                const int damagePeriod = m4/(eNumbers::sDayLength*damageRisk);
                 if(damagePeriod && eRand::rand() % damagePeriod == 0) {
                     eEventData ed(cityId());
                     ed.fTile = centerTile();
@@ -2911,7 +2910,7 @@ void eBuilding::setHP(const int hp) {
 
 void eBuilding::resetRisks() {
     mMaintance = 100;
-    mFireRiskUpdate = 999999;
+    mFireRiskUpdate = 0;
 }
 
 double eBuilding::appeal() const {

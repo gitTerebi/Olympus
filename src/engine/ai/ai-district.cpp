@@ -879,8 +879,9 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::templeZeus: {
         const bool rotate = b.fO == eDiagonalOrientation::topLeft ||
                             b.fO == eDiagonalOrientation::bottomRight;
+        const int rotateId = rotate ? 1 : 0;
         return board.buildSanctuary(minX, maxX, minY, maxY, b.fType,
-                                    rotate, cid, pid, editorDisplay);
+                                    rotateId, cid, pid, editorDisplay);
     } break;
     default:
         break;

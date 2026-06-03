@@ -1,7 +1,5 @@
 #include "etemplemonumentbuilding.h"
-
 #include "textures/egametextures.h"
-#include "engine/game-board.h"
 
 eTempleMonumentBuilding::eTempleMonumentBuilding(
         const eGodType god,
@@ -51,53 +49,3 @@ const eTextureCollection* eTempleMonumentBuilding::sGodMonumentTextureCollection
     return nullptr;
 }
 
-std::shared_ptr<eTexture>
-eTempleMonumentBuilding::getTexture(const eTileSize size) const {
-    const int p = progress();
-    if(p <= 0) return nullptr;
-    const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
-    if(p == 1) {
-        return blds.fBlankMonument;
-    }
-    const auto coll = sGodMonumentTextureCollection(size, mGod);
-
-    if(!coll) return nullptr;
-    auto& board = getBoard();
-    const auto dir = board.direction();
-    int dirId;
-    if(dir == eWorldDirection::N) {
-        dirId = mId;
-    } else if(dir == eWorldDirection::E) {
-        if(mId == 0) {
-            dirId = 3;
-        } else if(mId == 1) {
-            dirId = 0;
-        } else if(mId == 2) {
-            dirId = 1;
-        } else { // if(mId == 3) {
-            dirId = 2;
-        }
-    } else if(dir == eWorldDirection::S) {
-        if(mId == 0) {
-            dirId = 1;
-        } else if(mId == 1) {
-            dirId = 3;
-        } else if(mId == 2) {
-            dirId = 0;
-        } else { // if(mId == 3) {
-            dirId = 2;
-        }
-    } else { // if(dir == eWorldDirection::W) {
-        if(mId == 0) {
-            dirId = 1;
-        } else if(mId == 1) {
-            dirId = 2;
-        } else if(mId == 2) {
-            dirId = 3;
-        } else { // if(mId == 3) {
-            dirId = 0;
-        }
-    }
-    return coll->getTexture(dirId);
-}

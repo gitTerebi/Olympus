@@ -32,10 +32,13 @@ void CartTransporterAction::increment(const int by) {
         return;
     }
     updateWaiting();
-    const bool outdoors = mState == eCartState::waitOutside ||
-                          mState == eCartState::movingToTarget ||
-                          mState == eCartState::atTarget ||
-                          mState == eCartState::idleOutside;
+    const bool deliverOnly = (support() & eCartActionTypeSupport::deliver) &&
+                             !(support() & eCartActionTypeSupport::get);
+    const bool outdoors = deliverOnly &&
+                          (mState == eCartState::waitOutside ||
+                           mState == eCartState::movingToTarget ||
+                           mState == eCartState::atTarget ||
+                           mState == eCartState::idleOutside);
     if(outdoors) {
         const auto c = character();
         const auto t = c->tile();

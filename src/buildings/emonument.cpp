@@ -137,7 +137,7 @@ std::vector<eCartTask> eMonument::cartTasks() const {
 
 void eMonument::serializeFields(eSaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
-    ar.field("rotated", mRotated);
+    ar.field("rotateId", mRotateId);
     ar.field("haltConstruction", mHaltConstruction);
     ar.archiveField("stored", [this](eSaveArchive& childAr) { mStored.serialize(childAr); });
     ar.archiveField("used", [this](eSaveArchive& childAr) { mUsed.serialize(childAr); });
