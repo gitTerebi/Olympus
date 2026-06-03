@@ -19,10 +19,20 @@ namespace {
 static const double gAltarOffsetX[4] = {0, 2, 0, 2};
 static const double gAltarOffsetY[4] = {0, -2, 0, -2};
 
-// world-tile offsets from b-tile per [rotateId][dirIdx] (tunable via JKLI)
+// Draw-space nudge after world tile -> drawXY. Tunable via JKLI.
 // dirIdx: N=0, W=1, S=2, E=3
-static double gWomanTileDX[4][4] = {{3.00,-1.50,0,0},{1.00,0,0,3.00},{0,0, 0.00,1.50},{0, 0.00,-2.00,0}};
-static double gWomanTileDY[4][4] = {{0.50, 2.00,0,0},{2.00,0,0,-3.00},{0,0,-2.50,-1.00},{0, 0.50,-1.00,0}};
+static double gWomanTileDX[4][4] = {
+    {3.00, -1.50, 0.00, 0.00},
+    {1.50,  0.00, 0.00, 3.00},
+    {0.00,  0.00, 0.00, 1.50},
+    {0.00,  0.00, -1.50, 0.00}
+};
+static double gWomanTileDY[4][4] = {
+    {0.50,  2.00, 0.00,  0.00},
+    {2.00,  0.00, 0.00, -3.00},
+    {0.00,  0.00, -2.50, -1.00},
+    {0.00,  0.50, -1.00,  0.00}
+};
 
 struct PreviewTile
 {
@@ -603,8 +613,13 @@ void adjustWomanDebugOffset(
            r, d, gWomanTileDX[r][d], gWomanTileDY[r][d]);
 }
 
-double sanctuaryWomanTileDX(const int rotateId, const int dirIdx) { return gWomanTileDX[rotateId % 4][dirIdx % 4]; }
-double sanctuaryWomanTileDY(const int rotateId, const int dirIdx) { return gWomanTileDY[rotateId % 4][dirIdx % 4]; }
+double sanctuaryWomanTileDX(const int rotateId, const int dirIdx) {
+    return gWomanTileDX[rotateId % 4][dirIdx % 4];
+}
+
+double sanctuaryWomanTileDY(const int rotateId, const int dirIdx) {
+    return gWomanTileDY[rotateId % 4][dirIdx % 4];
+}
 
 SanctuaryTempleTextures sanctuaryTempleGetTextures(
     const eBuildingTextures& builTexs,

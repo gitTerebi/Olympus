@@ -1915,28 +1915,34 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
         return true;
     const auto k = e.key();
     const auto &hotkeys = window()->settings();
-    if(e.ctrlPressed()) {
-        if(mDebugWomanTempleIdx >= 0) {
-            int rotateId = mRotateId;
-            const auto t = mBoard->tile(mHoverTX, mHoverTY);
-            const auto ub = t ? t->underBuilding() : nullptr;
-            if(const auto sb = dynamic_cast<eSanctBuilding*>(ub))
-                if(sb->monument()) rotateId = sb->monument()->rotateId();
-            const int dirIdx = static_cast<int>(mBoard->direction());
-            if(k == SDL_Scancode::SDL_SCANCODE_J) {
-                adjustWomanDebugOffset(rotateId, dirIdx, -1, 0);
-                return true;
-            } else if(k == SDL_Scancode::SDL_SCANCODE_L) {
-                adjustWomanDebugOffset(rotateId, dirIdx, 1, 0);
-                return true;
-            } else if(k == SDL_Scancode::SDL_SCANCODE_I) {
-                adjustWomanDebugOffset(rotateId, dirIdx, 0, -1);
-                return true;
-            } else if(k == SDL_Scancode::SDL_SCANCODE_K) {
-                adjustWomanDebugOffset(rotateId, dirIdx, 0, 1);
-                return true;
+    {
+        int rotateId = mRotateId;
+        bool womanNudgeActive = mDebugWomanTempleIdx >= 0;
+        const auto t = mBoard->tile(mHoverTX, mHoverTY);
+        const auto underBuilding = t ? t->underBuilding() : nullptr;
+        if(const auto sanctuaryBuilding =
+           dynamic_cast<eSanctBuilding*>(underBuilding)) {
+            if(sanctuaryBuilding->monument()) {
+                womanNudgeActive = true;
+                rotateId = sanctuaryBuilding->monument()->rotateId();
             }
         }
+        const int dirIdx = static_cast<int>(mBoard->direction());
+        if(womanNudgeActive && k == SDL_Scancode::SDL_SCANCODE_J) {
+            adjustWomanDebugOffset(rotateId, dirIdx, -1, 0);
+            return true;
+        } else if(womanNudgeActive && k == SDL_Scancode::SDL_SCANCODE_L) {
+            adjustWomanDebugOffset(rotateId, dirIdx, 1, 0);
+            return true;
+        } else if(womanNudgeActive && k == SDL_Scancode::SDL_SCANCODE_I) {
+            adjustWomanDebugOffset(rotateId, dirIdx, 0, -1);
+            return true;
+        } else if(womanNudgeActive && k == SDL_Scancode::SDL_SCANCODE_K) {
+            adjustWomanDebugOffset(rotateId, dirIdx, 0, 1);
+            return true;
+        }
+    }
+    if(e.ctrlPressed()) {
         if(k == SDL_Scancode::SDL_SCANCODE_J) {
             adjustSanctuaryTemplePreviewDebugOffset(
                 mGm->mode(), mRotateId, 0, -1, 0);

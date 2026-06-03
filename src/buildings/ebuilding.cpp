@@ -958,6 +958,10 @@ void eBuilding::sInfoText(eBuilding* const b,
             employmentInfoString = 2;
         } else {
             employmentInfoString = 3;
+            const int eventId = 7 + (b->seed() % 5);
+            additionalInfo = eLanguage::zeusText(80, 6) + " " +
+                             std::to_string(s->showDays()) + " days.\n" +
+                             eLanguage::zeusText(80, eventId);
         }
     } break;
     case eBuildingType::podium: {
@@ -976,6 +980,10 @@ void eBuilding::sInfoText(eBuilding* const b,
             employmentInfoString = 2;
         } else {
             employmentInfoString = 3;
+            const int eventId = 7 + (b->seed() % 5);
+            additionalInfo = eLanguage::zeusText(81, 6) + " " +
+                             std::to_string(p->showDays()) + " days.\n" +
+                             eLanguage::zeusText(81, eventId);
         }
     } break;
     case eBuildingType::theater: {
@@ -994,6 +1002,10 @@ void eBuilding::sInfoText(eBuilding* const b,
             employmentInfoString = 2;
         } else {
             employmentInfoString = 3;
+            const int eventId = 7 + (b->seed() % 5);
+            additionalInfo = eLanguage::zeusText(82, 6) + " " +
+                             std::to_string(t->showDays()) + " days.\n" +
+                             eLanguage::zeusText(82, eventId);
         }
     } break;
     case eBuildingType::bibliotheke: {
@@ -2337,8 +2349,10 @@ void eBuilding::sInfoText(eBuilding* const b,
     info = eLanguage::zeusText(group, infoString);
     const int g = employmentInfoGroup == -1 ? group : employmentInfoGroup;
     employmentInfo = eLanguage::zeusText(g, employmentInfoString);
-    const int ag = additionalInfoGroup == -1 ? group : additionalInfoGroup;
-    additionalInfo = eLanguage::zeusText(ag, additionalInfoString);
+    if(additionalInfo.empty()) {
+        const int ag = additionalInfoGroup == -1 ? group : additionalInfoGroup;
+        additionalInfo = eLanguage::zeusText(ag, additionalInfoString);
+    }
 }
 
 eTile* eBuilding::tileNeighbour(const eMoveDirection o,

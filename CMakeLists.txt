@@ -676,6 +676,7 @@ set(SOURCES
     src/widgets/paint/build-preview-render.cpp
     src/widgets/paint/road-band-paint.cpp
     src/widgets/paint/paint-build-preview.cpp
+    src/widgets/paint/sanctuary-real-draw.cpp
     src/widgets/paint/sanctuary-preview.cpp
     src/widgets/paint/draw-xy.cpp
     src/widgets/paint/draw/draw-column.cpp

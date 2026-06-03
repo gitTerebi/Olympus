@@ -1064,12 +1064,12 @@ void BoardCity::unregisterMuseum() {
 
 bool BoardCity::stadiumBonusActive() const {
     if(!mStadium || !mStadium->isActive()) return false;
-    return mStadium->employed() >= mStadium->maxEmployees();
+    return mStadium->employed() > 0;
 }
 
 bool BoardCity::museumBonusActive() const {
     if(!mMuseum || !mMuseum->isActive()) return false;
-    return mMuseum->employed() >= mMuseum->maxEmployees();
+    return mMuseum->employed() > 0;
 }
 
 void BoardCity::registerStorBuilding(eStorageBuilding* const b) {
