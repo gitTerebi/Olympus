@@ -5,29 +5,29 @@
 #include "buildings/ebuilding.h"
 
 stdsptr<eTexture> GameWidget::getBasementTexture(
-    const int rtx, const int rty,
-    eBuilding *const d,
+    const int viewTileX, const int viewTileY,
+    eBuilding *const building,
     const eTerrainTextures &trrTexs,
     const eWorldDirection dir,
-    const int boardw,
-    const int boardh)
+    const int boardWidth,
+    const int boardHeight)
 {
-    auto tr = d->tileRect();
-    tr = eTileHelper::toRotatedRect(tr, dir, boardw, boardh);
-    const int right = tr.x + tr.w - 1;
-    const int bottom = tr.y + tr.h - 1;
+    auto tileRect = building->tileRect();
+    tileRect = eTileHelper::toRotatedRect(tileRect, dir, boardWidth, boardHeight);
+    const int right = tileRect.x + tileRect.w - 1;
+    const int bottom = tileRect.y + tileRect.h - 1;
     int id = 0;
-    if (tr.w == 1 && tr.h == 1)
+    if (tileRect.w == 1 && tileRect.h == 1)
     {
         id = 0;
     }
-    else if (rtx == tr.x)
+    else if (viewTileX == tileRect.x)
     {
-        if (rty == tr.y)
+        if (viewTileY == tileRect.y)
         {
             id = 2;
         }
-        else if (rty == bottom)
+        else if (viewTileY == bottom)
         {
             id = 8;
         }
@@ -36,13 +36,13 @@ stdsptr<eTexture> GameWidget::getBasementTexture(
             id = 9;
         }
     }
-    else if (rtx == right)
+    else if (viewTileX == right)
     {
-        if (rty == tr.y)
+        if (viewTileY == tileRect.y)
         {
             id = 4;
         }
-        else if (rty == bottom)
+        else if (viewTileY == bottom)
         {
             id = 6;
         }
@@ -51,11 +51,11 @@ stdsptr<eTexture> GameWidget::getBasementTexture(
             id = 5;
         }
     }
-    else if (rty == tr.y)
+    else if (viewTileY == tileRect.y)
     {
         id = 3;
     }
-    else if (rty == bottom)
+    else if (viewTileY == bottom)
     {
         id = 7;
     }
@@ -64,7 +64,7 @@ stdsptr<eTexture> GameWidget::getBasementTexture(
         id = 1;
     }
     const eTextureCollection *coll = nullptr;
-    const auto type = d->type();
+    const auto type = building->type();
     if (type == eBuildingType::commonHouse ||
         type == eBuildingType::eliteHousing)
     {

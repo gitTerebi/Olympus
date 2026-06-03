@@ -3,32 +3,35 @@
 #include "eiteratesquare.h"
 #include "engine/game-board.h"
 
-void eTileHelper::dtileIdToTileId(const int dtx, const int dty, int& tx, int& ty) {
-    tx = dtx + (dty + 1)/2;
-    ty = dty/2 - dtx;
+void eTileHelper::dtileIdToTileId(const int dTileX, const int dTileY,
+                                  int& worldTileX, int& worldTileY) {
+    worldTileX = dTileX + (dTileY + 1)/2;
+    worldTileY = dTileY/2 - dTileX;
 }
 
-void eTileHelper::tileIdToDTileId(const int tx, const int ty, int& dtx, int& dty) {
-    dty = tx + ty;
-    dtx = (tx + ty)/2 - ty;
+void eTileHelper::tileIdToDTileId(const int worldTileX, const int worldTileY,
+                                  int& dTileX, int& dTileY) {
+    dTileY = worldTileX + worldTileY;
+    dTileX = (worldTileX + worldTileY)/2 - worldTileY;
 }
 
-eTile* eTileHelper::closestRoad(const int rdx, const int rdy,
+eTile* eTileHelper::closestRoad(const int roadWorldTileX,
+                                const int roadWorldTileY,
                                 GameBoard& board, const int minLen) {
-    const auto init = board.tile(rdx, rdy);
+    const auto init = board.tile(roadWorldTileX, roadWorldTileY);
     const auto cid = init->cityId();
     eTile* roadTile = nullptr;
     eTile* plainTile = nullptr;
     const auto prcsTile = [&](const int i, const int j) {
-        const int tx = rdx + i;
-        const int ty = rdy + j;
-        const auto tt = board.tile(tx, ty);
-        if(!tt || tt->cityId() != cid) return false;
-        if(tt->roadLength(minLen) >= minLen) {
-            roadTile = tt;
+        const int worldTileX = roadWorldTileX + i;
+        const int worldTileY = roadWorldTileY + j;
+        const auto tile = board.tile(worldTileX, worldTileY);
+        if(!tile || tile->cityId() != cid) return false;
+        if(tile->roadLength(minLen) >= minLen) {
+            roadTile = tile;
             return true;
-        } else if(!plainTile && tt->walkable()) {
-            plainTile = tt;
+        } else if(!plainTile && tile->walkable()) {
+            plainTile = tile;
         }
         return false;
     };
@@ -42,105 +45,119 @@ eTile* eTileHelper::closestRoad(const int rdx, const int rdy,
     return tile;
 }
 
-void eTileHelper::rotatedDTileIdToDTileId(const int rdtx, const int rdty,
-                                          int& dtx, int& dty,
+void eTileHelper::rotatedDTileIdToDTileId(const int viewDTileX,
+                                          const int viewDTileY,
+                                          int& dTileX, int& dTileY,
                                           const eWorldDirection dir,
-                                          const int width, const int height) {
+                                          const int boardWidth,
+                                          const int boardHeight) {
     if(dir == eWorldDirection::N) {
-        dtx = rdtx;
-        dty = rdty;
+        dTileX = viewDTileX;
+        dTileY = viewDTileY;
     } else if(dir == eWorldDirection::E) {
-        dtx = width - 1 - (rdty + 1)/2;
-        dty = 2*rdtx + (rdty % 2);
+        dTileX = boardWidth - 1 - (viewDTileY + 1)/2;
+        dTileY = 2*viewDTileX + (viewDTileY % 2);
     } else if(dir == eWorldDirection::S) {
-        dtx = width - rdtx - 1;
-        dty = height - rdty - 1;
+        dTileX = boardWidth - viewDTileX - 1;
+        dTileY = boardHeight - viewDTileY - 1;
     } else { // if(dir == eWorldDirection::W) {
-        dtx = rdty/2;
-        dty = (height - 2) - 2*rdtx - (rdty % 2);
+        dTileX = viewDTileY/2;
+        dTileY = (boardHeight - 2) - 2*viewDTileX - (viewDTileY % 2);
     }
 }
 
-void eTileHelper::dTileIdToRotatedDTileId(const int dtx, const int dty,
-                                          int& rdtx, int& rdty,
+void eTileHelper::dTileIdToRotatedDTileId(const int dTileX, const int dTileY,
+                                          int& viewDTileX, int& viewDTileY,
                                           const eWorldDirection dir,
-                                          const int width, const int height) {
+                                          const int boardWidth,
+                                          const int boardHeight) {
     if(dir == eWorldDirection::N) {
-        rdtx = dtx;
-        rdty = dty;
+        viewDTileX = dTileX;
+        viewDTileY = dTileY;
     } else if(dir == eWorldDirection::E) {
-        rdtx = dty/2;
-        rdty = 2*width - 2 - 2*dtx - (dty % 2);
+        viewDTileX = dTileY/2;
+        viewDTileY = 2*boardWidth - 2 - 2*dTileX - (dTileY % 2);
     } else if(dir == eWorldDirection::S) {
-        rdtx = width - dtx - 1;
-        rdty = height - dty - 1;
+        viewDTileX = boardWidth - dTileX - 1;
+        viewDTileY = boardHeight - dTileY - 1;
     } else { // if(dir == eWorldDirection::W) {
-        rdtx = (height - 1)/2 - dty/2 - (dty % 2);
-        rdty = 2*dtx + (dty % 2);
+        viewDTileX = (boardHeight - 1)/2 - dTileY/2 - (dTileY % 2);
+        viewDTileY = 2*dTileX + (dTileY % 2);
     }
 }
 
-void eTileHelper::tileIdToRotatedTileId(const int tx, const int ty,
-                                        int& rtx, int& rty,
+void eTileHelper::tileIdToRotatedTileId(const int worldTileX,
+                                        const int worldTileY,
+                                        int& viewTileX, int& viewTileY,
                                         const eWorldDirection dir,
-                                        const int width, const int height) {
+                                        const int boardWidth,
+                                        const int boardHeight) {
     if(dir == eWorldDirection::N) {
-        rtx = tx;
-        rty = ty;
+        viewTileX = worldTileX;
+        viewTileY = worldTileY;
         return;
     }
-    int dtx;
-    int dty;
-    tileIdToDTileId(tx, ty, dtx, dty);
-    int rdtx;
-    int rdty;
-    dTileIdToRotatedDTileId(dtx, dty, rdtx, rdty, dir, width, height);
-    dtileIdToTileId(rdtx, rdty, rtx, rty);
+    int dTileX;
+    int dTileY;
+    tileIdToDTileId(worldTileX, worldTileY, dTileX, dTileY);
+    int viewDTileX;
+    int viewDTileY;
+    dTileIdToRotatedDTileId(dTileX, dTileY, viewDTileX, viewDTileY,
+                            dir, boardWidth, boardHeight);
+    dtileIdToTileId(viewDTileX, viewDTileY, viewTileX, viewTileY);
 }
 
-void eTileHelper::rotatedTileIdToTileId(const int rtx, const int rty,
-                                        int& tx, int& ty,
+void eTileHelper::rotatedTileIdToTileId(const int viewTileX,
+                                        const int viewTileY,
+                                        int& worldTileX, int& worldTileY,
                                         const eWorldDirection dir,
-                                        const int width, const int height) {
+                                        const int boardWidth,
+                                        const int boardHeight) {
     if(dir == eWorldDirection::N) {
-        tx = rtx;
-        ty = rty;
+        worldTileX = viewTileX;
+        worldTileY = viewTileY;
         return;
     }
-    int rdtx;
-    int rdty;
-    tileIdToDTileId(rtx, rty, rdtx, rdty);
-    int dtx;
-    int dty;
-    rotatedDTileIdToDTileId(rdtx, rdty, dtx, dty, dir, width, height);
-    dtileIdToTileId(dtx, dty, tx, ty);
+    int viewDTileX;
+    int viewDTileY;
+    tileIdToDTileId(viewTileX, viewTileY, viewDTileX, viewDTileY);
+    int dTileX;
+    int dTileY;
+    rotatedDTileIdToDTileId(viewDTileX, viewDTileY, dTileX, dTileY,
+                            dir, boardWidth, boardHeight);
+    dtileIdToTileId(dTileX, dTileY, worldTileX, worldTileY);
 }
 
-SDL_Rect eTileHelper::toRotatedRect(const SDL_Rect& r, const eWorldDirection dir,
-                                    const int width, const int height) {
+SDL_Rect eTileHelper::toRotatedRect(const SDL_Rect& rect,
+                                    const eWorldDirection dir,
+                                    const int boardWidth,
+                                    const int boardHeight) {
     if(dir == eWorldDirection::N) {
-        return r;
+        return rect;
     } else if(dir == eWorldDirection::E) {
-        const int tx = r.x + r.w - 1;
-        const int ty = r.y;
-        int rtx;
-        int rty;
-        tileIdToRotatedTileId(tx, ty, rtx, rty, dir, width, height);
-        return SDL_Rect{rtx, rty, r.h, r.w};
+        const int worldTileX = rect.x + rect.w - 1;
+        const int worldTileY = rect.y;
+        int viewTileX;
+        int viewTileY;
+        tileIdToRotatedTileId(worldTileX, worldTileY, viewTileX, viewTileY,
+                              dir, boardWidth, boardHeight);
+        return SDL_Rect{viewTileX, viewTileY, rect.h, rect.w};
     } else if(dir == eWorldDirection::S) {
-        const int tx = r.x + r.w - 1;
-        const int ty = r.y + r.h - 1;
-        int rtx;
-        int rty;
-        tileIdToRotatedTileId(tx, ty, rtx, rty, dir, width, height);
-        return SDL_Rect{rtx, rty, r.w, r.h};
+        const int worldTileX = rect.x + rect.w - 1;
+        const int worldTileY = rect.y + rect.h - 1;
+        int viewTileX;
+        int viewTileY;
+        tileIdToRotatedTileId(worldTileX, worldTileY, viewTileX, viewTileY,
+                              dir, boardWidth, boardHeight);
+        return SDL_Rect{viewTileX, viewTileY, rect.w, rect.h};
     } else if(dir == eWorldDirection::W) {
-        const int tx = r.x;
-        const int ty = r.y + r.h - 1;
-        int rtx;
-        int rty;
-        tileIdToRotatedTileId(tx, ty, rtx, rty, dir, width, height);
-        return SDL_Rect{rtx, rty, r.h, r.w};
+        const int worldTileX = rect.x;
+        const int worldTileY = rect.y + rect.h - 1;
+        int viewTileX;
+        int viewTileY;
+        tileIdToRotatedTileId(worldTileX, worldTileY, viewTileX, viewTileY,
+                              dir, boardWidth, boardHeight);
+        return SDL_Rect{viewTileX, viewTileY, rect.h, rect.w};
     }
-    return r;
+    return rect;
 }

@@ -3,51 +3,54 @@
 #include "etilehelper.h"
 #include "engine/game-board.h"
 
-void GameWidget::drawXY(int tx, int ty,
-                         double &rx, double &ry,
-                         const int wSpan, const int hSpan,
-                         const int a)
+void GameWidget::drawXY(int worldTileX, int worldTileY,
+                         double &drawX, double &drawY,
+                         const int tileSpanW, const int tileSpanH,
+                         const int altitude)
 {
+    int viewTileX = worldTileX;
+    int viewTileY = worldTileY;
     if (mBoard)
     {
         const auto dir = mBoard->direction();
         if (dir != eWorldDirection::N)
         {
-            const int width = mBoard->width();
-            const int height = mBoard->height();
-            eTileHelper::tileIdToRotatedTileId(tx, ty, tx, ty,
-                                               dir, width, height);
+            const int boardWidth = mBoard->width();
+            const int boardHeight = mBoard->height();
+            eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+                                               viewTileX, viewTileY,
+                                               dir, boardWidth, boardHeight);
         }
     }
 
-    rx = tx + 0.5;
-    ry = ty + 1.5;
+    drawX = viewTileX + 0.5;
+    drawY = viewTileY + 1.5;
 
-    if (wSpan == 2 && hSpan == 2)
+    if (tileSpanW == 2 && tileSpanH == 2)
     {
-        rx += 0.5;
-        ry += 0.5;
+        drawX += 0.5;
+        drawY += 0.5;
     }
-    else if (wSpan == 3 && hSpan == 3)
+    else if (tileSpanW == 3 && tileSpanH == 3)
     {
-        rx += 0.0;
-        ry += 2.0;
+        drawX += 0.0;
+        drawY += 2.0;
     }
-    else if (wSpan == 4 && hSpan == 4)
+    else if (tileSpanW == 4 && tileSpanH == 4)
     {
-        rx += 0.5;
-        ry += 2.5;
+        drawX += 0.5;
+        drawY += 2.5;
     }
-    else if (wSpan == 5 && hSpan == 5)
+    else if (tileSpanW == 5 && tileSpanH == 5)
     {
-        rx += 0.0;
-        ry += 4.0;
+        drawX += 0.0;
+        drawY += 4.0;
     }
-    else if (wSpan == 6 && hSpan == 6)
+    else if (tileSpanW == 6 && tileSpanH == 6)
     {
-        rx += 0.5;
-        ry += 5.5;
+        drawX += 0.5;
+        drawY += 5.5;
     }
-    rx -= a;
-    ry -= a;
+    drawX -= altitude;
+    drawY -= altitude;
 }

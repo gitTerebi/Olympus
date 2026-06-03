@@ -17,33 +17,36 @@ void modPreviewTexture(const std::shared_ptr<eTexture>& tex,
     else          tex->setColorMod(255, 0, 0);
 }
 
-void drawXYPreview(int tx,
-                   int ty,
-                   double& rx,
-                   double& ry,
-                   const int wSpan,
-                   const int hSpan,
+void drawXYPreview(int worldTileX,
+                   int worldTileY,
+                   double& drawX,
+                   double& drawY,
+                   const int tileSpanW,
+                   const int tileSpanH,
                    const int altitude,
                    const eWorldDirection dir,
-                   const int boardw,
-                   const int boardh)
+                   const int boardWidth,
+                   const int boardHeight)
 {
+    int viewTileX = worldTileX;
+    int viewTileY = worldTileY;
     if (dir != eWorldDirection::N)
     {
-        eTileHelper::tileIdToRotatedTileId(tx, ty, tx, ty,
-                                           dir, boardw, boardh);
+        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+                                           viewTileX, viewTileY,
+                                           dir, boardWidth, boardHeight);
     }
 
-    rx = tx + 0.5;
-    ry = ty + 1.5;
+    drawX = viewTileX + 0.5;
+    drawY = viewTileY + 1.5;
 
-    if (wSpan == 2 && hSpan == 2)       { rx += 0.5; ry += 0.5; }
-    else if (wSpan == 3 && hSpan == 3)  { rx += 0.0; ry += 2.0; }
-    else if (wSpan == 4 && hSpan == 4)  { rx += 0.5; ry += 2.5; }
-    else if (wSpan == 5 && hSpan == 5)  { rx += 0.0; ry += 4.0; }
-    else if (wSpan == 6 && hSpan == 6)  { rx += 0.5; ry += 5.5; }
-    rx -= altitude;
-    ry -= altitude;
+    if (tileSpanW == 2 && tileSpanH == 2)       { drawX += 0.5; drawY += 0.5; }
+    else if (tileSpanW == 3 && tileSpanH == 3)  { drawX += 0.0; drawY += 2.0; }
+    else if (tileSpanW == 4 && tileSpanH == 4)  { drawX += 0.5; drawY += 2.5; }
+    else if (tileSpanW == 5 && tileSpanH == 5)  { drawX += 0.0; drawY += 4.0; }
+    else if (tileSpanW == 6 && tileSpanH == 6)  { drawX += 0.5; drawY += 5.5; }
+    drawX -= altitude;
+    drawY -= altitude;
 }
 
 void drawPreviewTextureAndOverlays(eTilePainter& tp,
@@ -89,8 +92,8 @@ void drawGenericBuildPreviewPart(
     eBuilding* const building,
     eBuildingRenderer* const renderer,
     eTile* const centerTile,
-    const int tx,
-    const int ty,
+    const int worldTileX,
+    const int worldTileY,
     const int altitude,
     const eWorldDirection dir,
     const bool canBuild,
@@ -104,25 +107,28 @@ void drawGenericBuildPreviewPart(
     building->addUnderBuilding(centerTile);
     building->setCenterTile(centerTile);
 
-    const int sw = renderer->spanW();
-    const int sh = renderer->spanH();
+    const int tileSpanW = renderer->spanW();
+    const int tileSpanH = renderer->spanH();
     double drawX;
     double drawY;
-    drawXYPreview(tx, ty, drawX, drawY, sw, sh, altitude,
+    drawXYPreview(worldTileX, worldTileY, drawX, drawY,
+                  tileSpanW, tileSpanH, altitude,
                   dir, centerTile->board().width(), centerTile->board().height());
     if (dir == eWorldDirection::E)
     {
-        if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2)) drawX -= 1;
-        else if (sw == 6 && sh == 6) drawY -= 1;
+        if ((tileSpanW == 4 && tileSpanH == 4) ||
+            (tileSpanW == 2 && tileSpanH == 2)) drawX -= 1;
+        else if (tileSpanW == 6 && tileSpanH == 6) drawY -= 1;
     }
     else if (dir == eWorldDirection::S)
     {
-        if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2))
+        if ((tileSpanW == 4 && tileSpanH == 4) ||
+            (tileSpanW == 2 && tileSpanH == 2))
         {
             drawX -= 1;
             drawY += 1;
         }
-        else if (sw == 6 && sh == 6)
+        else if (tileSpanW == 6 && tileSpanH == 6)
         {
             drawX -= 1;
             drawY -= 1;
@@ -130,8 +136,9 @@ void drawGenericBuildPreviewPart(
     }
     else if (dir == eWorldDirection::W)
     {
-        if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2)) drawY += 1;
-        else if (sw == 6 && sh == 6) drawX -= 1;
+        if ((tileSpanW == 4 && tileSpanH == 4) ||
+            (tileSpanW == 2 && tileSpanH == 2)) drawY += 1;
+        else if (tileSpanW == 6 && tileSpanH == 6) drawX -= 1;
     }
 
     drawPreviewTextureAndOverlays(tp, building, renderer,

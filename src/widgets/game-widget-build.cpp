@@ -57,8 +57,8 @@ std::vector<eTile*> GameWidget::agoraBuildPlaceTR(
 }
 std::vector<eTile*> GameWidget::agoraBuildPlaceIter(
         eTile* const tile, const bool grand,
-        eAgoraOrientation& bt, const eCityId cid, const ePlayerId pid) const {
-    return ::agoraBuildPlaceIter(mBoard, mEditorMode, tile, grand, bt, cid, pid);
+        eAgoraOrientation& agoraOrientation, const eCityId cid, const ePlayerId pid) const {
+    return ::agoraBuildPlaceIter(mBoard, mEditorMode, tile, grand, agoraOrientation, cid, pid);
 }
 
 template <class T>
@@ -68,8 +68,8 @@ bool buildVendor(GameBoard& brd, const int tx, const int ty,
     if(!t) return false;
     const auto b = t->underBuilding();
     if(!b) return false;
-    const auto bt = b->type();
-    if(bt != eBuildingType::agoraSpace) return false;
+    const auto buildingType = b->type();
+    if(buildingType != eBuildingType::agoraSpace) return false;
     const auto space = static_cast<eAgoraSpace*>(b);
     const auto ct = space->centerTile();
     if(!ct) return false;
@@ -305,9 +305,9 @@ GameWidget::eApply GameWidget::editFunc() {
 std::vector<eTile*> GameWidget::stampAgoraBuildPlace(
         const eStampBuildCommand& cmd,
         const int pressedTX, const int pressedTY,
-        eAgoraOrientation& bt) const {
+        eAgoraOrientation& agoraOrientation) const {
     return ::stampAgoraBuildPlace(mBoard, mEditorMode, cmd,
-                                  pressedTX, pressedTY, bt,
+                                  pressedTX, pressedTY, agoraOrientation,
                                   mViewedCityId, mBoard->personPlayer());
 }
 
@@ -481,10 +481,10 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
         case eBuildingMode::commonAgora: {
             const auto t = mBoard->tile(hoverTX, hoverTY);
             if(!t) return false;
-            eAgoraOrientation bt;
-            const auto p = agoraBuildPlaceIter(t, false, bt, cid, pid);
+            eAgoraOrientation agoraOrientation;
+            const auto p = agoraBuildPlaceIter(t, false, agoraOrientation, cid, pid);
             if(p.empty()) return false;
-            const auto b = e::make_shared<eCommonAgora>(bt, *mBoard, mViewedCityId);
+            const auto b = e::make_shared<eCommonAgora>(agoraOrientation, *mBoard, mViewedCityId);
             r = true;
             int x = __INT_MAX__;
             int y = __INT_MAX__;
@@ -505,7 +505,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                     b->addUnderBuilding(t);
                 }
             }
-            switch(bt) {
+            switch(agoraOrientation) {
             case eAgoraOrientation::bottomLeft:
             case eAgoraOrientation::topRight:
                 w = 6;
@@ -533,10 +533,10 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
         case eBuildingMode::grandAgora: {
             const auto t = mBoard->tile(hoverTX, hoverTY);
             if(!t) return false;
-            eAgoraOrientation bt;
-            const auto p = agoraBuildPlaceIter(t, true, bt, cid, pid);
+            eAgoraOrientation agoraOrientation;
+            const auto p = agoraBuildPlaceIter(t, true, agoraOrientation, cid, pid);
             if(p.empty()) return false;
-            const auto b = e::make_shared<eGrandAgora>(bt, *mBoard, mViewedCityId);
+            const auto b = e::make_shared<eGrandAgora>(agoraOrientation, *mBoard, mViewedCityId);
             r = true;
             int x = __INT_MAX__;
             int y = __INT_MAX__;
@@ -557,7 +557,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                     b->addUnderBuilding(t);
                 }
             }
-            switch(bt) {
+            switch(agoraOrientation) {
             case eAgoraOrientation::bottomLeft:
             case eAgoraOrientation::topRight:
                 w = 6;
@@ -1768,12 +1768,12 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 const int ty = pressedTY + cmd.dy;
                 if(cmd.mode == eBuildingMode::commonAgora) {
                     if(!cmd.agoraRect && implicitAgoraBuilt) continue;
-                    eAgoraOrientation bt;
-                    const auto p = stampAgoraBuildPlace(cmd, pressedTX, pressedTY, bt);
+                    eAgoraOrientation agoraOrientation;
+                    const auto p = stampAgoraBuildPlace(cmd, pressedTX, pressedTY, agoraOrientation);
                     if(p.empty()) continue;
                     if(!cmd.agoraRect) implicitAgoraBuilt = true;
                     if(cmd.agoraOrientation >= 0 || !cmd.agoraRoads.empty()) {
-                        buildStampAgora(p, bt, cid, ppid);
+                        buildStampAgora(p, agoraOrientation, cid, ppid);
                     }
                     continue;
                 }
@@ -1870,8 +1870,8 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 return false;
             }
 
-            const auto bt = eBuildingModeHelpers::toBuildingType(mode);
-            const int m = eBuilding::sInitialMarbleCost(bt);
+            const auto buildingType = eBuildingModeHelpers::toBuildingType(mode);
+            const int m = eBuilding::sInitialMarbleCost(buildingType);
             const int hasM = mBoard->resourceCount(mViewedCityId, eResourceType::marble);
             if(!mEditorMode && hasM < m) {
                 auto text = eLanguage::zeusText(19, 201);
@@ -1884,7 +1884,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 return false;
             }
 
-            const auto h = eSanctBlueprints::sSanctuaryBlueprint(bt, mRotateId);
+            const auto h = eSanctBlueprints::sSanctuaryBlueprint(buildingType, mRotateId);
 
             const int sw = h->fW;
             const int sh = h->fH;
@@ -1896,7 +1896,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
 
             r = mBoard->buildSanctuary(
                 minX, maxX, minY, maxY,
-                bt, mRotateId, mViewedCityId, pid, mEditorMode);
+                buildingType, mRotateId, mViewedCityId, pid, mEditorMode);
         } break;
         case eBuildingMode::modestPyramid:
         case eBuildingMode::pyramid:

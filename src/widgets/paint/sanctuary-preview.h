@@ -22,8 +22,8 @@ enum class eCityId;
 struct SanctuaryPreviewEntry
 {
     SanctuaryPreviewEntry(int order,
-                          int tx,
-                          int ty,
+                          int worldTileX,
+                          int worldTileY,
                           int altitude,
                           int templeOverlayDirId,
                           eGodType statueGod,
@@ -118,8 +118,8 @@ void drawSanctuaryTempleBuildingPreview(
     GameBoard &board,
     eTilePainter &tp,
     const eBuildingTextures &builTexs,
-    int tx,
-    int ty,
+    int worldTileX,
+    int worldTileY,
     int altitude,
     int placementRotateId,
     eWorldDirection dir,
@@ -133,8 +133,8 @@ void drawSanctuaryStatuePreview(
     const eBuildingTextures &builTexs,
     eGodType god,
     int statueTextureId,
-    int tx,
-    int ty,
+    int worldTileX,
+    int worldTileY,
     int altitude,
     eWorldDirection dir,
     bool canBuild);
@@ -145,8 +145,8 @@ void drawSanctuaryMonumentPreview(
     const eBuildingTextures &builTexs,
     eGodType god,
     int monumentTextureId,
-    int tx,
-    int ty,
+    int worldTileX,
+    int worldTileY,
     int altitude,
     eWorldDirection dir,
     bool canBuild);
@@ -155,8 +155,8 @@ void drawSanctuaryAltarPreview(
     GameBoard &board,
     eTilePainter &tp,
     const eBuildingTextures &builTexs,
-    int tx,
-    int ty,
+    int worldTileX,
+    int worldTileY,
     int altitude,
     eWorldDirection dir,
     int rotateId,
@@ -166,8 +166,8 @@ void drawSanctuaryTorchPreview(
     GameBoard &board,
     eTilePainter &tp,
     const eBuildingTextures &builTexs,
-    int tx,
-    int ty,
+    int worldTileX,
+    int worldTileY,
     int altitude,
     int animFrame);
 
@@ -183,8 +183,8 @@ void drawSanctuaryTerrainPreview(
     eCityId viewedCityId,
     const SDL_Rect footprint,
     eWorldDirection dir,
-    int boardw,
-    int boardh,
+    int boardWidth,
+    int boardHeight,
     int animFrame,
     bool canBuild);
 

@@ -31,7 +31,7 @@ void GameWidget::paintBuildPreview(
     ePlayerId ppid,
     eBuildingMode mode,
     eWorldDirection dir,
-    int boardw, int boardh,
+    int boardWidth, int boardHeight,
     bool bridgeValid,
     const std::vector<eTile*>& bridgetTs,
     int sMinX, int sMaxX, int sMinY, int sMaxY)
@@ -68,10 +68,10 @@ void GameWidget::paintBuildPreview(
         tex->setAlpha(140);
         for(const auto tile : mStampTemplateTiles) {
             if(!tile) continue;
-            double rx;
-            double ry;
-            drawXY(tile->x(), tile->y(), rx, ry, 1, 1, tile->altitude());
-            tp.drawTexture(rx, ry, tex, eAlignment::top);
+            double drawX;
+            double drawY;
+            drawXY(tile->x(), tile->y(), drawX, drawY, 1, 1, tile->altitude());
+            tp.drawTexture(drawX, drawY, tex, eAlignment::top);
         }
         tex->clearAlphaMod();
         tex->clearColorMod();
@@ -111,28 +111,28 @@ void GameWidget::paintBuildPreview(
         if(!tile) return;
         const auto tex = animalBuildTexture(mode);
         if(!tex) return;
-        const int tx = tile->x();
-        const int ty = tile->y();
-        int rtx;
-        int rty;
-        eTileHelper::tileIdToRotatedTileId(tx, ty,
-                                           rtx, rty, dir,
-                                           boardw, boardh);
+        const int worldTileX = tile->x();
+        const int worldTileY = tile->y();
+        int viewTileX;
+        int viewTileY;
+        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+                                           viewTileX, viewTileY, dir,
+                                           boardWidth, boardHeight);
         const int da = tile->characterDoubleAltitude();
         double x;
         double y;
         if(dir == eWorldDirection::N) {
-            x = tx - da*0.5 + 0.75;
-            y = ty - da*0.5 + 0.75;
+            x = worldTileX - da*0.5 + 0.75;
+            y = worldTileY - da*0.5 + 0.75;
         } else if(dir == eWorldDirection::E) {
-            x = rtx - da*0.5 + 0.75;
-            y = rty - da*0.5 + 0.75;
+            x = viewTileX - da*0.5 + 0.75;
+            y = viewTileY - da*0.5 + 0.75;
         } else if(dir == eWorldDirection::S) {
-            x = rtx - da*0.5 + 0.75;
-            y = rty - da*0.5 + 0.75;
+            x = viewTileX - da*0.5 + 0.75;
+            y = viewTileY - da*0.5 + 0.75;
         } else {
-            x = rtx - da*0.5 + 0.75;
-            y = rty - da*0.5 + 0.75;
+            x = viewTileX - da*0.5 + 0.75;
+            y = viewTileY - da*0.5 + 0.75;
         }
         const double offX = mTileH*tex->offsetX()/30.;
         const double offY = mTileH*tex->offsetY()/30.;
@@ -146,9 +146,9 @@ void GameWidget::paintBuildPreview(
     };
 
     const auto t = mBoard->tile(mHoverTX, mHoverTY);
-    const int tx = mHoverTX;
-    const int ty = mHoverTY;
-    const int a = t ? t->altitude() : 0;
+    const int worldTileX = mHoverTX;
+    const int worldTileY = mHoverTY;
+    const int altitude = t ? t->altitude() : 0;
     const auto drawAgoraRoadAccessPreview = [&](const std::vector<eTile *> &p)
     {
         int ri = 0;
@@ -174,10 +174,10 @@ void GameWidget::paintBuildPreview(
         const auto drawBase = [&](eTile *const t)
         {
             const auto &tex = trrTexs.fBuildingBase;
-            double rx;
-            double ry;
-            drawXY(t->x(), t->y(), rx, ry, 1, 1, t->altitude());
-            tp.drawTexture(rx, ry, tex, eAlignment::top);
+            double drawX;
+            double drawY;
+            drawXY(t->x(), t->y(), drawX, drawY, 1, 1, t->altitude());
+            tp.drawTexture(drawX, drawY, tex, eAlignment::top);
 
             buildW = std::max(buildW, 1 + std::abs(mHoverTX - t->x()));
             buildH = std::max(buildH, 1 + std::abs(mHoverTY - t->y()));
@@ -241,13 +241,13 @@ void GameWidget::paintBuildPreview(
             {
                 const auto &tex = builTexs.fBridge.getTexture(10);
                 tex->setColorMod(255, 0, 0);
-                double rx;
-                double ry;
+                double drawX;
+                double drawY;
                 const int hx = hoverTile->x();
                 const int hy = hoverTile->y();
                 const int ha = hoverTile->altitude();
-                drawXY(hx, hy, rx, ry, 1, 1, ha);
-                tp.drawTexture(rx, ry, tex, eAlignment::top);
+                drawXY(hx, hy, drawX, drawY, 1, 1, ha);
+                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                 tex->clearColorMod();
             }
         }
@@ -284,8 +284,8 @@ void GameWidget::paintBuildPreview(
             {
                 for (int y = sMinY; y <= sMaxY; y++)
                 {
-                    double rx;
-                    double ry;
+                    double drawX;
+                    double drawY;
                     const auto t = mBoard->tile(x, y);
                     if (!t)
                         continue;
@@ -293,9 +293,9 @@ void GameWidget::paintBuildPreview(
                         continue;
                     if (t->underBuilding())
                         continue;
-                    const int a = t->altitude();
-                    drawXY(x, y, rx, ry, 1, 1, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    const int altitude = t->altitude();
+                    drawXY(x, y, drawX, drawY, 1, 1, altitude);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
 
                     buildCount++;
                 }
@@ -310,8 +310,8 @@ void GameWidget::paintBuildPreview(
             mode == eBuildingMode::cattle)
         {
             int buildCount = 0;
-            const auto bt = eBuildingModeHelpers::toBuildingType(mode);
-            const int allowed = mBoard->countAllowed(mViewedCityId, bt);
+            const auto buildingType = eBuildingModeHelpers::toBuildingType(mode);
+            const int allowed = mBoard->countAllowed(mViewedCityId, buildingType);
             const int animalW = 1;
             const int animalH = 1;
             int n = 1;
@@ -349,8 +349,8 @@ void GameWidget::paintBuildPreview(
             {
                 for (int y = sMinY; y <= sMaxY; y++)
                 {
-                    double rx;
-                    double ry;
+                    double drawX;
+                    double drawY;
                     const auto t = mBoard->tile(x, y);
                     if (!t)
                         continue;
@@ -367,9 +367,9 @@ void GameWidget::paintBuildPreview(
                         if (!hr)
                             continue;
                     }
-                    const int a = t->altitude();
-                    drawXY(x, y, rx, ry, 1, 1, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    const int altitude = t->altitude();
+                    drawXY(x, y, drawX, drawY, 1, 1, altitude);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
 
                     buildW = 1 + std::max(buildW, std::abs(mHoverTX - t->x()));
                     buildH = 1 + std::max(buildH, std::abs(mHoverTY - t->y()));
@@ -387,17 +387,17 @@ void GameWidget::paintBuildPreview(
                         mPressedTX, mPressedTY, mHoverTX, mHoverTY);
             for (const auto &rect : rects)
             {
-                double rx;
-                double ry;
+                double drawX;
+                double drawY;
                 const auto t = mBoard->tile(rect.fX, rect.fY);
                 if (!t)
                     continue;
-                const int a = t->altitude();
-                drawXY(rect.fX, rect.fY, rx, ry, 1, 1, a);
-                tp.drawTexture(rx, ry, tex, eAlignment::top);
-                tp.drawTexture(rx + 1, ry, tex, eAlignment::top);
-                tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
-                tp.drawTexture(rx + 1, ry + 1, tex, eAlignment::top);
+                const int altitude = t->altitude();
+                drawXY(rect.fX, rect.fY, drawX, drawY, 1, 1, altitude);
+                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                tp.drawTexture(drawX + 1, drawY, tex, eAlignment::top);
+                tp.drawTexture(drawX, drawY + 1, tex, eAlignment::top);
+                tp.drawTexture(drawX + 1, drawY + 1, tex, eAlignment::top);
             }
 
             const auto bounds = commonHousingBuildBounds(rects);
@@ -412,17 +412,17 @@ void GameWidget::paintBuildPreview(
     {
         if (mLeftPressed)
             return;
-        const auto bt = eBuildingModeHelpers::toBuildingType(mode);
-        const int allowed = mBoard->countAllowed(mViewedCityId, bt);
+        const auto buildingType = eBuildingModeHelpers::toBuildingType(mode);
+        const int allowed = mBoard->countAllowed(mViewedCityId, buildingType);
         const auto t = mBoard->tile(mHoverTX, mHoverTY);
         if (!t)
             return;
-        const int tx = t->x();
-        const int ty = t->y();
+        const int worldTileX = t->x();
+        const int worldTileY = t->y();
         const int animalW = 1;
         const int animalH = 1;
         const bool cb = allowed > 0 && mBoard->canBuild(
-                                           tx, ty, animalW, animalH,
+                                           worldTileX, worldTileY, animalW, animalH,
                                            mEditorMode,
                                            mViewedCityId, ppid,
                                            true, true);
@@ -432,7 +432,7 @@ void GameWidget::paintBuildPreview(
 
     if (mode == eBuildingMode::stamp)
     {
-        paintStampPreview(tp, trrTexs, builTexs, tx, ty, ppid);
+        paintStampPreview(tp, trrTexs, builTexs, worldTileX, worldTileY, ppid);
         drawStampCostEstimate();
         return;
     }
@@ -445,20 +445,20 @@ void GameWidget::paintBuildPreview(
         const auto &agr = builTexs.fAgora;
         const auto &agrr = builTexs.fAgoraRoad;
 
-        eAgoraOrientation bt;
-        const auto p = agoraBuildPlaceIter(t, false, bt, mViewedCityId, ppid);
+        eAgoraOrientation agoraOrientation;
+        const auto p = agoraBuildPlaceIter(t, false, agoraOrientation, mViewedCityId, ppid);
         if (p.empty())
         {
             const auto &tex = trrTexs.fBuildingBase;
             tex->setColorMod(255, 0, 0);
-            for (int i = tx - 1; i < tx + 2; i++)
+            for (int i = worldTileX - 1; i < worldTileX + 2; i++)
             {
-                for (int j = ty - 3; j < ty + 3; j++)
+                for (int j = worldTileY - 3; j < worldTileY + 3; j++)
                 {
-                    double rx;
-                    double ry;
-                    drawXY(i, j, rx, ry, 1, 1, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    double drawX;
+                    double drawY;
+                    drawXY(i, j, drawX, drawY, 1, 1, altitude);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                 }
             }
             tex->clearColorMod();
@@ -468,19 +468,19 @@ void GameWidget::paintBuildPreview(
                                   : 1;
             const auto &road = trrTexs.fRoad.getTexture(texId);
             road->setColorMod(255, 0, 0);
-            for (int j = ty - 3; j < ty + 3; j++)
+            for (int j = worldTileY - 3; j < worldTileY + 3; j++)
             {
-                double rx;
-                double ry;
-                drawXY(tx - 1, j, rx, ry, 1, 1, a);
-                tp.drawTexture(rx, ry, road, eAlignment::top);
+                double drawX;
+                double drawY;
+                drawXY(worldTileX - 1, j, drawX, drawY, 1, 1, altitude);
+                tp.drawTexture(drawX, drawY, road, eAlignment::top);
             }
             road->clearColorMod();
         }
         else
         {
             drawAgoraRoadAccessPreview(p);
-            if (bt == eAgoraOrientation::bottomRight)
+            if (agoraOrientation == eAgoraOrientation::bottomRight)
             {
                 const int iMax = p.size();
                 for (int i = 0; i < iMax; i++)
@@ -507,34 +507,34 @@ void GameWidget::paintBuildPreview(
                     {
                         continue;
                     }
-                    double rx;
-                    double ry;
-                    const int tx = t->x();
-                    const int ty = t->y();
-                    const int a = t->altitude();
-                    drawXY(tx, ty, rx, ry, dim, dim, a);
+                    double drawX;
+                    double drawY;
+                    const int worldTileX = t->x();
+                    const int worldTileY = t->y();
+                    const int altitude = t->altitude();
+                    drawXY(worldTileX, worldTileY, drawX, drawY, dim, dim, altitude);
                     if (dim == 2)
                     {
                         if (dir == eWorldDirection::E)
                         {
-                            rx -= 1;
+                            drawX -= 1;
                         }
                         else if (dir == eWorldDirection::S)
                         {
-                            rx -= 1;
-                            ry += 1;
+                            drawX -= 1;
+                            drawY += 1;
                         }
                         else if (dir == eWorldDirection::W)
                         {
-                            ry += 1;
+                            drawY += 1;
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                     tex->clearColorMod();
                 }
             }
-            else if (bt == eAgoraOrientation::topLeft)
+            else if (agoraOrientation == eAgoraOrientation::topLeft)
             {
                 const int iMax = p.size();
                 for (int i = 0; i < iMax; i++)
@@ -559,34 +559,34 @@ void GameWidget::paintBuildPreview(
                     {
                         continue;
                     }
-                    double rx;
-                    double ry;
-                    const int tx = t->x();
-                    const int ty = t->y();
-                    const int a = t->altitude();
-                    drawXY(tx, ty, rx, ry, dim, dim, a);
+                    double drawX;
+                    double drawY;
+                    const int worldTileX = t->x();
+                    const int worldTileY = t->y();
+                    const int altitude = t->altitude();
+                    drawXY(worldTileX, worldTileY, drawX, drawY, dim, dim, altitude);
                     if (dim == 2)
                     {
                         if (dir == eWorldDirection::E)
                         {
-                            rx -= 1;
+                            drawX -= 1;
                         }
                         else if (dir == eWorldDirection::S)
                         {
-                            rx -= 1;
-                            ry += 1;
+                            drawX -= 1;
+                            drawY += 1;
                         }
                         else if (dir == eWorldDirection::W)
                         {
-                            ry += 1;
+                            drawY += 1;
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                     tex->clearColorMod();
                 }
             }
-            else if (bt == eAgoraOrientation::bottomLeft)
+            else if (agoraOrientation == eAgoraOrientation::bottomLeft)
             {
                 const int iMax = p.size();
                 for (int i = 0; i < iMax; i++)
@@ -611,34 +611,34 @@ void GameWidget::paintBuildPreview(
                     {
                         continue;
                     }
-                    double rx;
-                    double ry;
-                    const int tx = t->x();
-                    const int ty = t->y();
-                    const int a = t->altitude();
-                    drawXY(tx, ty, rx, ry, dim, dim, a);
+                    double drawX;
+                    double drawY;
+                    const int worldTileX = t->x();
+                    const int worldTileY = t->y();
+                    const int altitude = t->altitude();
+                    drawXY(worldTileX, worldTileY, drawX, drawY, dim, dim, altitude);
                     if (dim == 2)
                     {
                         if (dir == eWorldDirection::E)
                         {
-                            rx -= 1;
+                            drawX -= 1;
                         }
                         else if (dir == eWorldDirection::S)
                         {
-                            rx -= 1;
-                            ry += 1;
+                            drawX -= 1;
+                            drawY += 1;
                         }
                         else if (dir == eWorldDirection::W)
                         {
-                            ry += 1;
+                            drawY += 1;
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                     tex->clearColorMod();
                 }
             }
-            else if (bt == eAgoraOrientation::topRight)
+            else if (agoraOrientation == eAgoraOrientation::topRight)
             {
                 const int iMax = p.size();
                 for (int i = 0; i < iMax; i++)
@@ -663,30 +663,30 @@ void GameWidget::paintBuildPreview(
                     {
                         continue;
                     }
-                    double rx;
-                    double ry;
-                    const int tx = t->x();
-                    const int ty = t->y();
-                    const int a = t->altitude();
-                    drawXY(tx, ty, rx, ry, dim, dim, a);
+                    double drawX;
+                    double drawY;
+                    const int worldTileX = t->x();
+                    const int worldTileY = t->y();
+                    const int altitude = t->altitude();
+                    drawXY(worldTileX, worldTileY, drawX, drawY, dim, dim, altitude);
                     if (dim == 2)
                     {
                         if (dir == eWorldDirection::E)
                         {
-                            rx -= 1;
+                            drawX -= 1;
                         }
                         else if (dir == eWorldDirection::S)
                         {
-                            rx -= 1;
-                            ry += 1;
+                            drawX -= 1;
+                            drawY += 1;
                         }
                         else if (dir == eWorldDirection::W)
                         {
-                            ry += 1;
+                            drawY += 1;
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -699,20 +699,20 @@ void GameWidget::paintBuildPreview(
         const auto &agr = builTexs.fAgora;
         const auto &agrr = builTexs.fAgoraRoad;
 
-        eAgoraOrientation bt;
-        const auto p = agoraBuildPlaceIter(t, true, bt, mViewedCityId, ppid);
+        eAgoraOrientation agoraOrientation;
+        const auto p = agoraBuildPlaceIter(t, true, agoraOrientation, mViewedCityId, ppid);
         if (p.empty())
         {
             const auto &tex = trrTexs.fBuildingBase;
             tex->setColorMod(255, 0, 0);
-            for (int i = tx - 2; i < tx + 3; i++)
+            for (int i = worldTileX - 2; i < worldTileX + 3; i++)
             {
-                for (int j = ty - 3; j < ty + 3; j++)
+                for (int j = worldTileY - 3; j < worldTileY + 3; j++)
                 {
-                    double rx;
-                    double ry;
-                    drawXY(i, j, rx, ry, 1, 1, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    double drawX;
+                    double drawY;
+                    drawXY(i, j, drawX, drawY, 1, 1, altitude);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                 }
             }
             tex->clearColorMod();
@@ -722,27 +722,27 @@ void GameWidget::paintBuildPreview(
                                   : 1;
             const auto &road = trrTexs.fRoad.getTexture(texId);
             road->setColorMod(255, 0, 0);
-            for (int j = ty - 3; j < ty + 3; j++)
+            for (int j = worldTileY - 3; j < worldTileY + 3; j++)
             {
-                double rx;
-                double ry;
-                drawXY(tx, j, rx, ry, 1, 1, a);
-                tp.drawTexture(rx, ry, road, eAlignment::top);
+                double drawX;
+                double drawY;
+                drawXY(worldTileX, j, drawX, drawY, 1, 1, altitude);
+                tp.drawTexture(drawX, drawY, road, eAlignment::top);
             }
             road->clearColorMod();
         }
         else
         {
             drawAgoraRoadAccessPreview(p);
-            if (bt == eAgoraOrientation::bottomRight)
+            if (agoraOrientation == eAgoraOrientation::bottomRight)
             {
                 const int iMax = p.size();
                 for (int i = 0; i < iMax; i++)
                 {
                     const auto t = p[i];
-                    const int tx = t->x();
-                    const int ty = t->y();
-                    const int a = t->altitude();
+                    const int worldTileX = t->x();
+                    const int worldTileY = t->y();
+                    const int altitude = t->altitude();
                     stdsptr<eTexture> tex;
                     int dim;
                     if (i < 6)
@@ -762,39 +762,39 @@ void GameWidget::paintBuildPreview(
                     {
                         continue;
                     }
-                    double rx;
-                    double ry;
-                    drawXY(tx, ty, rx, ry, dim, dim, a);
+                    double drawX;
+                    double drawY;
+                    drawXY(worldTileX, worldTileY, drawX, drawY, dim, dim, altitude);
                     if (dim == 2)
                     {
                         if (dir == eWorldDirection::E)
                         {
-                            rx -= 1;
+                            drawX -= 1;
                         }
                         else if (dir == eWorldDirection::S)
                         {
-                            rx -= 1;
-                            ry += 1;
+                            drawX -= 1;
+                            drawY += 1;
                         }
                         else if (dir == eWorldDirection::W)
                         {
-                            ry += 1;
+                            drawY += 1;
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                     tex->clearColorMod();
                 }
             }
-            else if (bt == eAgoraOrientation::bottomLeft)
+            else if (agoraOrientation == eAgoraOrientation::bottomLeft)
             {
                 const int iMax = p.size();
                 for (int i = 0; i < iMax; i++)
                 {
                     const auto t = p[i];
-                    const int tx = t->x();
-                    const int ty = t->y();
-                    const int a = t->altitude();
+                    const int worldTileX = t->x();
+                    const int worldTileY = t->y();
+                    const int altitude = t->altitude();
                     stdsptr<eTexture> tex;
                     int dim;
                     if (i < 6)
@@ -814,27 +814,27 @@ void GameWidget::paintBuildPreview(
                     {
                         continue;
                     }
-                    double rx;
-                    double ry;
-                    drawXY(tx, ty, rx, ry, dim, dim, a);
+                    double drawX;
+                    double drawY;
+                    drawXY(worldTileX, worldTileY, drawX, drawY, dim, dim, altitude);
                     if (dim == 2)
                     {
                         if (dir == eWorldDirection::E)
                         {
-                            rx -= 1;
+                            drawX -= 1;
                         }
                         else if (dir == eWorldDirection::S)
                         {
-                            rx -= 1;
-                            ry += 1;
+                            drawX -= 1;
+                            drawY += 1;
                         }
                         else if (dir == eWorldDirection::W)
                         {
-                            ry += 1;
+                            drawY += 1;
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -849,56 +849,56 @@ void GameWidget::paintBuildPreview(
     if (t && mGm->visible())
     {
         bool fertile = false;
-        std::function<bool(const int tx, const int ty,
-                           const int sw, const int sh)>
+        std::function<bool(const int worldTileX, const int worldTileY,
+                           const int tileSpanW, const int tileSpanH)>
             canBuildFunc;
         switch (mode)
         {
         case eBuildingMode::urchinQuay:
         case eBuildingMode::fishery:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
+                (void)tileSpanW;
+                (void)tileSpanH;
                 eDiagonalOrientation o;
-                return canBuildFishery(tx, ty, o);
+                return canBuildFishery(worldTileX, worldTileY, o);
             };
         }
         break;
         case eBuildingMode::triremeWharf:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
+                (void)tileSpanW;
+                (void)tileSpanH;
                 eDiagonalOrientation o;
-                return canBuildTriremeWharf(tx, ty, o);
+                return canBuildTriremeWharf(worldTileX, worldTileY, o);
             };
         }
         break;
         case eBuildingMode::pier:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                if (sw > 2 || sh > 2)
+                if (tileSpanW > 2 || tileSpanH > 2)
                     return true;
                 eDiagonalOrientation o;
-                return canBuildPier(tx, ty, o, mViewedCityId, ppid, mEditorMode);
+                return canBuildPier(worldTileX, worldTileY, o, mViewedCityId, ppid, mEditorMode);
             };
         }
         break;
         case eBuildingMode::palace:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
                 if (mBoard->hasPalace(mViewedCityId))
                     return false;
-                return mBoard->canBuild(tx, ty, sw, sh,
+                return mBoard->canBuild(worldTileX, worldTileY, tileSpanW, tileSpanH,
                                         mEditorMode,
                                         mViewedCityId, ppid,
                                         fertile);
@@ -907,12 +907,12 @@ void GameWidget::paintBuildPreview(
         break;
         case eBuildingMode::stadium:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
                 if (mBoard->hasStadium(mViewedCityId))
                     return false;
-                return mBoard->canBuild(tx, ty, sw, sh,
+                return mBoard->canBuild(worldTileX, worldTileY, tileSpanW, tileSpanH,
                                         mEditorMode,
                                         mViewedCityId, ppid,
                                         fertile);
@@ -921,99 +921,99 @@ void GameWidget::paintBuildPreview(
         break;
         case eBuildingMode::foodVendor:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                return canBuildVendor(tx, ty, eResourceType::food);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                return canBuildVendor(worldTileX, worldTileY, eResourceType::food);
             };
         }
         break;
         case eBuildingMode::fleeceVendor:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                return canBuildVendor(tx, ty, eResourceType::fleece);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                return canBuildVendor(worldTileX, worldTileY, eResourceType::fleece);
             };
         }
         break;
         case eBuildingMode::oilVendor:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                return canBuildVendor(tx, ty, eResourceType::oliveOil);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                return canBuildVendor(worldTileX, worldTileY, eResourceType::oliveOil);
             };
         }
         break;
         case eBuildingMode::wineVendor:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                return canBuildVendor(tx, ty, eResourceType::wine);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                return canBuildVendor(worldTileX, worldTileY, eResourceType::wine);
             };
         }
         break;
         case eBuildingMode::armsVendor:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                return canBuildVendor(tx, ty, eResourceType::armor);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                return canBuildVendor(worldTileX, worldTileY, eResourceType::armor);
             };
         }
         break;
         case eBuildingMode::horseTrainer:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                return canBuildVendor(tx, ty, eResourceType::horse);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                return canBuildVendor(worldTileX, worldTileY, eResourceType::horse);
             };
         }
         break;
         case eBuildingMode::chariotVendor:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                return canBuildVendor(tx, ty, eResourceType::chariot);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                return canBuildVendor(worldTileX, worldTileY, eResourceType::chariot);
             };
         }
         break;
         case eBuildingMode::avenue:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                const auto t = mBoard->tile(tx, ty);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                const auto t = mBoard->tile(worldTileX, worldTileY);
                 return canBuildAvenue(t, mViewedCityId, ppid, mEditorMode);
             };
         }
         break;
         default:
         {
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                return mBoard->canBuild(tx, ty, sw, sh,
+                return mBoard->canBuild(worldTileX, worldTileY, tileSpanW, tileSpanH,
                                         mEditorMode,
                                         mViewedCityId, ppid,
                                         fertile);
@@ -1024,7 +1024,7 @@ void GameWidget::paintBuildPreview(
 
         struct eB
         {
-            eB(const int tx, const int ty,
+            eB(const int worldTileX, const int worldTileY,
                const stdsptr<eBuilding> &b,
                const int altitude = 0,
                const int templeOverlayDirId = -1,
@@ -1033,7 +1033,7 @@ void GameWidget::paintBuildPreview(
                const int monumentTextureId = -1,
                const bool altar = false,
                const int order = 0) :
-                fTx(tx), fTy(ty), fAltitude(altitude),
+                fTx(worldTileX), fTy(worldTileY), fAltitude(altitude),
                 fTempleOverlayDirId(templeOverlayDirId),
                 fStatueGod(statueGod),
                 fStatueTextureId(statueTextureId),
@@ -1085,15 +1085,15 @@ void GameWidget::paintBuildPreview(
                 done.insert(pb);
                 if (!eb.fBR)
                     continue;
-                const int sw = eb.fBR->spanW();
-                const int sh = eb.fBR->spanH();
+                const int tileSpanW = eb.fBR->spanW();
+                const int tileSpanH = eb.fBR->spanH();
                 int minX;
                 int minY;
                 int maxX;
                 int maxY;
                 GameBoard::sBuildTiles(minX, minY, maxX, maxY,
-                                        eb.fTx, eb.fTy, sw, sh);
-                pb->setTileRect({minX, minY, sw, sh});
+                                        eb.fTx, eb.fTy, tileSpanW, tileSpanH);
+                pb->setTileRect({minX, minY, tileSpanW, tileSpanH});
                 const auto roads = pb->surroundingRoad(false, true);
                 drawRoadBands(roads, tp, trrTexs);
             }
@@ -1165,13 +1165,13 @@ void GameWidget::paintBuildPreview(
         {
             const auto &tex = trrTexs.fBuildingBase;
             const auto type = eBuildingModeHelpers::toBuildingType(mode);
-            int sw;
-            int sh;
-            ePyramid::sDimensions(type, sw, sh);
-            const int xMin = mHoverTX - sw / 2;
-            const int yMin = mHoverTY - sh / 2;
-            const int xMax = xMin + sw;
-            const int yMax = yMin + sh;
+            int tileSpanW;
+            int tileSpanH;
+            ePyramid::sDimensions(type, tileSpanW, tileSpanH);
+            const int xMin = mHoverTX - tileSpanW / 2;
+            const int yMin = mHoverTY - tileSpanH / 2;
+            const int xMax = xMin + tileSpanW;
+            const int yMax = yMin + tileSpanH;
             const bool cb = mBoard->canBuildBase(xMin, xMax, yMin, yMax,
                                                  mEditorMode,
                                                  mViewedCityId, ppid);
@@ -1181,16 +1181,16 @@ void GameWidget::paintBuildPreview(
             {
                 for (int y = yMin; y < yMax; y++)
                 {
-                    double rx;
-                    double ry;
+                    double drawX;
+                    double drawY;
                     const auto t = mBoard->tile(x, y);
                     if (!t)
                         continue;
                     if (t->underBuilding())
                         continue;
-                    const int a = t->altitude();
-                    drawXY(x, y, rx, ry, 1, 1, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    const int altitude = t->altitude();
+                    drawXY(x, y, drawX, drawY, 1, 1, altitude);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                 }
             }
             if (!cb)
@@ -1253,12 +1253,12 @@ void GameWidget::paintBuildPreview(
             const auto b1 = e::make_shared<eRoad>(*mBoard, mViewedCityId);
             b1->setRoadblock(true);
             ebs.emplace_back(mHoverTX, mHoverTY, b1);
-            canBuildFunc = [&](const int tx, const int ty,
-                               const int sw, const int sh)
+            canBuildFunc = [&](const int worldTileX, const int worldTileY,
+                               const int tileSpanW, const int tileSpanH)
             {
-                (void)sw;
-                (void)sh;
-                const auto t = mBoard->tile(tx, ty);
+                (void)tileSpanW;
+                (void)tileSpanH;
+                const auto t = mBoard->tile(worldTileX, worldTileY);
                 if (!t)
                     return false;
                 const bool hr = t->hasRoad();
@@ -1267,8 +1267,8 @@ void GameWidget::paintBuildPreview(
                 const bool b = t->hasBridge();
                 if (b)
                     return false;
-                const auto ub = t->underBuilding();
-                const auto r = static_cast<eRoad *>(ub);
+                const auto building = t->underBuilding();
+                const auto r = static_cast<eRoad *>(building);
                 return !r->isRoadblock();
             };
         }
@@ -1407,24 +1407,24 @@ void GameWidget::paintBuildPreview(
         break;
         case eBuildingMode::palace:
         {
-            const int tx = mHoverTX;
-            const int ty = mHoverTY;
+            const int worldTileX = mHoverTX;
+            const int worldTileY = mHoverTY;
             const auto b1 = e::make_shared<ePalace>(*mBoard, mRotate, mViewedCityId);
 
             int dx;
             int dy;
-            int sw;
-            int sh;
-            const int tminX = tx - 2;
-            const int tminY = ty - 3;
+            int tileSpanW;
+            int tileSpanH;
+            const int tminX = worldTileX - 2;
+            const int tminY = worldTileY - 3;
             int tmaxX;
             int tmaxY;
             if (mRotate)
             {
                 dx = 0;
                 dy = 4;
-                sw = 4;
-                sh = 8;
+                tileSpanW = 4;
+                tileSpanH = 8;
                 tmaxX = tminX + 6;
                 tmaxY = tminY + 9;
             }
@@ -1432,12 +1432,12 @@ void GameWidget::paintBuildPreview(
             {
                 dx = 4;
                 dy = 0;
-                sw = 8;
-                sh = 4;
+                tileSpanW = 8;
+                tileSpanH = 4;
                 tmaxX = tminX + 9;
                 tmaxY = tminY + 6;
             }
-            const SDL_Rect rect{tminX + 1, tminY + 1, sw, sh};
+            const SDL_Rect rect{tminX + 1, tminY + 1, tileSpanW, tileSpanH};
             for (int x = tminX; x < tmaxX; x++)
             {
                 for (int y = tminY; y < tmaxY; y++)
@@ -1465,9 +1465,9 @@ void GameWidget::paintBuildPreview(
                 }
             }
 
-            auto &ebs1 = ebs.emplace_back(tx, ty, b1);
+            auto &ebs1 = ebs.emplace_back(worldTileX, worldTileY, b1);
             ebs1.fBR = e::make_shared<ePalace1Renderer>(b1);
-            auto &ebs2 = ebs.emplace_back(tx + dx, ty + dy, b1);
+            auto &ebs2 = ebs.emplace_back(worldTileX + dx, worldTileY + dy, b1);
             ebs2.fBR = e::make_shared<ePalace2Renderer>(b1);
             if (dir == eWorldDirection::S)
             {
@@ -1631,7 +1631,7 @@ void GameWidget::paintBuildPreview(
             eDiagonalOrientation o = eDiagonalOrientation::topRight;
             canBuildFishery(mHoverTX, mHoverTY, o);
             const auto b1 = e::make_shared<eUrchinQuay>(*mBoard, o, mViewedCityId);
-            ebs.emplace_back(tx, ty, b1);
+            ebs.emplace_back(worldTileX, worldTileY, b1);
         }
         break;
 
@@ -1664,29 +1664,29 @@ void GameWidget::paintBuildPreview(
             const auto ct = cts[ctid];
             const auto b2 = e::make_shared<TradePost>(
                 *mBoard, *ct, mViewedCityId, eTradePostType::pier);
-            int tx = mHoverTX;
-            int ty = mHoverTY;
+            int worldTileX = mHoverTX;
+            int worldTileY = mHoverTY;
             switch (o)
             {
             case eDiagonalOrientation::topRight:
             {
-                ty += 3;
+                worldTileY += 3;
             }
             break;
             case eDiagonalOrientation::bottomRight:
             {
-                tx -= 3;
+                worldTileX -= 3;
             }
             break;
             case eDiagonalOrientation::bottomLeft:
             {
-                ty -= 3;
+                worldTileY -= 3;
             }
             break;
             default:
             case eDiagonalOrientation::topLeft:
             {
-                tx += 3;
+                worldTileX += 3;
             }
             break;
             }
@@ -1713,11 +1713,11 @@ void GameWidget::paintBuildPreview(
             }
             if (insert)
             {
-                ebs.insert(ebs.begin(), {tx, ty, b2});
+                ebs.insert(ebs.begin(), {worldTileX, worldTileY, b2});
             }
             else
             {
-                ebs.emplace_back(tx, ty, b2);
+                ebs.emplace_back(worldTileX, worldTileY, b2);
             }
         }
         break;
@@ -1799,8 +1799,8 @@ void GameWidget::paintBuildPreview(
                 for(int dy = 0; dy < 2; dy++) {
                     const auto t = mBoard->tile(mHoverTX + dx, mHoverTY + dy);
                     if(t) {
-                        const auto ub = t->underBuilding();
-                        if(ub && ub->type() == eBuildingType::wall) {
+                        const auto building = t->underBuilding();
+                        if(building && building->type() == eBuildingType::wall) {
                             onWall = true;
                             break;
                         }
@@ -1811,12 +1811,12 @@ void GameWidget::paintBuildPreview(
             if(onWall) {
                 const auto tex = b1->getTexture(mTileSize);
                 tex->setColorMod(0, 255, 0);
-                double rx, ry;
+                double drawX, drawY;
                 const auto centerTile = mBoard->tile(mHoverTX, mHoverTY);
                 if(centerTile) {
-                    const int a = centerTile->altitude();
-                    drawXY(mHoverTX, mHoverTY, rx, ry, 2, 2, a);
-                    tp.drawTexture(rx, ry, tex, eAlignment::top);
+                    const int altitude = centerTile->altitude();
+                    drawXY(mHoverTX, mHoverTY, drawX, drawY, 2, 2, altitude);
+                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                 }
                 tex->clearColorMod();
             } else {
@@ -1824,12 +1824,12 @@ void GameWidget::paintBuildPreview(
                     for(int dy = 0; dy < 2; dy++) {
                         const auto t = mBoard->tile(mHoverTX + dx, mHoverTY + dy);
                         if(!t) continue;
-                        double rx, ry;
-                        drawXY(mHoverTX + dx, mHoverTY + dy, rx, ry, 1, 1, t->altitude());
+                        double drawX, drawY;
+                        drawXY(mHoverTX + dx, mHoverTY + dy, drawX, drawY, 1, 1, t->altitude());
                         int dd;
                         auto tex = eTileToTexture::get(t, trrTexs, builTexs, mTileSize, false, dd, nullptr, eWorldDirection::N);
                         tex->setColorMod(255, 0, 0);
-                        tp.drawTexture(rx, ry, tex, eAlignment::top);
+                        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                         tex->clearColorMod();
                     }
                 }
@@ -1925,10 +1925,10 @@ void GameWidget::paintBuildPreview(
         break;
         case eBuildingMode::horseRanch:
         {
-            const int tx = mHoverTX;
-            const int ty = mHoverTY;
+            const int worldTileX = mHoverTX;
+            const int worldTileY = mHoverTY;
             const auto b1 = e::make_shared<eHorseRanch>(*mBoard, mViewedCityId);
-            ebs.emplace_back(tx, ty, b1);
+            ebs.emplace_back(worldTileX, worldTileY, b1);
 
             int dx = 0;
             int dy = 0;
@@ -1973,11 +1973,11 @@ void GameWidget::paintBuildPreview(
             b1->setEnclosure(b2.get());
             if (under)
             {
-                ebs.insert(ebs.begin(), eB{tx + dx, ty + dy, b2});
+                ebs.insert(ebs.begin(), eB{worldTileX + dx, worldTileY + dy, b2});
             }
             else
             {
-                ebs.emplace_back(tx + dx, ty + dy, b2);
+                ebs.emplace_back(worldTileX + dx, worldTileY + dy, b2);
             }
         }
         break;
@@ -2170,10 +2170,10 @@ void GameWidget::paintBuildPreview(
         case eBuildingMode::poseidonMonument:
         case eBuildingMode::zeusMonument:
         {
-            const int tx = mHoverTX;
-            const int ty = mHoverTY;
-            const int tminX = tx - 1;
-            const int tminY = ty - 2;
+            const int worldTileX = mHoverTX;
+            const int worldTileY = mHoverTY;
+            const int tminX = worldTileX - 1;
+            const int tminY = worldTileY - 2;
             const int tmaxX = tminX + 4;
             const int tmaxY = tminY + 4;
             const auto am = eBuildingMode::aphroditeMonument;
@@ -2333,9 +2333,9 @@ void GameWidget::paintBuildPreview(
             if (!eb.fBR)
                 eb.fBR = e::make_shared<eBuildingRenderer>(eb.fB);
             const auto b = eb.fBR;
-            const int sw = b->spanW();
-            const int sh = b->spanH();
-            const bool cb = canBuildFunc(eb.fTx, eb.fTy, sw, sh);
+            const int tileSpanW = b->spanW();
+            const int tileSpanH = b->spanH();
+            const bool cb = canBuildFunc(eb.fTx, eb.fTy, tileSpanW, tileSpanH);
             if (!cb)
                 canBuildPreview = false;
         }
@@ -2347,8 +2347,8 @@ void GameWidget::paintBuildPreview(
                              if (isSanctuaryPreview) {
                                  const SDL_Rect lr{lhs.fTx, lhs.fTy, 1, 1};
                                  const SDL_Rect rr{rhs.fTx, rhs.fTy, 1, 1};
-                                 const auto rl = eTileHelper::toRotatedRect(lr, dir, boardw, boardh);
-                                 const auto rr2 = eTileHelper::toRotatedRect(rr, dir, boardw, boardh);
+                                 const auto rl = eTileHelper::toRotatedRect(lr, dir, boardWidth, boardHeight);
+                                 const auto rr2 = eTileHelper::toRotatedRect(rr, dir, boardWidth, boardHeight);
                                  if (rl.y != rr2.y) return rl.y < rr2.y;
                                  return rl.x < rr2.x;
                              }
@@ -2361,9 +2361,9 @@ void GameWidget::paintBuildPreview(
                              const SDL_Rect rhsRect{rhs.fTx, rhs.fTy,
                                                     rhsSpanW, rhsSpanH};
                              const auto rotatedLhsRect = eTileHelper::toRotatedRect(
-                                 lhsRect, dir, boardw, boardh);
+                                 lhsRect, dir, boardWidth, boardHeight);
                              const auto rotatedRhsRect = eTileHelper::toRotatedRect(
-                                 rhsRect, dir, boardw, boardh);
+                                 rhsRect, dir, boardWidth, boardHeight);
                              const int lhsY = rotatedLhsRect.y + rotatedLhsRect.h - 1;
                              const int rhsY = rotatedRhsRect.y + rotatedRhsRect.h - 1;
                              if (lhsY != rhsY)
@@ -2381,7 +2381,7 @@ void GameWidget::paintBuildPreview(
             drawSanctuaryTerrainPreview(
                 *mBoard, tp, builTexs, trrTexs,
                 mode, mRotateId, mHoverTX, mHoverTY, mViewedCityId,
-                previewFootprint, dir, boardw, boardh, mAnimFrame,
+                previewFootprint, dir, boardWidth, boardHeight, mAnimFrame,
                 canBuildPreview);
         }
         if (isSanctuaryPreview)

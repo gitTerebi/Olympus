@@ -187,74 +187,80 @@ eGodType statueGod(const eSanctEleType type, const eGodType fallback)
 
 void applyPreviewSpanCameraOffset(double& drawX,
                                   double& drawY,
-                                  const int sw,
-                                  const int sh,
+                                  const int tileSpanW,
+                                  const int tileSpanH,
                                   const eWorldDirection dir)
 {
     if (dir == eWorldDirection::E) {
-        if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2)) drawX -= 1;
-        else if (sw == 6 && sh == 6) drawY -= 1;
+        if ((tileSpanW == 4 && tileSpanH == 4) || (tileSpanW == 2 && tileSpanH == 2)) drawX -= 1;
+        else if (tileSpanW == 6 && tileSpanH == 6) drawY -= 1;
     } else if (dir == eWorldDirection::S) {
-        if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2)) {
+        if ((tileSpanW == 4 && tileSpanH == 4) || (tileSpanW == 2 && tileSpanH == 2)) {
             drawX -= 1;
             drawY += 1;
-        } else if (sw == 6 && sh == 6) {
+        } else if (tileSpanW == 6 && tileSpanH == 6) {
             drawX -= 1;
             drawY -= 1;
         }
     } else if (dir == eWorldDirection::W) {
-        if ((sw == 4 && sh == 4) || (sw == 2 && sh == 2)) drawY += 1;
-        else if (sw == 6 && sh == 6) drawX -= 1;
+        if ((tileSpanW == 4 && tileSpanH == 4) || (tileSpanW == 2 && tileSpanH == 2)) drawY += 1;
+        else if (tileSpanW == 6 && tileSpanH == 6) drawX -= 1;
     }
 }
 
 void sortByDrawOrder(std::vector<PreviewTile>& tiles,
                      const eWorldDirection dir,
-                     const int boardw,
-                     const int boardh)
+                     const int boardWidth,
+                     const int boardHeight)
 {
     std::stable_sort(tiles.begin(), tiles.end(),
                      [&](const PreviewTile& lhs, const PreviewTile& rhs)
                      {
-                         int ax, ay, bx, by;
+                         int lhsViewTileX;
+                         int lhsViewTileY;
+                         int rhsViewTileX;
+                         int rhsViewTileY;
                          eTileHelper::tileIdToRotatedTileId(
-                             lhs.fX, lhs.fY, ax, ay,
-                             dir, boardw, boardh);
+                             lhs.fX, lhs.fY, lhsViewTileX, lhsViewTileY,
+                             dir, boardWidth, boardHeight);
                          eTileHelper::tileIdToRotatedTileId(
-                             rhs.fX, rhs.fY, bx, by,
-                             dir, boardw, boardh);
-                         if (ay != by)
-                             return ay < by;
-                         return ax < bx;
+                             rhs.fX, rhs.fY, rhsViewTileX, rhsViewTileY,
+                             dir, boardWidth, boardHeight);
+                         if (lhsViewTileY != rhsViewTileY)
+                             return lhsViewTileY < rhsViewTileY;
+                         return lhsViewTileX < rhsViewTileX;
                      });
 }
 
 void previewDrawXY(GameBoard& board,
-                   int tx,
-                   int ty,
-                   double& rx,
-                   double& ry,
-                   const int wSpan,
-                   const int hSpan,
+                   int worldTileX,
+                   int worldTileY,
+                   double& drawX,
+                   double& drawY,
+                   const int tileSpanW,
+                   const int tileSpanH,
                    const int altitude)
 {
     const auto dir = board.direction();
+    int viewTileX = worldTileX;
+    int viewTileY = worldTileY;
     if (dir != eWorldDirection::N)
     {
-        eTileHelper::tileIdToRotatedTileId(tx, ty, tx, ty,
+        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+                                           viewTileX, viewTileY,
                                            dir, board.width(), board.height());
     }
 
-    rx = tx + 0.5;
-    ry = ty + 1.5;
+    drawX = viewTileX + 0.5;
+    drawY = viewTileY + 1.5;
 
-    if (wSpan == 2 && hSpan == 2)       { rx += 0.5; ry += 0.5; }
-    else if (wSpan == 3 && hSpan == 3)  { rx += 0.0; ry += 2.0; }
-    else if (wSpan == 4 && hSpan == 4)  { rx += 0.5; ry += 2.5; }
-    else if (wSpan == 5 && hSpan == 5)  { rx += 0.0; ry += 4.0; }
-    else if (wSpan == 6 && hSpan == 6)  { rx += 0.5; ry += 5.5; }
-    rx -= altitude;
-    ry -= altitude;
+    if (tileSpanW == 2 && tileSpanH == 2)       { drawX += 0.5; drawY += 0.5; }
+    else if (tileSpanW == 3 && tileSpanH == 3)  { drawX += 0.0; drawY += 2.0; }
+    else if (tileSpanW == 4 && tileSpanH == 4)  { drawX += 0.5; drawY += 2.5; }
+    else if (tileSpanW == 5 && tileSpanH == 5)  { drawX += 0.0; drawY += 4.0; }
+    else if (tileSpanW == 6 && tileSpanH == 6)  { drawX += 0.5; drawY += 5.5; }
+    drawX -= altitude;
+    drawY -= altitude;
 }
 
 int sanctuaryStairTextureId(const int seed,
@@ -393,14 +399,14 @@ const eTextureCollection* monumentTextureCollection(
 
 SanctuaryPreviewEntry::SanctuaryPreviewEntry(
     const int order,
-    const int tx, const int ty, const int altitude,
+    const int worldTileX, const int worldTileY, const int altitude,
     const int templeOverlayDirId,
     const eGodType statueGod,
     const int statueTextureId,
     const int monumentTextureId,
     const bool altar,
     const stdsptr<eBuilding>& b) :
-    fOrder(order), fTx(tx), fTy(ty), fAltitude(altitude),
+    fOrder(order), fTx(worldTileX), fTy(worldTileY), fAltitude(altitude),
     fTempleOverlayDirId(templeOverlayDirId),
     fStatueGod(statueGod), fStatueTextureId(statueTextureId),
     fMonumentTextureId(monumentTextureId), fAltar(altar), fB(b)
@@ -420,14 +426,14 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
         static_cast<int>(mode) -
         static_cast<int>(eBuildingMode::templeAphrodite));
     const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotateId);
-    const int sw = h->fW;
-    const int sh = h->fH;
-    const int xMin = hoverTX - sw/2;
-    const int yMin = hoverTY - sh/2;
-    footprint = {xMin, yMin, sw, sh};
+    const int tileSpanW = h->fW;
+    const int tileSpanH = h->fH;
+    const int xMin = hoverTX - tileSpanW/2;
+    const int yMin = hoverTY - tileSpanH/2;
+    footprint = {xMin, yMin, tileSpanW, tileSpanH};
 
     const auto sanctuary = e::make_shared<eMonument>(
-        board, type, sw, sh, 0, viewedCityId);
+        board, type, tileSpanW, tileSpanH, 0, viewedCityId);
     sanctuary->setRotateId(rotateId);
     sanctuary->setTileRect(footprint);
     eGameTextures::loadZeusSanctuary();
@@ -440,11 +446,11 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
     for(const auto& tile : tiles) {
         const auto& te = tile.fEle;
         const int tileOrder = tile.fPreviewX + tile.fPreviewY;
-        const int tx = xMin + te.fX;
-        const int ty = yMin + te.fY;
+        const int worldTileX = xMin + te.fX;
+        const int worldTileY = yMin + te.fY;
         const int previewX = xMin + tile.fPreviewX;
         const int previewY = yMin + tile.fPreviewY;
-        const auto boardTile = board.tile(tx, ty);
+        const auto boardTile = board.tile(worldTileX, worldTileY);
         const auto previewBoardTile = board.tile(previewX, previewY);
         const int altitude = (boardTile ? boardTile->altitude() : 0) + te.fA;
         const int previewAltitude =
@@ -462,10 +468,10 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
             b->setMonument(sanctuary.get());
             finishSanctuaryPart(b.get());
             sanctuary->registerElement(b);
-            auto& floorEntry = result.emplace_back(tileOrder, tx, ty, altitude, -1,
+            auto& floorEntry = result.emplace_back(tileOrder, worldTileX, worldTileY, altitude, -1,
                                                     god, -1, -1, false, b);
             if(isTempleFloorTile(te.fType) && te.fId >= 10) {
-                auto& torchEntry = result.emplace_back(tileOrder, tx, ty, altitude, -1,
+                auto& torchEntry = result.emplace_back(tileOrder, worldTileX, worldTileY, altitude, -1,
                                                        god, -1, -1, false, b);
                 torchEntry.fTorch = true;
             }
@@ -709,8 +715,8 @@ void drawSanctuaryTempleBuildingPreview(
     GameBoard& board,
     eTilePainter& tp,
     const eBuildingTextures& builTexs,
-    const int tx,
-    const int ty,
+    const int worldTileX,
+    const int worldTileY,
     const int altitude,
     const int placementRotateId,
     const eWorldDirection dir,
@@ -725,7 +731,7 @@ void drawSanctuaryTempleBuildingPreview(
 
     double drawX;
     double drawY;
-    previewDrawXY(board, tx, ty, drawX, drawY, 4, 4, altitude);
+    previewDrawXY(board, worldTileX, worldTileY, drawX, drawY, 4, 4, altitude);
     applyPreviewSpanCameraOffset(drawX, drawY, 4, 4, dir);
 
     const auto drawLayer = [&](const std::shared_ptr<eTexture>& tex) {
@@ -740,11 +746,11 @@ void drawSanctuaryTempleBuildingPreview(
     if(t.fWoman) {
         const int r = placementRotateId % 4;
         const int d = static_cast<int>(dir);
-        double wdrawX, wdrawY;
-        previewDrawXY(board, tx, ty, wdrawX, wdrawY, 1, 1, altitude);
-        wdrawX += sanctuaryWomanTileDX(r, d);
-        wdrawY += sanctuaryWomanTileDY(r, d);
-        tp.drawTexture(wdrawX, wdrawY, t.fWoman, eAlignment::bottom);
+        double womanDrawX, womanDrawY;
+        previewDrawXY(board, worldTileX, worldTileY, womanDrawX, womanDrawY, 1, 1, altitude);
+        womanDrawX += sanctuaryWomanTileDX(r, d);
+        womanDrawY += sanctuaryWomanTileDY(r, d);
+        tp.drawTexture(womanDrawX, womanDrawY, t.fWoman, eAlignment::bottom);
         t.fWoman->clearColorMod();
     }
 }
@@ -755,8 +761,8 @@ void drawSanctuaryStatuePreview(
     const eBuildingTextures& builTexs,
     const eGodType god,
     const int statueTextureId,
-    const int tx,
-    const int ty,
+    const int worldTileX,
+    const int worldTileY,
     const int altitude,
     const eWorldDirection dir,
     const bool canBuild)
@@ -768,7 +774,7 @@ void drawSanctuaryStatuePreview(
     const int dirId = sanctuaryFigureDirId(statueTextureId, dir);
     double drawX;
     double drawY;
-    previewDrawXY(board, tx, ty, drawX, drawY, 1, 1, altitude);
+    previewDrawXY(board, worldTileX, worldTileY, drawX, drawY, 1, 1, altitude);
     const auto tex = coll->getTexture(dirId);
     tp.drawTexture(drawX, drawY, tex, eAlignment::top);
     tex->clearColorMod();
@@ -780,8 +786,8 @@ void drawSanctuaryMonumentPreview(
     const eBuildingTextures& builTexs,
     const eGodType god,
     const int monumentTextureId,
-    const int tx,
-    const int ty,
+    const int worldTileX,
+    const int worldTileY,
     const int altitude,
     const eWorldDirection dir,
     const bool canBuild)
@@ -793,7 +799,7 @@ void drawSanctuaryMonumentPreview(
     const int dirId = sanctuaryFigureDirId(monumentTextureId, dir);
     double drawX;
     double drawY;
-    previewDrawXY(board, tx, ty, drawX, drawY, 2, 2, altitude);
+    previewDrawXY(board, worldTileX, worldTileY, drawX, drawY, 2, 2, altitude);
     applyPreviewSpanCameraOffset(drawX, drawY, 2, 2, dir);
     const auto tex = coll->getTexture(dirId);
     tp.drawTexture(drawX, drawY, tex, eAlignment::top);
@@ -804,8 +810,8 @@ void drawSanctuaryAltarPreview(
     GameBoard& board,
     eTilePainter& tp,
     const eBuildingTextures& builTexs,
-    const int tx,
-    const int ty,
+    const int worldTileX,
+    const int worldTileY,
     const int altitude,
     const eWorldDirection dir,
     const int rotateId,
@@ -813,7 +819,7 @@ void drawSanctuaryAltarPreview(
 {
     double drawX;
     double drawY;
-    previewDrawXY(board, tx, ty, drawX, drawY, 2, 2, altitude);
+    previewDrawXY(board, worldTileX, worldTileY, drawX, drawY, 2, 2, altitude);
     applyPreviewSpanCameraOffset(drawX, drawY, 2, 2, dir);
     drawX += gAltarOffsetX[rotateId % 4];
     drawY += gAltarOffsetY[rotateId % 4];
@@ -828,19 +834,19 @@ void drawSanctuaryTorchPreview(
     GameBoard& board,
     eTilePainter& tp,
     const eBuildingTextures& builTexs,
-    const int tx,
-    const int ty,
+    const int worldTileX,
+    const int worldTileY,
     const int altitude,
     const int animFrame)
 {
-    double rx;
-    double ry;
-    previewDrawXY(board, tx, ty, rx, ry, 1, 1, altitude);
+    double drawX;
+    double drawY;
+    previewDrawXY(board, worldTileX, worldTileY, drawX, drawY, 1, 1, altitude);
     const auto& coll = builTexs.fSanctuaryFire;
     if(coll.size() == 0) return;
     const int texId = (animFrame / 4) % coll.size();
     const auto& tex = coll.getTexture(texId);
-    tp.drawTexture(rx + 0.5, ry - 0.5, tex, eAlignment::bottom);
+    tp.drawTexture(drawX + 0.5, drawY - 0.5, tex, eAlignment::bottom);
 }
 
 void drawSanctuaryTerrainPreview(
@@ -855,8 +861,8 @@ void drawSanctuaryTerrainPreview(
     const eCityId viewedCityId,
     const SDL_Rect footprint,
     const eWorldDirection dir,
-    const int boardw,
-    const int boardh,
+    const int boardWidth,
+    const int boardHeight,
     const int animFrame,
     const bool canBuild)
 {
@@ -886,16 +892,16 @@ void drawSanctuaryTerrainPreview(
                          ele.fType, ele.fId});
     }
 
-    sortByDrawOrder(tiles, dir, boardw, boardh);
+    sortByDrawOrder(tiles, dir, boardWidth, boardHeight);
     for (const auto& tile : tiles)
     {
         const auto tex = sanctuaryTerrainTexture(
             tile, board, viewedCityId, tp.size(), builTexs, trrTexs, dir);
         if(!tex) continue;
-        double rx;
-        double ry;
-        previewDrawXY(board, tile.fX, tile.fY, rx, ry, 1, 1,
+        double drawX;
+        double drawY;
+        previewDrawXY(board, tile.fX, tile.fY, drawX, drawY, 1, 1,
                       tile.fAltitude);
-        tp.drawTexture(rx, ry, tex, eAlignment::top);
+        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
     }
 }

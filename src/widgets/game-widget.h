@@ -198,21 +198,21 @@ private:
     void renderTargetsReset() override;
     void initializeNumbers();
 
-    void drawXY(int tx, int ty,
-                double& rx, double& ry,
-                const int wSpan, const int hSpan,
-                const int a);
+    void drawXY(int worldTileX, int worldTileY,
+                double& drawX, double& drawY,
+                const int tileSpanW, const int tileSpanH,
+                const int altitude);
 
     void paintStampPreview(eTilePainter& tp,
                            const eTerrainTextures& trrTexs,
                            const eBuildingTextures& builTexs,
-                           int tx, int ty,
+                           int worldTileX, int worldTileY,
                            ePlayerId ppid);
     void paintAppealBuildPreview(eTilePainter& tp,
                                  const eTerrainTextures& trrTexs,
                                  eBuilding* building,
                                  eBuildingRenderer* renderer,
-                                 int tx, int ty);
+                                 int worldTileX, int worldTileY);
     void paintBuildPreview(eTilePainter& tp,
                            ePainter& painter,
                            const eTerrainTextures& trrTexs,
@@ -220,7 +220,7 @@ private:
                            ePlayerId ppid,
                            eBuildingMode mode,
                            eWorldDirection dir,
-                           int boardw, int boardh,
+                           int boardWidth, int boardHeight,
                            bool bridgeValid,
                            const std::vector<eTile*>& bridgetTs,
                            int sMinX, int sMaxX, int sMinY, int sMaxY);
@@ -314,13 +314,13 @@ private:
                                           const ePlayerId pid) const;
     std::vector<eTile*> agoraBuildPlaceIter(
             eTile* const tile, const bool grand,
-            eAgoraOrientation& bt,
+            eAgoraOrientation& agoraOrientation,
             const eCityId cid,
             const ePlayerId pid) const;
     std::vector<eTile*> stampAgoraBuildPlace(
             const eStampBuildCommand& cmd,
             int pressedTX, int pressedTY,
-            eAgoraOrientation& bt) const;
+            eAgoraOrientation& agoraOrientation) const;
     bool buildStampAgora(const std::vector<eTile*>& tiles,
                          eAgoraOrientation orientation,
                          eCityId cid,
@@ -424,9 +424,10 @@ private:
     void setGameSpeed(const int speed);
 
     stdsptr<eTexture> getBasementTexture(
-            const int tx, const int ty, eBuilding* const d,
+            const int viewTileX, const int viewTileY,
+            eBuilding* const building,
             const eTerrainTextures& trrTexs, const eWorldDirection dir,
-            const int boardw, const int boardh);
+            const int boardWidth, const int boardHeight);
 
     std::vector<eTile*> selectedTiles() const;
 

@@ -60,7 +60,7 @@ void GameWidget::paintAppealBuildPreview(eTilePainter& tp,
                                          const eTerrainTextures& trrTexs,
                                          eBuilding* const building,
                                          eBuildingRenderer* const renderer,
-                                         const int tx, const int ty) {
+                                         const int worldTileX, const int worldTileY) {
     if(!building || !renderer) return;
 
     const auto pid = mBoard->cityIdToPlayerId(mViewedCityId);
@@ -68,17 +68,17 @@ void GameWidget::paintAppealBuildPreview(eTilePainter& tp,
     const auto heat = eHeatGetters::appeal(building->type(), diff);
     if(heat.fRange <= 0 || heat.fValue == 0) return;
 
-    const int sw = renderer->spanW();
-    const int sh = renderer->spanH();
-    const int r = heat.fRange;
+    const int tileSpanW = renderer->spanW();
+    const int tileSpanH = renderer->spanH();
+    const int appealRange = heat.fRange;
     const int step = heat.fStepTiles > 0 ? heat.fStepTiles : 1;
     int minStrength = std::abs(heat.fValue);
     int maxStrength = minStrength;
-    const int ringCount = (r - 1) / step + 1;
+    const int ringCount = (appealRange - 1) / step + 1;
     for(int ring = 1; ring <= ringCount; ring++) {
-        const int app = heat.fValue + (ring - 1) * heat.fStepSize;
-        if(app == 0) continue;
-        const int strength = std::abs(app);
+        const int appealValue = heat.fValue + (ring - 1) * heat.fStepSize;
+        if(appealValue == 0) continue;
+        const int strength = std::abs(appealValue);
         minStrength = std::min(minStrength, strength);
         maxStrength = std::max(maxStrength, strength);
     }
@@ -87,38 +87,38 @@ void GameWidget::paintAppealBuildPreview(eTilePainter& tp,
     int minY;
     int maxX;
     int maxY;
-    GameBoard::sBuildTiles(minX, minY, maxX, maxY, tx, ty, sw, sh);
+    GameBoard::sBuildTiles(minX, minY, maxX, maxY, worldTileX, worldTileY, tileSpanW, tileSpanH);
 
-    const auto drawPreviewTile = [&](eTile* const tile, const int app) {
+    const auto drawPreviewTile = [&](eTile* const tile, const int appealValue) {
         if(!tile) return;
         if(dontDrawAppeal(tile->terrain())) return;
         if(tile->isElevationTile()) return;
 
-        const int strength = std::clamp(std::abs(app), 1, 30);
+        const int strength = std::clamp(std::abs(appealValue), 1, 30);
         const int spread = std::max(1, maxStrength - minStrength);
         const double ratio = std::clamp(
             static_cast<double>(strength - minStrength) / spread, 0., 1.);
-        const double appSign = app > 0 ? 1. : -1.;
-        const double appS = appSign * pow(abs(app), 0.75);
+        const double appSign = appealValue > 0 ? 1. : -1.;
+        const double appS = appSign * pow(abs(appealValue), 0.75);
         int appId = static_cast<int>(std::round(appS + 2.));
         appId = std::clamp(appId, 0, 9);
 
         const auto tex = trrTexs.fAppeal.getTexture(appId);
-        const int alpha = static_cast<int>(app > 0 ?
+        const int alpha = static_cast<int>(appealValue > 0 ?
             40 + 150 * ratio :
             18 + 65 * ratio);
-        if(app > 0) {
+        if(appealValue > 0) {
             tex->setColorMod(0, 255, 0);
         } else {
             tex->setColorMod(255, 120, 120);
         }
         tex->setAlpha(alpha);
 
-        double rx;
-        double ry;
-        const int ta = mDrawElevation ? tile->altitude() : 0;
-        drawXY(tile->x(), tile->y(), rx, ry, 1, 1, ta);
-        tp.drawTexture(rx, ry, tex, eAlignment::top);
+        double drawX;
+        double drawY;
+        const int tileAltitude = mDrawElevation ? tile->altitude() : 0;
+        drawXY(tile->x(), tile->y(), drawX, drawY, 1, 1, tileAltitude);
+        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
         tex->clearAlphaMod();
         tex->clearColorMod();
     };
@@ -150,24 +150,24 @@ void GameWidget::paintAppealBuildPreview(eTilePainter& tp,
         return;
     }
 
-    for(int x = minX - r; x <= minX + sw + r; x++) {
-        for(int y = minY - r; y <= minY + sh + r; y++) {
+    for(int x = minX - appealRange; x <= minX + tileSpanW + appealRange; x++) {
+        for(int y = minY - appealRange; y <= minY + tileSpanH + appealRange; y++) {
             int dx = 0;
             if(x < minX) dx = minX - x;
-            else if(x >= minX + sw) dx = x - (minX + sw - 1);
+            else if(x >= minX + tileSpanW) dx = x - (minX + tileSpanW - 1);
 
             int dy = 0;
             if(y < minY) dy = minY - y;
-            else if(y >= minY + sh) dy = y - (minY + sh - 1);
+            else if(y >= minY + tileSpanH) dy = y - (minY + tileSpanH - 1);
 
             const int dist = std::max(dx, dy);
-            if(dist <= 0 || dist > r) continue;
+            if(dist <= 0 || dist > appealRange) continue;
 
             const int ring = (dist - 1) / step + 1;
-            const int app = heat.fValue + (ring - 1) * heat.fStepSize;
-            if(app == 0) continue;
+            const int appealValue = heat.fValue + (ring - 1) * heat.fStepSize;
+            if(appealValue == 0) continue;
 
-            drawPreviewTile(mBoard->tile(x, y), app);
+            drawPreviewTile(mBoard->tile(x, y), appealValue);
         }
     }
 }
