@@ -151,7 +151,7 @@ private:
     eMissilePath mPath;
 
     int mTime = 0;
-    double mSpeed = 1;
+    double mSpeed = 0.5;
 
     stdsptr<eGodAct> mFinish;
 
