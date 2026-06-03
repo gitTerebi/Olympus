@@ -101,7 +101,7 @@ void eWorldWidget::initialize() {
     mWM->initialize(requestFunc, fulfillFunc, giftFunc,
                     raidFunc, conquerFunc);
 
-    const auto selectCity = [this](const stdsptr<eWorldCity>& ct) {
+    const auto selectCity = [this](const stdsptr<WorldCity>& ct) {
         mCity = ct;
         const bool editor = mWorldBoard && mWorldBoard->editorMode();
         mWM->setCity(ct);
@@ -109,7 +109,7 @@ void eWorldWidget::initialize() {
     const auto leftArrowFunc = [this, selectCity]() {
         if(!mWorldBoard) return;
         const auto& cities = mWorldBoard->cities();
-        std::vector<stdsptr<eWorldCity>> visibleCities;
+        std::vector<stdsptr<WorldCity>> visibleCities;
         const bool editor = mWorldBoard->editorMode();
         for(const auto& c : cities) {
             bool visible = editor;
@@ -137,7 +137,7 @@ void eWorldWidget::initialize() {
     const auto rightArrowFunc = [this, selectCity]() {
         if(!mWorldBoard) return;
         const auto& cities = mWorldBoard->cities();
-        std::vector<stdsptr<eWorldCity>> visibleCities;
+        std::vector<stdsptr<WorldCity>> visibleCities;
         const bool editor = mWorldBoard->editorMode();
         for(const auto& c : cities) {
             bool visible = editor;
@@ -168,7 +168,7 @@ void eWorldWidget::initialize() {
     mWMW = new eWorldMapWidget(window());
     addWidget(mWMW);
 
-    mWMW->setSelectCityAction([this, selectCity](const stdsptr<eWorldCity>& ct) {
+    mWMW->setSelectCityAction([this, selectCity](const stdsptr<WorldCity>& ct) {
         selectCity(ct);
         const bool editor = mWorldBoard && mWorldBoard->editorMode();
         mSettingsButton->setVisible(mCity && editor);
@@ -211,7 +211,7 @@ void eWorldWidget::initialize() {
     addWidget(mAddCityButton);
     mAddCityButton->setPressAction([this]() {
         if(!mWorldBoard) return;
-        const auto c = std::make_shared<eWorldCity>();
+        const auto c = std::make_shared<WorldCity>();
         const auto cid = mWorldBoard->firstFreeCityId();
         c->setCityId(cid);
         const auto pid = mWorldBoard->firstFreePlayerId();
@@ -252,7 +252,7 @@ void eWorldWidget::setBoard(GameBoard* const board) {
     setWorldBoard(&mBoard->world());
 }
 
-void eWorldWidget::setWorldBoard(eWorldBoard* const board) {
+void eWorldWidget::setWorldBoard(WorldBoard* const board) {
     mWorldBoard = board;
     mWMW->setWorldBoard(board);
     mWM->setWorldBoard(board);
@@ -270,7 +270,7 @@ void eWorldWidget::update() {
 
 void eWorldWidget::openEnlistForcesDialog(
         const eEnlistAction& a,
-        const std::vector<stdsptr<eWorldCity>>& exclude,
+        const std::vector<stdsptr<WorldCity>>& exclude,
         const std::vector<eResourceType>& plunderResources,
         const bool onlySoldiers) {
     mBoard->requestForces(a, plunderResources, exclude, onlySoldiers);
@@ -302,7 +302,7 @@ void eWorldWidget::openRequestDialog() {
     };
     const auto requestStrike = [this, d]() {
         const auto& cts = mWorldBoard->cities();
-        std::vector<stdsptr<eWorldCity>> rivals;
+        std::vector<stdsptr<WorldCity>> rivals;
         for(const auto& c : cts) {
             if(!c->isRival()) continue;
             rivals.push_back(c);
@@ -347,12 +347,12 @@ void eWorldWidget::openRequestDialog() {
             textLabel->setY(tly);
 
             const auto cityButton = new eCityButton(window());
-            cityButton->setValidator([](const stdsptr<eWorldCity>& c) {
+            cityButton->setValidator([](const stdsptr<WorldCity>& c) {
                 return c->isRival();
             });
             cityButton->initialize(mWorldBoard,
                                    [textLabel, textBase](
-                                   const stdsptr<eWorldCity>& c) {
+                                   const stdsptr<WorldCity>& c) {
                 auto text = textBase;
                 eStringHelpers::replace(text, "[city_nameB]", c->name());
                 textLabel->setText(text);

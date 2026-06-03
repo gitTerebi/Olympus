@@ -24,7 +24,7 @@
 void eEditorSettingsMenu::initialize(const bool first,
                                      eCampaign* const c,
                                      eEpisode* const ep,
-                                     eWorldBoard* const board) {
+                                     WorldBoard* const board) {
     setType(eFrameType::message);
 
     if(first) {

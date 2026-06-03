@@ -1,17 +1,17 @@
-#ifndef EFULFILLDIALOG_H
+﻿#ifndef EFULFILLDIALOG_H
 #define EFULFILLDIALOG_H
 
 #include "infowidgets/einfowidget.h"
 
 class GameBoard;
-class eWorldCity;
+class WorldCity;
 
 class eFulfillDialog : public eInfoWidget {
 public:
     eFulfillDialog(eMainWindow* const window,
                    eMainWidget* const mw);
 
-    using eCity = std::shared_ptr<eWorldCity>;
+    using eCity = std::shared_ptr<WorldCity>;
     void initialize(GameBoard* const board,
                     const eCity& city);
 };

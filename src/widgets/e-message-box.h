@@ -7,7 +7,7 @@
 #include "engine/edate.h"
 #include "engine/ecityid.h"
 
-class eWorldCity;
+class WorldCity;
 struct eEventData;
 enum class eResourceType;
 class eLabel;

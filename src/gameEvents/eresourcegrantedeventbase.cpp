@@ -1,4 +1,4 @@
-#include "eresourcegrantedeventbase.h"
+﻿#include "eresourcegrantedeventbase.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
@@ -35,7 +35,7 @@ void eResourceGrantedEventBase::initialize(
         const bool postpone,
         const eResourceType res,
         const int count,
-        const stdsptr<eWorldCity> &c) {
+        const stdsptr<WorldCity> &c) {
     mPostpone = postpone;
     mResource = res;
     mCount = count;

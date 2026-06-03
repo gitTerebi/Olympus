@@ -10,9 +10,9 @@ class eSaveArchive;
 struct eSetAside {
     eResourceType fRes = eResourceType::none;
     int fCount = 0;
-    stdsptr<eWorldCity> fFrom;
+    stdsptr<WorldCity> fFrom;
 
-    void serialize(eSaveArchive& ar, eWorldBoard* const board) {
+    void serialize(eSaveArchive& ar, WorldBoard* const board) {
         ar.field("resource", fRes, eResourceType::none);
         ar.field("count", fCount, 0);
         ar.worldCityField("from", board, fFrom);
@@ -56,7 +56,7 @@ public:
 
     void loadNumbers();
 
-    eWorldBoard& worldBoard() { return mWorldBoard; }
+    WorldBoard& worldBoard() { return mWorldBoard; }
     GameBoard& parentCityBoard()
     { return *mParentBoard; }
     GameBoard& colonyBoard(const int id)
@@ -112,12 +112,12 @@ public:
     void setEditorMode(const bool e);
 
     void setAside(const eResourceType res, const int count,
-                  const stdsptr<eWorldCity>& from);
+                  const stdsptr<WorldCity>& from);
 
     std::map<eResourceType, int>& prices()
     { return mPrices; }
 
-    stdsptr<eWorldCity> lastPlayedColony() const;
+    stdsptr<WorldCity> lastPlayedColony() const;
 
     bool colonyEpisodeFinished(const int id) const;
 private:
@@ -148,7 +148,7 @@ private:
 
     Difficulty mDifficulty{Difficulty::hero};
 
-    eWorldBoard mWorldBoard;
+    WorldBoard mWorldBoard;
     stdsptr<GameBoard> mParentBoard;
     std::vector<stdsptr<GameBoard>> mColonyBoards;
 

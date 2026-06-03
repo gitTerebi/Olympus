@@ -1,4 +1,4 @@
-#include "erequestdialog.h"
+﻿#include "erequestdialog.h"
 
 #include "elanguage.h"
 #include "elabel.h"
@@ -6,10 +6,10 @@
 #include "estringhelpers.h"
 #include "textures/egametextures.h"
 #include "eboardcityswitchbutton.h"
-#include "engine/eworldboard.h"
+#include "engine/world-board.h"
 
-void eRequestDialog::initialize(const stdsptr<eWorldCity>& c,
-                                eWorldBoard &board,
+void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
+                                WorldBoard &board,
                                 const eRequestFunction& func,
                                 const eRequestDefenceFunc& requestDefensiveAid,
                                 const eAction& requestStrike,

@@ -1,4 +1,4 @@
-#include "egiftdialog.h"
+﻿#include "egiftdialog.h"
 
 #include "elanguage.h"
 #include "elabel.h"
@@ -9,7 +9,7 @@
 
 #include "eboardcityswitchbutton.h"
 
-void eGiftDialog::initialize(const stdsptr<eWorldCity>& c,
+void eGiftDialog::initialize(const stdsptr<WorldCity>& c,
                              const eRequestFunction& func,
                              const GameBoard& board) {
     const auto r = resolution();

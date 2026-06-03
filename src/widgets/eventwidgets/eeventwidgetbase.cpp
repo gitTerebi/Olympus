@@ -1,4 +1,4 @@
-#include "eeventwidgetbase.h"
+﻿#include "eeventwidgetbase.h"
 
 #include "gameEvents/egameevent.h"
 
@@ -308,7 +308,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         for(int i = 0; i < 2; i++) {
             const auto cityButton = new eCityButton(window());
             const auto board = e->worldBoard();
-            cityButton->initialize(board, [ee, i](const stdsptr<eWorldCity>& c) {
+            cityButton->initialize(board, [ee, i](const stdsptr<WorldCity>& c) {
                 const auto cid = c->cityId();
                 const int iCid = static_cast<int>(cid);
                 if(i) ee->setMaxCityId(iCid);
@@ -338,7 +338,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         const auto cityButtonL = new eLabeledWidget(window());
         const auto cityButton = new eCityButton(window());
         const auto board = e->worldBoard();
-        cityButton->initialize(board, [ee](const stdsptr<eWorldCity>& c){
+        cityButton->initialize(board, [ee](const stdsptr<WorldCity>& c){
             ee->setAttackingCity(c);
         });
         const auto cc = ee->attackingCity();

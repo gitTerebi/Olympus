@@ -212,11 +212,11 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                     askForAttack(enemyCids[0]);
                 } else {
                     const auto choose = new eChooseCityDialog(window());
-                    choose->setValidator([enemyCids](const stdsptr<eWorldCity>& c) {
+                    choose->setValidator([enemyCids](const stdsptr<WorldCity>& c) {
                         const auto cid = c->cityId();
                         return eVectorHelpers::contains(enemyCids, cid);
                     });
-                    const auto act = [askForAttack](const stdsptr<eWorldCity>& c) {
+                    const auto act = [askForAttack](const stdsptr<WorldCity>& c) {
                         const auto cid = c->cityId();
                         askForAttack(cid);
                     };

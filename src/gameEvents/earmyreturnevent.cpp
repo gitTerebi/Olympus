@@ -1,4 +1,4 @@
-#include "earmyreturnevent.h"
+﻿#include "earmyreturnevent.h"
 
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
@@ -17,7 +17,7 @@ eArmyReturnEvent::eArmyReturnEvent(
 
 void eArmyReturnEvent::initialize(
         const eEnlistedForces& forces,
-        const stdsptr<eWorldCity>& city) {
+        const stdsptr<WorldCity>& city) {
     mForces = forces;
     mCity = city;
 }

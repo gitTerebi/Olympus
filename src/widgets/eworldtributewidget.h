@@ -1,10 +1,10 @@
-#ifndef EWORLDTRIBUTEWIDGET_H
+﻿#ifndef EWORLDTRIBUTEWIDGET_H
 #define EWORLDTRIBUTEWIDGET_H
 
 #include "ewidget.h"
 
 #include "elabel.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 
 class GameBoard;
 
@@ -14,9 +14,9 @@ public:
 
     void initialize();
     void setBoard(GameBoard* const board) { mBoard = board; }
-    void setCity(const stdsptr<eWorldCity>& c);
+    void setCity(const stdsptr<WorldCity>& c);
 private:
-    bool hasClaimToTribute(const stdsptr<eWorldCity>& c) const;
+    bool hasClaimToTribute(const stdsptr<WorldCity>& c) const;
 
     GameBoard* mBoard = nullptr;
 

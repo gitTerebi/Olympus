@@ -1,9 +1,9 @@
-#ifndef EREQUESTDIALOG_H
+﻿#ifndef EREQUESTDIALOG_H
 #define EREQUESTDIALOG_H
 
 #include "emodal.h"
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 
 class eRequestDialog : public eModal {
 public:
@@ -11,8 +11,8 @@ public:
 
     using eRequestFunction = std::function<void(eCityId, eResourceType)>;
     using eRequestDefenceFunc = std::function<void(eCityId)>;
-    void initialize(const stdsptr<eWorldCity>& c,
-                    eWorldBoard& board,
+    void initialize(const stdsptr<WorldCity>& c,
+                    WorldBoard& board,
                     const eRequestFunction& func,
                     const eRequestDefenceFunc& requestDefensiveAid,
                     const eAction& requestStrike,

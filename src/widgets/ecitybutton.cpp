@@ -1,11 +1,11 @@
-#include "ecitybutton.h"
+﻿#include "ecitybutton.h"
 
 #include "echoosecitydialog.h"
 #include "emainwindow.h"
 #include "engine/game-board.h"
 #include "elanguage.h"
 
-void eCityButton::initialize(eWorldBoard* const board,
+void eCityButton::initialize(WorldBoard* const board,
                              const eCityAction& cact,
                              const bool showId) {
     mShowId = showId;
@@ -13,7 +13,7 @@ void eCityButton::initialize(eWorldBoard* const board,
     setPressAction([this, board, cact]() {
         const auto choose = new eChooseCityDialog(window());
         choose->setValidator(mValidator);
-        const auto act = [this, cact](const stdsptr<eWorldCity>& c) {
+        const auto act = [this, cact](const stdsptr<WorldCity>& c) {
             setCity(c);
             if(cact) cact(c);
         };
@@ -42,7 +42,7 @@ void eCityButton::setValidator(const eCityValidator& v) {
     mValidator = v;
 }
 
-void eCityButton::setCity(const stdsptr<eWorldCity>& c) {
+void eCityButton::setCity(const stdsptr<WorldCity>& c) {
     const auto lcity = eLanguage::text("none");
     const auto ccname = c ? (mShowId ? c->nameWithId() : c->name()) :
                             lcity;

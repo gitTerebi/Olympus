@@ -61,6 +61,6 @@ void eEventTrigger::removeEvent(const stdsptr<eGameEvent>& e) {
     eVectorHelpers::remove(mEvents, e);
 }
 
-eWorldBoard* eEventTrigger::worldBoard() const {
+WorldBoard* eEventTrigger::worldBoard() const {
     return &mBoard.world();
 }

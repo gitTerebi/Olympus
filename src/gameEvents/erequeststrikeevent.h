@@ -1,4 +1,4 @@
-#ifndef EREQUESTSTRIKEEVENT_H
+﻿#ifndef EREQUESTSTRIKEEVENT_H
 #define EREQUESTSTRIKEEVENT_H
 
 #include "egameevent.h"
@@ -17,17 +17,17 @@ public:
     void setEnd(const int e) { mEnd = e; }
     bool end() const { return mEnd; }
 
-    void setCity(const stdsptr<eWorldCity>& c) { mCity = c; }
-    const stdsptr<eWorldCity>& city() const { return mCity; }
+    void setCity(const stdsptr<WorldCity>& c) { mCity = c; }
+    const stdsptr<WorldCity>& city() const { return mCity; }
 
-    void setRivalCity(const stdsptr<eWorldCity>& c) { mRivalCity = c; }
-    const stdsptr<eWorldCity>& rivalCity() const { return mRivalCity; }
+    void setRivalCity(const stdsptr<WorldCity>& c) { mRivalCity = c; }
+    const stdsptr<WorldCity>& rivalCity() const { return mRivalCity; }
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
     bool mEnd = false;
-    stdsptr<eWorldCity> mCity;
-    stdsptr<eWorldCity> mRivalCity;
+    stdsptr<WorldCity> mCity;
+    stdsptr<WorldCity> mRivalCity;
 };
 
 #endif // EREQUESTSTRIKEEVENT_H

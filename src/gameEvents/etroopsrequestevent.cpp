@@ -1,4 +1,4 @@
-#include "etroopsrequestevent.h"
+﻿#include "etroopsrequestevent.h"
 
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -14,7 +14,7 @@ eTroopsRequestEvent::eTroopsRequestEvent(
         const eGameEventBranch branch,
         GameBoard& board) :
     eGameEvent(cid, eGameEventType::troopsRequest, branch, board),
-    eCityEventValue(board, [this](eWorldCity& city) {
+    eCityEventValue(board, [this](WorldCity& city) {
         switch(mType) {
         case eTroopsRequestEventType::cityUnderAttack: {
             if(city.isVassal()) {
@@ -271,7 +271,7 @@ void eTroopsRequestEvent::refuse()
 void eTroopsRequestEvent::dispatch(const eAction& close) {
     const auto board = gameBoard();
     if(!board) return;
-    std::vector<stdsptr<eWorldCity>> exclude = {mCity};
+    std::vector<stdsptr<WorldCity>> exclude = {mCity};
     if(mType != eTroopsRequestEventType::greekCityTerrorized) {
         exclude.push_back(mAttackingCity);
     }

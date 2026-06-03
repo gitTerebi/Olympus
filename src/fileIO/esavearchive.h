@@ -1,4 +1,4 @@
-#ifndef ESAVEARCHIVE_H
+﻿#ifndef ESAVEARCHIVE_H
 #define ESAVEARCHIVE_H
 
 #include <functional>
@@ -30,8 +30,8 @@ class eCharacterActionFunction;
 class eTile;
 class SoldierBanner;
 class eBanner;
-class eWorldBoard;
-class eWorldCity;
+class WorldBoard;
+class WorldCity;
 class eGameEvent;
 class eInvasionHandler;
 class eDate;
@@ -364,11 +364,11 @@ public:
             });
     }
 
-    void city(GameBoard* board, stdsptr<eWorldCity>& value) {
+    void city(GameBoard* board, stdsptr<WorldCity>& value) {
         if(reading()) {
-            stdsptr<eWorldCity>* const tgt = &value;
+            stdsptr<WorldCity>* const tgt = &value;
             *tgt = nullptr;
-            mSrc->readCity(board, [tgt](const stdsptr<eWorldCity>& c) {
+            mSrc->readCity(board, [tgt](const stdsptr<WorldCity>& c) {
                 *tgt = c;
             });
         } else {
@@ -376,11 +376,11 @@ public:
         }
     }
 
-    void city(eWorldBoard* board, stdsptr<eWorldCity>& value) {
+    void city(WorldBoard* board, stdsptr<WorldCity>& value) {
         if(reading()) {
-            stdsptr<eWorldCity>* const tgt = &value;
+            stdsptr<WorldCity>* const tgt = &value;
             *tgt = nullptr;
-            mSrc->readCity(board, [tgt](const stdsptr<eWorldCity>& c) {
+            mSrc->readCity(board, [tgt](const stdsptr<WorldCity>& c) {
                 *tgt = c;
             });
         } else {
@@ -390,29 +390,29 @@ public:
 
     bool worldCityField(const char* const name,
                         GameBoard* board,
-                        stdsptr<eWorldCity>& value) {
-        stdsptr<eWorldCity>* const tgt = &value;
+                        stdsptr<WorldCity>& value) {
+        stdsptr<WorldCity>* const tgt = &value;
         return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeCity(tgt->get()); },
             [board, tgt](eReadStream& src) {
                 *tgt = nullptr;
-                src.readCity(board, [tgt](const stdsptr<eWorldCity>& c) {
+                src.readCity(board, [tgt](const stdsptr<WorldCity>& c) {
                     *tgt = c;
                 });
             });
     }
 
     bool worldCityField(const char* const name,
-                        eWorldBoard* board,
-                        stdsptr<eWorldCity>& value) {
-        stdsptr<eWorldCity>* const tgt = &value;
+                        WorldBoard* board,
+                        stdsptr<WorldCity>& value) {
+        stdsptr<WorldCity>* const tgt = &value;
         return payloadFieldImpl(
             name,
             [tgt](eWriteStream& dst) { dst.writeCity(tgt->get()); },
             [board, tgt](eReadStream& src) {
                 *tgt = nullptr;
-                src.readCity(board, [tgt](const stdsptr<eWorldCity>& c) {
+                src.readCity(board, [tgt](const stdsptr<WorldCity>& c) {
                     *tgt = c;
                 });
             });

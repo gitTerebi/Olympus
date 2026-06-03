@@ -1,9 +1,9 @@
-#ifndef EWORLDBOARD_H
-#define EWORLDBOARD_H
+﻿#ifndef WORLD_BOARD_H
+#define WORLD_BOARD_H
 
 #include <vector>
 
-#include "e-worldcity.h"
+#include "world-city.h"
 #include "pointers/estdselfref.h"
 #include "eworldregion.h"
 
@@ -25,27 +25,27 @@ enum class eWorldMap {
     poseidon4
 };
 
-class eWorldBoard {
+class WorldBoard {
 public:
-    eWorldBoard();
+    WorldBoard();
 
-    eWorldBoard(const eWorldBoard&) = delete;
-    eWorldBoard& operator=(const eWorldBoard&) = delete;
+    WorldBoard(const WorldBoard&) = delete;
+    WorldBoard& operator=(const WorldBoard&) = delete;
 
     void nextMonth(GameBoard* const board);
     void nextYear();
 
-    std::vector<stdsptr<eWorldCity>> getTribute() const;
+    std::vector<stdsptr<WorldCity>> receiveTribute() const;
 
-    void setHomeCity(const stdsptr<eWorldCity>& hc);
-    void addCity(const stdsptr<eWorldCity>& c);
+    void setHomeCity(const stdsptr<WorldCity>& hc);
+    void addCity(const stdsptr<WorldCity>& c);
 
     void addRegion(const eWorldRegion& region);
     const std::vector<eWorldRegion>& regions() const
     { return mRegions; }
 
-    stdsptr<eWorldCity> currentCity() const;
-    const std::vector<stdsptr<eWorldCity>>& cities() const
+    stdsptr<WorldCity> currentCity() const;
+    const std::vector<stdsptr<WorldCity>>& cities() const
     { return mCities; }
 
     eWorldMap map() const { return mMap; }
@@ -54,14 +54,14 @@ public:
     eCityId firstFreeCityId() const;
     ePlayerId firstFreePlayerId() const;
 
-    stdsptr<eWorldCity> cityWithId(const eCityId cid) const;
+    stdsptr<WorldCity> cityWithId(const eCityId cid) const;
     std::string cityName(const eCityId cid) const;
-    stdsptr<eWorldCity> cityWithIOID(const int id) const;
+    stdsptr<WorldCity> cityWithIOID(const int id) const;
     void setIOIDs() const;
 
     void serialize(eSaveArchive& ar);
 
-    stdsptr<eWorldCity> colonyWithId(const int id) const;
+    stdsptr<WorldCity> colonyWithId(const int id) const;
     void activateColony(const int id);
 
     void setCitiesOnBoard(const std::vector<eCityId>& cids);
@@ -85,7 +85,7 @@ public:
 private:
     bool mEditorMode = false;
     eWorldMap mMap{eWorldMap::greece8};
-    std::vector<stdsptr<eWorldCity>> mCities;
+    std::vector<stdsptr<WorldCity>> mCities;
     std::vector<eWorldRegion> mRegions;
 
     std::map<eCityId, ePlayerId> mCityToPlayer;
@@ -93,4 +93,4 @@ private:
     std::map<ePlayerId, eTeamId> mPlayerToTeam;
 };
 
-#endif // EWORLDBOARD_H
+#endif // WORLD_BOARD_H

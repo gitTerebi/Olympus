@@ -1,4 +1,4 @@
-#include "eepisodegoalwidget.h"
+﻿#include "eepisodegoalwidget.h"
 
 #include "engine/eepisodegoal.h"
 #include "elabel.h"
@@ -221,7 +221,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     } break;
     case eEpisodeGoalType::rule: {
         const auto cityButton = new eCityButton(window());
-        cityButton->initialize(&board->world(), [e, updateText](const stdsptr<eWorldCity>& c){
+        cityButton->initialize(&board->world(), [e, updateText](const stdsptr<WorldCity>& c){
             e->fEnumInt1 = static_cast<int>(c->cityId());
             updateText();
         });

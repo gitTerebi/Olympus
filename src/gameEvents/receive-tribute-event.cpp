@@ -1,28 +1,28 @@
-#include "ereceivetributeevent.h"
+﻿#include "receive-tribute-event.h"
 #include "engine/game-board.h"
 #include "engine/eevent.h"
-#include "engine/e-tribute.h"
+#include "engine/tribute.h"
 #include "engine/eeventdata.h"
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "fileIO/esavearchive.h"
 
-eReceiveTributeEvent::eReceiveTributeEvent(
+ReceiveTributeEvent::ReceiveTributeEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
     eGameEvent(cid, eGameEventType::receiveTribute, branch, board) {}
 
-void eReceiveTributeEvent::initialize(const stdsptr<eWorldCity>& c) {
+void ReceiveTributeEvent::initialize(const stdsptr<WorldCity>& c) {
     mCity = c;
 }
 
-void eReceiveTributeEvent::trigger() {
+void ReceiveTributeEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
     const auto pid = playerId();
-    const auto tribute = eTributeHelpers::receiveTribute(*mCity);
+    const auto tribute = TributeHelpers::receiveTribute(*mCity);
     const auto type = tribute.fType;
     const int count = tribute.fCount;
     eEventData ed(pid);
@@ -36,17 +36,26 @@ void eReceiveTributeEvent::trigger() {
     } else {
         const auto cids = board->playerCitiesOnBoard(pid);
         for(const auto cid : cids) {
-            ed.fCSpaceCount[cid] = board->spaceForResource(cid, type);
+            const int space = board->spaceForResource(cid, type);
+            ed.fCSpaceCount[cid] = space;
             ed.fCityNames[cid] = board->cityName(cid);
-            ed.fCityConditionalResponses[cid] = static_cast<int>(eResponse::accept);
+            if(space >= count) {
+                ed.fCityConditionalResponses[cid] = static_cast<int>(eResponse::accept);
+            }
         }
     }
-    ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
+    if(!mPostponed) ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
     ed.fTertiaryResponse = static_cast<int>(eResponse::decline);
+    mAwaitingResponse = true;
     board->event(eEvent::tributePaid, ed);
 }
 
-void eReceiveTributeEvent::respond(const int response, const eCityId city) {
+bool ReceiveTributeEvent::finished() const {
+    return eGameEvent::finished() && !mAwaitingResponse;
+}
+
+void ReceiveTributeEvent::respond(const int response, const eCityId city) {
+    mAwaitingResponse = false;
     switch(static_cast<eResponse>(response)) {
     case eResponse::accept:
         accept(city);
@@ -60,12 +69,12 @@ void eReceiveTributeEvent::respond(const int response, const eCityId city) {
     }
 }
 
-void eReceiveTributeEvent::accept(const eCityId city) {
+void ReceiveTributeEvent::accept(const eCityId city) {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
     const auto pid = playerId();
-    const auto tribute = eTributeHelpers::receiveTribute(*mCity);
+    const auto tribute = TributeHelpers::receiveTribute(*mCity);
     const auto type = tribute.fType;
     const int count = tribute.fCount;
     if(type == eResourceType::drachmas) {
@@ -83,32 +92,33 @@ void eReceiveTributeEvent::accept(const eCityId city) {
     board->event(eEvent::tributeAccepted, ed);
 }
 
-void eReceiveTributeEvent::postpone() {
+void ReceiveTributeEvent::postpone() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
     const auto pid = playerId();
-    const auto tribute = eTributeHelpers::receiveTribute(*mCity);
+    const auto tribute = TributeHelpers::receiveTribute(*mCity);
     eEventData ed(pid);
     ed.fType = eMessageEventType::resourceGranted;
     ed.fCity = mCity;
     ed.fResourceType = tribute.fType;
     ed.fResourceCount = tribute.fCount;
     board->event(eEvent::tributePostponed, ed);
-    const auto e = e::make_shared<eReceiveTributeEvent>(
+    const auto e = e::make_shared<ReceiveTributeEvent>(
         board->currentCityId(), eGameEventBranch::root, *board);
     e->initialize(mCity);
+    e->mPostponed = true;
     auto date = board->date();
-    date.nextYears(1);
+    date.nextMonths(1);
     e->initializeDate(date);
     board->addRootGameEvent(e);
 }
 
-void eReceiveTributeEvent::decline() {
+void ReceiveTributeEvent::decline() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
-    const auto tribute = eTributeHelpers::receiveTribute(*mCity);
+    const auto tribute = TributeHelpers::receiveTribute(*mCity);
     eEventData ed(playerId());
     ed.fType = eMessageEventType::resourceGranted;
     ed.fCity = mCity;
@@ -117,7 +127,7 @@ void eReceiveTributeEvent::decline() {
     board->event(eEvent::tributeDeclined, ed);
 }
 
-std::string eReceiveTributeEvent::longName() const {
+std::string ReceiveTributeEvent::longName() const {
     auto tmpl = eLanguage::text("receive_tribute_from");
     const auto none = eLanguage::text("none");
     const auto ctstr = mCity ? mCity->name() : none;
@@ -125,7 +135,9 @@ std::string eReceiveTributeEvent::longName() const {
     return tmpl;
 }
 
-void eReceiveTributeEvent::serializeFields(eSaveArchive& ar) {
+void ReceiveTributeEvent::serializeFields(eSaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);
+    ar.field("awaitingResponse", mAwaitingResponse, false);
+    ar.field("postponed", mPostponed, false);
 }

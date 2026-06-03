@@ -1,4 +1,4 @@
-#ifndef EPLAYERRAIDEVENT_H
+﻿#ifndef EPLAYERRAIDEVENT_H
 #define EPLAYERRAIDEVENT_H
 
 #include "eplayerconquesteventbase.h"
@@ -12,7 +12,7 @@ public:
                      GameBoard& board);
 
     void initialize(const eEnlistedForces& forces,
-                    const stdsptr<eWorldCity>& city,
+                    const stdsptr<WorldCity>& city,
                     const eResourceType resource);
 
     void trigger() override;

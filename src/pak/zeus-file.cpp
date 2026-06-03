@@ -552,7 +552,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
             } else {
                 leaderName = eLanguage::zeusText(139, leaderNameId);
             }
-            const auto c = std::make_shared<eWorldCity>(
+            const auto c = std::make_shared<WorldCity>(
                                cityType, cid, name, cityXF, cityYF);
             const bool visible = visibleId != 4;
             const auto namePlace = pakIdToNamePlace(namePlaceId);

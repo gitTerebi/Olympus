@@ -1,14 +1,14 @@
-#include "ewatertradewidget.h"
+﻿#include "ewatertradewidget.h"
 
 #include "widgets/echoosecitydialog.h"
 #include "emainwindow.h"
-#include "engine/eworldboard.h"
+#include "engine/world-board.h"
 #include "evectorhelpers.h"
 
 void eWaterTradeWidget::initialize(const eCitiesGetter& get,
                                    const eCityRemover& add,
                                    const eCityRemover& remove,
-                                   eWorldBoard* const wboard) {
+                                   WorldBoard* const wboard) {
     eScrollButtonsList::initialize();
 
     const auto iniCids = get();
@@ -20,11 +20,11 @@ void eWaterTradeWidget::initialize(const eCitiesGetter& get,
     setButtonCreateEvent([this, get, add, wboard]() {
         const auto choose = new eChooseCityDialog(window());
         const auto cids = get();
-        choose->setValidator([cids](const stdsptr<eWorldCity>& c) {
+        choose->setValidator([cids](const stdsptr<WorldCity>& c) {
             const auto cid = c->cityId();
             return !eVectorHelpers::contains(cids, cid);
         });
-        const auto act = [this, add](const stdsptr<eWorldCity>& wc) {
+        const auto act = [this, add](const stdsptr<WorldCity>& wc) {
             const auto cid = wc->cityId();
             add(cid);
             addButton(wc->name());

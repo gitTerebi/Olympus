@@ -1,4 +1,4 @@
-#ifndef EREINFORCEMENTSEVENT_H
+﻿#ifndef EREINFORCEMENTSEVENT_H
 #define EREINFORCEMENTSEVENT_H
 
 #include "earmyeventbase.h"
@@ -10,7 +10,7 @@ public:
                          GameBoard& board);
 
     void initialize(const eEnlistedForces& forces,
-                    const stdsptr<eWorldCity>& city);
+                    const stdsptr<WorldCity>& city);
 
     void trigger() override;
 

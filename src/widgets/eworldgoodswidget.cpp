@@ -1,4 +1,4 @@
-#include "eworldgoodswidget.h"
+﻿#include "eworldgoodswidget.h"
 
 #include "elabel.h"
 #include "ebutton.h"
@@ -150,7 +150,7 @@ void eWorldGoodsWidget::initialize() {
     updateTradeY();
 }
 
-void eWorldGoodsWidget::setCity(const stdsptr<eWorldCity>& c) {
+void eWorldGoodsWidget::setCity(const stdsptr<WorldCity>& c) {
     const auto buys = c ? &c->buys() : nullptr;
     const auto sells = c ? &c->sells() : nullptr;
     const bool cc = c && c->isCurrentCity();

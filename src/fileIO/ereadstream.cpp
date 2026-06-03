@@ -151,7 +151,7 @@ void eReadStream::readCity(GameBoard* board, const eCityFunc& func) {
     return readCity(&board->world(), func);
 }
 
-void eReadStream::readCity(eWorldBoard* board, const eCityFunc& func) {
+void eReadStream::readCity(WorldBoard* board, const eCityFunc& func) {
     int cid;
     *this >> cid;
     addPostFunc([board, func, cid]() {

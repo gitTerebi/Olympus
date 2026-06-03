@@ -128,7 +128,7 @@ void sSortTradePostDrawSlots(std::vector<TradePostDrawSlot>& slots) {
 
 } // namespace
 
-TradePost::TradePost(GameBoard& board, eWorldCity& city,
+TradePost::TradePost(GameBoard& board, WorldCity& city,
                        const eCityId cid,
                        const eTradePostType type) :
     WarehouseBase(board, eBuildingType::tradePost, 4, 4, 24,

@@ -322,7 +322,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
             w->serialize(itemAr, *this);
         });
 
-    // conqueredBy map<eCityId, vector<stdsptr<eWorldCity>>>
+    // conqueredBy map<eCityId, vector<stdsptr<WorldCity>>>
     {
         int conqueredByCount = ar.writing() ? static_cast<int>(mConqueredBy.size()) : 0;
         ar.field("conqueredBy.count", conqueredByCount);
@@ -334,7 +334,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
                         it.field("cityId", cid);
                         auto& cities = mConqueredBy[cid];
                         it.arrayField("cities", cities,
-                            [this](eSaveArchive& itemAr, stdsptr<eWorldCity>& c) {
+                            [this](eSaveArchive& itemAr, stdsptr<WorldCity>& c) {
                                 itemAr.worldCityField("city", this, c);
                             });
                     });
@@ -348,7 +348,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
                     [this, &cid, &cities](eSaveArchive& it) {
                         it.field("cityId", cid);
                         it.arrayField("cities", cities,
-                            [this](eSaveArchive& itemAr, stdsptr<eWorldCity>& c) {
+                            [this](eSaveArchive& itemAr, stdsptr<WorldCity>& c) {
                                 itemAr.worldCityField("city", this, c);
                             });
                     });

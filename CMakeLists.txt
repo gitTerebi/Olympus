@@ -434,8 +434,8 @@ set(SOURCES
     src/engine/etilebase.cpp
     src/engine/etileterrainpainter.cpp
     src/engine/ewagerate.cpp
-    src/engine/eworldboard.cpp
-    src/engine/eworldcity.cpp
+    src/engine/world-board.cpp
+    src/engine/world-city.cpp
     src/engine/eworldregion.cpp
     src/engine/thread/ethreadboard.cpp
     src/engine/thread/ethreadboardhandler.cpp
@@ -493,8 +493,8 @@ set(SOURCES
     src/gameEvents/invasions/monster-invasion-event-base.cpp
     src/gameEvents/emonsterseventvalue.cpp
     src/gameEvents/invasions/monster-unleashed-event.cpp
-    src/engine/e-tribute.cpp
-    src/gameEvents/ereceivetributeevent.cpp
+    src/engine/tribute.cpp
+    src/gameEvents/receive-tribute-event.cpp
     src/gameEvents/requests/e-pay-tribute-event.cpp
     src/gameEvents/eplayerconquestevent.cpp
     src/gameEvents/eplayerconquesteventbase.cpp

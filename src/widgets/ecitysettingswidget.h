@@ -1,16 +1,16 @@
-#ifndef ECITYSETTINGSWIDGET_H
+﻿#ifndef ECITYSETTINGSWIDGET_H
 #define ECITYSETTINGSWIDGET_H
 
 #include "eframedwidget.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 
 class eCitySettingsWidget : public eFramedWidget {
 public:
     using eFramedWidget::eFramedWidget;
 
-    void initialize(const stdsptr<eWorldCity>& c,
+    void initialize(const stdsptr<WorldCity>& c,
                     GameBoard* const board,
-                    eWorldBoard* const wb);
+                    WorldBoard* const wb);
 };
 
 #endif // ECITYSETTINGSWIDGET_H

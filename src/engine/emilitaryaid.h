@@ -1,4 +1,4 @@
-#ifndef EMILITARYAID_H
+﻿#ifndef EMILITARYAID_H
 #define EMILITARYAID_H
 
 #include <vector>
@@ -6,7 +6,7 @@
 #include "pointers/estdselfref.h"
 
 class GameBoard;
-class eWorldCity;
+class WorldCity;
 class SoldierBanner;
 class eSaveArchive;
 
@@ -21,7 +21,7 @@ struct eMilitaryAid {
 
     void serialize(eSaveArchive& ar, GameBoard* board);
 
-    stdsptr<eWorldCity> fCity;
+    stdsptr<WorldCity> fCity;
     std::vector<stdsptr<SoldierBanner>> fSoldiers;
 };
 

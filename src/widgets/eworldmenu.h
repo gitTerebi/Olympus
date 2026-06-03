@@ -1,16 +1,16 @@
-#ifndef EWORLDMENU_H
+﻿#ifndef EWORLDMENU_H
 #define EWORLDMENU_H
 
 #include "elabel.h"
 
 #include "ebutton.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "pointers/estdselfref.h"
 
 class eWorldGoodsWidget;
 class eWorldTributeWidget;
 
-class eWorldBoard;
+class WorldBoard;
 class GameBoard;
 
 class eWorldMenu : public eLabel {
@@ -24,15 +24,15 @@ public:
                     const eAction& openConquer,
                     const bool showText = true);
 
-    void setCity(const stdsptr<eWorldCity>& c);
-    void setWorldBoard(eWorldBoard* const b);
+    void setCity(const stdsptr<WorldCity>& c);
+    void setWorldBoard(WorldBoard* const b);
     void setGameBoard(GameBoard* const b);
     void setText(const std::string& text);
     void setArrowActions(const eAction& left, const eAction& right);
     void updateLabels() const;
     void updateButtonsEnabled() const;
 private:
-    eWorldBoard* mBoard = nullptr;
+    WorldBoard* mBoard = nullptr;
 
     eLabel* mTextLabel = nullptr;
 
@@ -54,7 +54,7 @@ private:
     eButton* mLeftArrowButton = nullptr;
     eButton* mRightArrowButton = nullptr;
 
-    stdsptr<eWorldCity> mCity;
+    stdsptr<WorldCity> mCity;
 
     bool mShowText = true;
 };

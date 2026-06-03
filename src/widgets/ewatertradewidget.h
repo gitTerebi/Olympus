@@ -3,7 +3,7 @@
 
 #include "escrollbuttonslist.h"
 
-class eWorldBoard;
+class WorldBoard;
 
 enum class eCityId;
 
@@ -17,7 +17,7 @@ public:
     void initialize(const eCitiesGetter& get,
                     const eCityRemover& add,
                     const eCityRemover& remove,
-                    eWorldBoard* const wboard);
+                    WorldBoard* const wboard);
 };
 
 #endif // EWATERTRADEWIDGET_H

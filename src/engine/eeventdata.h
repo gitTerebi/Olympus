@@ -1,4 +1,4 @@
-#ifndef EEVENTDATA_H
+﻿#ifndef EEVENTDATA_H
 #define EEVENTDATA_H
 
 #include "edate.h"
@@ -32,8 +32,8 @@ struct eEventData {
     std::map<eCityId, int> fCityConditionalResponses;
     int fSecondaryResponse = -1;
     int fTertiaryResponse = -1;
-    stdsptr<eWorldCity> fCity;
-    stdsptr<eWorldCity> fRivalCity;
+    stdsptr<WorldCity> fCity;
+    stdsptr<WorldCity> fRivalCity;
     eResourceType fResourceType = eResourceType::drachmas;
     int fResourceCount = 0;
     std::map<eCityId, int> fCSpaceCount;

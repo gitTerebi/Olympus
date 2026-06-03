@@ -1,18 +1,18 @@
-#ifndef EATTACKINGCITYEVENTVALUE_H
+﻿#ifndef EATTACKINGCITYEVENTVALUE_H
 #define EATTACKINGCITYEVENTVALUE_H
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 
 class eSaveArchive;
 
 class eAttackingCityEventValue {
 public:
-    void setAttackingCity(const stdsptr<eWorldCity>& c) { mAttackingCity = c; }
-    const stdsptr<eWorldCity>& attackingCity() const { return mAttackingCity; }
+    void setAttackingCity(const stdsptr<WorldCity>& c) { mAttackingCity = c; }
+    const stdsptr<WorldCity>& attackingCity() const { return mAttackingCity; }
 protected:
     void serialize(eSaveArchive& ar, GameBoard* board);
 
-    stdsptr<eWorldCity> mAttackingCity;
+    stdsptr<WorldCity> mAttackingCity;
 };
 
 #endif // EATTACKINGCITYEVENTVALUE_H

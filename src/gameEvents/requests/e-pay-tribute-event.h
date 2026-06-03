@@ -1,9 +1,9 @@
-#ifndef EPAYTRIBUTEEVENT_H
+﻿#ifndef EPAYTRIBUTEEVENT_H
 #define EPAYTRIBUTEEVENT_H
 
 #include "../egameevent.h"
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "engine/ecityrequest.h"
 #include "engine/eevent.h"
 #include "engine/eresourcetype.h"
@@ -23,7 +23,7 @@ public:
                      GameBoard& board);
     ~ePayTributeEvent();
 
-    void initialize(const stdsptr<eWorldCity>& c);
+    void initialize(const stdsptr<WorldCity>& c);
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
@@ -54,7 +54,7 @@ private:
     void finish(ePayTributeResult result);
     int remainingMonths(const eDate& deadline, const eDate& current) const;
 
-    stdsptr<eWorldCity> mCity;
+    stdsptr<WorldCity> mCity;
     eResourceType mResource = eResourceType::drachmas;
     int mCount = 0;
     bool mActive = false;

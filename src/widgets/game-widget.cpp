@@ -17,7 +17,7 @@
 #include "egamedir.h"
 #include "engine/game-board.h"
 #include "engine/egifthelpers.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "characters/gods/egod.h"
 #include "characters/monsters/emonster.h"
 #include "characters/echaracter.h"
@@ -70,7 +70,7 @@ void formatStoredMessage(eMessage& msg,
             eStringHelpers::replaceAll(text, "[gift_size]", giftSizeText);
         }
         if(const auto c = ed.fCity) {
-            const auto nat = eWorldCity::sNationalityName(c->nationality());
+            const auto nat = WorldCity::sNationalityName(c->nationality());
             eStringHelpers::replaceAll(text, "[nationality]", nat);
             eStringHelpers::replaceAll(text, "[city_name]", c->name());
             eStringHelpers::replaceAll(text, "[last_colony]", c->name());
@@ -79,7 +79,7 @@ void formatStoredMessage(eMessage& msg,
         }
         const auto c = ed.fRivalCity ? ed.fRivalCity : ed.fCity;
         if(c) {
-            const auto nat = eWorldCity::sNationalityName(c->nationality());
+            const auto nat = WorldCity::sNationalityName(c->nationality());
             eStringHelpers::replaceAll(text, "[rival_nationality]", nat);
             eStringHelpers::replaceAll(text, "[rival_city_name]", c->name());
         }

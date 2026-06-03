@@ -1,4 +1,4 @@
-#include "eplayerconquestevent.h"
+﻿#include "eplayerconquestevent.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
@@ -18,7 +18,7 @@ ePlayerConquestEvent::ePlayerConquestEvent(
 void ePlayerConquestEvent::initialize(
         const eDate& date,
         const eEnlistedForces& forces,
-        const stdsptr<eWorldCity>& city) {
+        const stdsptr<WorldCity>& city) {
     mForces = forces;
     mCity = city;
 

@@ -1,4 +1,4 @@
-#include "egifttoevent.h"
+﻿#include "egifttoevent.h"
 
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -11,7 +11,7 @@ eGiftToEvent::eGiftToEvent(
         GameBoard& board) :
     eGameEvent(cid, eGameEventType::giftTo, branch, board) {}
 
-void eGiftToEvent::initialize(const stdsptr<eWorldCity>& c,
+void eGiftToEvent::initialize(const stdsptr<WorldCity>& c,
                               const eResourceType type,
                               const int count) {
     mCity = c;

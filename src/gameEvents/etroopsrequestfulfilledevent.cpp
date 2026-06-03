@@ -1,4 +1,4 @@
-#include "etroopsrequestfulfilledevent.h"
+﻿#include "etroopsrequestfulfilledevent.h"
 
 #include "elanguage.h"
 #include "estringhelpers.h"
@@ -15,8 +15,8 @@ eTroopsRequestFulfilledEvent::eTroopsRequestFulfilledEvent(
 
 void eTroopsRequestFulfilledEvent::initialize(
         const eEnlistedForces& forces,
-        const stdsptr<eWorldCity>& city,
-        const stdsptr<eWorldCity>& rivalCity) {
+        const stdsptr<WorldCity>& city,
+        const stdsptr<WorldCity>& rivalCity) {
     mForces = forces;
     mCity = city;
     mRivalCity = rivalCity;

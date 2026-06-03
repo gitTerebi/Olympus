@@ -305,7 +305,7 @@ public:
     using eRequestButton::eRequestButton;
 
 void initialize(const eResourceType resource,
-                     const stdsptr<eWorldCity>& city,
+                     const stdsptr<WorldCity>& city,
                      const eViableChecker& checker,
                      const eStatusProvider& statusProvider,
                      const eStatusWarningProvider& statusWarningProvider) {
@@ -323,7 +323,7 @@ class eTroopsRequestButton : public eRequestButton {
 public:
     using eRequestButton::eRequestButton;
 
-void initialize(const stdsptr<eWorldCity>& city,
+void initialize(const stdsptr<WorldCity>& city,
                      const eViableChecker& checker) {
          const auto cityName = trimmedString(city->name());
          const auto res = resolution();

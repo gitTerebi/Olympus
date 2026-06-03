@@ -1,13 +1,13 @@
-#include "ecolonymonumentaction.h"
+﻿#include "ecolonymonumentaction.h"
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "fileIO/esavearchive.h"
 
 eColonyMonumentAction::eColonyMonumentAction(
-        const stdsptr<eWorldCity>& city) :
+        const stdsptr<WorldCity>& city) :
     ePlannedAction(false, 1000, ePlannedActionType::colonyMonument),
     mCity(city) {}
 

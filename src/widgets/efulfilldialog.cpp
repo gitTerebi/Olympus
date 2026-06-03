@@ -1,6 +1,6 @@
-#include "efulfilldialog.h"
+﻿#include "efulfilldialog.h"
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
 #include "estringhelpers.h"

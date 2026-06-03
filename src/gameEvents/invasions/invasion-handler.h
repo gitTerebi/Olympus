@@ -1,4 +1,4 @@
-#ifndef INVASION_HANDLER_H
+﻿#ifndef INVASION_HANDLER_H
 #define INVASION_HANDLER_H
 
 #include <vector>
@@ -15,7 +15,7 @@ class eTile;
 class eCharacter;
 class eReadStream;
 class eWriteStream;
-class eWorldCity;
+class WorldCity;
 class SoldierBanner;
 class ePlayerConquestEvent;
 class eSaveArchive;
@@ -43,7 +43,7 @@ class eInvasionHandler {
 public:
     eInvasionHandler(GameBoard& board,
                      const eCityId targetCity,
-                     const stdsptr<eWorldCity>& city,
+                     const stdsptr<WorldCity>& city,
                      eInvasionEvent* const event);
     ~eInvasionHandler();
 
@@ -126,7 +126,7 @@ private:
 
     GameBoard& mBoard;
     eCityId mTargetCity;
-    stdsptr<eWorldCity> mCity;
+    stdsptr<WorldCity> mCity;
     stdptr<eInvasionEvent> mEvent;
     stdptr<ePlayerConquestEvent> mConquestEvent;
     eTile* mTile = nullptr;

@@ -7,7 +7,7 @@
 #include "eworldgoodswidget.h"
 #include "eworldtributewidget.h"
 #include "game-widget.h"
-#include "engine/eworldboard.h"
+#include "engine/world-board.h"
 
 #include "elanguage.h"
 
@@ -230,7 +230,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
     setCity(nullptr);
 }
 
-void eWorldMenu::setCity(const stdsptr<eWorldCity>& c) {
+void eWorldMenu::setCity(const stdsptr<WorldCity>& c) {
     if(!c && mShowText) {
         const auto text = eLanguage::zeusText(47, 5);
         mTextLabel->setText(text);
@@ -252,7 +252,7 @@ void eWorldMenu::setCity(const stdsptr<eWorldCity>& c) {
     mTributeWidget->setCity(c);
 }
 
-void eWorldMenu::setWorldBoard(eWorldBoard* const b) {
+void eWorldMenu::setWorldBoard(WorldBoard* const b) {
     mBoard = b;
 }
 
@@ -303,7 +303,7 @@ void eWorldMenu::updateLabels() const {
         mAttitudeLabel->setText("");
     } else {
         const auto at = mCity->attitudeClass(ppid);
-        auto atStr = eWorldCity::sAttitudeName(at);
+        auto atStr = WorldCity::sAttitudeName(at);
         const auto att = mCity->attitude(ppid);
         atStr += " (" + std::to_string((int)att) + ")";
         mAttitudeLabel->setText(atStr);

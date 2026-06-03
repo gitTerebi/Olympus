@@ -1,5 +1,5 @@
-#ifndef EWORLDCITY_H
-#define EWORLDCITY_H
+#ifndef WORLD_CITY_H
+#define WORLD_CITY_H
 
 #include <string>
 #include <set>
@@ -10,7 +10,7 @@
 #include "fileIO/esavearchive.h"
 #include "engine/ecityid.h"
 
-class eWorldBoard;
+class WorldBoard;
 
 enum class eNationality {
     greek,
@@ -156,10 +156,10 @@ struct eResourceTrade {
     }
 };
 
-class eWorldCity {
+class WorldCity {
 public:
-    eWorldCity() {}
-    eWorldCity(const eCityType type,
+    WorldCity() {}
+    WorldCity(const eCityType type,
                const eCityId id,
                const std::string& name,
                const double x, const double y);
@@ -308,13 +308,13 @@ public:
     eResourceType payTributeType() const { return mPayTributeType; }
     int payTributeCount() const { return mPayTributeCount; }
 
-    void serialize(eSaveArchive& ar, eWorldBoard* board);
+    void serialize(eSaveArchive& ar, WorldBoard* board);
 
     void gifted(const eResourceType type, const int count);
     bool acceptsGift(const eResourceType type, const int count) const;
 
     bool conqueredByRival() const { return mConqueredBy.get(); }
-    void setConqueredBy(const stdsptr<eWorldCity>& c) { mConqueredBy = c; }
+    void setConqueredBy(const stdsptr<WorldCity>& c) { mConqueredBy = c; }
 
     void setPlayerId(const ePlayerId pid);
     ePlayerId playerId() const { return mPlayerId; }
@@ -324,7 +324,7 @@ public:
 private:
     int mIOID = -1;
 
-    stdsptr<eWorldCity> mConqueredBy;
+    stdsptr<WorldCity> mConqueredBy;
 
     ePlayerId mPlayerId = ePlayerId::neutralFriendly;
     ePlayerId mCapitalOf = ePlayerId::neutralFriendly;
@@ -380,4 +380,4 @@ private:
     int mPayTributeCount = 100;
 };
 
-#endif // EWORLDCITY_H
+#endif // WORLD_CITY_H

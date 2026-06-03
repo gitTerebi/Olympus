@@ -20,7 +20,7 @@
 #include "ethreadpool.h"
 #include "eplannedaction.h"
 
-#include "eworldboard.h"
+#include "world-board.h"
 #include "widgets/ebuildingmode.h"
 
 #include "characters/gods/egod.h"
@@ -97,11 +97,11 @@ private:
     const int mTmpId;
 };
 
-using eCities = std::vector<stdsptr<eWorldCity>>;
+using eCities = std::vector<stdsptr<WorldCity>>;
 
 class GameBoard : public eStdSelfRef {
 public:
-    GameBoard(eWorldBoard& world);
+    GameBoard(WorldBoard& world);
     ~GameBoard();
 
     void initialize(const int w, const int h);
@@ -185,7 +185,7 @@ public:
 
     void registerTradePost(TradePost* const b);
     bool unregisterTradePost(TradePost* const b);
-    bool hasTradePost(const eCityId cid, const eWorldCity& city);
+    bool hasTradePost(const eCityId cid, const WorldCity& city);
 
     void registerSpawner(eSpawner* const s);
     bool unregisterSpawner(eSpawner* const s);
@@ -312,7 +312,7 @@ public:
     using eEventHandler = std::function<void(eEvent, eEventData&)>;
     void setEventHandler(const eEventHandler& eh);
     void event(const eEvent e, eEventData& ed);
-    void changeCityAttitude(const stdsptr<eWorldCity>& c,
+    void changeCityAttitude(const stdsptr<WorldCity>& c,
                           const double amount,
                           const ePlayerId pid);
     void attackedAllyAttitude(const ePlayerId pid);
@@ -340,7 +340,7 @@ public:
     void setEnlistForcesRequest(const eEnlistRequest& req);
     void requestForces(const eEnlistAction& action,
                        const std::vector<eResourceType>& plunderResources = {},
-                       const std::vector<stdsptr<eWorldCity>>& exclude = {},
+                       const std::vector<stdsptr<WorldCity>>& exclude = {},
                        const bool onlySoldiers = false);
 
     using eAction = std::function<void()>;
@@ -372,7 +372,7 @@ public:
     void scheduleAppealMapUpdate(const eCityId cid);
     void updateAppealMapIfNeeded();
 
-    eWorldBoard& world() const { return mWorld; }
+    WorldBoard& world() const { return mWorld; }
 
     void enlistForces(const eEnlistedForces& forces);
 
@@ -513,21 +513,21 @@ public:
     int takeResource(const eCityId cid,
                      const eResourceType type,
                      const int count);
-    void request(const stdsptr<eWorldCity>& c,
+    void request(const stdsptr<WorldCity>& c,
                  const eResourceType type,
                  const eCityId cid);
-    void requestAid(const stdsptr<eWorldCity>& c,
+    void requestAid(const stdsptr<WorldCity>& c,
                     const eCityId cid);
-    void planGiftFrom(const stdsptr<eWorldCity>& c,
+    void planGiftFrom(const stdsptr<WorldCity>& c,
                       const eResourceType type,
                       const int count,
                       const int delay);
 
 
-    bool giftTo(const stdsptr<eWorldCity>& c,
+    bool giftTo(const stdsptr<WorldCity>& c,
                 const eResourceType type,
                 const int count, const eCityId cid);
-    void giftToReceived(const stdsptr<eWorldCity>& c,
+    void giftToReceived(const stdsptr<WorldCity>& c,
                         const eResourceType type,
                         const int count,
                         const ePlayerId pid);
@@ -624,7 +624,7 @@ public:
     bool terrainUpdateScheduled() const { return mUpdateTerrain; }
     void afterTerrainUpdated() { mUpdateTerrain = false; }
 
-    using eWC = stdsptr<eWorldCity>;
+    using eWC = stdsptr<WorldCity>;
     void startEpisode(eEpisode* const e,
                       const eWC& lastPlayedColony);
     void loadResources();
@@ -653,9 +653,9 @@ public:
     void setSeaTradeShutdown(const eCityId cid, const bool s);
 
     eMilitaryAid* militaryAid(const eCityId cid,
-                              const stdsptr<eWorldCity>& c) const;
+                              const stdsptr<WorldCity>& c) const;
     void removeMilitaryAid(const eCityId cid,
-                           const stdsptr<eWorldCity>& c);
+                           const stdsptr<WorldCity>& c);
     void addMilitaryAid(const eCityId cid,
                         const stdsptr<eMilitaryAid>& a);
 
@@ -679,7 +679,7 @@ public:
     bool duringLavaFlow() const;
 
     void conqueredBy(const eCityId conquered,
-                      const stdsptr<eWorldCity>& by);
+                      const stdsptr<WorldCity>& by);
     eCities conqueredBy(const eCityId cid);
 
     eImmigrationLimitedBy immigrationLimit(const eCityId cid) const;
@@ -711,7 +711,7 @@ public:
     void setPlayerTeam(const ePlayerId pid, const eTeamId tid);
     std::vector<eCityId> playerCities(const ePlayerId pid) const;
     eCityId currentCityId() const;
-    stdsptr<eWorldCity> currentCity() const;
+    stdsptr<WorldCity> currentCity() const;
     eCityId playerCapital(const ePlayerId pid) const;
     std::vector<eCityId> playerCitiesOnBoard(const ePlayerId pid) const;
     std::vector<eCityId> personPlayerCitiesOnBoard() const;
@@ -838,7 +838,7 @@ private:
     bool mAgorasTakeFromTradingPosts = true;
     int mCurrentDistrictId = -1;
     mutable bool mEpisodeLost = false;
-    eWorldBoard& mWorld;
+    WorldBoard& mWorld;
     eWorldDirection mDirection{eWorldDirection::N};
 
     bool mUpdateTerrain = true;
@@ -1027,7 +1027,7 @@ private:
     int mProgressLandSlides = 0;
     std::vector<stdsptr<eLandSlide>> mLandSlides;
 
-    std::map<eCityId, std::vector<stdsptr<eWorldCity>>> mConqueredBy;
+    std::map<eCityId, std::vector<stdsptr<WorldCity>>> mConqueredBy;
 
     // for person player
     struct eYearlyProduction {

@@ -1,13 +1,13 @@
-#include "eworldboard.h"
+﻿#include "world-board.h"
 
 #include "evectorhelpers.h"
 #include "fileIO/esavearchive.h"
 
 #include <iterator>
 
-eWorldBoard::eWorldBoard() {}
+WorldBoard::WorldBoard() {}
 
-void eWorldBoard::nextMonth(GameBoard *const board)
+void WorldBoard::nextMonth(GameBoard *const board)
 {
     for (const auto &c : mCities)
     {
@@ -15,7 +15,7 @@ void eWorldBoard::nextMonth(GameBoard *const board)
     }
 }
 
-void eWorldBoard::nextYear()
+void WorldBoard::nextYear()
 {
     for (const auto &c : mCities)
     {
@@ -23,9 +23,9 @@ void eWorldBoard::nextYear()
     }
 }
 
-std::vector<stdsptr<eWorldCity>> eWorldBoard::getTribute() const
+std::vector<stdsptr<WorldCity>> WorldBoard::receiveTribute() const
 {
-    std::vector<stdsptr<eWorldCity>> r;
+    std::vector<stdsptr<WorldCity>> r;
     for (const auto &c : mCities)
     {
         if (c->isCurrentCity())
@@ -47,17 +47,17 @@ std::vector<stdsptr<eWorldCity>> eWorldBoard::getTribute() const
     return r;
 }
 
-void eWorldBoard::addCity(const stdsptr<eWorldCity> &c)
+void WorldBoard::addCity(const stdsptr<WorldCity> &c)
 {
     mCities.push_back(c);
 }
 
-void eWorldBoard::addRegion(const eWorldRegion &region)
+void WorldBoard::addRegion(const eWorldRegion &region)
 {
     mRegions.push_back(region);
 }
 
-stdsptr<eWorldCity> eWorldBoard::currentCity() const
+stdsptr<WorldCity> WorldBoard::currentCity() const
 {
     for (const auto &c : mCities)
     {
@@ -68,7 +68,7 @@ stdsptr<eWorldCity> eWorldBoard::currentCity() const
     return nullptr;
 }
 
-eCityId eWorldBoard::firstFreeCityId() const
+eCityId WorldBoard::firstFreeCityId() const
 {
     std::vector<eCityId> used;
     for (const auto &c : mCities)
@@ -86,7 +86,7 @@ eCityId eWorldBoard::firstFreeCityId() const
     return eCityId::neutralFriendly;
 }
 
-ePlayerId eWorldBoard::firstFreePlayerId() const
+ePlayerId WorldBoard::firstFreePlayerId() const
 {
     std::vector<ePlayerId> used;
     for (const auto &c : mCityToPlayer)
@@ -104,7 +104,7 @@ ePlayerId eWorldBoard::firstFreePlayerId() const
     return ePlayerId::neutralFriendly;
 }
 
-stdsptr<eWorldCity> eWorldBoard::cityWithId(const eCityId cid) const
+stdsptr<WorldCity> WorldBoard::cityWithId(const eCityId cid) const
 {
     const int id = static_cast<int>(cid);
     if (id < 0)
@@ -115,7 +115,7 @@ stdsptr<eWorldCity> eWorldBoard::cityWithId(const eCityId cid) const
     return mCities[id];
 }
 
-std::string eWorldBoard::cityName(const eCityId cid) const
+std::string WorldBoard::cityName(const eCityId cid) const
 {
     const auto c = cityWithId(cid);
     if (!c)
@@ -123,7 +123,7 @@ std::string eWorldBoard::cityName(const eCityId cid) const
     return c->name();
 }
 
-stdsptr<eWorldCity> eWorldBoard::cityWithIOID(const int id) const
+stdsptr<WorldCity> WorldBoard::cityWithIOID(const int id) const
 {
     for (const auto &c : mCities)
     {
@@ -134,7 +134,7 @@ stdsptr<eWorldCity> eWorldBoard::cityWithIOID(const int id) const
     return nullptr;
 }
 
-void eWorldBoard::setIOIDs() const
+void WorldBoard::setIOIDs() const
 {
     int id = 0;
     for (const auto &c : mCities)
@@ -143,7 +143,7 @@ void eWorldBoard::setIOIDs() const
     }
 }
 
-void eWorldBoard::serialize(eSaveArchive &ar)
+void WorldBoard::serialize(eSaveArchive &ar)
 {
     if (ar.writing()) setIOIDs();
 
@@ -161,7 +161,7 @@ void eWorldBoard::serialize(eSaveArchive &ar)
         if (ar.reading()) mCities.clear();
         for (int i = 0; i < nc; i++) {
             if (ar.reading()) {
-                const auto c = std::make_shared<eWorldCity>();
+                const auto c = std::make_shared<WorldCity>();
                 ar.archiveField(("city." + std::to_string(i)).c_str(),
                     [this, &c](eSaveArchive& cAr) { c->serialize(cAr, this); });
                 addCity(c);
@@ -234,7 +234,7 @@ void eWorldBoard::serialize(eSaveArchive &ar)
     }
 }
 
-stdsptr<eWorldCity> eWorldBoard::colonyWithId(const int id) const
+stdsptr<WorldCity> WorldBoard::colonyWithId(const int id) const
 {
     int i = 0;
     for (const auto &c : mCities)
@@ -249,14 +249,14 @@ stdsptr<eWorldCity> eWorldBoard::colonyWithId(const int id) const
     return nullptr;
 }
 
-void eWorldBoard::activateColony(const int id)
+void WorldBoard::activateColony(const int id)
 {
     const auto c = colonyWithId(id);
     if (c)
         c->setState(eCityState::active);
 }
 
-void eWorldBoard::setCitiesOnBoard(const std::vector<eCityId> &cids)
+void WorldBoard::setCitiesOnBoard(const std::vector<eCityId> &cids)
 {
     for (const auto &c : mCities)
     {
@@ -266,7 +266,7 @@ void eWorldBoard::setCitiesOnBoard(const std::vector<eCityId> &cids)
     }
 }
 
-void eWorldBoard::setColonyAsCurrentCity(const int id)
+void WorldBoard::setColonyAsCurrentCity(const int id)
 {
     for (const auto &c : mCities)
     {
@@ -282,7 +282,7 @@ void eWorldBoard::setColonyAsCurrentCity(const int id)
     }
 }
 
-void eWorldBoard::setParentAsCurrentCity()
+void WorldBoard::setParentAsCurrentCity()
 {
     for (const auto &c : mCities)
     {
@@ -301,7 +301,7 @@ void eWorldBoard::setParentAsCurrentCity()
     }
 }
 
-ePlayerId eWorldBoard::cityIdToPlayerId(const eCityId cid) const
+ePlayerId WorldBoard::cityIdToPlayerId(const eCityId cid) const
 {
     if (cid == eCityId::neutralFriendly)
     {
@@ -319,13 +319,13 @@ ePlayerId eWorldBoard::cityIdToPlayerId(const eCityId cid) const
     return it->second;
 }
 
-eTeamId eWorldBoard::cityIdToTeamId(const eCityId cid) const
+eTeamId WorldBoard::cityIdToTeamId(const eCityId cid) const
 {
     const auto pid = cityIdToPlayerId(cid);
     return playerIdToTeamId(pid);
 }
 
-eTeamId eWorldBoard::playerIdToTeamId(const ePlayerId pid) const
+eTeamId WorldBoard::playerIdToTeamId(const ePlayerId pid) const
 {
     if (pid == ePlayerId::neutralFriendly)
     {
@@ -343,19 +343,19 @@ eTeamId eWorldBoard::playerIdToTeamId(const ePlayerId pid) const
     return it->second;
 }
 
-void eWorldBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid)
+void WorldBoard::moveCityToPlayer(const eCityId cid, const ePlayerId pid)
 {
     const auto c = cityWithId(cid);
     c->setPlayerId(pid);
     mCityToPlayer[cid] = pid;
 }
 
-void eWorldBoard::setPlayerTeam(const ePlayerId pid, const eTeamId tid)
+void WorldBoard::setPlayerTeam(const ePlayerId pid, const eTeamId tid)
 {
     mPlayerToTeam[pid] = tid;
 }
 
-std::vector<eCityId> eWorldBoard::playerCities(const ePlayerId pid) const
+std::vector<eCityId> WorldBoard::playerCities(const ePlayerId pid) const
 {
     if (pid == ePlayerId::neutralFriendly)
     {
@@ -382,7 +382,7 @@ std::vector<eCityId> eWorldBoard::playerCities(const ePlayerId pid) const
     return result;
 }
 
-eCityId eWorldBoard::playerCapital(const ePlayerId pid) const
+eCityId WorldBoard::playerCapital(const ePlayerId pid) const
 {
     if (pid == ePlayerId::neutralFriendly)
     {
@@ -406,12 +406,12 @@ eCityId eWorldBoard::playerCapital(const ePlayerId pid) const
     return eCityId::neutralFriendly;
 }
 
-std::vector<eCityId> eWorldBoard::personPlayerCities() const
+std::vector<eCityId> WorldBoard::personPlayerCities() const
 {
     return playerCities(mPersonPlayer);
 }
 
-eCityId eWorldBoard::currentCityId() const
+eCityId WorldBoard::currentCityId() const
 {
     const auto c = currentCity();
     if (!c)

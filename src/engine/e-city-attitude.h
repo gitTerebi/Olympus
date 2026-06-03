@@ -1,7 +1,7 @@
-#ifndef ECITYATTITUDE_H
+﻿#ifndef ECITYATTITUDE_H
 #define ECITYATTITUDE_H
 
-#include "e-worldcity.h"
+#include "world-city.h"
 
 enum class eCityAttitudeMessage {
     none,
@@ -18,7 +18,7 @@ enum class eCityAttitudeMessage {
 };
 
 eCityAttitudeMessage eCityAttitudeMessageForChange(
-        const eWorldCity& city,
+        const WorldCity& city,
         const ePlayerId pid,
         const eCityAttitude oldAttitude,
         const eCityAttitude newAttitude);

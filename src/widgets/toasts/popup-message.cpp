@@ -81,9 +81,18 @@ void GameWidget::showMessage(eEventData &ed,
             if (ed.fSecondaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
             else if (ed.fTertiaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);
             break;
+        case eMessageEventType::requestTributeGranted:
+            if (ed.fPrimaryResponse >= 0) {
+                mBoard->respondToEvent(ed.fEventRuntimeId, ed.fPrimaryResponse);
+            } else if (!ed.fCityConditionalResponses.empty()) {
+                const auto it = ed.fCityConditionalResponses.begin();
+                mBoard->respondToEvent(ed.fEventRuntimeId, it->second, it->first);
+            } else if (ed.fSecondaryResponse >= 0) {
+                mBoard->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
+            }
+            break;
         case eMessageEventType::generalRequestGranted:
         case eMessageEventType::resourceGranted:
-        case eMessageEventType::requestTributeGranted:
         case eMessageEventType::troopsRequest:
             if (ed.fSecondaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
             else if (ed.fTertiaryResponse >= 0) mBoard->respondToEvent(ed.fEventRuntimeId, ed.fTertiaryResponse);

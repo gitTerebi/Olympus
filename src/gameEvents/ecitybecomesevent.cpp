@@ -1,4 +1,4 @@
-#include "ecitybecomesevent.h"
+﻿#include "ecitybecomesevent.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
@@ -12,7 +12,7 @@ eCityBecomesEvent::eCityBecomesEvent(
         GameBoard& board) :
     eGameEvent(cid, eGameEventType::cityBecomes,
                branch, board),
-    eCityEventValue(board, [this](eWorldCity& city) {
+    eCityEventValue(board, [this](WorldCity& city) {
         switch(mType) {
         case eCityBecomesType::ally: {
             return !city.isAlly();

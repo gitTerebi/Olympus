@@ -1038,7 +1038,7 @@ bool BoardCity::unregisterTradePost(TradePost* const b) {
     return eVectorHelpers::remove(mTradePosts, b);
 }
 
-bool BoardCity::hasTradePost(const eWorldCity& city) {
+bool BoardCity::hasTradePost(const WorldCity& city) {
     for(const auto t : mTradePosts) {
         const bool r = &t->city() == &city;
         if(r) return true;
@@ -2491,14 +2491,14 @@ bool BoardCity::nearestEnemySoldier(const eTeamId tid,
     return false;
 }
 
-eMilitaryAid* BoardCity::militaryAid(const stdsptr<eWorldCity>& c) const {
+eMilitaryAid* BoardCity::militaryAid(const stdsptr<WorldCity>& c) const {
     for(const auto& m : mMilitaryAid) {
         if(m->fCity == c) return m.get();
     }
     return nullptr;
 }
 
-void BoardCity::removeMilitaryAid(const stdsptr<eWorldCity>& c) {
+void BoardCity::removeMilitaryAid(const stdsptr<WorldCity>& c) {
     const int iMax = mMilitaryAid.size();
     for(int i = 0; i < iMax; i++) {
         const auto& m = mMilitaryAid[i];

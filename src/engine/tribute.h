@@ -1,28 +1,28 @@
-#ifndef ETRIBUTE_H
-#define ETRIBUTE_H
+﻿#ifndef TRIBUTE_H
+#define TRIBUTE_H
 
 #include "difficulty.h"
 #include "eresourcetype.h"
 
-class eWorldCity;
+class WorldCity;
 class GameBoard;
 
-struct eTributePayment {
+struct TributePayment {
     eResourceType fType;
     int fCount;
 };
 
-namespace eTributeHelpers {
-    eTributePayment receiveTribute(const eWorldCity& city);
-    eTributePayment payTribute(const eWorldCity& city,
+namespace TributeHelpers {
+    TributePayment receiveTribute(const WorldCity& city);
+    TributePayment payTribute(const WorldCity& city,
                                const Difficulty diff);
     void receiveTributeFromCity(GameBoard& board,
                                  const ePlayerId pid,
-                                 const stdsptr<eWorldCity>& city,
+                                 const stdsptr<WorldCity>& city,
                                  const bool postpone);
     void payTributeToCity(GameBoard& board,
                           const eCityId playerCityId,
-                          const stdsptr<eWorldCity>& parentCity);
+                          const stdsptr<WorldCity>& parentCity);
 }
 
-#endif // ETRIBUTE_H
+#endif // TRIBUTE_H

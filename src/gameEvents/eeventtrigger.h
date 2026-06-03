@@ -6,7 +6,7 @@
 #include "engine/edate.h"
 
 class eGameEvent;
-class eWorldBoard;
+class WorldBoard;
 class eSaveArchive;
 enum class eCityId;
 
@@ -33,10 +33,10 @@ public:
     int eventCount() const { return mEvents.size(); }
 
     GameBoard* gameBoard() const { return &mBoard; }
-    eWorldBoard* worldBoard() const;
+    WorldBoard* worldBoard() const;
 
     void setGameBoard(GameBoard* const b);
-    void setWorldBoard(eWorldBoard* const b);
+    void setWorldBoard(WorldBoard* const b);
 private:
     const eCityId mCid;
     GameBoard& mBoard;

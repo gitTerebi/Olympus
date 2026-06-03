@@ -1,4 +1,4 @@
-#include "invasion-event.h"
+﻿#include "invasion-event.h"
 #include "buildings/eaestheticsbuilding.h"
 
 #include "engine/game-board.h"
@@ -59,7 +59,7 @@ eInvasionEvent::eInvasionEvent(
                                     branch, board),
                          ePointEventValue(eBannerTypeS::landInvasion,
                                           cid, board),
-                         eCityEventValue(board, [this, cid](eWorldCity &c)
+                         eCityEventValue(board, [this, cid](WorldCity &c)
                                          {
         auto& board2 = *gameBoard();
         const auto ccid = c.cityId();
@@ -102,7 +102,7 @@ void eInvasionEvent::pointerCreated()
     }
 }
 
-void eInvasionEvent::initialize(const stdsptr<eWorldCity> &city,
+void eInvasionEvent::initialize(const stdsptr<WorldCity> &city,
                                 const int count, const ePlayerId sentBy)
 {
     setSingleCity(city);
@@ -111,7 +111,7 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity> &city,
     mSentByPlayer = sentBy;
 }
 
-void eInvasionEvent::initialize(const stdsptr<eWorldCity> &city,
+void eInvasionEvent::initialize(const stdsptr<WorldCity> &city,
                                 const eEnlistedForces &forces,
                                 ePlayerConquestEvent *const conquestEvent)
 {
@@ -127,7 +127,7 @@ void eInvasionEvent::initialize(const stdsptr<eWorldCity> &city,
     mConquestEvent = conquestEvent;
 }
 
-bool eInvasionEvent::tryCreateCityInvasion(eWorldCity &attacker, GameBoard &board)
+bool eInvasionEvent::tryCreateCityInvasion(WorldCity &attacker, GameBoard &board)
 {
     // canInvade?
     const auto ppid = board.personPlayer();

@@ -1,4 +1,4 @@
-#include "ereinforcementsevent.h"
+﻿#include "ereinforcementsevent.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
@@ -12,7 +12,7 @@ eReinforcementsEvent::eReinforcementsEvent(const eCityId cid,
     eArmyEventBase(cid, eGameEventType::reinforcementsEvent, branch, board) {}
 
 void eReinforcementsEvent::initialize(const eEnlistedForces& forces,
-                                      const stdsptr<eWorldCity>& city) {
+                                      const stdsptr<WorldCity>& city) {
     mForces = forces;
     mCity = city;
 }

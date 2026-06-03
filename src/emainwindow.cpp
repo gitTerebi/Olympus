@@ -366,7 +366,7 @@ void eMainWindow::episodeFinished() {
     } else {
         const auto w = new eSelectColonyWidget(this);
         const auto sel = mCampaign->remainingColonies();
-        const auto selA = [this](const stdsptr<eWorldCity>& c) {
+        const auto selA = [this](const stdsptr<WorldCity>& c) {
             int cid = 0;
             const auto& eps = mCampaign->colonyEpisodes();
             for(const auto& e : eps) {

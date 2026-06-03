@@ -1,4 +1,4 @@
-#include "eenlistedforces.h"
+﻿#include "eenlistedforces.h"
 
 #include <algorithm>
 #include <memory>
@@ -32,7 +32,7 @@ eEnlistedForces::splitIntoCities() const {
 }
 
 void eEnlistedForces::serialize(eSaveArchive& ar, GameBoard* board) {
-    eWorldBoard* wboard = board ? &board->world() : nullptr;
+    WorldBoard* wboard = board ? &board->world() : nullptr;
     {
         if(ar.reading()) {
             const auto soldiers = std::make_shared<std::vector<stdsptr<SoldierBanner>>>();
@@ -59,7 +59,7 @@ void eEnlistedForces::serialize(eSaveArchive& ar, GameBoard* board) {
     }
     {
         if(ar.reading()) {
-            const auto allies = std::make_shared<std::vector<stdsptr<eWorldCity>>>();
+            const auto allies = std::make_shared<std::vector<stdsptr<WorldCity>>>();
             ar.arrayField("allies", *allies, [wboard](eSaveArchive& ar, auto& ally) {
                 ar.city(wboard, ally);
             });
