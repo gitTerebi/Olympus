@@ -2,7 +2,8 @@
 #define ETEXTURECOLLECTION_H
 
 #include "etexture.h"
-#include "widgets/epainter.h"
+
+class ePainter;
 
 class eTextureCollection {
 public:

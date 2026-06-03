@@ -2,6 +2,7 @@
 #define EPIER_H
 
 #include "ebuilding.h"
+#include "engine/eorientation.h"
 
 class ePier : public eBuilding {
 public:

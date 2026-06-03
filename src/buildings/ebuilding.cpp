@@ -31,7 +31,7 @@ eBuilding::eBuilding(GameBoard& board,
                      const int sw, const int sh,
                      const eCityId cid) :
     eObject(board),
-    mSeed(eRand::rand()), mType(type),
+    mSeed(eRand::rand()), mFrameShift(eRand::rand() % 100), mType(type),
     mAtlantean(board.atlantean(cid)),
     mSpanW(sw), mSpanH(sh),
     mCityId(cid) {

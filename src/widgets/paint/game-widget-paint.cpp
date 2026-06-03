@@ -1,4 +1,5 @@
 ﻿#include "widgets/game-widget.h"
+#include "widgets/etilepainter.h"
 
 #include <functional>
 
@@ -1184,89 +1185,21 @@ void GameWidget::paintEvent(ePainter &p)
                     buildingType == eBuildingType::templeStatue ||
                     buildingType == eBuildingType::templeMonument ||
                     buildingType == eBuildingType::templeAltar;
-                const auto drawTex = [&](const std::shared_ptr<eTexture>& tex) {
+                const auto drawBuildingTexture = [&](const std::shared_ptr<eTexture>& tex) {
                     if(!tex) return;
                     if(colorMod) tex->setColorMod(cred, cgreen, cblue);
                     tp.drawTexture(buildingDrawX + ts.fX, buildingDrawY + ts.fY, tex, eAlignment::top);
                     if(colorMod) tex->clearColorMod();
                 };
-                if (isSancPart && last)
-                    SDL_RenderSetClipRect(p.renderer(), nullptr);
-                if (buildingType == eBuildingType::temple && last)
-                {
-                    const auto tb = static_cast<eTempleBuilding*>(building);
-                    const int stage = tb->progress() - 1;
-                    if(stage >= 0) {
-                        const int rotId = tb->monument() ? tb->monument()->rotateId() : 0;
-                        eGameTextures::loadZeusSanctuary();
-                        const auto t = sanctuaryTempleGetTextures(builTexs, rotId, dir, mAnimFrame, stage);
-                        drawTex(t.fBase);
-                        drawTex(t.fFlip);
-                        if(t.fWoman) {
-                            auto* mon = tb->monument();
-                            if(!mon || !drawnTempleWoman.count(mon)) {
-                                if(mon) drawnTempleWoman.insert(mon);
-                                const auto& tr = tb->tileRect();
-                                const int dirIdx = static_cast<int>(dir);
-                                const double wdx = sanctuaryWomanTileDX(rotId, dirIdx);
-                                const double wdy = sanctuaryWomanTileDY(rotId, dirIdx);
-                                double wrx, wry;
-                                drawXY(tr.x, tr.y, wrx, wry, 1, 1, tile->altitude());
-                                wrx += wdx;
-                                wry += wdy;
-                                if(colorMod) t.fWoman->setColorMod(cred, cgreen, cblue);
-                                tp.drawTexture(wrx, wry, t.fWoman, eAlignment::bottom);
-                                if(colorMod) t.fWoman->clearColorMod();
-                            }
-                        }
+                const auto drawBuildingOverlays = [&]() {
+                    if (!building->overlayEnabled() || !ts.fHasOverlays ||
+                        buildingType == eBuildingType::temple ||
+                        buildingType == eBuildingType::templeStatue ||
+                        buildingType == eBuildingType::templeMonument)
+                    {
+                        return;
                     }
-                }
-                else if (buildingType == eBuildingType::templeStatue && last)
-                {
-                    const auto sb = static_cast<eTempleStatueBuilding*>(building);
-                    if(sb->progress() > 0) {
-                        const int rotId = sb->monument() ? sb->monument()->rotateId() : 0;
-                        drawTex(sanctuaryStatueGetTexture(builTexs, sb->godType(), rotId, dir));
-                    }
-                }
-                else if (buildingType == eBuildingType::templeMonument && last)
-                {
-                    const auto mb = static_cast<eTempleMonumentBuilding*>(building);
-                    if(mb->progress() > 0) {
-                        const int rotId = mb->monument() ? mb->monument()->rotateId() : 0;
-                        drawTex(sanctuaryMonumentGetTexture(builTexs, mb->godType(), rotId, dir));
-                    }
-                }
-                else if (buildingType == eBuildingType::templeAltar && last)
-                {
-                    const auto ab = static_cast<eTempleAltarBuilding*>(building);
-                    if(ab->progress() > 0) {
-                        const int rotId = ab->monument() ? ab->monument()->rotateId() : 0;
-                        const auto altarTex = sanctuaryAltarGetTexture(builTexs, rotId);
-                        if(altarTex) {
-                            if(colorMod) altarTex->setColorMod(cred, cgreen, cblue);
-                            const double aox = (rotId % 2 == 1) ? 2.0 : 0.0;
-                            const double aoy = (rotId % 2 == 1) ? -2.0 : 0.0;
-                            tp.drawTexture(buildingDrawX + ts.fX + aox, buildingDrawY + ts.fY + aoy, altarTex, eAlignment::top);
-                            if(colorMod) altarTex->clearColorMod();
-                        }
-                    }
-                }
-                const auto &tex = ts.fTex;
-                if (tex && !isSancPart)
-                {
-                    if (colorMod)
-                        tex->setColorMod(cred, cgreen, cblue);
-                    tp.drawTexture(buildingDrawX + ts.fX, buildingDrawY + ts.fY,
-                                   tex, eAlignment::top);
-                    if (colorMod)
-                        tex->clearColorMod();
-                }
-                if (building->overlayEnabled() && ts.fOvelays &&
-                    buildingType != eBuildingType::temple &&
-                    buildingType != eBuildingType::templeStatue &&
-                    buildingType != eBuildingType::templeMonument)
-                {
+
                     const auto overlays = building->getOverlays(size);
                     for (const auto &o : overlays)
                     {
@@ -1305,11 +1238,104 @@ void GameWidget::paintEvent(ePainter &p)
                         if (colorMod)
                             tex->clearColorMod();
                     }
+                };
+                const auto drawActorsAfterBuildingTexture = [&]() {
+                    const auto actorDraws =
+                        building->getActorsDrawnAfterBuildingTexture(size);
+                    for (const auto& actorDraw : actorDraws)
+                    {
+                        const auto& tex = actorDraw.fTexture;
+                        if(!tex) continue;
+                        if(colorMod) tex->setColorMod(cred, cgreen, cblue);
+                        if(actorDraw.fUseAlignment)
+                        {
+                            tp.drawTexture(actorDraw.fViewTileX,
+                                           actorDraw.fViewTileY,
+                                           tex,
+                                           actorDraw.fAlignment);
+                        }
+                        else
+                        {
+                            tp.drawTexture(actorDraw.fViewTileX,
+                                           actorDraw.fViewTileY,
+                                           tex);
+                        }
+                        if(colorMod) tex->clearColorMod();
+                    }
+                };
+                if (isSancPart && last)
+                    SDL_RenderSetClipRect(p.renderer(), nullptr);
+                if (buildingType == eBuildingType::temple && last)
+                {
+                    const auto tb = static_cast<eTempleBuilding*>(building);
+                    const int stage = tb->progress() - 1;
+                    if(stage >= 0) {
+                        const int rotId = tb->monument() ? tb->monument()->rotateId() : 0;
+                        eGameTextures::loadZeusSanctuary();
+                        const auto t = sanctuaryTempleGetTextures(builTexs, rotId, dir, mAnimFrame, stage);
+                        drawBuildingTexture(t.fBase);
+                        drawBuildingTexture(t.fFlip);
+                        if(t.fWoman) {
+                            auto* mon = tb->monument();
+                            if(!mon || !drawnTempleWoman.count(mon)) {
+                                if(mon) drawnTempleWoman.insert(mon);
+                                const auto& tr = tb->tileRect();
+                                const int dirIdx = static_cast<int>(dir);
+                                const double wdx = sanctuaryWomanTileDX(rotId, dirIdx);
+                                const double wdy = sanctuaryWomanTileDY(rotId, dirIdx);
+                                double wrx, wry;
+                                drawXY(tr.x, tr.y, wrx, wry, 1, 1, tile->altitude());
+                                wrx += wdx;
+                                wry += wdy;
+                                if(colorMod) t.fWoman->setColorMod(cred, cgreen, cblue);
+                                tp.drawTexture(wrx, wry, t.fWoman, eAlignment::bottom);
+                                if(colorMod) t.fWoman->clearColorMod();
+                            }
+                        }
+                    }
                 }
+                else if (buildingType == eBuildingType::templeStatue && last)
+                {
+                    const auto sb = static_cast<eTempleStatueBuilding*>(building);
+                    if(sb->progress() > 0) {
+                        const int rotId = sb->monument() ? sb->monument()->rotateId() : 0;
+                        drawBuildingTexture(sanctuaryStatueGetTexture(builTexs, sb->godType(), rotId, dir));
+                    }
+                }
+                else if (buildingType == eBuildingType::templeMonument && last)
+                {
+                    const auto mb = static_cast<eTempleMonumentBuilding*>(building);
+                    if(mb->progress() > 0) {
+                        const int rotId = mb->monument() ? mb->monument()->rotateId() : 0;
+                        drawBuildingTexture(sanctuaryMonumentGetTexture(builTexs, mb->godType(), rotId, dir));
+                    }
+                }
+                else if (buildingType == eBuildingType::templeAltar && last)
+                {
+                    const auto ab = static_cast<eTempleAltarBuilding*>(building);
+                    if(ab->progress() > 0) {
+                        const int rotId = ab->monument() ? ab->monument()->rotateId() : 0;
+                        const auto altarTex = sanctuaryAltarGetTexture(builTexs, rotId);
+                        if(altarTex) {
+                            if(colorMod) altarTex->setColorMod(cred, cgreen, cblue);
+                            const double aox = (rotId % 2 == 1) ? 2.0 : 0.0;
+                            const double aoy = (rotId % 2 == 1) ? -2.0 : 0.0;
+                            tp.drawTexture(buildingDrawX + ts.fX + aox, buildingDrawY + ts.fY + aoy, altarTex, eAlignment::top);
+                            if(colorMod) altarTex->clearColorMod();
+                        }
+                    }
+                }
+                const auto &tex = ts.fTex;
+                if (tex && !isSancPart)
+                {
+                    drawBuildingTexture(tex);
+                }
+                drawBuildingOverlays();
                 SDL_RenderSetClipRect(p.renderer(), nullptr);
 
                 if (last)
                 {
+                    drawActorsAfterBuildingTexture();
                     bool globalLast = true;
                     if (buildingType == eBuildingType::eliteHousing)
                     {
@@ -1342,7 +1368,7 @@ void GameWidget::paintEvent(ePainter &p)
                             drawFire(ubt);
                         }
                     }
-                    if (ts.fOvelays && tex)
+                    if (ts.fHasOverlays && tex)
                     {
                         const int bx = buildingDrawX;
                         const int by = buildingDrawY - tsRect.h;

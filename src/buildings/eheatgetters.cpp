@@ -1,4 +1,5 @@
 #include "eheatgetters.h"
+#include "engine/etilebase.h"
 
 #include "characters/gods/egodtype.h"
 #include "engine/difficulty.h"

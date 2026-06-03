@@ -14,35 +14,27 @@
 
 namespace {
 
-void rotatedHorsePosition(const eTile& tile, const double x, const double y,
-                          const eWorldDirection dir, const int boardW,
-                          const int boardH, double& rx, double& ry) {
-    int rtx;
-    int rty;
-    eTileHelper::tileIdToRotatedTileId(tile.x(), tile.y(), rtx, rty,
-                                       dir, boardW, boardH);
+void horseDrawPosition(const eTile& tile, const double horseTileX,
+                       const double horseTileY, const eWorldDirection dir,
+                       const int boardWidth, const int boardHeight,
+                       double& drawX, double& drawY) {
+    int viewTileX;
+    int viewTileY;
+    eTileHelper::tileIdToRotatedTileId(tile.x(), tile.y(), viewTileX, viewTileY,
+                                       dir, boardWidth, boardHeight);
     if(dir == eWorldDirection::N) {
-        rx = rtx + x + 0.5;
-        ry = rty + y + 0.5;
+        drawX = viewTileX + horseTileX + 0.5;
+        drawY = viewTileY + horseTileY + 0.5;
     } else if(dir == eWorldDirection::E) {
-        rx = rtx + y + 0.5;
-        ry = rty - x + 1.5;
+        drawX = viewTileX + horseTileY + 0.5;
+        drawY = viewTileY - horseTileX + 1.5;
     } else if(dir == eWorldDirection::S) {
-        rx = rtx - x + 1.5;
-        ry = rty - y + 1.5;
+        drawX = viewTileX - horseTileX + 1.5;
+        drawY = viewTileY - horseTileY + 1.5;
     } else { // if(dir == eWorldDirection::W) {
-        rx = rtx - y + 1.5;
-        ry = rty + x + 0.5;
+        drawX = viewTileX - horseTileY + 1.5;
+        drawY = viewTileY + horseTileX + 0.5;
     }
-}
-
-void enclosureDrawPosition(const SDL_Rect& rect, const eWorldDirection dir,
-                           const int boardW, const int boardH,
-                           double& x, double& y) {
-    const auto rotatedRect = eTileHelper::toRotatedRect(rect, dir,
-                                                       boardW, boardH);
-    x = rotatedRect.x + rotatedRect.w - 2;
-    y = rotatedRect.y + rotatedRect.h + 2;
 }
 
 bool tileInRect(eTile* const tile, const SDL_Rect& rect) {
@@ -94,29 +86,23 @@ std::shared_ptr<eTexture> HorseRanchEnclosure::getTexture(
     return blds[sizeId].fHorseRanchEnclosure;
 }
 
-std::vector<eOverlay> HorseRanchEnclosure::getOverlays(
+std::vector<BuildingContainedActorDraw>
+HorseRanchEnclosure::getActorsDrawnAfterBuildingTexture(
         const eTileSize size) const {
     const auto& board = getBoard();
     const auto dir = board.direction();
-    const int boardW = board.width();
-    const int boardH = board.height();
-    double drawX;
-    double drawY;
-    enclosureDrawPosition(tileRect(), dir, boardW, boardH, drawX, drawY);
-    std::vector<eOverlay> os;
+    const int boardWidth = board.width();
+    const int boardHeight = board.height();
+    std::vector<BuildingContainedActorDraw> draws;
     for(const auto& h : mHorses) {
         const auto t = h->tile();
         if(!t) continue;
-        auto& o = os.emplace_back();
-        o.fTex = h->getTexture(size);
-        double horseX;
-        double horseY;
-        rotatedHorsePosition(*t, h->x(), h->y(), dir, boardW, boardH,
-                             horseX, horseY);
-        o.fX = horseX - drawX;
-        o.fY = horseY - drawY;
+        auto& draw = draws.emplace_back();
+        draw.fTexture = h->getTexture(size);
+        horseDrawPosition(*t, h->x(), h->y(), dir, boardWidth, boardHeight,
+                          draw.fViewTileX, draw.fViewTileY);
     }
-    return os;
+    return draws;
 }
 
 void HorseRanchEnclosure::timeChanged(const int by) {

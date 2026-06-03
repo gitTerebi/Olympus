@@ -2,7 +2,9 @@
 #define ESMALLHOUSE_H
 
 #include "ehousebase.h"
+#include "pointers/estdpointer.h"
 
+class eCharacter;
 class eSick;
 class eDisgruntled;
 class eSaveArchive;

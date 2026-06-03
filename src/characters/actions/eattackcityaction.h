@@ -2,6 +2,7 @@
 #define EATTACKCITYACTION_H
 
 #include "edefendattackcityaction.h"
+#include "erand.h"
 
 class eSaveArchive;
 

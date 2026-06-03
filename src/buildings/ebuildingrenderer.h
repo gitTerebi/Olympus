@@ -3,6 +3,8 @@
 
 #include "ebuilding.h"
 
+class eTilePainter;
+
 enum class eBuildingRendererType {
     basic,
     eliteHousing,
