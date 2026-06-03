@@ -1,4 +1,4 @@
-#include "invasion-handler.h"
+﻿#include "invasion-handler.h"
 
 #include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
@@ -70,7 +70,7 @@ const int spawnWaitDays = 14;
 
 eInvasionHandler::eInvasionHandler(GameBoard& board,
                                    const eCityId targetCity,
-                                   const stdsptr<eWorldCity>& city,
+                                   const stdsptr<WorldCity>& city,
                                    eInvasionEvent* const event) :
     mBoard(board), mTargetCity(targetCity), mCity(city), mEvent(event) {
     board.addInvasionHandler(targetCity, this);

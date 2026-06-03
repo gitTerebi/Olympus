@@ -1,4 +1,4 @@
-#include "ewritestream.h"
+﻿#include "ewritestream.h"
 
 #include "engine/game-board.h"
 #include "esavearchive.h"
@@ -73,7 +73,7 @@ void eWriteStream::writeDirectionTimes(eDirectionTimes* const d) {
     }
 }
 
-void eWriteStream::writeCity(eWorldCity* const c) {
+void eWriteStream::writeCity(WorldCity* const c) {
     const int cid = c ? c->ioID() : -1;
     *this << cid;
 }

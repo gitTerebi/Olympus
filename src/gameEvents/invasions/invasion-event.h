@@ -1,4 +1,4 @@
-#ifndef INVASION_EVENT_H
+﻿#ifndef INVASION_EVENT_H
 #define INVASION_EVENT_H
 
 #include "../egameevent.h"
@@ -6,7 +6,7 @@
 #include "../ecityeventvalue.h"
 #include "../ecounteventvalue.h"
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "characters/eenlistedforces.h"
 
 class eInvasionHandler;
@@ -31,13 +31,13 @@ public:
 
     void pointerCreated() override;
 
-    void initialize(const stdsptr<eWorldCity>& city,
+    void initialize(const stdsptr<WorldCity>& city,
                     const int count, const ePlayerId sentBy =
                         ePlayerId::neutralFriendly);
-    void initialize(const stdsptr<eWorldCity>& city,
+    void initialize(const stdsptr<WorldCity>& city,
                     const eEnlistedForces& forces,
                     ePlayerConquestEvent* const conquestEvent);
-    static bool tryCreateCityInvasion(eWorldCity& attacker,
+    static bool tryCreateCityInvasion(WorldCity& attacker,
                                       GameBoard& board);
 
     void trigger() override;

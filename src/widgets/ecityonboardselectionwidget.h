@@ -6,7 +6,7 @@
 #include "pointers/estdselfref.h"
 
 class BoardCity;
-class eWorldBoard;
+class WorldBoard;
 class GameBoard;
 
 enum class eCityId;
@@ -23,7 +23,7 @@ public:
                     const eCityAdder& add,
                     const eCityRemover& remove,
                     GameBoard* const board,
-                    eWorldBoard* const wboard);
+                    WorldBoard* const wboard);
 };
 
 #endif // ECITYONBOARDSELECTIONWIDGET_H

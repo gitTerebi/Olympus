@@ -1,4 +1,4 @@
-#include "e-board-player.h"
+﻿#include "e-board-player.h"
 
 #include "gameEvents/requests/e-fulfill-request-event.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"
@@ -187,7 +187,7 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
 void eBoardPlayer::giftAllies() {
     const auto allyCids = mBoard.allyCidsNotOnBoard(mId);
     const auto& wboard = mBoard.world();
-    stdsptr<eWorldCity> city;
+    stdsptr<WorldCity> city;
     const auto pCities =  mBoard.playerCities(mId);
     for(const auto cid : pCities) {
         const auto c = mBoard.boardCityWithId(cid);
@@ -233,7 +233,7 @@ void eBoardPlayer::giftAllies() {
 bool eBoardPlayer::askFor(const eResourceType type, const eCityId cid) {
     const auto allyCids = mBoard.allyCidsNotOnBoard(mId);
     const auto& wboard = mBoard.world();
-    stdsptr<eWorldCity> city;
+    stdsptr<WorldCity> city;
     for(const auto cid : allyCids) {
         const auto c = wboard.cityWithId(cid);
         const int att = c->attitude(mId);

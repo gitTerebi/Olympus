@@ -1,21 +1,21 @@
-#ifndef EWORLDMAPWIDGET_H
+﻿#ifndef EWORLDMAPWIDGET_H
 #define EWORLDMAPWIDGET_H
 
 #include "elabel.h"
 
-#include "engine/eworldboard.h"
+#include "engine/world-board.h"
 
 class eWorldMapWidget : public eLabel {
 public:
     eWorldMapWidget(eMainWindow* const window);
 
-    using eColonySelection = std::vector<stdsptr<eWorldCity>>;
+    using eColonySelection = std::vector<stdsptr<WorldCity>>;
     void setSelectColonyMode(const bool scm, const eColonySelection& s);
 
     void setBoard(GameBoard* const b);
-    void setWorldBoard(eWorldBoard* const b);
+    void setWorldBoard(WorldBoard* const b);
 
-    using eSelectCityAction = std::function<void(const stdsptr<eWorldCity>&)>;
+    using eSelectCityAction = std::function<void(const stdsptr<WorldCity>&)>;
     void setSelectCityAction(const eSelectCityAction& s);
     using eSetTextAction = std::function<void(const std::string&)>;
     void setSetTextAction(const eSetTextAction& s);
@@ -27,17 +27,17 @@ protected:
     void paintEvent(ePainter& p);
     bool mousePressEvent(const eMouseEvent& e);
 private:
-    void armyDrawXY(eWorldCity& c1, eWorldCity& c2,
+    void armyDrawXY(WorldCity& c1, WorldCity& c2,
                     const double frac, int& x, int& y);
 
-    bool cityVisible(const stdsptr<eWorldCity>& c,
+    bool cityVisible(const stdsptr<WorldCity>& c,
                      const bool editor) const;
 
     bool mSelectColonyMode = false;
-    std::vector<stdsptr<eWorldCity>> mColonySelection;
+    std::vector<stdsptr<WorldCity>> mColonySelection;
 
     GameBoard* mGameBoard = nullptr;
-    eWorldBoard* mWorldBoard = nullptr;
+    WorldBoard* mWorldBoard = nullptr;
     int mFrame = 0;
 
     std::map<std::string, stdsptr<eTexture>> mNames;

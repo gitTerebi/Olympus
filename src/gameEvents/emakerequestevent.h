@@ -1,4 +1,4 @@
-#ifndef EMAKEREQUESTEVENT_H
+﻿#ifndef EMAKEREQUESTEVENT_H
 #define EMAKEREQUESTEVENT_H
 
 #include "eresourcegrantedeventbase.h"
@@ -11,7 +11,7 @@ public:
 
     void initialize(const bool postpone,
                     const eResourceType res,
-                    const stdsptr<eWorldCity>& c);
+                    const stdsptr<WorldCity>& c);
 
     std::string longName() const override;
 };

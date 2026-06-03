@@ -1,4 +1,4 @@
-#include "e-city-attitude.h"
+﻿#include "e-city-attitude.h"
 
 #include "game-board.h"
 #include "eevent.h"
@@ -6,7 +6,7 @@
 
 namespace {
 eCityAttitudeMessage attitudeMessageForStatus(
-        const eWorldCity& city,
+        const WorldCity& city,
         const ePlayerId pid,
         const eCityAttitude attitude) {
     const auto rel = city.relationshipToPlayer(pid);
@@ -65,14 +65,14 @@ eCityAttitudeMessage attitudeMessageForStatus(
 }
 
 eCityAttitudeMessage attitudeMessageForInitialStatus(
-        const eWorldCity& city,
+        const WorldCity& city,
         const ePlayerId pid) {
     return attitudeMessageForStatus(city, pid, city.attitudeClass(pid));
 }
 }
 
 eCityAttitudeMessage eCityAttitudeMessageForChange(
-        const eWorldCity& city,
+        const WorldCity& city,
         const ePlayerId pid,
         const eCityAttitude oldAttitude,
         const eCityAttitude newAttitude) {
@@ -81,7 +81,7 @@ eCityAttitudeMessage eCityAttitudeMessageForChange(
     return attitudeMessageForStatus(city, pid, newAttitude);
 }
 
-void GameBoard::changeCityAttitude(const stdsptr<eWorldCity>& c,
+void GameBoard::changeCityAttitude(const stdsptr<WorldCity>& c,
                                  const double amount,
                                  const ePlayerId pid) {
     if(!c) return;

@@ -1,4 +1,4 @@
-#include "eselectcolonywidget.h"
+﻿#include "eselectcolonywidget.h"
 
 #include "eworldmapwidget.h"
 #include "eproceedbutton.h"
@@ -8,7 +8,7 @@
 
 void eSelectColonyWidget::initialize(const eColonySelection& sel,
                                      const eCitySelected& s,
-                                     eWorldBoard* const board) {
+                                     WorldBoard* const board) {
     const auto menu = new eWorldMenu(window());
     menu->initialize(nullptr, nullptr, nullptr, nullptr, nullptr, false);
 
@@ -44,7 +44,7 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
     proceedL->fitContent();
     buttonW->addWidget(proceedL);
 
-    const auto selectedCity = std::make_shared<stdsptr<eWorldCity>>();
+    const auto selectedCity = std::make_shared<stdsptr<WorldCity>>();
 
     const auto proceed = new eProceedButton(window());
     proceed->setPressAction([s, selectedCity]() {
@@ -61,7 +61,7 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
     buttonW->align(eAlignment::bottom | eAlignment::right);
 
     const auto citySelectedA = [cityLabel, tw, sel, selectedCity](
-                               const stdsptr<eWorldCity>& c) {
+                               const stdsptr<WorldCity>& c) {
         c->setState(eCityState::active);
         *selectedCity = c;
         for(const auto ep : sel) {
@@ -74,7 +74,7 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
         tw->setText(c->name());
     };
 
-    std::vector<stdsptr<eWorldCity>> selC;
+    std::vector<stdsptr<WorldCity>> selC;
     for(const auto ep : sel) {
         selC.push_back(ep->fCity);
     }

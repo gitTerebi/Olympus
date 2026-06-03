@@ -1,4 +1,4 @@
-#include "emakerequestevent.h"
+﻿#include "emakerequestevent.h"
 
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -27,7 +27,7 @@ eMakeRequestEvent::eMakeRequestEvent(
 void eMakeRequestEvent::initialize(
         const bool postpone,
         const eResourceType res,
-        const stdsptr<eWorldCity> &c) {
+        const stdsptr<WorldCity> &c) {
     mPostpone = postpone;
     mResource = res;
     mCity = c;

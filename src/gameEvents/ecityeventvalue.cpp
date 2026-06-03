@@ -1,8 +1,8 @@
-#include "ecityeventvalue.h"
+﻿#include "ecityeventvalue.h"
 
 #include "estringhelpers.h"
 #include "elanguage.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
@@ -16,7 +16,7 @@ void eCityEventValue::serialize(eSaveArchive& ar, GameBoard& board) {
     ar.field("maxCityId", mMaxCityId, 0);
 }
 
-void eCityEventValue::setSingleCity(const stdsptr<eWorldCity> &c) {
+void eCityEventValue::setSingleCity(const stdsptr<WorldCity> &c) {
     if(c) {
         mCity = c;
         const auto cid = c->cityId();

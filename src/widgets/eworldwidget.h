@@ -1,4 +1,4 @@
-#ifndef EWORLDWIDGET_H
+﻿#ifndef EWORLDWIDGET_H
 #define EWORLDWIDGET_H
 
 #include "emainwidget.h"
@@ -17,14 +17,14 @@ public:
     void initialize();
 
     void setBoard(GameBoard* const board);
-    void setWorldBoard(eWorldBoard* const board);
+    void setWorldBoard(WorldBoard* const board);
 
     void update();
 
     using eEnlistAction = eEnlistForcesDialog::eEnlistAction;
     void openEnlistForcesDialog(
         const eEnlistAction& a,
-        const std::vector<stdsptr<eWorldCity>>& exclude,
+        const std::vector<stdsptr<WorldCity>>& exclude,
         const std::vector<eResourceType>& plunderResources = {},
         const bool onlySoldiers = false);
     void openEnlistForcesDialog(const eEnlistedForces& enlistable,
@@ -43,10 +43,10 @@ private:
     void openGiftDialog();
     void setMap(const eWorldMap map);
 
-    stdsptr<eWorldCity> mCity;
+    stdsptr<WorldCity> mCity;
     eWorldMenu* mWM = nullptr;
     eWorldMapWidget* mWMW = nullptr;
-    eWorldBoard* mWorldBoard = nullptr;
+    WorldBoard* mWorldBoard = nullptr;
     GameBoard* mBoard = nullptr;
     FramedButton* mMapButton = nullptr;
     FramedButton* mAddCityButton = nullptr;

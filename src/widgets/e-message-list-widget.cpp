@@ -1,4 +1,4 @@
-#include "e-message-list-widget.h"
+﻿#include "e-message-list-widget.h"
 
 #include "engine/game-board.h"
 #include "escrollbar.h"
@@ -6,7 +6,7 @@
 #include "elabel.h"
 #include "eframedlabel.h"
 #include "estringhelpers.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "characters/gods/egod.h"
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"

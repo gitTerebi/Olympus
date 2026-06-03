@@ -1,4 +1,4 @@
-#include "emainmenu.h"
+﻿#include "emainmenu.h"
 
 #include <algorithm>
 
@@ -6,7 +6,7 @@
 #include "enamewidget.h"
 #include "elanguage.h"
 #include "emainwindow.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 
 
 void eMainMenu::initialize(const eAction& continueGameA,

@@ -1,8 +1,8 @@
-#ifndef ETRADEEDITWIDGET_H
+﻿#ifndef ETRADEEDITWIDGET_H
 #define ETRADEEDITWIDGET_H
 
 #include "eframedwidget.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 
 class eTradeResourceButton;
 

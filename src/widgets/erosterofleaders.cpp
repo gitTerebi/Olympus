@@ -1,4 +1,4 @@
-#include "erosterofleaders.h"
+﻿#include "erosterofleaders.h"
 
 #include "eframedwidget.h"
 #include "framed-button.h"
@@ -7,7 +7,7 @@
 #include "estringhelpers.h"
 #include "emainwindow.h"
 #include "enamewidget.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "egamedir.h"
 
 #include <string>
@@ -64,7 +64,7 @@ void eRosterOfLeaders::initialize() {
     createB->setPressAction([this]() {
         const auto w = window();
         const auto d = new eNameWidget(w);
-        d->initialize("", eWorldCity::sLeaders(),
+        d->initialize("", WorldCity::sLeaders(),
                       [this](const std::string& name) {
             if(name.empty()) return;
             const auto dir = eGameDir::saveDir() + name + "/";

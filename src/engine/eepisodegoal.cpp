@@ -1,11 +1,11 @@
-#include "eepisodegoal.h"
+﻿#include "eepisodegoal.h"
 #include "fileIO/esavearchive.h"
 
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "characters/gods/egod.h"
 #include "characters/soldier-banner.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "buildings/small-house.h"
 #include "buildings/elite-housing.h"
 #include "engine/game-board.h"
@@ -286,7 +286,7 @@ std::string eEpisodeGoal::statusText(const GameBoard& b) const {
         const auto city = world.cityWithId(cid);
         const auto rel = city ? city->relationshipToPlayer(ppid) :
                                 eForeignCityRelationship::ally;
-        const auto relStr = eWorldCity::sRelationshipName(rel);
+        const auto relStr = WorldCity::sRelationshipName(rel);
         eStringHelpers::replace(t, "[diplomatic_status]", relStr);
         return t;
     } break;

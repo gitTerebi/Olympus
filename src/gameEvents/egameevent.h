@@ -11,7 +11,7 @@
 class eWriteStream;
 class eReadStream;
 class eSaveArchive;
-class eWorldBoard;
+class WorldBoard;
 
 enum class eGameEventType {
     godVisit,
@@ -193,7 +193,7 @@ public:
     eGameEvent* parent() const { return mParent; }
 
     GameBoard* gameBoard() const { return &mBoard; }
-    eWorldBoard* worldBoard() const;
+    WorldBoard* worldBoard() const;
 
     void startingNewEpisode();
 
@@ -227,7 +227,7 @@ private:
     GameBoard& mBoard;
 
     bool mEpisodeEvent = false;
-    eWorldBoard* mWorldBoard = nullptr;
+    WorldBoard* mWorldBoard = nullptr;
 
     stdptr<eGameEvent> mParent;
 

@@ -1,4 +1,4 @@
-#ifndef ERESOURCEGRANTEDEVENTBASE_H
+﻿#ifndef ERESOURCEGRANTEDEVENTBASE_H
 #define ERESOURCEGRANTEDEVENTBASE_H
 
 #include "egameevent.h"
@@ -32,7 +32,7 @@ public:
     void initialize(const bool postpone,
                     const eResourceType res,
                     const int count,
-                    const stdsptr<eWorldCity>& c);
+                    const stdsptr<WorldCity>& c);
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;

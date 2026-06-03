@@ -5,7 +5,7 @@
 
 class eEpisode;
 class eCampaign;
-class eWorldBoard;
+class WorldBoard;
 
 class eEditorSettingsMenu : public eFramedWidget {
 public:
@@ -14,7 +14,7 @@ public:
     void initialize(const bool first,
                     eCampaign* const c,
                     eEpisode* const ep,
-                    eWorldBoard* const board);
+                    WorldBoard* const board);
 };
 
 #endif // EEDITORSETTINGSMENU_H

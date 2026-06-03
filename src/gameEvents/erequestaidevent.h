@@ -1,4 +1,4 @@
-#ifndef EREQUESTAIDEVENT_H
+﻿#ifndef EREQUESTAIDEVENT_H
 #define EREQUESTAIDEVENT_H
 
 #include "egameevent.h"
@@ -14,8 +14,8 @@ public:
     void trigger() override;
     std::string longName() const override;
 
-    void setCity(const stdsptr<eWorldCity>& c) { mCity = c; }
-    const stdsptr<eWorldCity>& city() const { return mCity; }
+    void setCity(const stdsptr<WorldCity>& c) { mCity = c; }
+    const stdsptr<WorldCity>& city() const { return mCity; }
 
     void setEnd(const int e) { mEnd = e; }
     bool end() const { return mEnd; }
@@ -27,7 +27,7 @@ protected:
 private:
     eDate mArrivalDate;
     bool mEnd = false;
-    stdsptr<eWorldCity> mCity;
+    stdsptr<WorldCity> mCity;
 };
 
 #endif // EREQUESTAIDEVENT_H

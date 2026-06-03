@@ -1,4 +1,4 @@
-#include "ecampaign.h"
+﻿#include "ecampaign.h"
 
 #include <fstream>
 
@@ -696,7 +696,7 @@ void eCampaign::setEditorMode(const bool e) {
 }
 
 void eCampaign::setAside(const eResourceType res, const int count,
-                         const stdsptr<eWorldCity>& from) {
+                         const stdsptr<WorldCity>& from) {
     const auto set = std::make_shared<eSetAside>();
     set->fRes = res;
     set->fCount = count;
@@ -708,7 +708,7 @@ void eCampaign::setAside(const eResourceType res, const int count,
     }
 }
 
-stdsptr<eWorldCity> eCampaign::lastPlayedColony() const {
+stdsptr<WorldCity> eCampaign::lastPlayedColony() const {
     if(mPlayedColonyEpisodes.empty()) return nullptr;
     const int i = mPlayedColonyEpisodes.back();
     return mColonyEpisodes[i]->fCity;

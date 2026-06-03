@@ -1,4 +1,4 @@
-#include "ecitysettingswidget.h"
+﻿#include "ecitysettingswidget.h"
 
 #include "framed-button.h"
 #include "elanguage.h"
@@ -9,7 +9,7 @@
 #include "elineedit.h"
 #include "echoosebutton.h"
 #include "enamewidget.h"
-#include "engine/eworldboard.h"
+#include "engine/world-board.h"
 #include "engine/game-board.h"
 #include "ewatertradewidget.h"
 #include "eswitchbutton.h"
@@ -22,7 +22,7 @@ class eTributeSettingsWidget : public eFramedWidget
 public:
     using eFramedWidget::eFramedWidget;
 
-    void initialize(const stdsptr<eWorldCity> &c, const bool payTribute)
+    void initialize(const stdsptr<WorldCity> &c, const bool payTribute)
     {
         setType(eFrameType::message);
         const auto innerWidget = new eWidget(window());
@@ -60,18 +60,18 @@ public:
     }
 };
 
-std::string attitudeTextToPlayer(const stdsptr<eWorldCity> &c,
+std::string attitudeTextToPlayer(const stdsptr<WorldCity> &c,
                                  const ePlayerId ppid)
 {
     const auto attitude = c->attitudeClass(ppid);
     const int iat = std::ceil(c->attitude(ppid));
-    return eWorldCity::sAttitudeName(attitude) +
+    return WorldCity::sAttitudeName(attitude) +
            " (" + std::to_string(iat) + ")";
 }
 
-void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
+void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
                                      GameBoard *const board,
-                                     eWorldBoard *const wb)
+                                     WorldBoard *const wb)
 {
     if (!c)
         return;
@@ -112,7 +112,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     nameButton->setPressAction([this, nameButton, c]()
                                {
         const auto d = new eNameWidget(window());
-        d->initialize(c->name(), eWorldCity::sNames(),
+        d->initialize(c->name(), WorldCity::sNames(),
                       [c, nameButton](const std::string& name) {
             c->setName(name);
             nameButton->setText(name);
@@ -133,7 +133,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     leaderButton->setPressAction([this, leaderButton, c]()
                                  {
         const auto d = new eNameWidget(window());
-        d->initialize(c->leader(), eWorldCity::sLeaders(),
+        d->initialize(c->leader(), WorldCity::sLeaders(),
                       [c, leaderButton](const std::string& name) {
             c->setLeader(name);
             leaderButton->setText(name);
@@ -214,7 +214,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
 
     const auto typeButton = new FramedButton(window());
     typeButton->setUnderline(false);
-    const auto typeName = eWorldCity::sTypeName(type);
+    const auto typeName = WorldCity::sTypeName(type);
     typeButton->setText(typeName);
     typeButton->fitContent();
     typeButton->setPressAction([this, board, ppid, p,
@@ -233,7 +233,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
              eCityType::destroyedCity};
         std::vector<std::string> typeNames;
         for(const auto t : types) {
-            const auto name = eWorldCity::sTypeName(t);
+            const auto name = WorldCity::sTypeName(t);
             typeNames.push_back(name);
         }
         const auto act = [board, ppid, p,
@@ -281,7 +281,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
 
     relationshipButton->setUnderline(false);
     const auto relationship = c->relationship();
-    relationshipButton->setText(eWorldCity::sRelationshipName(relationship));
+    relationshipButton->setText(WorldCity::sRelationshipName(relationship));
     relationshipButton->fitContent();
     relationshipButton->setPressAction([this, attitudeButton, ppid,
                                         relationshipButton, c]()
@@ -293,7 +293,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
              eForeignCityRelationship::rival};
         std::vector<std::string> relationshipNames;
         for(const auto r : relationships) {
-            const auto name = eWorldCity::sRelationshipName(r);
+            const auto name = WorldCity::sRelationshipName(r);
             relationshipNames.push_back(name);
         }
         const auto act = [attitudeButton, ppid,
@@ -318,8 +318,8 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
     relationshipButton->align(eAlignment::hcenter);
 
     stateButton->setUnderline(false);
-    stateButton->addValue(eWorldCity::sStateName(eCityState::active));
-    stateButton->addValue(eWorldCity::sStateName(eCityState::inactive));
+    stateButton->addValue(WorldCity::sStateName(eCityState::active));
+    stateButton->addValue(WorldCity::sStateName(eCityState::inactive));
     stateButton->fitValidContent();
     const auto state = c->state();
     stateButton->setValue(state == eCityState::active ? 0 : 1);
@@ -367,7 +367,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
         }
         std::vector<std::string> attitudeNames;
         for(const auto r : attitudes) {
-            const auto name = eWorldCity::sAttitudeName(r);
+            const auto name = WorldCity::sAttitudeName(r);
             attitudeNames.push_back(name);
         }
         const auto act = [attitudes, attitudeNames, ppid,
@@ -388,7 +388,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
 
     nationalityButton->setUnderline(false);
     const auto nationality = c->nationality();
-    nationalityButton->setText(eWorldCity::sNationalityName(nationality));
+    nationalityButton->setText(WorldCity::sNationalityName(nationality));
     nationalityButton->fitContent();
     nationalityButton->setPressAction([this, board, type,
                                        nationalityButton, c]()
@@ -416,7 +416,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
         }
         std::vector<std::string> nationalityNames;
         for(const auto r : nationalities) {
-            const auto name = eWorldCity::sNationalityName(r);
+            const auto name = WorldCity::sNationalityName(r);
             nationalityNames.push_back(name);
         }
         const auto act = [board,
@@ -528,7 +528,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
 
     directionButton->setUnderline(false);
     const auto dir = c->direction();
-    directionButton->setText(eWorldCity::sDirectionName(dir));
+    directionButton->setText(WorldCity::sDirectionName(dir));
     directionButton->fitContent();
     directionButton->setPressAction([this, directionButton, c]()
                                     {
@@ -545,7 +545,7 @@ void eCitySettingsWidget::initialize(const stdsptr<eWorldCity> &c,
              eDistantDirection::NW};
         std::vector<std::string> directionNames;
         for(const auto r : directions) {
-            const auto name = eWorldCity::sDirectionName(r);
+            const auto name = WorldCity::sDirectionName(r);
             directionNames.push_back(name);
         }
         const auto act = [directions, directionNames,

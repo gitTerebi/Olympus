@@ -428,8 +428,8 @@ SOURCES += \
         engine/etilebase.cpp \
         engine/etileterrainpainter.cpp \
         engine/ewagerate.cpp \
-        engine/eworldboard.cpp \
-        engine/eworldcity.cpp \
+        engine/world-board.cpp \
+        engine/world-city.cpp \
         engine/eworldregion.cpp \
         engine/thread/ethreadboard.cpp \
         engine/thread/ethreadboardhandler.cpp \
@@ -487,8 +487,8 @@ SOURCES += \
         gameEvents/emonsterinvasioneventbase.cpp \
         gameEvents/emonsterseventvalue.cpp \
         gameEvents/emonsterunleashedevent.cpp \
-        engine/e-tribute.cpp \
-        gameEvents/ereceivetributeevent.cpp \
+        engine/tribute.cpp \
+        gameEvents/receive-tribute-event.cpp \
         gameEvents/e-pay-tribute-event.cpp \
         gameEvents/eplayerconquestevent.cpp \
         gameEvents/eplayerconquesteventbase.cpp \
@@ -1110,7 +1110,7 @@ HEADERS += \
     engine/difficulty.h \
     engine/model-data.h \
     engine/vanilla-stats.h \
-    engine/e-tribute.h \
+    engine/tribute.h \
     engine/eemploymentdistributor.h \
     engine/eepisode.h \
     engine/eepisodegoal.h \
@@ -1148,8 +1148,8 @@ HEADERS += \
     engine/etilebase.h \
     engine/etileterrainpainter.h \
     engine/ewagerate.h \
-    engine/eworldboard.h \
-    engine/e-worldcity.h \
+    engine/world-board.h \
+    engine/world-city.h \
     engine/eworlddirection.h \
     engine/eworldregion.h \
     engine/thread/ethreadboard.h \
@@ -1211,7 +1211,7 @@ HEADERS += \
     gameEvents/emonsterinvasioneventbase.h \
     gameEvents/emonsterseventvalue.h \
     gameEvents/emonsterunleashedevent.h \
-    gameEvents/ereceivetributeevent.h \
+    gameEvents/receive-tribute-event.h \
     gameEvents/e-pay-tribute-event.h \
     gameEvents/eplayerconquestevent.h \
     gameEvents/eplayerconquesteventbase.h \

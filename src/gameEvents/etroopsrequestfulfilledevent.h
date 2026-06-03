@@ -1,4 +1,4 @@
-#ifndef ETROOPSREQUESTFULFILLEDEVENT_H
+﻿#ifndef ETROOPSREQUESTFULFILLEDEVENT_H
 #define ETROOPSREQUESTFULFILLEDEVENT_H
 
 #include "eplayerconquesteventbase.h"
@@ -10,13 +10,13 @@ public:
                                  GameBoard& board);
 
     void initialize(const eEnlistedForces& forces,
-                    const stdsptr<eWorldCity>& city,
-                    const stdsptr<eWorldCity>& rivalCity);
+                    const stdsptr<WorldCity>& city,
+                    const stdsptr<WorldCity>& rivalCity);
 
     void trigger() override;
     std::string longName() const override;
 private:
-    stdsptr<eWorldCity> mRivalCity;
+    stdsptr<WorldCity> mRivalCity;
 };
 
 #endif // ETROOPSREQUESTFULFILLEDEVENT_H

@@ -1,4 +1,4 @@
-#ifndef EEPISODE_H
+﻿#ifndef EEPISODE_H
 #define EEPISODE_H
 
 #include "game-board.h"
@@ -21,7 +21,7 @@ struct eEpisode {
     void clear();
 
     GameBoard* fBoard = nullptr;
-    eWorldBoard* fWorldBoard = nullptr;
+    WorldBoard* fWorldBoard = nullptr;
 
     int fDrachmasDelete = 2500;
     std::map<ePlayerId, int> fDrachmas;
@@ -63,7 +63,7 @@ struct eColonyEpisode : public eEpisode {
 
     std::string fSelection;
 
-    stdsptr<eWorldCity> fCity;
+    stdsptr<WorldCity> fCity;
 };
 
 #endif // EEPISODE_H

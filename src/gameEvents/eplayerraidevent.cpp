@@ -1,4 +1,4 @@
-#include "eplayerraidevent.h"
+﻿#include "eplayerraidevent.h"
 #include "fileIO/esavearchive.h"
 
 #include "engine/game-board.h"
@@ -18,7 +18,7 @@ ePlayerRaidEvent::ePlayerRaidEvent(
 
 void ePlayerRaidEvent::initialize(
         const eEnlistedForces& forces,
-        const stdsptr<eWorldCity>& city,
+        const stdsptr<WorldCity>& city,
         const eResourceType resource) {
     mForces = forces;
     mCity = city;

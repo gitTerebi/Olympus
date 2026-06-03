@@ -1,6 +1,6 @@
-#include "e-pay-tribute-event.h"
+﻿#include "e-pay-tribute-event.h"
 
-#include "engine/e-tribute.h"
+#include "engine/tribute.h"
 #include "engine/game-board.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
@@ -81,7 +81,7 @@ ePayTributeEvent::~ePayTributeEvent()
     }
 }
 
-void ePayTributeEvent::initialize(const stdsptr<eWorldCity> &c)
+void ePayTributeEvent::initialize(const stdsptr<WorldCity> &c)
 {
     mCity = c;
     if (!mCity)
@@ -90,7 +90,7 @@ void ePayTributeEvent::initialize(const stdsptr<eWorldCity> &c)
     if (!board)
         return;
     const auto diff = board->difficulty(board->personPlayer());
-    const auto tribute = eTributeHelpers::payTribute(*mCity, diff);
+    const auto tribute = TributeHelpers::payTribute(*mCity, diff);
     mResource = tribute.fType;
     mCount = tribute.fCount;
     activate();

@@ -1,9 +1,9 @@
-#ifndef EWORLDGOODSWIDGET_H
+﻿#ifndef EWORLDGOODSWIDGET_H
 #define EWORLDGOODSWIDGET_H
 
 #include "ewidget.h"
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "pointers/estdselfref.h"
 #include "eframedwidget.h"
 
@@ -41,7 +41,7 @@ public:
 
     void initialize();
 
-    void setCity(const stdsptr<eWorldCity>& c);
+    void setCity(const stdsptr<WorldCity>& c);
     void setPlayerId(const ePlayerId pid) { mPid = pid; }
 private:
     void updateTradeY() const;

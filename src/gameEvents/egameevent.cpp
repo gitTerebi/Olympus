@@ -9,7 +9,7 @@
 #include "gameEvents/invasions/monster-invasion-event.h"
 #include "gameEvents/invasions/monster-in-city-event.h"
 #include "gameEvents/invasions/invasion-event.h"
-#include "ereceivetributeevent.h"
+#include "receive-tribute-event.h"
 #include "requests/e-pay-tribute-event.h"
 #include "emakerequestevent.h"
 #include "requests/e-fulfill-request-event.h"
@@ -113,7 +113,7 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
     case eGameEventType::invasionWarning:
         return nullptr;
     case eGameEventType::receiveTribute:
-        return e::make_shared<eReceiveTributeEvent>(cid, branch, board);
+        return e::make_shared<ReceiveTributeEvent>(cid, branch, board);
     case eGameEventType::payTribute:
         return e::make_shared<ePayTributeEvent>(cid, branch, board);
     case eGameEventType::makeRequest:
@@ -351,7 +351,7 @@ int eGameEvent::triggerEventsCount() const {
     return r;
 }
 
-eWorldBoard* eGameEvent::worldBoard() const {
+WorldBoard* eGameEvent::worldBoard() const {
     return &mBoard.world();
 }
 

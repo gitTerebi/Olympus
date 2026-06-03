@@ -1,4 +1,4 @@
-#ifndef EARMYRETURNEVENT_H
+﻿#ifndef EARMYRETURNEVENT_H
 #define EARMYRETURNEVENT_H
 
 #include "earmyeventbase.h"
@@ -10,7 +10,7 @@ public:
                      GameBoard& board);
 
     void initialize(const eEnlistedForces& forces,
-                    const stdsptr<eWorldCity>& city);
+                    const stdsptr<WorldCity>& city);
 
     void trigger() override;
     std::string longName() const override;

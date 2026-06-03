@@ -1,4 +1,4 @@
-#include "eworldmapwidget.h"
+﻿#include "eworldmapwidget.h"
 
 #include "textures/egametextures.h"
 #include "textures/einterfacetextures.h"
@@ -30,7 +30,7 @@ void eWorldMapWidget::setBoard(GameBoard* const b) {
     setWorldBoard(b ? &b->world() : nullptr);
 }
 
-void eWorldMapWidget::setWorldBoard(eWorldBoard* const b) {
+void eWorldMapWidget::setWorldBoard(WorldBoard* const b) {
     mWorldBoard = b;
     if(b) setMap(b->map());
     updateWidgets();
@@ -49,10 +49,10 @@ enum class eArmyReason {
 };
 
 struct eMapArmy {
-    stdsptr<eWorldCity> fOrigin;
+    stdsptr<WorldCity> fOrigin;
 
-    stdsptr<eWorldCity> fTravelFrom;
-    stdsptr<eWorldCity> fTravelTo;
+    stdsptr<WorldCity> fTravelFrom;
+    stdsptr<WorldCity> fTravelTo;
     double fTravelFrac;
 
     int fArmySize; // 0, 1, 2, 3
@@ -88,7 +88,7 @@ std::vector<eMapArmy> getArmies(GameBoard& board) {
         } else if(dynamic_cast<eTroopsRequestFulfilledEvent*>(c)) {
             reason = eArmyReason::help;
         }
-        stdsptr<eWorldCity> toCity;
+        stdsptr<WorldCity> toCity;
         if(dynamic_cast<eReinforcementsEvent*>(c)) {
             reason = eArmyReason::help;
             const auto cid = c->cityId();
@@ -201,7 +201,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         p.drawTexture(dx, dy, nameTex);
     }
 
-    const auto handleCity = [&](const stdsptr<eWorldCity>& ct) {
+    const auto handleCity = [&](const stdsptr<WorldCity>& ct) {
         const bool v = cityVisible(ct, editor);
         if(!v) return;
         const bool atlantean = ct->nationality() == eNationality::atlantean;
@@ -549,7 +549,7 @@ class eCityTransparentWidget : public eTransparentWidget {
 public:
     using eTransparentWidget::eTransparentWidget;
 
-    void setCity(const stdsptr<eWorldCity>& c) {
+    void setCity(const stdsptr<WorldCity>& c) {
         mCity = c;
     }
 protected:
@@ -574,7 +574,7 @@ protected:
         return true;
     }
 private:
-    stdsptr<eWorldCity> mCity;
+    stdsptr<WorldCity> mCity;
 
     int mPressX = 0;
     int mPressY = 0;
@@ -694,7 +694,7 @@ void eWorldMapWidget::updateWidgets() {
     }
 }
 
-void eWorldMapWidget::armyDrawXY(eWorldCity& c1, eWorldCity& c2,
+void eWorldMapWidget::armyDrawXY(WorldCity& c1, WorldCity& c2,
                                  const double frac, int& x, int& y) {
     const double hx = c1.x();
     const double hy = c1.y();
@@ -704,7 +704,7 @@ void eWorldMapWidget::armyDrawXY(eWorldCity& c1, eWorldCity& c2,
     y = (hy + (ccy - hy)*frac)*height();
 }
 
-bool eWorldMapWidget::cityVisible(const stdsptr<eWorldCity>& c,
+bool eWorldMapWidget::cityVisible(const stdsptr<WorldCity>& c,
                                   const bool editor) const {
     if(!editor && !c->visible()) return false;
     if(!mSelectColonyMode && !editor &&

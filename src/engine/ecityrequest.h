@@ -1,7 +1,7 @@
-#ifndef ECITYREQUEST_H
+﻿#ifndef ECITYREQUEST_H
 #define ECITYREQUEST_H
 
-#include "e-worldcity.h"
+#include "world-city.h"
 #include "eresourcetype.h"
 
 struct eCityRequest {
@@ -11,7 +11,7 @@ struct eCityRequest {
                fCount == o.fCount;
     }
 
-    stdsptr<eWorldCity> fCity;
+    stdsptr<WorldCity> fCity;
     eResourceType fType = eResourceType::none;
     int fCount = 0;
 };

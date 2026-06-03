@@ -1,9 +1,9 @@
-#ifndef EGIFTTOEVENT_H
+﻿#ifndef EGIFTTOEVENT_H
 #define EGIFTTOEVENT_H
 
 #include "egameevent.h"
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 
 class eSaveArchive;
 
@@ -13,7 +13,7 @@ public:
                  const eGameEventBranch branch,
                  GameBoard& board);
 
-    void initialize(const stdsptr<eWorldCity>& c,
+    void initialize(const stdsptr<WorldCity>& c,
                     const eResourceType type,
                     const int count);
 
@@ -22,7 +22,7 @@ public:
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    stdsptr<eWorldCity> mCity;
+    stdsptr<WorldCity> mCity;
     eResourceType mResource{};
     int mCount = 0;
 };

@@ -1,10 +1,10 @@
-#ifndef EARMYEVENTBASE_H
+﻿#ifndef EARMYEVENTBASE_H
 #define EARMYEVENTBASE_H
 
 #include "egameevent.h"
 
 #include "characters/eenlistedforces.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 
 class eSaveArchive;
 
@@ -17,7 +17,7 @@ public:
     ~eArmyEventBase();
 
     const eEnlistedForces& forces() const { return mForces; }
-    const stdsptr<eWorldCity>& city() const { return mCity; }
+    const stdsptr<WorldCity>& city() const { return mCity; }
 protected:
     void planArmyReturn();
     void planArmyReturn(const int travelTime);
@@ -27,7 +27,7 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 
     eEnlistedForces mForces;
-    stdsptr<eWorldCity> mCity;
+    stdsptr<WorldCity> mCity;
 };
 
 #endif // EARMYEVENTBASE_H

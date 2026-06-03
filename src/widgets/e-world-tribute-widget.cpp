@@ -1,8 +1,8 @@
-#include "eworldtributewidget.h"
+﻿#include "eworldtributewidget.h"
 
 #include "elanguage.h"
 #include "engine/game-board.h"
-#include "engine/e-tribute.h"
+#include "engine/tribute.h"
 #include "evectorhelpers.h"
 
 void eWorldTributeWidget::initialize() {
@@ -38,7 +38,7 @@ void eWorldTributeWidget::initialize() {
 }
 
 bool eWorldTributeWidget::hasClaimToTribute(
-        const stdsptr<eWorldCity>& c) const {
+        const stdsptr<WorldCity>& c) const {
     if(!mBoard || !c) return false;
     const auto cids = mBoard->personPlayerCitiesOnBoard();
     const auto defs = mBoard->conqueredBy(c->cityId());
@@ -49,7 +49,7 @@ bool eWorldTributeWidget::hasClaimToTribute(
     return false;
 }
 
-void eWorldTributeWidget::setCity(const stdsptr<eWorldCity>& c) {
+void eWorldTributeWidget::setCity(const stdsptr<WorldCity>& c) {
     mAlliesLabel->hide();
     mTitleLabel->hide();
     mTypeIcon->hide();
@@ -82,11 +82,11 @@ void eWorldTributeWidget::setCity(const stdsptr<eWorldCity>& c) {
         int count;
         if(playerPaysTribute) {
             const auto diff = mBoard->personPlayerDifficulty();
-            const auto tribute = eTributeHelpers::payTribute(*c, diff);
+            const auto tribute = TributeHelpers::payTribute(*c, diff);
             ttype = tribute.fType;
             count = tribute.fCount;
         } else {
-            const auto tribute = eTributeHelpers::receiveTribute(*c);
+            const auto tribute = TributeHelpers::receiveTribute(*c);
             ttype = tribute.fType;
             count = tribute.fCount;
         }

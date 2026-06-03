@@ -1,4 +1,4 @@
-#ifndef EWRITESTREAM_H
+﻿#ifndef EWRITESTREAM_H
 #define EWRITESTREAM_H
 
 #define SDL_MAIN_HANDLED
@@ -17,7 +17,7 @@ class eCharacter;
 class eCharacterAction;
 class eCharacterActionFunction;
 class eGodAct;
-class eWorldCity;
+class WorldCity;
 class eBanner;
 class SoldierBanner;
 class eGameEvent;
@@ -141,7 +141,7 @@ public:
     void writeCharActFunc(eCharacterActionFunction* const caf);
     void writeGodAct(eGodAct* const ga);
     void writeDirectionTimes(eDirectionTimes* const d);
-    void writeCity(eWorldCity* const c);
+    void writeCity(WorldCity* const c);
     void writeBanner(eBanner* const b);
     void writSoldierBanner(SoldierBanner* const b);
     void writeGameEvent(eGameEvent* const e);

@@ -1,4 +1,4 @@
-#include "eepisodeswidget.h"
+﻿#include "eepisodeswidget.h"
 
 #include "evectorhelpers.h"
 
@@ -152,13 +152,13 @@ public:
             cityW->setNoPadding();
             cityW->setWidth(colW);
             const auto cityB = new eCityButton(window());
-            cityB->setValidator([](const stdsptr<eWorldCity>& c) {
+            cityB->setValidator([](const stdsptr<WorldCity>& c) {
                 return c->isColony();
             });
             cityB->setFontSizeXS();
             cityB->setPaddingXS();
             const auto ee = static_cast<eColonyEpisode*>(e.get());
-            cityB->initialize(&c->worldBoard(), [ee](const stdsptr<eWorldCity>& c) {
+            cityB->initialize(&c->worldBoard(), [ee](const stdsptr<WorldCity>& c) {
                 ee->fCity = c;
             });
             cityB->setCity(ee->fCity);

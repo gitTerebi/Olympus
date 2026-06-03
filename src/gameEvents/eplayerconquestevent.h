@@ -1,4 +1,4 @@
-#ifndef EPLAYERCONQUESTEVENT_H
+﻿#ifndef EPLAYERCONQUESTEVENT_H
 #define EPLAYERCONQUESTEVENT_H
 
 #include "eplayerconquesteventbase.h"
@@ -14,7 +14,7 @@ public:
 
     void initialize(const eDate& date,
                     const eEnlistedForces& forces,
-                    const stdsptr<eWorldCity>& city);
+                    const stdsptr<WorldCity>& city);
 
     void trigger() override;
     std::string longName() const override;

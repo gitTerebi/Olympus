@@ -1,40 +1,39 @@
-#include "e-tribute.h"
+﻿#include "tribute.h"
 
 #include "game-board.h"
 #include "eevent.h"
 #include "eeventdata.h"
-#include "e-worldcity.h"
+#include "world-city.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"
-#include "gameEvents/ereceivetributeevent.h"
+#include "gameEvents/receive-tribute-event.h"
 
 #include <cmath>
 #include <cstdio>
 
-eTributePayment eTributeHelpers::payTribute(const eWorldCity &city, const Difficulty diff)
+TributePayment TributeHelpers::payTribute(const WorldCity &city, const Difficulty diff)
 {
     const double mult = DifficultyHelpers::costMultiplier(diff);
     const int count = std::round(city.payTributeCount() * mult);
     return {city.payTributeType(), count};
 }
 
-eTributePayment eTributeHelpers::receiveTribute(const eWorldCity &city)
+TributePayment TributeHelpers::receiveTribute(const WorldCity &city)
 {
     return {city.receiveTributeType(), city.receiveTributeCount()};
 }
 
-void eTributeHelpers::receiveTributeFromCity(GameBoard &board, const ePlayerId pid, const stdsptr<eWorldCity> &city, const bool postpone)
+void TributeHelpers::receiveTributeFromCity(GameBoard &board, const ePlayerId pid, const stdsptr<WorldCity> &city, const bool postpone)
 {
     if (!city)
         return;
-    const auto e = e::make_shared<eReceiveTributeEvent>(
+    const auto e = e::make_shared<ReceiveTributeEvent>(
         board.currentCityId(), eGameEventBranch::root, board);
     e->initialize(city);
     e->initializeDate(board.date());
     board.addRootGameEvent(e);
-    e->trigger();
 }
 
-void eTributeHelpers::payTributeToCity(GameBoard &board, const eCityId playerCityId, const stdsptr<eWorldCity> &parentCity)
+void TributeHelpers::payTributeToCity(GameBoard &board, const eCityId playerCityId, const stdsptr<WorldCity> &parentCity)
 {
     if (!parentCity)
         return;

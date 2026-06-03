@@ -13,7 +13,7 @@ void eCityOnBoardSelectionWidget::initialize(
         const eCityAdder& add,
         const eCityRemover& remove,
         GameBoard* const board,
-        eWorldBoard* const wboard) {
+        WorldBoard* const wboard) {
     eScrollButtonsList::initialize();
 
     const auto iniCids = get();
@@ -40,7 +40,7 @@ void eCityOnBoardSelectionWidget::initialize(
 
     setButtonCreateEvent([this, add, wboard]() {
         const auto choose = new eChooseCityDialog(window());
-        const auto act = [this, add](const stdsptr<eWorldCity>& wc) {
+        const auto act = [this, add](const stdsptr<WorldCity>& wc) {
             const auto cid = wc->cityId();
             add(cid);
             addButton(wc->name());

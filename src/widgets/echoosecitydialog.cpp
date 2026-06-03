@@ -1,12 +1,12 @@
-#include "echoosecitydialog.h"
+﻿#include "echoosecitydialog.h"
 
-#include "engine/eworldboard.h"
+#include "engine/world-board.h"
 
-void eChooseCityDialog::initialize(eWorldBoard* const board,
+void eChooseCityDialog::initialize(WorldBoard* const board,
                                    const eCityAction& cact,
                                    const bool showId) {
     const auto& cities = board->cities();
-    std::vector<stdsptr<eWorldCity>> validCities;
+    std::vector<stdsptr<WorldCity>> validCities;
     std::vector<std::string> cityNames;
     for(const auto& c : cities) {
         if(mValidator) {

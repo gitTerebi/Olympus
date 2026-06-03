@@ -8,7 +8,7 @@
 #include <unordered_set>
 
 #include "buildings/eagorabase.h"
-#include "e-tribute.h"
+#include "tribute.h"
 #include "characters/echaracter.h"
 #include "characters/actions/esettleraction.h"
 #include "characters/edomesticatedanimal.h"
@@ -57,7 +57,7 @@
 #include "gameEvents/gods/egodattackevent.h"
 #include "gameEvents/invasions/monster-unleashed-event.h"
 #include "gameEvents/invasions/invasion-event.h"
-#include "gameEvents/ereceivetributeevent.h"
+#include "gameEvents/receive-tribute-event.h"
 #include "gameEvents/requests/e-pay-tribute-event.h"
 #include "gameEvents/emakerequestevent.h"
 #include "gameEvents/egifttoevent.h"
@@ -115,7 +115,7 @@
 #define uint unsigned int
 #endif
 
-GameBoard::GameBoard(eWorldBoard &world) : mWorld(world), mThreadPool(*this), mUndo(*this)
+GameBoard::GameBoard(WorldBoard &world) : mWorld(world), mThreadPool(*this), mUndo(*this)
 {
     const auto types = eResourceTypeHelpers::extractResourceTypes(
         eResourceType::allBasic);
@@ -1047,7 +1047,7 @@ int GameBoard::maxMonumentSpaceForResource(
     return c->maxMonumentSpaceForResource(b);
 }
 
-void GameBoard::planGiftFrom(const stdsptr<eWorldCity> &c,
+void GameBoard::planGiftFrom(const stdsptr<WorldCity> &c,
                               const eResourceType type,
                               const int count,
                               const int delay)
@@ -1061,7 +1061,7 @@ void GameBoard::planGiftFrom(const stdsptr<eWorldCity> &c,
     addRootGameEvent(e);
 }
 
-void GameBoard::request(const stdsptr<eWorldCity> &c,
+void GameBoard::request(const stdsptr<WorldCity> &c,
                          const eResourceType type,
                          const eCityId cid)
 {
@@ -1083,7 +1083,7 @@ void GameBoard::request(const stdsptr<eWorldCity> &c,
     changeCityAttitude(c, -10, pid);
 }
 
-void GameBoard::requestAid(const stdsptr<eWorldCity> &c,
+void GameBoard::requestAid(const stdsptr<WorldCity> &c,
                             const eCityId cid)
 {
     const auto e = e::make_shared<eRequestAidEvent>(
@@ -1094,7 +1094,7 @@ void GameBoard::requestAid(const stdsptr<eWorldCity> &c,
     addRootGameEvent(e);
 }
 
-bool GameBoard::giftTo(const stdsptr<eWorldCity> &c,
+bool GameBoard::giftTo(const stdsptr<WorldCity> &c,
                         const eResourceType type,
                         const int count,
                         const eCityId cid)
@@ -1113,7 +1113,7 @@ bool GameBoard::giftTo(const stdsptr<eWorldCity> &c,
     return true;
 }
 
-void GameBoard::giftToReceived(const stdsptr<eWorldCity> &c,
+void GameBoard::giftToReceived(const stdsptr<WorldCity> &c,
                                 const eResourceType type,
                                 const int count,
                                 const ePlayerId pid)
@@ -1308,7 +1308,7 @@ eCityId GameBoard::currentCityId() const
     return mWorld.currentCityId();
 }
 
-stdsptr<eWorldCity> GameBoard::currentCity() const
+stdsptr<WorldCity> GameBoard::currentCity() const
 {
     return mWorld.currentCity();
 }
@@ -2588,7 +2588,7 @@ bool GameBoard::unregisterTradePost(TradePost *const b)
     return r;
 }
 
-bool GameBoard::hasTradePost(const eCityId cid, const eWorldCity &city)
+bool GameBoard::hasTradePost(const eCityId cid, const WorldCity &city)
 {
     const auto c = boardCityWithId(cid);
     if (!c)
@@ -3136,12 +3136,12 @@ void GameBoard::incTime(const int by)
     {
         mWorld.nextYear();
         const auto ppid = personPlayer();
-        const auto cs = mWorld.getTribute();
+        const auto cs = mWorld.receiveTribute();
         for (const auto &c : cs)
         {
             if (c->conqueredByRival())
                 continue;
-            eTributeHelpers::receiveTributeFromCity(*this, ppid, c, true);
+            TributeHelpers::receiveTributeFromCity(*this, ppid, c, true);
         }
     }
     const auto chars = mCharacters;
@@ -3503,7 +3503,7 @@ void GameBoard::setEnlistForcesRequest(const eEnlistRequest &req)
 
 void GameBoard::requestForces(const eEnlistAction &action,
                                const std::vector<eResourceType> &plunderResources,
-                               const std::vector<stdsptr<eWorldCity>> &exclude,
+                               const std::vector<stdsptr<WorldCity>> &exclude,
                                const bool onlySoldiers)
 {
     if (mEnlistRequester)
@@ -4198,7 +4198,7 @@ void GameBoard::setSeaTradeShutdown(
 }
 
 eMilitaryAid *GameBoard::militaryAid(const eCityId cid,
-                                      const stdsptr<eWorldCity> &c) const
+                                      const stdsptr<WorldCity> &c) const
 {
     const auto cc = boardCityWithId(cid);
     if (!cc)
@@ -4207,7 +4207,7 @@ eMilitaryAid *GameBoard::militaryAid(const eCityId cid,
 }
 
 void GameBoard::removeMilitaryAid(const eCityId cid,
-                                   const stdsptr<eWorldCity> &c)
+                                   const stdsptr<WorldCity> &c)
 {
     const auto cc = boardCityWithId(cid);
     if (!cc)
@@ -4333,7 +4333,7 @@ bool GameBoard::duringEarthquake() const
 }
 
 void GameBoard::conqueredBy(const eCityId conquered,
-                             const stdsptr<eWorldCity> &by)
+                             const stdsptr<WorldCity> &by)
 {
     auto &defs = mConqueredBy[by->cityId()];
     const auto conqueredCity = world().cityWithId(conquered);

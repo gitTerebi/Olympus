@@ -250,7 +250,7 @@ public:
     const std::vector<TradePost*>& tradePosts() const { return mTradePosts; }
     void registerTradePost(TradePost* const b);
     bool unregisterTradePost(TradePost* const b);
-    bool hasTradePost(const eWorldCity& city);
+    bool hasTradePost(const WorldCity& city);
 
     bool landTradeShutdown() const { return mShutdownLandTrade; }
     void setLandTradeShutdown(const bool s) { mShutdownLandTrade = s; }
@@ -371,8 +371,8 @@ public:
                              const int tx, const int ty,
                              int& nX, int& nY) const;
 
-    eMilitaryAid* militaryAid(const stdsptr<eWorldCity>& c) const;
-    void removeMilitaryAid(const stdsptr<eWorldCity>& c);
+    eMilitaryAid* militaryAid(const stdsptr<WorldCity>& c) const;
+    void removeMilitaryAid(const stdsptr<WorldCity>& c);
     void addMilitaryAid(const stdsptr<eMilitaryAid>& a);
 
     bool wasHeroSummoned(const eHeroType hero) const;

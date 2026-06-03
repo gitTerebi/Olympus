@@ -1,4 +1,4 @@
-#ifndef EREADSTREAM_H
+﻿#ifndef EREADSTREAM_H
 #define EREADSTREAM_H
 
 #define SDL_MAIN_HANDLED
@@ -21,11 +21,11 @@ class eCharacterAction;
 class GameBoard;
 class eCharacterActionFunction;
 class eGodAct;
-class eWorldCity;
+class WorldCity;
 class eBanner;
 class SoldierBanner;
 class eGameEvent;
-class eWorldBoard;
+class WorldBoard;
 class eInvasionHandler;
 
 #include "engine/edirectionlastusetime.h"
@@ -183,9 +183,9 @@ public:
     stdsptr<eGodAct> readGodAct(GameBoard& board);
     stdsptr<eDirectionTimes> readDirectionTimes(
             GameBoard& board);
-    using eCityFunc = std::function<void(stdsptr<eWorldCity>)>;
+    using eCityFunc = std::function<void(stdsptr<WorldCity>)>;
     void readCity(GameBoard* board, const eCityFunc& func);
-    void readCity(eWorldBoard* board, const eCityFunc& func);
+    void readCity(WorldBoard* board, const eCityFunc& func);
     using eBannerFunc = std::function<void(eBanner*)>;
     void readBanner(GameBoard* board, const eBannerFunc& func);
     using SoldierBannerFunc = std::function<void(stdsptr<SoldierBanner>)>;

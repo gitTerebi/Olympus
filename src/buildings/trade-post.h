@@ -1,9 +1,9 @@
-#ifndef TRADE_POST_H
+﻿#ifndef TRADE_POST_H
 #define TRADE_POST_H
 
 #include "warehouse-base.h"
 
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "ewalkablehelpers.h"
 
 class eSaveArchive;
@@ -14,7 +14,7 @@ enum class eTradePostType {
 
 class TradePost : public WarehouseBase {
 public:
-    TradePost(GameBoard& board, eWorldCity& city,
+    TradePost(GameBoard& board, WorldCity& city,
                const eCityId cid,
                const eTradePostType type = eTradePostType::post);
     ~TradePost();
@@ -42,7 +42,7 @@ public:
                    eResourceType& cartAccept,
                    eResourceType& cartDontAccept) const;
 
-    eWorldCity& city() const { return mCity; }
+    WorldCity& city() const { return mCity; }
 
     void spawnTrader();
 
@@ -80,7 +80,7 @@ protected:
 private:
     eTile* entryPoint() const;
 
-    eWorldCity& mCity;
+    WorldCity& mCity;
     const eTradePostType mType;
     eResourceType mImports = eResourceType::none;
     eResourceType mExports = eResourceType::none;

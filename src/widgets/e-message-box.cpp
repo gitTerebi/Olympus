@@ -12,7 +12,7 @@
 #include "elanguage.h"
 
 #include "estringhelpers.h"
-#include "engine/e-worldcity.h"
+#include "engine/world-city.h"
 #include "widgets/game-widget.h"
 
 #include "engine/game-board.h"
@@ -155,7 +155,7 @@ void eMessageBox::initialize(GameBoard& board,
 
     if(const auto c = ed.fCity) {
         const auto nat = c->nationality();
-        const auto natName = eWorldCity::sNationalityName(nat);
+        const auto natName = WorldCity::sNationalityName(nat);
         eStringHelpers::replaceAll(msg.fText, "[nationality]",
                                    natName);
         eStringHelpers::replaceAll(msg.fText, "[city_name]",
@@ -174,7 +174,7 @@ void eMessageBox::initialize(GameBoard& board,
     const auto c = ed.fRivalCity ? ed.fRivalCity : ed.fCity;
     if(c) {
         const auto nat = c->nationality();
-        const auto natName = eWorldCity::sNationalityName(nat);
+        const auto natName = WorldCity::sNationalityName(nat);
         eStringHelpers::replaceAll(msg.fText, "[rival_nationality]",
                                    natName);
         eStringHelpers::replaceAll(msg.fText, "[rival_city_name]",
@@ -288,6 +288,7 @@ void eMessageBox::initialize(GameBoard& board,
                 const auto iniC = ed.fCityNames.begin();
                 const auto iniCid = iniC->first;
                 wid->addWidget(acceptB);
+                acceptB->setVisible(ed.fCityConditionalResponses.count(iniCid) > 0);
                 acceptB->setPressAction([this, boardPtr, ed, iniCid]() {
                     const auto a0 = ed.fCityConditionalResponses.at(iniCid);
                     boardPtr->respondToEvent(ed.fEventRuntimeId, a0, iniCid);
@@ -314,7 +315,7 @@ void eMessageBox::initialize(GameBoard& board,
                         const auto cStr = std::to_string(c);
                         spaceLabel->setText(cStr);
                     }
-                    acceptB->setVisible(space > 0);
+                    acceptB->setVisible(ed.fCityConditionalResponses.count(cid) > 0);
                     acceptB->setPressAction([this, boardPtr, ed, cid]() {
                         const auto a0 = ed.fCityConditionalResponses.at(cid);
                         boardPtr->respondToEvent(ed.fEventRuntimeId, a0, cid);
@@ -414,7 +415,7 @@ void eMessageBox::initialize(GameBoard& board,
             const auto iniC = ed.fCityNames.begin();
             const auto iniCid = iniC->first;
             wid->addWidget(a0B);
-            a0B->setVisible(ed.fCSpaceCount.at(iniCid) >= ed.fResourceCount);
+            a0B->setVisible(ed.fCityConditionalResponses.count(iniCid) > 0);
             a0B->setPressAction([this, boardPtr, ed, iniCid]() {
                 const auto a0 = ed.fCityConditionalResponses.at(iniCid);
                 boardPtr->respondToEvent(ed.fEventRuntimeId, a0, iniCid);
@@ -429,8 +430,7 @@ void eMessageBox::initialize(GameBoard& board,
             const auto cityB = new eBoardCitySwitchButton(window());
             cityB->setFontSizeS();
             const auto setCid = [this, boardPtr, ed, a0B](const eCityId cid) {
-                const int count = ed.fCSpaceCount.at(cid);
-                a0B->setVisible(count >= ed.fResourceCount);
+                a0B->setVisible(ed.fCityConditionalResponses.count(cid) > 0);
                 a0B->setPressAction([this, boardPtr, ed, cid]() {
                     const auto a0 = ed.fCityConditionalResponses.at(cid);
                     boardPtr->respondToEvent(ed.fEventRuntimeId, a0, cid);

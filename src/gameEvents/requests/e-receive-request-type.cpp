@@ -1,4 +1,4 @@
-#include "e-receive-request-type.h"
+﻿#include "e-receive-request-type.h"
 
 #include "emessages.h"
 
@@ -50,7 +50,7 @@ DEFINE_ENTRY(financialWoes, FinancialWoes, Parent, ParentR);
 
 static const eReceiveRequestEntry& getEntry(
     const eReceiveRequestType type,
-    const eWorldCity& city) {
+    const WorldCity& city) {
     if(city.isRival()) {
         switch(type) {
         case eReceiveRequestType::general: return kGeneralRequestRival;
@@ -104,7 +104,7 @@ static const eReceiveRequestEntry& getEntry(
 
 eEvent receiveRequestFinishEvent(
     const eReceiveRequestType type,
-    const eWorldCity& city,
+    const WorldCity& city,
     const eReceiveRequestFinish finish) {
     const auto& entry = getEntry(type, city);
     switch(finish) {
@@ -117,7 +117,7 @@ eEvent receiveRequestFinishEvent(
 
 eEvent receiveRequestStepEvent(
     const eReceiveRequestType type,
-    const eWorldCity& city,
+    const WorldCity& city,
     const int requestStep) {
     const auto& entry = getEntry(type, city);
     switch(requestStep) {
@@ -132,6 +132,6 @@ eEvent receiveRequestStepEvent(
 
 const eReceiveRequestMessages* receiveRequestMessages(
     const eReceiveRequestType type,
-    const eWorldCity& city) {
+    const WorldCity& city) {
     return getEntry(type, city).fMessages;
 }

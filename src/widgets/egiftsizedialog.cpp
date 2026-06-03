@@ -1,4 +1,4 @@
-#include "egiftsizedialog.h"
+﻿#include "egiftsizedialog.h"
 
 #include "elanguage.h"
 #include "estringhelpers.h"
@@ -8,7 +8,7 @@
 #include "engine/egifthelpers.h"
 
 void eGiftSizeDialog::initialize(const eResourceType type,
-                                 const stdsptr<eWorldCity>& c,
+                                 const stdsptr<WorldCity>& c,
                                  const eRequestFunction& func,
                                  const GameBoard& board,
                                  const eCityId cid) {
