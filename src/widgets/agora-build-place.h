@@ -26,13 +26,13 @@ std::vector<eTile*> agoraBuildPlaceTR(GameBoard* board, bool editorMode,
 
 std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                                         eTile* const tile, bool grand,
-                                        eAgoraOrientation& bt,
+                                        eAgoraOrientation& agoraOrientation,
                                         eCityId cid, ePlayerId pid);
 
 std::vector<eTile*> stampAgoraBuildPlace(GameBoard* board, bool editorMode,
                                          const eStampBuildCommand& cmd,
                                          int pressedTX, int pressedTY,
-                                         eAgoraOrientation& bt,
+                                         eAgoraOrientation& agoraOrientation,
                                          eCityId cid, ePlayerId pid);
 
 #endif // AGORA_BUILD_PLACE_H

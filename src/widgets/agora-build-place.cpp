@@ -7,9 +7,9 @@
 bool agoraRoadTile(eTile* const t) {
     if(!t) return false;
     if(!t->hasRoad()) return false;
-    const auto ub = t->underBuilding();
-    if(!ub) return false;
-    const auto r = static_cast<eRoad*>(ub);
+    const auto building = t->underBuilding();
+    if(!building) return false;
+    const auto r = static_cast<eRoad*>(building);
     return !r->underAgora();
 }
 
@@ -158,7 +158,7 @@ std::vector<eTile*> agoraBuildPlaceTR(GameBoard* board, bool editorMode,
 
 std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                                         eTile* const tile, bool grand,
-                                        eAgoraOrientation& bt,
+                                        eAgoraOrientation& agoraOrientation,
                                         eCityId cid, ePlayerId pid) {
     if(!tile) return {};
     {
@@ -172,7 +172,7 @@ std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                 if(!t) continue;
                 const auto r = agoraBuildPlaceBR(board, editorMode, t, cid, pid);
                 if(r.empty()) continue;
-                bt = eAgoraOrientation::bottomRight;
+                agoraOrientation = eAgoraOrientation::bottomRight;
                 if(grand) {
                     const auto rr = agoraBuildPlaceTL(board, editorMode, t, cid, pid);
                     if(rr.empty()) continue;
@@ -198,7 +198,7 @@ std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                 const auto r = agoraBuildPlaceTL(board, editorMode, t, cid, pid);
                 if(r.empty()) continue;
                 if(grand) {
-                    bt = eAgoraOrientation::bottomRight;
+                    agoraOrientation = eAgoraOrientation::bottomRight;
                     const auto rr = agoraBuildPlaceBR(board, editorMode, t, cid, pid);
                     if(rr.empty()) continue;
                     std::vector<eTile*> rrr;
@@ -207,7 +207,7 @@ std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                     rrr.insert(rrr.end(), rr.begin(), rr.end());
                     return rrr;
                 } else {
-                    bt = eAgoraOrientation::topLeft;
+                    agoraOrientation = eAgoraOrientation::topLeft;
                 }
                 return r;
             }
@@ -224,7 +224,7 @@ std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                 if(!t) continue;
                 const auto r = agoraBuildPlaceBL(board, editorMode, t, cid, pid);
                 if(r.empty()) continue;
-                bt = eAgoraOrientation::bottomLeft;
+                agoraOrientation = eAgoraOrientation::bottomLeft;
                 if(grand) {
                     const auto rr = agoraBuildPlaceTR(board, editorMode, t, cid, pid);
                     if(rr.empty()) continue;
@@ -250,7 +250,7 @@ std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                 const auto r = agoraBuildPlaceTR(board, editorMode, t, cid, pid);
                 if(r.empty()) continue;
                 if(grand) {
-                    bt = eAgoraOrientation::bottomLeft;
+                    agoraOrientation = eAgoraOrientation::bottomLeft;
                     const auto rr = agoraBuildPlaceBL(board, editorMode, t, cid, pid);
                     if(rr.empty()) continue;
                     std::vector<eTile*> rrr;
@@ -259,7 +259,7 @@ std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
                     rrr.insert(rrr.end(), rr.begin(), rr.end());
                     return rrr;
                 } else {
-                    bt = eAgoraOrientation::topRight;
+                    agoraOrientation = eAgoraOrientation::topRight;
                 }
                 return r;
             }
@@ -271,21 +271,21 @@ std::vector<eTile*> agoraBuildPlaceIter(GameBoard* board, bool editorMode,
 std::vector<eTile*> stampAgoraBuildPlace(GameBoard* board, bool editorMode,
                                          const eStampBuildCommand& cmd,
                                          int pressedTX, int pressedTY,
-                                         eAgoraOrientation& bt,
+                                         eAgoraOrientation& agoraOrientation,
                                          eCityId cid, ePlayerId pid) {
-    const int tx = pressedTX + cmd.dx;
-    const int ty = pressedTY + cmd.dy;
-    const auto t = board->tile(tx, ty);
+    const int worldTileX = pressedTX + cmd.dx;
+    const int worldTileY = pressedTY + cmd.dy;
+    const auto t = board->tile(worldTileX, worldTileY);
     std::vector<eTile*> result;
 
     if(cmd.agoraRect && cmd.agoraOrientation >= 0) {
-        bt = static_cast<eAgoraOrientation>(cmd.agoraOrientation);
-        const bool horizontal = bt == eAgoraOrientation::bottomLeft ||
-                                bt == eAgoraOrientation::topRight;
+        agoraOrientation = static_cast<eAgoraOrientation>(cmd.agoraOrientation);
+        const bool horizontal = agoraOrientation == eAgoraOrientation::bottomLeft ||
+                                agoraOrientation == eAgoraOrientation::topRight;
         const int w = horizontal ? 6 : 3;
         const int h = horizontal ? 3 : 6;
-        for(int x = tx; x < tx + w; x++) {
-            for(int y = ty; y < ty + h; y++) {
+        for(int x = worldTileX; x < worldTileX + w; x++) {
+            for(int y = worldTileY; y < worldTileY + h; y++) {
                 if(!agoraSpaceTile(board, editorMode, x, y, cid, pid)) return {};
                 result.push_back(board->tile(x, y));
             }
@@ -328,7 +328,7 @@ std::vector<eTile*> stampAgoraBuildPlace(GameBoard* board, bool editorMode,
             const int score = 10*spaceScore(tiles) + roadScore(tiles);
             if(score > bestScore) {
                 bestScore = score;
-                bt = o;
+                agoraOrientation = o;
                 result = tiles;
             }
         };
@@ -348,8 +348,8 @@ std::vector<eTile*> stampAgoraBuildPlace(GameBoard* board, bool editorMode,
     }
 
     if(cmd.agoraOrientation >= 0) {
-        bt = static_cast<eAgoraOrientation>(cmd.agoraOrientation);
-        switch(bt) {
+        agoraOrientation = static_cast<eAgoraOrientation>(cmd.agoraOrientation);
+        switch(agoraOrientation) {
         case eAgoraOrientation::bottomRight:
             return agoraBuildPlaceBR(board, editorMode, t, cid, pid);
         case eAgoraOrientation::topLeft:
@@ -361,5 +361,5 @@ std::vector<eTile*> stampAgoraBuildPlace(GameBoard* board, bool editorMode,
         }
     }
 
-    return agoraBuildPlaceIter(board, editorMode, t, false, bt, cid, pid);
+    return agoraBuildPlaceIter(board, editorMode, t, false, agoraOrientation, cid, pid);
 }

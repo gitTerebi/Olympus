@@ -16,16 +16,16 @@ void GameWidget::drawRoadFootprint(eTile* const tile, const SDL_Color color,
                                    const eTerrainTextures& trrTexs)
 {
     if (!tile) return;
-    const int tx = tile->x();
-    const int ty = tile->y();
-    const int a = mDrawElevation ? tile->altitude() : 0;
-    double rx;
-    double ry;
-    drawXY(tx, ty, rx, ry, 1, 1, a);
+    const int worldTileX = tile->x();
+    const int worldTileY = tile->y();
+    const int altitude = mDrawElevation ? tile->altitude() : 0;
+    double drawX;
+    double drawY;
+    drawXY(worldTileX, worldTileY, drawX, drawY, 1, 1, altitude);
     const auto& tex = trrTexs.fBuildingBase;
     tex->setColorMod(color.r, color.g, color.b);
     tex->setAlpha(color.a);
-    tp.drawTexture(rx, ry, tex, eAlignment::top);
+    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
     tex->clearAlphaMod();
     tex->clearColorMod();
 }

@@ -31,15 +31,15 @@ SDL_Point tilePoint(GameBoard& board,
                     const int tileW,
                     const int tileH)
 {
-    int rtx;
-    int rty;
-    eTileHelper::tileIdToRotatedTileId(tile->x(), tile->y(), rtx, rty,
+    int viewTileX;
+    int viewTileY;
+    eTileHelper::tileIdToRotatedTileId(tile->x(), tile->y(), viewTileX, viewTileY,
                                        board.direction(),
                                        board.width(), board.height());
-    const int a = tile->altitude();
+    const int altitude = tile->altitude();
     return {
-        (rtx - rty)*tileW/2,
-        (rtx + rty - 2*a)*tileH/2
+        (viewTileX - viewTileY)*tileW/2,
+        (viewTileX + viewTileY - 2*altitude)*tileH/2
     };
 }
 
@@ -71,22 +71,22 @@ void drawCross(ePainter& p,
 }
 
 void drawLine(ePainter& p,
-              const SDL_Point a,
-              const SDL_Point b,
+              const SDL_Point fromPoint,
+              const SDL_Point toPoint,
               const SDL_Color color)
 {
-    const double dx = b.x - a.x;
-    const double dy = b.y - a.y;
+    const double dx = toPoint.x - fromPoint.x;
+    const double dy = toPoint.y - fromPoint.y;
     const double len = std::sqrt(dx*dx + dy*dy);
     if(len < 1.0) return;
     const double px = -dy/len;
     const double py = dx/len;
     const int width = 22;
     const std::vector<SDL_Point> shaft{
-        {int(a.x + px*width), int(a.y + py*width)},
-        {int(b.x + px*width), int(b.y + py*width)},
-        {int(b.x - px*width), int(b.y - py*width)},
-        {int(a.x - px*width), int(a.y - py*width)}
+        {int(fromPoint.x + px*width), int(fromPoint.y + py*width)},
+        {int(toPoint.x + px*width), int(toPoint.y + py*width)},
+        {int(toPoint.x - px*width), int(toPoint.y - py*width)},
+        {int(fromPoint.x - px*width), int(fromPoint.y - py*width)}
     };
     p.drawPolygon(shaft, color);
 }
@@ -121,18 +121,18 @@ void paintInvasionDebugTargets(GameBoard& board,
         const auto target = invasion->moveToTile();
         if(!from || !target) continue;
 
-        const auto a = tilePoint(board, from, tileW, tileH);
-        const auto b = tilePoint(board, target, tileW, tileH);
+        const auto fromPoint = tilePoint(board, from, tileW, tileH);
+        const auto toPoint = tilePoint(board, target, tileW, tileH);
         const SDL_Color line{255, 25, 25, 220};
         const SDL_Color start{255, 230, 40, 230};
         const SDL_Color end{255, 25, 25, 255};
-        drawLine(p, a, b, line);
-        drawDiamond(p, a, tileW, tileH, start);
-        drawDiamond(p, b, tileW, tileH, end);
-        drawLabel(p, a, "FROM", {});
-        drawLabel(p, b, "GOAL", {});
+        drawLine(p, fromPoint, toPoint, line);
+        drawDiamond(p, fromPoint, tileW, tileH, start);
+        drawDiamond(p, toPoint, tileW, tileH, end);
+        drawLabel(p, fromPoint, "FROM", {});
+        drawLabel(p, toPoint, "GOAL", {});
 
         const int pulse = 10 + (animFrame / 8) % 8;
-        drawCross(p, b, pulse, SDL_Color{255, 255, 255, 240});
+        drawCross(p, toPoint, pulse, SDL_Color{255, 255, 255, 240});
     }
 }

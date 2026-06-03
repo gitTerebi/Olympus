@@ -9,7 +9,7 @@
 void GameWidget::paintStampPreview(eTilePainter &tp,
                                     const eTerrainTextures &trrTexs,
                                     const eBuildingTextures &builTexs,
-                                    int tx, int ty,
+                                    int worldTileX, int worldTileY,
                                     ePlayerId ppid)
 {
     eGameTextures::loadCommonHouse();
@@ -21,14 +21,14 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
     eGameTextures::loadPark();
     eGameTextures::loadAgora();
 
-    const auto doDrawXY = [&](int bx, int by, double &rx, double &ry,
-                              int sw, int sh, int alt)
+    const auto doDrawXY = [&](int buildingTileX, int buildingTileY, double &drawX, double &drawY,
+                              int tileSpanW, int tileSpanH, int altitude)
     {
-        drawXY(bx, by, rx, ry, sw, sh, alt);
+        drawXY(buildingTileX, buildingTileY, drawX, drawY, tileSpanW, tileSpanH, altitude);
     };
 
-    const auto doDrawTex = [&](double rx, double ry,
-                               eBuildingType type, int sw, bool can)
+    const auto doDrawTex = [&](double drawX, double drawY,
+                               eBuildingType buildingType, int tileSpanW, bool canBuild)
     {
         stdsptr<eTexture> tex;
         const auto firstTex = [](const eTextureCollection &coll) -> stdsptr<eTexture>
@@ -37,7 +37,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
                 return nullptr;
             return coll.getTexture(0);
         };
-        switch (type)
+        switch (buildingType)
         {
         case eBuildingType::road:
             tex = trrTexs.fRoad.getTexture(12);
@@ -395,12 +395,12 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
         if (!tex) return;
         if (fallback)
             tex->setColorMod(140, 140, 140);
-        else if (!can)
+        else if (!canBuild)
             tex->setColorMod(255, 0, 0);
         tex->setAlpha(120);
-        tp.drawTexture(rx, ry, tex, eAlignment::top);
+        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
         tex->clearAlphaMod();
-        if (fallback || !can)
+        if (fallback || !canBuild)
             tex->clearColorMod();
     };
     const auto doDrawAgora = [&](const int ax, const int ay, const int id)
@@ -431,9 +431,9 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
                 const auto tile = mBoard->tile(x, y);
                 if (!tile)
                     continue;
-                double rx;
-                double ry;
-                drawXY(x, y, rx, ry, 1, 1, tile->altitude());
+                double drawX;
+                double drawY;
+                drawXY(x, y, drawX, drawY, 1, 1, tile->altitude());
                 stdsptr<eTexture> tex;
                 if (isRoad(x, y))
                 {
@@ -449,7 +449,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
                     continue;
                 tex->setColorMod(0, 255, 0);
                 tex->setAlpha(120);
-                tp.drawTexture(rx, ry, tex, eAlignment::top);
+                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                 tex->clearAlphaMod();
                 tex->clearColorMod();
             }
@@ -465,9 +465,9 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
             const auto tile = mBoard->tile(x, y);
             if (!tile)
                 return;
-            double rx;
-            double ry;
-            drawXY(x, y, rx, ry, 1, 1, tile->altitude());
+            double drawX;
+            double drawY;
+            drawXY(x, y, drawX, drawY, 1, 1, tile->altitude());
             stdsptr<eTexture> tex;
             if (road)
             {
@@ -483,15 +483,15 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
                 return;
             tex->setColorMod(0, 255, 0);
             tex->setAlpha(120);
-            tp.drawTexture(rx, ry, tex, eAlignment::top);
+            tp.drawTexture(drawX, drawY, tex, eAlignment::top);
             tex->clearAlphaMod();
             tex->clearColorMod();
         };
         for (const auto &road : cmd.agoraRoads)
-            drawCell(tx + road.first, ty + road.second, true);
+            drawCell(worldTileX + road.first, worldTileY + road.second, true);
     };
 
-    mStampTool->paintPreview(tx, ty, mBoard, mEditorMode, mViewedCityId, ppid,
+    mStampTool->paintPreview(worldTileX, worldTileY, mBoard, mEditorMode, mViewedCityId, ppid,
                              doDrawXY, doDrawTex, doDrawAgora,
                              doDrawStampAgora);
 }
