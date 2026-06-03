@@ -267,10 +267,6 @@ void GameBoard::setWorldDirection(const eWorldDirection dir)
 {
     mDirection = dir;
     scheduleTerrainUpdate();
-    const char* name = dir == eWorldDirection::N ? "N" :
-                       dir == eWorldDirection::W ? "W" :
-                       dir == eWorldDirection::S ? "S" : "E";
-    printf("camera dir = %s\n", name);
 }
 
 eTile *GameBoard::rotateddtile(const int x, const int y) const
