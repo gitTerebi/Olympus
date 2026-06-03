@@ -2344,6 +2344,14 @@ void GameWidget::paintBuildPreview(
         std::stable_sort(ebs.begin(), ebs.end(),
                          [&](const eB &lhs, const eB &rhs)
                          {
+                             if (isSanctuaryPreview) {
+                                 const SDL_Rect lr{lhs.fTx, lhs.fTy, 1, 1};
+                                 const SDL_Rect rr{rhs.fTx, rhs.fTy, 1, 1};
+                                 const auto rl = eTileHelper::toRotatedRect(lr, dir, boardw, boardh);
+                                 const auto rr2 = eTileHelper::toRotatedRect(rr, dir, boardw, boardh);
+                                 if (rl.y != rr2.y) return rl.y < rr2.y;
+                                 return rl.x < rr2.x;
+                             }
                              const int lhsSpanW = lhs.fBR ? lhs.fBR->spanW() : 1;
                              const int lhsSpanH = lhs.fBR ? lhs.fBR->spanH() : 1;
                              const int rhsSpanW = rhs.fBR ? rhs.fBR->spanW() : 1;
@@ -2356,8 +2364,6 @@ void GameWidget::paintBuildPreview(
                                  lhsRect, dir, boardw, boardh);
                              const auto rotatedRhsRect = eTileHelper::toRotatedRect(
                                  rhsRect, dir, boardw, boardh);
-                             if (isSanctuaryPreview)
-                                 return lhs.fOrder < rhs.fOrder;
                              const int lhsY = rotatedLhsRect.y + rotatedLhsRect.h - 1;
                              const int rhsY = rotatedRhsRect.y + rotatedRhsRect.h - 1;
                              if (lhsY != rhsY)
@@ -2399,7 +2405,7 @@ void GameWidget::paintBuildPreview(
                     drawSanctuaryTempleBuildingPreview(
                         *mBoard, tp, builTexs, eb.fTx, eb.fTy,
                         eb.fAltitude, eb.fTempleOverlayDirId,
-                        dir, mAnimFrame, canBuildPreview);
+                        dir, mAnimFrame, canBuildPreview, 0);
                     continue;
                 }
                 if (type == eBuildingType::templeStatue)

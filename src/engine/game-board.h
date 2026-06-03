@@ -797,7 +797,7 @@ public:
     bool buildSanctuary(const int minX, const int maxX,
                         const int minY, const int maxY,
                         const eBuildingType bt,
-                        const bool rotate,
+                        const int rotateId,
                         const eCityId cid,
                         const ePlayerId pid,
                         const bool editorDisplay);

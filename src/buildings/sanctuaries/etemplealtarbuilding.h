@@ -16,8 +16,7 @@ class eTempleAltarBuilding : public eSanctBuilding {
 public:
     eTempleAltarBuilding(GameBoard& board, const eCityId cid);
 
-    std::shared_ptr<eTexture>
-    getTexture(const eTileSize size) const override;
+    std::shared_ptr<eTexture> getTexture(const eTileSize) const override { return nullptr; }
 
     std::vector<eOverlay>
     getOverlays(const eTileSize size) const override;

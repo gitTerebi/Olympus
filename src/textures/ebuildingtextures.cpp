@@ -842,6 +842,8 @@ eBuildingTextures::eBuildingTextures(const int tileW, const int tileH,
     fHeraMonuments(renderer),
     fAtlasMonuments(renderer),
 
+    fSanctuaryFlippedSW(renderer),
+    fSanctuaryFlippedNW(renderer),
     fPoseidonSanctuary(renderer),
     fPyramid(renderer),
     fPyramid2(renderer),
@@ -2185,6 +2187,7 @@ void eBuildingTextures::loadSanctuary() {
             auto& coll = fSanctuary.emplace_back(fRenderer);
             loader.load(1, i, coll);
         }
+
     }
 
     {
@@ -2221,6 +2224,16 @@ void eBuildingTextures::loadZeusSanctuary() {
         auto& coll = fSanctuary[i - 1];
         loader.load(1, i, coll);
     }
+
+    // SW = SE(S3) flipped, NW overlay = NE(S3) flipped; index 2 = S3
+    const auto makeFlipped = [&](const std::shared_ptr<eTexture>& src,
+                                 eTextureCollection& dst) {
+        auto& tex = dst.addTexture();
+        tex->setOffset(0, src->offsetY());
+        tex->setFlipTex(src);
+    };
+    makeFlipped(fSanctuary[1].getTexture(2), fSanctuaryFlippedSW);
+    makeFlipped(fSanctuary[0].getTexture(2), fSanctuaryFlippedNW);
 }
 
 void eBuildingTextures::loadHerosHall() {

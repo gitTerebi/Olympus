@@ -3,6 +3,35 @@
 #include "sanctuary.h"
 #include "fileIO/esavearchive.h"
 
+bool sanctuaryTempleFrontFacing(const int rotateId, const eWorldDirection dir)
+{
+    static const bool table[4][4] = {
+        // N      W      S      E
+        { true,  true,  false, false }, // rot 0
+        { true,  false, false, true  }, // rot 1
+        { false, false, true,  true  }, // rot 2
+        { false, true,  true,  false }, // rot 3
+    };
+    return table[rotateId % 4][static_cast<int>(dir)];
+}
+
+int sanctuaryFigureDirId(const int rotateId, const eWorldDirection dir)
+{
+    const int base = (dir == eWorldDirection::E) ? kNE :
+                     (dir == eWorldDirection::N) ? kSE :
+                     (dir == eWorldDirection::W) ? kSW : kNW;
+    return (base + rotateId) % 4;
+}
+
+int sanctuaryTempleDirId(const int rotateId, const eWorldDirection dir)
+{
+    // temple: SW=0 SE=1 NE=2 NW=3
+    const int base = (dir == eWorldDirection::N) ? 1 :
+                     (dir == eWorldDirection::W) ? 0 :
+                     (dir == eWorldDirection::S) ? 3 : 2; // E
+    return (base - rotateId + 4) % 4;
+}
+
 eSanctCost totalCost(const std::vector<eSanctCost>& cost) {
     eSanctCost result{0, 0, 0};
     for(const auto& c : cost) {

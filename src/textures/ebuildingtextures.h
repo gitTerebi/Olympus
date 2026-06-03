@@ -655,6 +655,8 @@ public:
     eTextureCollection fAtlasMonuments;
 
     std::vector<eTextureCollection> fSanctuary;
+    eTextureCollection fSanctuaryFlippedSW;
+    eTextureCollection fSanctuaryFlippedNW;
     eTextureCollection fPoseidonSanctuary;
     eTextureCollection fPyramid;
     eTextureCollection fPyramid2;

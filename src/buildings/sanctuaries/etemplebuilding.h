@@ -11,21 +11,11 @@ public:
     eTempleBuilding(const int id, GameBoard& board,
                     const eCityId cid);
 
-    std::shared_ptr<eTexture>
-    getTexture(const eTileSize size) const override;
-
-    std::vector<eOverlay>
-    getOverlays(const eTileSize size) const override;
+    std::shared_ptr<eTexture> getTexture(const eTileSize) const override { return nullptr; }
 
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    bool hasNeighbour() const;
-
-    int rotatedId() const;
-
-    mutable bool mUpdateHasNeighbour = true;
-    mutable bool mHasNeighbour = false;
     int mId;
 };
 

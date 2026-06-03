@@ -3,6 +3,13 @@
 
 #include "../ebuilding.h"
 #include "fileIO/esavearchive.h"
+#include "engine/eworlddirection.h"
+
+enum eFigureFacing { kNE = 0, kSE = 1, kSW = 2, kNW = 3 };
+
+bool sanctuaryTempleFrontFacing(int rotateId, eWorldDirection dir);
+int sanctuaryFigureDirId(int rotateId, eWorldDirection dir);
+int sanctuaryTempleDirId(int rotateId, eWorldDirection dir);
 
 struct eSanctCost {
     int fWood = 0;
