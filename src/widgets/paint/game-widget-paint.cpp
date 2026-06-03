@@ -22,6 +22,7 @@
 #include "buildings/pyramids/epyramid.h"
 
 #include "missiles/emissile.h"
+#include "destruction-puff.h"
 #include "characters/soldier-banner.h"
 #include "widgets/paint/invasion-debug-paint.h"
 #include "widgets/paint/draw/draw-column.h"
@@ -1596,6 +1597,7 @@ void GameWidget::paintEvent(ePainter &p)
                         return ca && ca->src() == mWalkerBuilding.get();
                     }();
                     const bool charHighlighted = walkerSelected || patrolerSelected;
+                    const bool charDead = c->dead();
                     const auto drawCharTex = [&](const std::shared_ptr<eTexture>& t,
                                                  const double cx, const double cy,
                                                  const bool drawDot) {
@@ -1604,7 +1606,9 @@ void GameWidget::paintEvent(ePainter &p)
                         const double offY = mTileH*t->offsetY()/30.;
                         const int dx = std::round(mDX + 0.5*(cx - cy)*mTileW - offX);
                         const int dy = std::round(mDY + 0.5*(cx + cy)*mTileH - offY);
-                        if(charHighlighted) {
+                        if(charDead) {
+                            t->setColorMod(255, 0, 0);
+                        } else if(charHighlighted) {
                             t->setColorMod(selectedWalkerColor.r,
                                            selectedWalkerColor.g,
                                            selectedWalkerColor.b);
@@ -1612,7 +1616,7 @@ void GameWidget::paintEvent(ePainter &p)
                             t->setColorMod(hr, hg, hb);
                         }
                         t->render(r, dx, dy, false);
-                        if(charHighlighted || hover) t->clearColorMod();
+                        if(charDead || charHighlighted || hover) t->clearColorMod();
                         if(charHighlighted && drawDot) {
                             trackingBoxes.push_back({dx, dy});
                         }
@@ -2355,6 +2359,35 @@ void GameWidget::paintEvent(ePainter &p)
 
     // enemy banners drawn after flush so they sit on top of everything
     for(const auto& d : deferredEnemyBanners) d();
+
+    // destruction puffs draw on top of everything
+    for(const auto puff : mBoard->destructionPuffs()) {
+        if(puff->dead()) continue;
+        const int worldTileX = static_cast<int>(puff->worldX());
+        const int worldTileY = static_cast<int>(puff->worldY());
+        int viewTileX;
+        int viewTileY;
+        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+                                           viewTileX, viewTileY, dir,
+                                           boardWidth, boardHeight);
+        double sx;
+        double sy;
+        if(dir == eWorldDirection::N) {
+            sx = viewTileX + 0.25;
+            sy = viewTileY + 0.25;
+        } else if(dir == eWorldDirection::E) {
+            sx = viewTileX + 0.25;
+            sy = viewTileY + 1.25;
+        } else if(dir == eWorldDirection::S) {
+            sx = viewTileX + 1.25;
+            sy = viewTileY + 1.25;
+        } else {
+            sx = viewTileX + 1.25;
+            sy = viewTileY + 0.25;
+        }
+        const auto tex = puff->getTexture(mTileSize);
+        tp.drawTexture(sx, sy, tex);
+    }
 
     paintInvasionDebugTargets(*mBoard, mViewedCityId, p,
                               mTileW, mTileH, mAnimFrame);

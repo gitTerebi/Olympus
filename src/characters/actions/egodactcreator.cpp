@@ -42,6 +42,8 @@ stdsptr<eGodAct> eGodAct::sCreate(
         return std::make_shared<eLookForTargetedBlessGodAct>(board);
     case eGodActType::lookForTargetedAttack:
         return std::make_shared<eLookForTargetedAttackGodAct>(board);
+    case eGodActType::spawnImpactPuffs:
+        return std::make_shared<eSpawnImpactPuffsGodAct>(board);
     }
     return nullptr;
 }

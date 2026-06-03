@@ -49,6 +49,7 @@ class eSaveArchive;
 class eGameEvent;
 
 class eSpawner;
+class DestructionPuff;
 enum class eBannerType;
 enum class eBannerTypeS;
 class eCharacter;
@@ -210,6 +211,10 @@ public:
 
     void registerMissile(eMissile* const m);
     bool unregisterMissile(eMissile* const m);
+
+    void registerDestructionPuff(DestructionPuff* const p);
+    bool unregisterDestructionPuff(DestructionPuff* const p);
+    const std::vector<DestructionPuff*>& destructionPuffs() const { return mDestructionPuffs; }
 
     bool hasStadium(const eCityId cid) const;
     bool hasMuseum(const eCityId cid) const;
@@ -893,6 +898,7 @@ private:
     std::vector<eCharacter*> mCharacters;
     std::vector<eSoldier*> mSoldiers;
     std::vector<eMissile*> mMissiles;
+    std::vector<DestructionPuff*> mDestructionPuffs;
 
     std::vector<SoldierBanner*> mSelectedBanners;
     eAction mBannerSelectionChanged;

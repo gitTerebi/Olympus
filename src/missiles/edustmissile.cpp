@@ -15,11 +15,7 @@ eDustMissile::getTexture(const eTileSize size) const {
     const auto& colls = textures[id].fDust;
     const int collId = mCollId % colls.size();
     const auto& coll = colls[collId];
-    const int texId = textureTime() + mTexTimeShift;
+    const int texId = textureTime();
     const int clampedTexId = std::clamp(texId, 0, coll.size() - 1);
-    if(clampedTexId == coll.size() - 1) {
-        mCollId = eRand::rand();
-        mTexTimeShift -= texId;
-    }
     return coll.getTexture(clampedTexId);
 }

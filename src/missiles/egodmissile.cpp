@@ -43,6 +43,10 @@ eGodMissile::getTexture(const eTileSize size) const {
             const auto ht = eHero::sCharacterToHeroType(mCharType);
             collsptr = eHero::sHeroMissile(ht);
         } break;
+        case eCharacterType::hydra:
+            eGameTextures::loadGodBlueArrow();
+            collsptr = &eDestructionTextures::fGodBlueArrow;
+            break;
         default:
             eGameTextures::loadMonsterMissile();
             collsptr = &eDestructionTextures::fMonsterMissile;
