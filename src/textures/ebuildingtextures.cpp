@@ -1,4 +1,4 @@
-#include "ebuildingtextures.h"
+﻿#include "ebuildingtextures.h"
 
 #include "ebinaryimageloader.h"
 #include "offsets/SprAmbient.h"
@@ -1818,10 +1818,10 @@ void eBuildingTextures::loadHorseRanch() {
     }
     {
         const auto& sds = spriteData(fTileH,
-                                     eHorseRanchEnclosureSpriteData15,
-                                     eHorseRanchEnclosureSpriteData30,
-                                     eHorseRanchEnclosureSpriteData45,
-                                     eHorseRanchEnclosureSpriteData60);
+                                     HorseRanchEnclosureSpriteData15,
+                                     HorseRanchEnclosureSpriteData30,
+                                     HorseRanchEnclosureSpriteData45,
+                                     HorseRanchEnclosureSpriteData60);
         eSpriteLoader loader(fTileH, "horseRanchEnclosure", sds,
                              nullptr, fRenderer);
 

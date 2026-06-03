@@ -30,7 +30,7 @@
 #include "buildings/emuseum.h"
 
 #include "buildings/ehorseranch.h"
-#include "buildings/ehorseranchenclosure.h"
+#include "buildings/horse-ranch-enclosure.h"
 #include "buildings/echariotfactory.h"
 
 #include "buildings/epalace.h"
@@ -306,7 +306,7 @@ bool gBuild(const AIBuilding& b,
                                          pid, cid, editorDisplay);
         if(!tpr) return false;
         const auto bcp = [boardPtr, cid, b, tpPtr]() {
-            const auto p = e::make_shared<eHorseRanchEnclosure>(*boardPtr, cid);
+            const auto p = e::make_shared<HorseRanchEnclosure>(*boardPtr, cid);
             p->setRanch(tpPtr);
             tpPtr->setEnclosure(p.get());
             return p;

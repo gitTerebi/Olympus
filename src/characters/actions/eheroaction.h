@@ -1,4 +1,4 @@
-#ifndef EHEROACTION_H
+﻿#ifndef EHEROACTION_H
 #define EHEROACTION_H
 
 #include "eactionwithcomeback.h"
@@ -39,7 +39,7 @@ private:
     bool fightMonster(eMonster* const m);
     void huntMonster(eMonster* const m, const bool second);
 
-    stdsptr<eWalkableObject> defaultWalkable() const;
+    stdsptr<WalkableObject> defaultWalkable() const;
 
     eHeroType heroType() const;
     bool rangedHero() const;
@@ -66,7 +66,7 @@ public:
         const auto t = mTptr.get();
         const auto c = t->character();
         c->setActionType(eCharacterActionType::walk);
-        t->goBack(eWalkableObject::sCreateDefault());
+        t->goBack(WalkableObject::sCreateDefault());
     }
 protected:
     void serializeFields(eSaveArchive& ar) override {

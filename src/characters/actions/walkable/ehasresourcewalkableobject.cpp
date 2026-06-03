@@ -5,12 +5,12 @@
 
 eHasResourceWalkableObject::eHasResourceWalkableObject(
         const stdsptr<eHasResourceObject>& hr,
-        const stdsptr<eWalkableObject>& w) :
-    eWalkableObject(eWalkableObjectType::hasResource),
+        const stdsptr<WalkableObject>& w) :
+    WalkableObject(eWalkableObjectType::hasResource),
     mHr(hr), mW(w) {}
 
 eHasResourceWalkableObject::eHasResourceWalkableObject() :
-    eWalkableObject(eWalkableObjectType::hasResource) {}
+    WalkableObject(eWalkableObjectType::hasResource) {}
 
 bool eHasResourceWalkableObject::walkable(eTileBase* const t) const {
     return mHr->has(t) || mW->walkable(t);

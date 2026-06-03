@@ -24,7 +24,8 @@ enum class eWalkableObjectType {
     ranch,
     all,
     attacker,
-    artisan
+    artisan,
+    ranchRect
 };
 
 class eHasResourceObject;
@@ -60,7 +61,7 @@ public:
     static stdsptr<eWalkableObject> sCreateWater();
     static stdsptr<eWalkableObject> sCreateWaterAndDefault();
     static stdsptr<eWalkableObject> sCreateAll();
-    static stdsptr<eWalkableObject> sCreateRanch();
+    static stdsptr<eWalkableObject> sCreateRanch(const SDL_Rect& rect);
     static stdsptr<eWalkableObject> sCreateRect(const SDL_Rect& rect);
     static stdsptr<eWalkableObject> sCreateRect(eBuilding* const b);
     static stdsptr<eWalkableObject> sCreateRect(

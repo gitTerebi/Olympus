@@ -1,4 +1,4 @@
-#include "ethreadbuilding.h"
+﻿#include "ethreadbuilding.h"
 
 #include "buildings/small-house.h"
 #include "buildings/elite-housing.h"
@@ -7,7 +7,7 @@
 #include "buildings/sanctuaries/esanctbuilding.h"
 #include "buildings/echariotfactory.h"
 #include "buildings/ehorseranch.h"
-#include "buildings/ehorseranchenclosure.h"
+#include "buildings/horse-ranch-enclosure.h"
 #include "buildings/sanctuaries/sanctuary.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/pyramids/epyramidelement.h"
@@ -137,7 +137,7 @@ void eThreadBuilding::load(eBuilding* const src) {
             mSpaceCount = 1;
         } break;
         case eBuildingType::horseRanchEnclosure: {
-            const auto e = static_cast<eHorseRanchEnclosure*>(src);
+            const auto e = static_cast<HorseRanchEnclosure*>(src);
             mResource[0] = eResourceType::horse;
             mResourceCount[0] = e->horseCount();
             mSpaceCount = 1;

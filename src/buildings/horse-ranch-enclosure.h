@@ -1,5 +1,5 @@
-#ifndef EHORSERANCHENCLOSURE_H
-#define EHORSERANCHENCLOSURE_H
+#ifndef HORSE_RANCH_ENCLOSURE_H
+#define HORSE_RANCH_ENCLOSURE_H
 
 #include "ebuildingwithresource.h"
 
@@ -7,10 +7,10 @@ class Horse;
 class eHorseRanch;
 class eSaveArchive;
 
-class eHorseRanchEnclosure : public eBuildingWithResource {
+class HorseRanchEnclosure : public eBuildingWithResource {
 public:
-    eHorseRanchEnclosure(GameBoard& board, const eCityId cid);
-    ~eHorseRanchEnclosure();
+    HorseRanchEnclosure(GameBoard& board, const eCityId cid);
+    ~HorseRanchEnclosure();
 
     void erase() override;
 
@@ -40,4 +40,4 @@ private:
     eHorseRanch* mRanch = nullptr;
 };
 
-#endif // EHORSERANCHENCLOSURE_H
+#endif // HORSE_RANCH_ENCLOSURE_H

@@ -1089,7 +1089,7 @@ void eInvasionHandler::spawnBoat() {
         if(bptr) bptr->kill();
     });
     mBoats.push_back(b.get());
-    a->start(mDisembarkTile, eWalkableObject::sCreateDeepWater());
+    a->start(mDisembarkTile, WalkableObject::sCreateDeepWater());
 }
 
 void eInvasionHandler::generateImmortals(

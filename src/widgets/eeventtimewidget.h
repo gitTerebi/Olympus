@@ -15,6 +15,7 @@ public:
     eEventTime eventTime() const;
 private:
     eAction mChangeAction;
+    eEventTime mEventTime;
 };
 
 #endif // EEVENTTIMEWIDGET_H

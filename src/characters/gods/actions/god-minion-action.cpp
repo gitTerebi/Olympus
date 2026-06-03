@@ -1,4 +1,4 @@
-#include "god-minion-action.h"
+﻿#include "god-minion-action.h"
 
 #include "fileIO/esavearchive.h"
 
@@ -231,9 +231,9 @@ void eGodMinionAction::serializeFields(eSaveArchive& ar) {
 //    a->setWait(false);
 //    if(mtype == eCharacterType::scylla ||
 //       mtype == eCharacterType::kraken) {
-//        a->start(mt, eWalkableObject::sCreateWaterAndDefault());
+//        a->start(mt, WalkableObject::sCreateWaterAndDefault());
 //    } else {
-//        a->start(mt, eWalkableObject::sCreateDefault());
+//        a->start(mt, WalkableObject::sCreateDefault());
 //    }
 //    if(second) {
 //        setCurrentAction(a);
@@ -349,6 +349,6 @@ void eGodMinionAction::huntSoldier(eCharacter* const s) {
     });
     a->setRemoveLastTurn(true);
     a->setWait(false);
-    a->start(st, eWalkableObject::sCreateDefault());
+    a->start(st, WalkableObject::sCreateDefault());
     setCurrentAction(a);
 }

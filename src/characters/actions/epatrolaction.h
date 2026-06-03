@@ -1,4 +1,4 @@
-#ifndef EPATROLACTION_H
+﻿#ifndef EPATROLACTION_H
 #define EPATROLACTION_H
 
 #include "eactionwithcomeback.h"
@@ -29,8 +29,8 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;
     void patrol();
-    void goBackDecision(const stdsptr<eWalkableObject>& w =
-                            eWalkableObject::sCreateRoadAvenue());
+    void goBackDecision(const stdsptr<WalkableObject>& w =
+                            WalkableObject::sCreateRoadAvenue());
 
     std::vector<eOrientation> mPath;
     stdsptr<eDirectionTimes> mDirTimes;

@@ -1,4 +1,4 @@
-#include "egroweraction.h"
+﻿#include "egroweraction.h"
 
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ewaitaction.h"
@@ -436,7 +436,7 @@ void eGrowerAction::releaseWorkTile() {
 void eGrowerAction::goBackDecision() {
     mStage = eGrowerActionStage::goingBack;
     mGrower->setActionType(eCharacterActionType::carry);
-    goBack(mLodge, eWalkableObject::sCreateDefault());
+    goBack(mLodge, WalkableObject::sCreateDefault());
 }
 
 void eGrowerAction::waitDecision() {

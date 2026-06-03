@@ -1,4 +1,4 @@
-#include "soldier-action.h"
+﻿#include "soldier-action.h"
 #include "fileIO/esavearchive.h"
 
 #include "characters/esoldier.h"
@@ -400,7 +400,7 @@ void SoldierAction::goHome() {
         if(!cptr) return;
         cptr->setActionType(eCharacterActionType::walk);
     });
-    a->start(b, eWalkableObject::sCreateDefault());
+    a->start(b, WalkableObject::sCreateDefault());
     setCurrentAction(a);
 }
 

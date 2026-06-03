@@ -1,4 +1,4 @@
-#include "shepherd-action.h"
+﻿#include "shepherd-action.h"
 
 #include "characters/esheep.h"
 #include "characters/egoat.h"
@@ -406,7 +406,7 @@ void ShepherdAction::goBackDecision() {
         mCharacter->setActionType(eCharacterActionType::walk);
     }
 
-    goBack(mShed, eWalkableObject::sCreateDefault());
+    goBack(mShed, WalkableObject::sCreateDefault());
 }
 
 void ShepherdAction::waitDecision() {

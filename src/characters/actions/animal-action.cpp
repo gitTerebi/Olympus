@@ -1,4 +1,4 @@
-#include "eanimalaction.h"
+#include "animal-action.h"
 
 #include "move-around-action.h"
 #include "characters/echaracter.h"
@@ -7,18 +7,18 @@
 #include "fileIO/esavearchive.h"
 #include "engine/etile.h"
 
-eAnimalAction::eAnimalAction(eCharacter* const c,
-                             const int spawnerX, const int spawnerY,
-                             const stdsptr<eWalkableObject>& tileWalkable,
-                             const eCharActionType type) :
+AnimalAction::AnimalAction(eCharacter* const c,
+                           const int spawnerX, const int spawnerY,
+                           const stdsptr<WalkableObject>& tileWalkable,
+                           const eCharActionType type) :
     eComplexAction(c, type),
     mSpawnerX(spawnerX), mSpawnerY(spawnerY),
     mTileWalkable(tileWalkable) {}
 
-eAnimalAction::eAnimalAction(eCharacter* const c) :
-    eAnimalAction(c, 0, 0) {}
+AnimalAction::AnimalAction(eCharacter* const c) :
+    AnimalAction(c, 0, 0) {}
 
-bool eAnimalAction::decide() {
+bool AnimalAction::decide() {
     const auto c = character();
     const auto t = c->tile();
     bool shared = false;
@@ -39,7 +39,7 @@ bool eAnimalAction::decide() {
     return true;
 }
 
-void eAnimalAction::serializeFields(eSaveArchive& ar) {
+void AnimalAction::serializeFields(eSaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     ar.field("spawnerX", mSpawnerX);
     ar.field("spawnerY", mSpawnerY);
@@ -49,7 +49,7 @@ void eAnimalAction::serializeFields(eSaveArchive& ar) {
     ar.field("animalStage", mStage);
 }
 
-void eAnimalAction::resumeFromSavedState() {
+void AnimalAction::resumeFromSavedState() {
     switch(mStage) {
     case eAnimalActionStage::idle:
         eComplexAction::resumeFromSavedState();
@@ -63,13 +63,13 @@ void eAnimalAction::resumeFromSavedState() {
     }
 }
 
-void eAnimalAction::walkAround() {
+void AnimalAction::walkAround() {
     mStage = eAnimalActionStage::walking;
     const auto c = character();
     c->setActionType(eCharacterActionType::walk);
     if(c->type() == eCharacterType::horse) {
         const SDL_Rect rect{mSpawnerX - 1, mSpawnerY - 2, 4, 4};
-        mTileWalkable = eWalkableObject::sCreateRanch(rect);
+        mTileWalkable = WalkableObject::sCreateRanch(rect);
     }
     const auto m = e::make_shared<MoveAroundAction>(
                        c, mSpawnerX, mSpawnerY,
@@ -79,7 +79,7 @@ void eAnimalAction::walkAround() {
     setCurrentAction(m);
 }
 
-void eAnimalAction::lay() {
+void AnimalAction::lay() {
     mStage = eAnimalActionStage::laying;
     const auto c = character();
     c->setActionType(eCharacterActionType::lay);

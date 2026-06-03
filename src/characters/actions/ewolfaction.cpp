@@ -1,4 +1,4 @@
-#include "ewolfaction.h"
+﻿#include "ewolfaction.h"
 
 #include "erand.h"
 #include "enumbers.h"
@@ -7,15 +7,15 @@
 #include "fileIO/esavearchive.h"
 
 #include "engine/epathfinder.h"
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 #include "buildings/ebuilding.h"
 #include "audio/sounds.h"
 #include "characters/echaracter.h"
 
 #include <cstdlib>
 
-eWolfAction::eWolfAction(eCharacter *const c, const int spawnerX, const int spawnerY) : eAnimalAction(c, spawnerX, spawnerY,
-                                                                                                      eWalkableObject::sCreateDefault(),
+eWolfAction::eWolfAction(eCharacter *const c, const int spawnerX, const int spawnerY) : AnimalAction(c, spawnerX, spawnerY,
+                                                                                                      WalkableObject::sCreateDefault(),
                                                                                                       eCharActionType::wolfAction) {}
 
 eWolfAction::eWolfAction(eCharacter *const c) : eWolfAction(c, 0, 0) {}
@@ -58,7 +58,7 @@ void eWolfAction::increment(const int by)
         goBack();
         return;
     }
-    eAnimalAction::increment(by);
+    AnimalAction::increment(by);
 }
 
 static eBuilding* sAdjacentWall(eTile* const t) {
@@ -98,7 +98,7 @@ bool eWolfAction::decide()
     }
     const int wait = eNumbers::sWolfHuntWait;
     if (wait <= 0)
-        return eAnimalAction::decide();
+        return AnimalAction::decide();
     const bool hunt = (eRand::rand() % wait) == 0;
     if (hunt)
     {
@@ -106,12 +106,12 @@ bool eWolfAction::decide()
         findPrey();
         return true;
     }
-    return eAnimalAction::decide();
+    return AnimalAction::decide();
 }
 
 void eWolfAction::serializeFields(eSaveArchive& ar)
 {
-    eAnimalAction::serializeFields(ar);
+    AnimalAction::serializeFields(ar);
     ar.field("hunting", mHunting);
     ar.field("stage", mStage);
     ar.buildingAsField("wallTarget", &board(), mWallTarget);
@@ -221,7 +221,7 @@ void eWolfAction::findPrey()
             goBack();
             return;
         }
-        const auto wallWalkableObject = eWalkableObject::sCreateWall();
+        const auto wallWalkableObject = WalkableObject::sCreateWall();
         const auto wallWalkable = [wallWalkableObject](eTileBase* const t) {
             return wallWalkableObject->walkable(t);
         };

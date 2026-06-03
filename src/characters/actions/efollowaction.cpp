@@ -1,14 +1,14 @@
-#include "efollowaction.h"
+﻿#include "efollowaction.h"
 
 #include "../echaracter.h"
 
-#include "walkable/ewalkableobject.h"
+#include "walkable/walkable-object.h"
 #include "fileIO/esavearchive.h"
 
 eFollowAction::eFollowAction(eCharacter* const f,
                              eCharacter* const c,
                              const eCharActionType type) :
-    eMoveAction(c, eWalkableObject::sCreateAll(), type),
+    eMoveAction(c, WalkableObject::sCreateAll(), type),
     mFollow(f) {
     if(f) c->setSpeed(f->speed());
     c->setActionType(eCharacterActionType::stand);

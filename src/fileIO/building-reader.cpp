@@ -289,7 +289,7 @@ stdsptr<eBuilding> BuildingArchive::load(
         ar.archiveField("factory", [&](eSaveArchive& it) {
             eCityId cid;
             it.field("cityId", cid);
-            b = e::make_shared<eHorseRanchEnclosure>(board, cid);
+            b = e::make_shared<HorseRanchEnclosure>(board, cid);
         });
         ar.archiveField("state", [&](eSaveArchive& it) {
             if(b) b->serialize(it);

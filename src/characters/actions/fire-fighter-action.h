@@ -1,4 +1,4 @@
-#ifndef FIRE_FIGHTER_ACTION_H
+﻿#ifndef FIRE_FIGHTER_ACTION_H
 #define FIRE_FIGHTER_ACTION_H
 
 #include "epatrolaction.h"
@@ -54,7 +54,7 @@ public:
         t->mFireFighting = false;
         const auto c = t->character();
         c->setActionType(eCharacterActionType::walk);
-        t->goBackDecision(eWalkableObject::sCreateDefault());
+        t->goBackDecision(WalkableObject::sCreateDefault());
     }
 
 protected:

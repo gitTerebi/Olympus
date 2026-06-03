@@ -1,11 +1,11 @@
-#include "ehorseranchenclosure.h"
+#include "horse-ranch-enclosure.h"
 
 #include <memory>
 
 #include "textures/egametextures.h"
 
 #include "characters/horse.h"
-#include "characters/actions/eanimalaction.h"
+#include "characters/actions/animal-action.h"
 
 #include "ehorseranch.h"
 #include "engine/game-board.h"
@@ -51,11 +51,11 @@ bool tileInRect(eTile* const tile, const SDL_Rect& rect) {
     return SDL_PointInRect(&p, &rect);
 }
 
-stdsptr<eAnimalAction> createHorseAction(Horse* const horse,
-                                         eTile* const tile,
-                                         const SDL_Rect& rect) {
-    const auto walkable = eWalkableObject::sCreateRanch(rect);
-    const auto a = e::make_shared<eAnimalAction>(
+stdsptr<AnimalAction> createHorseAction(Horse* const horse,
+                                        eTile* const tile,
+                                        const SDL_Rect& rect) {
+    const auto walkable = WalkableObject::sCreateRanch(rect);
+    const auto a = e::make_shared<AnimalAction>(
                        horse, tile->x(), tile->y(), walkable);
     a->setLayTime(500);
     a->setWalkTime(1000);
@@ -64,37 +64,37 @@ stdsptr<eAnimalAction> createHorseAction(Horse* const horse,
 
 }
 
-eHorseRanchEnclosure::eHorseRanchEnclosure(GameBoard& board,
-                                           const eCityId cid) :
+HorseRanchEnclosure::HorseRanchEnclosure(GameBoard& board,
+                                         const eCityId cid) :
     eBuildingWithResource(board, eBuildingType::horseRanchEnclosure, 4, 4,
                           cid) {
     setEnabled(true);
 }
 
-eHorseRanchEnclosure::~eHorseRanchEnclosure() {
+HorseRanchEnclosure::~HorseRanchEnclosure() {
     for(const auto& h : mHorses) {
         h->kill();
     }
 }
 
-void eHorseRanchEnclosure::erase() {
+void HorseRanchEnclosure::erase() {
     if(mRanch) mRanch->eBuilding::erase();
     eBuilding::erase();
 }
 
-int eHorseRanchEnclosure::provide(const eProvide p, const int n) {
+int HorseRanchEnclosure::provide(const eProvide p, const int n) {
     if(mRanch) mRanch->eEmployingBuilding::provide(p, n);
     return eBuildingWithResource::provide(p, n);
 }
 
-std::shared_ptr<eTexture> eHorseRanchEnclosure::getTexture(
+std::shared_ptr<eTexture> HorseRanchEnclosure::getTexture(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     auto& blds = eGameTextures::buildings();
     return blds[sizeId].fHorseRanchEnclosure;
 }
 
-std::vector<eOverlay> eHorseRanchEnclosure::getOverlays(
+std::vector<eOverlay> HorseRanchEnclosure::getOverlays(
         const eTileSize size) const {
     const auto& board = getBoard();
     const auto dir = board.direction();
@@ -119,7 +119,7 @@ std::vector<eOverlay> eHorseRanchEnclosure::getOverlays(
     return os;
 }
 
-void eHorseRanchEnclosure::timeChanged(const int by) {
+void HorseRanchEnclosure::timeChanged(const int by) {
     (void)by;
     const auto tile = centerTile();
     if(!tile) return;
@@ -133,12 +133,12 @@ void eHorseRanchEnclosure::timeChanged(const int by) {
     }
 }
 
-int eHorseRanchEnclosure::count(const eResourceType type) const {
+int HorseRanchEnclosure::count(const eResourceType type) const {
     if(type == eResourceType::horse) return horseCount();
     return eBuildingWithResource::count(type);
 }
 
-int eHorseRanchEnclosure::take(const eResourceType type, const int count) {
+int HorseRanchEnclosure::take(const eResourceType type, const int count) {
     if(type == eResourceType::horse) {
         const int max = horseCount();
         const int t = std::min(max, count);
@@ -150,7 +150,7 @@ int eHorseRanchEnclosure::take(const eResourceType type, const int count) {
     return eBuildingWithResource::take(type, count);
 }
 
-bool eHorseRanchEnclosure::spawnHorse() {
+bool HorseRanchEnclosure::spawnHorse() {
     if(mHorses.size() > 5) return false;
     const auto h = e::make_shared<Horse>(getBoard());
     h->setBothCityIds(cityId());
@@ -162,7 +162,7 @@ bool eHorseRanchEnclosure::spawnHorse() {
     return true;
 }
 
-bool eHorseRanchEnclosure::takeHorse() {
+bool HorseRanchEnclosure::takeHorse() {
     if(mHorses.empty()) return false;
     auto& h = mHorses.back();
     h->kill();
@@ -170,14 +170,14 @@ bool eHorseRanchEnclosure::takeHorse() {
     return true;
 }
 
-void eHorseRanchEnclosure::setRanch(eHorseRanch* const ranch) {
+void HorseRanchEnclosure::setRanch(eHorseRanch* const ranch) {
     mRanch = ranch;
 }
 
-void eHorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
+void HorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
     eBuildingWithResource::serializeFields(ar);
     if(ar.reading()) {
-        const stdptr<eHorseRanchEnclosure> tptr(this);
+        const stdptr<HorseRanchEnclosure> tptr(this);
         auto horses = std::make_shared<std::vector<std::shared_ptr<Horse*>>>();
         mHorses.clear();
         ar.countedArrayField("horses", 0,
@@ -193,7 +193,7 @@ void eHorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
                 const auto h = hptr ? *hptr : nullptr;
                 if(h) tptr->mHorses.push_back(h->ref<Horse>());
             }
-        }, "eHorseRanchEnclosure::horses");
+        }, "HorseRanchEnclosure::horses");
     } else {
         const int nh = static_cast<int>(mHorses.size());
         ar.countedArrayField("horses", nh,

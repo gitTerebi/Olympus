@@ -1,7 +1,7 @@
-#include "ereadstream.h"
+﻿#include "ereadstream.h"
 
 #include "engine/game-board.h"
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
 #include "characters/actions/character-action.h"
 #include "characters/gods/actions/god-action.h"

@@ -1,6 +1,6 @@
-#include "widgets/game-widget.h"
+﻿#include "widgets/game-widget.h"
 
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 #include "engine/etile.h"
 #include "buildings/eroad.h"
 #include "enumbers.h"
@@ -41,7 +41,7 @@ bool GameWidget::isRoadBandTile(eTile* const tile)
 
 void GameWidget::addRoamerPreview(eTile* const start,
                                   eRoadPreviewPath& path,
-                                  const std::shared_ptr<eWalkableObject>& walkable)
+                                  const std::shared_ptr<WalkableObject>& walkable)
 {
     using eUseTimes = std::map<eTile*, std::array<int, 8>>;
     for (int i = 0; i < 4; i++) {
@@ -161,7 +161,7 @@ void GameWidget::drawRoadBands(const std::vector<eTile*>& roads,
     const auto start = roads.front();
     const auto ret = roads.back();
     eRoadPreviewPath path;
-    const auto walkable = eWalkableObject::sCreateRoadblock();
+    const auto walkable = WalkableObject::sCreateRoadblock();
     addRoamerPreview(start, path, walkable);
     for (const auto& p : path) {
         drawRoadBandTile(p.first, start, ret, path, tp, trrTexs);

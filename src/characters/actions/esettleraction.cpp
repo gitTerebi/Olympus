@@ -1,4 +1,4 @@
-#include "esettleraction.h"
+﻿#include "esettleraction.h"
 
 #include "engine/etile.h"
 #include "characters/echaracter.h"
@@ -135,7 +135,7 @@ void eSettlerAction::findHouse() {
 
 void eSettlerAction::goBack2() {
     mStage = eSettlerActionStage::goingBack;
-    eActionWithComeback::goBack(eWalkableObject::sCreateDefault());
+    eActionWithComeback::goBack(WalkableObject::sCreateDefault());
 }
 
 void eSettlerAction::leave() {

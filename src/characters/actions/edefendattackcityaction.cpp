@@ -1,4 +1,4 @@
-#include "edefendattackcityaction.h"
+﻿#include "edefendattackcityaction.h"
 
 #include "enumbers.h"
 #include "emovetoaction.h"
@@ -65,7 +65,7 @@ bool eDefendAttackCityAction::goTo(const int fx, const int fy, const int dist) {
     };
 
     const auto walkable =
-            eWalkableObject::sCreateDefault();
+            WalkableObject::sCreateDefault();
 
     const auto a = e::make_shared<eMoveToAction>(c);
     a->setStateRelevance(eStateRelevance::buildings |

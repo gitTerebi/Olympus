@@ -1,13 +1,13 @@
-#ifndef ERECTWALKABLEOBJECT_H
+﻿#ifndef ERECTWALKABLEOBJECT_H
 #define ERECTWALKABLEOBJECT_H
 
-#include "ewalkableobject.h"
+#include "walkable-object.h"
 
 class eSaveArchive;
 
-class eRectWalkableObject : public eWalkableObject {
+class eRectWalkableObject : public WalkableObject {
 public:
-    eRectWalkableObject(const stdsptr<eWalkableObject>& other,
+    eRectWalkableObject(const stdsptr<WalkableObject>& other,
                         const SDL_Rect& rect);
     eRectWalkableObject(const SDL_Rect& rect);
     eRectWalkableObject();
@@ -17,7 +17,7 @@ public:
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    stdsptr<eWalkableObject> mOther;
+    stdsptr<WalkableObject> mOther;
     SDL_Rect mRect;
 };
 

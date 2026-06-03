@@ -12,7 +12,7 @@
 #include "characters/esheep.h"
 #include "characters/egoat.h"
 #include "characters/ecattle.h"
-#include "characters/actions/eanimalaction.h"
+#include "characters/actions/animal-action.h"
 
 #include "evectorhelpers.h"
 #include "spawners/eboarspawner.h"
@@ -429,7 +429,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                             addAnimal(c.get());
                         }
                         for(const auto c : mBoard->characters()) {
-                            const auto aa = c ? dynamic_cast<eAnimalAction*>(c->action()) : nullptr;
+                            const auto aa = c ? dynamic_cast<AnimalAction*>(c->action()) : nullptr;
                             if(!aa) continue;
                             if(aa->spawnerX() == x && aa->spawnerY() == y) {
                                 addAnimal(c);
@@ -1405,7 +1405,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             if(!cb2) return true;
             r = true;
             const auto hr = e::make_shared<eHorseRanch>(*mBoard, mViewedCityId);
-            const auto hre = e::make_shared<eHorseRanchEnclosure>(*mBoard, mViewedCityId);
+            const auto hre = e::make_shared<HorseRanchEnclosure>(*mBoard, mViewedCityId);
             hre->setRanch(hr.get());
             hr->setEnclosure(hre.get());
             mBoard->build(tx, ty, 3, 3, cid, pid, mEditorMode,

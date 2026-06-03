@@ -1,7 +1,7 @@
-#include "eanimalspawner.h"
+﻿#include "eanimalspawner.h"
 
 #include "characters/ewildanimal.h"
-#include "characters/actions/eanimalaction.h"
+#include "characters/actions/animal-action.h"
 #include "characters/actions/ewolfaction.h"
 #include "erand.h"
 
@@ -21,7 +21,7 @@ void eAnimalSpawner::spawn(eTile* const tile) {
             b.get(), tx, ty);
         b->setAction(a);
     } else {
-        const auto a = e::make_shared<eAnimalAction>(
+        const auto a = e::make_shared<AnimalAction>(
             b.get(), tx, ty);
         b->setAction(a);
     }

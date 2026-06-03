@@ -73,7 +73,7 @@ void TraderAction::setUnpackBuilding(eBuilding* const b) {
     mUnpackBuilding = b;
 }
 
-void TraderAction::setWalkable(const stdsptr<eWalkableObject>& w) {
+void TraderAction::setWalkable(const stdsptr<WalkableObject>& w) {
     mWalkable = w;
 }
 

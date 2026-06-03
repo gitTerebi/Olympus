@@ -1,4 +1,4 @@
-#include "epatrolmoveaction.h"
+﻿#include "epatrolmoveaction.h"
 
 #include "../echaracter.h"
 #include "engine/etile.h"
@@ -13,7 +13,7 @@ void eDirectionLastUseTime::serialize(eSaveArchive& ar) {
 
 ePatrolMoveAction::ePatrolMoveAction(eCharacter* const c,
                                      const bool diagonalOnly,
-                                     const stdsptr<eWalkableObject>& walkable,
+                                     const stdsptr<WalkableObject>& walkable,
                                      const stdsptr<eDirectionTimes>& os) :
     eMoveAction(c, walkable, eCharActionType::patrolMoveAction),
     mDiagonalOnly(diagonalOnly),

@@ -1,6 +1,6 @@
-#include "widgets/game-widget.h"
+﻿#include "widgets/game-widget.h"
 
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 #include "engine/etile.h"
 #include "engine/game-board.h"
 #include "enumbers.h"
@@ -1968,7 +1968,7 @@ void GameWidget::paintBuildPreview(
             {
                 under = mRotateId == 2 || mRotateId == 3; // topRight, bottomRight
             }
-            const auto b2 = e::make_shared<eHorseRanchEnclosure>(*mBoard, mViewedCityId);
+            const auto b2 = e::make_shared<HorseRanchEnclosure>(*mBoard, mViewedCityId);
             b2->setRanch(b1.get());
             b1->setEnclosure(b2.get());
             if (under)

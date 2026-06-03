@@ -1,4 +1,4 @@
-#include "eurchinquay.h"
+﻿#include "eurchinquay.h"
 
 #include "characters/eurchingatherer.h"
 #include "characters/actions/ecollectresourceaction.h"
@@ -203,7 +203,7 @@ void eUrchinQuay::spawnGatherer() {
                             eHasResourceObjectType::urchin);
     const auto a = e::make_shared<eCollectResourceAction>(
                        this, b.get(), hasRes);
-    const auto w = eWalkableObject::sCreateDeepWater();
+    const auto w = WalkableObject::sCreateDeepWater();
     a->setWalkable(w);
     a->setWaitTime(eNumbers::sUrchinQuayUnpackTime);
     a->setFinishOnce(false);

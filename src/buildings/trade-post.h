@@ -54,7 +54,7 @@ public:
     int buy(const int cash, std::map<eResourceType, int>& bought);
     int sell(const int items, std::map<eResourceType, int>& sold);
 
-    void setWalkable(const stdsptr<eWalkableObject>& w);
+    void setWalkable(const stdsptr<WalkableObject>& w);
     void setUnpackBuilding(eBuilding* const b);
     void setOrientation(const eDiagonalOrientation o);
     eDiagonalOrientation orientation() const;
@@ -91,7 +91,7 @@ private:
     eDiagonalOrientation mO = eDiagonalOrientation::topLeft;
 
     eCharacterCreator mCharGen;
-    stdsptr<eWalkableObject> mWalkable = eWalkableObject::sCreateDefault();
+    stdsptr<WalkableObject> mWalkable = WalkableObject::sCreateDefault();
     eBuilding* mUnpackBuilding = this;
 
     int mRouteTimer = 0;

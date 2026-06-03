@@ -1,19 +1,19 @@
-#include "erectwalkableobject.h"
+﻿#include "erectwalkableobject.h"
 
 #include "engine/etilebase.h"
 #include "fileIO/esavearchive.h"
 
 eRectWalkableObject::eRectWalkableObject(
-        const stdsptr<eWalkableObject>& other,
+        const stdsptr<WalkableObject>& other,
         const SDL_Rect& rect) :
-    eWalkableObject(eWalkableObjectType::rect),
+    WalkableObject(eWalkableObjectType::rect),
     mOther(other), mRect(rect) {}
 
 eRectWalkableObject::eRectWalkableObject(const SDL_Rect& rect) :
     eRectWalkableObject(nullptr, rect) {}
 
 eRectWalkableObject::eRectWalkableObject() :
-    eWalkableObject(eWalkableObjectType::rect) {}
+    WalkableObject(eWalkableObjectType::rect) {}
 
 bool eRectWalkableObject::walkable(
         eTileBase* const t) const {

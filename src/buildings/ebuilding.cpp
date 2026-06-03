@@ -2591,7 +2591,7 @@ void eBuilding::collapse() {
             tiles.insert(tiles.end(), etiles.begin(), etiles.end());
             restoreBuildings.push_back(e);
         }
-    } else if(const auto e = dynamic_cast<eHorseRanchEnclosure*>(this)) {
+    } else if(const auto e = dynamic_cast<HorseRanchEnclosure*>(this)) {
         const auto r = e->ranch();
         if(r) {
             const auto rtiles = r->mUnderBuilding;

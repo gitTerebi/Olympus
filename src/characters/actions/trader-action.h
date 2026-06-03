@@ -21,7 +21,7 @@ public:
     void setTradePost(TradePost* const tp);
     void setUnpackBuilding(eBuilding* const b);
 
-    void setWalkable(const stdsptr<eWalkableObject>& w);
+    void setWalkable(const stdsptr<WalkableObject>& w);
 
     const std::map<eResourceType, int>& bought() const { return mBought; }
     const std::map<eResourceType, int>& sold() const { return mSold; }
@@ -33,8 +33,8 @@ private:
     void tradeIncrement();
     void setPierLoading(const bool b);
 
-    stdsptr<eWalkableObject> mWalkable =
-            eWalkableObject::sCreateDefault();
+    stdsptr<WalkableObject> mWalkable =
+            WalkableObject::sCreateDefault();
 
     int mCash = 1000;
     int mItems = 1000;

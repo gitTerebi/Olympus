@@ -38,7 +38,7 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 
 #include "engine/eeventdata.h"
 
-class eWalkableObject;
+class WalkableObject;
 class eTerrainEditMenu;
 class eDomesticatedAnimal;
 struct eSanctBlueprint;
@@ -232,7 +232,7 @@ private:
                            const eTerrainTextures& trrTexs);
     static bool isRoadBandTile(eTile* tile);
     void addRoamerPreview(eTile* start, eRoadPreviewPath& path,
-                         const std::shared_ptr<eWalkableObject>& walkable);
+                         const std::shared_ptr<WalkableObject>& walkable);
     static void addPathBands(const std::vector<eTile*>& tiles,
                              eRoadPreviewPath& path);
     static eTile* firstPathRoad(const std::vector<eTile*>& tiles);

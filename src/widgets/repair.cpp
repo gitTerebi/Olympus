@@ -311,7 +311,7 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
             {
                 for (const auto &bb : buildings)
                 {
-                    const auto e = dynamic_cast<eHorseRanchEnclosure *>(bb.get());
+                    const auto e = dynamic_cast<HorseRanchEnclosure *>(bb.get());
                     if (e)
                     {
                         r->setEnclosure(e);
@@ -321,7 +321,7 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
                 }
             }
         }
-        else if (const auto e = dynamic_cast<eHorseRanchEnclosure *>(b.get()))
+        else if (const auto e = dynamic_cast<HorseRanchEnclosure *>(b.get()))
         {
             if (!e->ranch())
             {

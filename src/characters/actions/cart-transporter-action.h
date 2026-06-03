@@ -1,4 +1,4 @@
-#ifndef CART_TRANSPORTER_ACTION_H
+﻿#ifndef CART_TRANSPORTER_ACTION_H
 #define CART_TRANSPORTER_ACTION_H
 
 #include "eactionwithcomeback.h"
@@ -104,8 +104,8 @@ protected:
     void clearTask();
 
 private:
-    stdsptr<eWalkableObject> getWalkable(bool excludeHomeRect = false) const;
-    stdsptr<eWalkableObject> getWalkableForTask(bool excludeHomeRect,
+    stdsptr<WalkableObject> getWalkable(bool excludeHomeRect = false) const;
+    stdsptr<WalkableObject> getWalkableForTask(bool excludeHomeRect,
                                                 eCartActionType taskType) const;
 
     void updateWaiting();

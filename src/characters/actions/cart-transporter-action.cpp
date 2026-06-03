@@ -1,9 +1,9 @@
-#include "cart-transporter-action.h"
+﻿#include "cart-transporter-action.h"
 
 #include "../echaracter.h"
 #include "buildings/ebuildingwithresource.h"
 #include "buildings/estoragebuilding.h"
-#include "buildings/ehorseranchenclosure.h"
+#include "buildings/horse-ranch-enclosure.h"
 #include "buildings/ehorseranch.h"
 #include "buildings/evendor.h"
 #include "engine/game-board.h"
@@ -705,16 +705,16 @@ bool CartTransporterAction::savesCartState() const {
     return true;
 }
 
-stdsptr<eWalkableObject> CartTransporterAction::getWalkableForTask(
+stdsptr<WalkableObject> CartTransporterAction::getWalkableForTask(
         bool excludeHomeRect, eCartActionType taskType) const {
-    if(!mBuilding) return eWalkableObject::sCreateRoadAvenue();
+    if(!mBuilding) return WalkableObject::sCreateRoadAvenue();
     const auto supp = support();
     // storage-yard rule: GET fallback = open ground, DELIVER/EMPTY = road
     const bool isStorageHome = dynamic_cast<eStorageBuilding*>(mBuilding.get());
     if(isStorageHome && taskType != eCartActionType::get) {
         const auto buildingRect = mBuilding->tileRect();
-        auto w = eWalkableObject::sCreateRoadAvenue();
-        if(!excludeHomeRect) w = eWalkableObject::sCreateRect(buildingRect, w);
+        auto w = WalkableObject::sCreateRoadAvenue();
+        if(!excludeHomeRect) w = WalkableObject::sCreateRect(buildingRect, w);
         return w;
     }
     if(supp & eCartActionTypeSupport::get) {
@@ -728,27 +728,27 @@ stdsptr<eWalkableObject> CartTransporterAction::getWalkableForTask(
                               type == eBuildingType::horseTrainer ||
                               type == eBuildingType::chariotVendor;
         if(isVendor) {
-            auto w = eWalkableObject::sCreateRoadAvenue();
-            w = eWalkableObject::sCreateRect(buildingRect, w);
+            auto w = WalkableObject::sCreateRoadAvenue();
+            w = WalkableObject::sCreateRect(buildingRect, w);
             return w;
         }
-        auto w = eWalkableObject::sCreateDefault();
-        w = eWalkableObject::sCreateRect(buildingRect, w);
+        auto w = WalkableObject::sCreateDefault();
+        w = WalkableObject::sCreateRect(buildingRect, w);
         if(type == eBuildingType::horseRanch) {
             const auto hr = static_cast<eHorseRanch*>(mBuilding.get());
             const auto e = hr->enclosure();
             const auto eRect = e->tileRect();
-            w = eWalkableObject::sCreateRect(eRect, w);
+            w = WalkableObject::sCreateRect(eRect, w);
         }
         return w;
     }
     const auto buildingRect = mBuilding->tileRect();
-    auto w = eWalkableObject::sCreateRoadAvenue();
-    if(!excludeHomeRect) w = eWalkableObject::sCreateRect(buildingRect, w);
+    auto w = WalkableObject::sCreateRoadAvenue();
+    if(!excludeHomeRect) w = WalkableObject::sCreateRect(buildingRect, w);
     return w;
 }
 
-stdsptr<eWalkableObject> CartTransporterAction::getWalkable(bool excludeHomeRect) const {
+stdsptr<WalkableObject> CartTransporterAction::getWalkable(bool excludeHomeRect) const {
     return getWalkableForTask(excludeHomeRect, mTask.fType);
 }
 
@@ -814,7 +814,7 @@ void CartTransporterAction::spread() {
         return sqrt(dx*dx + dy*dy) > 4;
     };
     a->setRemoveLastTurn(true);
-    a->start(finalFunc, eWalkableObject::sCreateRoadAvenue());
+    a->start(finalFunc, WalkableObject::sCreateRoadAvenue());
 
     setCurrentAction(a);
 }

@@ -1,4 +1,4 @@
-#include "eheroaction.h"
+﻿#include "eheroaction.h"
 #include "fileIO/esavearchive.h"
 
 #include "characters/monsters/emonster.h"
@@ -364,7 +364,7 @@ void eHeroAction::huntMonster(eMonster* const m, const bool second) {
     a->setWait(false);
     if(mtype == eCharacterType::scylla ||
        mtype == eCharacterType::kraken) {
-        a->start(mt, eWalkableObject::sCreateWaterAndDefault());
+        a->start(mt, WalkableObject::sCreateWaterAndDefault());
     } else {
         a->start(mt, defaultWalkable());
     }
@@ -373,14 +373,14 @@ void eHeroAction::huntMonster(eMonster* const m, const bool second) {
     }
 }
 
-stdsptr<eWalkableObject> eHeroAction::defaultWalkable() const {
+stdsptr<WalkableObject> eHeroAction::defaultWalkable() const {
     const auto c = character();
     const auto tile = c->tile();
     const bool w = tile->hasWater();
     if(w) {
-        return eWalkableObject::sCreateWaterAndDefault();
+        return WalkableObject::sCreateWaterAndDefault();
     } else {
-        return eWalkableObject::sCreateDefault();
+        return WalkableObject::sCreateDefault();
     }
 }
 

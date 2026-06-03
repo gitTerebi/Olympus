@@ -1,4 +1,4 @@
-#include "ebuildingstoerase.h"
+﻿#include "ebuildingstoerase.h"
 
 #include "buildings/ebuilding.h"
 #include "buildings/eagoraspace.h"
@@ -17,7 +17,7 @@
 
 #include "characters/ehomeless.h"
 #include "characters/echaracter.h"
-#include "characters/actions/eanimalaction.h"
+#include "characters/actions/animal-action.h"
 #include "characters/actions/esettleraction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 #include "buildings/ehousebase.h"
@@ -70,7 +70,7 @@ void killAnimalPenAnimals(eBuilding* const b) {
     for(const auto c : chars) {
         if(!c) continue;
         if(!isAnimalForPen(c->type(), bt)) continue;
-        const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+        const auto aa = dynamic_cast<AnimalAction*>(c->action());
         if(aa) {
             if(aa->spawnerX() != rect.x || aa->spawnerY() != rect.y) continue;
         } else {

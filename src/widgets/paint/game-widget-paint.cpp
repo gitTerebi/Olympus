@@ -4,7 +4,7 @@
 
 #include "enumbers.h"
 
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 
 #include "widgets/eterraineditmenu.h"
 
@@ -656,7 +656,7 @@ void GameWidget::paintEvent(ePainter &p)
                 {
                     patrolRoadStart = start;
                     patrolRoadReturn = ret;
-                    const auto walkable = eWalkableObject::sCreateRoadblock();
+                    const auto walkable = WalkableObject::sCreateRoadblock();
                     addRoamerPreview(start, patrolRoadPreview, walkable);
                 }
             }
@@ -667,7 +667,7 @@ void GameWidget::paintEvent(ePainter &p)
                 {
                     patrolRoadStart = roads.front();
                     patrolRoadReturn = roads.back();
-                    const auto walkable = eWalkableObject::sCreateRoadblock();
+                    const auto walkable = WalkableObject::sCreateRoadblock();
                     addRoamerPreview(patrolRoadStart, patrolRoadPreview, walkable);
                     if (mPatrolBuilding->bothDirections() &&
                         patrolRoadReturn != patrolRoadStart)

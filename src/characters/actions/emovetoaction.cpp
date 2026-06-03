@@ -1,4 +1,4 @@
-#include "emovetoaction.h"
+﻿#include "emovetoaction.h"
 
 #include <cstdio>
 
@@ -18,8 +18,8 @@ eMoveToAction::eMoveToAction(eCharacter* const c) :
     eComplexAction(c, eCharActionType::moveToAction) {}
 
 void eMoveToAction::start(const eTileFinal& final,
-                          stdsptr<eWalkableObject> pathFindWalkable,
-                          stdsptr<eWalkableObject> moveWalkable,
+                          stdsptr<WalkableObject> pathFindWalkable,
+                          stdsptr<WalkableObject> moveWalkable,
                           const eTileGetter& endTile) {
     mSavedGoal = eSavedGoal::custom;
     mSavedTile = nullptr;
@@ -32,8 +32,8 @@ void eMoveToAction::start(const eTileFinal& final,
 }
 
 void eMoveToAction::startInternal(const eTileFinal& final,
-                                  stdsptr<eWalkableObject> pathFindWalkable,
-                                  stdsptr<eWalkableObject> moveWalkable,
+                                  stdsptr<WalkableObject> pathFindWalkable,
+                                  stdsptr<WalkableObject> moveWalkable,
                                   const eTileGetter& endTile) {
     const auto c = character();
     const auto t = c->tile();
@@ -42,14 +42,14 @@ void eMoveToAction::startInternal(const eTileFinal& final,
 
     if(!pathFindWalkable->walkable(t)) {
         if(const auto b = t->underBuilding()) {
-            pathFindWalkable = eWalkableObject::sCreateRect(
+            pathFindWalkable = WalkableObject::sCreateRect(
                 b, pathFindWalkable);
         }
     }
 
     if(moveWalkable && !moveWalkable->walkable(t)) {
         if(const auto b = t->underBuilding()) {
-            moveWalkable = eWalkableObject::sCreateRect(
+            moveWalkable = WalkableObject::sCreateRect(
                 b, moveWalkable);
         }
     }
@@ -128,8 +128,8 @@ void eMoveToAction::startInternal(const eTileFinal& final,
 }
 
 void eMoveToAction::start(eTile* const final,
-                          const stdsptr<eWalkableObject>& pathFindWalkable,
-                          const stdsptr<eWalkableObject>& moveWalkable,
+                          const stdsptr<WalkableObject>& pathFindWalkable,
+                          const stdsptr<WalkableObject>& moveWalkable,
                           const eTileGetter& endTile) {
     mSavedGoal = eSavedGoal::tile;
     mSavedTile = final;
@@ -147,8 +147,8 @@ void eMoveToAction::start(eTile* const final,
 }
 
 void eMoveToAction::start(const SDL_Rect& rect,
-                          stdsptr<eWalkableObject> pathFindWalkable,
-                          stdsptr<eWalkableObject> moveWalkable,
+                          stdsptr<WalkableObject> pathFindWalkable,
+                          stdsptr<WalkableObject> moveWalkable,
                           const eTileGetter& endTile) {
     mSavedGoal = eSavedGoal::rect;
     mSavedTile = nullptr;
@@ -161,18 +161,18 @@ void eMoveToAction::start(const SDL_Rect& rect,
         const SDL_Point p{t->x(), t->y()};
         return SDL_PointInRect(&p, &rect);
     };
-    pathFindWalkable = eWalkableObject::sCreateRect(
+    pathFindWalkable = WalkableObject::sCreateRect(
                               rect, pathFindWalkable);
     if(moveWalkable) {
-        moveWalkable = eWalkableObject::sCreateRect(
+        moveWalkable = WalkableObject::sCreateRect(
                                   rect, moveWalkable);
     }
     startInternal(finalFunc, pathFindWalkable, moveWalkable, endTile);
 }
 
 void eMoveToAction::start(eBuilding* const final,
-                          const stdsptr<eWalkableObject>& pathFindWalkable,
-                          const stdsptr<eWalkableObject>& moveWalkable,
+                          const stdsptr<WalkableObject>& pathFindWalkable,
+                          const stdsptr<WalkableObject>& moveWalkable,
                           const eTileGetter& endTile) {
     mSavedGoal = eSavedGoal::building;
     mSavedTile = nullptr;
@@ -186,15 +186,15 @@ void eMoveToAction::start(eBuilding* const final,
         const SDL_Point p{t->x(), t->y()};
         return SDL_PointInRect(&p, &rect);
     };
-    auto pfw = eWalkableObject::sCreateRect(rect, pathFindWalkable);
+    auto pfw = WalkableObject::sCreateRect(rect, pathFindWalkable);
     auto mw = moveWalkable;
-    if(mw) mw = eWalkableObject::sCreateRect(rect, mw);
+    if(mw) mw = WalkableObject::sCreateRect(rect, mw);
     startInternal(finalFunc, pfw, mw, endTile);
 }
 
 void eMoveToAction::start(const eBuildingType final,
-                          const stdsptr<eWalkableObject>& pathFindWalkable,
-                          const stdsptr<eWalkableObject>& moveWalkable,
+                          const stdsptr<WalkableObject>& pathFindWalkable,
+                          const stdsptr<WalkableObject>& moveWalkable,
                           const eTileGetter& endTile) {
     mSavedGoal = eSavedGoal::buildingType;
     mSavedTile = nullptr;
@@ -288,7 +288,7 @@ void eMoveToAction::resumeFromSavedState() {
 
 bool eMoveToAction::restartSavedGoal() {
     if(!mSavedPathFindWalkable) {
-        mSavedPathFindWalkable = eWalkableObject::sCreateDefault();
+        mSavedPathFindWalkable = WalkableObject::sCreateDefault();
     }
     switch(mSavedGoal) {
     case eSavedGoal::tile:
@@ -311,7 +311,7 @@ bool eMoveToAction::restartSavedGoal() {
         if(const auto f = dynamic_cast<ePT_spawnGetActorFinish*>(finishAction())) {
             const auto t = f->target();
             if(!t) return false;
-            start(t, eWalkableObject::sCreateRoadAvenue());
+            start(t, WalkableObject::sCreateRoadAvenue());
             return true;
         }
         return false;

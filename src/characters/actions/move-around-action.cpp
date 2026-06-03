@@ -1,4 +1,4 @@
-#include "move-around-action.h"
+﻿#include "move-around-action.h"
 #include "fileIO/esavearchive.h"
 
 #include "characters/echaracter.h"
@@ -6,7 +6,7 @@
 
 MoveAroundAction::MoveAroundAction(eCharacter* const c,
                                      const int startX, const int startY,
-                                     const stdsptr<eWalkableObject>& walkable) :
+                                     const stdsptr<WalkableObject>& walkable) :
     eMoveAction(c, walkable, eCharActionType::moveAroundAction) {
     mStartTX = startX;
     mStartTY = startY;

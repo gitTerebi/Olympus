@@ -1,4 +1,4 @@
-#include "ewalkableobject.h"
+#include "walkable-object.h"
 
 #include "buildings/ebuilding.h"
 #include "fileIO/esavearchive.h"
@@ -25,10 +25,10 @@ bool ranchTileWalkable(eTileBase* const t) {
     return true;
 }
 
-class RanchRectWalkableObject : public eWalkableObject {
+class RanchRectWalkableObject : public WalkableObject {
 public:
     RanchRectWalkableObject() :
-        eWalkableObject(eWalkableObjectType::ranchRect) {}
+        WalkableObject(eWalkableObjectType::ranchRect) {}
     RanchRectWalkableObject(const SDL_Rect& rect) :
         RanchRectWalkableObject() {
         mRect = rect;
@@ -50,7 +50,7 @@ private:
 
 }
 
-bool eWalkableObject::walkable(eTileBase* const t) const {
+bool WalkableObject::walkable(eTileBase* const t) const {
     switch(mType) {
     case eWalkableObjectType::ddefault:
         return t->walkable();
@@ -135,7 +135,7 @@ bool eWalkableObject::walkable(eTileBase* const t) const {
     }
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreate(
+stdsptr<WalkableObject> WalkableObject::sCreate(
         const eWalkableObjectType type) {
     switch(type) {
     case eWalkableObjectType::rect:
@@ -145,89 +145,89 @@ stdsptr<eWalkableObject> eWalkableObject::sCreate(
     case eWalkableObjectType::ranchRect:
         return std::make_shared<RanchRectWalkableObject>();
     default:
-        return std::make_shared<eWalkableObject>(type);
+        return std::make_shared<WalkableObject>(type);
     }
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateDefault() {
+stdsptr<WalkableObject> WalkableObject::sCreateDefault() {
     return sCreate(eWalkableObjectType::ddefault);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateArtisan() {
+stdsptr<WalkableObject> WalkableObject::sCreateArtisan() {
     return sCreate(eWalkableObjectType::artisan);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRoad() {
+stdsptr<WalkableObject> WalkableObject::sCreateRoad() {
     return sCreate(eWalkableObjectType::road);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRoadAvenue() {
+stdsptr<WalkableObject> WalkableObject::sCreateRoadAvenue() {
     return sCreate(eWalkableObjectType::roadAvenue);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRoadblock() {
+stdsptr<WalkableObject> WalkableObject::sCreateRoadblock() {
     return sCreate(eWalkableObjectType::roadblock);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateTerrain() {
+stdsptr<WalkableObject> WalkableObject::sCreateTerrain() {
     return sCreate(eWalkableObjectType::terrain);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateAttacker() {
+stdsptr<WalkableObject> WalkableObject::sCreateAttacker() {
     return sCreate(eWalkableObjectType::attacker);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateFertile() {
+stdsptr<WalkableObject> WalkableObject::sCreateFertile() {
     return sCreate(eWalkableObjectType::fertile);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateWall() {
+stdsptr<WalkableObject> WalkableObject::sCreateWall() {
     return sCreate(eWalkableObjectType::wall);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateDeepWater() {
+stdsptr<WalkableObject> WalkableObject::sCreateDeepWater() {
     return sCreate(eWalkableObjectType::deepWater);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateWater() {
+stdsptr<WalkableObject> WalkableObject::sCreateWater() {
     return sCreate(eWalkableObjectType::water);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateWaterAndDefault() {
+stdsptr<WalkableObject> WalkableObject::sCreateWaterAndDefault() {
     return sCreate(eWalkableObjectType::waterAndDefault);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateAll() {
+stdsptr<WalkableObject> WalkableObject::sCreateAll() {
     return sCreate(eWalkableObjectType::all);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRanch(
+stdsptr<WalkableObject> WalkableObject::sCreateRanch(
         const SDL_Rect& rect) {
     return std::make_shared<RanchRectWalkableObject>(rect);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRect(const SDL_Rect& rect) {
+stdsptr<WalkableObject> WalkableObject::sCreateRect(const SDL_Rect& rect) {
     return std::make_shared<eRectWalkableObject>(rect);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRect(eBuilding* const b) {
+stdsptr<WalkableObject> WalkableObject::sCreateRect(eBuilding* const b) {
     return sCreateRect(b->tileRect());
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRect(
+stdsptr<WalkableObject> WalkableObject::sCreateRect(
         const SDL_Rect& rect,
-        const stdsptr<eWalkableObject>& other) {
+        const stdsptr<WalkableObject>& other) {
     return std::make_shared<eRectWalkableObject>(other, rect);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRect(
+stdsptr<WalkableObject> WalkableObject::sCreateRect(
         eBuilding* const b,
-        const stdsptr<eWalkableObject>& other) {
+        const stdsptr<WalkableObject>& other) {
     return sCreateRect(b->tileRect(), other);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateHasResource(
+stdsptr<WalkableObject> WalkableObject::sCreateHasResource(
         const stdsptr<eHasResourceObject>& hr,
-        const stdsptr<eWalkableObject>& w) {
+        const stdsptr<WalkableObject>& w) {
     return std::make_shared<eHasResourceWalkableObject>(hr, w);
 }

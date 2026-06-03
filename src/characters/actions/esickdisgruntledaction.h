@@ -1,4 +1,4 @@
-#ifndef ESICKDISGRUNTLEDACTION_H
+﻿#ifndef ESICKDISGRUNTLEDACTION_H
 #define ESICKDISGRUNTLEDACTION_H
 
 #include "eactionwithcomeback.h"
@@ -20,8 +20,8 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
     void resumeFromSavedState() override;
     void patrol();
-    void goBackDecision(const stdsptr<eWalkableObject>& w =
-                            eWalkableObject::sCreateRoadAvenue());
+    void goBackDecision(const stdsptr<WalkableObject>& w =
+                            WalkableObject::sCreateRoadAvenue());
 
     SmallHouse* mBuilding = nullptr;
 

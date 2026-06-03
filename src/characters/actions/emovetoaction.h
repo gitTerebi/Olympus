@@ -1,4 +1,4 @@
-#ifndef EMOVETOACTION_H
+﻿#ifndef EMOVETOACTION_H
 #define EMOVETOACTION_H
 
 #include "ecomplexaction.h"
@@ -24,29 +24,29 @@ public:
 
     using eTileFinal = std::function<bool(eThreadTile* const)>;
     void start(const eTileFinal& final,
-               stdsptr<eWalkableObject> pathFindWalkable =
-                   eWalkableObject::sCreateDefault(),
-               stdsptr<eWalkableObject> moveWalkable = nullptr,
+               stdsptr<WalkableObject> pathFindWalkable =
+                   WalkableObject::sCreateDefault(),
+               stdsptr<WalkableObject> moveWalkable = nullptr,
                const eTileGetter& endTile = nullptr);
     void start(eTile* const final,
-               const stdsptr<eWalkableObject>& pathFindWalkable =
-                    eWalkableObject::sCreateDefault(),
-               const stdsptr<eWalkableObject>& moveWalkable = nullptr,
+               const stdsptr<WalkableObject>& pathFindWalkable =
+                    WalkableObject::sCreateDefault(),
+               const stdsptr<WalkableObject>& moveWalkable = nullptr,
                const eTileGetter& endTile = nullptr);
     void start(const SDL_Rect& rect,
-               stdsptr<eWalkableObject> pathFindWalkable =
-                    eWalkableObject::sCreateDefault(),
-               stdsptr<eWalkableObject> moveWalkable = nullptr,
+               stdsptr<WalkableObject> pathFindWalkable =
+                    WalkableObject::sCreateDefault(),
+               stdsptr<WalkableObject> moveWalkable = nullptr,
                const eTileGetter& endTile = nullptr);
     void start(eBuilding* const final,
-               const stdsptr<eWalkableObject>& pathFindWalkable =
-                    eWalkableObject::sCreateDefault(),
-               const stdsptr<eWalkableObject>& moveWalkable = nullptr,
+               const stdsptr<WalkableObject>& pathFindWalkable =
+                    WalkableObject::sCreateDefault(),
+               const stdsptr<WalkableObject>& moveWalkable = nullptr,
                const eTileGetter& endTile = nullptr);
     void start(const eBuildingType final,
-               const stdsptr<eWalkableObject>& pathFindWalkable =
-                    eWalkableObject::sCreateDefault(),
-               const stdsptr<eWalkableObject>& moveWalkable = nullptr,
+               const stdsptr<WalkableObject>& pathFindWalkable =
+                    WalkableObject::sCreateDefault(),
+               const stdsptr<WalkableObject>& moveWalkable = nullptr,
                const eTileGetter& endTile = nullptr);
 
     void setRemoveLastTurn(const bool r)
@@ -87,8 +87,8 @@ private:
         none, custom, tile, rect, building, buildingType
     };
     void startInternal(const eTileFinal& final,
-                       stdsptr<eWalkableObject> pathFindWalkable,
-                       stdsptr<eWalkableObject> moveWalkable,
+                       stdsptr<WalkableObject> pathFindWalkable,
+                       stdsptr<WalkableObject> moveWalkable,
                        const eTileGetter& endTile);
     bool restartSavedGoal();
 
@@ -108,8 +108,8 @@ private:
     SDL_Rect mSavedRect{};
     stdptr<eBuilding> mSavedBuilding;
     eBuildingType mSavedBuildingType{};
-    stdsptr<eWalkableObject> mSavedPathFindWalkable;
-    stdsptr<eWalkableObject> mSavedMoveWalkable;
+    stdsptr<WalkableObject> mSavedPathFindWalkable;
+    stdsptr<WalkableObject> mSavedMoveWalkable;
 };
 
 #endif // EMOVETOACTION_H

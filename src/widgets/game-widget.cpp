@@ -96,7 +96,7 @@ void formatStoredMessage(eMessage& msg,
 #include "game-menu.h"
 #include "eminimap.h"
 
-#include "characters/actions/eanimalaction.h"
+#include "characters/actions/animal-action.h"
 
 #include "characters/soldier-banner.h"
 #include "characters/formation-facing.h"
@@ -132,7 +132,7 @@ void formatStoredMessage(eMessage& msg,
 #include "buildings/epalace.h"
 #include "buildings/epalacetile.h"
 #include "buildings/ehorseranch.h"
-#include "buildings/ehorseranchenclosure.h"
+#include "buildings/horse-ranch-enclosure.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/egatehouse.h"
 #include "buildings/trade-post.h"
@@ -1746,7 +1746,7 @@ bool GameWidget::inErase(eBuilding *const b)
         const auto hre = hr->enclosure();
         rect = hre->tileRect();
     }
-    else if (const auto hr = dynamic_cast<eHorseRanchEnclosure *>(b))
+    else if (const auto hr = dynamic_cast<HorseRanchEnclosure *>(b))
     {
         const bool e1 = inErase(hr->tileRect());
         if (e1)

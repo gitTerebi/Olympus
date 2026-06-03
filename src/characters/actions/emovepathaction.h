@@ -1,4 +1,4 @@
-#ifndef EMOVEPATHACTION_H
+﻿#ifndef EMOVEPATHACTION_H
 #define EMOVEPATHACTION_H
 
 #include "emoveaction.h"
@@ -9,7 +9,7 @@ class eMovePathAction : public eMoveAction {
 public:
     eMovePathAction(eCharacter* const c,
                     const std::vector<eOrientation>& path,
-                    const stdsptr<eWalkableObject>& tileWalkable);
+                    const stdsptr<WalkableObject>& tileWalkable);
     eMovePathAction(eCharacter* const c);
 
     void setMaxDistance(const int dist) { mMaxDistance = dist; }

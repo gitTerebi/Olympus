@@ -1,4 +1,4 @@
-#include "monster-action.h"
+﻿#include "monster-action.h"
 
 #include "engine/game-board.h"
 
@@ -367,7 +367,7 @@ void MonsterAction::goToTarget() {
         });
         a->setRemoveLastTurn(true);
 
-        a->start(underBuilding, eWalkableObject::sCreateDeepWater());
+        a->start(underBuilding, WalkableObject::sCreateDeepWater());
         setCurrentAction(a);
     } else {
         const stdptr<MonsterAction> tptr(this);
@@ -376,8 +376,8 @@ void MonsterAction::goToTarget() {
         eGodMonsterAction::goToTarget(eHeatGetters::any, tryAgain,
                                       obsticleHandler(),
                                       eWalkableHelpers::sMonsterTileDistance,
-                                      eWalkableObject::sCreateAttacker(),
-                                      eWalkableObject::sCreateDefault());
+                                      WalkableObject::sCreateAttacker(),
+                                      WalkableObject::sCreateDefault());
     }
 }
 
@@ -394,10 +394,10 @@ void MonsterAction::goBack() {
 
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
-        a->start(mHomeTile, eWalkableObject::sCreateDeepWater());
+        a->start(mHomeTile, WalkableObject::sCreateDeepWater());
     } else {
-        a->start(mHomeTile, eWalkableObject::sCreateAttacker(),
-                 eWalkableObject::sCreateDefault());
+        a->start(mHomeTile, WalkableObject::sCreateAttacker(),
+                 WalkableObject::sCreateDefault());
     }
     setCurrentAction(a);
     c->setActionType(eCharacterActionType::walk);
@@ -421,7 +421,7 @@ void MonsterAction::enterMonsterPatrol() {
 void MonsterAction::rebuildMonsterPatrol() {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
-        moveAround(nullptr, mPatrolRemaining, eWalkableObject::sCreateDeepWater());
+        moveAround(nullptr, mPatrolRemaining, WalkableObject::sCreateDeepWater());
     } else {
         goToNearestRoad();
     }
@@ -465,7 +465,7 @@ void MonsterAction::rebuildWait() {
     if(mType == eMonsterType::scylla ||
        mType == eMonsterType::kraken) {
         moveAround(nullptr, mWaitRemaining,
-                   eWalkableObject::sCreateDeepWater());
+                   WalkableObject::sCreateDeepWater());
     } else {
         moveAround(nullptr, mWaitRemaining);
     }

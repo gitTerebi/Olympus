@@ -81,7 +81,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
         const auto twWid = new eTriremeWharfInfoWidget(window(), this, false, false);
         twWid->initialize(tw);
         wid = twWid;
-    } else if(const auto encl = dynamic_cast<eHorseRanchEnclosure*>(b)) {
+    } else if(const auto encl = dynamic_cast<HorseRanchEnclosure*>(b)) {
         return openInfoWidget(encl->ranch());
     } else {
         eAgoraBase* a = nullptr;

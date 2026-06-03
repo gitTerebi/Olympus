@@ -1,9 +1,9 @@
-#ifndef EHORSERANCH_H
+﻿#ifndef EHORSERANCH_H
 #define EHORSERANCH_H
 
 #include "eemployingbuilding.h"
 
-class eHorseRanchEnclosure;
+class HorseRanchEnclosure;
 class eSaveArchive;
 
 class eHorseRanch : public eEmployingBuilding {
@@ -30,8 +30,8 @@ public:
 
     int wheat() const { return mWheat; }
 
-    eHorseRanchEnclosure* enclosure() const { return mEnclosure; }
-    void setEnclosure(eHorseRanchEnclosure* const e);
+    HorseRanchEnclosure* enclosure() const { return mEnclosure; }
+    void setEnclosure(HorseRanchEnclosure* const e);
 
     int horseCount() const;
     bool takeHorse();
@@ -42,7 +42,7 @@ private:
     int mWheat = 0;
     int mWheatTime = 0;
     int mHorseTime = 0;
-    eHorseRanchEnclosure* mEnclosure = nullptr;
+    HorseRanchEnclosure* mEnclosure = nullptr;
 
     stdptr<eCartTransporter> mTakeCart;
 };

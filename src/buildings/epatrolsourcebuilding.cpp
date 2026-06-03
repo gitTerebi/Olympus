@@ -1,4 +1,4 @@
-#include "epatrolsourcebuilding.h"
+﻿#include "epatrolsourcebuilding.h"
 
 #include <memory>
 #include <cmath>
@@ -10,7 +10,7 @@
 #include "epathfindtask.h"
 #include "engine/ethreadpool.h"
 #include "engine/game-board.h"
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 #include "evectorhelpers.h"
 #include "epatroltarget.h"
 #include "estadium.h"
@@ -199,8 +199,8 @@ void ePatrolSourceBuilding::spawn(const int id)
         }
     };
     const auto failFunc = []() {};
-    const auto rw = eWalkableObject::sCreateRoadAvenue();
-    const auto walkable = eWalkableObject::sCreateRect(tRect, rw);
+    const auto rw = WalkableObject::sCreateRoadAvenue();
+    const auto walkable = WalkableObject::sCreateRect(tRect, rw);
     using ePath = std::vector<eOrientation>;
     const stdptr<ePatrolSourceBuilding> tptr(this);
     const auto finishFunc = [tptr, walkable, targetRects, id, tx, ty](const ePath &)
@@ -274,5 +274,5 @@ void ePatrolSourceBuilding::spawn(const int id, eBuilding *const targetBuilding)
     a->setFinishAction(finishAction);
     c->setAction(a);
     c->setActionType(eCharacterActionType::walk);
-    a->start(targetBuilding, eWalkableObject::sCreateRoadAvenue());
+    a->start(targetBuilding, WalkableObject::sCreateRoadAvenue());
 }

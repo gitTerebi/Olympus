@@ -147,7 +147,7 @@ TradePost::TradePost(GameBoard& board, WorldCity& city,
             r->changeTile(tile);
             return r;
         });
-        setWalkable(eWalkableObject::sCreate(eWalkableObjectType::deepWater));;
+        setWalkable(WalkableObject::sCreate(eWalkableObjectType::deepWater));;
     } break;
     case eTradePostType::post: {
         setCharacterCreator([](eTile* const tile, GameBoard& board) {
@@ -296,7 +296,7 @@ void TradePost::spawnTrader() {
     ta->setFinishOnComeback(true);
     ta->setTradePost(this);
     ta->setUnpackBuilding(mUnpackBuilding);
-    ta->setWalkable(eWalkableObject::sCreateRect(
+    ta->setWalkable(WalkableObject::sCreateRect(
                         mUnpackBuilding, mWalkable));
     r->setAction(ta);
 }
@@ -416,7 +416,7 @@ int TradePost::sell(const int items, std::map<eResourceType, int>& sold) {
     return earned;
 }
 
-void TradePost::setWalkable(const stdsptr<eWalkableObject>& w) {
+void TradePost::setWalkable(const stdsptr<WalkableObject>& w) {
     mWalkable = w;
 }
 

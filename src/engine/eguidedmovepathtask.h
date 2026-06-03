@@ -1,4 +1,4 @@
-#ifndef EGUIDEDMOVEPATHTASK_H
+﻿#ifndef EGUIDEDMOVEPATHTASK_H
 #define EGUIDEDMOVEPATHTASK_H
 
 #include <vector>
@@ -33,7 +33,7 @@ private:
     const stdptr<ePatrolBuildingBase> mB;
     const eAction mFinish;
 
-    stdsptr<eWalkableObject> mWalkable;
+    stdsptr<WalkableObject> mWalkable;
     bool mBothDirections;
     ePatrolGuide mStartGuide;
     std::vector<ePatrolGuide> mGuides;

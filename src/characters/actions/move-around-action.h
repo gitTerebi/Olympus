@@ -1,9 +1,9 @@
-#ifndef MOVE_AROUND_ACTION_H
+﻿#ifndef MOVE_AROUND_ACTION_H
 #define MOVE_AROUND_ACTION_H
 
 #include "emoveaction.h"
 
-#include "walkable/ewalkableobject.h"
+#include "walkable/walkable-object.h"
 #include "elimits.h"
 #include <vector>
 
@@ -13,8 +13,8 @@ class MoveAroundAction : public eMoveAction {
 public:
     MoveAroundAction(eCharacter* const c,
                       const int startX, const int startY,
-                      const stdsptr<eWalkableObject>& walkable =
-                            eWalkableObject::sCreateDefault());
+                      const stdsptr<WalkableObject>& walkable =
+                            WalkableObject::sCreateDefault());
     MoveAroundAction(eCharacter* const c);
 
     void increment(const int by) override;
