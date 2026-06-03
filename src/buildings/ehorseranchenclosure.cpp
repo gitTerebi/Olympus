@@ -8,7 +8,61 @@
 #include "characters/actions/eanimalaction.h"
 
 #include "ehorseranch.h"
+#include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
+#include "etilehelper.h"
+
+namespace {
+
+void rotatedHorsePosition(const eTile& tile, const double x, const double y,
+                          const eWorldDirection dir, const int boardW,
+                          const int boardH, double& rx, double& ry) {
+    int rtx;
+    int rty;
+    eTileHelper::tileIdToRotatedTileId(tile.x(), tile.y(), rtx, rty,
+                                       dir, boardW, boardH);
+    if(dir == eWorldDirection::N) {
+        rx = rtx + x + 0.5;
+        ry = rty + y + 0.5;
+    } else if(dir == eWorldDirection::E) {
+        rx = rtx + y + 0.5;
+        ry = rty - x + 1.5;
+    } else if(dir == eWorldDirection::S) {
+        rx = rtx - x + 1.5;
+        ry = rty - y + 1.5;
+    } else { // if(dir == eWorldDirection::W) {
+        rx = rtx - y + 1.5;
+        ry = rty + x + 0.5;
+    }
+}
+
+void enclosureDrawPosition(const SDL_Rect& rect, const eWorldDirection dir,
+                           const int boardW, const int boardH,
+                           double& x, double& y) {
+    const auto rotatedRect = eTileHelper::toRotatedRect(rect, dir,
+                                                       boardW, boardH);
+    x = rotatedRect.x + rotatedRect.w - 2;
+    y = rotatedRect.y + rotatedRect.h + 2;
+}
+
+bool tileInRect(eTile* const tile, const SDL_Rect& rect) {
+    if(!tile) return false;
+    const SDL_Point p{tile->x(), tile->y()};
+    return SDL_PointInRect(&p, &rect);
+}
+
+stdsptr<eAnimalAction> createHorseAction(Horse* const horse,
+                                         eTile* const tile,
+                                         const SDL_Rect& rect) {
+    const auto walkable = eWalkableObject::sCreateRanch(rect);
+    const auto a = e::make_shared<eAnimalAction>(
+                       horse, tile->x(), tile->y(), walkable);
+    a->setLayTime(500);
+    a->setWalkTime(1000);
+    return a;
+}
+
+}
 
 eHorseRanchEnclosure::eHorseRanchEnclosure(GameBoard& board,
                                            const eCityId cid) :
@@ -42,21 +96,41 @@ std::shared_ptr<eTexture> eHorseRanchEnclosure::getTexture(
 
 std::vector<eOverlay> eHorseRanchEnclosure::getOverlays(
         const eTileSize size) const {
-    const auto ct = centerTile();
-    if(!ct) return {};
-    const int ctx = ct->x();
-    const int cty = ct->y();
+    const auto& board = getBoard();
+    const auto dir = board.direction();
+    const int boardW = board.width();
+    const int boardH = board.height();
+    double drawX;
+    double drawY;
+    enclosureDrawPosition(tileRect(), dir, boardW, boardH, drawX, drawY);
     std::vector<eOverlay> os;
     for(const auto& h : mHorses) {
-        auto& o = os.emplace_back();
-        o.fTex = h->getNotRotatedTexture(size);
         const auto t = h->tile();
-        const int tx = t->x();
-        const int ty = t->y();
-        o.fX = tx + h->x() - ctx - 0.5;
-        o.fY = ty + h->y() - cty - 3.5;
+        if(!t) continue;
+        auto& o = os.emplace_back();
+        o.fTex = h->getTexture(size);
+        double horseX;
+        double horseY;
+        rotatedHorsePosition(*t, h->x(), h->y(), dir, boardW, boardH,
+                             horseX, horseY);
+        o.fX = horseX - drawX;
+        o.fY = horseY - drawY;
     }
     return os;
+}
+
+void eHorseRanchEnclosure::timeChanged(const int by) {
+    (void)by;
+    const auto tile = centerTile();
+    if(!tile) return;
+    const auto rect = tileRect();
+    for(const auto& h : mHorses) {
+        if(tileInRect(h->tile(), rect)) continue;
+        h->changeTile(tile);
+        h->setX(0.5);
+        h->setY(0.5);
+        h->setAction(createHorseAction(h.get(), tile, rect));
+    }
 }
 
 int eHorseRanchEnclosure::count(const eResourceType type) const {
@@ -82,13 +156,7 @@ bool eHorseRanchEnclosure::spawnHorse() {
     h->setBothCityIds(cityId());
     const auto tile = centerTile();
     h->changeTile(tile);
-    const auto walkable = eWalkableObject::sCreateRanch();
-    const int tx = tile->x();
-    const int ty = tile->y();
-    const auto a = e::make_shared<eAnimalAction>(
-                       h.get(), tx, ty, walkable);
-    a->setLayTime(500);
-    a->setWalkTime(1000);
+    const auto a = createHorseAction(h.get(), tile, tileRect());
     h->setAction(a);
     mHorses.push_back(h);
     return true;

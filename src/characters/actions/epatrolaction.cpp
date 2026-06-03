@@ -1,4 +1,4 @@
-#include "epatrolaction.h"
+﻿#include "epatrolaction.h"
 
 #include "../echaracter.h"
 #include "engine/etile.h"
@@ -67,7 +67,7 @@ void ePatrolAction::patrol() {
                                 board(), this);
     const int dist = mBuilding->maxDistance();
     if(mPath.empty()) {
-        const auto walkable = eWalkableObject::sCreateRoadblock();
+        const auto walkable = WalkableObject::sCreateRoadblock();
         const auto a = e::make_shared<ePatrolMoveAction>(
             c, true, walkable, mDirTimes);
         a->setFailAction(failFunc);
@@ -75,8 +75,8 @@ void ePatrolAction::patrol() {
         a->setMaxWalkDistance(dist);
         setCurrentAction(a);
     } else {
-        auto walkable = eWalkableObject::sCreateRoadAvenue();
-        walkable = eWalkableObject::sCreateRect(mBuilding, walkable);
+        auto walkable = WalkableObject::sCreateRoadAvenue();
+        walkable = WalkableObject::sCreateRect(mBuilding, walkable);
         const auto a = e::make_shared<eMovePathAction>(
             c, mPath, walkable);
         a->setFailAction(failFunc);
@@ -85,7 +85,7 @@ void ePatrolAction::patrol() {
     }
 }
 
-void ePatrolAction::goBackDecision(const stdsptr<eWalkableObject>& w) {
+void ePatrolAction::goBackDecision(const stdsptr<WalkableObject>& w) {
     mStage = ePatrolActionStage::goingBack;
     goBack(mBuilding, w);
 }

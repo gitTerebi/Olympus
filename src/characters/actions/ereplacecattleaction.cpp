@@ -1,4 +1,4 @@
-#include "ereplacecattleaction.h"
+﻿#include "ereplacecattleaction.h"
 
 #include "emovetoaction.h"
 #include "engine/game-board.h"
@@ -34,7 +34,7 @@ void eReplaceCattleAction::resumeFromSavedState() {
         break;
     case eReplaceCattleActionStage::goingBack:
         sendCattleHome();
-        goBack(eWalkableObject::sCreateDefault());
+        goBack(WalkableObject::sCreateDefault());
         break;
     }
 }
@@ -43,7 +43,7 @@ void eReplaceCattleAction::goCattle() {
     const auto c = character();
     mStage = eReplaceCattleActionStage::goingToCattle;
 
-    const auto ca = dynamic_cast<eAnimalAction*>(mCattle ? mCattle->action() : nullptr);
+    const auto ca = dynamic_cast<AnimalAction*>(mCattle ? mCattle->action() : nullptr);
     if(!ca) return;
     mCattleHomeX = ca->spawnerX();
     mCattleHomeY = ca->spawnerY();
@@ -56,7 +56,7 @@ void eReplaceCattleAction::goCattle() {
     });
     const stdptr<eReplaceCattleAction> tptr(this);
     const auto findFailFunc = [tptr, this]() {
-        if(tptr) goBack(eWalkableObject::sCreateDefault());
+        if(tptr) goBack(WalkableObject::sCreateDefault());
     };
     a->setFindFailAction(findFailFunc);
     const auto finish = std::make_shared<eRC_finishAction>(
@@ -69,7 +69,7 @@ void eReplaceCattleAction::goCattle() {
 
 void eReplaceCattleAction::finishReplacing() {
     mStage = eReplaceCattleActionStage::goingBack;
-    goBack(eWalkableObject::sCreateDefault());
+    goBack(WalkableObject::sCreateDefault());
     sendCattleHome();
 }
 
@@ -99,7 +99,7 @@ void eRC_finishAction::call() {
     if(!mCattle) return;
     const auto c = mCattle.get();
 
-    const auto ca = dynamic_cast<eAnimalAction*>(c->action());
+    const auto ca = dynamic_cast<AnimalAction*>(c->action());
     if(!ca) return;
     const auto homeTile = board().tile(ca->spawnerX(), ca->spawnerY());
 
@@ -121,8 +121,8 @@ void eRC_finishWalkingAction::call() {
     if(!t) return;
     const int tx = t->x();
     const int ty = t->y();
-    const auto walkable = eWalkableObject::sCreateFertile();
-    const auto a = e::make_shared<eAnimalAction>(
+    const auto walkable = WalkableObject::sCreateFertile();
+    const auto a = e::make_shared<AnimalAction>(
                        mCattle, tx, ty, walkable);
     mCattle->setAction(a);
 }

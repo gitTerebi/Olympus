@@ -19,6 +19,8 @@ public:
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
 
+    void timeChanged(const int by) override;
+
     int count(const eResourceType type) const override;
     int take(const eResourceType type, const int count) override;
 

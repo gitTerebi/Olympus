@@ -1,10 +1,10 @@
-#ifndef EREPLACECATTLEACTION_H
+﻿#ifndef EREPLACECATTLEACTION_H
 #define EREPLACECATTLEACTION_H
 
 #include "eactionwithcomeback.h"
 
 #include "characters/echaracter.h"
-#include "characters/actions/eanimalaction.h"
+#include "characters/actions/animal-action.h"
 
 class eSaveArchive;
 

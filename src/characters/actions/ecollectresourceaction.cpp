@@ -1,4 +1,4 @@
-#include "ecollectresourceaction.h"
+﻿#include "ecollectresourceaction.h"
 
 #include "characters/eresourcecollector.h"
 #include "buildings/eresourcecollectbuilding.h"
@@ -183,7 +183,7 @@ bool eCollectResourceAction::findResourceDecision() {
 
     const stdptr<eCollectResourceAction> tptr(this);
 
-    const auto tileWalkable = eWalkableObject::sCreateHasResource(
+    const auto tileWalkable = WalkableObject::sCreateHasResource(
                                   mHasResource, mWalkable);
 
     const auto hr = mHasResource;
@@ -268,7 +268,7 @@ void eCollectResourceAction::goBackDecision() {
     } else {
         c->setActionType(eCharacterActionType::walk);
     }
-    const auto tileWalkable = eWalkableObject::sCreateHasResource(
+    const auto tileWalkable = WalkableObject::sCreateHasResource(
                                   mHasResource, mWalkable);
     goBack(mBuilding, tileWalkable);
 }

@@ -1,12 +1,12 @@
-#include "epathfindtask.h"
+﻿#include "epathfindtask.h"
 
 #include "engine/epathfinder.h"
 #include "engine/eknownendpathfinder.h"
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 #include "ewalkablehelpers.h"
 
 using eTileDistance = std::function<int(eTileBase* const)>;
-eTileDistance tileDist(const stdsptr<eWalkableObject>& w,
+eTileDistance tileDist(const stdsptr<WalkableObject>& w,
                        const eTileDistance& d) {
     if(!d && w && w->rootType() == eWalkableObjectType::roadAvenue) {
         return eWalkableHelpers::sRoadAvenueTileDistance;
@@ -18,7 +18,7 @@ eTileDistance tileDist(const stdsptr<eWalkableObject>& w,
 ePathFindTask::ePathFindTask(const eCityId cid,
                              const SDL_Rect& tileBRect,
                              const eTileGetter& startTile,
-                             const stdsptr<eWalkableObject>& tileWalkable,
+                             const stdsptr<WalkableObject>& tileWalkable,
                              const eTileChecker& endTileFunc,
                              const eFinishFunc& finishFunc,
                              const eFailFunc& failFunc,

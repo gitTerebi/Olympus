@@ -1,4 +1,4 @@
-#ifndef ALLBUILDINGS_H
+﻿#ifndef ALLBUILDINGS_H
 #define ALLBUILDINGS_H
 
 #include "buildings/ebuildingrenderer.h"
@@ -53,7 +53,7 @@
 #include "buildings/esculpturestudio.h"
 #include "buildings/earmory.h"
 #include "buildings/ehorseranch.h"
-#include "buildings/ehorseranchenclosure.h"
+#include "buildings/horse-ranch-enclosure.h"
 
 #include "buildings/eartisansguild.h"
 

@@ -1,4 +1,4 @@
-#include "eactionwithcomeback.h"
+﻿#include "eactionwithcomeback.h"
 
 #include "characters/echaracter.h"
 #include "emovetoaction.h"
@@ -36,14 +36,14 @@ void eActionWithComeback::serializeFields(eSaveArchive& ar) {
     ar.field("diagonalOnly", mDiagonalOnly);
 }
 
-void eActionWithComeback::goBack(stdsptr<eWalkableObject> walkable) {
+void eActionWithComeback::goBack(stdsptr<WalkableObject> walkable) {
     mDefaultTry = false;
     mGoBackFail = false;
     goBackInternal(walkable);
 }
 
 void eActionWithComeback::goBack(eBuilding* const b,
-                                 const stdsptr<eWalkableObject>& walkable) {
+                                 const stdsptr<WalkableObject>& walkable) {
     const auto type = b->type();
     if(type == eBuildingType::commonAgora ||
        type == eBuildingType::grandAgora) {
@@ -55,20 +55,20 @@ void eActionWithComeback::goBack(eBuilding* const b,
 }
 
 void eActionWithComeback::goBack(const SDL_Rect& rect,
-                                 const stdsptr<eWalkableObject>& walkable) {
+                                 const stdsptr<WalkableObject>& walkable) {
     mGoBackRect = rect;
-    const auto w = eWalkableObject::sCreateRect(rect, walkable);
+    const auto w = WalkableObject::sCreateRect(rect, walkable);
     eActionWithComeback::goBack(w);
 }
 
-void eActionWithComeback::goBackInternal(stdsptr<eWalkableObject> walkable) {
+void eActionWithComeback::goBackInternal(stdsptr<WalkableObject> walkable) {
     if(mGoBackFail) return;
     if(mDefaultTry) {
         if(SDL_RectEmpty(&mGoBackRect)) {
-            walkable = eWalkableObject::sCreateDefault();
+            walkable = WalkableObject::sCreateDefault();
         } else {
-            walkable = eWalkableObject::sCreateRect(
-                    mGoBackRect, eWalkableObject::sCreateDefault());
+            walkable = WalkableObject::sCreateRect(
+                    mGoBackRect, WalkableObject::sCreateDefault());
         }
     }
     const auto c = character();
@@ -103,7 +103,7 @@ void eActionWithComeback::goBackInternal(stdsptr<eWalkableObject> walkable) {
     });
     a->setDiagonalOnly(mDiagonalOnly);
     if(const auto ub = mStartTile->underBuilding()) {
-        walkable = eWalkableObject::sCreateRect(ub, walkable);
+        walkable = WalkableObject::sCreateRect(ub, walkable);
     }
     a->start(finalTile, walkable);
     setCurrentAction(a);

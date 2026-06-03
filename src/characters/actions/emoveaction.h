@@ -1,4 +1,4 @@
-#ifndef EMOVEACTION_H
+﻿#ifndef EMOVEACTION_H
 #define EMOVEACTION_H
 
 #include "character-action.h"
@@ -12,7 +12,7 @@ class eSaveArchive;
 class eMoveAction : public eCharacterAction {
 public:
     eMoveAction(eCharacter* const c,
-                const stdsptr<eWalkableObject>& tileWalkable,
+                const stdsptr<WalkableObject>& tileWalkable,
                 const eCharActionType type);
     eMoveAction(eCharacter* const c, const eCharActionType type);
 
@@ -32,7 +32,7 @@ private:
     void moveBy(const double inc);
     void moveToTargetTile();
 
-    stdsptr<eWalkableObject> mTileWalkable;
+    stdsptr<WalkableObject> mTileWalkable;
 
     eOrientation mOrientation;
     eTile* mTargetTile = nullptr;

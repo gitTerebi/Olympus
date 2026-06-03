@@ -1,4 +1,4 @@
-#include "eguidedmovepathtask.h"
+﻿#include "eguidedmovepathtask.h"
 
 #include "thread/ethreadboard.h"
 #include "engine/game-board.h"
@@ -12,8 +12,8 @@ eGuidedMovePathTask::eGuidedMovePathTask(ePatrolBuildingBase * const b,
     eTask(b->cityId()),
     mB(b), mFinish(finish) {
     setRelevance(eStateRelevance::buildings);
-    const auto walkable = eWalkableObject::sCreateRoadAvenue();
-    mWalkable = eWalkableObject::sCreateRect(b, walkable);
+    const auto walkable = WalkableObject::sCreateRoadAvenue();
+    mWalkable = WalkableObject::sCreateRect(b, walkable);
 
     mBothDirections = b->bothDirections();
     {

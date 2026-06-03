@@ -1,4 +1,4 @@
-#include "eartisanaction.h"
+﻿#include "eartisanaction.h"
 
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ewaitaction.h"
@@ -164,7 +164,7 @@ bool eArtisanAction::findTargetDecision() {
 
     a->setFindFailAction(findFailFunc);
     a->setRemoveLastTurn(true);
-    a->start(hha, eWalkableObject::sCreateArtisan());
+    a->start(hha, WalkableObject::sCreateArtisan());
     setCurrentAction(a);
     return true;
 }
@@ -236,5 +236,5 @@ void eArtisanAction::goBackDecision() {
     mStage = eArtisanActionStage::goingBack;
     const auto c = character();
     c->setActionType(eCharacterActionType::walk);
-    goBack(mGuild, eWalkableObject::sCreateArtisan());
+    goBack(mGuild, WalkableObject::sCreateArtisan());
 }

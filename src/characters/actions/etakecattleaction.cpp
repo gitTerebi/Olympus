@@ -1,4 +1,4 @@
-#include "etakecattleaction.h"
+﻿#include "etakecattleaction.h"
 
 #include "buildings/ecorral.h"
 
@@ -40,7 +40,7 @@ void eTakeCattleAction::increment(const int by) {
             cc->setAction(fa);
 
             mStage = eTakeCattleActionStage::goBack;
-            goBack(eWalkableObject::sCreateDefault());
+            goBack(WalkableObject::sCreateDefault());
         }
     }
     eActionWithComeback::increment(by);
@@ -62,7 +62,7 @@ void eTakeCattleAction::resumeFromSavedState() {
         goGetCattle();
         break;
     case eTakeCattleActionStage::goBack:
-        goBack(eWalkableObject::sCreateDefault());
+        goBack(WalkableObject::sCreateDefault());
         break;
     }
 }
@@ -115,7 +115,7 @@ void eTakeCattleAction::goGetCattle() {
         if(tptr) {
             mNoCattle = true;
             mCorral->setNoCattle(!*foundAny);
-            goBack(eWalkableObject::sCreateDefault());
+            goBack(WalkableObject::sCreateDefault());
         }
     };
     a->setFindFailAction(findFailFunc);

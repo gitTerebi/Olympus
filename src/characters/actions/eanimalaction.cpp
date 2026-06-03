@@ -67,6 +67,10 @@ void eAnimalAction::walkAround() {
     mStage = eAnimalActionStage::walking;
     const auto c = character();
     c->setActionType(eCharacterActionType::walk);
+    if(c->type() == eCharacterType::horse) {
+        const SDL_Rect rect{mSpawnerX - 1, mSpawnerY - 2, 4, 4};
+        mTileWalkable = eWalkableObject::sCreateRanch(rect);
+    }
     const auto m = e::make_shared<MoveAroundAction>(
                        c, mSpawnerX, mSpawnerY,
                        mTileWalkable);

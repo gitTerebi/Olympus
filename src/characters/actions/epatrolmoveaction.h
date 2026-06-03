@@ -1,4 +1,4 @@
-#ifndef EPATROLMOVEACTION_H
+﻿#ifndef EPATROLMOVEACTION_H
 #define EPATROLMOVEACTION_H
 
 #include "emoveaction.h"
@@ -17,8 +17,8 @@ class ePatrolMoveAction : public eMoveAction {
 public:
     ePatrolMoveAction(eCharacter* const c,
                       const bool diagonalOnly = true,
-                      const stdsptr<eWalkableObject>& walkable =
-                        eWalkableObject::sCreateRoad(),
+                      const stdsptr<WalkableObject>& walkable =
+                        WalkableObject::sCreateRoad(),
                       const stdsptr<eDirectionTimes>& os =
                         std::make_shared<eDirectionTimes>());
 
@@ -30,7 +30,7 @@ private:
     eCharacterActionState nextTurn(eOrientation& t) override;
 
     bool mDiagonalOnly;
-    stdsptr<eWalkableObject> mWalkable;
+    stdsptr<WalkableObject> mWalkable;
     stdsptr<eDirectionTimes> mOs;
 
     eOrientation mO{eOrientation::topRight};

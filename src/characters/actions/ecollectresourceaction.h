@@ -1,4 +1,4 @@
-#ifndef ECOLLECTRESOURCEACTION_H
+﻿#ifndef ECOLLECTRESOURCEACTION_H
 #define ECOLLECTRESOURCEACTION_H
 
 #include "eactionwithcomeback.h"
@@ -40,7 +40,7 @@ public:
 
     void setGetAtTile(const bool b) { mGetAtTile = b; }
     void setAddResource(const bool b) { mAddResource = b; }
-    void setWalkable(const stdsptr<eWalkableObject> & w) { mWalkable = w; }
+    void setWalkable(const stdsptr<WalkableObject> & w) { mWalkable = w; }
 
     void setFinishOnce(const bool f) { mFinishOnce = f; }
     void setWaitTime(const int w) { mWaitTime = w; }
@@ -59,8 +59,8 @@ private:
     stdsptr<eHasResourceObject> mHasResource;
     eResourceCollectBuildingBase* mBuilding = nullptr;
     eTileActionType mCollectedAction = eTileActionType::none;
-    stdsptr<eWalkableObject> mWalkable =
-            eWalkableObject::sCreateDefault();
+    stdsptr<WalkableObject> mWalkable =
+            WalkableObject::sCreateDefault();
 
     bool mDisabled = false;
     int mWaitTime = 5000;

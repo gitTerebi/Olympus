@@ -1,4 +1,4 @@
-#include "fighting-action.h"
+﻿#include "fighting-action.h"
 
 #include <math.h>
 #include <cstdio>
@@ -774,17 +774,17 @@ void FightingAction::goToInternal(const int fx, const int fy,
     const bool pathAround = attackBuildings && prefersPathAround() &&
                             !forceAttacker;
 
-    stdsptr<eWalkableObject> pathFindWalkable;
-    stdsptr<eWalkableObject> moveWalkable;
+    stdsptr<WalkableObject> pathFindWalkable;
+    stdsptr<WalkableObject> moveWalkable;
     if(c->isBoat()) {
         pathFindWalkable =
-            eWalkableObject::sCreateDeepWater();
+            WalkableObject::sCreateDeepWater();
     } else if(attackBuildings && !pathAround) {
-        pathFindWalkable = eWalkableObject::sCreateAttacker();
-        moveWalkable = eWalkableObject::sCreateDefault();
+        pathFindWalkable = WalkableObject::sCreateAttacker();
+        moveWalkable = WalkableObject::sCreateDefault();
     } else {
         pathFindWalkable =
-            eWalkableObject::sCreateDefault();
+            WalkableObject::sCreateDefault();
     }
 
     eAction failAct = findFailAct;

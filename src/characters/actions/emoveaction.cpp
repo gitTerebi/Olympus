@@ -1,14 +1,14 @@
-#include "emoveaction.h"
+﻿#include "emoveaction.h"
 
 #include "../echaracter.h"
-#include "walkable/ewalkableobject.h"
+#include "walkable/walkable-object.h"
 
 #include "vec2.h"
 #include "fileIO/esavearchive.h"
 #include "enumbers.h"
 
 eMoveAction::eMoveAction(eCharacter* const c,
-                         const stdsptr<eWalkableObject>& tileWalkable,
+                         const stdsptr<WalkableObject>& tileWalkable,
                          const eCharActionType type) :
     eCharacterAction(c, type),
     mTileWalkable(tileWalkable) {

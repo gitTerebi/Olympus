@@ -1,11 +1,11 @@
-#include "emovepathaction.h"
+﻿#include "emovepathaction.h"
 
 #include "characters/echaracter.h"
 #include "fileIO/esavearchive.h"
 
 eMovePathAction::eMovePathAction(eCharacter* const c,
                                  const std::vector<eOrientation>& path,
-                                 const stdsptr<eWalkableObject>& tileWalkable) :
+                                 const stdsptr<WalkableObject>& tileWalkable) :
     eMoveAction(c, tileWalkable, eCharActionType::movePathAction),
     mTurns(path) {
 }

@@ -1,10 +1,10 @@
-#ifndef EACTIONWITHCOMEBACK_H
+﻿#ifndef EACTIONWITHCOMEBACK_H
 #define EACTIONWITHCOMEBACK_H
 
 #include "ecomplexaction.h"
 #include "emovepathaction.h"
 #include "engine/emovedirection.h"
-#include "walkable/ewalkableobject.h"
+#include "walkable/walkable-object.h"
 
 #include <SDL2/SDL_rect.h>
 
@@ -30,11 +30,11 @@ public:
     void setDiagonalOnly(const bool d)
     { mDiagonalOnly = d; }
 
-    void goBack(stdsptr<eWalkableObject> walkable);
+    void goBack(stdsptr<WalkableObject> walkable);
     void goBack(eBuilding* const b,
-                const stdsptr<eWalkableObject>& walkable);
+                const stdsptr<WalkableObject>& walkable);
     void goBack(const SDL_Rect& rect,
-                const stdsptr<eWalkableObject>& walkable);
+                const stdsptr<WalkableObject>& walkable);
 
     eTile* startTile() const { return mStartTile; }
     void setStartTile(eTile* const t) { mStartTile = t; }
@@ -42,7 +42,7 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 
 private:
-    void goBackInternal(stdsptr<eWalkableObject> walkable);
+    void goBackInternal(stdsptr<WalkableObject> walkable);
     void teleportDecision();
 
     eTile* mStartTile = nullptr;
@@ -61,7 +61,7 @@ public:
         eCharActFunc(board, eCharActFuncType::AWC_goBackFail) {}
     eAWC_goBackFail(GameBoard& board,
                     eActionWithComeback* const t,
-                    const stdsptr<eWalkableObject>& walkable) :
+                    const stdsptr<WalkableObject>& walkable) :
         eCharActFunc(board, eCharActFuncType::AWC_goBackFail),
         mTptr(t), mWalkable(walkable) {}
 
@@ -77,7 +77,7 @@ protected:
     }
 private:
     stdptr<eActionWithComeback> mTptr;
-    stdsptr<eWalkableObject> mWalkable;
+    stdsptr<WalkableObject> mWalkable;
 };
 
 class eAWC_goBackFinish : public eCharActFunc {

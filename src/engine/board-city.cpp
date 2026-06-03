@@ -14,14 +14,14 @@
 #include "buildings/epier.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/ehorseranch.h"
-#include "buildings/ehorseranchenclosure.h"
+#include "buildings/horse-ranch-enclosure.h"
 #include "buildings/etriremewharf.h"
 #include "buildings/etower.h"
 #include "buildings/estadium.h"
 #include "buildings/emuseum.h"
 #include "buildings/pyramids/epyramid.h"
 #include "characters/echaracter.h"
-#include "characters/actions/eanimalaction.h"
+#include "characters/actions/animal-action.h"
 
 #include "evectorhelpers.h"
 
@@ -1540,7 +1540,7 @@ int BoardCity::countAnimalCharacters(const eBuildingType t) const {
     for(const auto c : mBoard.characters()) {
         if(!c) continue;
         if(!animalTypeMatchesBuilding(c->type(), t)) continue;
-        const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+        const auto aa = dynamic_cast<AnimalAction*>(c->action());
         if(!aa) continue;
         const auto tile = mBoard.tile(aa->spawnerX(), aa->spawnerY());
         if(!tile || tile->cityId() != mId) continue;
@@ -2645,7 +2645,7 @@ const std::vector<eTile*>& BoardCity::animalBuildingsTiles() {
                                 ct == eCharacterType::cattle3 ||
                                 ct == eCharacterType::bull;
             if(!animal) continue;
-            const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+            const auto aa = dynamic_cast<AnimalAction*>(c->action());
             if(!aa) continue;
             const int x = aa->spawnerX();
             const int y = aa->spawnerY();

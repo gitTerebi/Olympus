@@ -1,4 +1,4 @@
-#ifndef EPATHFINDTASK_H
+﻿#ifndef EPATHFINDTASK_H
 #define EPATHFINDTASK_H
 
 #include "engine/etask.h"
@@ -21,7 +21,7 @@ public:
     ePathFindTask(const eCityId cid,
                   const SDL_Rect& tileBRect,
                   const eTileGetter& startTile,
-                  const stdsptr<eWalkableObject>& tileWalkable,
+                  const stdsptr<WalkableObject>& tileWalkable,
                   const eTileChecker& endTileFunc,
                   const eFinishFunc& finishFunc,
                   const eFailFunc& failFunc,
@@ -41,7 +41,7 @@ private:
     const SDL_Rect mTileBRect;
     const eTileGetter mStartTile;
     const eTileGetter mEndTile;
-    const stdsptr<eWalkableObject> mTileWalkable;
+    const stdsptr<WalkableObject> mTileWalkable;
     const eTileChecker mEndTileFunc;
     const eFinishFunc mFinish;
     const eFailFunc mFailFunc;

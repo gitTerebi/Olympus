@@ -1,13 +1,13 @@
-#ifndef EWOLFACTION_H
+﻿#ifndef EWOLFACTION_H
 #define EWOLFACTION_H
 
-#include "eanimalaction.h"
+#include "animal-action.h"
 
 enum class eWolfActionStage {
     idle, hunting, goingBack, attackingWall
 };
 
-class eWolfAction : public eAnimalAction
+class eWolfAction : public AnimalAction
 {
 public:
     eWolfAction(eCharacter *const c, const int spawnerX, const int spawnerY);

@@ -1,4 +1,4 @@
-#include "fire-fighter-action.h"
+﻿#include "fire-fighter-action.h"
 #include "fileIO/esavearchive.h"
 
 #include "../echaracter.h"
@@ -79,7 +79,7 @@ bool FireFighterAction::decide() {
         } else {
             if(mUsedWater >= 5) {
                 c->setActionType(eCharacterActionType::walk);
-                goBackDecision(eWalkableObject::sCreateDefault());
+                goBackDecision(WalkableObject::sCreateDefault());
             } else {
                 c->setActionType(eCharacterActionType::stand);
                 lookForFire(true);

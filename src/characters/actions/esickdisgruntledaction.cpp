@@ -1,4 +1,4 @@
-#include "esickdisgruntledaction.h"
+﻿#include "esickdisgruntledaction.h"
 
 #include "../echaracter.h"
 #include "buildings/small-house.h"
@@ -57,25 +57,25 @@ void eSickDisgruntledAction::patrol() {
     if(t->hasRoad()) {
         const auto a = e::make_shared<ePatrolMoveAction>(
                            c, true,
-                           eWalkableObject::sCreateRoad());
+                           WalkableObject::sCreateRoad());
         a->setMaxWalkDistance(50);
         setCurrentAction(a);
     } else {
-        auto walkable = eWalkableObject::sCreateDefault();
+        auto walkable = WalkableObject::sCreateDefault();
         if(const auto ub = t->underBuilding()) {
-            walkable = eWalkableObject::sCreateRect(ub, walkable);
+            walkable = WalkableObject::sCreateRect(ub, walkable);
         }
 
         const auto a = e::make_shared<MoveAroundAction>(
                            c, t->x(), t->y(),
-                           eWalkableObject::sCreateDefault());
+                           WalkableObject::sCreateDefault());
         a->setTime(5000);
         a->setMaxDistance(8);
         setCurrentAction(a);
     }
 }
 
-void eSickDisgruntledAction::goBackDecision(const stdsptr<eWalkableObject>& w) {
+void eSickDisgruntledAction::goBackDecision(const stdsptr<WalkableObject>& w) {
     mStage = eSickDisgruntledActionStage::goingBack;
     goBack(mBuilding, w);
 }

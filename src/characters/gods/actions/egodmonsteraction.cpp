@@ -1,4 +1,4 @@
-#include "egodmonsteraction.h"
+﻿#include "egodmonsteraction.h"
 
 #include "fileIO/esavearchive.h"
 
@@ -127,7 +127,7 @@ void eGodMonsterAction::randomPlaceOnBoard() {
 void eGodMonsterAction::moveAround(
         const stdsptr<eCharActFunc>& finishAct,
         const int time,
-        const stdsptr<eWalkableObject>& walkable) {
+        const stdsptr<WalkableObject>& walkable) {
     const auto c = character();
     c->setActionType(eCharacterActionType::walk);
     const auto t = c->tile();
@@ -146,8 +146,8 @@ void eGodMonsterAction::goToTarget(const eHeatGetters::eHeatGetter hg,
                                    const stdsptr<eFindFailFunc>& findFailFunc,
                                    const stdsptr<eObsticleHandler>& oh,
                                    const eTileDistance& tileDistance,
-                                   const stdsptr<eWalkableObject>& pathFindWalkable,
-                                   const stdsptr<eWalkableObject>& moveWalkable) {
+                                   const stdsptr<WalkableObject>& pathFindWalkable,
+                                   const stdsptr<WalkableObject>& moveWalkable) {
     const auto c = character();
     const stdptr<eGodMonsterAction> tptr(this);
     const stdptr<eCharacter> cptr(c);
@@ -193,8 +193,8 @@ void eGodMonsterAction::goToTile(
         const stdsptr<eFindFailFunc>& findFailFunc,
         const stdsptr<eObsticleHandler>& oh,
         const eTileDistance& tileDistance,
-        const stdsptr<eWalkableObject>& pathFindWalkable,
-        const stdsptr<eWalkableObject>& moveWalkable) {
+        const stdsptr<WalkableObject>& pathFindWalkable,
+        const stdsptr<WalkableObject>& moveWalkable) {
     const auto c = character();
     if(!tile || !c) return setCurrentAction(nullptr);
     auto& board = c->getBoard();

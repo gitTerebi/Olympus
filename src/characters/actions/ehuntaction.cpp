@@ -1,4 +1,4 @@
-#include "ehuntaction.h"
+﻿#include "ehuntaction.h"
 
 #include "engine/epathfinder.h"
 
@@ -209,7 +209,7 @@ void eHuntAction::goBackDecision() {
     mStage = eHuntActionStage::goingBack;
     mHunter->setActionType(eCharacterActionType::carry);
     const auto rect = mLodge->tileRect();
-    eActionWithComeback::goBack(rect, eWalkableObject::sCreateDefault());
+    eActionWithComeback::goBack(rect, WalkableObject::sCreateDefault());
 }
 
 void eHuntAction::waitDecision() {

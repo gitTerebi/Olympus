@@ -83,7 +83,7 @@ set(SOURCES
     src/buildings/ehippodrome.cpp
     src/buildings/ehippodromepiece.cpp
     src/buildings/ehorseranch.cpp
-    src/buildings/ehorseranchenclosure.cpp
+    src/buildings/horse-ranch-enclosure.cpp
     src/buildings/ehorsevendor.cpp
     src/buildings/ehospital.cpp
     src/buildings/ehousebase.cpp
@@ -168,7 +168,7 @@ set(SOURCES
     src/buildings/sanctuaries/etempletilebuilding.cpp
     src/buildings/sanctuaries/ezeussanctuary.cpp
     src/characters/actions/eactionwithcomeback.cpp
-    src/characters/actions/eanimalaction.cpp
+    src/characters/actions/animal-action.cpp
     src/characters/actions/earcheraction.cpp
     src/characters/actions/eartisanaction.cpp
     src/characters/actions/eattackcityaction.cpp
@@ -242,7 +242,7 @@ set(SOURCES
     src/characters/actions/walkable/ehasresourcewalkableobject.cpp
     src/characters/actions/walkable/eobsticlehandler.cpp
     src/characters/actions/walkable/erectwalkableobject.cpp
-    src/characters/actions/walkable/ewalkableobject.cpp
+    src/characters/actions/walkable/walkable-object.cpp
     src/characters/actor.cpp
     src/characters/eamazon.cpp
     src/characters/animal.cpp

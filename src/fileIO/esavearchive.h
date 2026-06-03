@@ -13,7 +13,7 @@
 #include <string>
 
 #include "estreams.h"
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
 
 #if defined(__cplusplus) && __cplusplus >= 201402L
@@ -524,7 +524,7 @@ public:
             });
     }
 
-    bool walkableField(const char* const name, stdsptr<eWalkableObject>& val) {
+    bool walkableField(const char* const name, stdsptr<WalkableObject>& val) {
         bool hasValue = val != nullptr;
         const std::string hasName = std::string(name) + ".has";
         this->field(hasName.c_str(), hasValue, false);
@@ -535,7 +535,7 @@ public:
         eWalkableObjectType type = writing() ? val->type() : eWalkableObjectType::ddefault;
         const std::string typeName = std::string(name) + ".type";
         this->field(typeName.c_str(), type);
-        if(reading()) val = eWalkableObject::sCreate(type);
+        if(reading()) val = WalkableObject::sCreate(type);
         if(!val) {
             printf("[saveLoad] walkableField '%s' unknown type %d.\n",
                    name, static_cast<int>(type));

@@ -1,10 +1,54 @@
 #include "ewalkableobject.h"
 
 #include "buildings/ebuilding.h"
+#include "fileIO/esavearchive.h"
 
 #include "erectwalkableobject.h"
 #include "ehasresourcewalkableobject.h"
 
+namespace {
+
+bool ranchTileWalkable(eTileBase* const t) {
+    const auto tt = t->underBuildingType();
+    if(tt != eBuildingType::horseRanchEnclosure) return false;
+
+    const auto bl = t->bottomLeft();
+    if(!bl) return false;
+    const auto blt = bl->underBuildingType();
+    if(blt != eBuildingType::horseRanchEnclosure) return false;
+
+    const auto br = t->bottomRight();
+    if(!br) return false;
+    const auto brt = br->underBuildingType();
+    if(brt != eBuildingType::horseRanchEnclosure) return false;
+
+    return true;
+}
+
+class RanchRectWalkableObject : public eWalkableObject {
+public:
+    RanchRectWalkableObject() :
+        eWalkableObject(eWalkableObjectType::ranchRect) {}
+    RanchRectWalkableObject(const SDL_Rect& rect) :
+        RanchRectWalkableObject() {
+        mRect = rect;
+    }
+
+    bool walkable(eTileBase* const t) const override {
+        const SDL_Point p{t->x(), t->y()};
+        if(!SDL_PointInRect(&p, &mRect)) return false;
+        return ranchTileWalkable(t);
+    }
+
+protected:
+    void serializeFields(eSaveArchive& ar) override {
+        ar.field("rect", mRect);
+    }
+private:
+    SDL_Rect mRect{0, 0, 0, 0};
+};
+
+}
 
 bool eWalkableObject::walkable(eTileBase* const t) const {
     switch(mType) {
@@ -84,20 +128,7 @@ bool eWalkableObject::walkable(eTileBase* const t) const {
         return t->hasWater();
     }
     case eWalkableObjectType::ranch: {
-        const auto tt = t->underBuildingType();
-        if(tt != eBuildingType::horseRanchEnclosure) return false;
-
-        const auto bl = t->bottomLeft();
-        if(!bl) return false;
-        const auto blt = bl->underBuildingType();
-        if(blt != eBuildingType::horseRanchEnclosure) return false;
-
-        const auto br = t->bottomRight();
-        if(!br) return false;
-        const auto brt = br->underBuildingType();
-        if(brt != eBuildingType::horseRanchEnclosure) return false;
-
-        return true;
+        return ranchTileWalkable(t);
     }
     default:
         return true;
@@ -111,6 +142,8 @@ stdsptr<eWalkableObject> eWalkableObject::sCreate(
         return std::make_shared<eRectWalkableObject>();
     case eWalkableObjectType::hasResource:
         return std::make_shared<eHasResourceWalkableObject>();
+    case eWalkableObjectType::ranchRect:
+        return std::make_shared<RanchRectWalkableObject>();
     default:
         return std::make_shared<eWalkableObject>(type);
     }
@@ -168,8 +201,9 @@ stdsptr<eWalkableObject> eWalkableObject::sCreateAll() {
     return sCreate(eWalkableObjectType::all);
 }
 
-stdsptr<eWalkableObject> eWalkableObject::sCreateRanch() {
-    return sCreate(eWalkableObjectType::ranch);
+stdsptr<eWalkableObject> eWalkableObject::sCreateRanch(
+        const SDL_Rect& rect) {
+    return std::make_shared<RanchRectWalkableObject>(rect);
 }
 
 stdsptr<eWalkableObject> eWalkableObject::sCreateRect(const SDL_Rect& rect) {

@@ -1,10 +1,10 @@
-#ifndef EWALKABLEHELPERS_H
+﻿#ifndef EWALKABLEHELPERS_H
 #define EWALKABLEHELPERS_H
 
 #include "engine/etile.h"
 #include <SDL2/SDL_rect.h>
 
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 
 using eWalkable = std::function<bool(eTileBase*)>;
 namespace eWalkableHelpers {

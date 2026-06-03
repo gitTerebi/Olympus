@@ -94,7 +94,7 @@
 #include "elanguage.h"
 #include "enumbers.h"
 
-#include "characters/actions/eanimalaction.h"
+#include "characters/actions/animal-action.h"
 
 #include "buildings/eplaceholder.h"
 #include "buildings/sanctuaries/ezeussanctuary.h"
@@ -5258,7 +5258,7 @@ bool GameBoard::buildAnimal(eTile *const tile,
     {
         if (!c)
             continue;
-        const auto aa = dynamic_cast<eAnimalAction *>(c->action());
+        const auto aa = dynamic_cast<AnimalAction *>(c->action());
         if (!aa)
             continue;
         if (aa->spawnerX() != tx || aa->spawnerY() != ty)
@@ -5279,8 +5279,8 @@ bool GameBoard::buildAnimal(eTile *const tile,
     a->changeTile(tile);
     const auto o = static_cast<eOrientation>(eRand::rand() % 8);
     a->setOrientation(o);
-    const auto w = eWalkableObject::sCreateFertile();
-    const auto aa = e::make_shared<eAnimalAction>(a.get(), tx, ty, w);
+    const auto w = WalkableObject::sCreateFertile();
+    const auto aa = e::make_shared<AnimalAction>(a.get(), tx, ty, w);
     a->setAction(aa);
     if (!editorDisplay)
     {

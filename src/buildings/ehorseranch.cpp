@@ -1,9 +1,9 @@
-#include "ehorseranch.h"
+﻿#include "ehorseranch.h"
 
 #include "textures/egametextures.h"
 #include "fileIO/esavearchive.h"
 
-#include "ehorseranchenclosure.h"
+#include "horse-ranch-enclosure.h"
 #include "engine/game-board.h"
 #include "enumbers.h"
 
@@ -128,7 +128,7 @@ int eHorseRanch::provide(const eProvide p, const int n) {
     return eEmployingBuilding::provide(p, n);
 }
 
-void eHorseRanch::setEnclosure(eHorseRanchEnclosure* const e) {
+void eHorseRanch::setEnclosure(HorseRanchEnclosure* const e) {
     mEnclosure = e;
 }
 

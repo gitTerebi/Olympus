@@ -1,11 +1,11 @@
-#ifndef EGODMONSTERACTION_H
+﻿#ifndef EGODMONSTERACTION_H
 #define EGODMONSTERACTION_H
 
 #include "characters/echaracter.h"
 #include "characters/actions/ecomplexaction.h"
 
 #include "buildings/eheatgetters.h"
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "fileIO/esavearchive.h"
 
@@ -112,23 +112,23 @@ public:
 
     void moveAround(const stdsptr<eCharActFunc>& finishAct = nullptr,
                     const int time = 5000,
-                    const stdsptr<eWalkableObject>& walkable =
-                            eWalkableObject::sCreateDefault());
+                    const stdsptr<WalkableObject>& walkable =
+                            WalkableObject::sCreateDefault());
     using eTileDistance = std::function<int(eTileBase* const)>;
     void goToTarget(const eHeatGetters::eHeatGetter hg,
                     const stdsptr<eFindFailFunc>& findFailFunc,
                     const stdsptr<eObsticleHandler>& oh = nullptr,
                     const eTileDistance& tileDistance = nullptr,
-                    const stdsptr<eWalkableObject>& pathFindWalkable =
-                        eWalkableObject::sCreateDefault(),
-                    const stdsptr<eWalkableObject>& moveWalkable = nullptr);
+                    const stdsptr<WalkableObject>& pathFindWalkable =
+                        WalkableObject::sCreateDefault(),
+                    const stdsptr<WalkableObject>& moveWalkable = nullptr);
     void goToTile(eTile* const tile,
                   const stdsptr<eFindFailFunc>& findFailFunc,
                   const stdsptr<eObsticleHandler>& oh = nullptr,
                   const eTileDistance& tileDistance = nullptr,
-                  const stdsptr<eWalkableObject>& pathFindWalkable =
-                      eWalkableObject::sCreateDefault(),
-                  const stdsptr<eWalkableObject>& moveWalkable = nullptr);
+                  const stdsptr<WalkableObject>& pathFindWalkable =
+                      WalkableObject::sCreateDefault(),
+                  const stdsptr<WalkableObject>& moveWalkable = nullptr);
 
 
     using eTexPtr = eTextureCollection eDestructionTextures::*;

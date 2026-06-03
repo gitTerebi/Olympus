@@ -1,10 +1,10 @@
-#include "ecattle.h"
+﻿#include "ecattle.h"
 
 #include "eiteratesquare.h"
 #include "engine/game-board.h"
 #include "textures/egametextures.h"
 #include "enumbers.h"
-#include "actions/eanimalaction.h"
+#include "actions/animal-action.h"
 #include "fileIO/esavearchive.h"
 
 int eCattle::sId = 0;
@@ -117,7 +117,7 @@ bool eCattle::shouldBecomeBull() const {
             if(tt) {
                 for(const auto c : getBoard().characters()) {
                     if(!c) continue;
-                    const auto aa = dynamic_cast<eAnimalAction*>(c->action());
+                    const auto aa = dynamic_cast<AnimalAction*>(c->action());
                     if(!aa) continue;
                     if(aa->spawnerX() != tt->x() || aa->spawnerY() != tt->y()) continue;
                     const auto ct = c->type();
@@ -141,7 +141,7 @@ bool eCattle::shouldBecomeBull() const {
 
 eTile* eCattle::getSpawnerTile() const {
     const auto a = action();
-    if(const auto aa = dynamic_cast<eAnimalAction*>(a)) {
+    if(const auto aa = dynamic_cast<AnimalAction*>(a)) {
         const int x = aa->spawnerX();
         const int y = aa->spawnerY();
         return getBoard().tile(x, y);

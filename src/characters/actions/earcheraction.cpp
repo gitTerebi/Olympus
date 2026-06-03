@@ -1,4 +1,4 @@
-#include "earcheraction.h"
+﻿#include "earcheraction.h"
 
 #include "epatrolmoveaction.h"
 
@@ -135,7 +135,7 @@ bool eArcherAction::decide() {
     const auto fail = std::make_shared<eAA_patrolFail>(board(), this);
     const auto finish = std::make_shared<eAA_patrolFinish>(board(), this);
     const auto a = e::make_shared<ePatrolMoveAction>(
-                       c, false, eWalkableObject::sCreateWall());
+                       c, false, WalkableObject::sCreateWall());
     a->setFinishAction(fail);
     a->setFinishAction(finish);
     setCurrentAction(a);

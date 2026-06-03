@@ -8,7 +8,7 @@
 #include "buildings/epatrolbuildingbase.h"
 #include "buildings/epatrolsourcebuilding.h"
 #include "buildings/epatroltarget.h"
-#include "characters/actions/walkable/ewalkableobject.h"
+#include "characters/actions/walkable/walkable-object.h"
 
 using ePatrolGuides = std::vector<ePatrolGuide>;
 

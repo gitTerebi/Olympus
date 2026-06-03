@@ -1,4 +1,4 @@
-#include "efishery.h"
+﻿#include "efishery.h"
 
 #include "characters/efishingboat.h"
 #include "characters/actions/ecollectresourceaction.h"
@@ -244,7 +244,7 @@ void eFishery::spawnBoat() {
                             eHasResourceObjectType::fish);
     const auto a = e::make_shared<eCollectResourceAction>(
                        this, b.get(), hasRes);
-    const auto w = eWalkableObject::sCreateDeepWater();
+    const auto w = WalkableObject::sCreateDeepWater();
     a->setWalkable(w);
     a->setWaitTime(eNumbers::sFisheryUnpackTime);
     a->setFinishOnce(false);

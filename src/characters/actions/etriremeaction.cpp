@@ -1,4 +1,4 @@
-#include "etriremeaction.h"
+﻿#include "etriremeaction.h"
 
 #include "buildings/ebuilding.h"
 #include "ekillcharacterfinishfail.h"
@@ -60,7 +60,7 @@ void eTriremeAction::goHome() {
         if(!cptr) return;
         cptr->setActionType(eCharacterActionType::walk);
     });
-    a->start(tile, eWalkableObject::sCreateDeepWater());
+    a->start(tile, WalkableObject::sCreateDeepWater());
     setCurrentAction(a);
 }
 
@@ -103,7 +103,7 @@ void eTriremeAction::goAbroad() {
     c->setActionType(eCharacterActionType::walk);
 
     const auto exitPoint = eTriremeAction::exitPoint();
-    a->start(exitPoint, eWalkableObject::sCreateDeepWater());
+    a->start(exitPoint, WalkableObject::sCreateDeepWater());
 }
 
 eTriremeWharf *eTriremeAction::home() const {

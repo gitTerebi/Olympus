@@ -1,4 +1,4 @@
-#include "egodworshippedaction.h"
+﻿#include "egodworshippedaction.h"
 #include "fileIO/esavearchive.h"
 
 #include "characters/actions/edefendcityaction.h"
@@ -240,9 +240,9 @@ void eGodWorshippedAction::huntMonster(eMonster* const m, const bool second) {
     a->setWait(false);
     if(mtype == eCharacterType::scylla ||
        mtype == eCharacterType::kraken) {
-        a->start(mt, eWalkableObject::sCreateWaterAndDefault());
+        a->start(mt, WalkableObject::sCreateWaterAndDefault());
     } else {
-        a->start(mt, eWalkableObject::sCreateDefault());
+        a->start(mt, WalkableObject::sCreateDefault());
     }
     if(second) {
         setCurrentAction(a);
