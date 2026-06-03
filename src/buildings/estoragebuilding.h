@@ -75,6 +75,7 @@ public:
     { return static_cast<bool>(mEmpty & res); }
     bool canAccept(const eResourceType res) const
     { return static_cast<bool>(mCanAccept & res); }
+    virtual bool importsResource(const eResourceType) const { return false; }
 
     void setOrders(const eResourceType get,
                    const eResourceType empty,
