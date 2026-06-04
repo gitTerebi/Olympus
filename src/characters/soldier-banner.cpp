@@ -367,10 +367,15 @@ void SoldierBanner::goAbroad() {
     if(mSelected) mBoard.deselectBanner(this);
     if(mHome) backFromHome();
     mAbroad = true;
+    int idx = 0;
     for(const auto s : mSoldiers) {
         if(s->dead()) continue;
         const auto a = s->soldierAction();
-        if(a) a->goAbroad();
+        if(a) {
+            a->setDepartDelay(idx * 100);
+            a->goAbroad();
+        }
+        idx++;
     }
     if(mTile) {
         mTile->setSoldierBanner(nullptr);
