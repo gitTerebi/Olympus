@@ -9,6 +9,7 @@ class eCharacter;
 
 struct eTargetData {
     int fSpawnTime;
+    int fRerouteAccum = 0;
     stdptr<eCharacter> fWalker;
 };
 
@@ -42,6 +43,7 @@ public:
     // mirrors Augustus 2*days_left: a recently-served venue is penalized so
     // the next walker prefers an idle one.
     static int sLoadPenalty(const int showDays);
+    static int sBuildingScore(int fromX, int fromY, eBuilding* b);
     // distance bias (tiles) added per remaining show-day at a target.
     static constexpr int sLoadBias = 2;
 
@@ -52,6 +54,7 @@ private:
 
     void spawn(const int id);
     void spawn(const int id, eBuilding* const targetBuilding);
+    void reroute(const int id);
 
     const eTargets mTargets;
 

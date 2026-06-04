@@ -1,6 +1,7 @@
 #include "widgets/game-widget.h"
 
 
+
 #include "engine/game-board.h"
 #include "engine/etile.h"
 #include "engine/epathfinder.h"
@@ -160,15 +161,15 @@ void GameWidget::updateDestinationPath()
             reachable.push_back({destBldg, data.fDistance, std::move(path)});
         }
         if(reachable.empty()) continue;
-        // pass 2: pick target using road distance (BFS) + load penalty.
+        // pass 2: euclidean from source + load penalty, matching spawn() scoring.
+        const auto srcRect = src->tileRect();
+        const int scx = srcRect.x + srcRect.w / 2;
+        const int scy = srcRect.y + srcRect.h / 2;
         int bestI = -1;
         int bestScore = -1;
         for(int i = 0; i < (int)reachable.size(); i++) {
             const auto& re = reachable[i];
-            int penalty = 0;
-            const auto pt = dynamic_cast<ePatrolTarget*>(re.fBldg);
-            if(pt) penalty = ePatrolSourceBuilding::sLoadPenalty(pt->showDays());
-            const int score = re.fDist + penalty;
+            const int score = ePatrolSourceBuilding::sBuildingScore(scx, scy, re.fBldg);
             if(bestScore < 0 || score < bestScore) { bestScore = score; bestI = i; }
         }
         if(bestI < 0) continue;

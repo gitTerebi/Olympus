@@ -1573,10 +1573,11 @@ void GameWidget::paintEvent(ePainter &p)
                         if(!mDestinationBuilding) return false;
                         const auto ma = dynamic_cast<eMoveToAction*>(c->action());
                         if(!ma) return false;
-                        const auto fa = dynamic_cast<ePT_spawnGetActorFinish*>(ma->finishAction());
-                        if(!fa) return false;
-                        return eVectorHelpers::contains(mDestinationTargets,
-                                                        static_cast<eBuilding*>(fa->target()));
+                        if(!dynamic_cast<ePT_spawnGetActorFinish*>(ma->finishAction())) return false;
+                        const auto& tgts = mDestinationBuilding->targets();
+                        for(const auto& t : tgts)
+                            if(t.first == ct) return true;
+                        return false;
                     }();
                     const bool charHighlighted = walkerSelected || patrolerSelected || destWalkerSelected;
                     const bool charDead = c->dead();
