@@ -1110,6 +1110,29 @@ void GameWidget::paintEvent(ePainter &p)
                 int cred = 255;
                 int cgreen = 255;
                 int cblue = 255;
+                const bool houseStatOverlay =
+                    mViewMode == eViewMode::actors ||
+                    mViewMode == eViewMode::athletes ||
+                    mViewMode == eViewMode::philosophers ||
+                    mViewMode == eViewMode::competitors ||
+                    mViewMode == eViewMode::allCulture ||
+                    mViewMode == eViewMode::astronomers ||
+                    mViewMode == eViewMode::scholars ||
+                    mViewMode == eViewMode::inventors ||
+                    mViewMode == eViewMode::curators ||
+                    mViewMode == eViewMode::allScience ||
+                    mViewMode == eViewMode::water ||
+                    mViewMode == eViewMode::hygiene ||
+                    mViewMode == eViewMode::hazards ||
+                    mViewMode == eViewMode::unrest ||
+                    mViewMode == eViewMode::taxes ||
+                    mViewMode == eViewMode::security ||
+                    mViewMode == eViewMode::appeal ||
+                    mViewMode == eViewMode::problems;
+                const bool isHouseBuilding =
+                    buildingType == eBuildingType::commonHouse ||
+                    buildingType == eBuildingType::eliteHousing;
+                const bool alphaMod = houseStatOverlay && isHouseBuilding;
                 if (erase)
                 {
                     colorMod = true;
@@ -1161,8 +1184,10 @@ void GameWidget::paintEvent(ePainter &p)
                 const auto drawBuildingTexture = [&](const std::shared_ptr<eTexture>& tex) {
                     if(!tex) return;
                     if(colorMod) tex->setColorMod(cred, cgreen, cblue);
+                    if(alphaMod) tex->setAlpha(84);
                     tp.drawTexture(buildingDrawX + textureSpace.fX, buildingDrawY + textureSpace.fY, tex, eAlignment::top);
                     if(colorMod) tex->clearColorMod();
+                    if(alphaMod) tex->clearAlphaMod();
                 };
                 const auto drawBuildingOverlays = [&]() {
                     if (!building->overlayEnabled() || !textureSpace.fHasOverlays ||
@@ -1199,6 +1224,7 @@ void GameWidget::paintEvent(ePainter &p)
                         }
                         if (colorMod)
                             tex->setColorMod(cred, cgreen, cblue);
+                        if (alphaMod) tex->setAlpha(64);
                         if (o.fAlignTop)
                         {
                             tp.drawTexture(buildingDrawX + textureSpace.fX + o.fX, buildingDrawY + textureSpace.fY + o.fY,
@@ -1210,6 +1236,7 @@ void GameWidget::paintEvent(ePainter &p)
                         }
                         if (colorMod)
                             tex->clearColorMod();
+                        if (alphaMod) tex->clearAlphaMod();
                     }
                 };
                 const auto drawActorsAfterBuildingTexture = [&]() {
