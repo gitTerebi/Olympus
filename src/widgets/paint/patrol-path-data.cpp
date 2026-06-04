@@ -1,6 +1,5 @@
 #include "widgets/game-widget.h"
 
-#include <cmath>
 
 #include "engine/game-board.h"
 #include "engine/etile.h"
@@ -9,6 +8,7 @@
 #include "buildings/epatrolsourcebuilding.h"
 #include "buildings/epatroltarget.h"
 #include "characters/actions/walkable/walkable-object.h"
+#include "enumbers.h"
 
 using ePatrolWaypoints = std::vector<ePatrolWaypoint>;
 
@@ -160,24 +160,15 @@ void GameWidget::updateDestinationPath()
             reachable.push_back({destBldg, data.fDistance, std::move(path)});
         }
         if(reachable.empty()) continue;
-        // pass 2: pick the single target the next walker will go to (Augustus
-        // model: straight-line distance + load penalty, lowest wins) so the
-        // highlight shows exactly where the next walker is dispatched.
-        const auto srcRect = src->tileRect();
-        const int scx = srcRect.x + srcRect.w / 2;
-        const int scy = srcRect.y + srcRect.h / 2;
+        // pass 2: pick target using road distance (BFS) + load penalty.
         int bestI = -1;
         int bestScore = -1;
         for(int i = 0; i < (int)reachable.size(); i++) {
             const auto& re = reachable[i];
-            const auto br = re.fBldg->tileRect();
-            const long dx = (br.x + br.w / 2) - scx;
-            const long dy = (br.y + br.h / 2) - scy;
-            const int dist = (int)(std::sqrt((double)(dx * dx + dy * dy)) + 0.5);
             int penalty = 0;
             const auto pt = dynamic_cast<ePatrolTarget*>(re.fBldg);
             if(pt) penalty = ePatrolSourceBuilding::sLoadPenalty(pt->showDays());
-            const int score = dist + penalty;
+            const int score = re.fDist + penalty;
             if(bestScore < 0 || score < bestScore) { bestScore = score; bestI = i; }
         }
         if(bestI < 0) continue;
@@ -193,5 +184,15 @@ void GameWidget::updateDestinationPath()
 void GameWidget::setDestinationBuilding(ePatrolSourceBuilding* const sb)
 {
     mDestinationBuilding = sb;
+    mDestPathLastDay = -1;
+    updateDestinationPath();
+}
+
+void GameWidget::tickDestinationPath(const int time)
+{
+    const int dayLen = eNumbers::sDayLength;
+    const int curDay = dayLen > 0 ? time / dayLen : time;
+    if(curDay == mDestPathLastDay) return;
+    mDestPathLastDay = curDay;
     updateDestinationPath();
 }

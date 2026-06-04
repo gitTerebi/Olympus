@@ -31,10 +31,12 @@ ePatrolSourceBuilding::ePatrolSourceBuilding(GameBoard &board,
                                                                                               overlays, charGen, type, sw, sh, maxEmployees, cid),
                                                                               mTargets(targets)
 {
+    mSpawnInterval = eNumbers::sDestinationWalkerRecurringSpawnDays * eNumbers::sDayLength;
+    mInitialDelay = eNumbers::sDestinationWalkerInitialSpawnWaitDays * eNumbers::sDayLength;
     for (const auto &t : mTargets)
     {
         (void)t;
-        mTargetData.push_back({eRand::rand() % mSpawnInterval, nullptr});
+        mTargetData.push_back({mSpawnInterval - mInitialDelay, nullptr});
     }
 }
 
@@ -49,14 +51,13 @@ void ePatrolSourceBuilding::timeChanged(const int by)
         const int iMax = mTargetData.size();
         for (int i = 0; i < iMax; i++)
         {
-            if (targetWalkerInFlight(i))
-                continue;
             int &spawnTime = mTargetData[i].fSpawnTime;
             spawnTime += scaledBy;
             if (spawnTime > mSpawnInterval)
             {
                 spawnTime = 0;
-                spawn(i);
+                if (!targetWalkerInFlight(i))
+                    spawn(i);
             }
         }
     }

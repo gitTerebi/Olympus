@@ -417,6 +417,7 @@ private:
 
     void setDestinationBuilding(ePatrolSourceBuilding* const sb);
     void updateDestinationPath();
+    void tickDestinationPath(const int time);
 
     eInfoWidget* openInfoWidget(eBuilding* const b);
     eInfoWidget* openInfoWidget(const std::vector<eCharacter *> chars);
@@ -469,6 +470,7 @@ private:
     bool mLastPaintTpValid{false};
     std::vector<int> mValiableHippodromePieces;
     int mTime{0};
+    int mDestPathLastDay{-1};
     int mLastAmbientSoundTime{0};
     std::map<int, int> mAmbientSoundCooldowns;
     int mSpeedId = 2;

@@ -35,6 +35,8 @@
 #include "characters/esoldier.h"
 #include "characters/actions/soldier-action.h"
 #include "characters/actions/cart-transporter-action.h"
+#include "characters/actions/emovetoaction.h"
+#include "buildings/epatroltarget.h"
 
 #include "evectorhelpers.h"
 #include "etilehelper.h"
@@ -258,6 +260,7 @@ void GameWidget::paintEvent(ePainter &p)
                     remaining -= step;
                 }
                 mGm->update();
+                if(mDestinationBuilding) tickDestinationPath(mTime);
             }
         }
         mBoard->emptyRubbish();
@@ -1566,7 +1569,16 @@ void GameWidget::paintEvent(ePainter &p)
                         const auto ca = dynamic_cast<CartTransporterAction*>(c->action());
                         return ca && ca->src() == mWalkerBuilding.get();
                     }();
-                    const bool charHighlighted = walkerSelected || patrolerSelected;
+                    const bool destWalkerSelected = [&]() {
+                        if(!mDestinationBuilding) return false;
+                        const auto ma = dynamic_cast<eMoveToAction*>(c->action());
+                        if(!ma) return false;
+                        const auto fa = dynamic_cast<ePT_spawnGetActorFinish*>(ma->finishAction());
+                        if(!fa) return false;
+                        return eVectorHelpers::contains(mDestinationTargets,
+                                                        static_cast<eBuilding*>(fa->target()));
+                    }();
+                    const bool charHighlighted = walkerSelected || patrolerSelected || destWalkerSelected;
                     const bool charDead = c->dead();
                     const auto drawCharTex = [&](const std::shared_ptr<eTexture>& t,
                                                  const double cx, const double cy,

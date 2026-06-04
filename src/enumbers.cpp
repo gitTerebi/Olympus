@@ -108,8 +108,9 @@ int eNumbers::sPatrolWalkerSpawnCooldown;
 int eNumbers::sWaterCarrierSpawnCooldown;
 int eNumbers::sInfirmarySpawnCooldown;
 int eNumbers::sScheduledWalkerSpawnCooldown;
-int eNumbers::sDestinationWalkerSpawnCooldown;
-int eNumbers::sCulturePatrolSpawnCooldown;
+int eNumbers::sDestinationWalkerRecurringSpawnDays;
+int eNumbers::sDestinationWalkerInitialSpawnWaitDays;
+int eNumbers::sCulturePatrolSpawnCooldownDays;
 int eNumbers::sTheaterPatrolSpawnCooldown;
 int eNumbers::sCultureShowDays;
 
@@ -425,8 +426,9 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("infirmary_spawn_cooldown_i", sInfirmarySpawnCooldown, 1000, 0, 1000000);
     loadI("scheduled_walker_spawn_cooldown_i", sScheduledWalkerSpawnCooldown, 2000, 1, 1000000);
 
-    loadI("destination_walker_spawn_cooldown_i", sDestinationWalkerSpawnCooldown, 10000, 1, 1000000);
-    loadI("culture_patrol_spawn_cooldown_i", sCulturePatrolSpawnCooldown, 10000, 0, 1000000);
+    loadI("destination_walker_spawn_interval_days_i", sDestinationWalkerRecurringSpawnDays, 32, 1, 10000);
+    loadI("destination_walker_initial_spawn_wait_days_i", sDestinationWalkerInitialSpawnWaitDays, 16, 1, 10000);
+    loadI("culture_patrol_spawn_cooldown_days_i", sCulturePatrolSpawnCooldownDays, 18, 0, 10000);
     loadI("theater_patrol_spawn_cooldown_i", sTheaterPatrolSpawnCooldown, 5000, 0, 1000000);
     loadI("culture_show_days_i", sCultureShowDays, 64, 0, 100000);
 
