@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10)
 project(Olympus)
 
 enable_language(RC)
@@ -415,7 +415,7 @@ set(SOURCES
     src/engine/egameboardwrite.cpp
     src/engine/egameevents.cpp
     src/engine/egifthelpers.cpp
-    src/engine/eguidedmovepathtask.cpp
+    src/engine/waypoint-move-path-task.cpp
     src/engine/eknownendpathfinder.cpp
     src/engine/emapgenerator.cpp
     src/engine/emilitaryaid.cpp

@@ -1,6 +1,8 @@
 #include "walkable-object.h"
 
 #include "buildings/ebuilding.h"
+#include "buildings/eroad.h"
+#include "engine/etile.h"
 #include "fileIO/esavearchive.h"
 
 #include "erectwalkableobject.h"
@@ -74,6 +76,13 @@ bool WalkableObject::walkable(eTileBase* const t) const {
         const bool hr = t->hasRoad();
         if(!hr) return false;
         return !t->hasRoadblock();
+    }
+    case eWalkableObjectType::roadblockNoAgora: {
+        if(!t->hasRoad()) return false;
+        if(t->hasRoadblock()) return false;
+        const auto tt = static_cast<const eTile*>(t);
+        const auto r = dynamic_cast<const eRoad*>(tt->underBuilding());
+        return !r || !r->underAgora();
     }
     case eWalkableObjectType::terrain: {
         if(!t->walkableElev() && t->isElevationTile()) return false;
@@ -167,6 +176,10 @@ stdsptr<WalkableObject> WalkableObject::sCreateRoadAvenue() {
 
 stdsptr<WalkableObject> WalkableObject::sCreateRoadblock() {
     return sCreate(eWalkableObjectType::roadblock);
+}
+
+stdsptr<WalkableObject> WalkableObject::sCreateRoadblockNoAgora() {
+    return sCreate(eWalkableObjectType::roadblockNoAgora);
 }
 
 stdsptr<WalkableObject> WalkableObject::sCreateTerrain() {

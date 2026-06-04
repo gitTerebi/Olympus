@@ -1094,8 +1094,10 @@ void GameWidget::paintBuildPreview(
                 GameBoard::sBuildTiles(minX, minY, maxX, maxY,
                                         eb.fTx, eb.fTy, tileSpanW, tileSpanH);
                 pb->setTileRect({minX, minY, tileSpanW, tileSpanH});
-                const auto roads = pb->surroundingRoad(false, true);
-                drawRoadBands(roads, tp, trrTexs);
+                eRoadPreviewPath path;
+                eTile* spawnTile = nullptr;
+                addPatrolBuildingRoadPreview(pb, path, spawnTile);
+                drawRoadPreview(path, spawnTile, tp, trrTexs);
             }
         };
 

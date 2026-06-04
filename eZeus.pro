@@ -1,4 +1,4 @@
-﻿TEMPLATE = app
+TEMPLATE = app
 CONFIG += c++17
 CONFIG += console
 CONFIG -= app_bundle
@@ -408,7 +408,7 @@ SOURCES += \
         engine/egameevents.cpp \
         engine/egifthelpers.cpp \
         engine/egodquest.cpp \
-        engine/eguidedmovepathtask.cpp \
+        engine/waypoint-move-path-task.cpp \
         engine/eknownendpathfinder.cpp \
         engine/emapgenerator.cpp \
         engine/emilitaryaid.cpp \
@@ -1122,7 +1122,7 @@ HEADERS += \
     engine/egameevents.h \
     engine/egifthelpers.h \
     engine/egodquest.h \
-    engine/eguidedmovepathtask.h \
+    engine/waypoint-move-path-task.h \
     engine/eknownendpathfinder.h \
     engine/emapgenerator.h \
     engine/emessageeventtype.h \
@@ -1132,7 +1132,7 @@ HEADERS += \
     engine/epathboard.h \
     engine/epathfinder.h \
     engine/epathfinderbase.h \
-    engine/epatrolguide.h \
+    engine/patrol-waypoint.h \
     engine/eplague.h \
     engine/eplannedaction.h \
     engine/eprovide.h \

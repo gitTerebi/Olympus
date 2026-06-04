@@ -1,4 +1,4 @@
-﻿#include "widgets/game-widget.h"
+#include "widgets/game-widget.h"
 
 #include <cmath>
 
@@ -10,51 +10,51 @@
 #include "buildings/epatroltarget.h"
 #include "characters/actions/walkable/walkable-object.h"
 
-using ePatrolGuides = std::vector<ePatrolGuide>;
+using ePatrolWaypoints = std::vector<ePatrolWaypoint>;
 
-void GameWidget::updatePatrolPath()
+void GameWidget::updateWaypointPath()
 {
     if (!mPatrolBuilding)
     {
-        mPatrolPath.clear();
-        mExcessPatrolPath.clear();
-        mPatrolPath1.clear();
-        mExcessPatrolPath1.clear();
+        mWaypointOutPath.clear();
+        mWaypointReturnPath.clear();
+        mWaypointOutPath1.clear();
+        mWaypointReturnPath1.clear();
         return;
     }
     const bool r = mPatrolBuilding->updatePath([this]()
                                                {
-        mPatrolPath.clear();
-        mExcessPatrolPath.clear();
-        mPatrolPath1.clear();
-        mExcessPatrolPath1.clear();
+        mWaypointOutPath.clear();
+        mWaypointReturnPath.clear();
+        mWaypointOutPath1.clear();
+        mWaypointReturnPath1.clear();
         if(!mPatrolBuilding) return;
         const auto startTile = mPatrolBuilding->patrolStartTile();
         {
             const auto& path = mPatrolBuilding->path();
             auto lastTile = startTile;
-            mPatrolPath.push_back(lastTile);
+            mWaypointOutPath.push_back(lastTile);
             const int iMin = path.size() - 1;
             for(int i = iMin; i >= 0; i--) {
                 const auto o = path[i];
                 lastTile = lastTile->neighbour<eTile>(o);
-                mPatrolPath.push_back(lastTile);
+                mWaypointOutPath.push_back(lastTile);
             }
         }
         {
             const auto& path = mPatrolBuilding->reversePath();
             auto lastTile = startTile;
-            mPatrolPath1.push_back(lastTile);
+            mWaypointOutPath1.push_back(lastTile);
             const int iMin = path.size() - 1;
             for(int i = iMin; i >= 0; i--) {
                 const auto o = path[i];
                 lastTile = lastTile->neighbour<eTile>(o);
-                mPatrolPath1.push_back(lastTile);
+                mWaypointOutPath1.push_back(lastTile);
             }
         }
 
-        const auto handlePatrolPath = [&](std::vector<eTile*>& excessPath,
-                                          const ePatrolGuides& guides) {
+        const auto handleWaypointPath = [&](std::vector<eTile*>& excessPath,
+                                          const ePatrolWaypoints& waypoints) {
             const auto startTile = mPatrolBuilding->patrolStartTile();
             auto lastTile = startTile;
             const auto handlePath = [&](eTile* const from, eTile* const to) {
@@ -84,29 +84,29 @@ void GameWidget::updatePatrolPath()
                 }
                 return true;
             };
-            for(const auto& g : guides) {
+            for(const auto& waypoint : waypoints) {
                 if(!lastTile) break;
-                const auto guideTile = mBoard->tile(g.fX, g.fY);
-                if(!guideTile) break;
-                const bool r = handlePath(lastTile, guideTile);
+                const auto waypointTile = mBoard->tile(waypoint.fX, waypoint.fY);
+                if(!waypointTile) break;
+                const bool r = handlePath(lastTile, waypointTile);
                 if(!r) break;
-                lastTile = guideTile;
+                lastTile = waypointTile;
             }
         };
         {
-            const auto& guides = mPatrolBuilding->patrolGuides();
-            handlePatrolPath(mExcessPatrolPath, guides);
+            const auto& waypoints = mPatrolBuilding->patrolWaypoints();
+            handleWaypointPath(mWaypointReturnPath, waypoints);
         }
         if(mPatrolBuilding->bothDirections()) {
-            const auto guides = mPatrolBuilding->reversePatrolGuides();
-            handlePatrolPath(mExcessPatrolPath1, guides);
+            const auto waypoints = mPatrolBuilding->reversePatrolWaypoints();
+            handleWaypointPath(mWaypointReturnPath1, waypoints);
         } });
     if (!r)
     {
-        mPatrolPath.clear();
-        mExcessPatrolPath.clear();
-        mPatrolPath1.clear();
-        mExcessPatrolPath1.clear();
+        mWaypointOutPath.clear();
+        mWaypointReturnPath.clear();
+        mWaypointOutPath1.clear();
+        mWaypointReturnPath1.clear();
     }
 }
 

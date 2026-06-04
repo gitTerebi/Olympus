@@ -1,9 +1,9 @@
-﻿#ifndef EGUIDEDMOVEPATHTASK_H
-#define EGUIDEDMOVEPATHTASK_H
+#ifndef WAYPOINT_MOVE_PATH_TASK_H
+#define WAYPOINT_MOVE_PATH_TASK_H
 
 #include <vector>
 
-#include "epatrolguide.h"
+#include "patrol-waypoint.h"
 
 #include "engine/etask.h"
 #include "engine/thread/ethreadtile.h"
@@ -11,12 +11,12 @@
 class ePatrolBuildingBase;
 class ePathFinderBase;
 
-class eGuidedMovePathTask : public eTask {
+class eWaypointMovePathTask : public eTask {
 public:
     using ePath = std::vector<eOrientation>;
     using eTileGetter = std::function<eThreadTile*(eThreadBoard&)>;
     using eAction = std::function<void()>;
-    eGuidedMovePathTask(ePatrolBuildingBase* const b,
+    eWaypointMovePathTask(ePatrolBuildingBase* const b,
                         const eAction& finish = nullptr);
 protected:
     void run(eThreadBoard& data) override;
@@ -24,23 +24,23 @@ protected:
 private:
     bool runImpl(eThreadBoard& data,
                  ePath &path,
-                 const ePatrolGuide& from,
-                 const ePatrolGuide& to,
+                 const ePatrolWaypoint& from,
+                 const ePatrolWaypoint& to,
                  int& distance,
                  const int maxDistance,
-                 ePatrolGuide& last);
+                 ePatrolWaypoint& last);
 
     const stdptr<ePatrolBuildingBase> mB;
     const eAction mFinish;
 
     stdsptr<WalkableObject> mWalkable;
     bool mBothDirections;
-    ePatrolGuide mStartGuide;
-    std::vector<ePatrolGuide> mGuides;
+    ePatrolWaypoint mStartWaypoint;
+    std::vector<ePatrolWaypoint> mWaypoints;
     SDL_Rect mTileBRect;
 
     ePath mPath;
     ePath mReversePath;
 };
 
-#endif // EGUIDEDMOVEPATHTASK_H
+#endif // WAYPOINT_MOVE_PATH_TASK_H

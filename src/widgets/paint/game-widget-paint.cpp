@@ -1,4 +1,4 @@
-﻿#include "widgets/game-widget.h"
+#include "widgets/game-widget.h"
 #include "widgets/etilepainter.h"
 
 #include <functional>
@@ -138,7 +138,7 @@ void GameWidget::paintEvent(ePainter &p)
     }
     {
         const auto pbv = eViewMode::patrolBuilding;
-        if (!mPatrolBuilding && (mViewMode == pbv || mPatrolPathWid))
+        if (!mPatrolBuilding && (mViewMode == pbv || mWaypointPathWid))
         {
             setPatrolBuilding(nullptr);
         }
@@ -461,21 +461,21 @@ void GameWidget::paintEvent(ePainter &p)
                 tex->setColorMod(175, 255, 175);
             }
             else if (mPatrolBuilding &&
-                     (!mPatrolPath.empty() || !mPatrolPath1.empty()))
+                     (!mWaypointOutPath.empty() || !mWaypointOutPath1.empty()))
             {
                 const bool bothDirections = mPatrolBuilding->bothDirections();
-                patrolCm = eVectorHelpers::contains(mPatrolPath, tile) ||
+                patrolCm = eVectorHelpers::contains(mWaypointOutPath, tile) ||
                            (bothDirections &&
-                            eVectorHelpers::contains(mPatrolPath1, tile));
+                            eVectorHelpers::contains(mWaypointOutPath1, tile));
                 if (patrolCm)
                 {
                     tex->setColorMod(175, 255, 175);
                 }
                 else
                 {
-                    patrolCm = eVectorHelpers::contains(mExcessPatrolPath, tile) ||
+                    patrolCm = eVectorHelpers::contains(mWaypointReturnPath, tile) ||
                                (bothDirections &&
-                                eVectorHelpers::contains(mExcessPatrolPath1, tile));
+                                eVectorHelpers::contains(mWaypointReturnPath1, tile));
                     if (patrolCm)
                     {
                         tex->setColorMod(255, 175, 175);
@@ -622,72 +622,42 @@ void GameWidget::paintEvent(ePainter &p)
     eTile *patrolRoadReturn = nullptr;
     if (mPatrolBuilding)
     {
-        if (!mPatrolBuilding->patrolGuides().empty())
+        if (!mPatrolBuilding->patrolWaypoints().empty())
         {
-            addPathBands(mExcessPatrolPath, patrolRoadPreview);
-            addPathBands(mPatrolPath, patrolRoadPreview);
-            patrolRoadStart = firstPathRoad(mExcessPatrolPath);
+            addPathBands(mWaypointReturnPath, patrolRoadPreview);
+            addPathBands(mWaypointOutPath, patrolRoadPreview);
+            patrolRoadStart = firstPathRoad(mWaypointReturnPath);
             if (!patrolRoadStart)
-                patrolRoadStart = firstPathRoad(mPatrolPath);
-            patrolRoadReturn = lastPathRoad(mPatrolPath);
+                patrolRoadStart = firstPathRoad(mWaypointOutPath);
+            patrolRoadReturn = lastPathRoad(mWaypointOutPath);
             if (!patrolRoadReturn)
-                patrolRoadReturn = lastPathRoad(mExcessPatrolPath);
+                patrolRoadReturn = lastPathRoad(mWaypointReturnPath);
             if (mPatrolBuilding->bothDirections())
             {
-                addPathBands(mExcessPatrolPath1, patrolRoadPreview);
-                addPathBands(mPatrolPath1, patrolRoadPreview);
+                addPathBands(mWaypointReturnPath1, patrolRoadPreview);
+                addPathBands(mWaypointOutPath1, patrolRoadPreview);
                 if (!patrolRoadReturn)
                 {
-                    patrolRoadReturn = lastPathRoad(mPatrolPath1);
+                    patrolRoadReturn = lastPathRoad(mWaypointOutPath1);
                     if (!patrolRoadReturn)
                     {
-                        patrolRoadReturn = lastPathRoad(mExcessPatrolPath1);
+                        patrolRoadReturn = lastPathRoad(mWaypointReturnPath1);
                     }
                 }
             }
         }
         else
         {
-            const auto buildingType = mPatrolBuilding->type();
-            const bool agora = buildingType == eBuildingType::commonAgora ||
-                               buildingType == eBuildingType::grandAgora;
-            if (agora)
-            {
-                const auto ab = static_cast<eAgoraBase*>(mPatrolBuilding.get());
-                const auto start = ab->agoraRoadStart();
-                const auto ret = ab->agoraRoadEnd();
-                if (start)
-                {
-                    patrolRoadStart = start;
-                    patrolRoadReturn = ret;
-                    const auto walkable = WalkableObject::sCreateRoadblock();
-                    addRoamerPreview(start, patrolRoadPreview, walkable);
-                }
-            }
-            else
-            {
-                const auto roads = mPatrolBuilding->surroundingRoad(false, true);
-                if (!roads.empty())
-                {
-                    patrolRoadStart = roads.front();
-                    patrolRoadReturn = roads.back();
-                    const auto walkable = WalkableObject::sCreateRoadblock();
-                    addRoamerPreview(patrolRoadStart, patrolRoadPreview, walkable);
-                    if (mPatrolBuilding->bothDirections() &&
-                        patrolRoadReturn != patrolRoadStart)
-                    {
-                        addRoamerPreview(patrolRoadReturn, patrolRoadPreview, walkable);
-                    }
-                }
-            }
+            addPatrolBuildingRoadPreview(mPatrolBuilding.get(),
+                                         patrolRoadPreview,
+                                         patrolRoadStart);
         }
     }
     const auto drawSelectedRoadPreview = [&](eTile *const tile)
     {
         if (!mPatrolBuilding || !tile)
             return;
-        drawRoadBandTile(tile, patrolRoadStart, patrolRoadReturn,
-                         patrolRoadPreview, tp, trrTexs);
+        drawRoadBandTile(tile, patrolRoadStart, patrolRoadPreview, tp, trrTexs);
     };
 
     const auto buildingDrawer = [&](eTile *const tile)
@@ -1647,23 +1617,23 @@ void GameWidget::paintEvent(ePainter &p)
                            eAlignment::hcenter | eAlignment::top);
         };
 
-        const auto drawPatrolGuides = [&]() {
+        const auto drawPatrolWaypoints = [&]() {
             if(mPatrolBuilding) {
-                using ePatrolGuides = std::vector<ePatrolGuide>;
-                const auto drawPGS = [&](const ePatrolGuides& pgs) {
+                using ePatrolWaypoints = std::vector<ePatrolWaypoint>;
+                const auto drawWaypoints = [&](const ePatrolWaypoints& waypoints) {
                     int i = 0;
-                    for(const auto& pg : pgs) {
-                        if(pg.fX == worldTileX && pg.fY == worldTileY) {
+                    for(const auto& waypoint : waypoints) {
+                        if(waypoint.fX == worldTileX && waypoint.fY == worldTileY) {
                             const bool bothDirections =
                                     mPatrolBuilding->bothDirections();
-                            const bool invalid = !eVectorHelpers::contains(mPatrolPath, tile) &&
+                            const bool invalid = !eVectorHelpers::contains(mWaypointOutPath, tile) &&
                                                  (!bothDirections ||
-                                                  !eVectorHelpers::contains(mPatrolPath1, tile));
+                                                  !eVectorHelpers::contains(mWaypointOutPath1, tile));
                             const auto& coll = builTexs.fSpawner;
                             const int texId = mAnimFrame % coll.size();
                             const auto& tex = coll.getTexture(texId);
                             if(invalid) tex->setColorMod(255, 125, 125);
-                            //const auto& coll = builTexs.fPatrolGuides;
+                            //const auto& coll = builTexs.fPatrolWaypoints;
                             //const auto tex = coll.getTexture(14);
                             //tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                             tp.drawTexture(drawX, drawY - 1, tex,
@@ -1675,8 +1645,8 @@ void GameWidget::paintEvent(ePainter &p)
                         i++;
                     }
                 };
-                const auto& pgs = mPatrolBuilding->patrolGuides();
-                drawPGS(pgs);
+                const auto& waypoints = mPatrolBuilding->patrolWaypoints();
+                drawWaypoints(waypoints);
             }
         };
 
@@ -2188,7 +2158,7 @@ void GameWidget::paintEvent(ePainter &p)
         };
 
         drawBridge();
-        drawPatrolGuides();
+        drawPatrolWaypoints();
         drawSpawner();
 
         if(buildingType == eBuildingType::templeTile) {
@@ -2539,8 +2509,8 @@ void GameWidget::paintEvent(ePainter &p)
 
     if (mPatrolBuilding)
     {
-        const auto &pgs = mPatrolBuilding->patrolGuides();
-        if (!pgs.empty())
+        const auto& waypoints = mPatrolBuilding->patrolWaypoints();
+        if (!waypoints.empty())
         {
             const auto t = mPatrolBuilding->centerTile();
             const int worldTileX = t->x();
@@ -2552,12 +2522,12 @@ void GameWidget::paintEvent(ePainter &p)
                                                boardWidth, boardHeight);
             const int ta = t->altitude();
             std::vector<SDL_Point> polygon;
-            polygon.reserve(pgs.size() + 2);
+            polygon.reserve(waypoints.size() + 2);
             polygon.push_back({viewTileX - ta, viewTileY - ta});
-            for (const auto &pg : pgs)
+            for (const auto& waypoint : waypoints)
             {
-                const int worldTileX = pg.fX;
-                const int worldTileY = pg.fY;
+                const int worldTileX = waypoint.fX;
+                const int worldTileY = waypoint.fY;
                 int viewTileX;
                 int viewTileY;
                 eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
