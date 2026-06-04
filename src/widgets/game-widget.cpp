@@ -1,4 +1,4 @@
-﻿#include "game-widget.h"
+#include "game-widget.h"
 #include "enumbers.h"
 #include "buildtools/road-tool.h"
 #include "buildtools/column-tool.h"
@@ -1064,20 +1064,20 @@ bool GameWidget::canBuildPier(const int tx, const int ty,
     return BuildValidity::canBuildPier(mBoard, tx, ty, o, cid, pid, forestAllowed);
 }
 
-std::vector<ePatrolGuide>::iterator
-GameWidget::findGuide(const int tx, const int ty)
+std::vector<ePatrolWaypoint>::iterator
+GameWidget::findWaypoint(const int tx, const int ty)
 {
-    auto &pgs = mPatrolBuilding->patrolGuides();
-    const int iMax = pgs.size();
+    auto& waypoints = mPatrolBuilding->patrolWaypoints();
+    const int iMax = waypoints.size();
     for (int i = 0; i < iMax; i++)
     {
-        auto &pg = pgs[i];
-        if (pg.fX == tx && pg.fY == ty)
+        auto& waypoint = waypoints[i];
+        if (waypoint.fX == tx && waypoint.fY == ty)
         {
-            return pgs.begin() + i;
+            return waypoints.begin() + i;
         }
     }
-    return pgs.end();
+    return waypoints.end();
 }
 
 void GameWidget::updateMinimap()
@@ -1488,9 +1488,9 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         clearb->setPressAction([this]()
                                {
             if(!mPatrolBuilding) return;
-            auto& pgs = mPatrolBuilding->patrolGuides();
-            pgs.clear();
-            updatePatrolPath(); 
+            auto& waypoints = mPatrolBuilding->patrolWaypoints();
+            waypoints.clear();
+            updateWaypointPath(); 
             setViewMode(mSavedViewMode); });
         buttons->addWidget(clearb);
         clearb->align(eAlignment::vcenter);
@@ -1499,9 +1499,9 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         fitWaypointText(resetb);
         resetb->setPressAction([this]()
                                {
-            auto& pgs = mPatrolBuilding->patrolGuides();
-            pgs = mSavedGuides;
-            updatePatrolPath(); });
+            auto& waypoints = mPatrolBuilding->patrolWaypoints();
+            waypoints = mSavedWaypoints;
+            updateWaypointPath(); });
         buttons->addWidget(resetb);
         resetb->align(eAlignment::vcenter);
 
@@ -1515,7 +1515,7 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
             mPatrolBuilding->setBothDirections(!bd);
             const auto bothTxt = bd ? "one way" : "both ways";
             bothb->setText(bothTxt);
-            updatePatrolPath(); });
+            updateWaypointPath(); });
         buttons->addWidget(bothb);
         bothb->align(eAlignment::vcenter);
 
@@ -1528,23 +1528,23 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
 
         buttons->layoutHorizontally();
 
-        mPatrolPathWid = fw;
+        mWaypointPathWid = fw;
 
-        mSavedGuides = pb->patrolGuides();
+        mSavedWaypoints = pb->patrolWaypoints();
     }
     else if (mViewMode == eViewMode::patrolBuilding)
     {
         setViewMode(mSavedViewMode);
     }
 
-    if (mPatrolPathWid && !pb)
+    if (mWaypointPathWid && !pb)
     {
-        mPatrolPathWid->deleteLater();
-        mPatrolPathWid = nullptr;
+        mWaypointPathWid->deleteLater();
+        mWaypointPathWid = nullptr;
     }
 
     mPatrolBuilding = pb;
-    updatePatrolPath();
+    updateWaypointPath();
 }
 
 bool GameWidget::inErase(const int tx, const int ty)
@@ -2392,11 +2392,11 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
         {
             if (!tile)
                 return true;
-            auto &pgs = mPatrolBuilding->patrolGuides();
-            const auto it = findGuide(tx, ty);
-            if (it != pgs.end())
+            auto& waypoints = mPatrolBuilding->patrolWaypoints();
+            const auto it = findWaypoint(tx, ty);
+            if (it != waypoints.end())
             {
-                pgs.erase(it);
+                waypoints.erase(it);
             }
             else
             {
@@ -2404,7 +2404,7 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
                 {
                     if (mViewMode != eViewMode::patrolBuilding)
                         setViewMode(eViewMode::patrolBuilding);
-                    pgs.push_back({tx, ty});
+                    waypoints.push_back({tx, ty});
                 }
                 else
                 {
@@ -2412,7 +2412,7 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
                 }
             }
             if (mPatrolBuilding)
-                updatePatrolPath();
+                updateWaypointPath();
         }
     }
         return true;

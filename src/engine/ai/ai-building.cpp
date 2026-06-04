@@ -1,4 +1,4 @@
-﻿#include "ai-building.h"
+#include "ai-building.h"
 
 #include "fileIO/esavearchive.h"
 
@@ -33,17 +33,17 @@ void AIBuilding::serialize(eSaveArchive& ar) {
     }
 
     int ng;
-    if(ar.writing()) ng = fGuides.size();
+    if(ar.writing()) ng = fWaypoints.size();
     ar.field("ng", ng);
-    if(ar.reading()) fGuides.clear();
+    if(ar.reading()) fWaypoints.clear();
     for(int i = 0; i < ng; i++) {
-        ePatrolGuide pg;
-        if(ar.writing()) pg = fGuides[i];
-        ar.field("pg.fX", pg.fX);
-        ar.field("pg.fY", pg.fY);
-        if(ar.reading()) fGuides.push_back(pg);
+        ePatrolWaypoint waypoint;
+        if(ar.writing()) waypoint = fWaypoints[i];
+        ar.field("pg.fX", waypoint.fX);
+        ar.field("pg.fY", waypoint.fY);
+        if(ar.reading()) fWaypoints.push_back(waypoint);
     }
-    ar.field("fGuidesBothDirections", fGuidesBothDirections);
+    ar.field("fGuidesBothDirections", fWaypointsBothDirections);
 
     ar.field("fO", fO);
 

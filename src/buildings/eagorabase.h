@@ -56,9 +56,8 @@ public:
     eDiagonalOrientation diagonalOrientation() const;
 
     eTile* patrolStartTile() const override;
-    std::vector<eTile*> agoraRoadEnds() const;
-    eTile* agoraRoadStart() const;
-    eTile* agoraRoadEnd() const;
+    std::vector<eTile*> findAgoraExits() const;
+    eTile* agoraRoadExit() const;
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:

@@ -1,8 +1,8 @@
-﻿#ifndef AIBuilding_H
+#ifndef AIBuilding_H
 #define AIBuilding_H
 
 #include "buildings/ebuilding.h"
-#include "engine/epatrolguide.h"
+#include "engine/patrol-waypoint.h"
 
 enum class eResourceType;
 enum class eTradePostType;
@@ -18,8 +18,8 @@ struct AIBuilding {
     eResourceType fTradeExports = static_cast<eResourceType>(0);
     eResourceType fTradeDontAccept = static_cast<eResourceType>(0);
     std::map<eResourceType, int> fSpace;
-    std::vector<ePatrolGuide> fGuides;
-    bool fGuidesBothDirections;
+    std::vector<ePatrolWaypoint> fWaypoints;
+    bool fWaypointsBothDirections;
     eDiagonalOrientation fO;
     eCityId fTradingPartner;
     eTradePostType feTradePostType;

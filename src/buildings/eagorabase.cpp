@@ -261,7 +261,7 @@ eVendor* eAgoraBase::vendor(const eResourceType r) const {
     return nullptr;
 }
 
-std::vector<eTile*> eAgoraBase::agoraRoadEnds() const {
+std::vector<eTile*> eAgoraBase::findAgoraExits() const {
     auto& brd = const_cast<eAgoraBase*>(this)->getBoard();
     const auto rect = tileRect();
 
@@ -307,18 +307,14 @@ std::vector<eTile*> eAgoraBase::agoraRoadEnds() const {
     return result;
 }
 
-eTile* eAgoraBase::agoraRoadStart() const {
-    const auto ends = agoraRoadEnds();
+eTile* eAgoraBase::agoraRoadExit() const {
+    const auto ends = findAgoraExits();
     return ends.empty() ? centerTile() : ends.front();
 }
 
-eTile* eAgoraBase::agoraRoadEnd() const {
-    const auto ends = agoraRoadEnds();
-    return ends.size() >= 2 ? ends[1] : agoraRoadStart();
-}
 
 eTile* eAgoraBase::patrolStartTile() const {
-    return agoraRoadStart();
+    return agoraRoadExit();
 }
 
 eDiagonalOrientation eAgoraBase::diagonalOrientation() const {

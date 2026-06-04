@@ -1,4 +1,4 @@
-﻿#include "ai-district.h"
+#include "ai-district.h"
 #include "fileIO/esavearchive.h"
 
 #include "engine/game-board.h"
@@ -153,8 +153,8 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::maintenanceOffice: {
         const auto bc = [boardPtr, cid, b]() {
             const auto bb = e::make_shared<eMaintenanceOffice>(*boardPtr, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -162,8 +162,8 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::taxOffice: {
         const auto bc = [boardPtr, cid, b]() {
             const auto bb = e::make_shared<eTaxOffice>(*boardPtr, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -171,8 +171,8 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::fountain: {
         const auto bc = [boardPtr, cid, b]() {
             const auto bb = e::make_shared<eFountain>(*boardPtr, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -180,8 +180,8 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::watchPost: {
         const auto bc = [boardPtr, cid, b]() {
             const auto bb = e::make_shared<eWatchpost>(*boardPtr, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -189,8 +189,8 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::hospital: {
         const auto bc = [boardPtr, cid, b]() {
             const auto bb = e::make_shared<eHospital>(*boardPtr, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -199,8 +199,8 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::podium: {
         const auto bc = [boardPtr, cid, b]() {
             const auto bb = e::make_shared<ePodium>(*boardPtr, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -215,8 +215,8 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::gymnasium: {
         const auto bc = [boardPtr, cid, b]() {
             const auto bb = e::make_shared<eGymnasium>(*boardPtr, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -224,8 +224,8 @@ bool gBuild(const AIBuilding& b,
     case eBuildingType::theater: {
         const auto bc = [boardPtr, cid, b]() {
             const auto bb = e::make_shared<eTheater>(*boardPtr, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -241,8 +241,8 @@ bool gBuild(const AIBuilding& b,
         const bool rotated = rect.w == 5;
         const auto bc = [boardPtr, cid, b, rotated]() {
             const auto bb = e::make_shared<eStadium>(*boardPtr, rotated, cid);
-            bb->setPatrolGuides(b.fGuides);
-            bb->setBothDirections(b.fGuidesBothDirections);
+            bb->setPatrolWaypoints(b.fWaypoints);
+            bb->setBothDirections(b.fWaypointsBothDirections);
             return bb;
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
@@ -564,8 +564,8 @@ bool gBuild(const AIBuilding& b,
 
         a->setTileRect(rect);
         a->fillSpaces();
-        a->setPatrolGuides(b.fGuides);
-        a->setBothDirections(b.fGuidesBothDirections);
+        a->setPatrolWaypoints(b.fWaypoints);
+        a->setBothDirections(b.fWaypointsBothDirections);
 
         if(!editorDisplay) {
             const auto diff = board.difficulty(pid);
@@ -603,8 +603,8 @@ bool gBuild(const AIBuilding& b,
 
         a->setTileRect(rect);
         a->fillSpaces();
-        a->setPatrolGuides(b.fGuides);
-        a->setBothDirections(b.fGuidesBothDirections);
+        a->setPatrolWaypoints(b.fWaypoints);
+        a->setBothDirections(b.fWaypointsBothDirections);
 
         if(!editorDisplay) {
             const auto diff = board.difficulty(pid);

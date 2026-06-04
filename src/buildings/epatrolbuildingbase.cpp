@@ -2,7 +2,7 @@
 
 #include "engine/game-board.h"
 #include "engine/etile.h"
-#include "engine/eguidedmovepathtask.h"
+#include "engine/waypoint-move-path-task.h"
 #include "fileIO/esavearchive.h"
 
 eTile* ePatrolBuildingBase::patrolStartTile() const {
@@ -60,15 +60,15 @@ void ePatrolBuildingBase::timeChanged(const int by) {
     eEmployingBuilding::timeChanged(by);
 }
 
-using ePatrolGuides = std::vector<ePatrolGuide>;
-ePatrolGuides ePatrolBuildingBase::reversePatrolGuides() const {
-    auto guides = mPatrolGuides;
-    std::reverse(guides.begin(), guides.end());
-    return guides;
+using ePatrolWaypoints = std::vector<ePatrolWaypoint>;
+ePatrolWaypoints ePatrolBuildingBase::reversePatrolWaypoints() const {
+    auto waypoints = mPatrolWaypoints;
+    std::reverse(waypoints.begin(), waypoints.end());
+    return waypoints;
 }
 
-void ePatrolBuildingBase::setPatrolGuides(const ePatrolGuides &g) {
-    mPatrolGuides = g;
+void ePatrolBuildingBase::setPatrolWaypoints(const ePatrolWaypoints &waypoints) {
+    mPatrolWaypoints = waypoints;
 }
 
 void ePatrolBuildingBase::setBothDirections(const bool both) {
@@ -81,7 +81,7 @@ bool ePatrolBuildingBase::spawn() {
     mChar = chr.get();
     if(!mChar) return false;
     chr->setBothCityIds(cityId());
-    if(mPatrolGuides.empty()) {
+    if(mPatrolWaypoints.empty()) {
         eTile* t = nullptr;
         const auto bt = type();
         if(bt == eBuildingType::commonAgora ||
@@ -136,15 +136,15 @@ void ePatrolBuildingBase::serializeFields(eSaveArchive& ar) {
 
     ar.characterField("patroler", &getBoard(), mChar);
 
-    ar.arrayField("patrolGuides", mPatrolGuides,
-        [](eSaveArchive& itemAr, ePatrolGuide& pg) {
-            itemAr.field("x", pg.fX);
-            itemAr.field("y", pg.fY);
+    ar.arrayField("patrolGuides", mPatrolWaypoints,
+        [](eSaveArchive& itemAr, ePatrolWaypoint& waypoint) {
+            itemAr.field("x", waypoint.fX);
+            itemAr.field("y", waypoint.fY);
         });
 }
 
 bool ePatrolBuildingBase::updatePathIfNeeded() {
-    if(mPatrolGuides.empty()) {
+    if(mPatrolWaypoints.empty()) {
         mPath.clear();
         mReversePath.clear();
         return false;
@@ -159,14 +159,14 @@ bool ePatrolBuildingBase::updatePathIfNeeded() {
 }
 
 bool ePatrolBuildingBase::updatePath(const eAction& finish) {
-    if(mPatrolGuides.empty()) {
+    if(mPatrolWaypoints.empty()) {
         mPath.clear();
         mReversePath.clear();
         return false;
     }
     auto& board = getBoard();
     auto& tp = board.threadPool();
-    const auto task = new eGuidedMovePathTask(this, finish);
+    const auto task = new eWaypointMovePathTask(this, finish);
     tp.queueTask(task);
     return true;
 }

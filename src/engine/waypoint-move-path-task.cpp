@@ -1,4 +1,4 @@
-﻿#include "eguidedmovepathtask.h"
+#include "waypoint-move-path-task.h"
 
 #include "thread/ethreadboard.h"
 #include "engine/game-board.h"
@@ -7,7 +7,7 @@
 
 #include "engine/epathfinder.h"
 
-eGuidedMovePathTask::eGuidedMovePathTask(ePatrolBuildingBase * const b,
+eWaypointMovePathTask::eWaypointMovePathTask(ePatrolBuildingBase * const b,
                                          const eAction &finish) :
     eTask(b->cityId()),
     mB(b), mFinish(finish) {
@@ -22,51 +22,51 @@ eGuidedMovePathTask::eGuidedMovePathTask(ePatrolBuildingBase * const b,
         const auto c = board.boardCityWithId(cid);
         mTileBRect = c->tileBRect();
     }
-    mGuides = mB->patrolGuides();
+    mWaypoints = mB->patrolWaypoints();
     {
         const auto c = b->patrolStartTile();
         const int x = c->x();
         const int y = c->y();
-        mStartGuide = {x, y};
+        mStartWaypoint = {x, y};
     }
 }
 
-void eGuidedMovePathTask::run(eThreadBoard &data) {
+void eWaypointMovePathTask::run(eThreadBoard &data) {
     const int maxDistance = eNumbers::sPatrolerMaxDistance;
 
     for(int j = 0; j < (mBothDirections ? 2 : 1); j++) {
         int distance = 0;
-        ePatrolGuide last = mStartGuide;
-        const int iMax = mGuides.size();
+        ePatrolWaypoint last = mStartWaypoint;
+        const int iMax = mWaypoints.size();
         for(int i = 0; i < iMax; i++) {
-            const auto& from = j == 0 ? (i == 0 ? mStartGuide : mGuides[i - 1]) :
-                                        (i == 0 ? mStartGuide : mGuides[iMax - i]);
-            const auto& to = j == 0 ? (i == iMax ? mStartGuide : mGuides[i]) :
-                                      (i == iMax ? mStartGuide : mGuides[iMax - i - 1]);
+            const auto& from = j == 0 ? (i == 0 ? mStartWaypoint : mWaypoints[i - 1]) :
+                                        (i == 0 ? mStartWaypoint : mWaypoints[iMax - i]);
+            const auto& to = j == 0 ? (i == iMax ? mStartWaypoint : mWaypoints[i]) :
+                                      (i == iMax ? mStartWaypoint : mWaypoints[iMax - i - 1]);
             const bool r = runImpl(data, j == 0 ? mPath : mReversePath,
                                    from, to, distance, maxDistance, last);
             if(!r || i == iMax - 1) {
                 runImpl(data, j == 0 ? mPath : mReversePath,
-                        last, mStartGuide, distance, 1000, last);
+                        last, mStartWaypoint, distance, 1000, last);
                 break;
             }
         }
     }
 }
 
-void eGuidedMovePathTask::finish() {
+void eWaypointMovePathTask::finish() {
     if(!mB) return;
     mB->setPath(mPath, mReversePath);
     if(mFinish) mFinish();
 }
 
-bool eGuidedMovePathTask::runImpl(eThreadBoard& data,
+bool eWaypointMovePathTask::runImpl(eThreadBoard& data,
                                   ePath &path,
-                                  const ePatrolGuide& from,
-                                  const ePatrolGuide& to,
+                                  const ePatrolWaypoint& from,
+                                  const ePatrolWaypoint& to,
                                   int& distance,
                                   const int maxDistance,
-                                  ePatrolGuide& last) {
+                                  ePatrolWaypoint& last) {
     last = from;
     const auto startT = data.tile(from.fX, from.fY);
 

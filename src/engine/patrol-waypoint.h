@@ -1,9 +1,9 @@
-#ifndef EPATROLGUIDE_H
-#define EPATROLGUIDE_H
+#ifndef PATROL_WAYPOINT_H
+#define PATROL_WAYPOINT_H
 
 #include "eorientation.h"
 
-struct ePatrolGuide {
+struct ePatrolWaypoint {
     int fX;
     int fY;
 
@@ -41,4 +41,4 @@ struct ePatrolGuide {
     }
 };
 
-#endif // EPATROLGUIDE_H
+#endif // PATROL_WAYPOINT_H

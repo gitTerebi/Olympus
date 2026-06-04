@@ -8,13 +8,20 @@
 #include "fileIO/esavearchive.h"
 
 #include <SDL2/SDL_rect.h>
+#include <functional>
+#include <vector>
 
 class eMovePathAction;
 
 class eBuilding;
+class eTile;
 
 class ePatrolMoveAction : public eMoveAction {
 public:
+    using eOrientationPicker = std::function<eOrientation(
+        const std::vector<eOrientation>& options,
+        eOrientation current)>;
+
     ePatrolMoveAction(eCharacter* const c,
                       const bool diagonalOnly = true,
                       const stdsptr<WalkableObject>& walkable =
@@ -24,6 +31,15 @@ public:
 
     void setMaxWalkDistance(const int dist)
     { mMaxWalkDistance = dist; }
+
+    static eCharacterActionState sNextTurn(
+        eTile* tile,
+        bool diagonalOnly,
+        const WalkableObject& walkable,
+        eDirectionTimes& times,
+        eOrientation& orientation,
+        int time,
+        const eOrientationPicker& pickOrientation);
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:

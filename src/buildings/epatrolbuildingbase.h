@@ -2,14 +2,14 @@
 #define EPATROLBUILDINGBASE_H
 
 #include "eemployingbuilding.h"
-#include "engine/epatrolguide.h"
+#include "engine/patrol-waypoint.h"
 #include "characters/actions/epatrolaction.h"
 #include "enumbers.h"
 
 class eSaveArchive;
 
 class ePatrolBuildingBase : public eEmployingBuilding {
-    friend class eGuidedMovePathTask;
+    friend class eWaypointMovePathTask;
 public:
     using eCharGenerator =  std::function<stdsptr<eCharacter>()>;
     using eActGenerator =  std::function<stdsptr<eCharacterAction>(
@@ -40,10 +40,10 @@ public:
 
     void timeChanged(const int by) override;
 
-    using ePatrolGuides = std::vector<ePatrolGuide>;
-    ePatrolGuides& patrolGuides() { return mPatrolGuides; };
-    ePatrolGuides reversePatrolGuides() const;
-    void setPatrolGuides(const ePatrolGuides& g);
+    using ePatrolWaypoints = std::vector<ePatrolWaypoint>;
+    ePatrolWaypoints& patrolWaypoints() { return mPatrolWaypoints; };
+    ePatrolWaypoints reversePatrolWaypoints() const;
+    void setPatrolWaypoints(const ePatrolWaypoints& waypoints);
     bool bothDirections() const { return mBothDirections; }
     void setBothDirections(const bool both);
 
@@ -98,7 +98,7 @@ private:
     double mSpawnTimer = 1000000;
     stdptr<eCharacter> mChar;
 
-    ePatrolGuides mPatrolGuides;
+    ePatrolWaypoints mPatrolWaypoints;
 };
 
 #endif // EPATROLBUILDINGBASE_H

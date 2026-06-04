@@ -1,4 +1,4 @@
-﻿#include "epatrolaction.h"
+#include "epatrolaction.h"
 
 #include "../echaracter.h"
 #include "engine/etile.h"
@@ -67,7 +67,11 @@ void ePatrolAction::patrol() {
                                 board(), this);
     const int dist = mBuilding->maxDistance();
     if(mPath.empty()) {
-        const auto walkable = WalkableObject::sCreateRoadblock();
+        const auto bt = mBuilding->type();
+        const bool isAgora = bt == eBuildingType::commonAgora ||
+                             bt == eBuildingType::grandAgora;
+        const auto walkable = isAgora ? WalkableObject::sCreateRoadblockNoAgora()
+                                      : WalkableObject::sCreateRoadblock();
         const auto a = e::make_shared<ePatrolMoveAction>(
             c, true, walkable, mDirTimes);
         a->setFailAction(failFunc);

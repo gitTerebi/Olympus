@@ -1,4 +1,4 @@
-﻿#ifndef GameWidget_H
+#ifndef GameWidget_H
 #define GameWidget_H
 
 constexpr int kSimHz = 60;
@@ -231,17 +231,27 @@ private:
                            eTilePainter& tp,
                            const eTerrainTextures& trrTexs);
     static bool isRoadBandTile(eTile* tile);
-    void addRoamerPreview(eTile* start, eRoadPreviewPath& path,
-                         const std::shared_ptr<WalkableObject>& walkable);
+    void addPatrolWalkerPreview(eTile* start, eTile* home,
+                         eRoadPreviewPath& path,
+                         const std::shared_ptr<WalkableObject>& walkable,
+                         bool includeAgoraRoads = false,
+                         const SDL_Rect* despawnRect = nullptr);
+    void addPatrolBuildingRoadPreview(ePatrolBuildingBase* building,
+                         eRoadPreviewPath& path,
+                         eTile*& spawnTile);
     static void addPathBands(const std::vector<eTile*>& tiles,
                              eRoadPreviewPath& path);
     static eTile* firstPathRoad(const std::vector<eTile*>& tiles);
     static eTile* lastPathRoad(const std::vector<eTile*>& tiles);
     static SDL_Color roadBandColor(int freq);
-    void drawRoadBandTile(eTile* tile, eTile* start, eTile* ret,
+    void drawRoadBandTile(eTile* tile, eTile* start,
                           const eRoadPreviewPath& path,
                           eTilePainter& tp,
                           const eTerrainTextures& trrTexs);
+    void drawRoadPreview(const eRoadPreviewPath& path,
+                         eTile* spawnTile,
+                         eTilePainter& tp,
+                         const eTerrainTextures& trrTexs);
     void drawRoadBands(const std::vector<eTile*>& roads,
                        eTilePainter& tp,
                        const eTerrainTextures& trrTexs);
@@ -326,8 +336,8 @@ private:
                          eCityId cid,
                          ePlayerId ppid);
 
-    std::vector<ePatrolGuide>::iterator
-        findGuide(const int tx, const int ty);
+    std::vector<ePatrolWaypoint>::iterator
+        findWaypoint(const int tx, const int ty);
 
     void handleEvent(const eEvent e, eEventData& ed);
     void handleGodQuestEvent(eEventData& ed,
@@ -402,7 +412,7 @@ private:
                                const eBuildingTextures& builTexs);
     void updateTerrainTextures();
 
-    void updatePatrolPath();
+    void updateWaypointPath();
     void setPatrolBuilding(ePatrolBuildingBase* const pb);
 
     void setDestinationBuilding(ePatrolSourceBuilding* const sb);
@@ -518,12 +528,12 @@ private:
     stdptr<ePatrolSourceBuilding> mDestinationBuilding;
     std::vector<eTile*> mDestinationPath;
     std::vector<eBuilding*> mDestinationTargets;
-    std::vector<eTile*> mPatrolPath;
-    std::vector<eTile*> mExcessPatrolPath;
-    std::vector<eTile*> mPatrolPath1;
-    std::vector<eTile*> mExcessPatrolPath1;
-    eWidget* mPatrolPathWid = nullptr;
-    std::vector<ePatrolGuide> mSavedGuides;
+    std::vector<eTile*> mWaypointOutPath;
+    std::vector<eTile*> mWaypointReturnPath;
+    std::vector<eTile*> mWaypointOutPath1;
+    std::vector<eTile*> mWaypointReturnPath1;
+    eWidget* mWaypointPathWid = nullptr;
+    std::vector<ePatrolWaypoint> mSavedWaypoints;
     eViewMode mSavedViewMode = eViewMode::defaultView;
 
     eFramedLabel* mPausedLabel = nullptr;

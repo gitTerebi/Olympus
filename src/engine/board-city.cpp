@@ -1,4 +1,4 @@
-﻿#include "board-city.h"
+#include "board-city.h"
 #include "enumbers.h"
 
 #include "buildings/ebuilding.h"
@@ -718,8 +718,8 @@ void BoardCity::saveEditorCityPlan() {
         } else if(ab.fType == eBuildingType::placeholder) {
             continue;
         } else if(const auto pb = dynamic_cast<ePatrolBuildingBase*>(b)) {
-            ab.fGuides = pb->patrolGuides();
-            ab.fGuidesBothDirections = pb->bothDirections();
+            ab.fWaypoints = pb->patrolWaypoints();
+            ab.fWaypointsBothDirections = pb->bothDirections();
             if(const auto f = dynamic_cast<eAgoraBase*>(b)) {
                 ab.fO = f->diagonalOrientation();
             }
@@ -2466,7 +2466,7 @@ bool BoardCity::nearestEnemySoldier(const eTeamId tid,
         const auto& chars = tile->characters();
         for(const auto& c : chars) {
             if(c->dead()) continue;
-            // Only soldiers count as defenders — not citizens/walkers. Without
+            // Only soldiers count as defenders � not citizens/walkers. Without
             // this the invasion brain walks the formation toward the nearest
             // market lady and the line mills around an unattackable walker
             // instead of retaliating against the actual garrison.
