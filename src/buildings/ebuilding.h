@@ -338,7 +338,7 @@ public:
     int spanW() const { return mSpanW; }
     int spanH() const { return mSpanH; }
 
-    void incTime(const int by);
+    virtual void incTime(const int by);
     int time() const { return mTime; }
     int textureTime() const;
     void setFrameShift(const int f) { mFrameShift = f; }

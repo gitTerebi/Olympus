@@ -23,6 +23,8 @@ public:
     bool shutDown() const { return mShutDown; }
     void setShutDown(const bool sd);
 
+    void incTime(const int by) override;
+
 protected:
     void serializeFields(eSaveArchive& ar) override;
 
@@ -30,6 +32,7 @@ private:
     bool mShutDown = false;
     int mMaxEmployees;
     int mEmployed = 0;
+    int mEmploymentWait = 0;
 };
 
 #endif // EEMPLOYINGBUILDING_H

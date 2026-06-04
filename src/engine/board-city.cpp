@@ -103,6 +103,7 @@ void BoardCity::incTime(const int by) {
         updateCoverage();
     }
 
+
     const auto& msgs = &eMessages::instance;
     eEventData ed(mId);
     const int pop = mPopData.population();
@@ -2466,7 +2467,7 @@ bool BoardCity::nearestEnemySoldier(const eTeamId tid,
         const auto& chars = tile->characters();
         for(const auto& c : chars) {
             if(c->dead()) continue;
-            // Only soldiers count as defenders — not citizens/walkers. Without
+            // Only soldiers count as defenders ï¿½ not citizens/walkers. Without
             // this the invasion brain walks the formation toward the nearest
             // market lady and the line mills around an unattackable walker
             // instead of retaliating against the actual garrison.
