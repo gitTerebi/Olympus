@@ -67,6 +67,14 @@ void SoldierAction::increment(const int by) {
     // circuits every tick and the soldier stands and fights instead of obeying
     // the dismiss-to-palace command. Drop any live attack first so the walk owns
     // the soldier.
+    if(mStage == SoldierActionStage::abroad && !currentAction() && mDepartDelay > 0) {
+        mDepartDelay -= by;
+        if(mDepartDelay > 0) return;
+        mDepartDelay = 0;
+        goAbroad();
+        return;
+    }
+
     if((mStage == SoldierActionStage::home ||
         mStage == SoldierActionStage::abroad) && currentAction()) {
         if(isAttacking()) cancelAttack();
@@ -406,6 +414,7 @@ void SoldierAction::goHome() {
 
 void SoldierAction::goAbroad() {
     mStage = SoldierActionStage::abroad;
+    if(mDepartDelay > 0) return;
     const auto c = character();
     auto& board = SoldierAction::board();
     const auto cid = onCityId();

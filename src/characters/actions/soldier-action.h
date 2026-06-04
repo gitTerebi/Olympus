@@ -36,6 +36,7 @@ public:
                                 const GameBoard& brd);
 
     void setSpreadPeriod(const bool s) { mSpreadPeriod = s; }
+    void setDepartDelay(const int ms) { mDepartDelay = ms; }
     void cancelAndClearAction() {
         mSpreadPeriod = false;
         cancelAttack();
@@ -63,6 +64,7 @@ private:
     bool mSpreadPeriod = false; // for spreading invasion forces
     bool mArrivedAtBanner = false;
     SoldierActionStage mStage = SoldierActionStage::idle;
+    int mDepartDelay = 0;
     eTile* mChaseTarget = nullptr;
 };
 
