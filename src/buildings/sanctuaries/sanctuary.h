@@ -3,6 +3,7 @@
 
 #include "../eemployingbuilding.h"
 #include "../emonument.h"
+#include "enumbers.h"
 
 #include "esanctuaryblueprint.h"
 #include "characters/gods/egod.h"
@@ -65,6 +66,15 @@ public:
     void setSpawnWait(const int w);
 
     bool sacrificing() const;
+    bool priestOut() const;
+    int sacrificeDaysLeft() const;
+
+    bool prayerReady() const { return mHelpTimer >= eNumbers::sGodHelpPeriod; }
+    bool aresBuffReady() const { return mAresBuffReady; }
+    void consumeAresBuff() { mAresBuffReady = false; }
+
+    void registerElement(const stdsptr<eSanctBuilding>& e) override;
+    void boostHelpTimer();
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
@@ -76,7 +86,8 @@ private:
 
     bool mAskedForHelp = false;
     int mCheckHelpNeeded = 0;
-    int mHelpTimer = 10000000;
+    int mHelpTimer = 0;
+    bool mAresBuffReady = false;
 
     std::vector<eTile*> mWarriorTiles;
     std::vector<eTile*> mSpecialTiles;

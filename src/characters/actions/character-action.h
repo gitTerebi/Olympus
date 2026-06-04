@@ -82,7 +82,8 @@ enum class eCharActionType {
     vendorCartAction      = 53,
     storageDeliveryCartAction = 54,
 
-    godMinionAction       = 55
+    godMinionAction       = 55,
+    priestSacrificeAction = 56
 };
 
 class eCharacterAction : public eStdSelfRef {

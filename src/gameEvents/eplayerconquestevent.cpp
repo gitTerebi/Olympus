@@ -1,6 +1,8 @@
 ﻿#include "eplayerconquestevent.h"
 
 #include "engine/game-board.h"
+#include "engine/board-city.h"
+#include "buildings/sanctuaries/sanctuary.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "elanguage.h"
@@ -25,6 +27,14 @@ void ePlayerConquestEvent::initialize(
     const auto board = gameBoard();
     if(!board) return;
     if(!mCity) return;
+
+    if(mForces.fAres) {
+        const auto bc = board->boardCityWithId(mForces.fAresCity);
+        if(bc) {
+            const auto aresSanct = bc->sanctuary(eGodType::ares);
+            if(aresSanct) aresSanct->consumeAresBuff();
+        }
+    }
 
     const auto cid = mCity->cityId();
     const auto c = board->boardCityWithId(cid);

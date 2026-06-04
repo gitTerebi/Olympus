@@ -216,6 +216,7 @@ set(SOURCES
     src/characters/actions/ereplacecattleaction.cpp
     src/characters/actions/esettleraction.cpp
     src/characters/actions/shepherd-action.cpp
+    src/characters/actions/priest-sacrifice-action.cpp
     src/characters/actions/esickdisgruntledaction.cpp
     src/characters/actions/soldier-action.cpp
     src/characters/actions/etakecattleaction.cpp
@@ -329,6 +330,7 @@ set(SOURCES
     src/characters/scholar.cpp
     src/characters/esettler.cpp
     src/characters/esheep.cpp
+    src/characters/priest.cpp
     src/characters/shepherd.cpp
     src/characters/eshepherdbase.cpp
     src/characters/esick.cpp

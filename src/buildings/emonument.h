@@ -41,7 +41,7 @@ public:
     void setWomanTile(eTile* t) { mWomanTile = t; }
     eTile* womanTile() const { return mWomanTile; }
 
-    void registerElement(const stdsptr<eSanctBuilding>& e);
+    virtual void registerElement(const stdsptr<eSanctBuilding>& e);
 
     int progress() const; // 0-100
     bool finished() const;

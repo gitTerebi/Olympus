@@ -15,6 +15,7 @@
 #include "esettleraction.h"
 #include "ewolfaction.h"
 #include "shepherd-action.h"
+#include "priest-sacrifice-action.h"
 #include "soldier-action.h"
 #include "trader-action.h"
 #include "ekillcharacterfinishfail.h"
@@ -212,6 +213,8 @@ stdsptr<eCharActFunc> eCharActFunc::sCreate(
 
     case eCharActFuncType::enemyBoatFinish:
         return std::make_shared<eEnemyBoatFinish>(board);
+    case eCharActFuncType::PrSA_atAnimalFinish:
+        return std::make_shared<ePrSA_atAnimalFinish>(board);
     }
     return nullptr;
 }

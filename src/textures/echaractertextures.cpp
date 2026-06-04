@@ -61,6 +61,11 @@
 #include "spriteData/goatherd45.h"
 #include "spriteData/goatherd60.h"
 
+#include "spriteData/priest15.h"
+#include "spriteData/priest30.h"
+#include "spriteData/priest45.h"
+#include "spriteData/priest60.h"
+
 #include "spriteData/bronzeMiner15.h"
 #include "spriteData/bronzeMiner30.h"
 #include "spriteData/bronzeMiner45.h"
@@ -403,6 +408,8 @@ eCharacterTextures::eCharacterTextures(const int tileW, const int tileH,
     fBannerTops(renderer),
     fPoseidonBannerTops(renderer),
 
+    fPriest(renderer),
+
     fTrader(renderer),
     fDonkey(renderer),
 
@@ -614,6 +621,19 @@ void eCharacterTextures::loadPeddler() {
     eSpriteLoader loader(fTileH, "peddler", sds,
                          &eSprMainOffset, fRenderer);
     loadBasicTexture(fPeddler, 1, loader);
+}
+
+void eCharacterTextures::loadPriest() {
+    if(fPriestLoaded) return;
+    fPriestLoaded = true;
+    const auto& sds = spriteData(fTileH,
+                                 ePriestSpriteData15,
+                                 ePriestSpriteData30,
+                                 ePriestSpriteData45,
+                                 ePriestSpriteData60);
+    eSpriteLoader loader(fTileH, "priest", sds,
+                         &eSprMainOffset, fRenderer);
+    loadBasicTexture(fPriest, 8105, loader);
 }
 
 void eCharacterTextures::loadActor() {

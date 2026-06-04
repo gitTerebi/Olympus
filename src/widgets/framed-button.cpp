@@ -5,6 +5,43 @@
 #include <random>
 
 void FramedButton::paintEvent(ePainter& p) {
+    if(!enabled()) {
+        if(mRenderBg) renderBg(p);
+        // draw border normally
+        int iRes; int mult; iResAndMult(iRes, mult);
+        const int dim = 8*mult;
+        const auto& intrfc = eGameTextures::interface()[iRes];
+        if(intrfc.fLoaded) {
+            const auto& coll = intrfc.fButtonFrame;
+            const int iMax = width()/dim + 1;
+            const int jMax = height()/dim + 1;
+            const int lastX = width() - dim;
+            const int lastY = height() - dim;
+            for(int i = 0; i < iMax; i++) {
+                const int x = i == iMax-1 ? lastX : dim*i;
+                for(int j = 0; j < jMax; j++) {
+                    int texId;
+                    if(i==0)            texId = (j==0)?0:(j==jMax-1)?6:7;
+                    else if(i==iMax-1)  texId = (j==0)?2:(j==jMax-1)?4:3;
+                    else                texId = (j==0)?1:(j==jMax-1)?5:-1;
+                    if(texId == -1) continue;
+                    const int y = j == jMax-1 ? lastY : dim*j;
+                    const auto& tex = coll.getTexture(texId);
+                    tex->setAlpha(80);
+                    p.drawTexture(x, y, tex);
+                    tex->clearAlphaMod();
+                }
+            }
+        }
+        // draw text greyed
+        const auto& tex = texture();
+        if(tex) {
+            tex->setColorMod(120, 120, 120);
+            p.drawTexture(rect(), tex, textAlignment());
+            tex->clearColorMod();
+        }
+        return;
+    }
     if(mRenderBg) renderBg(p);
     if(mNoBorder) { eButton::paintEvent(p); return; }
 

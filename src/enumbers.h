@@ -112,7 +112,6 @@ struct eNumbers {
     static int sDestinationWalkerRecurringSpawnDays;
     static int sDestinationWalkerInitialSpawnWaitDays;
     static int sCulturePatrolSpawnCooldownDays;
-    static int sTheaterPatrolSpawnCooldown;
     static int sCultureShowDays;
 
     static int sArtisanWaitTime;
@@ -260,6 +259,9 @@ struct eNumbers {
     static int sTriremeWharfBuildStages;
 
     static int sNewBuildingEmployWaitDays;
+
+    static int sSacrificeDurationDays;
+    static int sPriestSacrificeRecurringSpawnDays;
 };
 
 #endif // ENUMBERS_H

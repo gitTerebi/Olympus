@@ -34,6 +34,7 @@ public:
     static void loadTexture(const std::function<void(int)>& func);
     static void loadInterfaceTexture(const std::function<void(int)>& func);
 
+    static void loadPriest();
     static void loadPeddler();
     static void loadActor();
     static void loadOx();

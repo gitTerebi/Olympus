@@ -49,6 +49,13 @@ void eGameTextures::loadInterfaceTexture(const std::function<void(int)>& func) {
     }
 }
 
+void eGameTextures::loadPriest() {
+    loadTexture([](const int i) {
+        auto& c = sCharacterTextures[i];
+        c.loadPriest();
+    });
+}
+
 void eGameTextures::loadPeddler() {
     loadTexture([](const int i) {
         auto& c = sCharacterTextures[i];

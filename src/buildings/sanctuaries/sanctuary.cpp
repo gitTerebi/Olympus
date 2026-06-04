@@ -36,6 +36,8 @@
 #include "ehephaestussanctuary.h"
 #include "ezeussanctuary.h"
 #include "fileIO/esavearchive.h"
+#include "etemplealtarbuilding.h"
+#include "enumbers.h"
 
 #include "etemplealtarbuilding.h"
 #include "enumbers.h"
@@ -335,6 +337,38 @@ bool eSanctuary::sacrificing() const {
     return false;
 }
 
+bool eSanctuary::priestOut() const {
+    for(const auto& e : mElements) {
+        if(e->type() != eBuildingType::templeAltar) continue;
+        const auto altar = static_cast<eTempleAltarBuilding*>(e.get());
+        if(altar->priestOut()) return true;
+    }
+    return false;
+}
+
+int eSanctuary::sacrificeDaysLeft() const {
+    int best = 0;
+    for(const auto& e : mElements) {
+        if(e->type() != eBuildingType::templeAltar) continue;
+        const auto altar = static_cast<eTempleAltarBuilding*>(e.get());
+        best = std::max(best, altar->sacrificeDaysLeft());
+    }
+    return best;
+}
+
+void eSanctuary::registerElement(const stdsptr<eSanctBuilding>& e) {
+    eMonument::registerElement(e);
+    if(e->type() == eBuildingType::templeAltar) {
+        const auto altar = static_cast<eTempleAltarBuilding*>(e.get());
+        altar->setOnSacrificeComplete([this]() { boostHelpTimer(); });
+    }
+}
+
+void eSanctuary::boostHelpTimer() {
+    // each completed sacrifice adds 15 days worth of prayer progress
+    mHelpTimer += 15 * eNumbers::sDayLength;
+}
+
 void eSanctuary::timeChanged(const int by) {
     mHelpTimer += by;
     eMonument::timeChanged(by);
@@ -404,6 +438,7 @@ void eSanctuary::serializeFields(eSaveArchive& ar) {
     ar.field("askedForHelp", mAskedForHelp);
     ar.field("checkHelpNeeded", mCheckHelpNeeded);
     ar.field("helpTimer", mHelpTimer);
+    ar.field("aresBuffReady", mAresBuffReady, false);
 
     const int nw = ar.writing() ? static_cast<int>(mWarriorTiles.size()) : 0;
     if(ar.reading()) mWarriorTiles.clear();
@@ -494,9 +529,12 @@ bool eSanctuary::askForHelp(eHelpDenialReason& reason) {
         r = eApolloHelpAction::sHelpNeeded(cid, board);
     } break;
     case eGodType::ares: {
-        const auto pid = board.cityIdToPlayerId(cid);
-        r = eAresHelpAction::sHelpNeeded(pid, board);
-    } break;
+        // Ares prayer always succeeds — buff stored, consumed on conquest dispatch
+        mHelpTimer = 0;
+        mAresBuffReady = true;
+        mAskedForHelp = false;
+        return true;
+    }
     case eGodType::artemis: {
         r = eArtemisHelpAction::sHelpNeeded(cid, board);
     } break;
@@ -610,12 +648,7 @@ bool eSanctuary::askForHelp(eHelpDenialReason& reason) {
     ed.fTile = c->tile();
     board.event(eEvent::godHelp, ed);
     if(type == eGodType::ares) {
-        const auto cid = cityId();
-        const auto pid = board.cityIdToPlayerId(cid);
-        const auto& cs = board.conquests(pid);
-        if(cs.empty()) return true;
-        cs[0]->addAres();
-        mGodAbroad = true;
+        mAresBuffReady = true;
     }
     return true;
 }
