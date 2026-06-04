@@ -36,7 +36,7 @@ ePatrolSourceBuilding::ePatrolSourceBuilding(GameBoard &board,
     for (const auto &t : mTargets)
     {
         (void)t;
-        mTargetData.push_back({mSpawnInterval - mInitialDelay, nullptr});
+        mTargetData.push_back({mSpawnInterval - mInitialDelay, 0, nullptr});
     }
 }
 
@@ -49,6 +49,7 @@ void ePatrolSourceBuilding::timeChanged(const int by)
         const int em = employed();
         const int scaledBy = (me > 0) ? (by * em) / me : 0;
         const int iMax = mTargetData.size();
+        const int dayLen = eNumbers::sDayLength;
         for (int i = 0; i < iMax; i++)
         {
             int &spawnTime = mTargetData[i].fSpawnTime;
@@ -56,8 +57,21 @@ void ePatrolSourceBuilding::timeChanged(const int by)
             if (spawnTime > mSpawnInterval)
             {
                 spawnTime = 0;
-                if (!targetWalkerInFlight(i))
-                    spawn(i);
+                spawn(i);
+            }
+            if (targetWalkerInFlight(i) && dayLen > 0)
+            {
+                int &rerouteAccum = mTargetData[i].fRerouteAccum;
+                rerouteAccum += by;
+                if (rerouteAccum >= dayLen)
+                {
+                    rerouteAccum -= dayLen;
+                    reroute(i);
+                }
+            }
+            else
+            {
+                mTargetData[i].fRerouteAccum = 0;
             }
         }
     }
@@ -74,6 +88,7 @@ void ePatrolSourceBuilding::serializeFields(eSaveArchive &ar)
                            [this](eSaveArchive &itemAr, eTargetData &td)
                            {
                                itemAr.field("fSpawnTime", td.fSpawnTime);
+                               itemAr.field("fRerouteAccum", td.fRerouteAccum);
                                itemAr.characterField("walker", &getBoard(), td.fWalker);
                            });
         ar.addPostFunc([tptr, targetData]()
@@ -87,6 +102,7 @@ void ePatrolSourceBuilding::serializeFields(eSaveArchive &ar)
                            [this](eSaveArchive &itemAr, eTargetData &td)
                            {
                                itemAr.field("fSpawnTime", td.fSpawnTime);
+                               itemAr.field("fRerouteAccum", td.fRerouteAccum);
                                itemAr.characterField("walker", &getBoard(), td.fWalker);
                            });
     }
@@ -109,6 +125,16 @@ bool operator==(const SDL_Rect &r1, const SDL_Rect &r2)
 {
     return r1.x == r2.x && r1.y == r2.y &&
            r1.w == r2.w && r1.h == r2.h;
+}
+
+int ePatrolSourceBuilding::sBuildingScore(int fromX, int fromY, eBuilding* b)
+{
+    const auto r = b->tileRect();
+    const long dx = (r.x + r.w / 2) - fromX;
+    const long dy = (r.y + r.h / 2) - fromY;
+    const int dist = (int)(std::sqrt((double)(dx * dx + dy * dy)) + 0.5);
+    const auto pt = dynamic_cast<ePatrolTarget*>(b);
+    return dist + sLoadPenalty(pt ? pt->showDays() : 0);
 }
 
 int ePatrolSourceBuilding::sLoadPenalty(const int showDays)
@@ -220,24 +246,11 @@ void ePatrolSourceBuilding::spawn(const int id)
         {
             const auto &r = tr.first;
             const auto targetTile = board.tile(r.x, r.y);
-            if (!targetTile)
-                continue;
+            if (!targetTile) continue;
             const auto tb = targetTile->underBuilding();
-            if (!tb)
-                continue;
-            const long dx = (r.x + r.w / 2) - tx;
-            const long dy = (r.y + r.h / 2) - ty;
-            const int dist = (int)(std::sqrt((double)(dx * dx + dy * dy)) + 0.5);
-            int penalty = 0;
-            const auto pt = dynamic_cast<ePatrolTarget *>(tb);
-            if (pt)
-                penalty = sLoadPenalty(pt->showDays());
-            const int score = dist + penalty;
-            if (bestScore < 0 || score < bestScore)
-            {
-                bestScore = score;
-                best = tb;
-            }
+            if (!tb) continue;
+            const int score = sBuildingScore(tx, ty, tb);
+            if (bestScore < 0 || score < bestScore) { bestScore = score; best = tb; }
         }
         if (!best)
             return;
@@ -252,6 +265,44 @@ void ePatrolSourceBuilding::spawn(const int id)
                                        nullptr, nullptr, true);
     pft->setFoundFunc(foundFunc);
     tp.queueTask(pft);
+}
+
+void ePatrolSourceBuilding::reroute(const int id)
+{
+    const auto c = mTargetData[id].fWalker.get();
+    if (!c) return;
+    const auto ma = dynamic_cast<eMoveToAction*>(c->action());
+    if (!ma) return;
+    const auto fa = dynamic_cast<ePT_spawnGetActorFinish*>(ma->finishAction());
+    if (!fa) return;
+    ePatrolTarget* const currentTarget = fa->target();
+
+    const auto &target = mTargets[id];
+    const auto targetType = target.second;
+    if (targetType == eBuildingType::stadium || targetType == eBuildingType::museum)
+        return;
+
+    const auto walkerTile = c->tile();
+    if (!walkerTile) return;
+    const int wx = walkerTile->x();
+    const int wy = walkerTile->y();
+
+    auto &board = getBoard();
+    const auto cid = cityId();
+    eBuilding *best = nullptr;
+    int bestScore = -1;
+    for (const auto b : board.buildings())
+    {
+        if (!b || b->type() != targetType || b->cityId() != cid) continue;
+        const int score = sBuildingScore(wx, wy, b);
+        if (bestScore < 0 || score < bestScore) { bestScore = score; best = b; }
+    }
+    if (!best || best == currentTarget) return;
+    const auto newTarget = dynamic_cast<ePatrolTarget*>(best);
+    if (!newTarget) return;
+    const auto newFinish = std::make_shared<ePT_spawnGetActorFinish>(board, newTarget);
+    ma->setFinishAction(newFinish);
+    ma->start(best, WalkableObject::sCreateRoadAvenue());
 }
 
 void ePatrolSourceBuilding::spawn(const int id, eBuilding *const targetBuilding)
