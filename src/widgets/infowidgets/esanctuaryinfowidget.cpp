@@ -11,11 +11,12 @@
 #include "evectorhelpers.h"
 #include "widgets/game-widget.h"
 #include "widgets/eprogressbar.h"
+#include "widgets/elayouthelpers.h"
 
 eSanctuaryInfoWidget::eSanctuaryInfoWidget(
         eMainWindow* const window,
         eMainWidget* const mw) :
-    eEmployingBuildingInfoWidget(window, mw, false, false) {}
+    eEmployingBuildingInfoWidget(window, mw, true, false) {}
 
 int sTextGodId(const eGodType god) {
     switch(god) {
@@ -67,45 +68,91 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                                  employmentInfo,
                                  additionalInfo);
         }
+        // override with live priest state (sInfoText only knows employment level)
+        if(s->priestOut()) {
+            employmentInfo = eLanguage::zeusText(132, 6); // "Our priests are out looking..."
+        } else if(s->sacrificing()) {
+            employmentInfo = eLanguage::zeusText(132, 7); // "We are conducting sacrifices..."
+        }
         const auto cw = addCentralWidget();
         addEmploymentWidget(m, employmentInfo);
+
+        {
+            const auto makeLbl = [this](const std::string& txt) {
+                const auto lbl = new eLabel(window());
+                lbl->setFontSizeS();
+                lbl->setText(txt);
+                lbl->fitContent();
+                return lbl;
+            };
+            std::vector<eLayoutHelpers::eFlexItem> lines;
+            if(s->sacrificing()) {
+                const int days = s->sacrificeDaysLeft();
+                if(days > 0) {
+                    // "This Sanctuary is active for another X days"
+                    const auto txt = eLanguage::zeusText(132, 8) +
+                                     " " + std::to_string(days) + " days";
+                    lines.push_back({makeLbl(txt)});
+                } else {
+                    // "We are conducting sacrifices right now."
+                    lines.push_back({makeLbl(eLanguage::zeusText(132, 7))});
+                }
+            } else if(s->priestOut()) {
+                // "Sanctuary preparing for sacrifice"
+                lines.push_back({makeLbl(eLanguage::zeusText(59, 30))});
+            } else {
+                // "Sanctuary working normally"
+                lines.push_back({makeLbl(eLanguage::zeusText(59, 26))});
+            }
+            const auto col = eLayoutHelpers::flexCol(
+                                 window(), widgetWidth(), 0, lines,
+                                 {.align = eLayoutHelpers::eAlign::center});
+            addInfoWidget(col);
+        }
+
         const auto gt = s->godType();
 
         const int cww = cw->width();
+        const int godId = sTextGodId(gt);
+
         const auto descLabel = new eLabel(window());
         descLabel->setNoPadding();
         descLabel->setFontSizeS();
         descLabel->setWrapWidth(cww);
-        const int godId = sTextGodId(gt);
         std::string desc;
-        {
-            const int string = 66 + godId;
-            const auto txt = eLanguage::zeusText(132, string);
-            desc = desc + " " + txt;
-        }
-        {
-            const int string = 80 + godId;
-            const auto txt = eLanguage::zeusText(132, string);
-            desc = desc + " " + txt;
-        }
-        {
-            const int string = 94 + godId;
-            const auto txt = eLanguage::zeusText(132, string);
-            desc = desc + " " + txt;
-        }
+        desc += eLanguage::zeusText(132, 66 + godId);
+        desc += " " + eLanguage::zeusText(132, 80 + godId);
+        desc += " " + eLanguage::zeusText(132, 94 + godId);
         descLabel->setText(desc);
         descLabel->fitContent();
-        cw->addWidget(descLabel);
+        descLabel->setWidth(cww);
 
         const auto buttonReasonW = new eWidget(window());
         buttonReasonW->setNoPadding();
-        cw->addWidget(buttonReasonW);
         buttonReasonW->setWidth(cww);
 
         const auto reasonLabel = new eLabel(window());
         reasonLabel->setNoPadding();
         reasonLabel->setFontSizeS();
         reasonLabel->setWrapWidth(cww);
+        {
+            // initial status line
+            const bool aresGod = (gt == eGodType::ares);
+            if(aresGod && s->aresBuffReady()) {
+                reasonLabel->setLightFontColor();
+                reasonLabel->setText(eLanguage::zeusText(132, 38 + godId)); // "Ares has heard...next opportunity"
+            } else if(s->prayerReady()) {
+                reasonLabel->setLightFontColor();
+                reasonLabel->setText(eLanguage::zeusText(132, 94 + godId));
+            } else if(aresGod) {
+                reasonLabel->setYellowFontColor();
+                reasonLabel->setText(eLanguage::zeusText(132, 99)); // "Pray to Ares if you would like him to accompany..."
+            } else {
+                reasonLabel->setYellowFontColor();
+                reasonLabel->setText(eLanguage::zeusText(132, 52 + godId));
+            }
+            reasonLabel->fitContent();
+        }
         buttonReasonW->addWidget(reasonLabel);
 
         const auto buttonsW = new eWidget(window());
@@ -115,17 +162,21 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             const auto bw = new eWidget(window());
             bw->setNoPadding();
             buttonsW->addWidget(bw);
-            const int string = 10 + godId;
-            const auto txt = eLanguage::zeusText(132, string);
-            const auto pb = new FramedButton(txt, window());
+            const auto pb = new FramedButton(eLanguage::zeusText(132, 10 + godId), window());
             pb->setUnderline(false);
             pb->fitContent();
+            if(gt == eGodType::ares && s->aresBuffReady()) pb->setEnabled(false);
             bw->addWidget(pb);
-            pb->setPressAction([s, godId, buttonReasonW, reasonLabel]() {
+            const auto bar = new eProgressBar(window());
+            bar->setRange(0, 100);
+            bar->setValue(std::clamp(int(std::floor(100*s->helpTimeFraction())), 0, 100));
+            pb->setPressAction([s, godId, gt, pb, buttonReasonW, reasonLabel, bar, cww, p]() {
                 eHelpDenialReason reason;
                 const bool r = s->askForHelp(reason);
-                int string;
+                reasonLabel->setWrapWidth(cww);
+                reasonLabel->setWidth(cww);
                 if(!r) {
+                    int string;
                     switch(reason) {
                     case eHelpDenialReason::tooSoon:
                         string = 52 + godId;
@@ -133,31 +184,27 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                     case eHelpDenialReason::noTarget:
                         string = 38 + godId;
                         break;
-                    case eHelpDenialReason::error:
-                        string = -1;
+                    default:
+                        string = 52 + godId;
                         break;
                     }
                     reasonLabel->setYellowFontColor();
-                } else {
-                    string = 24 + godId;
+                    reasonLabel->setText(eLanguage::zeusText(132, string));
+                } else if(gt == eGodType::ares) {
                     reasonLabel->setLightFontColor();
+                    reasonLabel->setText(eLanguage::zeusText(132, 38 + godId));
+                    pb->setEnabled(false);
+                } else {
+                    reasonLabel->setLightFontColor();
+                    reasonLabel->setText(eLanguage::zeusText(132, 24 + godId));
                 }
-                const auto txt = eLanguage::zeusText(132, string);
-                reasonLabel->setText(txt);
                 reasonLabel->fitContent();
-
-                buttonReasonW->stackVertically();
+                bar->setValue(std::clamp(int(std::floor(100*s->helpTimeFraction())), 0, 100));
+                buttonReasonW->stackVertically(p);
                 buttonReasonW->fitHeight();
-                buttonReasonW->align(eAlignment::bottom);
             });
-            const auto bar = new eProgressBar(window());
-            bar->setRange(0, 100);
-            const double frac = s->helpTimeFraction();
-            bar->setValue(std::clamp(int(std::floor(100*frac)), 5, 100));
             bw->addWidget(bar);
-            const int w = pb->width();
-            bar->resize(w, p);
-
+            bar->resize(pb->width(), p);
             bw->stackVertically(p);
             bw->fitContent();
         }
@@ -176,8 +223,12 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             pb->fitContent();
             bw->addWidget(pb);
             const auto wboard = &board.world();
-            pb->setPressAction([this, wboard, s, buttonReasonW, reasonLabel, enemyCids]() {
-                const auto askForAttack = [s, buttonReasonW, reasonLabel](const eCityId cid) {
+            const auto bar = new eProgressBar(window());
+            bar->setRange(0, 100);
+            const double frac = s->helpAttackTimeFraction();
+            bar->setValue(std::clamp(int(std::floor(100*frac)), 0, 100));
+            pb->setPressAction([this, wboard, s, buttonReasonW, reasonLabel, enemyCids, bar]() {
+                const auto askForAttack = [s, buttonReasonW, reasonLabel, bar](const eCityId cid) {
                     eHelpDenialReason reason;
                     const bool r = s->askForAttack(cid, reason);
                     int string;
@@ -203,10 +254,8 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                     const auto txt = godName + " " + eLanguage::zeusText(59, string);
                     reasonLabel->setText(txt);
                     reasonLabel->fitContent();
-
-                    buttonReasonW->stackVertically();
-                    buttonReasonW->fitHeight();
-                    buttonReasonW->align(eAlignment::bottom);
+                    const double f = s->helpAttackTimeFraction();
+                    bar->setValue(std::clamp(int(std::floor(100*f)), 0, 100));
                 };
                 if(enemyCids.size() == 1) {
                     askForAttack(enemyCids[0]);
@@ -226,10 +275,6 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                     mw->openDialog(choose);
                 }
             });
-            const auto bar = new eProgressBar(window());
-            bar->setRange(0, 100);
-            const double frac = s->helpAttackTimeFraction();
-            bar->setValue(std::clamp(int(std::floor(100*frac)), 5, 100));
             bw->addWidget(bar);
             const int w = pb->width();
             bar->resize(w, p);
@@ -243,10 +288,14 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
 
         buttonReasonW->addWidget(buttonsW);
         buttonsW->align(eAlignment::hcenter);
-
-        buttonReasonW->stackVertically();
+        buttonReasonW->stackVertically(p);
         buttonReasonW->fitHeight();
-        buttonReasonW->align(eAlignment::bottom);
+
+        // stack desc + buttonReasonW into cw with spacing
+        cw->addWidget(descLabel);
+        cw->addWidget(buttonReasonW);
+        descLabel->move(0, 0);
+        buttonReasonW->move(0, descLabel->height() + 2*p);
     } else if(m->finished()) {
         const auto title = eBuilding::sNameForBuilding(m);
         eInfoWidget::initialize(title);

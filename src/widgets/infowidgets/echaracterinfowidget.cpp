@@ -269,6 +269,9 @@ std::shared_ptr<eTexture> gCharPortrait(
     case eCharacterType::orichalcMiner:
         return pp.getTexture(5);
 
+    case eCharacterType::priest:
+        return zp.getTexture(65);
+
     case eCharacterType::scholar:
         return pp.getTexture(9);
 
@@ -343,6 +346,7 @@ std::string gCharName(const eCharacterType c, const int seedId)
     case eCharacterType::marbleMiner:
     case eCharacterType::silverMiner:
     case eCharacterType::lumberjack:
+    case eCharacterType::priest:
         return eLanguage::zeusText(275, seedId % 16);
     case eCharacterType::aphrodite:
     case eCharacterType::apollo:
@@ -615,6 +619,9 @@ std::string gCharOccupation(
     case eCharacterType::bronzeMiner:
     case eCharacterType::orichalcMiner:
         return eLanguage::zeusText(64, 62);
+
+    case eCharacterType::priest:
+        return eLanguage::zeusText(64, 65);
 
     case eCharacterType::scholar:
         return eLanguage::zeusText(64, 72);
@@ -1645,6 +1652,12 @@ eCharMessage gCharMessage(eCharacter *const c)
             stringId = 8 + eRand::rand() % 4;
         }
         groupId = 212;
+    }
+    break;
+    case eCharacterType::priest:
+    {
+        stringId = eRand::rand() % 7;
+        groupId = 237;
     }
     break;
     case eCharacterType::goatherd:

@@ -20,7 +20,8 @@ public:
 
     void addEmploymentWidget(eEmployingBuilding* const b,
                              const std::string& infoStr = std::string(),
-                             const std::string& preInfoStr = std::string());
+                             const std::string& preInfoStr = std::string(),
+                             bool centerText = false);
 };
 
 #endif // EEMPLOYINGBUILDINGINFOWIDGET_H

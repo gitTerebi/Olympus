@@ -50,6 +50,7 @@
 #include "emarbleminer.h"
 #include "eox.h"
 #include "epeddler.h"
+#include "priest.h"
 #include "philosopher.h"
 #include "eporter.h"
 #include "erockthrower.h"
@@ -348,6 +349,8 @@ stdsptr<eCharacter> eCharacter::sCreate(
         return e::make_shared<eTrireme>(board);
     case eCharacterType::enemyBoat:
         return e::make_shared<eEnemyBoat>(board);
+    case eCharacterType::priest:
+        return e::make_shared<Priest>(board);
     }
     return nullptr;
 }

@@ -51,46 +51,6 @@ void drawAtTextureAnchor(
         colorMod, colorModRed, colorModGreen, colorModBlue);
 }
 
-void drawTempleWomanDebugDots(
-    GameBoard& board,
-    const eTempleBuilding& templeBuilding,
-    eTile* fallbackAltitudeTile,
-    const SanctuaryDrawXY& drawXY,
-    const double womanDrawX,
-    const double womanDrawY,
-    std::vector<SanctuaryTempleDebugDot>& templeDebugDots)
-{
-    const auto& templeWorldRect = templeBuilding.tileRect();
-    const int fallbackAltitude =
-        fallbackAltitudeTile ? fallbackAltitudeTile->altitude() : 0;
-
-    for(int templeTileX = templeWorldRect.x;
-        templeTileX < templeWorldRect.x + templeWorldRect.w;
-        templeTileX++)
-    {
-        for(int templeTileY = templeWorldRect.y;
-            templeTileY < templeWorldRect.y + templeWorldRect.h;
-            templeTileY++)
-        {
-            const auto templeTile = board.tile(templeTileX, templeTileY);
-            const int templeTileAltitude =
-                templeTile ? templeTile->altitude() : fallbackAltitude;
-            double templeTileDrawX;
-            double templeTileDrawY;
-            drawXY(templeTileX, templeTileY,
-                   templeTileDrawX, templeTileDrawY,
-                   1, 1, templeTileAltitude);
-            templeDebugDots.push_back({
-                templeTileDrawX, templeTileDrawY,
-                6, {0, 120, 255, 255}});
-        }
-    }
-
-    templeDebugDots.push_back({
-        womanDrawX, womanDrawY,
-        10, {255, 230, 0, 255}});
-}
-
 void drawTemple(
     GameBoard& board,
     eTilePainter& tilePainter,
@@ -107,8 +67,7 @@ void drawTemple(
     const int colorModGreen,
     const int colorModBlue,
     const SanctuaryDrawXY& drawXY,
-    std::set<eMonument*>& drawnTempleWoman,
-    std::vector<SanctuaryTempleDebugDot>& templeDebugDots)
+    std::set<eMonument*>& drawnTempleWoman)
 {
     const int stage = templeBuilding.progress() - 1;
     if(stage < 0) return;
@@ -160,10 +119,6 @@ void drawTemple(
         womanDrawX, womanDrawY,
         eAlignment::bottom,
         colorMod, colorModRed, colorModGreen, colorModBlue);
-
-    drawTempleWomanDebugDots(
-        board, templeBuilding, fallbackAltitudeTile,
-        drawXY, womanDrawX, womanDrawY, templeDebugDots);
 }
 
 void drawStatue(
@@ -271,8 +226,7 @@ void drawSanctuaryRealBuildingPart(
     const int colorModGreen,
     const int colorModBlue,
     const SanctuaryDrawXY& drawXY,
-    std::set<eMonument*>& drawnTempleWoman,
-    std::vector<SanctuaryTempleDebugDot>& templeDebugDots)
+    std::set<eMonument*>& drawnTempleWoman)
 {
     if(!building) return;
 
@@ -283,7 +237,7 @@ void drawSanctuaryRealBuildingPart(
             textureSpace, dir, animFrame, fallbackAltitudeTile,
             buildingDrawX, buildingDrawY,
             colorMod, colorModRed, colorModGreen, colorModBlue,
-            drawXY, drawnTempleWoman, templeDebugDots);
+            drawXY, drawnTempleWoman);
     } else if(buildingType == eBuildingType::templeStatue) {
         drawStatue(
             tilePainter, buildingTextures,

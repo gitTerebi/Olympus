@@ -235,6 +235,20 @@ public:
             };
         }
 
+        if(e.fAres) {
+            auto& d = data.emplace_back();
+            d.fAbroad = false;
+            d.fType = eEnlistType::hero;
+            d.fTitle = "Ares";
+            d.fId = -1;
+            d.fTroops = -1;
+            d.fAction = [this, selectionChanged, aresCity = e.fAresCity]() {
+                mSelected.fAres = !mSelected.fAres;
+                mSelected.fAresCity = aresCity;
+                selectionChanged();
+            };
+        }
+
         for(const auto& a : e.fAllies) {
             auto& d = data.emplace_back();
             d.fAbroad = a->abroad();
@@ -753,6 +767,8 @@ void eEnlistForcesDialog::initialize(
                     hhef.fSoldiers.push_back(s);
                 }
             }
+            hhef.fAres = enlistable.fAres;
+            hhef.fAresCity = enlistable.fAresCity;
             mythical->initialize(hhef, cids, {}, selectionChanged,
                                  eLanguage::zeusText(283, 10), true);
             col2->addWidget(mythical);

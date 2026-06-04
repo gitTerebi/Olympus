@@ -194,7 +194,6 @@ void eMessageBox::initialize(GameBoard& board,
         ok->setPressAction([this]() {
             close();
         });
-        addWidget(ok);
     }
     if(ed.fType == eMessageEventType::invasion) {
         wid = new eWidget(window());
@@ -564,14 +563,28 @@ void eMessageBox::initialize(GameBoard& board,
     ww->stackVertically();
     ww->fitContent();
 
+    if(ok && !wid) {
+        addWidget(ok);
+    }
+
     stackVertically();
     fitContent();
 
     if(ok) {
         mClosable = true;
-        ok->align(eAlignment::right | eAlignment::bottom);
-        ok->setX(ok->x() - 1.5*p);
-        ok->setY(ok->y() - 1.5*p);
+        if(wid) {
+            wid->addWidget(ok);
+            const int w = width() - 4*p;
+            wid->setWidth(w);
+            wid->layoutHorizontallyWithoutSpaces();
+            wid->fitContent();
+            wid->setWidth(w);
+            ok->align(eAlignment::vcenter);
+        } else {
+            ok->align(eAlignment::right | eAlignment::bottom);
+            ok->setX(ok->x() - 1.5*p);
+            ok->setY(ok->y() - 1.5*p);
+        }
     }
     if(wid) {
         wid->align(eAlignment::hcenter);

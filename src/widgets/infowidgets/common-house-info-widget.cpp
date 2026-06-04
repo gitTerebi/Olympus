@@ -8,6 +8,7 @@
 #include "engine/difficulty.h"
 
 #include "widgets/elabel.h"
+#include "widgets/elayouthelpers.h"
 
 #include "elanguage.h"
 
@@ -213,9 +214,17 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         }
     }
 
-    const auto occ = new eLabel(window());
-    occ->setFontSizeS();
-    occ->setPaddingS();
+    const auto makeFwLbl = [&](const std::string& txt) {
+        const auto lbl = new eLabel(txt, window());
+        lbl->setFontSizeS();
+        lbl->setPaddingS();
+        lbl->setWrapWidth(fw->width());
+        lbl->fitContent();
+        lbl->setWidth(fw->width());
+        lbl->setTextAlignment(eAlignment::hcenter);
+        return lbl;
+    };
+
     auto occstr = std::to_string(house->people()) + " " +
                   eLanguage::zeusText(127, 15);
     const int vacs = house->vacancies();
@@ -226,19 +235,10 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         occstr += "  " + std::to_string(-vacs) + " " +
                   eLanguage::zeusText(127, 16);
     }
-    occ->setText(occstr);
-    occ->fitContent();
-    fw->addWidget(occ);
-    occ->align(eAlignment::hcenter);
 
-    const auto taxLabel = new eLabel(window());
+    std::string taxStr;
     {
         const int paid = house->paidTaxes();
-        taxLabel->setFontSizeS();
-        taxLabel->setPaddingXS();
-        taxLabel->setWidth(fw->width());
-        taxLabel->setWrapWidth(taxLabel->width());
-        std::string taxStr;
         if(paid) {
             taxStr = eLanguage::zeusText(127, 19);
             taxStr += " " + std::to_string(paid) + " ";
@@ -247,45 +247,29 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         } else {
             taxStr = eLanguage::zeusText(127, 18);
         }
-        taxLabel->setText(taxStr);
-        taxLabel->fitContent();
-        fw->addWidget(taxLabel);
-        taxLabel->setY(occ->y() + occ->height());
     }
 
-    const auto satLabel = new eLabel(window());
-    {
-        satLabel->setFontSizeS();
-        satLabel->setPaddingXS();
-        satLabel->setWidth(fw->width());
-        satLabel->setWrapWidth(satLabel->width());
-        std::string satstr;
-        if(type == eBuildingType::commonHouse) {
-            const auto ch = static_cast<SmallHouse*>(house);
-            const int sat = ch->satisfaction();
-            int n = std::floor((100 - sat)/(100./7));
-            n = std::clamp(n, 0, 6);
-            satstr = eLanguage::zeusText(127, 21 + n);
-        } else { // elite
-            satstr = eLanguage::zeusText(127, 21);
-        }
-        satLabel->setText(satstr);
-        satLabel->fitContent();
-        fw->addWidget(satLabel);
-        satLabel->setY(taxLabel->y() + taxLabel->height());
+    std::string satstr;
+    if(type == eBuildingType::commonHouse) {
+        const auto ch = static_cast<SmallHouse*>(house);
+        const int sat = ch->satisfaction();
+        int n = std::clamp(int(std::floor((100 - sat)/(100./7))), 0, 6);
+        satstr = eLanguage::zeusText(127, 21 + n);
+    } else {
+        satstr = eLanguage::zeusText(127, 21);
     }
 
-    if(!house->food()) {
-        const auto foodLabel = new eLabel(window());
-        foodLabel->setFontSizeS();
-        foodLabel->setPaddingXS();
-        foodLabel->setWidth(fw->width());
-        foodLabel->setWrapWidth(foodLabel->width());
-        foodLabel->setText(eLanguage::zeusText(127, 28));
-        foodLabel->fitContent();
-        fw->addWidget(foodLabel);
-        foodLabel->setY(satLabel->y() + satLabel->height());
-    }
+    std::vector<eLayoutHelpers::eFlexItem> topItems;
+    topItems.push_back({makeFwLbl(occstr)});
+    topItems.push_back({makeFwLbl(taxStr)});
+    topItems.push_back({makeFwLbl(satstr)});
+    if(!house->food())
+        topItems.push_back({makeFwLbl(eLanguage::zeusText(127, 28))});
+
+    const auto topCol = eLayoutHelpers::flexCol(
+                            window(), fw->width(), 0, topItems,
+                            {.gap = p, .align = eLayoutHelpers::eAlign::center});
+    fw->addWidget(topCol);
 
     {
         const bool atl = house->atlantean();

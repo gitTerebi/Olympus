@@ -31,6 +31,7 @@
 #include "epatrolaction.h"
 #include "esettleraction.h"
 #include "shepherd-action.h"
+#include "priest-sacrifice-action.h"
 #include "soldier-action.h"
 #include "trader-action.h"
 #include "ewaitaction.h"
@@ -129,6 +130,8 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
         return e::make_shared<eSettlerAction>(c);
     case eCharActionType::shepherdAction:
         return e::make_shared<ShepherdAction>(c);
+    case eCharActionType::priestSacrificeAction:
+        return e::make_shared<PriestSacrificeAction>(c);
     case eCharActionType::soldierAction:
         return e::make_shared<SoldierAction>(c);
     case eCharActionType::traderAction:

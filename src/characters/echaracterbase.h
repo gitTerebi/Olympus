@@ -169,7 +169,8 @@ enum class eCharacterType {
     eliteCitizen,
     trireme,
     enemyBoat,
-    orichalcMiner
+    orichalcMiner,
+    priest
 };
 
 inline bool eIsWildAnimal(const eCharacterType t) {

@@ -20,6 +20,7 @@
 #include "buildings/estadium.h"
 #include "buildings/emuseum.h"
 #include "buildings/pyramids/epyramid.h"
+#include "buildings/sanctuaries/sanctuary.h"
 #include "characters/echaracter.h"
 #include "characters/actions/animal-action.h"
 
@@ -2390,6 +2391,12 @@ eEnlistedForces BoardCity::getEnlistableForces() const {
         if(s != eHeroSummoningStage::arrived) continue;
         const auto ht = h->heroType();
         result.fHeroes.push_back({mId, ht});
+    }
+
+    const auto aresSanct = sanctuary(eGodType::ares);
+    if(aresSanct && aresSanct->aresBuffReady()) {
+        result.fAres = true;
+        result.fAresCity = mId;
     }
 
     return result;

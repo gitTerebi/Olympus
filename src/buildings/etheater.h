@@ -6,7 +6,6 @@
 class eTheater : public ePatrolTarget {
 public:
     eTheater(GameBoard& board, const eCityId cid);
-    int spawnCooldown() const override;
 };
 
 #endif // ETHEATER_H

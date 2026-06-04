@@ -111,7 +111,6 @@ int eNumbers::sScheduledWalkerSpawnCooldown;
 int eNumbers::sDestinationWalkerRecurringSpawnDays;
 int eNumbers::sDestinationWalkerInitialSpawnWaitDays;
 int eNumbers::sCulturePatrolSpawnCooldownDays;
-int eNumbers::sTheaterPatrolSpawnCooldown;
 int eNumbers::sCultureShowDays;
 
 int eNumbers::sArtisanWaitTime;
@@ -259,6 +258,9 @@ int eNumbers::sTriremeWharfBuildTime;
 int eNumbers::sTriremeWharfBuildStages;
 
 int eNumbers::sNewBuildingEmployWaitDays;
+
+int eNumbers::sSacrificeDurationDays;
+int eNumbers::sPriestSacrificeRecurringSpawnDays;
 
 void eNumbers::sLoad() {
     const auto path = eGameDir::numbersPath();
@@ -431,7 +433,6 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("destination_walker_spawn_interval_days_i", sDestinationWalkerRecurringSpawnDays, 32, 1, 10000);
     loadI("destination_walker_initial_spawn_wait_days_i", sDestinationWalkerInitialSpawnWaitDays, 16, 1, 10000);
     loadI("culture_patrol_spawn_cooldown_days_i", sCulturePatrolSpawnCooldownDays, 18, 0, 10000);
-    loadI("theater_patrol_spawn_cooldown_i", sTheaterPatrolSpawnCooldown, 5000, 0, 1000000);
     loadI("culture_show_days_i", sCultureShowDays, 64, 0, 100000);
 
     loadI("artisan_wait_time_i", sArtisanWaitTime, 2000, 1, 1000000);
@@ -579,4 +580,7 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("trireme_wharf_build_stages_i", sTriremeWharfBuildStages, 3, 1, 10);
 
     loadI("new_building_employ_wait_days_i", sNewBuildingEmployWaitDays, 6, 0, 360);
+
+    loadI("sacrifice_duration_days_i", sSacrificeDurationDays, 64, 1, 360);
+    loadI("priest_sacrifice_recurring_spawn_days_i", sPriestSacrificeRecurringSpawnDays, 32, 1, 360);
 }

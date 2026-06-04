@@ -3,6 +3,8 @@
 
 #include "esanctbuilding.h"
 
+#include <functional>
+
 class eSaveArchive;
 
 enum class eSacrifice {
@@ -25,6 +27,10 @@ public:
 
     void startSacrifice(const eSacrifice s);
     bool sacrificing() const { return mSacrifice != eSacrifice::none; }
+    bool priestOut() const { return mPriestOut; }
+    int sacrificeDaysLeft() const;  // 0 if not sacrificing
+
+    void setOnSacrificeComplete(std::function<void()> cb) { mOnSacrificeComplete = std::move(cb); }
 
     int id() const { return mId; }
     void setId(const int i) { mId = i % 2; }
@@ -33,7 +39,10 @@ protected:
 private:
     eSacrifice mSacrifice = eSacrifice::none;
     int mId = 0;
-    int mSacrificeTime = 600000;
+    int mSacrificeTime = 0;
+    int mSpawnTimer = 0;
+    bool mPriestOut = false;
+    std::function<void()> mOnSacrificeComplete;
 };
 
 #endif // ETEMPLEALTARBUILDING_H

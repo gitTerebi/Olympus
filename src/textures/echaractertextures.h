@@ -360,6 +360,9 @@ public:
     void loadGreekHorseman();
     bool fGreekRockThrowerLoaded = false;
     void loadGreekRockThrower();
+    bool fPriestLoaded = false;
+    void loadPriest();
+
     bool fDonkeyLoaded = false;
     void loadDonkey();
 
@@ -612,6 +615,8 @@ public:
     std::vector<eTextureCollection> fBanners;
     eTextureCollection fBannerTops;
     eTextureCollection fPoseidonBannerTops;
+
+    eBasicCharacterTextures fPriest;
 
     eBasicCharacterTextures fTrader;
     eBasicCharacterTextures fDonkey;

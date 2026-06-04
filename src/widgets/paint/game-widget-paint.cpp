@@ -328,7 +328,6 @@ void GameWidget::paintEvent(ePainter &p)
     const bool terrainEditing = mTem->visible();
     const bool fogOfWar = !terrainEditing && mBoard->fogOfWar();
     std::set<eMonument*> drawnTempleWoman;
-    std::vector<SanctuaryTempleDebugDot> templeDebugDots;
     const auto drawTerrain = [&](eTile *const tile)
     {
         const int worldTileX = tile->x();
@@ -1284,7 +1283,7 @@ void GameWidget::paintEvent(ePainter &p)
                         buildingDrawX, buildingDrawY,
                         colorMod, cred, cgreen, cblue,
                         drawTileToView,
-                        drawnTempleWoman, templeDebugDots);
+                        drawnTempleWoman);
                 }
                 const auto &tex = textureSpace.fTex;
                 if (tex && !isSancPart)
@@ -2612,12 +2611,6 @@ void GameWidget::paintEvent(ePainter &p)
         SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
         SDL_RenderDrawRect(r, &box);
     }
-
-    for(const auto& dot : templeDebugDots) {
-        tp.fillRectCenter(dot.fDrawX, dot.fDrawY,
-                          dot.fSize, dot.fSize, dot.fColor);
-    }
-
 
     SDL_SetRenderTarget(r, nullptr);
     SDL_RenderSetClipRect(r, nullptr);

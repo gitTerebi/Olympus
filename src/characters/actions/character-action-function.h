@@ -100,7 +100,9 @@ enum class eCharacterActionFunctionType {
     GMinA_huntSoldierFinish,
     GMinA_fightSoldierDie,
 
-    enemyBoatFinish
+    enemyBoatFinish,
+
+    PrSA_atAnimalFinish
 };
 
 using eCharActFuncType = eCharacterActionFunctionType;
