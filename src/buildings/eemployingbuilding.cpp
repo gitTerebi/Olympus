@@ -2,6 +2,7 @@
 
 #include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
+#include "enumbers.h"
 
 eEmployingBuilding::eEmployingBuilding(
         GameBoard& board,
@@ -10,7 +11,8 @@ eEmployingBuilding::eEmployingBuilding(
         const int maxEmployees,
         const eCityId cid) :
     eBuildingWithResource(board, type, sw, sh, cid),
-    mMaxEmployees(maxEmployees) {
+    mMaxEmployees(maxEmployees),
+    mEmploymentWait(eNumbers::sNewBuildingEmployWaitDays * eNumbers::sDayLength) {
     board.registerEmplBuilding(this);
 }
 
@@ -20,8 +22,19 @@ eEmployingBuilding::~eEmployingBuilding() {
 }
 
 void eEmployingBuilding::setEmployed(const int e) {
+    if(mEmploymentWait > 0) return;
     mEmployed = e;
     setEnabled(mEmployed > 0);
+}
+
+void eEmployingBuilding::incTime(const int by) {
+    eBuilding::incTime(by);
+    if(mEmploymentWait <= 0) return;
+    mEmploymentWait -= by;
+    if(mEmploymentWait <= 0) {
+        mEmploymentWait = 0;
+        ownerBoard().distributeEmployees(cityId());
+    }
 }
 
 double eEmployingBuilding::vacanciesFilledFraction() const {
@@ -51,9 +64,10 @@ void eEmployingBuilding::serializeFields(eSaveArchive& ar) {
     ar.field("shutDown", mShutDown);
     ar.field("maxEmployees", mMaxEmployees);
     ar.field("employed", mEmployed);
+    ar.field("employmentWait", mEmploymentWait);
     const stdptr<eEmployingBuilding> tptr(this);
     ar.addPostFunc([tptr]() {
         if(!tptr) return;
-        tptr->setEnabled(tptr->mEmployed > 0);
+        tptr->setEnabled(tptr->mEmploymentWait <= 0 && tptr->mEmployed > 0);
     }, "eEmployingBuilding::setEnabled");
 }

@@ -258,6 +258,8 @@ int eNumbers::sTriremeWharfMaxResourceTakeDistance;
 int eNumbers::sTriremeWharfBuildTime;
 int eNumbers::sTriremeWharfBuildStages;
 
+int eNumbers::sNewBuildingEmployWaitDays;
+
 void eNumbers::sLoad() {
     const auto path = eGameDir::numbersPath();
     sLoad(path);
@@ -575,4 +577,6 @@ void eNumbers::sLoad(const std::string& path) {
     loadI("trireme_wharf_max_resource_take_distance_i", sTriremeWharfMaxResourceTakeDistance, 60, 5, 1000);
     loadI("trireme_wharf_build_time_i", sTriremeWharfBuildTime, 100000, 1, 1000000);
     loadI("trireme_wharf_build_stages_i", sTriremeWharfBuildStages, 3, 1, 10);
+
+    loadI("new_building_employ_wait_days_i", sNewBuildingEmployWaitDays, 6, 0, 360);
 }

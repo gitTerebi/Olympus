@@ -258,6 +258,8 @@ struct eNumbers {
     static int sTriremeWharfMaxResourceTakeDistance;
     static int sTriremeWharfBuildTime;
     static int sTriremeWharfBuildStages;
+
+    static int sNewBuildingEmployWaitDays;
 };
 
 #endif // ENUMBERS_H
