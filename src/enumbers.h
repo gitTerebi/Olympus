@@ -109,8 +109,9 @@ struct eNumbers {
     static int sWaterCarrierSpawnCooldown;
     static int sInfirmarySpawnCooldown;
     static int sScheduledWalkerSpawnCooldown;
-    static int sDestinationWalkerSpawnCooldown;
-    static int sCulturePatrolSpawnCooldown;
+    static int sDestinationWalkerRecurringSpawnDays;
+    static int sDestinationWalkerInitialSpawnWaitDays;
+    static int sCulturePatrolSpawnCooldownDays;
     static int sTheaterPatrolSpawnCooldown;
     static int sCultureShowDays;
 

@@ -55,7 +55,8 @@ private:
 
     const eTargets mTargets;
 
-    const int mSpawnInterval = eNumbers::sDestinationWalkerSpawnCooldown;
+    int mSpawnInterval = 0;
+    int mInitialDelay = 0;
     std::vector<eTargetData> mTargetData;
 };
 

@@ -105,8 +105,8 @@ void GameWidget::paintAppealBuildPreview(eTilePainter& tp,
 
         const auto tex = trrTexs.fAppeal.getTexture(appId);
         const int alpha = static_cast<int>(appealValue > 0 ?
-            40 + 150 * ratio :
-            18 + 65 * ratio);
+            20 + 75 * ratio :
+            10 + 35 * ratio);
         if(appealValue > 0) {
             tex->setColorMod(0, 255, 0);
         } else {

@@ -42,7 +42,7 @@ void ePatrolTarget::arrived() {
 }
 
 int ePatrolTarget::spawnCooldown() const {
-    return eNumbers::sCulturePatrolSpawnCooldown;
+    return eNumbers::sCulturePatrolSpawnCooldownDays * eNumbers::sDayLength;
 }
 
 void ePatrolTarget::timeChanged(const int by) {
