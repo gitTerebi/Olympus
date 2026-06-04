@@ -18,11 +18,14 @@ public:
                     const std::vector<eHeroType>& heroesAbroad,
                     const eEnlistAction& action,
                     const std::vector<eResourceType>& plunderResources = {});
+    void setEnemyStr(const int s);
 protected:
     void paintEvent(ePainter& p) override;
 private:
     void updateTipPositions();
 
+    int mEnemyStr = 0;
+    eAction mSelectionChanged;
     int mFrame = 0;
 
     struct eTip {

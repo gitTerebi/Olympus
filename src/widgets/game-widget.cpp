@@ -304,6 +304,7 @@ void GameWidget::setBoard(GameBoard *const board)
         const auto d = new eEnlistForcesDialog(window());
         d->initialize(enlistable, cids, cnames, heroesAbroad,
                       action, plunderResources);
+        d->setEnemyStr(mBoard->enlistEnemyStr());
         if(cw == ww) {
             ww->openDialog(d);
         } else {

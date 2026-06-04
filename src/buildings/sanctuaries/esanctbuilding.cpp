@@ -1,6 +1,7 @@
 #include "esanctbuilding.h"
 
 #include "sanctuary.h"
+#include "engine/etile.h"
 #include "fileIO/esavearchive.h"
 
 bool sanctuaryTempleFrontFacing(const int rotateId, const eWorldDirection dir)

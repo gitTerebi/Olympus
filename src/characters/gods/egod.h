@@ -8,6 +8,7 @@
 #include "textures/edestructiontextures.h"
 
 class eSaveArchive;
+enum class eBuildingType;
 
 enum class eGodQuestId {
     godQuest1,

@@ -343,6 +343,8 @@ public:
                                               const eEnlistAction& action,
                                               const std::vector<eResourceType>& plunderResources)>;
     void setEnlistForcesRequest(const eEnlistRequest& req);
+    void setEnlistEnemyStr(const int s) { mEnlistEnemyStr = s; }
+    int enlistEnemyStr() const { return mEnlistEnemyStr; }
     void requestForces(const eEnlistAction& action,
                        const std::vector<eResourceType>& plunderResources = {},
                        const std::vector<stdsptr<WorldCity>>& exclude = {},
@@ -853,6 +855,7 @@ private:
     eVisibilityChecker mVisibilityChecker;
     eTipShower mTipShower;
     eEnlistRequest mEnlistRequester;
+    int mEnlistEnemyStr = 0;
     eAction mEpisodeFinishedHandler;
     eAction mAutosaver;
 

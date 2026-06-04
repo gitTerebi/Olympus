@@ -72,6 +72,7 @@ public:
     bool prayerReady() const { return mHelpTimer >= eNumbers::sGodHelpPeriod; }
     bool aresBuffReady() const { return mAresBuffReady; }
     void consumeAresBuff() { mAresBuffReady = false; }
+    void sendAresAbroad();
 
     void registerElement(const stdsptr<eSanctBuilding>& e) override;
     void boostHelpTimer();

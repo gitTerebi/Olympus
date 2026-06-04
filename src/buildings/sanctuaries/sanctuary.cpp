@@ -237,6 +237,14 @@ void eSanctuary::godComeback() {
     mGodAbroad = false;
 }
 
+void eSanctuary::sendAresAbroad() {
+    mGodAbroad = true;
+    if(mGod) {
+        const auto a = e::make_shared<eAresHelpAction>(mGod.get());
+        mGod->setAction(a);
+    }
+}
+
 double eSanctuary::helpTimeFraction() const {
     return double(mHelpTimer)/eNumbers::sGodHelpPeriod;
 }

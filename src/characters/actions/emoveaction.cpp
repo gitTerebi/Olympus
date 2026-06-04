@@ -1,6 +1,7 @@
 ﻿#include "emoveaction.h"
 
 #include "../echaracter.h"
+#include "engine/etile.h"
 #include "walkable/walkable-object.h"
 
 #include "vec2.h"

@@ -12,6 +12,7 @@
 #include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
+#include "characters/actions/character-action.h"
 #include "characters/soldier-banner.h"
 #include "evectorhelpers.h"
 

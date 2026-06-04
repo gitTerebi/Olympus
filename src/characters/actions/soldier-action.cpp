@@ -3,6 +3,7 @@
 
 #include "characters/esoldier.h"
 #include "engine/game-board.h"
+#include "engine/etile.h"
 
 #include <cstdio>
 #include <math.h>
@@ -11,6 +12,7 @@
 
 #include "emovetoaction.h"
 #include "buildings/small-house.h"
+#include "buildings/ebuilding.h"
 #include "buildings/elite-housing.h"
 #include "buildings/sanctuaries/etemplebuilding.h"
 #include "ekillcharacterfinishfail.h"
@@ -18,6 +20,18 @@
 
 SoldierAction::SoldierAction(eCharacter* const c) :
     FightingAction(c, eCharActionType::soldierAction) {}
+
+bool SoldierObsticleHandler::handle(eTile* const tile) {
+    if(!mTptr) return false;
+    const auto ub = tile->underBuilding();
+    if(!ub) return false;
+    const auto ubt = ub->type();
+    const bool r = eBuilding::sWalkableBuilding(ubt);
+    if(r) return false;
+    mTptr->setCombatBlockage(ub);
+    mTptr->attackBuilding(tile, false);
+    return true;
+}
 
 bool SoldierAction::decide() {
     return true;

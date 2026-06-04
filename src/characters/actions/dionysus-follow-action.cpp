@@ -1,6 +1,8 @@
 #include "dionysus-follow-action.h"
 
+#include "character-finish-actions.h"
 #include "characters/echaracter.h"
+#include "engine/etile.h"
 #include "fileIO/esavearchive.h"
 
 DionysusFollowAction::DionysusFollowAction(

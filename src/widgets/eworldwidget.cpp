@@ -61,7 +61,10 @@ void eWorldWidget::initialize() {
         for(const auto& s : sells) {
             resources.push_back(s.fType);
         }
+        mBoard->setEnlistEnemyStr(
+            ePlayerRaidEvent::raidTargetStrength(mCity->troops()));
         openEnlistForcesDialog(enlistAction, {mCity}, resources);
+        mBoard->setEnlistEnemyStr(0);
     };
     const auto conquerFunc = [this]() {
         const auto ppid = mBoard->personPlayer();
@@ -96,7 +99,9 @@ void eWorldWidget::initialize() {
                 update();
             }
         };
+        mBoard->setEnlistEnemyStr(mCity->troops());
         openEnlistForcesDialog(enlistAction, {mCity}, {}, reinforcements);
+        mBoard->setEnlistEnemyStr(0);
     };
     mWM->initialize(requestFunc, fulfillFunc, giftFunc,
                     raidFunc, conquerFunc);

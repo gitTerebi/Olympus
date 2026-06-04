@@ -3,6 +3,7 @@
 #include "characters/ewildanimal.h"
 #include "characters/actions/animal-action.h"
 #include "characters/actions/ewolfaction.h"
+#include "engine/etile.h"
 #include "erand.h"
 
 void eAnimalSpawner::spawn(eTile* const tile) {

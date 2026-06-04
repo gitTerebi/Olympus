@@ -1,6 +1,7 @@
 #include "fight-action.h"
 
 #include "characters/echaracter.h"
+#include "engine/etile.h"
 
 #include "characters/ebasicpatroler.h"
 #include "characters/efightingpatroler.h"

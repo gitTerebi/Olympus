@@ -59,10 +59,12 @@ void eEmployingBuildingInfoWidget::addEmploymentWidget(
     if(hasPre) items.push_back({makeLbl(preInfoStr)});
     if(hasInfo) items.push_back({makeLbl(infoStr)});
 
-    const auto col = eLayoutHelpers::flexCol(
-                         window(), wid->width(), frameH, items,
+    const auto col = eLayoutHelpers::createFlexContainer(
+                         window(), wid->width(), frameH,
+                         eLayoutHelpers::eFlexDirection::column,
+                         items,
                          {.gap = p,
                           .align = eLayoutHelpers::eAlign::center});
     wid->addWidget(col);
-    (void)centerText; // always centered via flexCol
+    (void)centerText; // always centered via flex container
 }

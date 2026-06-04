@@ -15,6 +15,8 @@ public:
                     const stdsptr<WorldCity>& city,
                     const eResourceType resource);
 
+    static int raidTargetStrength(const int enemyStr);
+
     void trigger() override;
     std::string longName() const override;
 

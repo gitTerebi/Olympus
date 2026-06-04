@@ -7,6 +7,9 @@
 #include "elanguage.h"
 #include "engine/egifthelpers.h"
 #include "eraidresourceevent.h"
+#include "erand.h"
+
+#include <algorithm>
 
 ePlayerRaidEvent::ePlayerRaidEvent(
         const eCityId cid,
@@ -25,6 +28,10 @@ void ePlayerRaidEvent::initialize(
     mResource = resource;
 }
 
+int ePlayerRaidEvent::raidTargetStrength(const int enemyStr) {
+    return std::max(1, (3*enemyStr + 3)/4);
+}
+
 void ePlayerRaidEvent::trigger() {
     removeArmyEvent();
     removeConquestEvent();
@@ -38,7 +45,7 @@ void ePlayerRaidEvent::trigger() {
     const double killFrac = std::clamp(0.5*enemyStr/str, 0., 1.);
     mForces.kill(killFrac);
 
-    const bool raided = str > 0.75*enemyStr;
+    const bool raided = eRand::combatRoll(str, raidTargetStrength(enemyStr));
     const auto pid = playerId();
     eEventData ed(pid);
     ed.fCity = mCity;

@@ -105,13 +105,17 @@ void PopulationDataWidget::initialize() {
         mImiLimitedReason2 = makeReasonLabel();
         mImiLimitedReason3 = makeReasonLabel();
 
-        mImiLimitedTitleW = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+        mImiLimitedTitleW = eLayoutHelpers::createFlexContainer(
+            window(), iw - 2*pp, 0, eLayoutHelpers::eFlexDirection::column,
             {{il1, 0, 0}}, {.align = eLayoutHelpers::eAlign::stretch});
-        mImiLimitedReasonW1 = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+        mImiLimitedReasonW1 = eLayoutHelpers::createFlexContainer(
+            window(), iw - 2*pp, 0, eLayoutHelpers::eFlexDirection::column,
             {{mImiLimitedReason1, 0, 0}}, {.align = eLayoutHelpers::eAlign::stretch});
-        mImiLimitedReasonW2 = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+        mImiLimitedReasonW2 = eLayoutHelpers::createFlexContainer(
+            window(), iw - 2*pp, 0, eLayoutHelpers::eFlexDirection::column,
             {{mImiLimitedReason2, 0, 0}}, {.align = eLayoutHelpers::eAlign::stretch});
-        mImiLimitedReasonW3 = eLayoutHelpers::flexCol(window(), iw - 2*pp, 0,
+        mImiLimitedReasonW3 = eLayoutHelpers::createFlexContainer(
+            window(), iw - 2*pp, 0, eLayoutHelpers::eFlexDirection::column,
             {{mImiLimitedReason3, 0, 0}}, {.align = eLayoutHelpers::eAlign::stretch});
 
         mImiLimitedW = new eWidget(window());

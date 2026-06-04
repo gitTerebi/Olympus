@@ -10,6 +10,7 @@
 
 class ePatrolBuildingBase;
 class ePathFinderBase;
+class WalkableObject;
 
 class eWaypointMovePathTask : public eTask {
 public:

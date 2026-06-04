@@ -186,11 +186,11 @@ eWidget *GameMenu::createPriceWidget(const eInterfaceTextures &coll)
     ilabel->setPaddingXS();
     ilabel->setMaxDrawHeight(plabel->height());
     ilabel->setFitToDrawSize(true);
-    using namespace eLayoutHelpers;
-    const auto row = flexRow(window(),
-                             ilabel->width() + plabel->width(),
-                             {{ilabel}, {plabel}},
-                             {.align = eAlign::center});
+    const auto row = eLayoutHelpers::createFlexContainer(
+        window(), ilabel->width() + plabel->width(), 0,
+        eLayoutHelpers::eFlexDirection::row,
+        {{ilabel}, {plabel}},
+        {.align = eLayoutHelpers::eAlign::center});
     r->addWidget(row);
     r->fitContent();
     mPriceWidgets.push_back(r);

@@ -1,4 +1,5 @@
 ﻿#include "eplayerconquestevent.h"
+#include "erand.h"
 
 #include "engine/game-board.h"
 #include "engine/board-city.h"
@@ -32,7 +33,10 @@ void ePlayerConquestEvent::initialize(
         const auto bc = board->boardCityWithId(mForces.fAresCity);
         if(bc) {
             const auto aresSanct = bc->sanctuary(eGodType::ares);
-            if(aresSanct) aresSanct->consumeAresBuff();
+            if(aresSanct) {
+                aresSanct->consumeAresBuff();
+                aresSanct->sendAresAbroad();
+            }
         }
     }
 
@@ -77,7 +81,8 @@ void ePlayerConquestEvent::trigger() {
             mCity->setTroops((1 - killFrac)*enemyStr);
         }
 
-        const bool conquered = playerStr > enemyStr && !unbeatable;
+        const bool conquered = !unbeatable &&
+                               eRand::combatRoll(playerStr, enemyStr);
 
         const auto pid = playerId();
         eEventData ed(pid);

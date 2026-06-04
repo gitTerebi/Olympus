@@ -4,6 +4,7 @@
 #include "engine/game-board.h"
 
 #include "buildings/epatrolbuildingbase.h"
+#include "characters/actions/walkable/walkable-object.h"
 
 #include "engine/epathfinder.h"
 

@@ -1,5 +1,6 @@
 #include "eenlistforcesdialog.h"
 
+#include "efontcolor.h"
 #include "framed-button.h"
 #include "elanguage.h"
 #include "evectorhelpers.h"
@@ -8,7 +9,11 @@
 #include "echoosebutton.h"
 #include "eframedlabel.h"
 #include "eswitchbutton.h"
+#include "elayouthelpers.h"
+#include "erand.h"
 #include "characters/soldier-banner.h"
+
+#include <algorithm>
 
 enum class eEnlistType {
     horseman, hoplite, navy,
@@ -491,12 +496,9 @@ void eEnlistForcesDialog::initialize(
     int hhh = hh;
 
     eSwitchButton* cButton = nullptr;
+    eWidget* titleW = nullptr;
     {
-        const auto titleW = new eWidget(window());
-        titleW->setNoPadding();
-        titleW->setWidth(innerWid->width());
-
-        int cw = p;
+        eWidget* leftW = nullptr;
         if(cnames.size() > 1) {
             cButton = new eSwitchButton(window());
             cButton->setUnderline(false);
@@ -504,39 +506,30 @@ void eEnlistForcesDialog::initialize(
                 cButton->addValue(cn);
             }
             cButton->fitValidContent();
-            titleW->addWidget(cButton);
-            cw = cButton->width() + p;
+            leftW = eLayoutHelpers::createFlexContainer(
+                window(), cButton->width(), 0,
+                eLayoutHelpers::eFlexDirection::row,
+                {{cButton, 0, 0}},
+                {.align = eLayoutHelpers::eAlign::center});
+        } else {
+            leftW = new eWidget(window());
+            leftW->setNoPadding();
         }
 
-        innerWid->addWidget(titleW);
+        const auto text = eLanguage::zeusText(283, 0);
+        const auto titleLabel = new eLabel(window());
+        titleLabel->setPaddingXS();
+        titleLabel->setText(text);
+        titleLabel->fitContent();
 
-        {
-            const auto text = eLanguage::zeusText(283, 0);
-            const auto titleLabel = new eLabel(window());
-            titleLabel->setPaddingXS();
-            titleLabel->setText(text);
-            titleLabel->fitContent();
-            titleW->addWidget(titleLabel);
-            if(plunderResources.empty()) {
-                titleLabel->align(eAlignment::top | eAlignment::hcenter);
-            } else {
-                titleLabel->align(eAlignment::top | eAlignment::left);
-                titleLabel->setX(cw);
-            }
-        }
-
+        eWidget* rightW = nullptr;
         if(!plunderResources.empty()) {
-            const auto plunderW = new eWidget(window());
-            plunderW->setNoPadding();
-            titleW->addWidget(plunderW);
-
             const auto text = eLanguage::zeusText(283, 22);
-            const auto titleLabel = new eLabel(window());
-            titleLabel->setFontSizeS();
-            titleLabel->setPaddingS();
-            titleLabel->setText(text);
-            titleLabel->fitContent();
-            plunderW->addWidget(titleLabel);
+            const auto plunderLabel = new eLabel(window());
+            plunderLabel->setFontSizeS();
+            plunderLabel->setPaddingS();
+            plunderLabel->setText(text);
+            plunderLabel->fitContent();
 
             const auto button = new FramedButton(window());
             button->setUnderline(false);
@@ -544,8 +537,7 @@ void eEnlistForcesDialog::initialize(
             button->setFontSizeS();
             button->setText(eLanguage::zeusText(283, 23));
             button->fitContent();
-            button->setWidth(titleLabel->width());
-            plunderW->addWidget(button);
+            button->setWidth(plunderLabel->width());
 
             button->setPressAction([this, button, plunderResources]() {
                 const auto choose = new eChooseButton(window());
@@ -567,15 +559,23 @@ void eEnlistForcesDialog::initialize(
                 choose->align(eAlignment::center);
             });
 
-            plunderW->stackHorizontally();
-            plunderW->fitContent();
-            plunderW->align(eAlignment::right);
-
-            titleLabel->align(eAlignment::vcenter);
-            button->align(eAlignment::vcenter);
+            rightW = eLayoutHelpers::createFlexContainer(
+                window(), 0, 0, eLayoutHelpers::eFlexDirection::row,
+                {{plunderLabel, 0, 0}, {button, 0, 0}},
+                {.align = eLayoutHelpers::eAlign::center});
+        } else {
+            rightW = new eWidget(window());
+            rightW->setNoPadding();
         }
 
-        titleW->fitHeight();
+        const int sideW = std::max(leftW->width(), rightW->width());
+        titleW = eLayoutHelpers::createFlexContainer(
+            window(), innerWid->width(), 0,
+            eLayoutHelpers::eFlexDirection::row,
+            {{leftW, sideW, 0},
+             {titleLabel, 0, 1, 1},
+             {rightW, sideW, 0}},
+            {.align = eLayoutHelpers::eAlign::center});
         hhh -= titleW->height();
     }
 
@@ -586,13 +586,52 @@ void eEnlistForcesDialog::initialize(
     const auto mythical = new eEnlistWidget(window());
     const auto allies = new eEnlistWidget(window());
 
-    const auto selectionChanged = [this,
-                                   horsemen,
-                                   hoplite,
-                                   navy,
-                                   heroes,
-                                   mythical,
-                                   allies]() {
+    const auto strWid = new eWidget(window());
+    strWid->setNoPadding();
+    const auto strPlayerLabel = new eLabel(window());
+    strPlayerLabel->setNoPadding();
+    strPlayerLabel->setFontSizeS();
+    strPlayerLabel->setText("0");
+    strPlayerLabel->fitContent();
+    const auto strVsLabel = new eLabel(window());
+    strVsLabel->setNoPadding();
+    strVsLabel->setFontSizeS();
+    strVsLabel->setText(" win chance");
+    strVsLabel->fitContent();
+    const auto strEnemyLabel = new eLabel(window());
+    strEnemyLabel->setNoPadding();
+    strEnemyLabel->setFontSizeS();
+    strEnemyLabel->setFontColor(eFontColor::red);
+    strEnemyLabel->setText("0");
+    strEnemyLabel->fitContent();
+    strWid->addWidget(strPlayerLabel);
+    strWid->addWidget(strVsLabel);
+    strWid->addWidget(strEnemyLabel);
+    strWid->resize(strPlayerLabel->width() +
+                   strVsLabel->width() +
+                   strEnemyLabel->width(),
+                   std::max({strPlayerLabel->height(),
+                             strVsLabel->height(),
+                             strEnemyLabel->height()}));
+    eLayoutHelpers::updateFlexContainerLayout(
+        strWid,
+        eLayoutHelpers::eFlexDirection::row,
+        {{strPlayerLabel, 0, 0}, {strVsLabel, 0, 0}, {strEnemyLabel, 0, 0}},
+        {.justify = eLayoutHelpers::eJustify::center,
+         .align = eLayoutHelpers::eAlign::center});
+    strWid->hide();
+
+    mSelectionChanged = [this,
+                         horsemen,
+                         hoplite,
+                         navy,
+                         heroes,
+                         mythical,
+                         allies,
+                         strWid,
+                         strPlayerLabel,
+                         strVsLabel,
+                         strEnemyLabel]() {
         mSelected.clear();
         mSelected.add(horsemen->allSelected());
         mSelected.add(hoplite->allSelected());
@@ -600,7 +639,29 @@ void eEnlistForcesDialog::initialize(
         mSelected.add(heroes->allSelected());
         mSelected.add(mythical->allSelected());
         mSelected.add(allies->allSelected());
+        if(mEnemyStr <= 0) {
+            strWid->hide();
+            return;
+        }
+
+        strWid->show();
+        const int ps = mSelected.strength();
+        const int winPct = eRand::combatChancePercent(ps, mEnemyStr);
+        strPlayerLabel->setText(std::to_string(winPct) + "%");
+        strPlayerLabel->fitContent();
+        strVsLabel->setText(" win chance");
+        strVsLabel->fitContent();
+        strEnemyLabel->setText("");
+        strEnemyLabel->fitContent();
+
+        eLayoutHelpers::updateFlexContainerLayout(
+            strWid,
+            eLayoutHelpers::eFlexDirection::row,
+            {{strPlayerLabel, 0, 0}, {strVsLabel, 0, 0}, {strEnemyLabel, 0, 0}},
+            {.justify = eLayoutHelpers::eJustify::center,
+             .align = eLayoutHelpers::eAlign::center});
     };
+    const auto selectionChanged = mSelectionChanged;
 
     if(cButton) cButton->setSwitchAction([cids, horsemen, hoplite, navy,
                                           heroes, mythical](const int id) {
@@ -612,7 +673,7 @@ void eEnlistForcesDialog::initialize(
         mythical->setCurrentCity(cid);
     });
 
-    const auto buttonsWid = new eWidget(window());
+    eWidget* buttonsWid = nullptr;
     {
         const auto cancelButt = new FramedButton(window());
         cancelButt->setFontSizeXS();
@@ -623,7 +684,6 @@ void eEnlistForcesDialog::initialize(
             deleteLater();
         };
         cancelButt->setPressAction(cancelAct);
-        buttonsWid->addWidget(cancelButt);
 
         const auto enlistAllButt = new FramedButton(window());
         enlistAllButt->setFontSizeXS();
@@ -647,7 +707,6 @@ void eEnlistForcesDialog::initialize(
             selectionChanged();
         };
         enlistAllButt->setPressAction(enlistAllAct);
-        buttonsWid->addWidget(enlistAllButt);
 
         const auto clearAllButt = new FramedButton(window());
         clearAllButt->setFontSizeXS();
@@ -670,7 +729,6 @@ void eEnlistForcesDialog::initialize(
             selectionChanged();
         };
         clearAllButt->setPressAction(clearAllAct);
-        buttonsWid->addWidget(clearAllButt);
 
         const auto dispatchButt = new FramedButton(window());
         dispatchButt->setFontSizeXS();
@@ -700,94 +758,104 @@ void eEnlistForcesDialog::initialize(
             }
         };
         dispatchButt->setPressAction(dispatchAct);
-        buttonsWid->addWidget(dispatchButt);
 
-        buttonsWid->setNoPadding();
-        buttonsWid->fitContent();
-        buttonsWid->setWidth(innerWid->width());
-        buttonsWid->layoutHorizontallyWithoutSpaces();
+        const int sideW = std::max(cancelButt->width() + enlistAllButt->width() + pp,
+                                   clearAllButt->width() + dispatchButt->width() + pp);
+        const auto leftButtons = eLayoutHelpers::createFlexContainer(
+            window(), sideW, 0, eLayoutHelpers::eFlexDirection::row,
+            {{cancelButt, 0, 0}, {enlistAllButt, 0, 0}},
+            {.gap = pp, .align = eLayoutHelpers::eAlign::center});
+        const auto rightButtons = eLayoutHelpers::createFlexContainer(
+            window(), sideW, 0, eLayoutHelpers::eFlexDirection::row,
+            {{clearAllButt, 0, 0}, {dispatchButt, 0, 0}},
+            {.gap = pp,
+             .justify = eLayoutHelpers::eJustify::end,
+             .align = eLayoutHelpers::eAlign::center});
+        buttonsWid = eLayoutHelpers::createFlexContainer(
+            window(), innerWid->width(), 0, eLayoutHelpers::eFlexDirection::row,
+            {{leftButtons, sideW, 0},
+             {strWid, 0, 1, 1},
+             {rightButtons, sideW, 0}},
+            {.gap = pp, .align = eLayoutHelpers::eAlign::center});
         hhh -= buttonsWid->height();
     }
 
     hhh -= 2*pp;
 
-    {
-        const auto selWid = new eWidget(window());
-        innerWid->addWidget(selWid);
-        selWid->resize(ww, hhh);
+    const int colW = (ww - pp)/2;
+    const int leftH = (hhh - pp)/2;
+    const int rightH = (hhh - 3*pp)/4;
 
-        {
-            const auto col1 = new eWidget(window());
-            const int www = ww/2 - pp;
-            col1->resize(www, hhh);
-            selWid->addWidget(col1);
+    horsemen->resize(colW, leftH);
+    const auto hef = extractType(eBannerType::horseman, enlistable);
+    horsemen->initialize(hef, cids, {}, selectionChanged,
+                         eLanguage::zeusText(283, 7), true);
 
-            const int hhhh = hhh/2 - pp;
+    hoplite->resize(colW, leftH);
+    const auto hopliteEf = extractType(eBannerType::hoplite, enlistable);
+    hoplite->initialize(hopliteEf, cids, {}, selectionChanged,
+                        eLanguage::zeusText(283, 14), true);
 
-            horsemen->resize(www, hhhh);
-            const auto hef = extractType(eBannerType::horseman, enlistable);
-            horsemen->initialize(hef, cids, {}, selectionChanged,
-                                 eLanguage::zeusText(283, 7), true);
-            col1->addWidget(horsemen);
+    navy->resize(colW, rightH);
+    navy->initialize(eEnlistedForces(), cids, {}, selectionChanged,
+                     eLanguage::zeusText(283, 6), false);
 
-            hoplite->resize(www, hhhh);
-            const auto hhef = extractType(eBannerType::hoplite, enlistable);
-            hoplite->initialize(hhef, cids, {}, selectionChanged,
-                                eLanguage::zeusText(283, 14), true);
-            col1->addWidget(hoplite);
+    heroes->resize(colW, rightH);
+    eEnlistedForces efh;
+    efh.fHeroes = enlistable.fHeroes;
+    heroes->initialize(efh, cids, heroesAbroad, selectionChanged,
+                       eLanguage::zeusText(283, 9), false);
 
-            col1->layoutVerticallyWithoutSpaces();
+    mythical->resize(colW, rightH);
+    eEnlistedForces hhef;
+    for(const auto& s : enlistable.fSoldiers) {
+        const auto t = s->type();
+        if(t == eBannerType::amazon ||
+           t == eBannerType::aresWarrior) {
+            hhef.fSoldiers.push_back(s);
         }
-        {
-            const auto col2 = new eWidget(window());
-            const int www = ww/2 - pp;
-            col2->resize(www, hhh);
-            selWid->addWidget(col2);
-
-            const int hhhh = hhh/4 - pp;
-
-            navy->resize(www, hhhh);
-            navy->initialize(eEnlistedForces(), cids, {}, selectionChanged,
-                             eLanguage::zeusText(283, 6), false);
-            col2->addWidget(navy);
-
-            heroes->resize(www, hhhh);
-            eEnlistedForces efh;
-            efh.fHeroes = enlistable.fHeroes;
-            heroes->initialize(efh, cids, heroesAbroad, selectionChanged,
-                               eLanguage::zeusText(283, 9), false);
-            col2->addWidget(heroes);
-
-            mythical->resize(www, hhhh);
-            eEnlistedForces hhef;
-            for(const auto& s : enlistable.fSoldiers) {
-                const auto t = s->type();
-                if(t == eBannerType::amazon ||
-                   t == eBannerType::aresWarrior) {
-                    hhef.fSoldiers.push_back(s);
-                }
-            }
-            hhef.fAres = enlistable.fAres;
-            hhef.fAresCity = enlistable.fAresCity;
-            mythical->initialize(hhef, cids, {}, selectionChanged,
-                                 eLanguage::zeusText(283, 10), true);
-            col2->addWidget(mythical);
-
-            allies->resize(www, hhhh);
-            eEnlistedForces efa;
-            efa.fAllies = enlistable.fAllies;
-            allies->initialize(efa, {cids[0]}, {}, selectionChanged,
-                               eLanguage::zeusText(283, 24), false);
-            col2->addWidget(allies);
-
-            col2->layoutVerticallyWithoutSpaces();
-        }
-
-        selWid->layoutHorizontallyWithoutSpaces();
     }
+    hhef.fAres = enlistable.fAres;
+    hhef.fAresCity = enlistable.fAresCity;
+    mythical->initialize(hhef, cids, {}, selectionChanged,
+                         eLanguage::zeusText(283, 10), true);
 
+    allies->resize(colW, rightH);
+    eEnlistedForces efa;
+    efa.fAllies = enlistable.fAllies;
+    allies->initialize(efa, {cids[0]}, {}, selectionChanged,
+                       eLanguage::zeusText(283, 24), false);
+
+    const auto leftCol = eLayoutHelpers::createFlexContainer(
+        window(), colW, hhh, eLayoutHelpers::eFlexDirection::column,
+        {{horsemen, leftH, 0}, {hoplite, leftH, 0}},
+        {.gap = pp});
+    const auto rightCol = eLayoutHelpers::createFlexContainer(
+        window(), colW, hhh, eLayoutHelpers::eFlexDirection::column,
+        {{navy, rightH, 0}, {heroes, rightH, 0},
+         {mythical, rightH, 0}, {allies, rightH, 0}},
+        {.gap = pp});
+    const auto selWid = eLayoutHelpers::createFlexContainer(
+        window(), ww, hhh, eLayoutHelpers::eFlexDirection::row,
+        {{leftCol, colW, 0}, {rightCol, colW, 0}},
+        {.gap = pp});
+
+    innerWid->addWidget(titleW);
+    innerWid->addWidget(selWid);
     innerWid->addWidget(buttonsWid);
-    innerWid->layoutVerticallyWithoutSpaces();
+    eLayoutHelpers::updateFlexContainerLayout(
+        innerWid,
+        eLayoutHelpers::eFlexDirection::column,
+        {{titleW, titleW->height(), 0},
+         {selWid, hhh, 0},
+         {buttonsWid, buttonsWid->height(), 0}},
+        {.gap = pp});
+    selectionChanged();
+}
+
+void eEnlistForcesDialog::setEnemyStr(const int s) {
+    mEnemyStr = s;
+    if(mSelectionChanged) mSelectionChanged();
 }
 
 void eEnlistForcesDialog::paintEvent(ePainter& p) {
@@ -816,4 +884,3 @@ void eEnlistForcesDialog::updateTipPositions() {
         y += wh + 2*p;
     }
 }
-

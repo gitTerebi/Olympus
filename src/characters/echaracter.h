@@ -6,19 +6,16 @@
 
 #include "eoverlay.h"
 #include "engine/eorientation.h"
-#include "engine/etile.h"
+#include "engine/etilesize.h"
 #include "etexture.h"
 #include "echaracterbase.h"
-#include "engine/eprovide.h"
-#include "characters/actions/character-action-function.h"
-
-#include "actions/earcheraction.h"
-#include "actions/edieaction.h"
-#include "fileIO/esavearchive.h"
 
 class GameBoard;
+class eTile;
 class eCharacterAction;
+class eTextureCollection;
 class eSaveArchive;
+enum class eProvide;
 
 struct ePausedAction {
     eCharacterActionType fAt;
@@ -118,7 +115,7 @@ private:
 
     bool mVisible = true;
 
-    eProvide mProvide = eProvide::none;
+    eProvide mProvide;
     int mProvideCount = 0;
 
     eTile* mTile = nullptr;
@@ -133,59 +130,6 @@ private:
 
     stdsptr<eCharacterAction> mAction;
     int mActionStartTime{0};
-};
-
-class eChar_fightFinish : public eCharActFunc {
-public:
-    eChar_fightFinish(GameBoard& board) :
-        eCharActFunc(board, eCharActFuncType::Char_fightFinish) {}
-    eChar_fightFinish(GameBoard& board, eCharacter* const t) :
-        eCharActFunc(board, eCharActFuncType::Char_fightFinish),
-        mTptr(t) {}
-
-    void call() override {
-        if(!mTptr) return;
-        const auto t = mTptr.get();
-        if(t->dead()) {
-            const auto d = e::make_shared<eDieAction>(t);
-            t->setAction(d);
-        } else {
-            t->resumeAction();
-        }
-    }
-
-protected:
-    void serializeFields(eSaveArchive& ar) override {
-        ar.characterField("character", &board(), mTptr);
-    }
-private:
-    stdptr<eCharacter> mTptr;
-};
-
-class eChar_killWithCorpseFinish : public eCharActFunc {
-public:
-    eChar_killWithCorpseFinish(GameBoard& board) :
-        eCharActFunc(board, eCharActFuncType::Char_killWithCorpseFinish) {}
-    eChar_killWithCorpseFinish(GameBoard& board, eCharacter* const t,
-                               const bool withCorpse = false) :
-        eCharActFunc(board, eCharActFuncType::Char_killWithCorpseFinish),
-        mWithCorpse(withCorpse), mTptr(t) {}
-
-    void call() override {
-        if(!mTptr) return;
-        const auto t = mTptr.get();
-        if(mWithCorpse && !t->dead()) t->killWithCorpse();
-        else t->kill();
-    }
-
-protected:
-    void serializeFields(eSaveArchive& ar) override {
-        ar.field("withCorpse", mWithCorpse);
-        ar.characterField("character", &board(), mTptr);
-    }
-private:
-    bool mWithCorpse;
-    stdptr<eCharacter> mTptr;
 };
 
 #endif // ECHARACTER_H
