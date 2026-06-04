@@ -1,5 +1,6 @@
 ﻿#include "character-action-function.h"
 
+#include "character-finish-actions.h"
 #include "eactionwithcomeback.h"
 #include "earcheraction.h"
 #include "eartisanaction.h"

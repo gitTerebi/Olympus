@@ -4,6 +4,7 @@
 #include "characters/actions/ewaitaction.h"
 #include "buildings/eresourcebuilding.h"
 #include "engine/game-board.h"
+#include "engine/etile.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
@@ -17,6 +18,10 @@ eGrowerAction::eGrowerAction(const eGrowerType type,
 
 eGrowerAction::eGrowerAction(eCharacter* const c) :
     eGrowerAction(eGrowerType::grapesAndOlives, nullptr, c) {}
+
+void eGRA_workOnDecisionDeleteFail::call() {
+    mTile->setBusy(false);
+}
 
 static bool isOliveHarvestMonth(const eMonth m) {
     return m == eMonth::january ||

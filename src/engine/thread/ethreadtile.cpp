@@ -1,6 +1,7 @@
 #include "ethreadtile.h"
 
 #include "characters/echaracter.h"
+#include "engine/etile.h"
 
 void eThreadTile::loadInitial(eTile* const src) {
     setSeed(src->seed());

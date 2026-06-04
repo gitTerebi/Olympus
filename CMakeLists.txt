@@ -181,6 +181,7 @@ set(SOURCES
     src/characters/actions/vendor-cart-action.cpp
     src/characters/actions/character-action.cpp
     src/characters/actions/character-action-creator.cpp
+    src/characters/actions/character-finish-actions.cpp
     src/characters/actions/character-action-function.cpp
     src/characters/actions/character-action-function-creator.cpp
     src/characters/actions/ecollectaction.cpp

@@ -1,6 +1,7 @@
 ﻿#include "emovepathaction.h"
 
 #include "characters/echaracter.h"
+#include "engine/etile.h"
 #include "fileIO/esavearchive.h"
 
 eMovePathAction::eMovePathAction(eCharacter* const c,

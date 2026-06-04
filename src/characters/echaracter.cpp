@@ -1,10 +1,12 @@
 #include "echaracter.h"
 
 #include "engine/game-board.h"
+#include "engine/eprovide.h"
+#include "engine/etile.h"
 
+#include "actions/character-finish-actions.h"
 #include "actions/edieaction.h"
 #include "actions/fight-action.h"
-#include "actions/earcheraction.h"
 
 #include "gods/egod.h"
 #include "heroes/ehero.h"
@@ -19,7 +21,8 @@
 eCharacter::eCharacter(GameBoard& board,
                        const eCharacterType type) :
     eObject(board), eCharacterBase(type),
-    mSeedId(eRand::rand()) {
+    mSeedId(eRand::rand()),
+    mProvide(eProvide::none) {
     getBoard().registerCharacter(this);
 }
 

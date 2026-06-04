@@ -94,9 +94,7 @@ public:
         eCharActFunc(board, eCharActFuncType::GRA_workOnDecisionDeleteFail),
         mTile(tile) {}
 
-    void call() override {
-        mTile->setBusy(false);
-    }
+    void call() override;
 
 protected:
     void serializeFields(eSaveArchive& ar) override {

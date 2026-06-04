@@ -5,8 +5,8 @@
 
 #include "characters/echaracter.h"
 #include "walkable/eobsticlehandler.h"
-#include "buildings/ebuilding.h"
 
+class eBuilding;
 class eSoldier;
 
 class eSaveArchive;
@@ -77,17 +77,7 @@ public:
         eObsticleHandler(board, eObsticleHandlerType::soldier),
         mTptr(t) {}
 
-    bool handle(eTile* const tile) override {
-        if(!mTptr) return false;
-        const auto ub = tile->underBuilding();
-        if(!ub) return false;
-        const auto ubt = ub->type();
-        const bool r = eBuilding::sWalkableBuilding(ubt);
-        if(r) return false;
-        mTptr->setCombatBlockage(ub);
-        mTptr->attackBuilding(tile, false);
-        return true;
-    }
+    bool handle(eTile* const tile) override;
 
 protected:
     void serializeFields(eSaveArchive& ar) override {

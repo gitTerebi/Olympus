@@ -6,6 +6,7 @@
 #include "engine/thread/ethreaddata.h"
 
 class ePathFinderBase;
+class WalkableObject;
 
 class ePathFindTask : public eTask {
 public:

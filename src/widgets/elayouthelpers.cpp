@@ -11,92 +11,32 @@ namespace eLayoutHelpers {
 
 // ── flex ─────────────────────────────────────────────────────────────────────
 
-eWidget* flexRow(eMainWindow* const window,
-                 const int containerW,
-                 std::initializer_list<eFlexItem> items,
-                 const eFlexParams params) {
-    const int gap     = params.gap;
-    const eJustify justify = params.justify;
-    const eAlign   align   = params.align;
-    std::vector<eFlexItem> its(items);
-    const int n = (int)its.size();
+static void layoutFlexItems(eWidget* container,
+                            eFlexDirection direction,
+                            const std::vector<eFlexItem>& items,
+                            eFlexParams params);
 
-    // resolve natural sizes
-    for(auto& it : its)
-        if(it.size == 0) it.size = it.widget->width();
-
-    // distribute grow
-    const int totalGaps  = n > 1 ? gap * (n - 1) : 0;
-    const int fixedTotal = std::accumulate(its.begin(), its.end(), 0,
-                               [](int s, const eFlexItem& i){ return s + i.size; });
-    const int leftover   = containerW - fixedTotal - totalGaps;
-    const int totalGrow  = std::accumulate(its.begin(), its.end(), 0,
-                               [](int s, const eFlexItem& i){ return s + i.grow; });
-    if(totalGrow > 0 && leftover > 0) {
-        for(auto& it : its)
-            if(it.grow > 0)
-                it.size += leftover * it.grow / totalGrow;
-    }
-
-    // max cross-axis size
-    int maxH = 0;
-    for(const auto& it : its) maxH = std::max(maxH, it.widget->height());
-
-    // justify: compute start x and extra per-gap
-    int startX  = 0;
-    int extraGap = 0;
-    const int usedW = std::accumulate(its.begin(), its.end(), 0,
-                          [](int s, const eFlexItem& i){ return s + i.size; })
-                      + totalGaps;
-    const int free = containerW - usedW;
-    switch(justify) {
-    case eJustify::center:      startX = free / 2; break;
-    case eJustify::end:         startX = free;     break;
-    case eJustify::spaceBetween: extraGap = n > 1 ? free / (n - 1) : 0; break;
-    case eJustify::spaceAround:  startX = free / (2 * n); extraGap = n > 1 ? free / n : 0; break;
-    default: break;
-    }
-
-    const auto row = new eWidget(window);
-    row->setNoPadding();
-    row->resize(containerW, maxH);
-
-    int x = startX;
-    for(const auto& it : its) {
-        row->addWidget(it.widget);
-        int y = 0;
-        switch(align) {
-        case eAlign::center: y = (maxH - it.widget->height()) / 2; break;
-        case eAlign::end:    y = maxH - it.widget->height();       break;
-        default: break;
-        }
-        it.widget->move(x, y);
-        it.widget->setWidth(it.size);
-        x += it.size + gap + extraGap;
-    }
-    return row;
+eWidget* createFlexContainer(eMainWindow* const window,
+                             const int containerW,
+                             const int containerH,
+                             const eFlexDirection direction,
+                             std::initializer_list<eFlexItem> items,
+                             const eFlexParams params) {
+    return createFlexContainer(window, containerW, containerH, direction,
+                               std::vector<eFlexItem>(items), params);
 }
 
-eWidget* flexCol(eMainWindow* const window,
-                 const int containerH,
-                 const std::vector<eFlexItem>& items,
-                 const eFlexParams params) {
-    return flexCol(window, 0, containerH, items, params);
-}
-
-eWidget* flexCol(eMainWindow* const window,
-                 const int containerW,
-                 const int containerH,
-                 const std::vector<eFlexItem>& items,
-                 const eFlexParams params) {
-    const int gap     = params.gap;
-    const eJustify justify = params.justify;
-    const eAlign   align   = params.align;
-    std::vector<eFlexItem> its(items);
-    const int n = (int)its.size();
-
-    if(align == eAlign::stretch && containerW > 0) {
-        for(auto& it : its) {
+eWidget* createFlexContainer(eMainWindow* const window,
+                             const int containerW,
+                             const int containerH,
+                             const eFlexDirection direction,
+                             const std::vector<eFlexItem>& items,
+                             const eFlexParams params) {
+    std::vector<eFlexItem> layoutItems(items);
+    if(direction == eFlexDirection::column &&
+       params.align == eAlign::stretch &&
+       containerW > 0) {
+        for(auto& it : layoutItems) {
             it.widget->setWidth(containerW);
             const auto label = dynamic_cast<eLabel*>(it.widget);
             if(label) {
@@ -106,76 +46,117 @@ eWidget* flexCol(eMainWindow* const window,
         }
     }
 
-    for(auto& it : its)
-        if(it.size == 0) it.size = it.widget->height();
+    const auto container = new eWidget(window);
+    container->setNoPadding();
+    container->resize(containerW, containerH);
+    for(const auto& it : layoutItems) {
+        container->addWidget(it.widget);
+    }
+    layoutFlexItems(container, direction, layoutItems, params);
+    return container;
+}
 
-    const int totalGaps  = n > 1 ? gap * (n - 1) : 0;
-    const int fixedTotal = std::accumulate(its.begin(), its.end(), 0,
-                               [](int s, const eFlexItem& i){ return s + i.size; });
-    const int usedH      = fixedTotal + totalGaps;
-    const int resolvedH  = containerH > 0 ? containerH : usedH;
+static void layoutFlexItems(eWidget* const container,
+                            const eFlexDirection direction,
+                            const std::vector<eFlexItem>& items,
+                            const eFlexParams params) {
+    std::vector<eFlexItem> its(items);
+    const int n = (int)its.size();
+    if(n == 0) return;
 
-    const int leftover  = resolvedH - usedH;
+    const bool isRow = direction == eFlexDirection::row;
+    const auto mainSize = [isRow](const eWidget* const w) {
+        return isRow ? w->width() : w->height();
+    };
+    const auto crossSize = [isRow](const eWidget* const w) {
+        return isRow ? w->height() : w->width();
+    };
+    const auto setMainSize = [isRow](eWidget* const w, const int s) {
+        if(isRow) w->setWidth(s);
+        else w->setHeight(s);
+    };
+    const auto setCrossSize = [isRow](eWidget* const w, const int s) {
+        if(isRow) w->setHeight(s);
+        else w->setWidth(s);
+    };
+    const auto moveItem = [isRow](eWidget* const w, const int main, const int cross) {
+        if(isRow) w->move(main, cross);
+        else w->move(cross, main);
+    };
+
+    for(auto& it : its) {
+        if(it.size == 0) it.size = mainSize(it.widget);
+        it.size = std::max(it.size, it.minSize);
+        if(it.maxSize > 0) it.size = std::min(it.size, it.maxSize);
+    }
+
+    const int gap = params.gap;
+    const int totalGaps = n > 1 ? gap * (n - 1) : 0;
+    int fixedTotal = std::accumulate(its.begin(), its.end(), 0,
+                         [](int s, const eFlexItem& i){ return s + i.size; });
+    int containerMain = isRow ? container->width() : container->height();
+    if(containerMain == 0) {
+        containerMain = fixedTotal + totalGaps;
+        setMainSize(container, containerMain);
+    }
+    int leftover = containerMain - fixedTotal - totalGaps;
     const int totalGrow = std::accumulate(its.begin(), its.end(), 0,
                               [](int s, const eFlexItem& i){ return s + i.grow; });
     if(totalGrow > 0 && leftover > 0) {
-        for(auto& it : its)
-            if(it.grow > 0)
-                it.size += leftover * it.grow / totalGrow;
+        for(auto& it : its) {
+            if(it.grow > 0) it.size += leftover * it.grow / totalGrow;
+            if(it.maxSize > 0) it.size = std::min(it.size, it.maxSize);
+        }
+    } else if(leftover < 0) {
+        const int totalShrink = std::accumulate(its.begin(), its.end(), 0,
+            [](int s, const eFlexItem& i){ return s + i.shrink * i.size; });
+        if(totalShrink > 0) {
+            const int overflow = -leftover;
+            for(auto& it : its) {
+                if(it.shrink <= 0) continue;
+                const int remove = overflow * it.shrink * it.size / totalShrink;
+                it.size = std::max(it.minSize, it.size - remove);
+            }
+        }
     }
+    int maxCross = isRow ? container->height() : container->width();
+    for(const auto& it : its) maxCross = std::max(maxCross, crossSize(it.widget));
+    setCrossSize(container, maxCross);
 
-    int maxW = containerW;
-    for(const auto& it : its) maxW = std::max(maxW, it.widget->width());
-
-    int startY   = 0;
+    int start = 0;
     int extraGap = 0;
-    const int usedFinal = std::accumulate(its.begin(), its.end(), 0,
-                              [](int s, const eFlexItem& i){ return s + i.size; })
-                          + totalGaps;
-    const int free = resolvedH - usedFinal;
-    switch(justify) {
-    case eJustify::center:       startY = free / 2; break;
-    case eJustify::end:          startY = free;     break;
+    const int usedMain = std::accumulate(its.begin(), its.end(), 0,
+                          [](int s, const eFlexItem& i){ return s + i.size; })
+                      + totalGaps;
+    const int free = containerMain - usedMain;
+    switch(params.justify) {
+    case eJustify::center: start = free / 2; break;
+    case eJustify::end: start = free; break;
     case eJustify::spaceBetween: extraGap = n > 1 ? free / (n - 1) : 0; break;
-    case eJustify::spaceAround:  startY = free / (2 * n); extraGap = n > 1 ? free / n : 0; break;
+    case eJustify::spaceAround: start = free / (2 * n); extraGap = n > 1 ? free / n : 0; break;
     default: break;
     }
 
-    const auto col = new eWidget(window);
-    col->setNoPadding();
-    col->resize(maxW, resolvedH);
-
-    int y = startY;
+    int main = start;
     for(const auto& it : its) {
-        col->addWidget(it.widget);
-        int x = 0;
-        switch(align) {
-        case eAlign::center: x = (maxW - it.widget->width()) / 2; break;
-        case eAlign::end:    x = maxW - it.widget->width();       break;
-        case eAlign::stretch: it.widget->setWidth(maxW);           break;
+        int cross = 0;
+        switch(params.align) {
+        case eAlign::center: cross = (maxCross - crossSize(it.widget)) / 2; break;
+        case eAlign::end: cross = maxCross - crossSize(it.widget); break;
+        case eAlign::stretch: setCrossSize(it.widget, maxCross); break;
         default: break;
         }
-        it.widget->move(x, y);
-        it.widget->setHeight(it.size);
-        y += it.size + gap + extraGap;
+        moveItem(it.widget, main, cross);
+        setMainSize(it.widget, it.size);
+        main += it.size + gap + extraGap;
     }
-    return col;
 }
 
-eWidget* flexCol(eMainWindow* const window,
-                 const int containerH,
-                 std::initializer_list<eFlexItem> items,
-                 const eFlexParams params) {
-    return flexCol(window, containerH, std::vector<eFlexItem>(items), params);
-}
-
-eWidget* flexCol(eMainWindow* const window,
-                 const int containerW,
-                 const int containerH,
-                 std::initializer_list<eFlexItem> items,
-                 const eFlexParams params) {
-    return flexCol(window, containerW, containerH,
-                   std::vector<eFlexItem>(items), params);
+void updateFlexContainerLayout(eWidget* const container,
+                               const eFlexDirection direction,
+                               std::initializer_list<eFlexItem> items,
+                               const eFlexParams params) {
+    layoutFlexItems(container, direction, std::vector<eFlexItem>(items), params);
 }
 
 } // namespace eLayoutHelpers

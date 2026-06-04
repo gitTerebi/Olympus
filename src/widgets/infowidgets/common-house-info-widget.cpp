@@ -266,8 +266,10 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
     if(!house->food())
         topItems.push_back({makeFwLbl(eLanguage::zeusText(127, 28))});
 
-    const auto topCol = eLayoutHelpers::flexCol(
-                            window(), fw->width(), 0, topItems,
+    const auto topCol = eLayoutHelpers::createFlexContainer(
+                            window(), fw->width(), 0,
+                            eLayoutHelpers::eFlexDirection::column,
+                            topItems,
                             {.gap = p, .align = eLayoutHelpers::eAlign::center});
     fw->addWidget(topCol);
 

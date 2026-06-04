@@ -7,6 +7,7 @@
 #include "pointers/estdpointer.h"
 
 #include "characters/eenlistedforces.h"
+#include "characters/actions/character-action-function.h"
 #include "invasion-general.h"
 
 class GameBoard;

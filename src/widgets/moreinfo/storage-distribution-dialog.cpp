@@ -77,8 +77,9 @@ void StorageDistributionDialog::initialize(
         nameHdr->setFontSizeXS();
         nameHdr->setNoPadding();
         nameHdr->fitContent();
-        const auto hdr = eLayoutHelpers::flexRow(
-            window(), ww, {{spacer, iconW, 0}, {nameHdr, nameW, 0}, {amtHdr, amtW, 0}, {sHdr, btnW, 0}, {mHdr, btnW, 0}, {twHdr, tradeW, 0}, {impHdr, tradeW, 0}, {expHdr, tradeW, 0}, {new eWidget(window()), 0, 1}}, {.gap = p});
+        const auto hdr = eLayoutHelpers::createFlexContainer(
+            window(), ww, 0, eLayoutHelpers::eFlexDirection::row,
+            {{spacer, iconW, 0}, {nameHdr, nameW, 0}, {amtHdr, amtW, 0}, {sHdr, btnW, 0}, {mHdr, btnW, 0}, {twHdr, tradeW, 0}, {impHdr, tradeW, 0}, {expHdr, tradeW, 0}, {new eWidget(window()), 0, 1}}, {.gap = p});
         addInfoWidget(hdr);
     }
 
@@ -192,8 +193,8 @@ void StorageDistributionDialog::initialize(
         expLabel->setNoPadding();
         expLabel->fitContent();
 
-        const auto row = eLayoutHelpers::flexRow(
-            window(), ww,
+        const auto row = eLayoutHelpers::createFlexContainer(
+            window(), ww, 0, eLayoutHelpers::eFlexDirection::row,
             {{iconClick, iconW, 0}, {nameClick, nameW, 0}, {amountLabel, amtW, 0}, {stockpileBtn, btnW, 0}, {mothballBtn, btnW, 0}, {tradeBtn, tradeW, 0}, {impLabel, tradeW, 0}, {expLabel, tradeW, 0}, {new eWidget(window()), 0, 1}},
             {.gap = p, .align = eLayoutHelpers::eAlign::center});
 
@@ -201,7 +202,9 @@ void StorageDistributionDialog::initialize(
     }
 
     const int maxH = std::round(window()->height() * 0.59);
-    const auto scrollArea = eLayoutHelpers::flexCol(window(), 0, rowItems, {.gap = p});
+    const auto scrollArea = eLayoutHelpers::createFlexContainer(
+        window(), 0, 0, eLayoutHelpers::eFlexDirection::column,
+        rowItems, {.gap = p});
     const int scrollH = std::min(scrollArea->height(), maxH);
 
     // probe scrollbar width before sizing viewport

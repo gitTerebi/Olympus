@@ -2,6 +2,7 @@
 
 #include "buildings/ebuilding.h"
 #include "engine/game-board.h"
+#include "characters/actions/character-finish-actions.h"
 #include "characters/actions/dionysus-follow-action.h"
 #include "characters/monsters/ecalydonianboar.h"
 #include "characters/actions/ewaitaction.h"

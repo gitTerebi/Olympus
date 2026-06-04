@@ -104,8 +104,10 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                 // "Sanctuary working normally"
                 lines.push_back({makeLbl(eLanguage::zeusText(59, 26))});
             }
-            const auto col = eLayoutHelpers::flexCol(
-                                 window(), widgetWidth(), 0, lines,
+            const auto col = eLayoutHelpers::createFlexContainer(
+                                 window(), widgetWidth(), 0,
+                                 eLayoutHelpers::eFlexDirection::column,
+                                 lines,
                                  {.align = eLayoutHelpers::eAlign::center});
             addInfoWidget(col);
         }
@@ -138,7 +140,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         {
             // initial status line
             const bool aresGod = (gt == eGodType::ares);
-            if(aresGod && s->aresBuffReady()) {
+            if(aresGod && (s->aresBuffReady() || s->godAbroad())) {
                 reasonLabel->setLightFontColor();
                 reasonLabel->setText(eLanguage::zeusText(132, 38 + godId)); // "Ares has heard...next opportunity"
             } else if(s->prayerReady()) {
@@ -165,7 +167,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             const auto pb = new FramedButton(eLanguage::zeusText(132, 10 + godId), window());
             pb->setUnderline(false);
             pb->fitContent();
-            if(gt == eGodType::ares && s->aresBuffReady()) pb->setEnabled(false);
+            if(gt == eGodType::ares && (s->aresBuffReady() || s->godAbroad())) pb->setEnabled(false);
             bw->addWidget(pb);
             const auto bar = new eProgressBar(window());
             bar->setRange(0, 100);
