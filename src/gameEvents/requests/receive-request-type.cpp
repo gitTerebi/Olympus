@@ -1,4 +1,4 @@
-﻿#include "e-receive-request-type.h"
+﻿#include "receive-request-type.h"
 
 #include "emessages.h"
 
@@ -49,42 +49,42 @@ DEFINE_ENTRY(financialWoes, FinancialWoes, Parent, ParentR);
 #undef DEFINE_ENTRY
 
 static const eReceiveRequestEntry& getEntry(
-    const eReceiveRequestType type,
+    const ReceiveRequestType type,
     const WorldCity& city) {
     if(city.isRival()) {
         switch(type) {
-        case eReceiveRequestType::general: return kGeneralRequestRival;
-        case eReceiveRequestType::famine: return kFamineRival;
-        case eReceiveRequestType::project: return kProjectRival;
-        case eReceiveRequestType::festival: return kFestivalRival;
-        case eReceiveRequestType::financialWoes: return kFinancialWoesRival;
+        case ReceiveRequestType::general: return kGeneralRequestRival;
+        case ReceiveRequestType::famine: return kFamineRival;
+        case ReceiveRequestType::project: return kProjectRival;
+        case ReceiveRequestType::festival: return kFestivalRival;
+        case ReceiveRequestType::financialWoes: return kFinancialWoesRival;
         default: break;
         }
     } else if(city.isVassal() || city.isColony()) {
         switch(type) {
-        case eReceiveRequestType::general: return kGeneralRequestSubject;
-        case eReceiveRequestType::famine: return kFamineSubject;
-        case eReceiveRequestType::project: return kProjectSubject;
-        case eReceiveRequestType::festival: return kFestivalSubject;
-        case eReceiveRequestType::financialWoes: return kFinancialWoesSubject;
+        case ReceiveRequestType::general: return kGeneralRequestSubject;
+        case ReceiveRequestType::famine: return kFamineSubject;
+        case ReceiveRequestType::project: return kProjectSubject;
+        case ReceiveRequestType::festival: return kFestivalSubject;
+        case ReceiveRequestType::financialWoes: return kFinancialWoesSubject;
         default: break;
         }
     } else if(city.isParentCity()) {
         switch(type) {
-        case eReceiveRequestType::general: return kGeneralRequestParent;
-        case eReceiveRequestType::famine: return kFamineParent;
-        case eReceiveRequestType::project: return kProjectParent;
-        case eReceiveRequestType::festival: return kFestivalParent;
-        case eReceiveRequestType::financialWoes: return kFinancialWoesParent;
+        case ReceiveRequestType::general: return kGeneralRequestParent;
+        case ReceiveRequestType::famine: return kFamineParent;
+        case ReceiveRequestType::project: return kProjectParent;
+        case ReceiveRequestType::festival: return kFestivalParent;
+        case ReceiveRequestType::financialWoes: return kFinancialWoesParent;
         default: break;
         }
     } else {
         switch(type) {
-        case eReceiveRequestType::general: return kGeneralRequestAlly;
-        case eReceiveRequestType::famine: return kFamineAlly;
-        case eReceiveRequestType::project: return kProjectAlly;
-        case eReceiveRequestType::festival: return kFestivalAlly;
-        case eReceiveRequestType::financialWoes: return kFinancialWoesAlly;
+        case ReceiveRequestType::general: return kGeneralRequestAlly;
+        case ReceiveRequestType::famine: return kFamineAlly;
+        case ReceiveRequestType::project: return kProjectAlly;
+        case ReceiveRequestType::festival: return kFestivalAlly;
+        case ReceiveRequestType::financialWoes: return kFinancialWoesAlly;
         default: break;
         }
     }
@@ -103,20 +103,20 @@ static const eReceiveRequestEntry& getEntry(
 }
 
 eEvent receiveRequestFinishEvent(
-    const eReceiveRequestType type,
+    const ReceiveRequestType type,
     const WorldCity& city,
-    const eReceiveRequestFinish finish) {
+    const ReceiveRequestFinish finish) {
     const auto& entry = getEntry(type, city);
     switch(finish) {
-    case eReceiveRequestFinish::tooLate: return entry.fTooLate;
-    case eReceiveRequestFinish::comply: return entry.fComply;
-    case eReceiveRequestFinish::refuse: return entry.fRefuse;
+    case ReceiveRequestFinish::tooLate: return entry.fTooLate;
+    case ReceiveRequestFinish::comply: return entry.fComply;
+    case ReceiveRequestFinish::refuse: return entry.fRefuse;
     }
     return eEvent::fire; // invalid
 }
 
 eEvent receiveRequestStepEvent(
-    const eReceiveRequestType type,
+    const ReceiveRequestType type,
     const WorldCity& city,
     const int requestStep) {
     const auto& entry = getEntry(type, city);
@@ -131,7 +131,7 @@ eEvent receiveRequestStepEvent(
 }
 
 const eReceiveRequestMessages* receiveRequestMessages(
-    const eReceiveRequestType type,
+    const ReceiveRequestType type,
     const WorldCity& city) {
     return getEntry(type, city).fMessages;
 }

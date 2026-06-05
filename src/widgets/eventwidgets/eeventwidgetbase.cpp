@@ -23,7 +23,7 @@
 #include "gameEvents/gods/egodeventvalue.h"
 #include "gameEvents/gods/egodreasoneventvalue.h"
 #include "gameEvents/eattackingcityeventvalue.h"
-#include "gameEvents/requests/e-fulfill-request-event.h"
+#include "gameEvents/requests/fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "gameEvents/emonsterseventvalue.h"
 #include "gameEvents/invasions/monster-invasion-event-base.h"
@@ -88,14 +88,14 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(typeButtonL);
     }
 
-    if(const auto ee = dynamic_cast<eFulfillRequestEvent*>(e.get())) {
+    if(const auto ee = dynamic_cast<FulfillRequestEvent*>(e.get())) {
         const auto typeButtonL = new eLabeledWidget(window());
-        const std::vector<eReceiveRequestType> types {
-            eReceiveRequestType::general,
-            eReceiveRequestType::festival,
-            eReceiveRequestType::project,
-            eReceiveRequestType::famine,
-            eReceiveRequestType::financialWoes
+        const std::vector<ReceiveRequestType> types {
+            ReceiveRequestType::general,
+            ReceiveRequestType::festival,
+            ReceiveRequestType::project,
+            ReceiveRequestType::famine,
+            ReceiveRequestType::financialWoes
         };
         const std::vector<std::string> typeNames {
             eLanguage::zeusText(290, 1),

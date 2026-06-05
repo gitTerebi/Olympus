@@ -59,12 +59,12 @@
 #include "gameEvents/gods/egodattackevent.h"
 #include "gameEvents/invasions/monster-unleashed-event.h"
 #include "gameEvents/invasions/invasion-event.h"
-#include "gameEvents/receive-tribute-event.h"
-#include "gameEvents/requests/e-pay-tribute-event.h"
+#include "gameEvents/requests/pay-tribute-event.h"
+#include "gameEvents/requests/get-tribute-event.h"
 #include "gameEvents/emakerequestevent.h"
 #include "gameEvents/egifttoevent.h"
 #include "gameEvents/egiftfromevent.h"
-#include "gameEvents/requests/e-fulfill-request-event.h"
+#include "gameEvents/requests/fulfill-request-event.h"
 #include "gameEvents/erequestaidevent.h"
 #include "gameEvents/eplayerconquesteventbase.h"
 #include "gameEvents/etroopsrequestevent.h"
@@ -1656,7 +1656,7 @@ GameBoard::eRequests GameBoard::cityRequests(const ePlayerId pid) const
     return p->cityRequests();
 }
 
-void GameBoard::addCityRequest(eFulfillRequestEvent *const q)
+void GameBoard::addCityRequest(FulfillRequestEvent *const q)
 {
     if (!q)
         return;
@@ -1670,7 +1670,7 @@ void GameBoard::addCityRequest(eFulfillRequestEvent *const q)
         mRequestUpdateHandler();
 }
 
-void GameBoard::removeCityRequest(eFulfillRequestEvent *const q)
+void GameBoard::removeCityRequest(FulfillRequestEvent *const q)
 {
     if (!q)
         return;
@@ -1692,7 +1692,7 @@ GameBoard::eTributeRequests GameBoard::tributeRequests(const ePlayerId pid) cons
     return p->tributeRequests();
 }
 
-void GameBoard::addTributeRequest(ePayTributeEvent *const q)
+void GameBoard::addTributeRequest(GetTributeEvent *const q)
 {
     if (!q)
         return;
@@ -1706,7 +1706,7 @@ void GameBoard::addTributeRequest(ePayTributeEvent *const q)
         mRequestUpdateHandler();
 }
 
-void GameBoard::removeTributeRequest(ePayTributeEvent *const q)
+void GameBoard::removeTributeRequest(GetTributeEvent *const q)
 {
     if (!q)
         return;
@@ -3011,12 +3011,12 @@ void GameBoard::incTime(const int by)
     const auto gameEvents = mAllGameEvents;
     for (const auto event : gameEvents)
     {
-        const auto tribute = dynamic_cast<ePayTributeEvent *>(event);
+        const auto tribute = dynamic_cast<GetTributeEvent *>(event);
         if (tribute && tribute->isMainEvent())
         {
             tribute->advanceIfNeeded(mDate);
         }
-        const auto request = dynamic_cast<eFulfillRequestEvent *>(event);
+        const auto request = dynamic_cast<FulfillRequestEvent *>(event);
         if (request && request->isMainEvent())
         {
             request->advanceIfNeeded(mDate);
@@ -3055,7 +3055,7 @@ void GameBoard::incTime(const int by)
                 if (!eVectorHelpers::contains(p.second, playerCity))
                     continue;
 
-                const auto e = e::make_shared<ePayTributeEvent>(
+                const auto e = e::make_shared<GetTributeEvent>(
                     playerCityId, eGameEventBranch::root, *this);
                 e->initialize(parentCity);
                 e->initializeDate(date());

@@ -1,5 +1,5 @@
-#ifndef E_FULFILL_REQUEST_EVENT_H
-#define E_FULFILL_REQUEST_EVENT_H
+#ifndef FULFILL_REQUEST_EVENT_H
+#define FULFILL_REQUEST_EVENT_H
 
 #include "../egameevent.h"
 #include "../ecounteventvalue.h"
@@ -12,7 +12,7 @@ struct eCityRequest;
 struct eEventData;
 class eSaveArchive;
 
-enum class eReceiveRequestType {
+enum class ReceiveRequestType {
     tribute,
     famine,
     general,
@@ -21,22 +21,22 @@ enum class eReceiveRequestType {
     financialWoes
 };
 
-enum class eReceiveRequestResult {
+enum class ReceiveRequestResult {
     comply,
     tooLate,
     refuse
 };
 
-class eFulfillRequestEvent : public eGameEvent,
+class FulfillRequestEvent : public eGameEvent,
                              public eResourceEventValue,
                              public eCountEventValue,
                              public eCityEventValue,
                              public eGodEventValue {
 public:
-    eFulfillRequestEvent(const eCityId cid,
+    FulfillRequestEvent(const eCityId cid,
                          const eGameEventBranch branch,
                          GameBoard& board);
-    ~eFulfillRequestEvent();
+    ~FulfillRequestEvent();
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
@@ -44,11 +44,11 @@ public:
 
     eCityRequest cityRequest() const;
     void dispatch(const eCityId cid);
-    void finish(eReceiveRequestResult result);
+    void finish(ReceiveRequestResult result);
 
-    void setRequestType(const eReceiveRequestType t)
+    void setRequestType(const ReceiveRequestType t)
     { mRequestType = t; }
-    eReceiveRequestType requestType() const
+    ReceiveRequestType requestType() const
     { return mRequestType; }
 
     std::string requestInfo(int stock, const eDate& currentDate) const;
@@ -92,8 +92,8 @@ private:
 
 
 
-    eReceiveRequestType mRequestType = eReceiveRequestType::general;
-    eReceiveRequestResult mRequestResult = eReceiveRequestResult::comply;
+    ReceiveRequestType mRequestType = ReceiveRequestType::general;
+    ReceiveRequestResult mRequestResult = ReceiveRequestResult::comply;
 
     bool mRequestFinished = false;
     int mRequestStep = 0;
@@ -111,4 +111,4 @@ private:
     stdsptr<eEventTrigger> mRefuseTrigger;
 };
 
-#endif // E_FULFILL_REQUEST_EVENT_H
+#endif // FULFILL_REQUEST_EVENT_H

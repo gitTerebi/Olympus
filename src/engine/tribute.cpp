@@ -4,8 +4,8 @@
 #include "eevent.h"
 #include "eeventdata.h"
 #include "world-city.h"
-#include "gameEvents/requests/e-pay-tribute-event.h"
-#include "gameEvents/receive-tribute-event.h"
+#include "gameEvents/requests/get-tribute-event.h"
+#include "gameEvents/requests/pay-tribute-event.h"
 
 #include <cmath>
 #include <cstdio>
@@ -26,7 +26,7 @@ void TributeHelpers::receiveTributeFromCity(GameBoard &board, const ePlayerId pi
 {
     if (!city)
         return;
-    const auto e = e::make_shared<ReceiveTributeEvent>(
+    const auto e = e::make_shared<PayTributeEvent>(
         board.currentCityId(), eGameEventBranch::root, board);
     e->initialize(city);
     e->initializeDate(board.date());
@@ -40,7 +40,7 @@ void TributeHelpers::payTributeToCity(GameBoard &board, const eCityId playerCity
     if (!board.boardCityWithId(playerCityId))
         return;
 
-    const auto e = e::make_shared<ePayTributeEvent>(
+    const auto e = e::make_shared<GetTributeEvent>(
         playerCityId, eGameEventBranch::root, board);
     e->initialize(parentCity);
     e->initializeDate(board.date());

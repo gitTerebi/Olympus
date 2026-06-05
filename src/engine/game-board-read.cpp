@@ -7,8 +7,8 @@
 #include "missiles/emissile.h"
 #include "destruction-puff.h"
 #include "gameEvents/egameevent.h"
-#include "gameEvents/requests/e-pay-tribute-event.h"
-#include "gameEvents/requests/e-fulfill-request-event.h"
+#include "gameEvents/requests/get-tribute-event.h"
+#include "gameEvents/requests/fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
@@ -434,7 +434,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
         }
         ar.addPostFunc([this]() {
             for(const auto e : mAllGameEvents) {
-                const auto request = dynamic_cast<eFulfillRequestEvent*>(e);
+                const auto request = dynamic_cast<FulfillRequestEvent*>(e);
                 if(request && request->isMainEvent() &&
                    request->isActiveCityRequest()) {
                     request->advanceIfNeeded(date());
@@ -442,7 +442,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
                         addCityRequest(request);
                     }
                 }
-                const auto tribute = dynamic_cast<ePayTributeEvent*>(e);
+                const auto tribute = dynamic_cast<GetTributeEvent*>(e);
                 if(tribute && tribute->isMainEvent() &&
                    !tribute->finished()) {
                     tribute->advanceIfNeeded(date());

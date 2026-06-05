@@ -5,7 +5,7 @@
 #include "characters/soldier-banner.h"
 #include "estringhelpers.h"
 #include "elanguage.h"
-#include "gameEvents/requests/e-fulfill-request-event.h"
+#include "gameEvents/requests/fulfill-request-event.h"
 #include "gameEvents/etroopsrequestevent.h"
 #include "buildings/eheroshall.h"
 #include "widgets/framed-button.h"
@@ -38,8 +38,8 @@ void eFulfillDialog::initialize(GameBoard* const board,
     int y = p;
     const auto pid = board->personPlayer();
     const auto& qs = board->cityRequests(pid);
-//    std::vector<stdsptr<eFulfillRequestEvent>> qs;
-//    const auto q = e::make_shared<eFulfillRequestEvent>(eGameEventBranch::root);
+//    std::vector<stdsptr<FulfillRequestEvent>> qs;
+//    const auto q = e::make_shared<FulfillRequestEvent>(eGameEventBranch::root);
 //    q->initialize(0, eResourceType::fleece, 10, city);
 //    qs.push_back(q);
     for(const auto q : qs) {

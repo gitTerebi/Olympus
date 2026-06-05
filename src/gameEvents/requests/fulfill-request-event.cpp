@@ -1,5 +1,5 @@
-#include "e-fulfill-request-event.h"
-#include "e-receive-request-type.h"
+#include "fulfill-request-event.h"
+#include "receive-request-type.h"
 
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -48,9 +48,9 @@ namespace
         return fulfillRequestState(step).fComplyMonths == 0;
     }
 
-    eReceiveRequestResult fulfillRequestResultForStep(const int step)
+    ReceiveRequestResult fulfillRequestResultForStep(const int step)
     {
-        return step > 2 ? eReceiveRequestResult::tooLate : eReceiveRequestResult::comply;
+        return step > 2 ? ReceiveRequestResult::tooLate : ReceiveRequestResult::comply;
     }
 
     bool canPostponeRequestStep(const int requestStep)
@@ -64,7 +64,7 @@ namespace
     }
 }
 
-eFulfillRequestEvent::eFulfillRequestEvent(
+FulfillRequestEvent::FulfillRequestEvent(
     const eCityId cid,
     const eGameEventBranch branch,
     GameBoard &board) : eGameEvent(cid, eGameEventType::receiveRequest, branch, board),
@@ -85,14 +85,14 @@ eFulfillRequestEvent::eFulfillRequestEvent(
     addTrigger(mRefuseTrigger);
 }
 
-eFulfillRequestEvent::~eFulfillRequestEvent()
+FulfillRequestEvent::~FulfillRequestEvent()
 {
     const auto board = gameBoard();
     if (board && isMainEvent())
         board->removeCityRequest(this);
 }
 
-void eFulfillRequestEvent::trigger()
+void FulfillRequestEvent::trigger()
 {
     const auto board = gameBoard();
     if (!board)
@@ -113,7 +113,7 @@ void eFulfillRequestEvent::trigger()
     }
 }
 
-bool eFulfillRequestEvent::startRequest(GameBoard &board)
+bool FulfillRequestEvent::startRequest(GameBoard &board)
 {
     if (isActiveCityRequest() &&
         mRequestDate == eDate(1, eMonth::january, 1))
@@ -122,7 +122,7 @@ bool eFulfillRequestEvent::startRequest(GameBoard &board)
         auto deadline = board.date();
         deadline.nextMonths(warningMonths());
         mRequestDeadline = deadline;
-        board.addCityRequest(mainEvent<eFulfillRequestEvent>());
+        board.addCityRequest(mainEvent<FulfillRequestEvent>());
         return true;
     }
     if (!isActiveCityRequest())
@@ -130,9 +130,9 @@ bool eFulfillRequestEvent::startRequest(GameBoard &board)
     return startQueuedRequest(board);
 }
 
-bool eFulfillRequestEvent::startQueuedRequest(GameBoard &board)
+bool FulfillRequestEvent::startQueuedRequest(GameBoard &board)
 {
-    const auto request = e::make_shared<eFulfillRequestEvent>(
+    const auto request = e::make_shared<FulfillRequestEvent>(
         cityId(), eGameEventBranch::root, board);
     request->setWarningMonths(warningMonths());
     request->setRequestType(mRequestType);
@@ -143,12 +143,12 @@ bool eFulfillRequestEvent::startQueuedRequest(GameBoard &board)
     return false;
 }
 
-bool eFulfillRequestEvent::initializeRequest(GameBoard &board)
+bool FulfillRequestEvent::initializeRequest(GameBoard &board)
 {
     mRequestStep = 0;
     mRequestId = sNextReceiveRequestId++;
     mRequestFinished = false;
-    mRequestResult = eReceiveRequestResult::comply;
+    mRequestResult = ReceiveRequestResult::comply;
     mRequestDate = board.date();
     // Side panel uses this deadline; reminder popups must not move it.
     auto deadline = board.date();
@@ -162,13 +162,13 @@ bool eFulfillRequestEvent::initializeRequest(GameBoard &board)
         return false;
     chooseType();
     chooseCount();
-    board.addCityRequest(mainEvent<eFulfillRequestEvent>());
+    board.addCityRequest(mainEvent<FulfillRequestEvent>());
     return true;
 }
 
-eEventData eFulfillRequestEvent::createEventData(GameBoard &board) const
+eEventData FulfillRequestEvent::createEventData(GameBoard &board) const
 {
-    const auto pid = mRequestType == eReceiveRequestType::tribute ? board.personPlayer() : playerId();
+    const auto pid = mRequestType == ReceiveRequestType::tribute ? board.personPlayer() : playerId();
     eEventData ed(pid);
     ed.fCity = mCity;
     ed.fResourceType = mResource;
@@ -179,44 +179,44 @@ eEventData eFulfillRequestEvent::createEventData(GameBoard &board) const
     return ed;
 }
 
-void eFulfillRequestEvent::showRequestFinished(
+void FulfillRequestEvent::showRequestFinished(
     GameBoard &board, eEventData &ed)
 {
     if (!mCity)
         return;
     ed.fType = eMessageEventType::resourceGranted;
     const auto *msgs = receiveRequestMessages(mRequestType, *mCity);
-    if (mRequestResult == eReceiveRequestResult::refuse)
+    if (mRequestResult == ReceiveRequestResult::refuse)
     {
         const auto event = receiveRequestFinishEvent(
-            mRequestType, *mCity, eReceiveRequestFinish::refuse);
+            mRequestType, *mCity, ReceiveRequestFinish::refuse);
         board.event(event, ed);
         const auto &reason = msgs->fRefuseReason;
-        const auto me = mainEvent<eFulfillRequestEvent>();
+        const auto me = mainEvent<FulfillRequestEvent>();
         me->finished(*me->mRefuseTrigger, reason);
         return;
     }
 
-    if (mRequestResult == eReceiveRequestResult::tooLate)
+    if (mRequestResult == ReceiveRequestResult::tooLate)
     {
         const auto event = receiveRequestFinishEvent(
-            mRequestType, *mCity, eReceiveRequestFinish::tooLate);
+            mRequestType, *mCity, ReceiveRequestFinish::tooLate);
         board.event(event, ed);
         const auto &reason = msgs->fTooLateReason;
-        const auto me = mainEvent<eFulfillRequestEvent>();
+        const auto me = mainEvent<FulfillRequestEvent>();
         me->finished(*me->mTooLateTrigger, reason);
         return;
     }
 
     const auto event = receiveRequestFinishEvent(
-        mRequestType, *mCity, eReceiveRequestFinish::comply);
+        mRequestType, *mCity, ReceiveRequestFinish::comply);
     board.event(event, ed);
     const auto &reason = msgs->fComplyReason;
-    const auto me = mainEvent<eFulfillRequestEvent>();
+    const auto me = mainEvent<FulfillRequestEvent>();
     me->finished(*me->mComplyTrigger, reason);
 }
 
-void eFulfillRequestEvent::showRequestPopup(GameBoard &board, eEventData &ed)
+void FulfillRequestEvent::showRequestPopup(GameBoard &board, eEventData &ed)
 {
     addFulfillButton(board, ed);
     addPostponeButton(board, ed);
@@ -228,7 +228,7 @@ void eFulfillRequestEvent::showRequestPopup(GameBoard &board, eEventData &ed)
     board.event(uiEvent, ed);
 }
 
-void eFulfillRequestEvent::addFulfillButton(GameBoard &board, eEventData &ed)
+void FulfillRequestEvent::addFulfillButton(GameBoard &board, eEventData &ed)
 {
     if (mResource == eResourceType::drachmas)
         addDrachmasFulfillButton(board, ed);
@@ -236,10 +236,10 @@ void eFulfillRequestEvent::addFulfillButton(GameBoard &board, eEventData &ed)
         addResourceFulfillButtons(board, ed);
 }
 
-void eFulfillRequestEvent::addDrachmasFulfillButton(
+void FulfillRequestEvent::addDrachmasFulfillButton(
     GameBoard &board, eEventData &ed)
 {
-    const auto pid = mRequestType == eReceiveRequestType::tribute ? board.personPlayer() : playerId();
+    const auto pid = mRequestType == ReceiveRequestType::tribute ? board.personPlayer() : playerId();
     const auto cids = board.playerCitiesOnBoard(pid);
     const int avCount = board.drachmas(pid);
     if (avCount >= mCount && !cids.empty())
@@ -249,10 +249,10 @@ void eFulfillRequestEvent::addDrachmasFulfillButton(
     }
 }
 
-void eFulfillRequestEvent::addResourceFulfillButtons(
+void FulfillRequestEvent::addResourceFulfillButtons(
     GameBoard &board, eEventData &ed)
 {
-    const auto pid = mRequestType == eReceiveRequestType::tribute ? board.personPlayer() : playerId();
+    const auto pid = mRequestType == ReceiveRequestType::tribute ? board.personPlayer() : playerId();
     const auto cids = board.playerCitiesOnBoard(pid);
     for (const auto cid : cids)
     {
@@ -267,31 +267,31 @@ void eFulfillRequestEvent::addResourceFulfillButtons(
     }
 }
 
-void eFulfillRequestEvent::addRequestToSidePanel(GameBoard &board)
+void FulfillRequestEvent::addRequestToSidePanel(GameBoard &board)
 {
-    const auto request = mainEvent<eFulfillRequestEvent>();
+    const auto request = mainEvent<FulfillRequestEvent>();
     if (request && request->isActiveCityRequest())
     {
         board.addCityRequest(request);
     }
 }
 
-void eFulfillRequestEvent::addPostponeButton(
+void FulfillRequestEvent::addPostponeButton(
     GameBoard &board, eEventData &ed)
 {
-    const auto request = mainEvent<eFulfillRequestEvent>();
+    const auto request = mainEvent<FulfillRequestEvent>();
     if (canPostponeRequestStep(mRequestStep))
     {
         ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
     }
 }
 
-void eFulfillRequestEvent::addRefuseButton(GameBoard &board, eEventData &ed)
+void FulfillRequestEvent::addRefuseButton(GameBoard &board, eEventData &ed)
 {
     ed.fTertiaryResponse = static_cast<int>(eResponse::refuse);
 }
 
-void eFulfillRequestEvent::respond(const int response, const eCityId city)
+void FulfillRequestEvent::respond(const int response, const eCityId city)
 {
     switch (static_cast<eResponse>(response))
     {
@@ -301,7 +301,7 @@ void eFulfillRequestEvent::respond(const int response, const eCityId city)
             const auto board = gameBoard();
             if (!board)
                 return;
-            const auto pid = mRequestType == eReceiveRequestType::tribute ? board->personPlayer() : playerId();
+            const auto pid = mRequestType == ReceiveRequestType::tribute ? board->personPlayer() : playerId();
             const auto cids = board->playerCitiesOnBoard(pid);
             if (!cids.empty())
                 dispatch(cids[0]);
@@ -315,27 +315,27 @@ void eFulfillRequestEvent::respond(const int response, const eCityId city)
         postpone();
         break;
     case eResponse::refuse:
-        if (const auto request = mainEvent<eFulfillRequestEvent>())
-            request->finish(eReceiveRequestResult::refuse);
+        if (const auto request = mainEvent<FulfillRequestEvent>())
+            request->finish(ReceiveRequestResult::refuse);
         break;
     }
 }
 
-void eFulfillRequestEvent::postpone()
+void FulfillRequestEvent::postpone()
 {
-    const auto request = mainEvent<eFulfillRequestEvent>();
+    const auto request = mainEvent<FulfillRequestEvent>();
     if (!request)
         return;
 
     request->mPostponed = true;
 }
 
-int eFulfillRequestEvent::complyMonths() const
+int FulfillRequestEvent::complyMonths() const
 {
     return fulfillRequestState(mComplyStep).fComplyMonths;
 }
 
-std::string eFulfillRequestEvent::longName() const
+std::string FulfillRequestEvent::longName() const
 {
     auto tmpl = eLanguage::text("receive_request_long_name");
     eCountEventValue::longNameReplaceCount("%1", tmpl);
@@ -343,15 +343,15 @@ std::string eFulfillRequestEvent::longName() const
     return tmpl;
 }
 
-void eFulfillRequestEvent::serializeFields(eSaveArchive &ar)
+void FulfillRequestEvent::serializeFields(eSaveArchive &ar)
 {
     eGameEvent::serializeFields(ar);
     eResourceEventValue::serialize(ar);
     eCountEventValue::serialize(ar);
     eCityEventValue::serialize(ar, *gameBoard());
     eGodEventValue::serialize(ar);
-    ar.field("requestType", mRequestType, eReceiveRequestType::general);
-    ar.field("requestResult", mRequestResult, eReceiveRequestResult::comply);
+    ar.field("requestType", mRequestType, ReceiveRequestType::general);
+    ar.field("requestResult", mRequestResult, ReceiveRequestResult::comply);
     ar.field("requestFinished", mRequestFinished, false);
     ar.field("requestStep", mRequestStep, 0);
     ar.field("requestId", mRequestId, 0);
@@ -366,7 +366,7 @@ void eFulfillRequestEvent::serializeFields(eSaveArchive &ar)
     }
 }
 
-eCityRequest eFulfillRequestEvent::cityRequest() const
+eCityRequest FulfillRequestEvent::cityRequest() const
 {
     eCityRequest request;
     request.fCity = mCity;
@@ -375,7 +375,7 @@ eCityRequest eFulfillRequestEvent::cityRequest() const
     return request;
 }
 
-void eFulfillRequestEvent::dispatch(const eCityId cid)
+void FulfillRequestEvent::dispatch(const eCityId cid)
 {
     const auto board = gameBoard();
     if (!board)
@@ -384,20 +384,20 @@ void eFulfillRequestEvent::dispatch(const eCityId cid)
     finish(fulfillRequestResultForStep(mRequestStep));
 }
 
-void eFulfillRequestEvent::finish(const eReceiveRequestResult result)
+void FulfillRequestEvent::finish(const ReceiveRequestResult result)
 {
     const auto board = gameBoard();
     if (!board)
         return;
     clearConsequences();
-    const auto request = mainEvent<eFulfillRequestEvent>();
+    const auto request = mainEvent<FulfillRequestEvent>();
     board->removeCityRequest(request);
     mRequestFinished = true;
     mRequestResult = result;
 
-    if (mCity && result == eReceiveRequestResult::refuse)
+    if (mCity && result == ReceiveRequestResult::refuse)
         board->changeCityAttitude(mCity, -10, playerId());
-    else if (mCity && result == eReceiveRequestResult::tooLate)
+    else if (mCity && result == ReceiveRequestResult::tooLate)
         board->changeCityAttitude(mCity, 5, playerId());
     else if (mCity)
         board->changeCityAttitude(mCity, 10, playerId());
@@ -408,7 +408,7 @@ void eFulfillRequestEvent::finish(const eReceiveRequestResult result)
         request->mRequestResult = result;
     }
 
-    const auto pid = mRequestType == eReceiveRequestType::tribute ? board->personPlayer() : playerId();
+    const auto pid = mRequestType == ReceiveRequestType::tribute ? board->personPlayer() : playerId();
     eEventData ed(pid);
     ed.fCity = mCity;
     ed.fResourceType = mResource;
@@ -417,7 +417,7 @@ void eFulfillRequestEvent::finish(const eReceiveRequestResult result)
     showRequestFinished(*board, ed);
 }
 
-void eFulfillRequestEvent::finished(eEventTrigger &t, const eReason &r)
+void FulfillRequestEvent::finished(eEventTrigger &t, const eReason &r)
 {
     const auto board = gameBoard();
     if (!board)
@@ -431,7 +431,7 @@ void eFulfillRequestEvent::finished(eEventTrigger &t, const eReason &r)
     t.trigger(*this, date, rFull);
 }
 
-eDate eFulfillRequestEvent::complyDate() const
+eDate FulfillRequestEvent::complyDate() const
 {
     if (mRequestDeadline != eDate(1, eMonth::january, 1))
         return mRequestDeadline;
@@ -444,12 +444,12 @@ eDate eFulfillRequestEvent::complyDate() const
     return date;
 }
 
-bool eFulfillRequestEvent::isOverdue(const eDate &currentDate) const
+bool FulfillRequestEvent::isOverdue(const eDate &currentDate) const
 {
     return currentDate > complyDate();
 }
 
-void eFulfillRequestEvent::advanceIfNeeded(const eDate &currentDate)
+void FulfillRequestEvent::advanceIfNeeded(const eDate &currentDate)
 {
     const auto board = gameBoard();
     if (!board || !isMainEvent() || !isActiveCityRequest())
@@ -467,14 +467,14 @@ void eFulfillRequestEvent::advanceIfNeeded(const eDate &currentDate)
     advanceToNextStep(*board);
 }
 
-void eFulfillRequestEvent::advanceToNextStep(GameBoard &board)
+void FulfillRequestEvent::advanceToNextStep(GameBoard &board)
 {
     const auto &states = fulfillRequestStates();
     const int nextStep = mRequestStep + 1;
     if (nextStep >= static_cast<int>(states.size()) ||
         fulfillRequestTerminalState(nextStep))
     {
-        finish(eReceiveRequestResult::refuse);
+        finish(ReceiveRequestResult::refuse);
         return;
     }
 
@@ -491,32 +491,32 @@ void eFulfillRequestEvent::advanceToNextStep(GameBoard &board)
     showRequestPopup(board, ed);
 }
 
-bool eFulfillRequestEvent::isPostponed() const
+bool FulfillRequestEvent::isPostponed() const
 {
     const int overdueStep = 2;
     return mRequestStep >= overdueStep;
 }
 
-bool eFulfillRequestEvent::finished() const
+bool FulfillRequestEvent::finished() const
 {
     return eGameEvent::finished() && !isActiveCityRequest();
 }
 
-bool eFulfillRequestEvent::isActiveCityRequest() const
+bool FulfillRequestEvent::isActiveCityRequest() const
 {
     return !mRequestFinished && mCity;
 }
 
-int eFulfillRequestEvent::remainingMonths(const eDate &deadline, const eDate &current) const
+int FulfillRequestEvent::remainingMonths(const eDate &deadline, const eDate &current) const
 {
     const int daysDiff = deadline - current;
     return (daysDiff + 30) / 31;
 }
 
-std::string eFulfillRequestEvent::overdueStatusText(const eDate &currentDate) const
+std::string FulfillRequestEvent::overdueStatusText(const eDate &currentDate) const
 {
-    const auto request = const_cast<eFulfillRequestEvent *>(this)
-                             ->mainEvent<eFulfillRequestEvent>();
+    const auto request = const_cast<FulfillRequestEvent *>(this)
+                             ->mainEvent<FulfillRequestEvent>();
     const auto state = request ? request : this;
     // Sidebar counts down from the current step's comply window.
     const int comply = state->complyMonths();
@@ -526,7 +526,7 @@ std::string eFulfillRequestEvent::overdueStatusText(const eDate &currentDate) co
     return std::to_string(remainingMonths);
 }
 
-std::string eFulfillRequestEvent::requestInfo(int stock, const eDate &currentDate) const
+std::string FulfillRequestEvent::requestInfo(int stock, const eDate &currentDate) const
 {
     const auto resName = eResourceTypeHelpers::typeLongName(mResource);
     const int requested = mCount;
@@ -553,7 +553,7 @@ std::string eFulfillRequestEvent::requestInfo(int stock, const eDate &currentDat
     return result;
 }
 
-std::string eFulfillRequestEvent::dispatchText(int stock, const eDate &currentDate) const
+std::string FulfillRequestEvent::dispatchText(int stock, const eDate &currentDate) const
 {
     return eLanguage::zeusText(5, 12) + " " +
            requestInfo(stock, currentDate) + "?";

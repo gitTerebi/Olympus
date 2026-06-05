@@ -21,7 +21,7 @@ enum class eGameEventType {
     monsterInvasionWarning, // old, unused
     invasion,
     invasionWarning, // old, unused
-    receiveTribute,
+    payTribute,
     receiveRequest,
     makeRequest,
     giftTo,
@@ -67,7 +67,7 @@ enum class eGameEventType {
     landSlide,
 
     reinforcementsEvent,
-    payTribute
+    getTribute
 };
 
 enum class eGameEventBranch {

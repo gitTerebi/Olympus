@@ -498,16 +498,16 @@ set(SOURCES
     src/gameEvents/emonsterseventvalue.cpp
     src/gameEvents/invasions/monster-unleashed-event.cpp
     src/engine/tribute.cpp
-    src/gameEvents/receive-tribute-event.cpp
-    src/gameEvents/requests/e-pay-tribute-event.cpp
+    src/gameEvents/requests/pay-tribute-event.cpp
+    src/gameEvents/requests/get-tribute-event.cpp
     src/gameEvents/eplayerconquestevent.cpp
     src/gameEvents/eplayerconquesteventbase.cpp
     src/gameEvents/eplayerraidevent.cpp
     src/gameEvents/epointeventvalue.cpp
     src/gameEvents/epricechangeevent.cpp
     src/gameEvents/eraidresourceevent.cpp
-    src/gameEvents/requests/e-fulfill-request-event.cpp
-    src/gameEvents/requests/e-receive-request-type.cpp
+    src/gameEvents/requests/fulfill-request-event.cpp
+    src/gameEvents/requests/receive-request-type.cpp
     src/gameEvents/ereinforcementsevent.cpp
     src/gameEvents/erequestaidevent.cpp
     src/gameEvents/erequeststrikeevent.cpp
