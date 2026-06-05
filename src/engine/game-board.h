@@ -59,8 +59,8 @@ class eStorageBuilding;
 class SoldierBanner;
 class ePalace;
 class eLandInvasionPoint;
-class eFulfillRequestEvent;
-class ePayTributeEvent;
+class FulfillRequestEvent;
+class GetTributeEvent;
 class eInvasionEvent;
 class eAgoraBase;
 class eHerosHall;
@@ -560,15 +560,15 @@ public:
     void addGodQuest(eGodQuestEvent* const q);
     void removeGodQuest(eGodQuestEvent* const q);
 
-    using eRequests = std::vector<eFulfillRequestEvent*>;
+    using eRequests = std::vector<FulfillRequestEvent*>;
     eRequests cityRequests(const ePlayerId pid) const;
-    void addCityRequest(eFulfillRequestEvent* const q);
-    void removeCityRequest(eFulfillRequestEvent* const q);
+    void addCityRequest(FulfillRequestEvent* const q);
+    void removeCityRequest(FulfillRequestEvent* const q);
 
-    using eTributeRequests = std::vector<ePayTributeEvent*>;
+    using eTributeRequests = std::vector<GetTributeEvent*>;
     eTributeRequests tributeRequests(const ePlayerId pid) const;
-    void addTributeRequest(ePayTributeEvent* const q);
-    void removeTributeRequest(ePayTributeEvent* const q);
+    void addTributeRequest(GetTributeEvent* const q);
+    void removeTributeRequest(GetTributeEvent* const q);
 
     using eTroopsRequests = std::vector<eTroopsRequestEvent*>;
     eTroopsRequests cityTroopsRequests(const ePlayerId pid) const;

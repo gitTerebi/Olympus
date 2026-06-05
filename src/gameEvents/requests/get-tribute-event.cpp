@@ -1,4 +1,4 @@
-﻿#include "e-pay-tribute-event.h"
+﻿#include "get-tribute-event.h"
 
 #include "engine/tribute.h"
 #include "engine/game-board.h"
@@ -67,12 +67,12 @@ namespace
     }
 }
 
-ePayTributeEvent::ePayTributeEvent(
+GetTributeEvent::GetTributeEvent(
     const eCityId cid,
     const eGameEventBranch branch,
-    GameBoard &board) : eGameEvent(cid, eGameEventType::payTribute, branch, board) {}
+    GameBoard &board) : eGameEvent(cid, eGameEventType::getTribute, branch, board) {}
 
-ePayTributeEvent::~ePayTributeEvent()
+GetTributeEvent::~GetTributeEvent()
 {
     const auto board = gameBoard();
     if (board && isMainEvent())
@@ -81,7 +81,7 @@ ePayTributeEvent::~ePayTributeEvent()
     }
 }
 
-void ePayTributeEvent::initialize(const stdsptr<WorldCity> &c)
+void GetTributeEvent::initialize(const stdsptr<WorldCity> &c)
 {
     mCity = c;
     if (!mCity)
@@ -96,7 +96,7 @@ void ePayTributeEvent::initialize(const stdsptr<WorldCity> &c)
     activate();
 }
 
-void ePayTributeEvent::trigger()
+void GetTributeEvent::trigger()
 {
     if (!mCity)
         return;
@@ -118,7 +118,7 @@ void ePayTributeEvent::trigger()
     if (!canDispatch)
     {
         if (isMainEvent())
-            finish(ePayTributeResult::refuse);
+            finish(GetTributeResult::refuse);
         return;
     }
 
@@ -156,7 +156,7 @@ void ePayTributeEvent::trigger()
     board->event(stepEvent(), ed);
 }
 
-void ePayTributeEvent::respond(const int response, const eCityId city)
+void GetTributeEvent::respond(const int response, const eCityId city)
 {
     switch (static_cast<eResponse>(response))
     {
@@ -177,13 +177,13 @@ void ePayTributeEvent::respond(const int response, const eCityId city)
         postpone();
         break;
     case eResponse::refuse:
-        if (const auto request = mainEvent<ePayTributeEvent>())
-            request->finish(ePayTributeResult::refuse);
+        if (const auto request = mainEvent<GetTributeEvent>())
+            request->finish(GetTributeResult::refuse);
         break;
     }
 }
 
-std::string ePayTributeEvent::longName() const
+std::string GetTributeEvent::longName() const
 {
     auto tmpl = eLanguage::text("pay_tribute");
     const auto none = eLanguage::text("none");
@@ -192,12 +192,12 @@ std::string ePayTributeEvent::longName() const
     return tmpl;
 }
 
-bool ePayTributeEvent::finished() const
+bool GetTributeEvent::finished() const
 {
     return eGameEvent::finished() && !mActive;
 }
 
-eCityRequest ePayTributeEvent::cityRequest() const
+eCityRequest GetTributeEvent::cityRequest() const
 {
     eCityRequest request;
     request.fCity = mCity;
@@ -206,12 +206,12 @@ eCityRequest ePayTributeEvent::cityRequest() const
     return request;
 }
 
-void ePayTributeEvent::dispatch(const eCityId cid)
+void GetTributeEvent::dispatch(const eCityId cid)
 {
     const auto board = gameBoard();
     if (!board)
         return;
-    const auto request = mainEvent<ePayTributeEvent>();
+    const auto request = mainEvent<GetTributeEvent>();
     const auto state = request ? request->mComplyEvent : mEvent;
     if (payTributeTerminalState(state))
         return;
@@ -225,13 +225,13 @@ void ePayTributeEvent::dispatch(const eCityId cid)
             request->mComplyEvent);
         const bool overdue = lateStep >= 0 &&
                              currentStep >= lateStep;
-        request->finish(overdue ? ePayTributeResult::tooLate : ePayTributeResult::comply);
+        request->finish(overdue ? GetTributeResult::tooLate : GetTributeResult::comply);
     }
 }
 
-void ePayTributeEvent::postpone()
+void GetTributeEvent::postpone()
 {
-    const auto request = mainEvent<ePayTributeEvent>();
+    const auto request = mainEvent<GetTributeEvent>();
     if (!request)
     {
         return;
@@ -240,7 +240,7 @@ void ePayTributeEvent::postpone()
     request->mPostponed = true;
 }
 
-std::string ePayTributeEvent::dispatchText(
+std::string GetTributeEvent::dispatchText(
     const int stock, const eDate &currentDate) const
 {
     const auto resName = eResourceTypeHelpers::typeLongName(mResource);
@@ -256,11 +256,11 @@ std::string ePayTributeEvent::dispatchText(
            status + "?";
 }
 
-std::string ePayTributeEvent::overdueStatusText(
+std::string GetTributeEvent::overdueStatusText(
     const eDate &currentDate) const
 {
-    const auto request = const_cast<ePayTributeEvent *>(this)
-                             ->mainEvent<ePayTributeEvent>();
+    const auto request = const_cast<GetTributeEvent *>(this)
+                             ->mainEvent<GetTributeEvent>();
     const auto state = request ? request : this;
     // Sidebar counts down from the current step's comply window.
     const int comply = state->complyMonths();
@@ -272,7 +272,7 @@ std::string ePayTributeEvent::overdueStatusText(
     return std::to_string(remainingMonths);
 }
 
-void ePayTributeEvent::serializeFields(eSaveArchive &ar)
+void GetTributeEvent::serializeFields(eSaveArchive &ar)
 {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);
@@ -292,7 +292,7 @@ void ePayTributeEvent::serializeFields(eSaveArchive &ar)
     }
 }
 
-void ePayTributeEvent::activate()
+void GetTributeEvent::activate()
 {
     if (mActive)
         return;
@@ -311,7 +311,7 @@ void ePayTributeEvent::activate()
     board->addTributeRequest(this);
 }
 
-bool ePayTributeEvent::isPostponed() const
+bool GetTributeEvent::isPostponed() const
 {
     const int overdueStep = payTributeStateIndex(
         eEvent::generalRequestTributeOverdue);
@@ -319,7 +319,7 @@ bool ePayTributeEvent::isPostponed() const
     return overdueStep >= 0 && currentStep >= overdueStep;
 }
 
-void ePayTributeEvent::advanceIfNeeded(const eDate &currentDate)
+void GetTributeEvent::advanceIfNeeded(const eDate &currentDate)
 {
     const auto board = gameBoard();
     if (!board || !isMainEvent() || finished())
@@ -334,12 +334,12 @@ void ePayTributeEvent::advanceIfNeeded(const eDate &currentDate)
     advanceToNextStep(*board);
 }
 
-void ePayTributeEvent::advanceToNextStep(GameBoard &board)
+void GetTributeEvent::advanceToNextStep(GameBoard &board)
 {
     const auto nextEvent = payTributeState(mComplyEvent).fNextEvent;
     if (payTributeTerminalState(nextEvent))
     {
-        finish(ePayTributeResult::refuse);
+        finish(GetTributeResult::refuse);
         return;
     }
 
@@ -388,22 +388,22 @@ void ePayTributeEvent::advanceToNextStep(GameBoard &board)
     board.event(stepEvent(), ed);
 }
 
-eEvent ePayTributeEvent::stepEvent() const
+eEvent GetTributeEvent::stepEvent() const
 {
     return mEvent;
 }
 
-int ePayTributeEvent::complyMonths() const
+int GetTributeEvent::complyMonths() const
 {
     return payTributeState(mComplyEvent).fComplyMonths;
 }
 
-int ePayTributeEvent::popupComplyMonths() const
+int GetTributeEvent::popupComplyMonths() const
 {
     return payTributeState(mEvent).fComplyMonths;
 }
 
-void ePayTributeEvent::finish(const ePayTributeResult result)
+void GetTributeEvent::finish(const GetTributeResult result)
 {
     const auto board = gameBoard();
     if (!board)
@@ -419,13 +419,13 @@ void ePayTributeEvent::finish(const ePayTributeResult result)
     ed.fResourceType = mResource;
     ed.fResourceCount = mCount;
 
-    if (result == ePayTributeResult::refuse)
+    if (result == GetTributeResult::refuse)
     {
         board->event(eEvent::generalRequestTributeRefuse, ed);
         if (mCity)
             board->changeCityAttitude(mCity, -10, board->personPlayer());
     }
-    else if (result == ePayTributeResult::tooLate)
+    else if (result == GetTributeResult::tooLate)
     {
         board->event(eEvent::generalRequestTributeTooLate, ed);
         if (mCity)
@@ -439,7 +439,7 @@ void ePayTributeEvent::finish(const ePayTributeResult result)
     }
 }
 
-int ePayTributeEvent::remainingMonths(
+int GetTributeEvent::remainingMonths(
     const eDate &deadline, const eDate &current) const
 {
     const int daysDiff = deadline - current;

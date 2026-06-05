@@ -1,4 +1,4 @@
-﻿#include "receive-tribute-event.h"
+﻿#include "pay-tribute-event.h"
 #include "engine/game-board.h"
 #include "engine/eevent.h"
 #include "engine/tribute.h"
@@ -7,17 +7,17 @@
 #include "estringhelpers.h"
 #include "fileIO/esavearchive.h"
 
-ReceiveTributeEvent::ReceiveTributeEvent(
+PayTributeEvent::PayTributeEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    eGameEvent(cid, eGameEventType::receiveTribute, branch, board) {}
+    eGameEvent(cid, eGameEventType::payTribute, branch, board) {}
 
-void ReceiveTributeEvent::initialize(const stdsptr<WorldCity>& c) {
+void PayTributeEvent::initialize(const stdsptr<WorldCity>& c) {
     mCity = c;
 }
 
-void ReceiveTributeEvent::trigger() {
+void PayTributeEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
@@ -50,11 +50,11 @@ void ReceiveTributeEvent::trigger() {
     board->event(eEvent::tributePaid, ed);
 }
 
-bool ReceiveTributeEvent::finished() const {
+bool PayTributeEvent::finished() const {
     return eGameEvent::finished() && !mAwaitingResponse;
 }
 
-void ReceiveTributeEvent::respond(const int response, const eCityId city) {
+void PayTributeEvent::respond(const int response, const eCityId city) {
     mAwaitingResponse = false;
     switch(static_cast<eResponse>(response)) {
     case eResponse::accept:
@@ -69,7 +69,7 @@ void ReceiveTributeEvent::respond(const int response, const eCityId city) {
     }
 }
 
-void ReceiveTributeEvent::accept(const eCityId city) {
+void PayTributeEvent::accept(const eCityId city) {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
@@ -92,7 +92,7 @@ void ReceiveTributeEvent::accept(const eCityId city) {
     board->event(eEvent::tributeAccepted, ed);
 }
 
-void ReceiveTributeEvent::postpone() {
+void PayTributeEvent::postpone() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
@@ -104,7 +104,7 @@ void ReceiveTributeEvent::postpone() {
     ed.fResourceType = tribute.fType;
     ed.fResourceCount = tribute.fCount;
     board->event(eEvent::tributePostponed, ed);
-    const auto e = e::make_shared<ReceiveTributeEvent>(
+    const auto e = e::make_shared<PayTributeEvent>(
         board->currentCityId(), eGameEventBranch::root, *board);
     e->initialize(mCity);
     e->mPostponed = true;
@@ -114,7 +114,7 @@ void ReceiveTributeEvent::postpone() {
     board->addRootGameEvent(e);
 }
 
-void ReceiveTributeEvent::decline() {
+void PayTributeEvent::decline() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
@@ -127,7 +127,7 @@ void ReceiveTributeEvent::decline() {
     board->event(eEvent::tributeDeclined, ed);
 }
 
-std::string ReceiveTributeEvent::longName() const {
+std::string PayTributeEvent::longName() const {
     auto tmpl = eLanguage::text("receive_tribute_from");
     const auto none = eLanguage::text("none");
     const auto ctstr = mCity ? mCity->name() : none;
@@ -135,7 +135,7 @@ std::string ReceiveTributeEvent::longName() const {
     return tmpl;
 }
 
-void ReceiveTributeEvent::serializeFields(eSaveArchive& ar) {
+void PayTributeEvent::serializeFields(eSaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);
     ar.field("awaitingResponse", mAwaitingResponse, false);

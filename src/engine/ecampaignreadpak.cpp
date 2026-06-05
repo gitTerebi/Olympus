@@ -7,7 +7,7 @@
 
 #include "buildings/pyramids/epyramid.h"
 
-#include "gameEvents/requests/e-fulfill-request-event.h"
+#include "gameEvents/requests/fulfill-request-event.h"
 #include "gameEvents/egiftfromevent.h"
 #include "gameEvents/invasions/monster-in-city-event.h"
 #include "gameEvents/invasions/monster-invasion-event.h"
@@ -308,14 +308,14 @@ ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     return ePakEventType::receiveRequest;
 }
 
-eReceiveRequestType pakIdToReceiveRequestType(const uint16_t id) {
-    if(id == 0) return eReceiveRequestType::general;
-    else if(id == 3) return eReceiveRequestType::festival;
-    else if(id == 4) return eReceiveRequestType::project;
-    else if(id == 5) return eReceiveRequestType::famine;
-    else if(id == 6) return eReceiveRequestType::financialWoes;
+ReceiveRequestType pakIdToReceiveRequestType(const uint16_t id) {
+    if(id == 0) return ReceiveRequestType::general;
+    else if(id == 3) return ReceiveRequestType::festival;
+    else if(id == 4) return ReceiveRequestType::project;
+    else if(id == 5) return ReceiveRequestType::famine;
+    else if(id == 6) return ReceiveRequestType::financialWoes;
     // printf("Invalid receive request type %i\n", id);
-    return eReceiveRequestType::general;
+    return ReceiveRequestType::general;
 }
 
 eGodType pakIdToGodType(const uint8_t id, bool& valid) {
@@ -561,7 +561,7 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 e = ee;
             } else {
                 const auto type = pakIdToReceiveRequestType(subType);
-                const auto ee = e::make_shared<eFulfillRequestEvent>(
+                const auto ee = e::make_shared<FulfillRequestEvent>(
                         cid, eGameEventBranch::root, *ep.fBoard);
                 setResources(*ee);
                 bool valid = false;

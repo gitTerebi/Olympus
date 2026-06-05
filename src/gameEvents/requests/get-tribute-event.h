@@ -1,5 +1,5 @@
-﻿#ifndef EPAYTRIBUTEEVENT_H
-#define EPAYTRIBUTEEVENT_H
+﻿#ifndef GETTRIBUTEEVENT_H
+#define GETTRIBUTEEVENT_H
 
 #include "../egameevent.h"
 
@@ -10,18 +10,18 @@
 
 class eSaveArchive;
 
-enum class ePayTributeResult {
+enum class GetTributeResult {
     comply,
     tooLate,
     refuse
 };
 
-class ePayTributeEvent : public eGameEvent {
+class GetTributeEvent : public eGameEvent {
 public:
-    ePayTributeEvent(const eCityId cid,
+    GetTributeEvent(const eCityId cid,
                      const eGameEventBranch branch,
                      GameBoard& board);
-    ~ePayTributeEvent();
+    ~GetTributeEvent();
 
     void initialize(const stdsptr<WorldCity>& c);
 
@@ -51,7 +51,7 @@ private:
     eEvent stepEvent() const;
     int complyMonths() const;
     int popupComplyMonths() const;
-    void finish(ePayTributeResult result);
+    void finish(GetTributeResult result);
     int remainingMonths(const eDate& deadline, const eDate& current) const;
 
     stdsptr<WorldCity> mCity;
@@ -67,4 +67,4 @@ private:
     eDate mComplyStartDate{1, eMonth::january, 1};
 };
 
-#endif // EPAYTRIBUTEEVENT_H
+#endif // GETTRIBUTEEVENT_H

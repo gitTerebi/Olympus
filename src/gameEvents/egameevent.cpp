@@ -9,10 +9,10 @@
 #include "gameEvents/invasions/monster-invasion-event.h"
 #include "gameEvents/invasions/monster-in-city-event.h"
 #include "gameEvents/invasions/invasion-event.h"
-#include "receive-tribute-event.h"
-#include "requests/e-pay-tribute-event.h"
+#include "requests/pay-tribute-event.h"
+#include "requests/get-tribute-event.h"
 #include "emakerequestevent.h"
-#include "requests/e-fulfill-request-event.h"
+#include "requests/fulfill-request-event.h"
 #include "egifttoevent.h"
 #include "egiftfromevent.h"
 #include "gameEvents/gods/egodquestevent.h"
@@ -112,14 +112,14 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
         return e::make_shared<eInvasionEvent>(cid, branch, board);
     case eGameEventType::invasionWarning:
         return nullptr;
-    case eGameEventType::receiveTribute:
-        return e::make_shared<ReceiveTributeEvent>(cid, branch, board);
     case eGameEventType::payTribute:
-        return e::make_shared<ePayTributeEvent>(cid, branch, board);
+        return e::make_shared<PayTributeEvent>(cid, branch, board);
+    case eGameEventType::getTribute:
+        return e::make_shared<GetTributeEvent>(cid, branch, board);
     case eGameEventType::makeRequest:
         return e::make_shared<eMakeRequestEvent>(cid, branch, board);
     case eGameEventType::receiveRequest:
-        return e::make_shared<eFulfillRequestEvent>(cid, branch, board);
+        return e::make_shared<FulfillRequestEvent>(cid, branch, board);
     case eGameEventType::giftTo:
         return e::make_shared<eGiftToEvent>(cid, branch, board);
     case eGameEventType::giftFrom:

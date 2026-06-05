@@ -1,15 +1,15 @@
-﻿#ifndef RECEIVE_TRIBUTE_EVENT_H
-#define RECEIVE_TRIBUTE_EVENT_H
+﻿#ifndef PAY_TRIBUTE_EVENT_H
+#define PAY_TRIBUTE_EVENT_H
 
-#include "egameevent.h"
+#include "../egameevent.h"
 
 #include "engine/world-city.h"
 
 class eSaveArchive;
 
-class ReceiveTributeEvent : public eGameEvent {
+class PayTributeEvent : public eGameEvent {
 public:
-    ReceiveTributeEvent(const eCityId cid,
+    PayTributeEvent(const eCityId cid,
                         const eGameEventBranch branch,
                         GameBoard& board);
 
@@ -37,4 +37,4 @@ private:
     bool mPostponed = false;
 };
 
-#endif // RECEIVE_TRIBUTE_EVENT_H
+#endif // PAY_TRIBUTE_EVENT_H
