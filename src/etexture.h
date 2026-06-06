@@ -97,6 +97,7 @@ public:
                           const std::shared_ptr<eTexture>& tex);
 
     SDL_Texture* tex() const { return mTex; }
+
 private:
     std::shared_ptr<eTexture> mParentTex;
     int mX = 0;
@@ -107,6 +108,10 @@ private:
     int mOffsetY = 0;
     std::shared_ptr<eTexture> mFlipTex;
     SDL_Texture* mTex = nullptr;
+    Uint8 mAlpha = 255;
+    Uint8 mColorR = 255;
+    Uint8 mColorG = 255;
+    Uint8 mColorB = 255;
 };
 
 #endif // ETEXTURE_H

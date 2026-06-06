@@ -521,15 +521,6 @@ private:
     int mScale = 100;
     double mZoom = 1.0;
     std::shared_ptr<eTexture> mWorldTex;
-    std::shared_ptr<eTexture> mTerrainCacheTex;
-    bool mTerrainCacheValid = false;
-    int mTerrainCacheW = 0;
-    int mTerrainCacheH = 0;
-    int mTerrainCacheDX = 0;
-    int mTerrainCacheDY = 0;
-    int mTerrainCacheAnimFrame = -1;
-    int mTerrainCacheDir = -1;
-    int mTerrainCacheTileSize = -1;
     std::shared_ptr<eTexture> mCompassTex;
     int mCompassDir = -1;
 

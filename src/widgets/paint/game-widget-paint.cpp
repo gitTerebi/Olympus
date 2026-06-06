@@ -191,26 +191,12 @@ void GameWidget::paintEvent(ePainter &p)
     {
         updateTerrainTextures();
         mBoard->afterTerrainUpdated();
-        mTerrainCacheValid = false;
     }
 
     const bool terrainEditing = mTem->visible();
     const bool fogOfWar = !terrainEditing && mBoard->fogOfWar();
-    const bool useTerrainCache =
-        mode == eBuildingMode::none &&
-        mViewMode == eViewMode::defaultView &&
-        !terrainEditing &&
-        !mEditorMode &&
-        !mDestinationBuilding &&
-        !mPatrolBuilding &&
-        !mLeftPressed &&
-        !mBoard->duringLavaFlow() &&
-        !mBoard->duringTidalWave() &&
-        !mBoard->duringLandSlide();
     std::set<eMonument*> drawnTempleWoman;
-    int terrainCacheClipOffsetX = 0;
-    const auto drawTerrain = [&](eTile *const tile,
-                                 const bool baseOnly = false)
+    const auto drawTerrain = [&](eTile *const tile)
     {
         const int worldTileX = tile->x();
         const int worldTileY = tile->y();
@@ -303,8 +289,7 @@ void GameWidget::paintEvent(ePainter &p)
                         clipRect.y = -10000;
                         clipRect.h = 20000;
                         const int d = textureFitTileY ? 1 : 0;
-                        clipRect.x = terrainCacheClipOffsetX + mDX +
-                                     (viewTileX - viewTileY - d) * mTileW / 2;
+                        clipRect.x = mDX + (viewTileX - viewTileY - d) * mTileW / 2;
                         clipRect.w = textureFitTileX && textureFitTileY ? mTileW : mTileW / 2;
                         SDL_RenderSetClipRect(p.renderer(), &clipRect);
                     }
@@ -323,7 +308,7 @@ void GameWidget::paintEvent(ePainter &p)
             bool repairCm = false;
             bool patrolCm = false;
             bool editorHover = false;
-            if (!baseOnly && terrainEditing)
+            if (terrainEditing)
             {
                 editorHover = eVectorHelpers::contains(mHoverTiles, tile) ||
                               eVectorHelpers::contains(mInflTiles, tile);
@@ -332,22 +317,20 @@ void GameWidget::paintEvent(ePainter &p)
                     tex->setColorMod(255, 175, 175);
                 }
             }
-            const bool lavaFlows = !baseOnly && mBoard->duringLavaFlow();
+            const bool lavaFlows = mBoard->duringLavaFlow();
             const bool hasLava = terr == eTerrain::lava;
             if (lavaFlows && hasLava)
             {
                 lavaCm = true;
                 tex->setColorMod(255, 0, 0);
             }
-            else if (!baseOnly &&
-                     mDestinationBuilding && !mDestinationPath.empty() &&
+            else if (mDestinationBuilding && !mDestinationPath.empty() &&
                      eVectorHelpers::contains(mDestinationPath, tile))
             {
                 patrolCm = true;
                 tex->setColorMod(175, 255, 175);
             }
-            else if (!baseOnly &&
-                     mPatrolBuilding &&
+            else if (mPatrolBuilding &&
                      (!mWaypointOutPath.empty() || !mWaypointOutPath1.empty()))
             {
                 const bool bothDirections = mPatrolBuilding->bothDirections();
@@ -369,8 +352,7 @@ void GameWidget::paintEvent(ePainter &p)
                     }
                 }
             }
-            else if (!baseOnly &&
-                     ((!terrainEditing &&
+            else if (((!terrainEditing &&
                       !static_cast<bool>(terr & eTerrain::stones)) ||
                      (terrainEditing &&
                       mTem->brushType() == eBrushType::apply)))
@@ -388,7 +370,7 @@ void GameWidget::paintEvent(ePainter &p)
                     tex->setColorMod(255, 175, 175);
             }
 
-            if (!baseOnly && mEditorMode && !eraseCm && !patrolCm)
+            if (mEditorMode && !eraseCm && !patrolCm)
             {
                 const auto building = tile->underBuilding();
                 if (building)
@@ -421,7 +403,7 @@ void GameWidget::paintEvent(ePainter &p)
                 }
             }
 
-            if (!baseOnly && mode == eBuildingMode::repair)
+            if (mode == eBuildingMode::repair)
             {
                 repairCm = inRepair(worldTileX, worldTileY);
                 if (repairCm)
@@ -429,7 +411,7 @@ void GameWidget::paintEvent(ePainter &p)
             }
 
             bool defaultHover = false;
-            if (!baseOnly && mode == eBuildingMode::none && !terrainEditing)
+            if (mode == eBuildingMode::none && !terrainEditing)
             {
                 defaultHover = worldTileX == mHoverTX && worldTileY == mHoverTY;
                 const auto building = tile->underBuilding();
@@ -490,60 +472,6 @@ void GameWidget::paintEvent(ePainter &p)
             }
         }
     };
-
-    const auto terrainCacheDebugStart = clock::now();
-    if(useTerrainCache) {
-        const int dirId = static_cast<int>(dir);
-        const int tileSizeId = static_cast<int>(mTileSize);
-        const bool cacheDirty =
-            !mTerrainCacheValid ||
-            !mTerrainCacheTex ||
-            mTerrainCacheW != w ||
-            mTerrainCacheH != h ||
-            mTerrainCacheDX != mDX ||
-            mTerrainCacheDY != mDY ||
-            mTerrainCacheAnimFrame != mAnimFrame ||
-            mTerrainCacheDir != dirId ||
-            mTerrainCacheTileSize != tileSizeId;
-        if(cacheDirty) {
-            if(!mTerrainCacheTex ||
-               mTerrainCacheTex->width() != w ||
-               mTerrainCacheTex->height() != h) {
-                mTerrainCacheTex = std::make_shared<eTexture>();
-                mTerrainCacheTex->create(r, w, h);
-            }
-
-            const auto prevTarget = SDL_GetRenderTarget(r);
-            SDL_BlendMode prevBlendMode;
-            SDL_GetRenderDrawBlendMode(r, &prevBlendMode);
-            mTerrainCacheTex->setAsRenderTarget(r);
-            SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_NONE);
-            SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
-            SDL_RenderClear(r);
-            SDL_SetRenderDrawBlendMode(r, prevBlendMode);
-
-            iterateOverVisibleTiles([&](eTile* const tile) {
-                drawTerrain(tile, true);
-            });
-
-            SDL_SetRenderTarget(r, prevTarget);
-            SDL_RenderSetClipRect(r, nullptr);
-            SDL_SetRenderDrawBlendMode(r, prevBlendMode);
-
-            mTerrainCacheValid = true;
-            mTerrainCacheW = w;
-            mTerrainCacheH = h;
-            mTerrainCacheDX = mDX;
-            mTerrainCacheDY = mDY;
-            mTerrainCacheAnimFrame = mAnimFrame;
-            mTerrainCacheDir = dirId;
-            mTerrainCacheTileSize = tileSizeId;
-        }
-        SDL_RenderCopy(r, mTerrainCacheTex->tex(), nullptr, nullptr);
-    } else {
-        mTerrainCacheValid = false;
-    }
-    const auto terrainCacheDebugEnd = clock::now();
 
     std::vector<eTile *> bridgetTs;
     bool bridgeValid = false;
@@ -1302,7 +1230,6 @@ void GameWidget::paintEvent(ePainter &p)
 
     const auto visibleTilesDebugStart = clock::now();
     int visibleTileCount = 0;
-    int skippedLiveTileCount = 0;
     iterateOverVisibleTiles([&](eTile *const tile)
                             {
         visibleTileCount++;
@@ -1321,42 +1248,6 @@ void GameWidget::paintEvent(ePainter &p)
 
         const auto building = tile->underBuilding();
         const auto buildingType = tile->underBuildingType();
-
-        bool lastTileForCharacters = false;
-        if(dir == eWorldDirection::N) {
-            lastTileForCharacters = dty >= mBoard->height() - 2;
-        } else if(dir == eWorldDirection::E) {
-            lastTileForCharacters = dtx <= 1;
-        } else if(dir == eWorldDirection::S) {
-            lastTileForCharacters = dty <= 1;
-        } else if(dir == eWorldDirection::W) {
-            lastTileForCharacters = dtx >= mBoard->width() - 2;
-        }
-        const auto tileHasCharacters = [](const eTile* const t) {
-            return t && !t->characters().empty();
-        };
-        const bool canSkipLiveTile =
-            useTerrainCache &&
-            (worldTileX != mHoverTX || worldTileY != mHoverTY) &&
-            !building &&
-            !tile->hasRoad() &&
-            !tile->hasFish() &&
-            !tile->hasUrchin() &&
-            tile->missiles().empty() &&
-            tile->banners().empty() &&
-            !tile->soldierBanner() &&
-            !tileHasCharacters(tile->tileRelRotated<eTile>(-3, -3, dir)) &&
-            !tileHasCharacters(tile->topRotated<eTile>(dir)) &&
-            !tileHasCharacters(tile->topLeftRotated<eTile>(dir)) &&
-            !tileHasCharacters(tile->topRightRotated<eTile>(dir)) &&
-            (!lastTileForCharacters ||
-             (!tileHasCharacters(tile) &&
-              !tileHasCharacters(tile->tileRelRotated<eTile>(-1, -1, dir)) &&
-              !tileHasCharacters(tile->tileRelRotated<eTile>(-2, -2, dir))));
-        if(canSkipLiveTile) {
-            skippedLiveTileCount++;
-            return;
-        }
 
         const bool bv = eViewModeHelpers::buildingVisible(mViewMode, building);
         const bool v = building && bv;
@@ -1914,9 +1805,6 @@ void GameWidget::paintEvent(ePainter &p)
         };
 
         if(tile) {
-            const bool drawLiveTerrain =
-                !useTerrainCache ||
-                (worldTileX == mHoverTX && worldTileY == mHoverTY);
             const auto terrainBuilding = tile->underBuilding();
             const auto terrainBuildingType = tile->underBuildingType();
             bool flatSanct = false;
@@ -1937,9 +1825,9 @@ void GameWidget::paintEvent(ePainter &p)
                     const int ttdx = tile->dx();
                     const int ttdy = tile->dy();
                     const auto ae = am.enabled(ttdx, ttdy);
-                    if(drawLiveTerrain && !ae) drawTerrain(tile);
+                    if(!ae) drawTerrain(tile);
                 } else {
-                    if(drawLiveTerrain) drawTerrain(tile);
+                    drawTerrain(tile);
                 }
             }
         }
@@ -2643,50 +2531,41 @@ void GameWidget::paintEvent(ePainter &p)
     static int paintDebugFrames = 0;
     static double stateMs = 0.;
     static double simMs = 0.;
-    static double terrainCacheMs = 0.;
     static double worldMs = 0.;
     static double visibleTilesMs = 0.;
     static double blitMs = 0.;
     static double compassMs = 0.;
     static double totalMs = 0.;
     static int visibleTiles = 0;
-    static int skippedLiveTiles = 0;
 
     paintDebugFrames++;
     stateMs += ms_t(stateDebugEnd - paintDebugStart).count();
     simMs += ms_t(simDebugEnd - simDebugStart).count();
-    terrainCacheMs += ms_t(terrainCacheDebugEnd - terrainCacheDebugStart).count();
     worldMs += ms_t(worldDebugEnd - worldDebugStart).count();
     visibleTilesMs += ms_t(worldDebugEnd - visibleTilesDebugStart).count();
     blitMs += ms_t(blitDebugEnd - blitDebugStart).count();
     compassMs += ms_t(compassDebugEnd - compassDebugStart).count();
     totalMs += ms_t(compassDebugEnd - paintDebugStart).count();
     visibleTiles += visibleTileCount;
-    skippedLiveTiles += skippedLiveTileCount;
     if(paintDebugFrames >= 240) {
         const double inv = 1. / paintDebugFrames;
-        printf("game paint avg %.2f ms | state %.2f sim %.2f terrain %.2f world %.2f tiles %.2f blit %.2f compass %.2f\n",
+        printf("game paint avg %.2f ms | state %.2f sim %.2f world %.2f tiles %.2f blit %.2f compass %.2f\n",
                totalMs * inv,
                stateMs * inv,
                simMs * inv,
-               terrainCacheMs * inv,
                worldMs * inv,
                visibleTilesMs * inv,
                blitMs * inv,
                compassMs * inv);
-        printf("visible tiles avg %.0f skipped live %.0f\n",
-               visibleTiles * inv,
-               skippedLiveTiles * inv);
+        printf("visible tiles avg %.0f\n", visibleTiles * inv);
         paintDebugFrames = 0;
         stateMs = 0.;
         simMs = 0.;
-        terrainCacheMs = 0.;
         worldMs = 0.;
         visibleTilesMs = 0.;
         blitMs = 0.;
         compassMs = 0.;
         totalMs = 0.;
         visibleTiles = 0;
-        skippedLiveTiles = 0;
     }
 }

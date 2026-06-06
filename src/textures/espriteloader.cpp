@@ -1,5 +1,79 @@
 #include "espriteloader.h"
 
+#include <algorithm>
+#include <cstdint>
+#include <vector>
+
+eSpriteLoader::~eSpriteLoader() {
+    buildSpriteAtlas();
+}
+
+void eSpriteLoader::buildSpriteAtlas() {
+    if(mTexs.size() < 2) return;
+
+    SDL_RendererInfo info;
+    if(SDL_GetRendererInfo(mRenderer, &info) != 0) return;
+    int maxSize = std::min(info.max_texture_width, info.max_texture_height);
+    if(maxSize <= 0) maxSize = 4096;
+    maxSize = std::min(maxSize, 8192);
+
+    struct Entry {
+        std::shared_ptr<eTexture> fTex;
+        SDL_Rect fDst;
+    };
+    std::vector<Entry> entries;
+    entries.reserve(mTexs.size());
+
+    int x = 0;
+    int y = 0;
+    int rowH = 0;
+    int atlasW = 0;
+    int atlasH = 0;
+    int64_t area = 0;
+    for(const auto& pair : mTexs) {
+        const auto& tex = pair.second;
+        if(!tex || !tex->tex()) return;
+        const int w = tex->width();
+        const int h = tex->height();
+        if(w <= 0 || h <= 0 || w > maxSize || h > maxSize) return;
+        if(x + w > maxSize) {
+            y += rowH;
+            x = 0;
+            rowH = 0;
+        }
+        if(y + h > maxSize) return;
+        entries.push_back({tex, SDL_Rect{x, y, w, h}});
+        x += w;
+        rowH = std::max(rowH, h);
+        atlasW = std::max(atlasW, x);
+        atlasH = std::max(atlasH, y + rowH);
+        area += int64_t(w) * h;
+    }
+    if(entries.size() < 2 || atlasW <= 0 || atlasH <= 0) return;
+    if(area > 8192ll * 8192ll) return;
+
+    const auto atlas = std::make_shared<eTexture>();
+    if(!atlas->create(mRenderer, atlasW, atlasH)) return;
+
+    const auto prevTarget = SDL_GetRenderTarget(mRenderer);
+    SDL_BlendMode prevBlendMode;
+    SDL_GetRenderDrawBlendMode(mRenderer, &prevBlendMode);
+    atlas->setAsRenderTarget(mRenderer);
+    SDL_SetRenderDrawBlendMode(mRenderer, SDL_BLENDMODE_NONE);
+    SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 0);
+    SDL_RenderClear(mRenderer);
+    SDL_SetRenderDrawBlendMode(mRenderer, prevBlendMode);
+    for(const auto& e : entries) {
+        SDL_RenderCopy(mRenderer, e.fTex->tex(), nullptr, &e.fDst);
+    }
+    SDL_SetRenderTarget(mRenderer, prevTarget);
+    SDL_SetRenderDrawBlendMode(mRenderer, prevBlendMode);
+
+    for(const auto& e : entries) {
+        e.fTex->setParentTexture(e.fDst, atlas);
+    }
+}
+
 void eSpriteLoader::loadTrailer(const int doff,
                                 const int min, const int max,
                                 eTextureCollection& coll, const int dy) {

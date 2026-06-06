@@ -18,6 +18,7 @@ public:
                   SDL_Renderer* const r) :
         mSize(std::to_string(size)), mName(name),
         mSds(sds), mOffs(offs), mRenderer(r) {}
+    ~eSpriteLoader();
 
     void loadTrailer(const int doff,
                      const int min, const int max,
@@ -47,6 +48,7 @@ public:
             const int doff, const int i);
 private:
     void loadTex(const int i);
+    void buildSpriteAtlas();
 
     const std::shared_ptr<eTexture>& getTex(const int i);;
 
