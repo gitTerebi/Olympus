@@ -20,6 +20,7 @@ public:
     using eOpenMessage = std::function<void(eEventData, eMessage)>;
     void initialize(const eOpenMessage& openMsg, const eAction& closeAction = nullptr);
 
+    void show();
     void addMessage(const eEventData& ed, const eMessage& msg, const eDate& date);
     void addSavedMessage(const eEventData& ed, const eMessage& msg,
                          const eDate& date, const bool read);
@@ -37,6 +38,7 @@ protected:
     bool keyPressEvent(const eKeyPressEvent& e) override;
 private:
     void rebuildList();
+    void requestRebuildList();
     void notifyUnread();
 
     struct eLoggedMessage {
@@ -80,6 +82,7 @@ private:
     int mTp = 0;
     std::vector<eLoggedMessage> mMessages;
     int mUnreadCount = 0;
+    bool mListDirty = false;
 };
 
 #endif // E_MESSAGE_LIST_WIDGET_H

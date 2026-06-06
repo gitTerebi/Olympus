@@ -49,7 +49,9 @@
 #include "widgets/efonts.h"
 
 #include <array>
+#include <chrono>
 #include <cmath>
+#include <cstdio>
 #include <map>
 #include <set>
 #include <string>
@@ -73,6 +75,9 @@ private:
 
 void GameWidget::paintEvent(ePainter &p)
 {
+    using clock = std::chrono::steady_clock;
+    using ms_t = std::chrono::duration<double, std::milli>;
+    const auto paintDebugStart = clock::now();
     auto* r = p.renderer();
     const int w = width();
     const int h = height();
@@ -146,150 +151,12 @@ void GameWidget::paintEvent(ePainter &p)
             setPatrolBuilding(nullptr);
         }
     }
-    const auto nowTp = std::chrono::steady_clock::now();
-    double dtMs = 0.0;
-    if(mLastPaintTpValid) {
-        using ms_t = std::chrono::duration<double, std::milli>;
-        dtMs = std::chrono::duration_cast<ms_t>(nowTp - mLastPaintTp).count();
-        if(dtMs > 250.0) dtMs = 250.0;
-    } else {
-        mLastPaintTpValid = true;
-    }
-    mLastPaintTp = nowTp;
-    if(dtMs <= 0.0) dtMs = kBaseRenderMs;
-    mLastDtMs = dtMs;
-    const double dtScale = dtMs / kBaseRenderMs;
+    const auto stateDebugEnd = clock::now();
 
-    mFrame++;
-    const int prevAnimFrame = mAnimFrame;
-    int simTicks = 0;
-    mSimAccumMs += dtMs;
-    while(mSimAccumMs >= kSimStepMs) {
-        mSimAccumMs -= kSimStepMs;
-        simTicks++;
-    }
-    mAnimAccumMs += dtMs;
-    while(mAnimAccumMs >= kAnimStepMs) {
-        mAnimAccumMs -= kAnimStepMs;
-        mAnimFrame++;
-    }
-    mRotateAccumMs += dtMs;
-    while(mRotateAccumMs >= kBaseRenderMs) {
-        mRotateAccumMs -= kBaseRenderMs;
-        mRotateFrame++;
-    }
-    bool updateTips = false;
-    for (int i = 0; i < int(mTips.size()); i++)
-    {
-        const auto &tip = mTips[i];
-        if (mBoard->totalTime() > tip.fLastTick)
-        {
-            tip.fWid->deleteLater();
-            mTips.erase(mTips.begin() + i);
-            updateTips = true;
-            i--;
-        }
-    }
-    if (updateTips)
-        updateTipPositions();
+    const auto simDebugStart = stateDebugEnd;
+    const auto simDebugEnd = simDebugStart;
 
-    // Update toasts - remove expired ones
-    bool updateToasts = false;
-    for (int i = 0; i < int(mToasts.size()); i++)
-    {
-        const auto &toast = mToasts[i];
-        if (mBoard->totalTime() > toast.fExpireTick)
-        {
-            toast.fWid->deleteLater();
-            mToasts.erase(mToasts.begin() + i);
-            updateToasts = true;
-            i--;
-        }
-    }
-    // Promote pending toasts; in turbo promote all at once with no cap
-    {
-        const bool turbo = mSpeedId == sMaxSpeedId;
-        while (!mPendingToasts.empty() && (turbo || mToasts.size() < 3))
-        {
-            eToast toast = mPendingToasts.front();
-            mPendingToasts.pop_front();
-            toast.fExpireTick = mBoard->totalTime() + 14 * eNumbers::sDayLength;
-            createToastWidget(toast);
-            mToasts.push_back(toast);
-            updateToasts = true;
-        }
-    }
-    if (updateToasts)
-        updateToastPositions();
-    if (mSpeedLabel && mFrame > mSpeedLabelHideFrame)
-    {
-        mSpeedLabel->deleteLater();
-        mSpeedLabel = nullptr;
-    }
-    if (mZoomLabel && mFrame > mZoomLabelHideFrame)
-    {
-        mZoomLabel->deleteLater();
-        mZoomLabel = nullptr;
-        updateTipPositions();
-    }
-    if (mAnimFrame != prevAnimFrame)
-        mBoard->incFrame();
-
-    const bool turbo = mSpeedId == sMaxSpeedId;
-    const int iMax = turbo ? 4 : simTicks;
-    for (int i = 0; i < iMax; i++)
-    {
-        mBoard->scheduleDataUpdate();
-        mBoard->updateAppealMapIfNeeded();
-        mBoard->handleFinishedTasks();
-        const bool incTime = !mPaused && !mLocked && !mMsgBox && !hasInfoWidget();
-        if (incTime)
-        {
-            const bool lost = mBoard->episodeLost();
-            if (lost)
-            {
-                const auto w = window();
-                w->episodeLost();
-            }
-            else
-            {
-                mTime += mSpeed;
-                int remaining = mSpeed;
-                while(remaining > 0) {
-                    const int step = std::min(remaining, sSpeeds[2]);
-                    mBoard->incTime(step);
-                    remaining -= step;
-                }
-                mGm->update();
-                if(mDestinationBuilding) tickDestinationPath(mTime);
-            }
-        }
-        mBoard->emptyRubbish();
-        if (!incTime)
-            break;
-    }
-
-    if (!window()->settings().fDisableEdgeScroll)
-    {
-        const int edgeStep = std::max(1, int(std::lround(35.0 * dtScale)));
-        if (mHoverX == 0)
-        {
-            setDX(mDX + edgeStep);
-        }
-        else if (mHoverX == width() - 1)
-        {
-            setDX(mDX - edgeStep);
-        }
-        if (mHoverY == 0)
-        {
-            setDY(mDY + edgeStep);
-        }
-        else if (mHoverY == height() - 1)
-        {
-            setDY(mDY - edgeStep);
-        }
-    }
-    smoothScroll();
+    const auto worldDebugStart = clock::now();
     GameBoardRegisterLock lock(*mBoard);
 
     p.setFont(eFonts::defaultFont(resolution()));
@@ -324,12 +191,26 @@ void GameWidget::paintEvent(ePainter &p)
     {
         updateTerrainTextures();
         mBoard->afterTerrainUpdated();
+        mTerrainCacheValid = false;
     }
 
     const bool terrainEditing = mTem->visible();
     const bool fogOfWar = !terrainEditing && mBoard->fogOfWar();
+    const bool useTerrainCache =
+        mode == eBuildingMode::none &&
+        mViewMode == eViewMode::defaultView &&
+        !terrainEditing &&
+        !mEditorMode &&
+        !mDestinationBuilding &&
+        !mPatrolBuilding &&
+        !mLeftPressed &&
+        !mBoard->duringLavaFlow() &&
+        !mBoard->duringTidalWave() &&
+        !mBoard->duringLandSlide();
     std::set<eMonument*> drawnTempleWoman;
-    const auto drawTerrain = [&](eTile *const tile)
+    int terrainCacheClipOffsetX = 0;
+    const auto drawTerrain = [&](eTile *const tile,
+                                 const bool baseOnly = false)
     {
         const int worldTileX = tile->x();
         const int worldTileY = tile->y();
@@ -422,7 +303,8 @@ void GameWidget::paintEvent(ePainter &p)
                         clipRect.y = -10000;
                         clipRect.h = 20000;
                         const int d = textureFitTileY ? 1 : 0;
-                        clipRect.x = mDX + (viewTileX - viewTileY - d) * mTileW / 2;
+                        clipRect.x = terrainCacheClipOffsetX + mDX +
+                                     (viewTileX - viewTileY - d) * mTileW / 2;
                         clipRect.w = textureFitTileX && textureFitTileY ? mTileW : mTileW / 2;
                         SDL_RenderSetClipRect(p.renderer(), &clipRect);
                     }
@@ -441,7 +323,7 @@ void GameWidget::paintEvent(ePainter &p)
             bool repairCm = false;
             bool patrolCm = false;
             bool editorHover = false;
-            if (terrainEditing)
+            if (!baseOnly && terrainEditing)
             {
                 editorHover = eVectorHelpers::contains(mHoverTiles, tile) ||
                               eVectorHelpers::contains(mInflTiles, tile);
@@ -450,20 +332,22 @@ void GameWidget::paintEvent(ePainter &p)
                     tex->setColorMod(255, 175, 175);
                 }
             }
-            const bool lavaFlows = mBoard->duringLavaFlow();
+            const bool lavaFlows = !baseOnly && mBoard->duringLavaFlow();
             const bool hasLava = terr == eTerrain::lava;
             if (lavaFlows && hasLava)
             {
                 lavaCm = true;
                 tex->setColorMod(255, 0, 0);
             }
-            else if (mDestinationBuilding && !mDestinationPath.empty() &&
+            else if (!baseOnly &&
+                     mDestinationBuilding && !mDestinationPath.empty() &&
                      eVectorHelpers::contains(mDestinationPath, tile))
             {
                 patrolCm = true;
                 tex->setColorMod(175, 255, 175);
             }
-            else if (mPatrolBuilding &&
+            else if (!baseOnly &&
+                     mPatrolBuilding &&
                      (!mWaypointOutPath.empty() || !mWaypointOutPath1.empty()))
             {
                 const bool bothDirections = mPatrolBuilding->bothDirections();
@@ -485,10 +369,11 @@ void GameWidget::paintEvent(ePainter &p)
                     }
                 }
             }
-            else if ((!terrainEditing &&
+            else if (!baseOnly &&
+                     ((!terrainEditing &&
                       !static_cast<bool>(terr & eTerrain::stones)) ||
                      (terrainEditing &&
-                      mTem->brushType() == eBrushType::apply))
+                      mTem->brushType() == eBrushType::apply)))
             {
                 const auto building = tile->underBuilding();
                 if (building)
@@ -503,7 +388,7 @@ void GameWidget::paintEvent(ePainter &p)
                     tex->setColorMod(255, 175, 175);
             }
 
-            if (mEditorMode && !eraseCm && !patrolCm)
+            if (!baseOnly && mEditorMode && !eraseCm && !patrolCm)
             {
                 const auto building = tile->underBuilding();
                 if (building)
@@ -536,7 +421,7 @@ void GameWidget::paintEvent(ePainter &p)
                 }
             }
 
-            if (mode == eBuildingMode::repair)
+            if (!baseOnly && mode == eBuildingMode::repair)
             {
                 repairCm = inRepair(worldTileX, worldTileY);
                 if (repairCm)
@@ -544,7 +429,7 @@ void GameWidget::paintEvent(ePainter &p)
             }
 
             bool defaultHover = false;
-            if (mode == eBuildingMode::none && !terrainEditing)
+            if (!baseOnly && mode == eBuildingMode::none && !terrainEditing)
             {
                 defaultHover = worldTileX == mHoverTX && worldTileY == mHoverTY;
                 const auto building = tile->underBuilding();
@@ -605,6 +490,60 @@ void GameWidget::paintEvent(ePainter &p)
             }
         }
     };
+
+    const auto terrainCacheDebugStart = clock::now();
+    if(useTerrainCache) {
+        const int dirId = static_cast<int>(dir);
+        const int tileSizeId = static_cast<int>(mTileSize);
+        const bool cacheDirty =
+            !mTerrainCacheValid ||
+            !mTerrainCacheTex ||
+            mTerrainCacheW != w ||
+            mTerrainCacheH != h ||
+            mTerrainCacheDX != mDX ||
+            mTerrainCacheDY != mDY ||
+            mTerrainCacheAnimFrame != mAnimFrame ||
+            mTerrainCacheDir != dirId ||
+            mTerrainCacheTileSize != tileSizeId;
+        if(cacheDirty) {
+            if(!mTerrainCacheTex ||
+               mTerrainCacheTex->width() != w ||
+               mTerrainCacheTex->height() != h) {
+                mTerrainCacheTex = std::make_shared<eTexture>();
+                mTerrainCacheTex->create(r, w, h);
+            }
+
+            const auto prevTarget = SDL_GetRenderTarget(r);
+            SDL_BlendMode prevBlendMode;
+            SDL_GetRenderDrawBlendMode(r, &prevBlendMode);
+            mTerrainCacheTex->setAsRenderTarget(r);
+            SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_NONE);
+            SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
+            SDL_RenderClear(r);
+            SDL_SetRenderDrawBlendMode(r, prevBlendMode);
+
+            iterateOverVisibleTiles([&](eTile* const tile) {
+                drawTerrain(tile, true);
+            });
+
+            SDL_SetRenderTarget(r, prevTarget);
+            SDL_RenderSetClipRect(r, nullptr);
+            SDL_SetRenderDrawBlendMode(r, prevBlendMode);
+
+            mTerrainCacheValid = true;
+            mTerrainCacheW = w;
+            mTerrainCacheH = h;
+            mTerrainCacheDX = mDX;
+            mTerrainCacheDY = mDY;
+            mTerrainCacheAnimFrame = mAnimFrame;
+            mTerrainCacheDir = dirId;
+            mTerrainCacheTileSize = tileSizeId;
+        }
+        SDL_RenderCopy(r, mTerrainCacheTex->tex(), nullptr, nullptr);
+    } else {
+        mTerrainCacheValid = false;
+    }
+    const auto terrainCacheDebugEnd = clock::now();
 
     std::vector<eTile *> bridgetTs;
     bool bridgeValid = false;
@@ -1361,8 +1300,12 @@ void GameWidget::paintEvent(ePainter &p)
     };
 
 
+    const auto visibleTilesDebugStart = clock::now();
+    int visibleTileCount = 0;
+    int skippedLiveTileCount = 0;
     iterateOverVisibleTiles([&](eTile *const tile)
                             {
+        visibleTileCount++;
         const int worldTileX = tile->x();
         const int worldTileY = tile->y();
         int viewTileX;
@@ -1378,6 +1321,42 @@ void GameWidget::paintEvent(ePainter &p)
 
         const auto building = tile->underBuilding();
         const auto buildingType = tile->underBuildingType();
+
+        bool lastTileForCharacters = false;
+        if(dir == eWorldDirection::N) {
+            lastTileForCharacters = dty >= mBoard->height() - 2;
+        } else if(dir == eWorldDirection::E) {
+            lastTileForCharacters = dtx <= 1;
+        } else if(dir == eWorldDirection::S) {
+            lastTileForCharacters = dty <= 1;
+        } else if(dir == eWorldDirection::W) {
+            lastTileForCharacters = dtx >= mBoard->width() - 2;
+        }
+        const auto tileHasCharacters = [](const eTile* const t) {
+            return t && !t->characters().empty();
+        };
+        const bool canSkipLiveTile =
+            useTerrainCache &&
+            (worldTileX != mHoverTX || worldTileY != mHoverTY) &&
+            !building &&
+            !tile->hasRoad() &&
+            !tile->hasFish() &&
+            !tile->hasUrchin() &&
+            tile->missiles().empty() &&
+            tile->banners().empty() &&
+            !tile->soldierBanner() &&
+            !tileHasCharacters(tile->tileRelRotated<eTile>(-3, -3, dir)) &&
+            !tileHasCharacters(tile->topRotated<eTile>(dir)) &&
+            !tileHasCharacters(tile->topLeftRotated<eTile>(dir)) &&
+            !tileHasCharacters(tile->topRightRotated<eTile>(dir)) &&
+            (!lastTileForCharacters ||
+             (!tileHasCharacters(tile) &&
+              !tileHasCharacters(tile->tileRelRotated<eTile>(-1, -1, dir)) &&
+              !tileHasCharacters(tile->tileRelRotated<eTile>(-2, -2, dir))));
+        if(canSkipLiveTile) {
+            skippedLiveTileCount++;
+            return;
+        }
 
         const bool bv = eViewModeHelpers::buildingVisible(mViewMode, building);
         const bool v = building && bv;
@@ -1935,6 +1914,9 @@ void GameWidget::paintEvent(ePainter &p)
         };
 
         if(tile) {
+            const bool drawLiveTerrain =
+                !useTerrainCache ||
+                (worldTileX == mHoverTX && worldTileY == mHoverTY);
             const auto terrainBuilding = tile->underBuilding();
             const auto terrainBuildingType = tile->underBuildingType();
             bool flatSanct = false;
@@ -1955,9 +1937,9 @@ void GameWidget::paintEvent(ePainter &p)
                     const int ttdx = tile->dx();
                     const int ttdy = tile->dy();
                     const auto ae = am.enabled(ttdx, ttdy);
-                    if(!ae) drawTerrain(tile);
+                    if(drawLiveTerrain && !ae) drawTerrain(tile);
                 } else {
-                    drawTerrain(tile);
+                    if(drawLiveTerrain) drawTerrain(tile);
                 }
             }
         }
@@ -2613,9 +2595,10 @@ void GameWidget::paintEvent(ePainter &p)
         SDL_RenderDrawRect(r, &box);
     }
 
+    const auto worldDebugEnd = clock::now();
+    const auto blitDebugStart = clock::now();
     SDL_SetRenderTarget(r, nullptr);
     SDL_RenderSetClipRect(r, nullptr);
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     const int srcW = std::round(w / mZoom);
     const int srcH = std::round(h / mZoom);
     const int srcX = (w - srcW) / 2;
@@ -2626,27 +2609,84 @@ void GameWidget::paintEvent(ePainter &p)
         r, mWorldTex->tex(), srcRect, dstRect,
         mWorldTex->width(), mWorldTex->height());
     SDL_SetRenderTarget(r, nullptr);
-    if(postprocessed) {
-        SDL_RenderFlush(r);
-    } else {
+    if(!postprocessed) {
         SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
     }
+    const auto blitDebugEnd = clock::now();
 
+    const auto compassDebugStart = clock::now();
     {
         const char* letters[] = {"N", "W", "S", "E"};
         const int idx = static_cast<int>(dir);
-        const auto letter = letters[idx % 4];
-        const auto tex = std::make_shared<eTexture>();
-        auto* font = eFonts::defaultFont(45);
-        if(font) {
-            tex->loadText(r, letter, eFontColor::light, *font);
-            SDL_SetTextureBlendMode(tex->tex(), SDL_BLENDMODE_BLEND);
-            tex->setAlpha(140);
+        if(!mCompassTex || mCompassDir != idx) {
+            const auto letter = letters[idx % 4];
+            const auto tex = std::make_shared<eTexture>();
+            auto* font = eFonts::defaultFont(45);
+            if(font) {
+                tex->loadText(r, letter, eFontColor::light, *font);
+                SDL_SetTextureBlendMode(tex->tex(), SDL_BLENDMODE_BLEND);
+                tex->setAlpha(140);
+                mCompassTex = tex;
+                mCompassDir = idx;
+            }
+        }
+        if(mCompassTex) {
             const int sideW = mGm ? mGm->width() : 0;
-        const int px = w - sideW - tex->width() - 20;
+            const int px = w - sideW - mCompassTex->width() - 20;
             const int topH = mTopBar ? mTopBar->height() : 0;
             const int py = topH + 10;
-            tex->render(r, px, py);
+            mCompassTex->render(r, px, py);
         }
+    }
+    const auto compassDebugEnd = clock::now();
+
+    static int paintDebugFrames = 0;
+    static double stateMs = 0.;
+    static double simMs = 0.;
+    static double terrainCacheMs = 0.;
+    static double worldMs = 0.;
+    static double visibleTilesMs = 0.;
+    static double blitMs = 0.;
+    static double compassMs = 0.;
+    static double totalMs = 0.;
+    static int visibleTiles = 0;
+    static int skippedLiveTiles = 0;
+
+    paintDebugFrames++;
+    stateMs += ms_t(stateDebugEnd - paintDebugStart).count();
+    simMs += ms_t(simDebugEnd - simDebugStart).count();
+    terrainCacheMs += ms_t(terrainCacheDebugEnd - terrainCacheDebugStart).count();
+    worldMs += ms_t(worldDebugEnd - worldDebugStart).count();
+    visibleTilesMs += ms_t(worldDebugEnd - visibleTilesDebugStart).count();
+    blitMs += ms_t(blitDebugEnd - blitDebugStart).count();
+    compassMs += ms_t(compassDebugEnd - compassDebugStart).count();
+    totalMs += ms_t(compassDebugEnd - paintDebugStart).count();
+    visibleTiles += visibleTileCount;
+    skippedLiveTiles += skippedLiveTileCount;
+    if(paintDebugFrames >= 240) {
+        const double inv = 1. / paintDebugFrames;
+        printf("game paint avg %.2f ms | state %.2f sim %.2f terrain %.2f world %.2f tiles %.2f blit %.2f compass %.2f\n",
+               totalMs * inv,
+               stateMs * inv,
+               simMs * inv,
+               terrainCacheMs * inv,
+               worldMs * inv,
+               visibleTilesMs * inv,
+               blitMs * inv,
+               compassMs * inv);
+        printf("visible tiles avg %.0f skipped live %.0f\n",
+               visibleTiles * inv,
+               skippedLiveTiles * inv);
+        paintDebugFrames = 0;
+        stateMs = 0.;
+        simMs = 0.;
+        terrainCacheMs = 0.;
+        worldMs = 0.;
+        visibleTilesMs = 0.;
+        blitMs = 0.;
+        compassMs = 0.;
+        totalMs = 0.;
+        visibleTiles = 0;
+        skippedLiveTiles = 0;
     }
 }

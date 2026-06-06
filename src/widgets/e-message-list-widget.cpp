@@ -14,6 +14,9 @@
 #include "emainwindow.h"
 #include "message-action-refresh.h"
 
+#include <chrono>
+#include <cstdio>
+
 void eMessageListWidget::initialize(const eOpenMessage &openMsg, const eAction &closeAction)
 {
     mOpenMsg = openMsg;
@@ -75,6 +78,13 @@ void eMessageListWidget::initialize(const eOpenMessage &openMsg, const eAction &
     mViewport->setPage(mContentArea);
 }
 
+void eMessageListWidget::show()
+{
+    if (mListDirty)
+        rebuildList();
+    eModal::show();
+}
+
 void eMessageListWidget::markAllRead()
 {
     for (int i = 0; i < static_cast<int>(mMessages.size()); i++)
@@ -85,7 +95,7 @@ void eMessageListWidget::markAllRead()
     }
     mUnreadCount = 0;
     notifyUnread();
-    rebuildList();
+    requestRebuildList();
 }
 
 void eMessageListWidget::notifyUnread()
@@ -136,7 +146,7 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
     }
     mUnreadCount++;
     notifyUnread();
-    rebuildList();
+    requestRebuildList();
 }
 
 void eMessageListWidget::addSavedMessage(const eEventData &ed,
@@ -163,13 +173,21 @@ void eMessageListWidget::addSavedMessage(const eEventData &ed,
     }
     if(!read) mUnreadCount++;
     notifyUnread();
-    rebuildList();
+    requestRebuildList();
+}
+
+void eMessageListWidget::requestRebuildList()
+{
+    mListDirty = true;
+    if (visible())
+        rebuildList();
 }
 
 void eMessageListWidget::rebuildList()
 {
     if (!mViewport)
         return;
+    const auto start = std::chrono::steady_clock::now();
 
     const auto children = mContentArea->children();
     for (const auto c : children)
@@ -244,6 +262,13 @@ void eMessageListWidget::rebuildList()
     mContentArea->fitContent();
     mContentArea->setWidth(w);
     mViewport->setPage(mContentArea);
+    mListDirty = false;
+
+    const auto end = std::chrono::steady_clock::now();
+    const auto ms = std::chrono::duration<double, std::milli>(end - start).count();
+    if (ms > 0.5)
+        printf("message list rebuild %.2f ms count=%zu visible=%d\n",
+               ms, mMessages.size(), visible());
 }
 
 bool eMessageListWidget::keyPressEvent(const eKeyPressEvent &e)

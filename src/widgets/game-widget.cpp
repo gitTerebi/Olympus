@@ -1965,15 +1965,6 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
     }
     if (updateSmoothScrollKey(k, true))
         return true;
-    if(k == SDL_Scancode::SDL_SCANCODE_LEFTBRACKET ||
-       k == SDL_Scancode::SDL_SCANCODE_F11) {
-        adjustWorldPostprocessSharpen(-0.25f);
-        return true;
-    } else if(k == SDL_Scancode::SDL_SCANCODE_RIGHTBRACKET ||
-              k == SDL_Scancode::SDL_SCANCODE_F12) {
-        adjustWorldPostprocessSharpen(0.25f);
-        return true;
-    }
     if (k == hotkeys.fHotkeySpeedUp ||
         k == SDL_Scancode::SDL_SCANCODE_KP_PLUS)
     {
@@ -2330,8 +2321,28 @@ void GameWidget::smoothScroll()
     updateSmoothScrollKeysPressed();
     const double scale = mLastDtMs / kBaseRenderMs;
     const double d = mKeyScrollSpeed * scale;
-    const int dx = int(std::lround(mSmoothScrollX * d));
-    const int dy = int(std::lround(mSmoothScrollY * d));
+
+    const auto scrollDelta = [](const double delta, double& fine) {
+        const int whole = int(delta);
+        fine += delta - whole;
+        const int extra = int(fine);
+        fine -= extra;
+        return whole + extra;
+    };
+
+    int dx = 0;
+    int dy = 0;
+    if (mSmoothScrollX) {
+        dx = scrollDelta(mSmoothScrollX * d, mSmoothScrollFineX);
+    } else {
+        mSmoothScrollFineX = 0.;
+    }
+    if (mSmoothScrollY) {
+        dy = scrollDelta(mSmoothScrollY * d, mSmoothScrollFineY);
+    } else {
+        mSmoothScrollFineY = 0.;
+    }
+
     if (dx)
         setDX(mDX + dx);
     if (dy)
@@ -2353,6 +2364,8 @@ void GameWidget::stopSmoothScroll()
 {
     mSmoothScrollX = 0;
     mSmoothScrollY = 0;
+    mSmoothScrollFineX = 0.;
+    mSmoothScrollFineY = 0.;
 }
 
 bool GameWidget::mousePressEvent(const eMouseEvent &e)
@@ -2957,6 +2970,10 @@ void GameWidget::renderTargetsReset()
 {
     eWidget::renderTargetsReset();
     mWorldTex.reset();
+    mTerrainCacheTex.reset();
+    mTerrainCacheValid = false;
+    mCompassTex.reset();
+    mCompassDir = -1;
     initializeNumbers();
 }
 
@@ -3622,4 +3639,131 @@ void GameWidget::setMessageListWidget(eMessageListWidget* const w)
 {
     mMsgListWidget = w;
     if(mBoard) w->setBoard(mBoard);
+}
+
+void GameWidget::updateBeforePaint()
+{
+    if(!mBoard) return;
+
+    const auto nowTp = std::chrono::steady_clock::now();
+    double dtMs = 0.0;
+    if(mLastPaintTpValid) {
+        using ms_t = std::chrono::duration<double, std::milli>;
+        dtMs = std::chrono::duration_cast<ms_t>(nowTp - mLastPaintTp).count();
+        if(dtMs > 250.0) dtMs = 250.0;
+    } else {
+        mLastPaintTpValid = true;
+    }
+    mLastPaintTp = nowTp;
+    if(dtMs <= 0.0) dtMs = kBaseRenderMs;
+    mLastDtMs = dtMs;
+    const double dtScale = dtMs / kBaseRenderMs;
+
+    mFrame++;
+    const int prevAnimFrame = mAnimFrame;
+    int simTicks = 0;
+    mSimAccumMs += dtMs;
+    while(mSimAccumMs >= kSimStepMs) {
+        mSimAccumMs -= kSimStepMs;
+        simTicks++;
+    }
+    mAnimAccumMs += dtMs;
+    while(mAnimAccumMs >= kAnimStepMs) {
+        mAnimAccumMs -= kAnimStepMs;
+        mAnimFrame++;
+    }
+    mRotateAccumMs += dtMs;
+    while(mRotateAccumMs >= kBaseRenderMs) {
+        mRotateAccumMs -= kBaseRenderMs;
+        mRotateFrame++;
+    }
+
+    bool updateTips = false;
+    for(int i = 0; i < int(mTips.size()); i++) {
+        const auto& tip = mTips[i];
+        if(mBoard->totalTime() > tip.fLastTick) {
+            tip.fWid->deleteLater();
+            mTips.erase(mTips.begin() + i);
+            updateTips = true;
+            i--;
+        }
+    }
+    if(updateTips) updateTipPositions();
+
+    bool updateToasts = false;
+    for(int i = 0; i < int(mToasts.size()); i++) {
+        const auto& toast = mToasts[i];
+        if(mBoard->totalTime() > toast.fExpireTick) {
+            toast.fWid->deleteLater();
+            mToasts.erase(mToasts.begin() + i);
+            updateToasts = true;
+            i--;
+        }
+    }
+    {
+        const bool turbo = mSpeedId == sMaxSpeedId;
+        while(!mPendingToasts.empty() && (turbo || mToasts.size() < 3)) {
+            eToast toast = mPendingToasts.front();
+            mPendingToasts.pop_front();
+            toast.fExpireTick = mBoard->totalTime() + 14 * eNumbers::sDayLength;
+            createToastWidget(toast);
+            mToasts.push_back(toast);
+            updateToasts = true;
+        }
+    }
+    if(updateToasts) updateToastPositions();
+
+    if(mSpeedLabel && mFrame > mSpeedLabelHideFrame) {
+        mSpeedLabel->deleteLater();
+        mSpeedLabel = nullptr;
+    }
+    if(mZoomLabel && mFrame > mZoomLabelHideFrame) {
+        mZoomLabel->deleteLater();
+        mZoomLabel = nullptr;
+        updateTipPositions();
+    }
+    if(mAnimFrame != prevAnimFrame) mBoard->incFrame();
+
+    const bool turbo = mSpeedId == sMaxSpeedId;
+    const int iMax = turbo ? 4 : simTicks;
+    for(int i = 0; i < iMax; i++) {
+        mBoard->scheduleDataUpdate();
+        mBoard->updateAppealMapIfNeeded();
+        mBoard->handleFinishedTasks();
+        const bool incTime = !mPaused && !mLocked && !mMsgBox && !hasInfoWidget();
+        if(incTime) {
+            const bool lost = mBoard->episodeLost();
+            if(lost) {
+                const auto w = window();
+                w->episodeLost();
+            } else {
+                mTime += mSpeed;
+                int remaining = mSpeed;
+                while(remaining > 0) {
+                    const int step = std::min(remaining, sSpeeds[2]);
+                    mBoard->incTime(step);
+                    remaining -= step;
+                }
+                mGm->update();
+                if(mDestinationBuilding) tickDestinationPath(mTime);
+            }
+        }
+        mBoard->emptyRubbish();
+        if(!incTime) break;
+    }
+
+    if(!window()->settings().fDisableEdgeScroll) {
+        const int edgeStep = std::max(1, int(std::lround(35.0 * dtScale)));
+        if(mHoverX == 0) {
+            setDX(mDX + edgeStep);
+        } else if(mHoverX == width() - 1) {
+            setDX(mDX - edgeStep);
+        }
+        if(mHoverY == 0) {
+            setDY(mDY + edgeStep);
+        } else if(mHoverY == height() - 1) {
+            setDY(mDY - edgeStep);
+        }
+    }
+    smoothScroll();
 }

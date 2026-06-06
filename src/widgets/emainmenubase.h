@@ -7,9 +7,14 @@ class eMainMenuBase : public eLabel {
 public:
     using eLabel::eLabel;
 
+    void renderTargetsReset() override;
     void initialize();
 protected:
     void paintEvent(ePainter& p) override;
+private:
+    void updateBackgroundCache(ePainter& p);
+
+    std::shared_ptr<eTexture> mBackgroundCache;
 };
 
 #endif // EMAINMENUBASE_H
