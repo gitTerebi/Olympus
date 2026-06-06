@@ -1,7 +1,7 @@
-﻿#include "e-board-player.h"
+#include "e-board-player.h"
 
-#include "gameEvents/requests/fulfill-request-event.h"
-#include "gameEvents/requests/get-tribute-event.h"
+#include "gameEvents/requests/send-resources-to-city-event.h"
+#include "gameEvents/requests/receive-tribute-event.h"
 
 #include "game-board.h"
 #include "eevent.h"
@@ -111,8 +111,8 @@ void eBoardPlayer::removeGodQuest(eGodQuestEvent* const q) {
     eVectorHelpers::remove(mGodQuests, q);
 }
 
-void eBoardPlayer::addCityRequest(FulfillRequestEvent* const q) {
-    const auto sameRequest = [q](const FulfillRequestEvent* r) {
+void eBoardPlayer::addCityRequest(SendResourcesToCityEvent* const q) {
+    const auto sameRequest = [q](const SendResourcesToCityEvent* r) {
         return r->requestId() == q->requestId();
     };
     if(std::find_if(mCityRequests.begin(), mCityRequests.end(),
@@ -121,8 +121,8 @@ void eBoardPlayer::addCityRequest(FulfillRequestEvent* const q) {
     }
 }
 
-void eBoardPlayer::removeCityRequest(FulfillRequestEvent* const q) {
-    const auto sameRequest = [q](const FulfillRequestEvent* r) {
+void eBoardPlayer::removeCityRequest(SendResourcesToCityEvent* const q) {
+    const auto sameRequest = [q](const SendResourcesToCityEvent* r) {
         return r->requestId() == q->requestId();
     };
     mCityRequests.erase(std::remove_if(mCityRequests.begin(),
@@ -131,21 +131,21 @@ void eBoardPlayer::removeCityRequest(FulfillRequestEvent* const q) {
                         mCityRequests.end());
 }
 
-void eBoardPlayer::addTributeRequest(GetTributeEvent* const q) {
+void eBoardPlayer::addTributeRequest(ReceiveTributeEvent* const q) {
     if(!eVectorHelpers::contains(mTributeRequests, q)) {
         mTributeRequests.push_back(q);
     }
 }
 
-void eBoardPlayer::removeTributeRequest(GetTributeEvent* const q) {
+void eBoardPlayer::removeTributeRequest(ReceiveTributeEvent* const q) {
     eVectorHelpers::remove(mTributeRequests, q);
 }
 
-void eBoardPlayer::addCityTroopsRequest(eTroopsRequestEvent* const q) {
+void eBoardPlayer::addCityTroopsRequest(SendTroopsEvent* const q) {
     mCityTroopsRequests.push_back(q);
 }
 
-void eBoardPlayer::removeCityTroopsRequest(eTroopsRequestEvent* const q) {
+void eBoardPlayer::removeCityTroopsRequest(SendTroopsEvent* const q) {
     eVectorHelpers::remove(mCityTroopsRequests, q);
 }
 

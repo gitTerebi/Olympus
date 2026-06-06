@@ -1,4 +1,4 @@
-﻿#include "etroopsrequestevent.h"
+#include "send-troops-event.h"
 
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -7,16 +7,16 @@
 #include "emessages.h"
 #include "fileIO/esavearchive.h"
 
-#include "etroopsrequestfulfilledevent.h"
+#include "troops-sent-event.h"
 
-eTroopsRequestEvent::eTroopsRequestEvent(
+SendTroopsEvent::SendTroopsEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    eGameEvent(cid, eGameEventType::troopsRequest, branch, board),
+    eGameEvent(cid, eGameEventType::sendTroops, branch, board),
     eCityEventValue(board, [this](WorldCity& city) {
         switch(mType) {
-        case eTroopsRequestEventType::cityUnderAttack: {
+        case SendTroopsEventType::cityUnderAttack: {
             if(city.isVassal()) {
                 return true;
             } else if(city.isColony()) {
@@ -27,14 +27,14 @@ eTroopsRequestEvent::eTroopsRequestEvent(
                 return true;
             }
         } break;
-        case eTroopsRequestEventType::cityAttacksRival: {
+        case SendTroopsEventType::cityAttacksRival: {
             if(city.isVassal()) {
                 return true;
             } else if(city.isAlly()) { // ally
                 return true;
             }
         } break;
-        case eTroopsRequestEventType::greekCityTerrorized: {
+        case SendTroopsEventType::greekCityTerrorized: {
             if(city.isVassal()) {
                 return true;
             } else if(city.isColony()) {
@@ -66,13 +66,13 @@ eTroopsRequestEvent::eTroopsRequestEvent(
     addTrigger(mLostBattleTrigger);
 }
 
-eTroopsRequestEvent::~eTroopsRequestEvent() {
+SendTroopsEvent::~SendTroopsEvent() {
     const auto board = gameBoard();
     if(board) board->removeCityTroopsRequest(this);
 }
 
-void eTroopsRequestEvent::set(
-        eTroopsRequestEvent& src,
+void SendTroopsEvent::set(
+        SendTroopsEvent& src,
         const int postpone,
         const bool finish) {
     mType = src.mType;
@@ -85,22 +85,22 @@ void eTroopsRequestEvent::set(
     mFinish = finish;
 }
 
-std::string eTroopsRequestEvent::longName() const {
+std::string SendTroopsEvent::longName() const {
     return eLanguage::zeusText(290, 6);
 }
 
-void eTroopsRequestEvent::serializeFields(eSaveArchive& ar) {
+void SendTroopsEvent::serializeFields(eSaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCityEventValue::serialize(ar, *gameBoard());
     eMonsterEventValue::serialize(ar);
     eAttackingCityEventValue::serialize(ar, gameBoard());
-    ar.field("type", mType, eTroopsRequestEventType::cityUnderAttack);
-    ar.field("effect", mEffect, eTroopsRequestEventEffect::unaffected);
+    ar.field("type", mType, SendTroopsEventType::cityUnderAttack);
+    ar.field("effect", mEffect, SendTroopsEventEffect::unaffected);
     ar.field("finish", mFinish, false);
     ar.field("postpone", mPostpone, 0);
 }
 
-void eTroopsRequestEvent::trigger() {
+void SendTroopsEvent::trigger() {
     chooseCity();
     if(!mCity) return;
     const auto board = gameBoard();
@@ -132,10 +132,10 @@ void eTroopsRequestEvent::trigger() {
 
     ed.fType = eMessageEventType::troopsRequest;
     if(mPostpone == 0) { // initial
-        board->addCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
+        board->addCityTroopsRequest(mainEvent<SendTroopsEvent>());
     }
     switch(mType) {
-    case eTroopsRequestEventType::cityUnderAttack: {
+    case SendTroopsEventType::cityUnderAttack: {
         if(mCity->isVassal()) {
             if(mPostpone == 0) { // initial
                 board->event(eEvent::troopsRequestVassalInitial, ed);
@@ -170,7 +170,7 @@ void eTroopsRequestEvent::trigger() {
             }
         }
     } break;
-    case eTroopsRequestEventType::cityAttacksRival: {
+    case SendTroopsEventType::cityAttacksRival: {
         if(mCity->isVassal()) {
             if(mPostpone == 0) { // initial
                 board->event(eEvent::troopsRequestAttackVassalInitial, ed);
@@ -189,7 +189,7 @@ void eTroopsRequestEvent::trigger() {
             }
         }
     } break;
-    case eTroopsRequestEventType::greekCityTerrorized: {
+    case SendTroopsEventType::greekCityTerrorized: {
         ed.fMonster = mMonster;
         if(mCity->isVassal()) {
             if(mPostpone == 0) { // initial
@@ -228,7 +228,7 @@ void eTroopsRequestEvent::trigger() {
     }
 }
 
-void eTroopsRequestEvent::respond(const int response, eCityId)
+void SendTroopsEvent::respond(const int response, eCityId)
 {
     switch(static_cast<eResponse>(response)) {
     case eResponse::dispatchNow:
@@ -243,11 +243,11 @@ void eTroopsRequestEvent::respond(const int response, eCityId)
     }
 }
 
-void eTroopsRequestEvent::postponeResponse()
+void SendTroopsEvent::postponeResponse()
 {
     const auto board = gameBoard();
     if(!board) return;
-    const auto e = e::make_shared<eTroopsRequestEvent>(
+    const auto e = e::make_shared<SendTroopsEvent>(
                        cityId(), eGameEventBranch::child, *board);
     e->set(*this, mPostpone + 1);
     const auto date = board->date() + 30*warningMonths();
@@ -255,12 +255,12 @@ void eTroopsRequestEvent::postponeResponse()
     addConsequence(e);
 }
 
-void eTroopsRequestEvent::refuse()
+void SendTroopsEvent::refuse()
 {
     const auto board = gameBoard();
     if(!board) return;
-    board->removeCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
-    const auto e = e::make_shared<eTroopsRequestEvent>(
+    board->removeCityTroopsRequest(mainEvent<SendTroopsEvent>());
+    const auto e = e::make_shared<SendTroopsEvent>(
                        cityId(), eGameEventBranch::child, *board);
     e->set(*this, 5, true);
     const auto date = board->date() + 31;
@@ -268,19 +268,19 @@ void eTroopsRequestEvent::refuse()
     addConsequence(e);
 }
 
-void eTroopsRequestEvent::dispatch(const eAction& close) {
+void SendTroopsEvent::dispatch(const eAction& close) {
     const auto board = gameBoard();
     if(!board) return;
     std::vector<stdsptr<WorldCity>> exclude = {mCity};
-    if(mType != eTroopsRequestEventType::greekCityTerrorized) {
+    if(mType != SendTroopsEventType::greekCityTerrorized) {
         exclude.push_back(mAttackingCity);
     }
     board->requestForces([this, board, close](
                          const eEnlistedForces& f,
                          const eResourceType) {
         board->enlistForces(f);
-        board->removeCityTroopsRequest(mainEvent<eTroopsRequestEvent>());
-        const auto e = e::make_shared<eTroopsRequestFulfilledEvent>(
+        board->removeCityTroopsRequest(mainEvent<SendTroopsEvent>());
+        const auto e = e::make_shared<TroopsSentEvent>(
                            cityId(), eGameEventBranch::child, *board);
         const auto currentDate = board->date();
         e->initialize(f, mCity, mAttackingCity);
@@ -292,7 +292,7 @@ void eTroopsRequestEvent::dispatch(const eAction& close) {
     }, {}, exclude);
 }
 
-void eTroopsRequestEvent::won() {
+void SendTroopsEvent::won() {
     const auto board = gameBoard();
     if(!board) return;
     const auto pid = playerId();
@@ -305,7 +305,7 @@ void eTroopsRequestEvent::won() {
     eTroopsRequestedMessages* rrmsgs = nullptr;
 
     switch(mType) {
-    case eTroopsRequestEventType::cityUnderAttack: {
+    case SendTroopsEventType::cityUnderAttack: {
         if(mCity->isVassal()) {
             rrmsgs = &msgs.fVassalTroopsRequest;
         } else if(mCity->isColony()) {
@@ -317,7 +317,7 @@ void eTroopsRequestEvent::won() {
         }
         board->event(eEvent::troopsRequestAttackAverted, ed);
     } break;
-    case eTroopsRequestEventType::cityAttacksRival: {
+    case SendTroopsEventType::cityAttacksRival: {
         eEvent event;
         if(mCity->isVassal()) {
             event = eEvent::vassalConqueresRival;
@@ -329,19 +329,19 @@ void eTroopsRequestEvent::won() {
         board->event(event, ed);
 
         switch(mEffect) {
-        case eTroopsRequestEventEffect::unaffected: {
+        case SendTroopsEventEffect::unaffected: {
         } break;
-        case eTroopsRequestEventEffect::destroyed: {
+        case SendTroopsEventEffect::destroyed: {
             mAttackingCity->setVisible(false);
         } break;
-        case eTroopsRequestEventEffect::conquered: {
+        case SendTroopsEventEffect::conquered: {
             mAttackingCity->setRelationship(eForeignCityRelationship::ally);
             const auto pid = mAttackingCity->playerId();
             board->setPlayerTeam(pid, eTeamId::team0);
         } break;
         }
     } break;
-    case eTroopsRequestEventType::greekCityTerrorized: {
+    case SendTroopsEventType::greekCityTerrorized: {
         ed.fMonster = mMonster;
         if(mCity->isVassal()) {
             rrmsgs = &msgs.fVassalTroopsMonsterRequest;
@@ -358,11 +358,11 @@ void eTroopsRequestEvent::won() {
     board->changeCityAttitude(mCity, 10, pid);
 
     const auto& reason = rrmsgs->fComplyReason;
-    const auto me = mainEvent<eTroopsRequestEvent>();
+    const auto me = mainEvent<SendTroopsEvent>();
     me->finished(*me->mComplyTrigger, reason);
 }
 
-void eTroopsRequestEvent::lost() {
+void SendTroopsEvent::lost() {
     const auto board = gameBoard();
     if(!board) return;
     const auto pid = playerId();
@@ -375,7 +375,7 @@ void eTroopsRequestEvent::lost() {
     eEvent event;
     eTroopsRequestedMessages* rrmsgs = nullptr;
     switch(mType) {
-    case eTroopsRequestEventType::cityUnderAttack: {
+    case SendTroopsEventType::cityUnderAttack: {
         if(mCity->isVassal()) {
             event = eEvent::troopsRequestVassalConquered;
             rrmsgs = &msgs.fVassalTroopsRequest;
@@ -392,12 +392,12 @@ void eTroopsRequestEvent::lost() {
         }
 
         switch(mEffect) {
-        case eTroopsRequestEventEffect::unaffected: {
+        case SendTroopsEventEffect::unaffected: {
         } break;
-        case eTroopsRequestEventEffect::destroyed: {
+        case SendTroopsEventEffect::destroyed: {
             mCity->setVisible(false);
         } break;
-        case eTroopsRequestEventEffect::conquered: {
+        case SendTroopsEventEffect::conquered: {
             if(!mAttackingCity) return;
             if(mCity->isColony()) {
                 mCity->setConqueredBy(mAttackingCity);
@@ -409,10 +409,10 @@ void eTroopsRequestEvent::lost() {
         } break;
         }
     } break;
-    case eTroopsRequestEventType::cityAttacksRival: {
+    case SendTroopsEventType::cityAttacksRival: {
         return;
     } break;
-    case eTroopsRequestEventType::greekCityTerrorized: {
+    case SendTroopsEventType::greekCityTerrorized: {
         ed.fMonster = mMonster;
         if(mCity->isVassal()) {
             event = eEvent::troopsMonsterRequestVassalConquered;
@@ -430,12 +430,12 @@ void eTroopsRequestEvent::lost() {
         }
 
         switch(mEffect) {
-        case eTroopsRequestEventEffect::unaffected: {
+        case SendTroopsEventEffect::unaffected: {
         } break;
-        case eTroopsRequestEventEffect::destroyed: {
+        case SendTroopsEventEffect::destroyed: {
             mCity->setVisible(false);
         } break;
-        case eTroopsRequestEventEffect::conquered: {
+        case SendTroopsEventEffect::conquered: {
         } break;
         }
     } break;
@@ -444,11 +444,11 @@ void eTroopsRequestEvent::lost() {
     board->changeCityAttitude(mCity, -25, pid);
 
     const auto& reason = rrmsgs->fLostBattleReason;
-    const auto me = mainEvent<eTroopsRequestEvent>();
+    const auto me = mainEvent<SendTroopsEvent>();
     me->finished(*me->mLostBattleTrigger, reason);
 }
 
-void eTroopsRequestEvent::finished(eEventTrigger& t, const eReason& r) {
+void SendTroopsEvent::finished(eEventTrigger& t, const eReason& r) {
     const auto board = gameBoard();
     if(!board) return;
     const auto date = board->date();

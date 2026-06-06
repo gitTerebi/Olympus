@@ -1,4 +1,4 @@
-﻿#include "eworldmapwidget.h"
+#include "eworldmapwidget.h"
 
 #include "textures/egametextures.h"
 #include "textures/einterfacetextures.h"
@@ -6,7 +6,7 @@
 #include "engine/game-board.h"
 #include "gameEvents/earmyreturnevent.h"
 #include "gameEvents/invasions/invasion-event.h"
-#include "gameEvents/etroopsrequestfulfilledevent.h"
+#include "gameEvents/requests/troops-sent-event.h"
 #include "gameEvents/eplayerconquestevent.h"
 #include "gameEvents/ereinforcementsevent.h"
 #include "gameEvents/eplayerraidevent.h"
@@ -85,7 +85,7 @@ std::vector<eMapArmy> getArmies(GameBoard& board) {
             reason = eArmyReason::home;
         } else if(dynamic_cast<ePlayerRaidEvent*>(c)) {
             reason = eArmyReason::raid;
-        } else if(dynamic_cast<eTroopsRequestFulfilledEvent*>(c)) {
+        } else if(dynamic_cast<TroopsSentEvent*>(c)) {
             reason = eArmyReason::help;
         }
         stdsptr<WorldCity> toCity;

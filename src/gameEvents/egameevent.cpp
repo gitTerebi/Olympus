@@ -10,9 +10,9 @@
 #include "gameEvents/invasions/monster-in-city-event.h"
 #include "gameEvents/invasions/invasion-event.h"
 #include "requests/pay-tribute-event.h"
-#include "requests/get-tribute-event.h"
-#include "emakerequestevent.h"
-#include "requests/fulfill-request-event.h"
+#include "requests/receive-tribute-event.h"
+#include "requests/receive-requested-resources-event.h"
+#include "requests/send-resources-to-city-event.h"
 #include "egifttoevent.h"
 #include "egiftfromevent.h"
 #include "gameEvents/gods/egodquestevent.h"
@@ -23,12 +23,12 @@
 #include "earmyreturnevent.h"
 #include "emilitarychangeevent.h"
 #include "eeconomicchangeevent.h"
-#include "etroopsrequestevent.h"
-#include "etroopsrequestfulfilledevent.h"
+#include "requests/send-troops-event.h"
+#include "requests/troops-sent-event.h"
 #include "gameEvents/gods/egoddisasterevent.h"
 #include "gameEvents/gods/egodtraderesumesevent.h"
-#include "erequestaidevent.h"
-#include "erequeststrikeevent.h"
+#include "requests/ask-for-aid-event.h"
+#include "requests/ask-for-strike-event.h"
 #include "erivalarmyawayevent.h"
 #include "eearthquakeevent.h"
 #include "elavaevent.h"
@@ -114,12 +114,12 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
         return nullptr;
     case eGameEventType::payTribute:
         return e::make_shared<PayTributeEvent>(cid, branch, board);
-    case eGameEventType::getTribute:
-        return e::make_shared<GetTributeEvent>(cid, branch, board);
-    case eGameEventType::makeRequest:
-        return e::make_shared<eMakeRequestEvent>(cid, branch, board);
-    case eGameEventType::receiveRequest:
-        return e::make_shared<FulfillRequestEvent>(cid, branch, board);
+    case eGameEventType::receiveTribute:
+        return e::make_shared<ReceiveTributeEvent>(cid, branch, board);
+    case eGameEventType::receiveRequestedResources:
+        return e::make_shared<ReceiveRequestedResourcesEvent>(cid, branch, board);
+    case eGameEventType::sendResourcesToCity:
+        return e::make_shared<SendResourcesToCityEvent>(cid, branch, board);
     case eGameEventType::giftTo:
         return e::make_shared<eGiftToEvent>(cid, branch, board);
     case eGameEventType::giftFrom:
@@ -141,20 +141,20 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
     case eGameEventType::militaryChange:
         return e::make_shared<eMilitaryChangeEvent>(cid, branch, board);
 
-    case eGameEventType::troopsRequest:
-        return e::make_shared<eTroopsRequestEvent>(cid, branch, board);
-    case eGameEventType::troopsRequestFulfilled:
-        return e::make_shared<eTroopsRequestFulfilledEvent>(cid, branch, board);
+    case eGameEventType::sendTroops:
+        return e::make_shared<SendTroopsEvent>(cid, branch, board);
+    case eGameEventType::troopsSent:
+        return e::make_shared<TroopsSentEvent>(cid, branch, board);
 
     case eGameEventType::godDisaster:
         return e::make_shared<eGodDisasterEvent>(cid, branch, board);
     case eGameEventType::godTradeResumes:
         return e::make_shared<eGodTradeResumesEvent>(cid, branch, board);
 
-    case eGameEventType::requestAid:
-        return e::make_shared<eRequestAidEvent>(cid, branch, board);
-    case eGameEventType::requestStrike:
-        return e::make_shared<eRequestStrikeEvent>(cid, branch, board);
+    case eGameEventType::askForAid:
+        return e::make_shared<AskForAidEvent>(cid, branch, board);
+    case eGameEventType::askForStrike:
+        return e::make_shared<AskForStrikeEvent>(cid, branch, board);
 
     case eGameEventType::rivalArmyAway:
         return e::make_shared<eRivalArmyAwayEvent>(cid, branch, board);
@@ -469,3 +469,5 @@ void eGameEvent::loadResources() const {
 }
 
 void eGameEvent::respond(int, eCityId) {}
+
+void eGameEvent::fillEventDataActions(eEventData&) {}

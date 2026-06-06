@@ -1,12 +1,12 @@
-﻿#include "efulfilldialog.h"
+#include "efulfilldialog.h"
 
 #include "engine/world-city.h"
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
 #include "estringhelpers.h"
 #include "elanguage.h"
-#include "gameEvents/requests/fulfill-request-event.h"
-#include "gameEvents/etroopsrequestevent.h"
+#include "gameEvents/requests/send-resources-to-city-event.h"
+#include "gameEvents/requests/send-troops-event.h"
 #include "buildings/eheroshall.h"
 #include "widgets/framed-button.h"
 #include "widgets/equestionwidget.h"
@@ -38,8 +38,8 @@ void eFulfillDialog::initialize(GameBoard* const board,
     int y = p;
     const auto pid = board->personPlayer();
     const auto& qs = board->cityRequests(pid);
-//    std::vector<stdsptr<FulfillRequestEvent>> qs;
-//    const auto q = e::make_shared<FulfillRequestEvent>(eGameEventBranch::root);
+//    std::vector<stdsptr<SendResourcesToCityEvent>> qs;
+//    const auto q = e::make_shared<SendResourcesToCityEvent>(eGameEventBranch::root);
 //    q->initialize(0, eResourceType::fleece, 10, city);
 //    qs.push_back(q);
     for(const auto q : qs) {
@@ -167,8 +167,8 @@ void eFulfillDialog::initialize(GameBoard* const board,
     }
 
     const auto& qqs = board->cityTroopsRequests(pid);
-//    std::vector<stdsptr<eTroopsRequestEvent>> qqs;
-//    const auto qq = e::make_shared<eTroopsRequestEvent>(eGameEventBranch::root);
+//    std::vector<stdsptr<SendTroopsEvent>> qqs;
+//    const auto qq = e::make_shared<SendTroopsEvent>(eGameEventBranch::root);
 //    qq->initialize(0, city, city, false);
 //    qq->setGameBoard(board);
 //    qqs.push_back(qq);

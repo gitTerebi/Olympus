@@ -1,11 +1,11 @@
-﻿#ifndef ETROOPSREQUESTFULFILLEDEVENT_H
-#define ETROOPSREQUESTFULFILLEDEVENT_H
+#ifndef TROOPS_SENT_EVENT_H
+#define TROOPS_SENT_EVENT_H
 
-#include "eplayerconquesteventbase.h"
+#include "../eplayerconquesteventbase.h"
 
-class eTroopsRequestFulfilledEvent : public ePlayerConquestEventBase {
+class TroopsSentEvent : public ePlayerConquestEventBase {
 public:
-    eTroopsRequestFulfilledEvent(const eCityId cid,
+    TroopsSentEvent(const eCityId cid,
                                  const eGameEventBranch branch,
                                  GameBoard& board);
 
@@ -19,4 +19,4 @@ private:
     stdsptr<WorldCity> mRivalCity;
 };
 
-#endif // ETROOPSREQUESTFULFILLEDEVENT_H
+#endif // TROOPS_SENT_EVENT_H

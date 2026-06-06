@@ -13,9 +13,9 @@ enum class eMonsterType;
 
 class eGodQuestEvent;
 class ePlayerConquestEventBase;
-class FulfillRequestEvent;
-class GetTributeEvent;
-class eTroopsRequestEvent;
+class SendResourcesToCityEvent;
+class ReceiveTributeEvent;
+class SendTroopsEvent;
 enum class eResourceType;
 class eSaveArchive;
 
@@ -48,20 +48,20 @@ public:
     void addGodQuest(eGodQuestEvent* const q);
     void removeGodQuest(eGodQuestEvent* const q);
 
-    using eRequests = std::vector<FulfillRequestEvent*>;
+    using eRequests = std::vector<SendResourcesToCityEvent*>;
     const eRequests& cityRequests() const { return mCityRequests; }
-    void addCityRequest(FulfillRequestEvent* const q);
-    void removeCityRequest(FulfillRequestEvent* const q);
+    void addCityRequest(SendResourcesToCityEvent* const q);
+    void removeCityRequest(SendResourcesToCityEvent* const q);
 
-    using eTributeRequests = std::vector<GetTributeEvent*>;
+    using eTributeRequests = std::vector<ReceiveTributeEvent*>;
     const eTributeRequests& tributeRequests() const { return mTributeRequests; }
-    void addTributeRequest(GetTributeEvent* const q);
-    void removeTributeRequest(GetTributeEvent* const q);
+    void addTributeRequest(ReceiveTributeEvent* const q);
+    void removeTributeRequest(ReceiveTributeEvent* const q);
 
-    using eTroopsRequests = std::vector<eTroopsRequestEvent*>;
+    using eTroopsRequests = std::vector<SendTroopsEvent*>;
     const eTroopsRequests& cityTroopsRequests() const { return mCityTroopsRequests; }
-    void addCityTroopsRequest(eTroopsRequestEvent* const q);
-    void removeCityTroopsRequest(eTroopsRequestEvent* const q);
+    void addCityTroopsRequest(SendTroopsEvent* const q);
+    void removeCityTroopsRequest(SendTroopsEvent* const q);
 
     using eConquests = std::vector<ePlayerConquestEventBase*>;
     const eConquests& conquests() const { return mConquests; }
@@ -96,9 +96,9 @@ private:
 
     std::vector<eGodQuestEvent*> mGodQuests;
     std::vector<ePlayerConquestEventBase*> mConquests;
-    std::vector<FulfillRequestEvent*> mCityRequests;
-    std::vector<GetTributeEvent*> mTributeRequests;
-    std::vector<eTroopsRequestEvent*> mCityTroopsRequests;
+    std::vector<SendResourcesToCityEvent*> mCityRequests;
+    std::vector<ReceiveTributeEvent*> mTributeRequests;
+    std::vector<SendTroopsEvent*> mCityTroopsRequests;
 
     int mDrachmas = 2500;
     eDate mInDebtSince;

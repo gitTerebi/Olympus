@@ -1,35 +1,35 @@
-#ifndef ETROOPSREQUESTEVENT_H
-#define ETROOPSREQUESTEVENT_H
+#ifndef SEND_TROOPS_EVENT_H
+#define SEND_TROOPS_EVENT_H
 
-#include "egameevent.h"
-#include "ecityeventvalue.h"
-#include "emonstereventvalue.h"
-#include "eattackingcityeventvalue.h"
+#include "../egameevent.h"
+#include "../ecityeventvalue.h"
+#include "../emonstereventvalue.h"
+#include "../eattackingcityeventvalue.h"
 
 struct eReason;
 class eSaveArchive;
 
-enum class eTroopsRequestEventType {
+enum class SendTroopsEventType {
     cityUnderAttack,
     cityAttacksRival,
     greekCityTerrorized
 };
 
-enum class eTroopsRequestEventEffect {
+enum class SendTroopsEventEffect {
     unaffected,
     destroyed,
     conquered
 };
 
-class eTroopsRequestEvent : public eGameEvent,
+class SendTroopsEvent : public eGameEvent,
                             public eCityEventValue,
                             public eMonsterEventValue,
                             public eAttackingCityEventValue {
 public:
-    eTroopsRequestEvent(const eCityId cid,
+    SendTroopsEvent(const eCityId cid,
                         const eGameEventBranch branch,
                         GameBoard& board);
-   ~eTroopsRequestEvent();
+   ~SendTroopsEvent();
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
@@ -38,11 +38,11 @@ public:
     using eAction = std::function<void()>;
     void dispatch(const eAction& close = nullptr);
 
-    void setType(const eTroopsRequestEventType t) { mType = t; }
-    eTroopsRequestEventType type() const { return mType; }
+    void setType(const SendTroopsEventType t) { mType = t; }
+    SendTroopsEventType type() const { return mType; }
 
-    void setEffect(const eTroopsRequestEventEffect e) { mEffect = e; }
-    eTroopsRequestEventEffect effect() const { return mEffect; }
+    void setEffect(const SendTroopsEventEffect e) { mEffect = e; }
+    SendTroopsEventEffect effect() const { return mEffect; }
 
     void won();
     void lost();
@@ -60,12 +60,12 @@ private:
 
     void finished(eEventTrigger& t, const eReason& r);
 
-    void set(eTroopsRequestEvent& src,
+    void set(SendTroopsEvent& src,
              const int postpone,
              const bool finish = false);
 
-    eTroopsRequestEventType mType = eTroopsRequestEventType::cityUnderAttack;
-    eTroopsRequestEventEffect mEffect = eTroopsRequestEventEffect::unaffected;
+    SendTroopsEventType mType = SendTroopsEventType::cityUnderAttack;
+    SendTroopsEventEffect mEffect = SendTroopsEventEffect::unaffected;
 
     bool mFinish = false;
     int mPostpone = 0;
@@ -77,4 +77,4 @@ private:
     stdsptr<eEventTrigger> mLostBattleTrigger;
 };
 
-#endif // ETROOPSREQUESTEVENT_H
+#endif // SEND_TROOPS_EVENT_H

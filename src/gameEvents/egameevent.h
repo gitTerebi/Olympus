@@ -12,62 +12,63 @@ class eWriteStream;
 class eReadStream;
 class eSaveArchive;
 class WorldBoard;
+struct eEventData;
 
 enum class eGameEventType {
-    godVisit,
-    godAttack,
-    monsterUnleashed,
-    monsterInvasion,
-    monsterInvasionWarning, // old, unused
-    invasion,
-    invasionWarning, // old, unused
-    payTribute,
-    receiveRequest,
-    makeRequest,
-    giftTo,
-    giftFrom,
-    godQuest,
-    godQuestFulfilled,
-    playerConquestEvent,
-    playerRaidEvent,
-    raidResourceReceive,
-    armyReturnEvent,
+    godVisit = 0,
+    godAttack = 1,
+    monsterUnleashed = 2,
+    monsterInvasion = 3,
+    monsterInvasionWarning = 4, // old, unused
+    invasion = 5,
+    invasionWarning = 6, // old, unused
+    payTribute = 7,
+    sendResourcesToCity = 8,
+    receiveRequestedResources = 9,
+    giftTo = 10,
+    giftFrom = 11,
+    godQuest = 12,
+    godQuestFulfilled = 13,
+    playerConquestEvent = 14,
+    playerRaidEvent = 15,
+    raidResourceReceive = 16,
+    armyReturnEvent = 17,
 
-    militaryChange,
-    economicChange,
+    militaryChange = 18,
+    economicChange = 19,
 
-    troopsRequest,
-    troopsRequestFulfilled,
+    sendTroops = 20,
+    troopsSent = 21,
 
-    godDisaster,
-    godTradeResumes,
+    godDisaster = 22,
+    godTradeResumes = 23,
 
-    requestAid,
-    requestStrike,
-    rivalArmyAway,
+    askForAid = 24,
+    askForStrike = 25,
+    rivalArmyAway = 26,
 
-    earthquake,
+    earthquake = 27,
 
-    cityBecomes,
+    cityBecomes = 28,
 
-    tradeShutdowns,
-    tradeOpensUp,
+    tradeShutdowns = 29,
+    tradeOpensUp = 30,
 
-    supplyChange,
-    demandChange,
+    supplyChange = 31,
+    demandChange = 32,
 
-    priceChange,
+    priceChange = 33,
 
-    wageChange,
+    wageChange = 34,
 
-    monsterInCity,
-    tidalWave,
-    lavaFlow,
-    sinkLand,
-    landSlide,
+    monsterInCity = 35,
+    tidalWave = 36,
+    lavaFlow = 37,
+    sinkLand = 38,
+    landSlide = 39,
 
-    reinforcementsEvent,
-    getTribute
+    reinforcementsEvent = 40,
+    receiveTribute = 41
 };
 
 enum class eGameEventBranch {
@@ -92,6 +93,7 @@ public:
 
     virtual void loadResources() const;
     virtual void respond(int response, eCityId city = eCityId::neutralAggresive);
+    virtual void fillEventDataActions(eEventData& ed);
 
     static stdsptr<eGameEvent> sCreate(const eCityId cid,
                                        const eGameEventType type,

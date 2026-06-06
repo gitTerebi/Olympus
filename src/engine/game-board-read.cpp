@@ -1,4 +1,4 @@
-﻿#include "game-board.h"
+#include "game-board.h"
 
 #include "spawners/ebanner.h"
 #include "fileIO/building-reader.h"
@@ -7,9 +7,9 @@
 #include "missiles/emissile.h"
 #include "destruction-puff.h"
 #include "gameEvents/egameevent.h"
-#include "gameEvents/requests/get-tribute-event.h"
-#include "gameEvents/requests/fulfill-request-event.h"
-#include "gameEvents/etroopsrequestevent.h"
+#include "gameEvents/requests/receive-tribute-event.h"
+#include "gameEvents/requests/send-resources-to-city-event.h"
+#include "gameEvents/requests/send-troops-event.h"
 #include "eplague.h"
 #include "fileIO/esavearchive.h"
 #include "characters/actions/character-action.h"
@@ -45,40 +45,6 @@ void GameBoard::serializeYearlyProduction(eSaveArchive& ar) {
         }
     }
     ar.field("lastAutosaveYear", mLastAutosaveYear);
-}
-
-void GameBoard::serializeMessageLog(eSaveArchive& ar) {
-    int messageCount = ar.writing() ? static_cast<int>(mMessageLog.size()) : 0;
-    ar.field("messageLog.count", messageCount);
-    if(ar.reading()) {
-        mMessageLog.clear();
-        for(int i = 0; i < messageCount; i++) {
-            eLoggedMessage lm;
-            ar.archiveField(("message." + std::to_string(i)).c_str(),
-                [&](eSaveArchive& it) {
-                    it.field("title", lm.fMsg.fTitle);
-                    it.field("text", lm.fMsg.fText);
-                    it.archiveField("date", [&](eSaveArchive& dAr) { lm.fDate.serialize(dAr); });
-                    it.field("playerName", lm.fEd.fPlayerName);
-                    it.field("read", lm.fRead);
-                });
-            lm.fEd.fDate = lm.fDate;
-            lm.fEd.fType = eMessageEventType::common;
-            mMessageLog.push_back(lm);
-        }
-    } else {
-        int i = 0;
-        for(auto& lm : mMessageLog) {
-            ar.archiveField(("message." + std::to_string(i++)).c_str(),
-                [&](eSaveArchive& it) {
-                    it.field("title", lm.fMsg.fTitle);
-                    it.field("text", lm.fMsg.fText);
-                    it.archiveField("date", [&](eSaveArchive& dAr) { lm.fDate.serialize(dAr); });
-                    it.field("playerName", lm.fEd.fPlayerName);
-                    it.field("read", lm.fRead);
-                });
-        }
-    }
 }
 
 void GameBoard::serialize(eSaveArchive& ar) {
@@ -434,7 +400,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
         }
         ar.addPostFunc([this]() {
             for(const auto e : mAllGameEvents) {
-                const auto request = dynamic_cast<FulfillRequestEvent*>(e);
+                const auto request = dynamic_cast<SendResourcesToCityEvent*>(e);
                 if(request && request->isMainEvent() &&
                    request->isActiveCityRequest()) {
                     request->advanceIfNeeded(date());
@@ -442,7 +408,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
                         addCityRequest(request);
                     }
                 }
-                const auto tribute = dynamic_cast<GetTributeEvent*>(e);
+                const auto tribute = dynamic_cast<ReceiveTributeEvent*>(e);
                 if(tribute && tribute->isMainEvent() &&
                    !tribute->finished()) {
                     tribute->advanceIfNeeded(date());

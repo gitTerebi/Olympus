@@ -1,13 +1,13 @@
-﻿#ifndef EREQUESTSTRIKEEVENT_H
-#define EREQUESTSTRIKEEVENT_H
+#ifndef ASK_FOR_STRIKE_EVENT_H
+#define ASK_FOR_STRIKE_EVENT_H
 
-#include "egameevent.h"
+#include "../egameevent.h"
 
 class eSaveArchive;
 
-class eRequestStrikeEvent : public eGameEvent {
+class AskForStrikeEvent : public eGameEvent {
 public:
-    eRequestStrikeEvent(const eCityId cid,
+    AskForStrikeEvent(const eCityId cid,
                         const eGameEventBranch branch,
                         GameBoard& board);
 
@@ -30,4 +30,4 @@ private:
     stdsptr<WorldCity> mRivalCity;
 };
 
-#endif // EREQUESTSTRIKEEVENT_H
+#endif // ASK_FOR_STRIKE_EVENT_H

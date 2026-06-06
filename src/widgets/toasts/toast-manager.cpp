@@ -6,6 +6,7 @@
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"
 #include "engine/game-board.h"
+#include "widgets/message-action-refresh.h"
 
 void GameWidget::createToastWidget(eToast &toast)
 {
@@ -41,6 +42,7 @@ void GameWidget::createToastWidget(eToast &toast)
         }
         tw->deleteLater();
         updateToastPositions();
+        refreshMessageActions(mBoard, edCopy);
         showMessage(edCopy, msg, false, true, false);
     });
     const int p = tw->padding();

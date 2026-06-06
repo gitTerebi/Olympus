@@ -72,6 +72,7 @@ private:
     };
 
     eAction mOnClose;
+    GameBoard* mBoard = nullptr;
     eScrollViewport* mViewport = nullptr;
     eScrollBar* mSidebar = nullptr;
     eWidget* mContentArea = nullptr;

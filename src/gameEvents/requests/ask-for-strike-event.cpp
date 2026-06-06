@@ -1,4 +1,4 @@
-#include "erequeststrikeevent.h"
+#include "ask-for-strike-event.h"
 
 
 #include "engine/game-board.h"
@@ -8,15 +8,15 @@
 #include "elanguage.h"
 #include "gameEvents/invasions/invasion-event.h"
 
-eRequestStrikeEvent::eRequestStrikeEvent(
+AskForStrikeEvent::AskForStrikeEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    eGameEvent(cid, eGameEventType::requestStrike, branch, board) {}
+    eGameEvent(cid, eGameEventType::askForStrike, branch, board) {}
 
 const double gStrikeFrac = 0.67;
 
-void eRequestStrikeEvent::trigger() {
+void AskForStrikeEvent::trigger() {
     if(!mCity || !mRivalCity) return;
     const auto board = gameBoard();
     if(!board) return;
@@ -57,7 +57,7 @@ void eRequestStrikeEvent::trigger() {
             e->initializeDate(date + 100);
             board->addRootGameEvent(e);
         } else {
-            const auto e = e::make_shared<eRequestStrikeEvent>(
+            const auto e = e::make_shared<AskForStrikeEvent>(
                                cityId(), eGameEventBranch::child, *board);
             e->setCity(mCity);
             e->setRivalCity(mRivalCity);
@@ -69,11 +69,11 @@ void eRequestStrikeEvent::trigger() {
     }
 }
 
-std::string eRequestStrikeEvent::longName() const {
+std::string AskForStrikeEvent::longName() const {
     return eLanguage::text("request_strike_long_name");
 }
 
-void eRequestStrikeEvent::serializeFields(eSaveArchive& ar) {
+void AskForStrikeEvent::serializeFields(eSaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);
     ar.worldCityField("rivalCity", worldBoard(), mRivalCity);

@@ -1,4 +1,4 @@
-﻿#include "receive-request-type.h"
+#include "requested-resources-type.h"
 
 #include "emessages.h"
 
@@ -10,7 +10,7 @@ struct eReceiveRequestEntry {
     eEvent fTooLate;
     eEvent fComply;
     eEvent fRefuse;
-    const eReceiveRequestMessages* fMessages;
+    const RequestedResourcesMessages* fMessages;
 };
 
 #define DEFINE_ENTRY(enumPrefix, fieldPrefix, relation, msgsSuffix) \
@@ -49,42 +49,42 @@ DEFINE_ENTRY(financialWoes, FinancialWoes, Parent, ParentR);
 #undef DEFINE_ENTRY
 
 static const eReceiveRequestEntry& getEntry(
-    const ReceiveRequestType type,
+    const RequestedResourcesType type,
     const WorldCity& city) {
     if(city.isRival()) {
         switch(type) {
-        case ReceiveRequestType::general: return kGeneralRequestRival;
-        case ReceiveRequestType::famine: return kFamineRival;
-        case ReceiveRequestType::project: return kProjectRival;
-        case ReceiveRequestType::festival: return kFestivalRival;
-        case ReceiveRequestType::financialWoes: return kFinancialWoesRival;
+        case RequestedResourcesType::general: return kGeneralRequestRival;
+        case RequestedResourcesType::famine: return kFamineRival;
+        case RequestedResourcesType::project: return kProjectRival;
+        case RequestedResourcesType::festival: return kFestivalRival;
+        case RequestedResourcesType::financialWoes: return kFinancialWoesRival;
         default: break;
         }
     } else if(city.isVassal() || city.isColony()) {
         switch(type) {
-        case ReceiveRequestType::general: return kGeneralRequestSubject;
-        case ReceiveRequestType::famine: return kFamineSubject;
-        case ReceiveRequestType::project: return kProjectSubject;
-        case ReceiveRequestType::festival: return kFestivalSubject;
-        case ReceiveRequestType::financialWoes: return kFinancialWoesSubject;
+        case RequestedResourcesType::general: return kGeneralRequestSubject;
+        case RequestedResourcesType::famine: return kFamineSubject;
+        case RequestedResourcesType::project: return kProjectSubject;
+        case RequestedResourcesType::festival: return kFestivalSubject;
+        case RequestedResourcesType::financialWoes: return kFinancialWoesSubject;
         default: break;
         }
     } else if(city.isParentCity()) {
         switch(type) {
-        case ReceiveRequestType::general: return kGeneralRequestParent;
-        case ReceiveRequestType::famine: return kFamineParent;
-        case ReceiveRequestType::project: return kProjectParent;
-        case ReceiveRequestType::festival: return kFestivalParent;
-        case ReceiveRequestType::financialWoes: return kFinancialWoesParent;
+        case RequestedResourcesType::general: return kGeneralRequestParent;
+        case RequestedResourcesType::famine: return kFamineParent;
+        case RequestedResourcesType::project: return kProjectParent;
+        case RequestedResourcesType::festival: return kFestivalParent;
+        case RequestedResourcesType::financialWoes: return kFinancialWoesParent;
         default: break;
         }
     } else {
         switch(type) {
-        case ReceiveRequestType::general: return kGeneralRequestAlly;
-        case ReceiveRequestType::famine: return kFamineAlly;
-        case ReceiveRequestType::project: return kProjectAlly;
-        case ReceiveRequestType::festival: return kFestivalAlly;
-        case ReceiveRequestType::financialWoes: return kFinancialWoesAlly;
+        case RequestedResourcesType::general: return kGeneralRequestAlly;
+        case RequestedResourcesType::famine: return kFamineAlly;
+        case RequestedResourcesType::project: return kProjectAlly;
+        case RequestedResourcesType::festival: return kFestivalAlly;
+        case RequestedResourcesType::financialWoes: return kFinancialWoesAlly;
         default: break;
         }
     }
@@ -102,21 +102,21 @@ static const eReceiveRequestEntry& getEntry(
     return tributeEntry;
 }
 
-eEvent receiveRequestFinishEvent(
-    const ReceiveRequestType type,
+eEvent requestedResourcesFinishEvent(
+    const RequestedResourcesType type,
     const WorldCity& city,
-    const ReceiveRequestFinish finish) {
+    const RequestedResourcesFinish finish) {
     const auto& entry = getEntry(type, city);
     switch(finish) {
-    case ReceiveRequestFinish::tooLate: return entry.fTooLate;
-    case ReceiveRequestFinish::comply: return entry.fComply;
-    case ReceiveRequestFinish::refuse: return entry.fRefuse;
+    case RequestedResourcesFinish::tooLate: return entry.fTooLate;
+    case RequestedResourcesFinish::comply: return entry.fComply;
+    case RequestedResourcesFinish::refuse: return entry.fRefuse;
     }
     return eEvent::fire; // invalid
 }
 
-eEvent receiveRequestStepEvent(
-    const ReceiveRequestType type,
+eEvent requestedResourcesStepEvent(
+    const RequestedResourcesType type,
     const WorldCity& city,
     const int requestStep) {
     const auto& entry = getEntry(type, city);
@@ -130,8 +130,8 @@ eEvent receiveRequestStepEvent(
     }
 }
 
-const eReceiveRequestMessages* receiveRequestMessages(
-    const ReceiveRequestType type,
+const RequestedResourcesMessages* requestedResourcesMessages(
+    const RequestedResourcesType type,
     const WorldCity& city) {
     return getEntry(type, city).fMessages;
 }

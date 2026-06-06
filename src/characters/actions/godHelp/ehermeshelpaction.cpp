@@ -3,7 +3,7 @@
 
 #include "etilehelper.h"
 #include "buildings/epalace.h"
-#include "gameEvents/requests/fulfill-request-event.h"
+#include "gameEvents/requests/send-resources-to-city-event.h"
 
 eHermesHelpAction::eHermesHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::hermesHelpAction) {}
@@ -86,7 +86,7 @@ void eHermesHelpAction::provide() {
         const auto pid = board.cityIdToPlayerId(cid);
         const auto& crs = board.cityRequests(pid);
         if(!crs.empty()) {
-            crs[0]->finish(ReceiveRequestResult::comply);
+            crs[0]->finish(RequestedResourcesResult::comply);
         }
         mRequestFulfilled = true;
     }

@@ -1,5 +1,5 @@
-#ifndef FULFILL_REQUEST_EVENT_H
-#define FULFILL_REQUEST_EVENT_H
+#ifndef SEND_RESOURCES_TO_CITY_EVENT_H
+#define SEND_RESOURCES_TO_CITY_EVENT_H
 
 #include "../egameevent.h"
 #include "../ecounteventvalue.h"
@@ -12,7 +12,7 @@ struct eCityRequest;
 struct eEventData;
 class eSaveArchive;
 
-enum class ReceiveRequestType {
+enum class RequestedResourcesType {
     tribute,
     famine,
     general,
@@ -21,34 +21,35 @@ enum class ReceiveRequestType {
     financialWoes
 };
 
-enum class ReceiveRequestResult {
+enum class RequestedResourcesResult {
     comply,
     tooLate,
     refuse
 };
 
-class FulfillRequestEvent : public eGameEvent,
+class SendResourcesToCityEvent : public eGameEvent,
                              public eResourceEventValue,
                              public eCountEventValue,
                              public eCityEventValue,
                              public eGodEventValue {
 public:
-    FulfillRequestEvent(const eCityId cid,
+    SendResourcesToCityEvent(const eCityId cid,
                          const eGameEventBranch branch,
                          GameBoard& board);
-    ~FulfillRequestEvent();
+    ~SendResourcesToCityEvent();
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
+    void fillEventDataActions(eEventData& ed) override;
     std::string longName() const override;
 
     eCityRequest cityRequest() const;
     void dispatch(const eCityId cid);
-    void finish(ReceiveRequestResult result);
+    void finish(RequestedResourcesResult result);
 
-    void setRequestType(const ReceiveRequestType t)
+    void setRequestType(const RequestedResourcesType t)
     { mRequestType = t; }
-    ReceiveRequestType requestType() const
+    RequestedResourcesType requestType() const
     { return mRequestType; }
 
     std::string requestInfo(int stock, const eDate& currentDate) const;
@@ -77,23 +78,20 @@ private:
     void showRequestFinished(GameBoard& board, eEventData& ed);
     void showRequestPopup(GameBoard& board, eEventData& ed);
     void addFulfillButton(GameBoard& board, eEventData& ed);
-    void addDrachmasFulfillButton(GameBoard& board, eEventData& ed);
-    void addResourceFulfillButtons(GameBoard& board, eEventData& ed);
     void addPostponeButton(GameBoard& board, eEventData& ed);
     void addRefuseButton(GameBoard& board, eEventData& ed);
     void addRequestToSidePanel(GameBoard& board);
     void finished(eEventTrigger& t, const eReason& r);
     void advanceToNextStep(GameBoard& board);
     eDate complyDate() const;
-    int remainingMonths(const eDate& deadline, const eDate& current) const;
 
     void postpone();
     int complyMonths() const;
 
 
 
-    ReceiveRequestType mRequestType = ReceiveRequestType::general;
-    ReceiveRequestResult mRequestResult = ReceiveRequestResult::comply;
+    RequestedResourcesType mRequestType = RequestedResourcesType::general;
+    RequestedResourcesResult mRequestResult = RequestedResourcesResult::comply;
 
     bool mRequestFinished = false;
     int mRequestStep = 0;
@@ -111,4 +109,4 @@ private:
     stdsptr<eEventTrigger> mRefuseTrigger;
 };
 
-#endif // FULFILL_REQUEST_EVENT_H
+#endif // SEND_RESOURCES_TO_CITY_EVENT_H

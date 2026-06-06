@@ -1,5 +1,6 @@
-#include "fulfill-request-event.h"
-#include "receive-request-type.h"
+#include "send-resources-to-city-event.h"
+#include "requested-resources-type.h"
+#include "request-state.h"
 
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -16,41 +17,31 @@ namespace
 {
     int sNextReceiveRequestId = 1;
 
-    struct eFulfillRequestState
+    const std::vector<RequestState>& fulfillRequestStates()
     {
-        int fPopupMonth;
-        int fComplyMonths;
-    };
-
-    const std::vector<eFulfillRequestState> &fulfillRequestStates()
-    {
-        static const std::vector<eFulfillRequestState> states = {
-            {0, 12},  // Step 0: Initial request, popup at month 0, comply within 12 months
-            {6,  6}, // Step 1: Reminder, popup at month 2, comply within 2 months
-            {12, 12}, // Step 2: Overdue, popup at month 12, comply within 12 months
-            {18, 6},  // Step 3: Warning, popup at month 18, comply within 6 months
-            {24, 0},  // Step 4: Too late, popup at month 24, no compliance possible
+        static const std::vector<RequestState> states = {
+            {0, 12},
+            {6, 6},
+            {12, 12},
+            {18, 6},
+            {24, 0},
         };
         return states;
     }
 
-    const eFulfillRequestState &fulfillRequestState(const int step)
+    const RequestState& fulfillRequestState(const int step)
     {
-        const auto &states = fulfillRequestStates();
-        if (step >= 0 && step < static_cast<int>(states.size()))
-            return states[step];
-        return states.front();
+        return requestState(fulfillRequestStates(), step);
     }
 
     bool fulfillRequestTerminalState(const int step)
     {
-        // Terminal state is "too late" - identified by 0 comply months
-        return fulfillRequestState(step).fComplyMonths == 0;
+        return requestTerminalState(fulfillRequestStates(), step);
     }
 
-    ReceiveRequestResult fulfillRequestResultForStep(const int step)
+    RequestedResourcesResult requestedResourcesResultForStep(const int step)
     {
-        return step > 2 ? ReceiveRequestResult::tooLate : ReceiveRequestResult::comply;
+        return step > 2 ? RequestedResourcesResult::tooLate : RequestedResourcesResult::comply;
     }
 
     bool canPostponeRequestStep(const int requestStep)
@@ -64,10 +55,10 @@ namespace
     }
 }
 
-FulfillRequestEvent::FulfillRequestEvent(
+SendResourcesToCityEvent::SendResourcesToCityEvent(
     const eCityId cid,
     const eGameEventBranch branch,
-    GameBoard &board) : eGameEvent(cid, eGameEventType::receiveRequest, branch, board),
+    GameBoard &board) : eGameEvent(cid, eGameEventType::sendResourcesToCity, branch, board),
                          eCityEventValue(board)
 {
     const auto e1 = eLanguage::text("early");
@@ -85,14 +76,14 @@ FulfillRequestEvent::FulfillRequestEvent(
     addTrigger(mRefuseTrigger);
 }
 
-FulfillRequestEvent::~FulfillRequestEvent()
+SendResourcesToCityEvent::~SendResourcesToCityEvent()
 {
     const auto board = gameBoard();
     if (board && isMainEvent())
         board->removeCityRequest(this);
 }
 
-void FulfillRequestEvent::trigger()
+void SendResourcesToCityEvent::trigger()
 {
     const auto board = gameBoard();
     if (!board)
@@ -113,7 +104,7 @@ void FulfillRequestEvent::trigger()
     }
 }
 
-bool FulfillRequestEvent::startRequest(GameBoard &board)
+bool SendResourcesToCityEvent::startRequest(GameBoard &board)
 {
     if (isActiveCityRequest() &&
         mRequestDate == eDate(1, eMonth::january, 1))
@@ -122,7 +113,7 @@ bool FulfillRequestEvent::startRequest(GameBoard &board)
         auto deadline = board.date();
         deadline.nextMonths(warningMonths());
         mRequestDeadline = deadline;
-        board.addCityRequest(mainEvent<FulfillRequestEvent>());
+        board.addCityRequest(mainEvent<SendResourcesToCityEvent>());
         return true;
     }
     if (!isActiveCityRequest())
@@ -130,9 +121,9 @@ bool FulfillRequestEvent::startRequest(GameBoard &board)
     return startQueuedRequest(board);
 }
 
-bool FulfillRequestEvent::startQueuedRequest(GameBoard &board)
+bool SendResourcesToCityEvent::startQueuedRequest(GameBoard &board)
 {
-    const auto request = e::make_shared<FulfillRequestEvent>(
+    const auto request = e::make_shared<SendResourcesToCityEvent>(
         cityId(), eGameEventBranch::root, board);
     request->setWarningMonths(warningMonths());
     request->setRequestType(mRequestType);
@@ -143,12 +134,12 @@ bool FulfillRequestEvent::startQueuedRequest(GameBoard &board)
     return false;
 }
 
-bool FulfillRequestEvent::initializeRequest(GameBoard &board)
+bool SendResourcesToCityEvent::initializeRequest(GameBoard &board)
 {
     mRequestStep = 0;
     mRequestId = sNextReceiveRequestId++;
     mRequestFinished = false;
-    mRequestResult = ReceiveRequestResult::comply;
+    mRequestResult = RequestedResourcesResult::comply;
     mRequestDate = board.date();
     // Side panel uses this deadline; reminder popups must not move it.
     auto deadline = board.date();
@@ -162,13 +153,13 @@ bool FulfillRequestEvent::initializeRequest(GameBoard &board)
         return false;
     chooseType();
     chooseCount();
-    board.addCityRequest(mainEvent<FulfillRequestEvent>());
+    board.addCityRequest(mainEvent<SendResourcesToCityEvent>());
     return true;
 }
 
-eEventData FulfillRequestEvent::createEventData(GameBoard &board) const
+eEventData SendResourcesToCityEvent::createEventData(GameBoard &board) const
 {
-    const auto pid = mRequestType == ReceiveRequestType::tribute ? board.personPlayer() : playerId();
+    const auto pid = mRequestType == RequestedResourcesType::tribute ? board.personPlayer() : playerId();
     eEventData ed(pid);
     ed.fCity = mCity;
     ed.fResourceType = mResource;
@@ -179,119 +170,112 @@ eEventData FulfillRequestEvent::createEventData(GameBoard &board) const
     return ed;
 }
 
-void FulfillRequestEvent::showRequestFinished(
+void SendResourcesToCityEvent::showRequestFinished(
     GameBoard &board, eEventData &ed)
 {
     if (!mCity)
         return;
     ed.fType = eMessageEventType::resourceGranted;
-    const auto *msgs = receiveRequestMessages(mRequestType, *mCity);
-    if (mRequestResult == ReceiveRequestResult::refuse)
+    const auto *msgs = requestedResourcesMessages(mRequestType, *mCity);
+    if (mRequestResult == RequestedResourcesResult::refuse)
     {
-        const auto event = receiveRequestFinishEvent(
-            mRequestType, *mCity, ReceiveRequestFinish::refuse);
+        const auto event = requestedResourcesFinishEvent(
+            mRequestType, *mCity, RequestedResourcesFinish::refuse);
         board.event(event, ed);
         const auto &reason = msgs->fRefuseReason;
-        const auto me = mainEvent<FulfillRequestEvent>();
+        const auto me = mainEvent<SendResourcesToCityEvent>();
         me->finished(*me->mRefuseTrigger, reason);
         return;
     }
 
-    if (mRequestResult == ReceiveRequestResult::tooLate)
+    if (mRequestResult == RequestedResourcesResult::tooLate)
     {
-        const auto event = receiveRequestFinishEvent(
-            mRequestType, *mCity, ReceiveRequestFinish::tooLate);
+        const auto event = requestedResourcesFinishEvent(
+            mRequestType, *mCity, RequestedResourcesFinish::tooLate);
         board.event(event, ed);
         const auto &reason = msgs->fTooLateReason;
-        const auto me = mainEvent<FulfillRequestEvent>();
+        const auto me = mainEvent<SendResourcesToCityEvent>();
         me->finished(*me->mTooLateTrigger, reason);
         return;
     }
 
-    const auto event = receiveRequestFinishEvent(
-        mRequestType, *mCity, ReceiveRequestFinish::comply);
+    const auto event = requestedResourcesFinishEvent(
+        mRequestType, *mCity, RequestedResourcesFinish::comply);
     board.event(event, ed);
     const auto &reason = msgs->fComplyReason;
-    const auto me = mainEvent<FulfillRequestEvent>();
+    const auto me = mainEvent<SendResourcesToCityEvent>();
     me->finished(*me->mComplyTrigger, reason);
 }
 
-void FulfillRequestEvent::showRequestPopup(GameBoard &board, eEventData &ed)
+void SendResourcesToCityEvent::showRequestPopup(GameBoard &board, eEventData &ed)
 {
-    addFulfillButton(board, ed);
-    addPostponeButton(board, ed);
-    addRefuseButton(board, ed);
+    fillEventDataActions(ed);
 
     ed.fType = eMessageEventType::generalRequestGranted;
-    const auto uiEvent = receiveRequestStepEvent(
+    const auto uiEvent = requestedResourcesStepEvent(
         mRequestType, *mCity, mRequestStep);
     board.event(uiEvent, ed);
 }
 
-void FulfillRequestEvent::addFulfillButton(GameBoard &board, eEventData &ed)
+void SendResourcesToCityEvent::fillEventDataActions(eEventData &ed)
 {
-    if (mResource == eResourceType::drachmas)
-        addDrachmasFulfillButton(board, ed);
-    else
-        addResourceFulfillButtons(board, ed);
+    const auto board = gameBoard();
+    const auto request = mainEvent<SendResourcesToCityEvent>();
+    if (!board || !request || !request->isActiveCityRequest())
+        return;
+
+    ed.fType = eMessageEventType::generalRequestGranted;
+    ed.fEventRuntimeId = request->runtimeId();
+    ed.fCity = request->mCity;
+    ed.fResourceType = request->mResource;
+    ed.fResourceCount = request->mCount;
+    ed.fTime = displayMonthsForRequestStep(request->mRequestStep);
+    ed.fGod = request->mGod;
+    ed.fCloseResponse = -1;
+    ed.fPrimaryResponse = -1;
+    ed.fCityNames.clear();
+    ed.fCityConditionalResponses.clear();
+    ed.fCSpaceCount.clear();
+    ed.fSecondaryResponse = -1;
+    ed.fTertiaryResponse = -1;
+
+    request->addFulfillButton(*board, ed);
+    request->addPostponeButton(*board, ed);
+    request->addRefuseButton(*board, ed);
 }
 
-void FulfillRequestEvent::addDrachmasFulfillButton(
-    GameBoard &board, eEventData &ed)
+void SendResourcesToCityEvent::addFulfillButton(GameBoard &board, eEventData &ed)
 {
-    const auto pid = mRequestType == ReceiveRequestType::tribute ? board.personPlayer() : playerId();
-    const auto cids = board.playerCitiesOnBoard(pid);
-    const int avCount = board.drachmas(pid);
-    if (avCount >= mCount && !cids.empty())
-    {
-        const auto cid = cids[0];
-        ed.fPrimaryResponse = static_cast<int>(eResponse::dispatch);
-    }
+    const auto pid = mRequestType == RequestedResourcesType::tribute ? board.personPlayer() : playerId();
+    addRequestDispatchResponses(board, ed, pid, mResource, mCount,
+                                static_cast<int>(eResponse::dispatch));
 }
 
-void FulfillRequestEvent::addResourceFulfillButtons(
-    GameBoard &board, eEventData &ed)
+void SendResourcesToCityEvent::addRequestToSidePanel(GameBoard &board)
 {
-    const auto pid = mRequestType == ReceiveRequestType::tribute ? board.personPlayer() : playerId();
-    const auto cids = board.playerCitiesOnBoard(pid);
-    for (const auto cid : cids)
-    {
-        const int avCount = board.resourceCount(cid, mResource);
-        ed.fCityNames[cid] = board.cityName(cid);
-        ed.fCSpaceCount[cid] = avCount;
-
-        if (avCount >= mCount)
-        {
-            ed.fCityConditionalResponses[cid] = static_cast<int>(eResponse::dispatch);
-        }
-    }
-}
-
-void FulfillRequestEvent::addRequestToSidePanel(GameBoard &board)
-{
-    const auto request = mainEvent<FulfillRequestEvent>();
+    const auto request = mainEvent<SendResourcesToCityEvent>();
     if (request && request->isActiveCityRequest())
     {
         board.addCityRequest(request);
     }
 }
 
-void FulfillRequestEvent::addPostponeButton(
+void SendResourcesToCityEvent::addPostponeButton(
     GameBoard &board, eEventData &ed)
 {
-    const auto request = mainEvent<FulfillRequestEvent>();
+    const auto request = mainEvent<SendResourcesToCityEvent>();
     if (canPostponeRequestStep(mRequestStep))
     {
         ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
     }
 }
 
-void FulfillRequestEvent::addRefuseButton(GameBoard &board, eEventData &ed)
+void SendResourcesToCityEvent::addRefuseButton(GameBoard &board, eEventData &ed)
 {
     ed.fTertiaryResponse = static_cast<int>(eResponse::refuse);
 }
 
-void FulfillRequestEvent::respond(const int response, const eCityId city)
+void SendResourcesToCityEvent::respond(const int response, const eCityId city)
 {
     switch (static_cast<eResponse>(response))
     {
@@ -301,7 +285,7 @@ void FulfillRequestEvent::respond(const int response, const eCityId city)
             const auto board = gameBoard();
             if (!board)
                 return;
-            const auto pid = mRequestType == ReceiveRequestType::tribute ? board->personPlayer() : playerId();
+            const auto pid = mRequestType == RequestedResourcesType::tribute ? board->personPlayer() : playerId();
             const auto cids = board->playerCitiesOnBoard(pid);
             if (!cids.empty())
                 dispatch(cids[0]);
@@ -315,27 +299,27 @@ void FulfillRequestEvent::respond(const int response, const eCityId city)
         postpone();
         break;
     case eResponse::refuse:
-        if (const auto request = mainEvent<FulfillRequestEvent>())
-            request->finish(ReceiveRequestResult::refuse);
+        if (const auto request = mainEvent<SendResourcesToCityEvent>())
+            request->finish(RequestedResourcesResult::refuse);
         break;
     }
 }
 
-void FulfillRequestEvent::postpone()
+void SendResourcesToCityEvent::postpone()
 {
-    const auto request = mainEvent<FulfillRequestEvent>();
+    const auto request = mainEvent<SendResourcesToCityEvent>();
     if (!request)
         return;
 
     request->mPostponed = true;
 }
 
-int FulfillRequestEvent::complyMonths() const
+int SendResourcesToCityEvent::complyMonths() const
 {
     return fulfillRequestState(mComplyStep).fComplyMonths;
 }
 
-std::string FulfillRequestEvent::longName() const
+std::string SendResourcesToCityEvent::longName() const
 {
     auto tmpl = eLanguage::text("receive_request_long_name");
     eCountEventValue::longNameReplaceCount("%1", tmpl);
@@ -343,15 +327,15 @@ std::string FulfillRequestEvent::longName() const
     return tmpl;
 }
 
-void FulfillRequestEvent::serializeFields(eSaveArchive &ar)
+void SendResourcesToCityEvent::serializeFields(eSaveArchive &ar)
 {
     eGameEvent::serializeFields(ar);
     eResourceEventValue::serialize(ar);
     eCountEventValue::serialize(ar);
     eCityEventValue::serialize(ar, *gameBoard());
     eGodEventValue::serialize(ar);
-    ar.field("requestType", mRequestType, ReceiveRequestType::general);
-    ar.field("requestResult", mRequestResult, ReceiveRequestResult::comply);
+    ar.field("requestType", mRequestType, RequestedResourcesType::general);
+    ar.field("requestResult", mRequestResult, RequestedResourcesResult::comply);
     ar.field("requestFinished", mRequestFinished, false);
     ar.field("requestStep", mRequestStep, 0);
     ar.field("requestId", mRequestId, 0);
@@ -366,7 +350,7 @@ void FulfillRequestEvent::serializeFields(eSaveArchive &ar)
     }
 }
 
-eCityRequest FulfillRequestEvent::cityRequest() const
+eCityRequest SendResourcesToCityEvent::cityRequest() const
 {
     eCityRequest request;
     request.fCity = mCity;
@@ -375,29 +359,29 @@ eCityRequest FulfillRequestEvent::cityRequest() const
     return request;
 }
 
-void FulfillRequestEvent::dispatch(const eCityId cid)
+void SendResourcesToCityEvent::dispatch(const eCityId cid)
 {
     const auto board = gameBoard();
     if (!board)
         return;
     board->takeResource(cid, mResource, mCount);
-    finish(fulfillRequestResultForStep(mRequestStep));
+    finish(requestedResourcesResultForStep(mRequestStep));
 }
 
-void FulfillRequestEvent::finish(const ReceiveRequestResult result)
+void SendResourcesToCityEvent::finish(const RequestedResourcesResult result)
 {
     const auto board = gameBoard();
     if (!board)
         return;
     clearConsequences();
-    const auto request = mainEvent<FulfillRequestEvent>();
+    const auto request = mainEvent<SendResourcesToCityEvent>();
     board->removeCityRequest(request);
     mRequestFinished = true;
     mRequestResult = result;
 
-    if (mCity && result == ReceiveRequestResult::refuse)
+    if (mCity && result == RequestedResourcesResult::refuse)
         board->changeCityAttitude(mCity, -10, playerId());
-    else if (mCity && result == ReceiveRequestResult::tooLate)
+    else if (mCity && result == RequestedResourcesResult::tooLate)
         board->changeCityAttitude(mCity, 5, playerId());
     else if (mCity)
         board->changeCityAttitude(mCity, 10, playerId());
@@ -408,7 +392,7 @@ void FulfillRequestEvent::finish(const ReceiveRequestResult result)
         request->mRequestResult = result;
     }
 
-    const auto pid = mRequestType == ReceiveRequestType::tribute ? board->personPlayer() : playerId();
+    const auto pid = mRequestType == RequestedResourcesType::tribute ? board->personPlayer() : playerId();
     eEventData ed(pid);
     ed.fCity = mCity;
     ed.fResourceType = mResource;
@@ -417,7 +401,7 @@ void FulfillRequestEvent::finish(const ReceiveRequestResult result)
     showRequestFinished(*board, ed);
 }
 
-void FulfillRequestEvent::finished(eEventTrigger &t, const eReason &r)
+void SendResourcesToCityEvent::finished(eEventTrigger &t, const eReason &r)
 {
     const auto board = gameBoard();
     if (!board)
@@ -431,7 +415,7 @@ void FulfillRequestEvent::finished(eEventTrigger &t, const eReason &r)
     t.trigger(*this, date, rFull);
 }
 
-eDate FulfillRequestEvent::complyDate() const
+eDate SendResourcesToCityEvent::complyDate() const
 {
     if (mRequestDeadline != eDate(1, eMonth::january, 1))
         return mRequestDeadline;
@@ -444,19 +428,19 @@ eDate FulfillRequestEvent::complyDate() const
     return date;
 }
 
-bool FulfillRequestEvent::isOverdue(const eDate &currentDate) const
+bool SendResourcesToCityEvent::isOverdue(const eDate &currentDate) const
 {
     return currentDate > complyDate();
 }
 
-void FulfillRequestEvent::advanceIfNeeded(const eDate &currentDate)
+void SendResourcesToCityEvent::advanceIfNeeded(const eDate &currentDate)
 {
     const auto board = gameBoard();
     if (!board || !isMainEvent() || !isActiveCityRequest())
         return;
     if (mRequestDate == eDate(1, eMonth::january, 1))
         return;
-    const auto &states = fulfillRequestStates();
+    const auto& states = fulfillRequestStates();
     const int nextStep = mRequestStep + 1;
     if (nextStep >= static_cast<int>(states.size()))
         return;
@@ -467,14 +451,14 @@ void FulfillRequestEvent::advanceIfNeeded(const eDate &currentDate)
     advanceToNextStep(*board);
 }
 
-void FulfillRequestEvent::advanceToNextStep(GameBoard &board)
+void SendResourcesToCityEvent::advanceToNextStep(GameBoard &board)
 {
-    const auto &states = fulfillRequestStates();
+    const auto& states = fulfillRequestStates();
     const int nextStep = mRequestStep + 1;
     if (nextStep >= static_cast<int>(states.size()) ||
         fulfillRequestTerminalState(nextStep))
     {
-        finish(ReceiveRequestResult::refuse);
+        finish(RequestedResourcesResult::refuse);
         return;
     }
 
@@ -491,70 +475,42 @@ void FulfillRequestEvent::advanceToNextStep(GameBoard &board)
     showRequestPopup(board, ed);
 }
 
-bool FulfillRequestEvent::isPostponed() const
+bool SendResourcesToCityEvent::isPostponed() const
 {
     const int overdueStep = 2;
     return mRequestStep >= overdueStep;
 }
 
-bool FulfillRequestEvent::finished() const
+bool SendResourcesToCityEvent::finished() const
 {
     return eGameEvent::finished() && !isActiveCityRequest();
 }
 
-bool FulfillRequestEvent::isActiveCityRequest() const
+bool SendResourcesToCityEvent::isActiveCityRequest() const
 {
     return !mRequestFinished && mCity;
 }
 
-int FulfillRequestEvent::remainingMonths(const eDate &deadline, const eDate &current) const
+std::string SendResourcesToCityEvent::overdueStatusText(const eDate &currentDate) const
 {
-    const int daysDiff = deadline - current;
-    return (daysDiff + 30) / 31;
-}
-
-std::string FulfillRequestEvent::overdueStatusText(const eDate &currentDate) const
-{
-    const auto request = const_cast<FulfillRequestEvent *>(this)
-                             ->mainEvent<FulfillRequestEvent>();
+    const auto request = const_cast<SendResourcesToCityEvent *>(this)
+                             ->mainEvent<SendResourcesToCityEvent>();
     const auto state = request ? request : this;
-    // Sidebar counts down from the current step's comply window.
-    const int comply = state->complyMonths();
-    const int elapsedMonths =
-        state->mComplyStartDate == eDate(1, eMonth::january, 1) ? 0 : state->remainingMonths(currentDate, state->mComplyStartDate);
-    const int remainingMonths = std::max(0, comply - elapsedMonths);
-    return std::to_string(remainingMonths);
+    return requestCountdownText(state->complyMonths(),
+                                state->mComplyStartDate,
+                                currentDate);
 }
 
-std::string FulfillRequestEvent::requestInfo(int stock, const eDate &currentDate) const
+std::string SendResourcesToCityEvent::requestInfo(int stock, const eDate &currentDate) const
 {
-    const auto resName = eResourceTypeHelpers::typeLongName(mResource);
-    const int requested = mCount;
     const bool overdue = isOverdue(currentDate);
     const int daysDiff = overdue ? currentDate - complyDate() : complyDate() - currentDate;
     const int remainingMonths = daysDiff / 31;
-    std::string status;
-    if (!overdue)
-    {
-        status = eLanguage::zeusText(212, 63); // [months_remaining] months remain
-        eStringHelpers::replaceAll(status, "[months_remaining]",
-                                   std::to_string(remainingMonths));
-    }
-    else
-    {
-        status = std::to_string(remainingMonths) + " " +
-                 eLanguage::zeusText(5, 150) + " " +
-                 eLanguage::zeusText(5, 205);
-    }
-    auto stockText = eLanguage::zeusText(44, 278); // in stock
-    auto result = std::to_string(requested) + " " + resName +
-                  " (" + std::to_string(stock) + " " + stockText + ")";
-    if(!status.empty()) result += ", " + status;
-    return result;
+    return resourceRequestInfo(mResource, mCount, stock, overdue,
+                               remainingMonths);
 }
 
-std::string FulfillRequestEvent::dispatchText(int stock, const eDate &currentDate) const
+std::string SendResourcesToCityEvent::dispatchText(int stock, const eDate &currentDate) const
 {
-    return eLanguage::zeusText(5, 12) + " " +
-           requestInfo(stock, currentDate) + "?";
+    return resourceDispatchText(requestInfo(stock, currentDate));
 }

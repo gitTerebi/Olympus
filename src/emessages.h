@@ -55,7 +55,7 @@ struct eHeroMessages {
     eConsequenceMessageType fHallAvailable;
 };
 
-struct eReceiveRequestMessages {
+struct RequestedResourcesMessages {
     eMessageType fInitial;
     eMessageType fReminder;
     eMessageType fOverdue;
@@ -229,32 +229,32 @@ public:
     eMessageType fGiftReceivedNotNeeded;
     eMessageType fGiftReceivedRefuse;
 
-    eReceiveRequestMessages fGeneralRequestAllyS;
-    eReceiveRequestMessages fGeneralRequestRivalD;
-    eReceiveRequestMessages fGeneralRequestSubjectP;
-    eReceiveRequestMessages fGeneralRequestParentR;
+    RequestedResourcesMessages fGeneralRequestAllyS;
+    RequestedResourcesMessages fGeneralRequestRivalD;
+    RequestedResourcesMessages fGeneralRequestSubjectP;
+    RequestedResourcesMessages fGeneralRequestParentR;
 
-    eReceiveRequestMessages fFamineAllyS;
-    eReceiveRequestMessages fFamineRivalD;
-    eReceiveRequestMessages fFamineSubjectP;
-    eReceiveRequestMessages fFamineParentR;
+    RequestedResourcesMessages fFamineAllyS;
+    RequestedResourcesMessages fFamineRivalD;
+    RequestedResourcesMessages fFamineSubjectP;
+    RequestedResourcesMessages fFamineParentR;
 
-    eReceiveRequestMessages fProjectAllyS;
-    eReceiveRequestMessages fProjectRivalD;
-    eReceiveRequestMessages fProjectSubjectP;
-    eReceiveRequestMessages fProjectParentR;
+    RequestedResourcesMessages fProjectAllyS;
+    RequestedResourcesMessages fProjectRivalD;
+    RequestedResourcesMessages fProjectSubjectP;
+    RequestedResourcesMessages fProjectParentR;
 
-    eReceiveRequestMessages fFestivalAllyS;
-    eReceiveRequestMessages fFestivalRivalD;
-    eReceiveRequestMessages fFestivalSubjectP;
-    eReceiveRequestMessages fFestivalParentR;
+    RequestedResourcesMessages fFestivalAllyS;
+    RequestedResourcesMessages fFestivalRivalD;
+    RequestedResourcesMessages fFestivalSubjectP;
+    RequestedResourcesMessages fFestivalParentR;
 
-    eReceiveRequestMessages fFinancialWoesAllyS;
-    eReceiveRequestMessages fFinancialWoesRivalD;
-    eReceiveRequestMessages fFinancialWoesSubjectP;
-    eReceiveRequestMessages fFinancialWoesParentR;
+    RequestedResourcesMessages fFinancialWoesAllyS;
+    RequestedResourcesMessages fFinancialWoesRivalD;
+    RequestedResourcesMessages fFinancialWoesSubjectP;
+    RequestedResourcesMessages fFinancialWoesParentR;
 
-    eReceiveRequestMessages fTributeRequest;
+    RequestedResourcesMessages fTributeRequest;
 
     eResourceGrantedMessages fGiftGranted;
 
@@ -410,7 +410,7 @@ private:
               const std::string& monsterName1,
               const std::string& monsterName2);
 
-    void loadGeneralRequest(eReceiveRequestMessages& request,
+    void loadGeneralRequest(RequestedResourcesMessages& request,
                             const std::string& letter,
                             const std::string& mid = "general_request");
     void loadResourceGranted(eResourceGrantedMessages& granted,

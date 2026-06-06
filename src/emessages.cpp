@@ -161,7 +161,7 @@ void eMessages::load(eMonsterMessages& monster,
 }
 
 void eMessages::loadGeneralRequest(
-        eReceiveRequestMessages& request,
+        RequestedResourcesMessages& request,
         const std::string& letter,
         const std::string& mid) {
     request.fInitial.fFull.fTitle = loadMessage("PHRASE_" + mid + "_title_" + letter);

@@ -213,9 +213,8 @@ void eMessageBox::initialize(GameBoard& board,
         surrenderB->setVisible(ed.fPrimaryResponse >= 0);
 
         const bool canBribe = ed.fSecondaryResponse >= 0;
-        const auto bribeB = canBribe ?
-            static_cast<eButton*>(new FramedButton(window())) :
-            new eButton(window());
+        const auto bribeB = new FramedButton(window());
+        bribeB->setEnabled(canBribe);
         bribeB->setFontSizeS();
         bribeB->setUnderline(false);
         auto bribeStr = eLanguage::zeusText(44, 281);
@@ -225,14 +224,12 @@ void eMessageBox::initialize(GameBoard& board,
         bribeB->fitContent();
         wid->addWidget(bribeB);
         bribeB->setPressAction([this, boardPtr, ed]() {
-            if(ed.fSecondaryResponse < 0) return;
             boardPtr->respondToEvent(ed.fEventRuntimeId, ed.fSecondaryResponse);
             mActionTaken = true;
             close();
         });
-        bribeB->setVisible(true);
         const auto bribeAmount = std::to_string(ed.fBribe) + " drachmas";
-        bribeB->setTooltip(ed.fSecondaryResponse >= 0 ? "Bribe demanded: " + bribeAmount :
+        bribeB->setTooltip(canBribe ? "Bribe demanded: " + bribeAmount :
                            "Need " + bribeAmount + " to bribe");
 
         const auto fightToDefend = new FramedButton(window());
