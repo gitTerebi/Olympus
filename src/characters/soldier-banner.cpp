@@ -265,9 +265,7 @@ void SoldierBanner::moveTo(const int x, const int y) {
 
     const bool visible = visibleOnTile();
 
-    if(visible && mTile) {
-        mTile->setSoldierBanner(nullptr);
-    }
+    if(visible) clearTileBanner();
     if(visible && t) {
         t->setSoldierBanner(this);
     }
@@ -278,12 +276,8 @@ void SoldierBanner::moveTo(const int x, const int y) {
 }
 
 void SoldierBanner::detachFromTile() {
-    if(mTile) {
-        if(mTile->soldierBanner() == this) {
-            mTile->setSoldierBanner(nullptr);
-        }
-        mTile = nullptr;
-    }
+    clearTileBanner();
+    mTile = nullptr;
 }
 
 void SoldierBanner::moveToPalace() {
@@ -377,10 +371,8 @@ void SoldierBanner::goAbroad() {
         }
         idx++;
     }
-    if(mTile) {
-        mTile->setSoldierBanner(nullptr);
-        mTile = nullptr;
-    }
+    clearTileBanner();
+    mTile = nullptr;
 }
 
 void SoldierBanner::backFromAbroad(int& wait) {
@@ -433,6 +425,7 @@ bool SoldierBanner::isGoingHome() const {
 
 void SoldierBanner::addSoldier(eSoldier* const s) {
     mSoldiers.push_back(s);
+    refreshTileBanner();
     updatePlaces();
     if(!mHome) callSoldier(s);
 }
@@ -757,13 +750,25 @@ void SoldierBanner::sSendPalaceBannersHomeAndRepack(
     for(int i = 0; i < (int)bs.size(); i++) {
         const auto bb = bs[i];
         const auto bbt = bb->type();
-        if(bbt == eBannerType::hoplite ||
-           bbt == eBannerType::rockThrower ||
-           bbt == eBannerType::horseman) {
+        switch(bbt) {
+        case eBannerType::hoplite:
+        case eBannerType::rockThrower:
+        case eBannerType::horseman:
+            bb->goHome();
+            changed = true;
+            eVectorHelpers::remove(bs, bb);
+            i--;
+            break;
+        case eBannerType::amazon:
+        case eBannerType::aresWarrior:
+            bb->moveToPalace();
             bb->goHome();
             eVectorHelpers::remove(bs, bb);
-            changed = true;
             i--;
+            break;
+        case eBannerType::enemy:
+        case eBannerType::trireme:
+            break;
         }
     }
     if(changed) {
@@ -954,9 +959,9 @@ SoldierBanner::sFormationPositions(
     std::stable_sort(bs.begin(), bs.end(), [](const SoldierBanner* a, const SoldierBanner* b) {
         auto order = [](const SoldierBanner* banner) {
             const auto role = banner->formationRole();
-            if(role == eBannerFormationRole::missile) return 0;
-            if(role == eBannerFormationRole::cavalry) return 1;
-            if(role == eBannerFormationRole::melee) return 2;
+            if(role == eBannerFormationRole::cavalry) return 0;
+            if(role == eBannerFormationRole::melee) return 1;
+            if(role == eBannerFormationRole::missile) return 2;
             return 3;
         };
         return order(a) < order(b);
@@ -1268,7 +1273,7 @@ void SoldierBanner::updateCount() {
         case eBannerType::rockThrower:
         case eBannerType::hoplite:
         case eBannerType::horseman:
-            mBoard.unregisterSoldierBanner(tptr);
+            if(mHome || mAbroad) mBoard.unregisterSoldierBanner(tptr);
             break;
         case eBannerType::amazon:
         case eBannerType::aresWarrior:
@@ -1279,6 +1284,7 @@ void SoldierBanner::updateCount() {
         }
         return;
     }
+    refreshTileBanner();
     updatePlaces();
 }
 
@@ -1550,6 +1556,28 @@ bool SoldierBanner::visibleOnTile() const {
     const auto pid = playerId();
     if(pid == ppid) return true;
     return mMilitaryAid;
+}
+
+void SoldierBanner::clearTileBanner() {
+    if(!mTile) return;
+    if(mTile->soldierBanner() != this) return;
+    mTile->setSoldierBanner(nullptr);
+}
+
+void SoldierBanner::refreshTileBanner() {
+    if(!mTile && !mHome && !mAbroad) {
+        for(const auto s : mSoldiers) {
+            if(!s || s->dead()) continue;
+            const auto tile = s->tile();
+            if(!tile) continue;
+            mTile = tile;
+            break;
+        }
+    }
+    if(!mTile) return;
+    if(!visibleOnTile()) return;
+    if(mTile->soldierBanner() == this) return;
+    mTile->setSoldierBanner(this);
 }
 
 void SoldierBanner::teleportSoldiersToPlaces() {
