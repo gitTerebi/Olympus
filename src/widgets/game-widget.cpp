@@ -799,8 +799,8 @@ void GameWidget::viewBoxSize(double &fx, double &fy) const
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    fx = (width() - mGm->width()) / double(mdx);
-    fy = height() / double(mdy);
+    fx = (width() - mGm->width()) / (mZoom * double(mdx));
+    fy = height() / (mZoom * double(mdy));
 }
 
 void GameWidget::viewedFraction(double &fx, double &fy) const
@@ -2920,6 +2920,7 @@ bool GameWidget::mouseWheelEvent(const eMouseWheelEvent &e)
         mDX = std::round((e.x() - cx) / mZoom - worldX);
         mDY = std::round((e.y() - cy) / mZoom - worldY);
         clampViewBox();
+        updateViewBoxSize();
         updateMinimap();
 
         const int pct = std::round(mZoom * 100.0);
@@ -3410,19 +3411,22 @@ void GameWidget::clampViewBox()
     if (mTem->visible())
         return;
     const auto dir = mBoard->direction();
+    const int viewW = std::round(width() / mZoom);
+    const int viewH = std::round(height() / mZoom);
+    const int viewX = (width() - viewW) / 2;
+    const int viewY = (height() - viewH) / 2;
     const int w = mBoard->rotatedWidth();
-    const int ww = width() - mGm->width();
-    mDX = std::min(0, mDX);
+    const int ww = std::round((width() - mGm->width()) / mZoom);
+    mDX = std::min(viewX, mDX);
     const int winc = dir == eWorldDirection::W ? mTileW / 2 : 0;
-    mDX = std::max(-w * mTileW + ww + mTileW / 2 + winc, mDX);
+    mDX = std::max(viewX - w * mTileW + ww + mTileW / 2 + winc, mDX);
 
     const int h = mBoard->rotatedHeight();
-    const int hh = height();
     const int einc = dir == eWorldDirection::E ? mTileH / 2 : 0;
     const int dt = mTopMinAltitude < 0 ? mTopMinAltitude : 0;
-    mDY = std::min(-mTileH / 2 + 2 * einc + dt * mTileH, mDY);
+    mDY = std::min(viewY - mTileH / 2 + 2 * einc + dt * mTileH, mDY);
     const int db = mBottomMaxAltitude > 0 ? mBottomMaxAltitude : 0;
-    mDY = std::max(-h * mTileH / 2 + hh + einc + db * mTileH, mDY);
+    mDY = std::max(viewY - h * mTileH / 2 + viewH + einc + db * mTileH, mDY);
 }
 
 void GameWidget::setBookmark(const int id)
