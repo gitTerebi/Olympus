@@ -80,6 +80,7 @@ public:
     bool isHome() const { return mHome; }
     bool isGoingHome() const;
     bool isAbroad() const { return mAbroad; }
+    bool deployed() const { return !mHome && !mAbroad; }
 
     void addSoldier(eSoldier* const s);
     void removeSoldier(eSoldier* const s);
@@ -155,6 +156,8 @@ public:
                         int& toX, int& toY) const;
 
     bool visibleOnTile() const;
+    void clearTileBanner();
+    void refreshTileBanner();
 
     void teleportSoldiersToPlaces();
 

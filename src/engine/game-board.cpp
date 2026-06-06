@@ -2855,6 +2855,10 @@ void GameBoard::incTime(const int by)
         }
     }
 
+    for(const auto b : mAllSoldierBanners) {
+        if(b && b->deployed()) b->refreshTileBanner();
+    }
+
     //    if(mTotalTime == 0) {
     ////        receiveRequest(mWorldBoard->cities()[0],
     ////                            eResourceType::fleece, 9, 0);

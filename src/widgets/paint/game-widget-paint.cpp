@@ -75,9 +75,6 @@ private:
 
 void GameWidget::paintEvent(ePainter &p)
 {
-    using clock = std::chrono::steady_clock;
-    using ms_t = std::chrono::duration<double, std::milli>;
-    const auto paintDebugStart = clock::now();
     auto* r = p.renderer();
     const int w = width();
     const int h = height();
@@ -151,12 +148,6 @@ void GameWidget::paintEvent(ePainter &p)
             setPatrolBuilding(nullptr);
         }
     }
-    const auto stateDebugEnd = clock::now();
-
-    const auto simDebugStart = stateDebugEnd;
-    const auto simDebugEnd = simDebugStart;
-
-    const auto worldDebugStart = clock::now();
     GameBoardRegisterLock lock(*mBoard);
 
     p.setFont(eFonts::defaultFont(resolution()));
@@ -1227,12 +1218,8 @@ void GameWidget::paintEvent(ePainter &p)
         }
     };
 
-
-    const auto visibleTilesDebugStart = clock::now();
-    int visibleTileCount = 0;
     iterateOverVisibleTiles([&](eTile *const tile)
                             {
-        visibleTileCount++;
         const int worldTileX = tile->x();
         const int worldTileY = tile->y();
         int viewTileX;
@@ -2482,9 +2469,6 @@ void GameWidget::paintEvent(ePainter &p)
         SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
         SDL_RenderDrawRect(r, &box);
     }
-
-    const auto worldDebugEnd = clock::now();
-    const auto blitDebugStart = clock::now();
     SDL_SetRenderTarget(r, nullptr);
     SDL_RenderSetClipRect(r, nullptr);
     const int srcW = std::round(w / mZoom);
@@ -2500,9 +2484,7 @@ void GameWidget::paintEvent(ePainter &p)
     if(!postprocessed) {
         SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
     }
-    const auto blitDebugEnd = clock::now();
 
-    const auto compassDebugStart = clock::now();
     {
         const char* letters[] = {"N", "W", "S", "E"};
         const int idx = static_cast<int>(dir);
@@ -2525,47 +2507,5 @@ void GameWidget::paintEvent(ePainter &p)
             const int py = topH + 10;
             mCompassTex->render(r, px, py);
         }
-    }
-    const auto compassDebugEnd = clock::now();
-
-    static int paintDebugFrames = 0;
-    static double stateMs = 0.;
-    static double simMs = 0.;
-    static double worldMs = 0.;
-    static double visibleTilesMs = 0.;
-    static double blitMs = 0.;
-    static double compassMs = 0.;
-    static double totalMs = 0.;
-    static int visibleTiles = 0;
-
-    paintDebugFrames++;
-    stateMs += ms_t(stateDebugEnd - paintDebugStart).count();
-    simMs += ms_t(simDebugEnd - simDebugStart).count();
-    worldMs += ms_t(worldDebugEnd - worldDebugStart).count();
-    visibleTilesMs += ms_t(worldDebugEnd - visibleTilesDebugStart).count();
-    blitMs += ms_t(blitDebugEnd - blitDebugStart).count();
-    compassMs += ms_t(compassDebugEnd - compassDebugStart).count();
-    totalMs += ms_t(compassDebugEnd - paintDebugStart).count();
-    visibleTiles += visibleTileCount;
-    if(paintDebugFrames >= 240) {
-        const double inv = 1. / paintDebugFrames;
-        printf("game paint avg %.2f ms | state %.2f sim %.2f world %.2f tiles %.2f blit %.2f compass %.2f\n",
-               totalMs * inv,
-               stateMs * inv,
-               simMs * inv,
-               worldMs * inv,
-               visibleTilesMs * inv,
-               blitMs * inv,
-               compassMs * inv);
-        printf("visible tiles avg %.0f\n", visibleTiles * inv);
-        paintDebugFrames = 0;
-        stateMs = 0.;
-        simMs = 0.;
-        worldMs = 0.;
-        visibleTilesMs = 0.;
-        blitMs = 0.;
-        compassMs = 0.;
-        totalMs = 0.;
-        visibleTiles = 0;
     }
 }

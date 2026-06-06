@@ -29,10 +29,6 @@
 #include <fstream>
 #include <algorithm>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #include "widgets/eloadgame.h"
 #include "elanguage.h"
 
@@ -41,30 +37,6 @@
 #include "widgets/eeventbackground.h"
 
 namespace {
-#ifdef _WIN32
-uint64_t fileTimeToU64(const FILETIME& ft) {
-    return (uint64_t(ft.dwHighDateTime) << 32) | uint64_t(ft.dwLowDateTime);
-}
-
-uint64_t processCpuTime100ns() {
-    FILETIME createTime;
-    FILETIME exitTime;
-    FILETIME kernelTime;
-    FILETIME userTime;
-    if(!GetProcessTimes(GetCurrentProcess(), &createTime, &exitTime,
-                        &kernelTime, &userTime)) {
-        return 0;
-    }
-    return fileTimeToU64(kernelTime) + fileTimeToU64(userTime);
-}
-
-int cpuProcessorCount() {
-    SYSTEM_INFO info;
-    GetSystemInfo(&info);
-    return std::max(1, static_cast<int>(info.dwNumberOfProcessors));
-}
-#endif
-
 bool writeGameSaveFile(const std::string& path,
                        const std::string& format,
                        GameWidget* const gameWidget,
@@ -732,21 +704,8 @@ int eMainWindow::exec() {
     bool resetRenderTargets = false;
     const duration<double, std::milli> frameDt(capRenderFps ? 1000./fpsClamp : 0.);
     auto nextFrame = high_resolution_clock::now();
-    int timingFrames = 0;
-    double timingEventMs = 0.;
-    double timingUpdateMs = 0.;
-    double timingPaintMs = 0.;
-    double timingPresentMs = 0.;
-    double timingSleepMs = 0.;
-    double timingFrameMs = 0.;
-#ifdef _WIN32
-    const int cpuCount = cpuProcessorCount();
-    uint64_t timingCpuPrev = processCpuTime100ns();
-    auto timingCpuWallPrev = high_resolution_clock::now();
-#endif
     while(!mQuit) {
         const auto fpsStart = high_resolution_clock::now();
-        const auto eventStart = fpsStart;
 
         while(SDL_PollEvent(&e)) {
             int x, y;
@@ -833,14 +792,12 @@ int eMainWindow::exec() {
                 if(mWidget) mWidget->keyRelease(ke);
             }
         }
-        const auto eventEnd = high_resolution_clock::now();
 
         if(resetRenderTargets) {
             resetRenderTargets = false;
             if(mWidget) mWidget->renderTargetsReset();
         }
 
-        const auto sleepStart = high_resolution_clock::now();
         if(capRenderFps) {
             nextFrame += duration_cast<high_resolution_clock::duration>(frameDt);
             const auto now = high_resolution_clock::now();
@@ -850,15 +807,11 @@ int eMainWindow::exec() {
                 std::this_thread::sleep_until(nextFrame);
             }
         }
-        const auto sleepEnd = high_resolution_clock::now();
 
-        const auto updateStart = high_resolution_clock::now();
         if(mWidget == mGW && mGW) {
             mGW->updateBeforePaint();
         }
-        const auto updateEnd = high_resolution_clock::now();
 
-        const auto paintStart = high_resolution_clock::now();
         SDL_SetRenderDrawColor(mSdlRenderer, 0x0, 0x0, 0x0, 0xFF);
         SDL_RenderClear(mSdlRenderer);
 
@@ -895,56 +848,13 @@ int eMainWindow::exec() {
             p.setFont(eFonts::defaultFont(resolution()));
             p.drawText(0, 0, std::to_string(fpsVal), eFontColor::dark);
         }
-        const auto paintEnd = high_resolution_clock::now();
 
-        const auto presentStart = high_resolution_clock::now();
         SDL_RenderPresent(mSdlRenderer);
-        const auto presentEnd = high_resolution_clock::now();
 
         std::vector<eSlot> slots;
         std::swap(slots, mSlots);
         for(const auto& s : slots) {
             s();
-        }
-        const auto frameEnd = high_resolution_clock::now();
-
-        timingFrames++;
-        timingEventMs += duration<double, std::milli>(eventEnd - eventStart).count();
-        timingUpdateMs += duration<double, std::milli>(updateEnd - updateStart).count();
-        timingPaintMs += duration<double, std::milli>(paintEnd - paintStart).count();
-        timingPresentMs += duration<double, std::milli>(presentEnd - presentStart).count();
-        timingSleepMs += duration<double, std::milli>(sleepEnd - sleepStart).count();
-        timingFrameMs += duration<double, std::milli>(frameEnd - fpsStart).count();
-        if(timingFrames >= 240) {
-            const double inv = 1. / timingFrames;
-#ifdef _WIN32
-            const auto cpuWallNow = high_resolution_clock::now();
-            const uint64_t cpuNow = processCpuTime100ns();
-            const double cpuWallSec =
-                duration<double>(cpuWallNow - timingCpuWallPrev).count();
-            const double cpuPct = cpuWallSec > 0. ?
-                (double(cpuNow - timingCpuPrev) / 10000000. /
-                 cpuWallSec / cpuCount * 100.) : 0.;
-            timingCpuPrev = cpuNow;
-            timingCpuWallPrev = cpuWallNow;
-#else
-            const double cpuPct = 0.;
-#endif
-            printf("frame avg %.2f ms | cpu %.1f%% event %.2f update %.2f paint %.2f present %.2f sleep %.2f\n",
-                   timingFrameMs * inv,
-                   cpuPct,
-                   timingEventMs * inv,
-                   timingUpdateMs * inv,
-                   timingPaintMs * inv,
-                   timingPresentMs * inv,
-                   timingSleepMs * inv);
-            timingFrames = 0;
-            timingEventMs = 0.;
-            timingUpdateMs = 0.;
-            timingPaintMs = 0.;
-            timingPresentMs = 0.;
-            timingSleepMs = 0.;
-            timingFrameMs = 0.;
         }
 
         if(showFPS) {
