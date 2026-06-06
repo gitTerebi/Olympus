@@ -63,9 +63,9 @@
 #include "gameEvents/egifttoevent.h"
 #include "gameEvents/egiftfromevent.h"
 #include "gameEvents/requests/ask-for-aid-event.h"
-#include "gameEvents/eplayerconquesteventbase.h"
+#include "gameEvents/conquest/player-conquest-event-base.h"
 #include "gameEvents/requests/send-troops-event.h"
-#include "gameEvents/earmyreturnevent.h"
+#include "gameEvents/conquest/army-return-event.h"
 
 #include "eeventdata.h"
 
@@ -469,7 +469,7 @@ void GameBoard::bannersGoHome()
             return;
         const auto fromCid = r.second[0]->onCityId();
         const auto fromC = mWorld.cityWithId(fromCid);
-        const auto e = e::make_shared<eArmyReturnEvent>(
+        const auto e = e::make_shared<ArmyReturnEvent>(
             r.first, eGameEventBranch::root, *this);
         const auto boardDate = date();
         const int period = eNumbers::sReinforcementsTravelTime;
@@ -1685,7 +1685,7 @@ GameBoard::eConquests GameBoard::conquests(const ePlayerId pid) const
     return p->conquests();
 }
 
-void GameBoard::addConquest(ePlayerConquestEventBase *const q)
+void GameBoard::addConquest(PlayerConquestEventBase *const q)
 {
     const auto cid = q->cityId();
     const auto pid = cityIdToPlayerId(cid);
@@ -1695,7 +1695,7 @@ void GameBoard::addConquest(ePlayerConquestEventBase *const q)
     p->addConquest(q);
 }
 
-void GameBoard::removeConquest(ePlayerConquestEventBase *const q)
+void GameBoard::removeConquest(PlayerConquestEventBase *const q)
 {
     const auto cid = q->cityId();
     const auto pid = cityIdToPlayerId(cid);
@@ -1740,12 +1740,12 @@ GameBoard::eArmyEvents GameBoard::armyEvents() const
     return mArmyEvents;
 }
 
-void GameBoard::addArmyEvent(eArmyEventBase *const q)
+void GameBoard::addArmyEvent(ArmyEventBase *const q)
 {
     mArmyEvents.push_back(q);
 }
 
-void GameBoard::removeArmyEvent(eArmyEventBase *const q)
+void GameBoard::removeArmyEvent(ArmyEventBase *const q)
 {
     eVectorHelpers::remove(mArmyEvents, q);
 }

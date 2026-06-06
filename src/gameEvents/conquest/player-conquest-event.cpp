@@ -1,4 +1,4 @@
-﻿#include "eplayerconquestevent.h"
+#include "player-conquest-event.h"
 #include "erand.h"
 
 #include "engine/game-board.h"
@@ -11,14 +11,14 @@
 #include "gameEvents/invasions/invasion-event.h"
 #include "fileIO/esavearchive.h"
 
-ePlayerConquestEvent::ePlayerConquestEvent(
+PlayerConquestEvent::PlayerConquestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    ePlayerConquestEventBase(cid, eGameEventType::playerConquestEvent,
-                             branch, board) {}
+    PlayerConquestEventBase(cid, eGameEventType::playerConquestEvent,
+                            branch, board) {}
 
-void ePlayerConquestEvent::initialize(
+void PlayerConquestEvent::initialize(
         const eDate& date,
         const eEnlistedForces& forces,
         const stdsptr<WorldCity>& city) {
@@ -56,7 +56,7 @@ void ePlayerConquestEvent::initialize(
     }
 }
 
-void ePlayerConquestEvent::trigger() {
+void PlayerConquestEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     removeArmyEvent();
@@ -120,21 +120,21 @@ void ePlayerConquestEvent::trigger() {
     }
 }
 
-std::string ePlayerConquestEvent::longName() const {
+std::string PlayerConquestEvent::longName() const {
     return eLanguage::text("player_conquest_event_long_name");
 }
 
-bool ePlayerConquestEvent::finished() const {
-    return ePlayerConquestEventBase::finished() &&
+bool PlayerConquestEvent::finished() const {
+    return PlayerConquestEventBase::finished() &&
             (!mInvasionEvent || mInvasionEvent->finished());
 }
 
-void ePlayerConquestEvent::serializeFields(eSaveArchive& ar) {
-    eArmyEventBase::serializeFields(ar);
+void PlayerConquestEvent::serializeFields(eSaveArchive& ar) {
+    ArmyEventBase::serializeFields(ar);
     ar.gameEventField("invasionEvent", gameBoard(), mInvasionEvent);
 }
 
-bool ePlayerConquestEvent::warned() const {
+bool PlayerConquestEvent::warned() const {
     if(!mInvasionEvent) return false;
     return mInvasionEvent->warned();
 }

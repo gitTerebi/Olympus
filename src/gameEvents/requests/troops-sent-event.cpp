@@ -10,8 +10,8 @@ TroopsSentEvent::TroopsSentEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    ePlayerConquestEventBase(cid, eGameEventType::troopsSent,
-                             branch, board) {}
+    PlayerConquestEventBase(cid, eGameEventType::troopsSent,
+                            branch, board) {}
 
 void TroopsSentEvent::initialize(
         const eEnlistedForces& forces,

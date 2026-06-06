@@ -29,9 +29,9 @@
 #include "gameEvents/invasions/invasion-event.h"
 #include "gameEvents/invasions/monster-invasion-event-base.h"
 #include "gameEvents/invasions/invasion-handler.h"
-#include "gameEvents/eplayerconquestevent.h"
+#include "gameEvents/conquest/player-conquest-event.h"
 #include "engine/emilitaryaid.h"
-#include "gameEvents/earmyreturnevent.h"
+#include "gameEvents/conquest/army-return-event.h"
 #include "gameEvents/gods/egodvisitevent.h"
 
 #include "elanguage.h"
@@ -617,7 +617,7 @@ void BoardCity::nextMonth() {
                         forces.fHeroes.push_back({mId, type});
                     }
                     mBoard.enlistForces(forces);
-                    const auto e = e::make_shared<ePlayerConquestEvent>(
+                    const auto e = e::make_shared<PlayerConquestEvent>(
                                        mId, eGameEventBranch::root, mBoard);
                     const auto boardDate = mBoard.date();
                     const int period = eNumbers::sArmyTravelTime;
@@ -2808,7 +2808,7 @@ void BoardCity::sendAllReinforcementsHome() {
         const auto& forces = r.forces();
         if(forces.fSoldiers.empty()) return;
         const auto fromC = world.cityWithId(fromCid);
-        const auto e = e::make_shared<eArmyReturnEvent>(
+        const auto e = e::make_shared<ArmyReturnEvent>(
             fromCid, eGameEventBranch::root, mBoard);
         const auto boardDate = mBoard.date();
         const int period = eNumbers::sReinforcementsTravelTime;

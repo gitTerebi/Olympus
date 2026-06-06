@@ -1,4 +1,4 @@
-﻿#include "eplayerraidevent.h"
+#include "player-raid-event.h"
 #include "fileIO/esavearchive.h"
 
 #include "engine/game-board.h"
@@ -6,20 +6,20 @@
 #include "engine/eevent.h"
 #include "elanguage.h"
 #include "engine/egifthelpers.h"
-#include "eraidresourceevent.h"
+#include "raid-resource-event.h"
 #include "erand.h"
 
 #include <algorithm>
 
-ePlayerRaidEvent::ePlayerRaidEvent(
+PlayerRaidEvent::PlayerRaidEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    ePlayerConquestEventBase(cid,
-                             eGameEventType::playerRaidEvent,
-                             branch, board) {}
+    PlayerConquestEventBase(cid,
+                            eGameEventType::playerRaidEvent,
+                            branch, board) {}
 
-void ePlayerRaidEvent::initialize(
+void PlayerRaidEvent::initialize(
         const eEnlistedForces& forces,
         const stdsptr<WorldCity>& city,
         const eResourceType resource) {
@@ -28,11 +28,11 @@ void ePlayerRaidEvent::initialize(
     mResource = resource;
 }
 
-int ePlayerRaidEvent::raidTargetStrength(const int enemyStr) {
+int PlayerRaidEvent::raidTargetStrength(const int enemyStr) {
     return std::max(1, (3*enemyStr + 3)/4);
 }
 
-void ePlayerRaidEvent::trigger() {
+void PlayerRaidEvent::trigger() {
     removeArmyEvent();
     removeConquestEvent();
     if(!mCity) return;
@@ -70,7 +70,7 @@ void ePlayerRaidEvent::trigger() {
             }
         }
         const int count = 2*eGiftHelpers::giftCount(res);
-        const auto e = e::make_shared<eRaidResourceEvent>(
+        const auto e = e::make_shared<RaidResourceEvent>(
                            cityId(), eGameEventBranch::child, *board);
         const auto boardDate = board->date();
         const int period = 75;
@@ -85,11 +85,11 @@ void ePlayerRaidEvent::trigger() {
     planArmyReturn();
 }
 
-std::string ePlayerRaidEvent::longName() const {
+std::string PlayerRaidEvent::longName() const {
     return eLanguage::text("player_raid_event_long_name");
 }
 
-void ePlayerRaidEvent::serializeFields(eSaveArchive& ar) {
-    eArmyEventBase::serializeFields(ar);
+void PlayerRaidEvent::serializeFields(eSaveArchive& ar) {
+    ArmyEventBase::serializeFields(ar);
     ar.field("resource", mResource, eResourceType::none);
 }

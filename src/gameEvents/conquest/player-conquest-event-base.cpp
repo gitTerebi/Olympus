@@ -1,25 +1,25 @@
-#include "eplayerconquesteventbase.h"
+#include "player-conquest-event-base.h"
 
 #include "engine/game-board.h"
 
-ePlayerConquestEventBase::ePlayerConquestEventBase(
+PlayerConquestEventBase::PlayerConquestEventBase(
         const eCityId cid,
         const eGameEventType type,
         const eGameEventBranch branch,
         GameBoard& board) :
-    eArmyEventBase(cid, type, branch, board) {
+    ArmyEventBase(cid, type, branch, board) {
     board.addConquest(this);
 }
 
-ePlayerConquestEventBase::~ePlayerConquestEventBase() {
+PlayerConquestEventBase::~PlayerConquestEventBase() {
     removeConquestEvent();
 }
 
-void ePlayerConquestEventBase::addAres() {
+void PlayerConquestEventBase::addAres() {
     mForces.fAres = true;
 }
 
-void ePlayerConquestEventBase::removeConquestEvent() {
+void PlayerConquestEventBase::removeConquestEvent() {
     const auto board = gameBoard();
     if(!board) return;
     board->removeConquest(this);

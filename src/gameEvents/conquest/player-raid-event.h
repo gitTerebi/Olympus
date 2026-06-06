@@ -1,15 +1,15 @@
-﻿#ifndef EPLAYERRAIDEVENT_H
+#ifndef EPLAYERRAIDEVENT_H
 #define EPLAYERRAIDEVENT_H
 
-#include "eplayerconquesteventbase.h"
+#include "player-conquest-event-base.h"
 
 class eSaveArchive;
 
-class ePlayerRaidEvent : public ePlayerConquestEventBase {
+class PlayerRaidEvent : public PlayerConquestEventBase {
 public:
-    ePlayerRaidEvent(const eCityId cid,
-                     const eGameEventBranch branch,
-                     GameBoard& board);
+    PlayerRaidEvent(const eCityId cid,
+                    const eGameEventBranch branch,
+                    GameBoard& board);
 
     void initialize(const eEnlistedForces& forces,
                     const stdsptr<WorldCity>& city,

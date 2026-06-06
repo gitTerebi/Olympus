@@ -10,7 +10,7 @@
 #include "characters/eenlistedforces.h"
 
 class eInvasionHandler;
-class ePlayerConquestEvent;
+class PlayerConquestEvent;
 class eInvasionWarning;
 class eSaveArchive;
 
@@ -36,7 +36,7 @@ public:
                         ePlayerId::neutralFriendly);
     void initialize(const stdsptr<WorldCity>& city,
                     const eEnlistedForces& forces,
-                    ePlayerConquestEvent* const conquestEvent);
+                    PlayerConquestEvent* const conquestEvent);
     static bool tryCreateCityInvasion(WorldCity& attacker,
                                       GameBoard& board);
 
@@ -66,7 +66,7 @@ public:
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX,int& toY) const;
 
-    ePlayerConquestEvent* conquestEvent() const;
+    PlayerConquestEvent* conquestEvent() const;
 
     const eEnlistedForces& forces() const
     { return mForces; }
@@ -101,7 +101,7 @@ private:
 
     bool mHardcoded = true;
 
-    stdptr<ePlayerConquestEvent> mConquestEvent;
+    stdptr<PlayerConquestEvent> mConquestEvent;
     eEnlistedForces mForces;
 
     eTile* mDisembarkTile = nullptr;

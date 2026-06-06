@@ -9,7 +9,7 @@
 #include "etilehelper.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
-#include "gameEvents/eplayerconquesteventbase.h"
+#include "gameEvents/conquest/player-conquest-event-base.h"
 
 #include "characters/actions/godHelp/eaphroditehelpaction.h"
 #include "characters/actions/godHelp/eapollohelpaction.h"

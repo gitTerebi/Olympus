@@ -9,7 +9,7 @@
 #include "gameEvents/invasions/invasion-warning.h"
 #include "audio/music.h"
 #include "evectorhelpers.h"
-#include "gameEvents/eplayerconquestevent.h"
+#include "gameEvents/conquest/player-conquest-event.h"
 #include "engine/difficulty.h"
 #include "engine/epathfinder.h"
 #include "eiteratesquare.h"
@@ -113,7 +113,7 @@ void eInvasionEvent::initialize(const stdsptr<WorldCity> &city,
 
 void eInvasionEvent::initialize(const stdsptr<WorldCity> &city,
                                 const eEnlistedForces &forces,
-                                ePlayerConquestEvent *const conquestEvent)
+                                PlayerConquestEvent *const conquestEvent)
 {
     mCity = city;
     if (city)
@@ -695,7 +695,7 @@ bool eInvasionEvent::nearestSoldier(const int fromX, const int fromY,
     return found;
 }
 
-ePlayerConquestEvent *eInvasionEvent::conquestEvent() const
+PlayerConquestEvent *eInvasionEvent::conquestEvent() const
 {
     return mConquestEvent;
 }

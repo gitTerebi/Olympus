@@ -14,8 +14,8 @@
 #include "efulfilldialog.h"
 #include "emessagewidget.h"
 
-#include "gameEvents/eplayerconquestevent.h"
-#include "gameEvents/eplayerraidevent.h"
+#include "gameEvents/conquest/player-conquest-event.h"
+#include "gameEvents/conquest/player-raid-event.h"
 #include "gameEvents/requests/ask-for-aid-event.h"
 #include "gameEvents/requests/ask-for-strike-event.h"
 #include "gameEvents/ereinforcementsevent.h"
@@ -43,7 +43,7 @@ void eWorldWidget::initialize() {
         const auto enlistAction = [this](const eEnlistedForces& forces,
                                          const eResourceType r) {
             mBoard->enlistForces(forces);
-            const auto e = e::make_shared<ePlayerRaidEvent>(
+            const auto e = e::make_shared<PlayerRaidEvent>(
                                mBoard->currentCityId(),
                                eGameEventBranch::root, *mBoard);
             const auto boardDate = mBoard->date();
@@ -62,7 +62,7 @@ void eWorldWidget::initialize() {
             resources.push_back(s.fType);
         }
         mBoard->setEnlistEnemyStr(
-            ePlayerRaidEvent::raidTargetStrength(mCity->troops()));
+            PlayerRaidEvent::raidTargetStrength(mCity->troops()));
         openEnlistForcesDialog(enlistAction, {mCity}, resources);
         mBoard->setEnlistEnemyStr(0);
     };
@@ -87,7 +87,7 @@ void eWorldWidget::initialize() {
                 mBoard->addRootGameEvent(e);
                 update();
             } else {
-                const auto e = e::make_shared<ePlayerConquestEvent>(
+                const auto e = e::make_shared<PlayerConquestEvent>(
                                    mBoard->currentCityId(),
                                    eGameEventBranch::root, *mBoard);
                 const auto boardDate = mBoard->date();
