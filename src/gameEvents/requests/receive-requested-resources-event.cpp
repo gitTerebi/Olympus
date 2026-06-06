@@ -1,4 +1,4 @@
-﻿#include "emakerequestevent.h"
+#include "receive-requested-resources-event.h"
 
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -7,7 +7,7 @@
 #include "engine/eevent.h"
 #include "engine/egifthelpers.h"
 
-eMakeRequestEvent::eMakeRequestEvent(
+ReceiveRequestedResourcesEvent::ReceiveRequestedResourcesEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
@@ -21,10 +21,10 @@ eMakeRequestEvent::eMakeRequestEvent(
                               eEvent::requestLastChance,
                               eEvent::requestInsufficientSpace,
                               eEvent::requestPartialSpace,
-                              eGameEventType::makeRequest,
+                              eGameEventType::receiveRequestedResources,
                               branch, board) {}
 
-void eMakeRequestEvent::initialize(
+void ReceiveRequestedResourcesEvent::initialize(
         const bool postpone,
         const eResourceType res,
         const stdsptr<WorldCity> &c) {
@@ -34,7 +34,7 @@ void eMakeRequestEvent::initialize(
     mCount = 2*eGiftHelpers::giftCount(mResource);
 }
 
-std::string eMakeRequestEvent::longName() const {
+std::string ReceiveRequestedResourcesEvent::longName() const {
     auto tmpl = eLanguage::text("make_request");
     const auto resName = eResourceTypeHelpers::typeName(mResource);
     eStringHelpers::replace(tmpl, "%1", resName);

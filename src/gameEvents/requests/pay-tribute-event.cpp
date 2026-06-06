@@ -31,6 +31,33 @@ void PayTributeEvent::trigger() {
     ed.fEventRuntimeId = runtimeId();
     ed.fResourceType = type;
     ed.fResourceCount = count;
+    mAwaitingResponse = true;
+    fillEventDataActions(ed);
+    board->event(eEvent::tributePaid, ed);
+}
+
+void PayTributeEvent::fillEventDataActions(eEventData& ed)
+{
+    const auto board = gameBoard();
+    if(!board || !mCity || !mAwaitingResponse) return;
+
+    const auto pid = playerId();
+    const auto tribute = TributeHelpers::receiveTribute(*mCity);
+    const auto type = tribute.fType;
+    const int count = tribute.fCount;
+    ed.fType = eMessageEventType::requestTributeGranted;
+    ed.fCity = mCity;
+    ed.fEventRuntimeId = runtimeId();
+    ed.fResourceType = type;
+    ed.fResourceCount = count;
+    ed.fCloseResponse = -1;
+    ed.fPrimaryResponse = -1;
+    ed.fCityNames.clear();
+    ed.fCityConditionalResponses.clear();
+    ed.fCSpaceCount.clear();
+    ed.fSecondaryResponse = -1;
+    ed.fTertiaryResponse = -1;
+
     if(type == eResourceType::drachmas) {
         ed.fPrimaryResponse = static_cast<int>(eResponse::accept);
     } else {
@@ -40,14 +67,15 @@ void PayTributeEvent::trigger() {
             ed.fCSpaceCount[cid] = space;
             ed.fCityNames[cid] = board->cityName(cid);
             if(space >= count) {
-                ed.fCityConditionalResponses[cid] = static_cast<int>(eResponse::accept);
+                ed.fCityConditionalResponses[cid] =
+                    static_cast<int>(eResponse::accept);
             }
         }
     }
-    if(!mPostponed) ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
+    if(!mPostponed) {
+        ed.fSecondaryResponse = static_cast<int>(eResponse::postpone);
+    }
     ed.fTertiaryResponse = static_cast<int>(eResponse::decline);
-    mAwaitingResponse = true;
-    board->event(eEvent::tributePaid, ed);
 }
 
 bool PayTributeEvent::finished() const {

@@ -1,4 +1,4 @@
-﻿#ifndef EGAMEBOARD_H
+#ifndef EGAMEBOARD_H
 #define EGAMEBOARD_H
 
 #include <vector>
@@ -59,8 +59,8 @@ class eStorageBuilding;
 class SoldierBanner;
 class ePalace;
 class eLandInvasionPoint;
-class FulfillRequestEvent;
-class GetTributeEvent;
+class SendResourcesToCityEvent;
+class ReceiveTributeEvent;
 class eInvasionEvent;
 class eAgoraBase;
 class eHerosHall;
@@ -74,7 +74,7 @@ class eInvasionHandler;
 class eMonsterPoint;
 class ePlayerConquestEventBase;
 class eArmyEventBase;
-class eTroopsRequestEvent;
+class SendTroopsEvent;
 enum class eMessageEventType;
 class eMonsterInvasionEventBase;
 
@@ -560,20 +560,22 @@ public:
     void addGodQuest(eGodQuestEvent* const q);
     void removeGodQuest(eGodQuestEvent* const q);
 
-    using eRequests = std::vector<FulfillRequestEvent*>;
+    using eRequests = std::vector<SendResourcesToCityEvent*>;
     eRequests cityRequests(const ePlayerId pid) const;
-    void addCityRequest(FulfillRequestEvent* const q);
-    void removeCityRequest(FulfillRequestEvent* const q);
+    void addCityRequest(SendResourcesToCityEvent* const q);
+    void removeCityRequest(SendResourcesToCityEvent* const q);
 
-    using eTributeRequests = std::vector<GetTributeEvent*>;
+    using eTributeRequests = std::vector<ReceiveTributeEvent*>;
     eTributeRequests tributeRequests(const ePlayerId pid) const;
-    void addTributeRequest(GetTributeEvent* const q);
-    void removeTributeRequest(GetTributeEvent* const q);
+    void addTributeRequest(ReceiveTributeEvent* const q);
+    void removeTributeRequest(ReceiveTributeEvent* const q);
+    void advanceRequestEvents();
+    void processYearlyRequestEvents();
 
-    using eTroopsRequests = std::vector<eTroopsRequestEvent*>;
+    using eTroopsRequests = std::vector<SendTroopsEvent*>;
     eTroopsRequests cityTroopsRequests(const ePlayerId pid) const;
-    void addCityTroopsRequest(eTroopsRequestEvent* const q);
-    void removeCityTroopsRequest(eTroopsRequestEvent* const q);
+    void addCityTroopsRequest(SendTroopsEvent* const q);
+    void removeCityTroopsRequest(SendTroopsEvent* const q);
 
     using eConquests = std::vector<ePlayerConquestEventBase*>;
     eConquests conquests(const ePlayerId pid) const;

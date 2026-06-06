@@ -1,13 +1,13 @@
-﻿#ifndef EREQUESTAIDEVENT_H
-#define EREQUESTAIDEVENT_H
+#ifndef ASK_FOR_AID_EVENT_H
+#define ASK_FOR_AID_EVENT_H
 
-#include "egameevent.h"
+#include "../egameevent.h"
 
 class eSaveArchive;
 
-class eRequestAidEvent : public eGameEvent {
+class AskForAidEvent : public eGameEvent {
 public:
-    eRequestAidEvent(const eCityId cid,
+    AskForAidEvent(const eCityId cid,
                      const eGameEventBranch branch,
                      GameBoard& board);
 
@@ -30,4 +30,4 @@ private:
     stdsptr<WorldCity> mCity;
 };
 
-#endif // EREQUESTAIDEVENT_H
+#endif // ASK_FOR_AID_EVENT_H

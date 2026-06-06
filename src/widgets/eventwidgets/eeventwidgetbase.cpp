@@ -1,4 +1,4 @@
-﻿#include "eeventwidgetbase.h"
+#include "eeventwidgetbase.h"
 
 #include "gameEvents/egameevent.h"
 
@@ -23,8 +23,8 @@
 #include "gameEvents/gods/egodeventvalue.h"
 #include "gameEvents/gods/egodreasoneventvalue.h"
 #include "gameEvents/eattackingcityeventvalue.h"
-#include "gameEvents/requests/fulfill-request-event.h"
-#include "gameEvents/etroopsrequestevent.h"
+#include "gameEvents/requests/send-resources-to-city-event.h"
+#include "gameEvents/requests/send-troops-event.h"
 #include "gameEvents/emonsterseventvalue.h"
 #include "gameEvents/invasions/monster-invasion-event-base.h"
 #include "gameEvents/etidalwaveevent.h"
@@ -88,14 +88,14 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(typeButtonL);
     }
 
-    if(const auto ee = dynamic_cast<FulfillRequestEvent*>(e.get())) {
+    if(const auto ee = dynamic_cast<SendResourcesToCityEvent*>(e.get())) {
         const auto typeButtonL = new eLabeledWidget(window());
-        const std::vector<ReceiveRequestType> types {
-            ReceiveRequestType::general,
-            ReceiveRequestType::festival,
-            ReceiveRequestType::project,
-            ReceiveRequestType::famine,
-            ReceiveRequestType::financialWoes
+        const std::vector<RequestedResourcesType> types {
+            RequestedResourcesType::general,
+            RequestedResourcesType::festival,
+            RequestedResourcesType::project,
+            RequestedResourcesType::famine,
+            RequestedResourcesType::financialWoes
         };
         const std::vector<std::string> typeNames {
             eLanguage::zeusText(290, 1),
@@ -116,12 +116,12 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         leftW->addWidget(typeButtonL);
     }
 
-    if(const auto ee = dynamic_cast<eTroopsRequestEvent*>(e.get())) {
+    if(const auto ee = dynamic_cast<SendTroopsEvent*>(e.get())) {
         const auto typeButtonL = new eLabeledWidget(window());
-        const std::vector<eTroopsRequestEventType> types {
-            eTroopsRequestEventType::cityUnderAttack,
-            eTroopsRequestEventType::cityAttacksRival,
-            eTroopsRequestEventType::greekCityTerrorized
+        const std::vector<SendTroopsEventType> types {
+            SendTroopsEventType::cityUnderAttack,
+            SendTroopsEventType::cityAttacksRival,
+            SendTroopsEventType::greekCityTerrorized
         };
         const std::vector<std::string> typeNames {
             eLanguage::zeusText(290, 7),
@@ -151,7 +151,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         effectButton->setValue(ieff);
 
         effectButton->setSwitchAction([ee](const int val) {
-            const auto effect = static_cast<eTroopsRequestEventEffect>(val);
+            const auto effect = static_cast<SendTroopsEventEffect>(val);
             ee->setEffect(effect);
         });
 
@@ -515,8 +515,8 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     dateW->addWidget(completeButton);
 
     if(!e->warnings().empty() ||
-       et == eGameEventType::receiveRequest ||
-       et == eGameEventType::troopsRequest) {
+       et == eGameEventType::sendResourcesToCity ||
+       et == eGameEventType::sendTroops) {
         const auto warningButtonL = new eLabeledWidget(window());
         const auto warningButton = new eValueButton(window());
         warningButton->setValueChangeAction([e](const int ms) {

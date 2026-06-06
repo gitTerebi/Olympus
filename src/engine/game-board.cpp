@@ -1,4 +1,4 @@
-﻿
+
 #include "game-board.h"
 
 #include "e-city-attitude.h"
@@ -59,15 +59,12 @@
 #include "gameEvents/gods/egodattackevent.h"
 #include "gameEvents/invasions/monster-unleashed-event.h"
 #include "gameEvents/invasions/invasion-event.h"
-#include "gameEvents/requests/pay-tribute-event.h"
-#include "gameEvents/requests/get-tribute-event.h"
-#include "gameEvents/emakerequestevent.h"
+#include "gameEvents/requests/receive-requested-resources-event.h"
 #include "gameEvents/egifttoevent.h"
 #include "gameEvents/egiftfromevent.h"
-#include "gameEvents/requests/fulfill-request-event.h"
-#include "gameEvents/erequestaidevent.h"
+#include "gameEvents/requests/ask-for-aid-event.h"
 #include "gameEvents/eplayerconquesteventbase.h"
-#include "gameEvents/etroopsrequestevent.h"
+#include "gameEvents/requests/send-troops-event.h"
 #include "gameEvents/earmyreturnevent.h"
 
 #include "eeventdata.h"
@@ -1064,7 +1061,7 @@ void GameBoard::request(const stdsptr<WorldCity> &c,
                          const eResourceType type,
                          const eCityId cid)
 {
-    const auto e = e::make_shared<eMakeRequestEvent>(
+    const auto e = e::make_shared<ReceiveRequestedResourcesEvent>(
         cid, eGameEventBranch::root, *this);
     e->initialize(true, type, c);
     const auto date = mDate + 90;
@@ -1085,7 +1082,7 @@ void GameBoard::request(const stdsptr<WorldCity> &c,
 void GameBoard::requestAid(const stdsptr<WorldCity> &c,
                             const eCityId cid)
 {
-    const auto e = e::make_shared<eRequestAidEvent>(
+    const auto e = e::make_shared<AskForAidEvent>(
         cid, eGameEventBranch::root, *this);
     e->setCity(c);
     const auto date = mDate + 30;
@@ -1648,78 +1645,6 @@ void GameBoard::removeGodQuest(eGodQuestEvent *const q)
         mRequestUpdateHandler();
 }
 
-GameBoard::eRequests GameBoard::cityRequests(const ePlayerId pid) const
-{
-    const auto p = boardPlayerWithId(pid);
-    if (!p)
-        return {};
-    return p->cityRequests();
-}
-
-void GameBoard::addCityRequest(FulfillRequestEvent *const q)
-{
-    if (!q)
-        return;
-    const auto cid = q->cityId();
-    const auto pid = cityIdToPlayerId(cid);
-    const auto p = boardPlayerWithId(pid);
-    if (!p)
-        return;
-    p->addCityRequest(q);
-    if (mRequestUpdateHandler)
-        mRequestUpdateHandler();
-}
-
-void GameBoard::removeCityRequest(FulfillRequestEvent *const q)
-{
-    if (!q)
-        return;
-    const auto cid = q->cityId();
-    const auto pid = cityIdToPlayerId(cid);
-    const auto p = boardPlayerWithId(pid);
-    if (!p)
-        return;
-    p->removeCityRequest(q);
-    if (mRequestUpdateHandler)
-        mRequestUpdateHandler();
-}
-
-GameBoard::eTributeRequests GameBoard::tributeRequests(const ePlayerId pid) const
-{
-    const auto p = boardPlayerWithId(pid);
-    if (!p)
-        return {};
-    return p->tributeRequests();
-}
-
-void GameBoard::addTributeRequest(GetTributeEvent *const q)
-{
-    if (!q)
-        return;
-    const auto cid = q->cityId();
-    const auto pid = cityIdToPlayerId(cid);
-    const auto p = boardPlayerWithId(pid);
-    if (!p)
-        return;
-    p->addTributeRequest(q);
-    if (mRequestUpdateHandler)
-        mRequestUpdateHandler();
-}
-
-void GameBoard::removeTributeRequest(GetTributeEvent *const q)
-{
-    if (!q)
-        return;
-    const auto cid = q->cityId();
-    const auto pid = cityIdToPlayerId(cid);
-    const auto p = boardPlayerWithId(pid);
-    if (!p)
-        return;
-    p->removeTributeRequest(q);
-    if (mRequestUpdateHandler)
-        mRequestUpdateHandler();
-}
-
 GameBoard::eTroopsRequests GameBoard::cityTroopsRequests(const ePlayerId pid) const
 {
     const auto p = boardPlayerWithId(pid);
@@ -1728,7 +1653,7 @@ GameBoard::eTroopsRequests GameBoard::cityTroopsRequests(const ePlayerId pid) co
     return p->cityTroopsRequests();
 }
 
-void GameBoard::addCityTroopsRequest(eTroopsRequestEvent *const q)
+void GameBoard::addCityTroopsRequest(SendTroopsEvent *const q)
 {
     const auto cid = q->cityId();
     const auto pid = cityIdToPlayerId(cid);
@@ -1740,7 +1665,7 @@ void GameBoard::addCityTroopsRequest(eTroopsRequestEvent *const q)
         mRequestUpdateHandler();
 }
 
-void GameBoard::removeCityTroopsRequest(eTroopsRequestEvent *const q)
+void GameBoard::removeCityTroopsRequest(SendTroopsEvent *const q)
 {
     const auto cid = q->cityId();
     const auto pid = cityIdToPlayerId(cid);
@@ -3008,20 +2933,7 @@ void GameBoard::incTime(const int by)
     mDate.nextDays(nd, nextMonth, nextYear);
     mTime -= nd * dayLen;
 
-    const auto gameEvents = mAllGameEvents;
-    for (const auto event : gameEvents)
-    {
-        const auto tribute = dynamic_cast<GetTributeEvent *>(event);
-        if (tribute && tribute->isMainEvent())
-        {
-            tribute->advanceIfNeeded(mDate);
-        }
-        const auto request = dynamic_cast<FulfillRequestEvent *>(event);
-        if (request && request->isMainEvent())
-        {
-            request->advanceIfNeeded(mDate);
-        }
-    }
+    advanceRequestEvents();
 
     if (nextYear)
     {
@@ -3039,29 +2951,7 @@ void GameBoard::incTime(const int by)
             c->nextYear();
         }
 
-        // pay tributes
-        const auto playerCities = personPlayerCitiesOnBoard();
-        for (const auto playerCityId : playerCities)
-        {
-            const auto playerCity = world().cityWithId(playerCityId);
-            if (!playerCity)
-                continue;
-
-            for (const auto &p : mConqueredBy)
-            {
-                const auto parentCity = world().cityWithId(p.first);
-                if (!parentCity || !parentCity->isRival())
-                    continue;
-                if (!eVectorHelpers::contains(p.second, playerCity))
-                    continue;
-
-                const auto e = e::make_shared<GetTributeEvent>(
-                    playerCityId, eGameEventBranch::root, *this);
-                e->initialize(parentCity);
-                e->initializeDate(date());
-                addRootGameEvent(e);
-            }
-        }
+        processYearlyRequestEvents();
     }
     if (nextMonth)
     {
@@ -3597,55 +3487,6 @@ bool GameBoard::ifVisible(eTile *const tile, const eAction &func) const
     if (r)
         func();
     return r;
-}
-
-void GameBoard::setMessageShower(const eMessageShower &msg)
-{
-    mMsgShower = msg;
-}
-
-void GameBoard::showMessage(eEventData &ed,
-                             const eMessageType &msg)
-{
-    mMsgShower(ed, msg);
-}
-
-void GameBoard::respondToEvent(const int runtimeId, const int response,
-                                const eCityId city)
-{
-    const auto event = eventWithRuntimeId(runtimeId);
-    if (!event)
-        return;
-    event->respond(response, city);
-}
-
-void GameBoard::addMessageLog(const eEventData &ed,
-                               const eMessage &msg,
-                               const eDate &date)
-{
-    auto &lm = mMessageLog.emplace_back();
-    lm.fEd = ed;
-    lm.fEd.fEventRuntimeId = -1;
-    lm.fEd.fCloseResponse = -1;
-    lm.fEd.fPrimaryResponse = -1;
-    lm.fEd.fCityConditionalResponses.clear();
-    lm.fEd.fSecondaryResponse = -1;
-    lm.fEd.fTertiaryResponse = -1;
-    lm.fEd.fType = eMessageEventType::common;
-    lm.fMsg = msg;
-    lm.fDate = date;
-    lm.fRead = false;
-    if (mMessageLog.size() > 50)
-    {
-        mMessageLog.erase(mMessageLog.begin());
-    }
-}
-
-void GameBoard::setMessageLogRead(const int index)
-{
-    if (index < 0 || index >= static_cast<int>(mMessageLog.size()))
-        return;
-    mMessageLog[index].fRead = true;
 }
 
 void GameBoard::updateNeighbours()

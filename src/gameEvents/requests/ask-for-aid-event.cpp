@@ -1,4 +1,4 @@
-#include "erequestaidevent.h"
+#include "ask-for-aid-event.h"
 
 #include "engine/emilitaryaid.h"
 #include "engine/game-board.h"
@@ -9,13 +9,13 @@
 #include "enumbers.h"
 #include "characters/soldier-banner.h"
 
-eRequestAidEvent::eRequestAidEvent(
+AskForAidEvent::AskForAidEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    eGameEvent(cid, eGameEventType::requestAid, branch, board) {}
+    eGameEvent(cid, eGameEventType::askForAid, branch, board) {}
 
-void eRequestAidEvent::trigger() {
+void AskForAidEvent::trigger() {
     if(!mCity) return;
     const auto board = gameBoard();
     if(!board) return;
@@ -128,7 +128,7 @@ void eRequestAidEvent::trigger() {
         board->addMilitaryAid(onCid, ma);
     }
 
-    const auto e = e::make_shared<eRequestAidEvent>(
+    const auto e = e::make_shared<AskForAidEvent>(
                        cityId(), eGameEventBranch::child, *board);
     e->setCity(mCity);
     e->setEnd(true);
@@ -138,11 +138,11 @@ void eRequestAidEvent::trigger() {
     board->event(eEvent::aidArrives, ed);
 }
 
-std::string eRequestAidEvent::longName() const {
+std::string AskForAidEvent::longName() const {
     return eLanguage::text("request_aid_long_name");
 }
 
-void eRequestAidEvent::serializeFields(eSaveArchive& ar) {
+void AskForAidEvent::serializeFields(eSaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);
     ar.dateField("arrivalDate", mArrivalDate);

@@ -1,19 +1,19 @@
-﻿#include "etroopsrequestfulfilledevent.h"
+#include "troops-sent-event.h"
 
 #include "elanguage.h"
 #include "estringhelpers.h"
 #include "engine/eeventdata.h"
 #include "engine/game-board.h"
-#include "etroopsrequestevent.h"
+#include "send-troops-event.h"
 
-eTroopsRequestFulfilledEvent::eTroopsRequestFulfilledEvent(
+TroopsSentEvent::TroopsSentEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    ePlayerConquestEventBase(cid, eGameEventType::troopsRequestFulfilled,
+    ePlayerConquestEventBase(cid, eGameEventType::troopsSent,
                              branch, board) {}
 
-void eTroopsRequestFulfilledEvent::initialize(
+void TroopsSentEvent::initialize(
         const eEnlistedForces& forces,
         const stdsptr<WorldCity>& city,
         const stdsptr<WorldCity>& rivalCity) {
@@ -22,7 +22,7 @@ void eTroopsRequestFulfilledEvent::initialize(
     mRivalCity = rivalCity;
 }
 
-void eTroopsRequestFulfilledEvent::trigger() {
+void TroopsSentEvent::trigger() {
     removeArmyEvent();
     removeConquestEvent();
     if(!mCity) return;
@@ -37,7 +37,7 @@ void eTroopsRequestFulfilledEvent::trigger() {
 
     const bool defended = str > enemyStr;
 
-    const auto me = mainEvent<eTroopsRequestEvent>();
+    const auto me = mainEvent<SendTroopsEvent>();
     if(defended) {
         me->won();
     } else {
@@ -47,6 +47,6 @@ void eTroopsRequestFulfilledEvent::trigger() {
     planArmyReturn();
 }
 
-std::string eTroopsRequestFulfilledEvent::longName() const {
+std::string TroopsSentEvent::longName() const {
     return eLanguage::zeusText(290, 6);
 }

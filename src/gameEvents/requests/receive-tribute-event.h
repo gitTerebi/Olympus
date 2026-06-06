@@ -1,4 +1,4 @@
-﻿#ifndef GETTRIBUTEEVENT_H
+#ifndef GETTRIBUTEEVENT_H
 #define GETTRIBUTEEVENT_H
 
 #include "../egameevent.h"
@@ -16,17 +16,18 @@ enum class GetTributeResult {
     refuse
 };
 
-class GetTributeEvent : public eGameEvent {
+class ReceiveTributeEvent : public eGameEvent {
 public:
-    GetTributeEvent(const eCityId cid,
+    ReceiveTributeEvent(const eCityId cid,
                      const eGameEventBranch branch,
                      GameBoard& board);
-    ~GetTributeEvent();
+    ~ReceiveTributeEvent();
 
     void initialize(const stdsptr<WorldCity>& c);
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
+    void fillEventDataActions(eEventData& ed) override;
     std::string longName() const override;
     bool finished() const override;
 
@@ -52,7 +53,6 @@ private:
     int complyMonths() const;
     int popupComplyMonths() const;
     void finish(GetTributeResult result);
-    int remainingMonths(const eDate& deadline, const eDate& current) const;
 
     stdsptr<WorldCity> mCity;
     eResourceType mResource = eResourceType::drachmas;

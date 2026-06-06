@@ -17,6 +17,7 @@ public:
 
     void trigger() override;
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
+    void fillEventDataActions(eEventData& ed) override;
     bool finished() const override;
     std::string longName() const override;
 protected:

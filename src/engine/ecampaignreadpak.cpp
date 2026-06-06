@@ -7,14 +7,14 @@
 
 #include "buildings/pyramids/epyramid.h"
 
-#include "gameEvents/requests/fulfill-request-event.h"
+#include "gameEvents/requests/send-resources-to-city-event.h"
 #include "gameEvents/egiftfromevent.h"
 #include "gameEvents/invasions/monster-in-city-event.h"
 #include "gameEvents/invasions/monster-invasion-event.h"
 #include "gameEvents/invasions/monster-unleashed-event.h"
 #include "gameEvents/invasions/invasion-event.h"
 #include "gameEvents/erivalarmyawayevent.h"
-#include "gameEvents/etroopsrequestevent.h"
+#include "gameEvents/requests/send-troops-event.h"
 #include "gameEvents/gods/egodattackevent.h"
 #include "gameEvents/ewagechangeevent.h"
 #include "gameEvents/edemandchangeevent.h"
@@ -308,14 +308,14 @@ ePakEventType pakIdToEventType(const uint8_t id, bool& valid) {
     return ePakEventType::receiveRequest;
 }
 
-ReceiveRequestType pakIdToReceiveRequestType(const uint16_t id) {
-    if(id == 0) return ReceiveRequestType::general;
-    else if(id == 3) return ReceiveRequestType::festival;
-    else if(id == 4) return ReceiveRequestType::project;
-    else if(id == 5) return ReceiveRequestType::famine;
-    else if(id == 6) return ReceiveRequestType::financialWoes;
+RequestedResourcesType pakIdToRequestedResourcesType(const uint16_t id) {
+    if(id == 0) return RequestedResourcesType::general;
+    else if(id == 3) return RequestedResourcesType::festival;
+    else if(id == 4) return RequestedResourcesType::project;
+    else if(id == 5) return RequestedResourcesType::famine;
+    else if(id == 6) return RequestedResourcesType::financialWoes;
     // printf("Invalid receive request type %i\n", id);
-    return ReceiveRequestType::general;
+    return RequestedResourcesType::general;
 }
 
 eGodType pakIdToGodType(const uint8_t id, bool& valid) {
@@ -523,15 +523,15 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
         switch(type) {
         case ePakEventType::receiveRequest: {
             if(subType == 1 || subType == 2 || subType == 7) { // troops request
-                const auto ee = e::make_shared<eTroopsRequestEvent>(
+                const auto ee = e::make_shared<SendTroopsEvent>(
                     cid, eGameEventBranch::root, *ep.fBoard);
-                eTroopsRequestEventType type;
+                SendTroopsEventType type;
                 if(subType == 1) {
-                    type = eTroopsRequestEventType::cityUnderAttack;
+                    type = SendTroopsEventType::cityUnderAttack;
                 } else if(subType == 2) {
-                    type = eTroopsRequestEventType::cityAttacksRival;
+                    type = SendTroopsEventType::cityAttacksRival;
                 } else if(subType == 7) {
-                    type = eTroopsRequestEventType::greekCityTerrorized;
+                    type = SendTroopsEventType::greekCityTerrorized;
                 } else {
                     // printf("Invalid troops request type id %i\n", subType);
                     events.push_back(nullptr);
@@ -542,13 +542,13 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                 ee->setMinCityId(cityMin);
                 ee->setMaxCityId(cityMax);
                 ee->setWarningMonths(duration);
-                eTroopsRequestEventEffect effect;
+                SendTroopsEventEffect effect;
                 if(effectOnCityId == 0) {
-                    effect = eTroopsRequestEventEffect::unaffected;
+                    effect = SendTroopsEventEffect::unaffected;
                 } else if(effectOnCityId == 1) {
-                    effect = eTroopsRequestEventEffect::destroyed;
+                    effect = SendTroopsEventEffect::destroyed;
                 } else if(effectOnCityId == 2) {
-                    effect = eTroopsRequestEventEffect::conquered;
+                    effect = SendTroopsEventEffect::conquered;
                 } else {
                     // printf("Invalid effect on city id %i\n", effectOnCityId);
                     continue;
@@ -560,8 +560,8 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
 
                 e = ee;
             } else {
-                const auto type = pakIdToReceiveRequestType(subType);
-                const auto ee = e::make_shared<FulfillRequestEvent>(
+                const auto type = pakIdToRequestedResourcesType(subType);
+                const auto ee = e::make_shared<SendResourcesToCityEvent>(
                         cid, eGameEventBranch::root, *ep.fBoard);
                 setResources(*ee);
                 bool valid = false;

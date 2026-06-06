@@ -1,4 +1,4 @@
-﻿#include "eworldwidget.h"
+#include "eworldwidget.h"
 
 #include "eworldmenu.h"
 #include "eworldmapwidget.h"
@@ -16,8 +16,8 @@
 
 #include "gameEvents/eplayerconquestevent.h"
 #include "gameEvents/eplayerraidevent.h"
-#include "gameEvents/erequestaidevent.h"
-#include "gameEvents/erequeststrikeevent.h"
+#include "gameEvents/requests/ask-for-aid-event.h"
+#include "gameEvents/requests/ask-for-strike-event.h"
 #include "gameEvents/ereinforcementsevent.h"
 
 #include "eacceptbutton.h"
@@ -373,7 +373,7 @@ void eWorldWidget::openRequestDialog() {
             const auto accept = new eAcceptButton(window());
             const auto cancel = new eCancelButton(window());
             accept->setPressAction([this, w, rivals, cityButton]() {
-                const auto e = e::make_shared<eRequestStrikeEvent>(
+                const auto e = e::make_shared<AskForStrikeEvent>(
                                    mBoard->currentCityId(),
                                    eGameEventBranch::root, *mBoard);
                 e->setCity(mCity);

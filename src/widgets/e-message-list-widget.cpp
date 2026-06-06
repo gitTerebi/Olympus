@@ -12,6 +12,7 @@
 #include "engine/eresourcetype.h"
 #include "eokbutton.h"
 #include "emainwindow.h"
+#include "message-action-refresh.h"
 
 void eMessageListWidget::initialize(const eOpenMessage &openMsg, const eAction &closeAction)
 {
@@ -97,7 +98,6 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
 {
     eLoggedMessage lm;
     lm.fEd = ed;
-    lm.fEd.fEventRuntimeId = -1;
     lm.fEd.fCloseResponse = -1;
     lm.fEd.fPrimaryResponse = -1;
     lm.fEd.fCityConditionalResponses.clear();
@@ -222,7 +222,9 @@ void eMessageListWidget::rebuildList()
         const auto row = new eMessageListRow(window(), dateLabel, titleLabel, [this, index]()
                                              {
             auto& lm = mMessages[index];
-            mOpenMsg(lm.fEd, lm.fMsg);
+            auto ed = lm.fEd;
+            refreshMessageActions(mBoard, ed);
+            mOpenMsg(ed, lm.fMsg);
             if(!lm.fRead) {
                 lm.fRead = true;
                 mUnreadCount--;
@@ -257,6 +259,7 @@ bool eMessageListWidget::keyPressEvent(const eKeyPressEvent &e)
 
 void eMessageListWidget::setBoard(GameBoard* const board)
 {
+    mBoard = board;
     for(const auto& lm : board->messageLog())
         addSavedMessage(lm.fEd, lm.fMsg, lm.fDate, lm.fRead);
     setReadChangedAction([board](const int index) {

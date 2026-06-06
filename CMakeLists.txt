@@ -489,7 +489,7 @@ set(SOURCES
     src/gameEvents/invasions/invasion-warning.cpp
     src/gameEvents/elandslideevent.cpp
     src/gameEvents/elavaevent.cpp
-    src/gameEvents/emakerequestevent.cpp
+    src/gameEvents/requests/receive-requested-resources-event.cpp
     src/gameEvents/emilitarychangeevent.cpp
     src/gameEvents/emonstereventvalue.cpp
     src/gameEvents/invasions/monster-in-city-event.cpp
@@ -498,19 +498,22 @@ set(SOURCES
     src/gameEvents/emonsterseventvalue.cpp
     src/gameEvents/invasions/monster-unleashed-event.cpp
     src/engine/tribute.cpp
+    src/engine/message-board.cpp
+    src/engine/request-event-board.cpp
     src/gameEvents/requests/pay-tribute-event.cpp
-    src/gameEvents/requests/get-tribute-event.cpp
+    src/gameEvents/requests/receive-tribute-event.cpp
+    src/gameEvents/requests/request-state.cpp
     src/gameEvents/eplayerconquestevent.cpp
     src/gameEvents/eplayerconquesteventbase.cpp
     src/gameEvents/eplayerraidevent.cpp
     src/gameEvents/epointeventvalue.cpp
     src/gameEvents/epricechangeevent.cpp
     src/gameEvents/eraidresourceevent.cpp
-    src/gameEvents/requests/fulfill-request-event.cpp
-    src/gameEvents/requests/receive-request-type.cpp
+    src/gameEvents/requests/send-resources-to-city-event.cpp
+    src/gameEvents/requests/requested-resources-type.cpp
     src/gameEvents/ereinforcementsevent.cpp
-    src/gameEvents/erequestaidevent.cpp
-    src/gameEvents/erequeststrikeevent.cpp
+    src/gameEvents/requests/ask-for-aid-event.cpp
+    src/gameEvents/requests/ask-for-strike-event.cpp
     src/gameEvents/eresourceeventvalue.cpp
     src/gameEvents/eresourcegrantedeventbase.cpp
     src/gameEvents/erivalarmyawayevent.cpp
@@ -520,8 +523,8 @@ set(SOURCES
     src/gameEvents/etidalwaveevent.cpp
     src/gameEvents/etradeopenupevent.cpp
     src/gameEvents/etradeshutdownevent.cpp
-    src/gameEvents/etroopsrequestevent.cpp
-    src/gameEvents/etroopsrequestfulfilledevent.cpp
+    src/gameEvents/requests/send-troops-event.cpp
+    src/gameEvents/requests/troops-sent-event.cpp
     src/gameEvents/ewagechangeevent.cpp
     src/gameEvents/ewarning.cpp
     src/missiles/earrowmissile.cpp
@@ -713,6 +716,7 @@ set(SOURCES
     src/widgets/emenuloadingwidget.cpp
     src/widgets/e-message-box.cpp
     src/widgets/e-message-list-widget.cpp
+    src/widgets/message-action-refresh.cpp
     src/widgets/emessagewidget.cpp
     src/widgets/emicrobutton.cpp
     src/widgets/emilitarymoreinfowidget.cpp

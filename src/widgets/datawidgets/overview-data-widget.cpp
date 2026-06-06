@@ -1,4 +1,4 @@
-﻿#include "overview-data-widget.h"
+#include "overview-data-widget.h"
 
 #include "eviewmodebutton.h"
 
@@ -11,9 +11,9 @@
 #include "characters/soldier-banner.h"
 #include "estringhelpers.h"
 #include "buildings/eheroshall.h"
-#include "gameEvents/requests/get-tribute-event.h"
-#include "gameEvents/requests/fulfill-request-event.h"
-#include "gameEvents/etroopsrequestevent.h"
+#include "gameEvents/requests/receive-tribute-event.h"
+#include "gameEvents/requests/send-resources-to-city-event.h"
+#include "gameEvents/requests/send-troops-event.h"
 #include "widgets/elinewidget.h"
 #include "widgets/eminimap.h"
 
