@@ -1,16 +1,16 @@
-﻿#ifndef EPLAYERCONQUESTEVENT_H
+#ifndef EPLAYERCONQUESTEVENT_H
 #define EPLAYERCONQUESTEVENT_H
 
-#include "eplayerconquesteventbase.h"
+#include "player-conquest-event-base.h"
 
 class eInvasionEvent;
 class eSaveArchive;
 
-class ePlayerConquestEvent : public ePlayerConquestEventBase {
+class PlayerConquestEvent : public PlayerConquestEventBase {
 public:
-    ePlayerConquestEvent(const eCityId cid,
-                         const eGameEventBranch branch,
-                         GameBoard& board);
+    PlayerConquestEvent(const eCityId cid,
+                        const eGameEventBranch branch,
+                        GameBoard& board);
 
     void initialize(const eDate& date,
                     const eEnlistedForces& forces,
@@ -23,7 +23,7 @@ public:
 
     bool warned() const;
 
-    using ePlayerConquestEventBase::planArmyReturn;
+    using PlayerConquestEventBase::planArmyReturn;
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:

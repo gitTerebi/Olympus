@@ -12,7 +12,7 @@ class GameBoard;
 enum class eMonsterType;
 
 class eGodQuestEvent;
-class ePlayerConquestEventBase;
+class PlayerConquestEventBase;
 class SendResourcesToCityEvent;
 class ReceiveTributeEvent;
 class SendTroopsEvent;
@@ -63,10 +63,10 @@ public:
     void addCityTroopsRequest(SendTroopsEvent* const q);
     void removeCityTroopsRequest(SendTroopsEvent* const q);
 
-    using eConquests = std::vector<ePlayerConquestEventBase*>;
+    using eConquests = std::vector<PlayerConquestEventBase*>;
     const eConquests& conquests() const { return mConquests; }
-    void addConquest(ePlayerConquestEventBase* const q);
-    void removeConquest(ePlayerConquestEventBase* const q);
+    void addConquest(PlayerConquestEventBase* const q);
+    void removeConquest(PlayerConquestEventBase* const q);
 
     const std::vector<eGodQuest>& fulfilledQuests() const
     { return mFulfilledQuests; }
@@ -95,7 +95,7 @@ private:
     std::vector<eMonsterType> mSlayedMonsters;
 
     std::vector<eGodQuestEvent*> mGodQuests;
-    std::vector<ePlayerConquestEventBase*> mConquests;
+    std::vector<PlayerConquestEventBase*> mConquests;
     std::vector<SendResourcesToCityEvent*> mCityRequests;
     std::vector<ReceiveTributeEvent*> mTributeRequests;
     std::vector<SendTroopsEvent*> mCityTroopsRequests;

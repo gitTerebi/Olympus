@@ -1,9 +1,9 @@
 #ifndef TROOPS_SENT_EVENT_H
 #define TROOPS_SENT_EVENT_H
 
-#include "../eplayerconquesteventbase.h"
+#include "../conquest/player-conquest-event-base.h"
 
-class TroopsSentEvent : public ePlayerConquestEventBase {
+class TroopsSentEvent : public PlayerConquestEventBase {
 public:
     TroopsSentEvent(const eCityId cid,
                                  const eGameEventBranch branch,

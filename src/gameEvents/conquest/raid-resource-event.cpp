@@ -1,4 +1,4 @@
-#include "eraidresourceevent.h"
+#include "raid-resource-event.h"
 
 #include "engine/game-board.h"
 #include "elanguage.h"
@@ -6,7 +6,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
-eRaidResourceEvent::eRaidResourceEvent(
+RaidResourceEvent::RaidResourceEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
@@ -24,6 +24,6 @@ eRaidResourceEvent::eRaidResourceEvent(
         eGameEventType::raidResourceReceive, branch,
         board) {}
 
-std::string eRaidResourceEvent::longName() const {
+std::string RaidResourceEvent::longName() const {
     return eLanguage::text("raid_resource_long_name");
 }

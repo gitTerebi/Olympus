@@ -4,12 +4,12 @@
 #include "textures/einterfacetextures.h"
 
 #include "engine/game-board.h"
-#include "gameEvents/earmyreturnevent.h"
+#include "gameEvents/conquest/army-return-event.h"
 #include "gameEvents/invasions/invasion-event.h"
 #include "gameEvents/requests/troops-sent-event.h"
-#include "gameEvents/eplayerconquestevent.h"
+#include "gameEvents/conquest/player-conquest-event.h"
 #include "gameEvents/ereinforcementsevent.h"
-#include "gameEvents/eplayerraidevent.h"
+#include "gameEvents/conquest/player-raid-event.h"
 #include "elanguage.h"
 #include "audio/sounds.h"
 #include "estringhelpers.h"
@@ -80,10 +80,10 @@ std::vector<eMapArmy> getArmies(GameBoard& board) {
                             eNumbers::sArmyTravelTime;
         const double frac = std::clamp(1. - (1.*days)/totDays, 0., 1.);
         bool reverse = false;
-        if(dynamic_cast<eArmyReturnEvent*>(c)) {
+        if(dynamic_cast<ArmyReturnEvent*>(c)) {
             reverse = true;
             reason = eArmyReason::home;
-        } else if(dynamic_cast<ePlayerRaidEvent*>(c)) {
+        } else if(dynamic_cast<PlayerRaidEvent*>(c)) {
             reason = eArmyReason::raid;
         } else if(dynamic_cast<TroopsSentEvent*>(c)) {
             reason = eArmyReason::help;

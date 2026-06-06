@@ -17,10 +17,10 @@
 #include "egiftfromevent.h"
 #include "gameEvents/gods/egodquestevent.h"
 #include "gameEvents/gods/egodquestfulfilledevent.h"
-#include "eplayerconquestevent.h"
-#include "eplayerraidevent.h"
-#include "eraidresourceevent.h"
-#include "earmyreturnevent.h"
+#include "conquest/player-conquest-event.h"
+#include "conquest/player-raid-event.h"
+#include "conquest/raid-resource-event.h"
+#include "conquest/army-return-event.h"
 #include "emilitarychangeevent.h"
 #include "eeconomicchangeevent.h"
 #include "requests/send-troops-event.h"
@@ -129,13 +129,13 @@ stdsptr<eGameEvent> eGameEvent::sCreate(
     case eGameEventType::godQuestFulfilled:
         return e::make_shared<eGodQuestFulfilledEvent>(cid, branch, board);
     case eGameEventType::playerConquestEvent:
-        return e::make_shared<ePlayerConquestEvent>(cid, branch, board);
+        return e::make_shared<PlayerConquestEvent>(cid, branch, board);
     case eGameEventType::raidResourceReceive:
-        return e::make_shared<eRaidResourceEvent>(cid, branch, board);
+        return e::make_shared<RaidResourceEvent>(cid, branch, board);
     case eGameEventType::playerRaidEvent:
-        return e::make_shared<ePlayerRaidEvent>(cid, branch, board);
+        return e::make_shared<PlayerRaidEvent>(cid, branch, board);
     case eGameEventType::armyReturnEvent:
-        return e::make_shared<eArmyReturnEvent>(cid, branch, board);
+        return e::make_shared<ArmyReturnEvent>(cid, branch, board);
     case eGameEventType::economicChange:
         return e::make_shared<eEconomicChangeEvent>(cid, branch, board);
     case eGameEventType::militaryChange:

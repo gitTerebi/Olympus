@@ -1,20 +1,20 @@
-﻿#ifndef EARMYEVENTBASE_H
+#ifndef EARMYEVENTBASE_H
 #define EARMYEVENTBASE_H
 
-#include "egameevent.h"
+#include "../egameevent.h"
 
 #include "characters/eenlistedforces.h"
 #include "engine/world-city.h"
 
 class eSaveArchive;
 
-class eArmyEventBase : public eGameEvent {
+class ArmyEventBase : public eGameEvent {
 public:
-    eArmyEventBase(const eCityId cid,
-                   const eGameEventType type,
-                   const eGameEventBranch branch,
-                   GameBoard& board);
-    ~eArmyEventBase();
+    ArmyEventBase(const eCityId cid,
+                  const eGameEventType type,
+                  const eGameEventBranch branch,
+                  GameBoard& board);
+    ~ArmyEventBase();
 
     const eEnlistedForces& forces() const { return mForces; }
     const stdsptr<WorldCity>& city() const { return mCity; }

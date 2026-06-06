@@ -55,7 +55,7 @@
 
 #include "invasion-event.h"
 #include "invasion-general.h"
-#include "gameEvents/eplayerconquestevent.h"
+#include "gameEvents/conquest/player-conquest-event.h"
 #include "characters/soldier-banner.h"
 #include "characters/formation-facing.h"
 #include "engine/etile.h"
@@ -221,7 +221,7 @@ void eInvasionHandler::initializeSeaInvasion(
         eTile* const disembarkTile,
         eTile* const shoreTile,
         const eEnlistedForces& forces,
-        ePlayerConquestEvent* const conquestEvent) {
+        PlayerConquestEvent* const conquestEvent) {
     int troops = 0;
 
     mDisembarkTile = disembarkTile;
@@ -468,7 +468,7 @@ void eInvasionHandler::initializeLandInvasion(
 void eInvasionHandler::initializeLandInvasion(
         eTile* const tile,
         const eEnlistedForces& forces,
-        ePlayerConquestEvent* const conquestEvent) {
+        PlayerConquestEvent* const conquestEvent) {
     mStage = eInvasionStage::active;
     mGState.fPhase = eGeneralPhase::spread;
     mConquestEvent = conquestEvent;

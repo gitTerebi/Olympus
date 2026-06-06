@@ -18,7 +18,7 @@ class eReadStream;
 class eWriteStream;
 class WorldCity;
 class SoldierBanner;
-class ePlayerConquestEvent;
+class PlayerConquestEvent;
 class eSaveArchive;
 enum class eCityId;
 enum class eNationality;
@@ -61,7 +61,7 @@ public:
                                eTile* const disembarkTile,
                                eTile* const shoreTile,
                                const eEnlistedForces& forces,
-                               ePlayerConquestEvent* const conquestEvent);
+                               PlayerConquestEvent* const conquestEvent);
 
     void initializeLandInvasion(eTile* const tile,
                                 const int infantry,
@@ -70,7 +70,7 @@ public:
 
     void initializeLandInvasion(eTile* const tile,
                                 const eEnlistedForces& forces,
-                                ePlayerConquestEvent* const conquestEvent);
+                                PlayerConquestEvent* const conquestEvent);
 
     void incTime(const int by);
 
@@ -129,7 +129,7 @@ private:
     eCityId mTargetCity;
     stdsptr<WorldCity> mCity;
     stdptr<eInvasionEvent> mEvent;
-    stdptr<ePlayerConquestEvent> mConquestEvent;
+    stdptr<PlayerConquestEvent> mConquestEvent;
     eTile* mTile = nullptr;
     eInvasionStage mStage = eInvasionStage::arrive;
     bool mFireRaidOverOnExit = false;

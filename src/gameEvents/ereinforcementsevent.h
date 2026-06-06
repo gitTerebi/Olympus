@@ -1,9 +1,9 @@
 ﻿#ifndef EREINFORCEMENTSEVENT_H
 #define EREINFORCEMENTSEVENT_H
 
-#include "earmyeventbase.h"
+#include "conquest/army-event-base.h"
 
-class eReinforcementsEvent : public eArmyEventBase {
+class eReinforcementsEvent : public ArmyEventBase {
 public:
     eReinforcementsEvent(const eCityId cid,
                          const eGameEventBranch branch,

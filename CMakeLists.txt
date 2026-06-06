@@ -462,8 +462,8 @@ set(SOURCES
     src/fileIO/building-writer.cpp
     src/fileIO/ereadstream.cpp
     src/fileIO/ewritestream.cpp
-    src/gameEvents/earmyeventbase.cpp
-    src/gameEvents/earmyreturnevent.cpp
+    src/gameEvents/conquest/army-event-base.cpp
+    src/gameEvents/conquest/army-return-event.cpp
     src/gameEvents/eattackingcityeventvalue.cpp
     src/gameEvents/ecitybecomesevent.cpp
     src/gameEvents/ecityeventvalue.cpp
@@ -503,12 +503,12 @@ set(SOURCES
     src/gameEvents/requests/pay-tribute-event.cpp
     src/gameEvents/requests/receive-tribute-event.cpp
     src/gameEvents/requests/request-state.cpp
-    src/gameEvents/eplayerconquestevent.cpp
-    src/gameEvents/eplayerconquesteventbase.cpp
-    src/gameEvents/eplayerraidevent.cpp
+    src/gameEvents/conquest/player-conquest-event.cpp
+    src/gameEvents/conquest/player-conquest-event-base.cpp
+    src/gameEvents/conquest/player-raid-event.cpp
     src/gameEvents/epointeventvalue.cpp
     src/gameEvents/epricechangeevent.cpp
-    src/gameEvents/eraidresourceevent.cpp
+    src/gameEvents/conquest/raid-resource-event.cpp
     src/gameEvents/requests/send-resources-to-city-event.cpp
     src/gameEvents/requests/requested-resources-type.cpp
     src/gameEvents/ereinforcementsevent.cpp

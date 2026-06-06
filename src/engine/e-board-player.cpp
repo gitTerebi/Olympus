@@ -149,11 +149,11 @@ void eBoardPlayer::removeCityTroopsRequest(SendTroopsEvent* const q) {
     eVectorHelpers::remove(mCityTroopsRequests, q);
 }
 
-void eBoardPlayer::addConquest(ePlayerConquestEventBase* const q) {
+void eBoardPlayer::addConquest(PlayerConquestEventBase* const q) {
     mConquests.push_back(q);
 }
 
-void eBoardPlayer::removeConquest(ePlayerConquestEventBase* const q) {
+void eBoardPlayer::removeConquest(PlayerConquestEventBase* const q) {
     eVectorHelpers::remove(mConquests, q);
 }
 

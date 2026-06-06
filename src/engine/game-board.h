@@ -72,8 +72,8 @@ class eThreadPool;
 class eSoldier;
 class eInvasionHandler;
 class eMonsterPoint;
-class ePlayerConquestEventBase;
-class eArmyEventBase;
+class PlayerConquestEventBase;
+class ArmyEventBase;
 class SendTroopsEvent;
 enum class eMessageEventType;
 class eMonsterInvasionEventBase;
@@ -577,10 +577,10 @@ public:
     void addCityTroopsRequest(SendTroopsEvent* const q);
     void removeCityTroopsRequest(SendTroopsEvent* const q);
 
-    using eConquests = std::vector<ePlayerConquestEventBase*>;
+    using eConquests = std::vector<PlayerConquestEventBase*>;
     eConquests conquests(const ePlayerId pid) const;
-    void addConquest(ePlayerConquestEventBase* const q);
-    void removeConquest(ePlayerConquestEventBase* const q);
+    void addConquest(PlayerConquestEventBase* const q);
+    void removeConquest(PlayerConquestEventBase* const q);
 
     using eInvasions = std::vector<eInvasionEvent*>;
     const eInvasions& invasions() const { return mInvasions; }
@@ -588,10 +588,10 @@ public:
     void addInvasion(eInvasionEvent* const i);
     void removeInvasion(eInvasionEvent* const i);
 
-    using eArmyEvents = std::vector<eArmyEventBase*>;
+    using eArmyEvents = std::vector<ArmyEventBase*>;
     eArmyEvents armyEvents() const;
-    void addArmyEvent(eArmyEventBase* const q);
-    void removeArmyEvent(eArmyEventBase* const q);
+    void addArmyEvent(ArmyEventBase* const q);
+    void removeArmyEvent(ArmyEventBase* const q);
 
     std::vector<eMonster*> monsters(const eCityId cid) const;
     using eChars = std::vector<eCharacter*>;
@@ -886,7 +886,7 @@ private:
 
     bool mRegisterBuildingsEnabled = true;
 
-    std::vector<eArmyEventBase*> mArmyEvents;
+    std::vector<ArmyEventBase*> mArmyEvents;
     double mWageMultiplier = 1.;
 
     // begin moved to BoardCity

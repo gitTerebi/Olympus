@@ -1,4 +1,4 @@
-﻿#include "earmyreturnevent.h"
+#include "army-return-event.h"
 
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
@@ -9,20 +9,20 @@
 #include "characters/actions/eheroaction.h"
 #include "characters/gods/actions/egodworshippedaction.h"
 
-eArmyReturnEvent::eArmyReturnEvent(
+ArmyReturnEvent::ArmyReturnEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
-    eArmyEventBase(cid, eGameEventType::armyReturnEvent, branch, board) {}
+    ArmyEventBase(cid, eGameEventType::armyReturnEvent, branch, board) {}
 
-void eArmyReturnEvent::initialize(
+void ArmyReturnEvent::initialize(
         const eEnlistedForces& forces,
         const stdsptr<WorldCity>& city) {
     mForces = forces;
     mCity = city;
 }
 
-void eArmyReturnEvent::trigger() {
+void ArmyReturnEvent::trigger() {
     removeArmyEvent();
     if(!mCity) return;
     const auto board = gameBoard();
@@ -79,6 +79,6 @@ void eArmyReturnEvent::trigger() {
     board->event(eEvent::armyReturns, ed);
 }
 
-std::string eArmyReturnEvent::longName() const {
+std::string ArmyReturnEvent::longName() const {
     return eLanguage::text("army_returns_event_long_name");
 }
