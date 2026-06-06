@@ -94,6 +94,7 @@ bool eMainWindow::initialize(const eSettings& settings) {
                SDL_GetError());
         return false;
     }
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
     const Uint32 flags = SDL_RENDERER_ACCELERATED/* |
                          SDL_RENDERER_PRESENTVSYNC*/;
     const auto renderer = SDL_CreateRenderer(window, -1, flags);

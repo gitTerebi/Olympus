@@ -7,6 +7,7 @@
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/stamp-template-writer.h"
 #include "widgets/paint/sanctuary-preview.h"
+#include "widgets/paint/world-postprocess-shader.h"
 #include "buildings/emonument.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
 #include "cursors.h"
@@ -1964,6 +1965,15 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
     }
     if (updateSmoothScrollKey(k, true))
         return true;
+    if(k == SDL_Scancode::SDL_SCANCODE_LEFTBRACKET ||
+       k == SDL_Scancode::SDL_SCANCODE_F11) {
+        adjustWorldPostprocessSharpen(-0.25f);
+        return true;
+    } else if(k == SDL_Scancode::SDL_SCANCODE_RIGHTBRACKET ||
+              k == SDL_Scancode::SDL_SCANCODE_F12) {
+        adjustWorldPostprocessSharpen(0.25f);
+        return true;
+    }
     if (k == hotkeys.fHotkeySpeedUp ||
         k == SDL_Scancode::SDL_SCANCODE_KP_PLUS)
     {

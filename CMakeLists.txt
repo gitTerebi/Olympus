@@ -681,6 +681,7 @@ set(SOURCES
     src/widgets/game-widget-info.cpp
     src/widgets/paint/build-preview-paint.cpp
     src/widgets/paint/build-preview-render.cpp
+    src/widgets/paint/world-postprocess-shader.cpp
     src/widgets/paint/road-band-paint.cpp
     src/widgets/paint/paint-build-preview.cpp
     src/widgets/paint/sanctuary-real-draw.cpp
@@ -871,6 +872,7 @@ target_link_libraries(Olympus
     ${SDL2_IMAGE_LIBRARY}
     ${SDL2_TTF_LIBRARY}
     ${SDL2_MIXER_LIBRARY}
+    opengl32
 )
 
 # For Windows, link additional libraries
