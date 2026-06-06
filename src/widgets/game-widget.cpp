@@ -965,11 +965,16 @@ void GameWidget::iterateOverVisibleTiles(const eTileAction &a)
 
     playVisibleAmbientSound(minX, maxX, minY, maxY);
 
-    const int eminX = std::clamp(minX - 5, 0, rw);
-    const int emaxX = std::clamp(maxX + 10, 0, rw);
+    const int bleedLeft = 6;
+    const int bleedRight = 9;
+    const int bleedTop = 9;
+    const int bleedBottom = 21;
 
-    const int eminY = std::clamp(minY - 10, 0, rh);
-    const int emaxY = std::clamp(maxY + 35, 0, rh);
+    const int eminX = std::clamp(minX - bleedLeft, 0, rw);
+    const int emaxX = std::clamp(maxX + bleedRight, 0, rw);
+
+    const int eminY = std::clamp(minY - bleedTop, 0, rh);
+    const int emaxY = std::clamp(maxY + bleedBottom, 0, rh);
 
     for (int y = eminY; y < emaxY; y++)
     {
@@ -2970,8 +2975,6 @@ void GameWidget::renderTargetsReset()
 {
     eWidget::renderTargetsReset();
     mWorldTex.reset();
-    mTerrainCacheTex.reset();
-    mTerrainCacheValid = false;
     mCompassTex.reset();
     mCompassDir = -1;
     initializeNumbers();
