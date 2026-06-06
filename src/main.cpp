@@ -32,8 +32,8 @@ bool init() {
                SDL_GetError());
     }
 
-    if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-        printf("Warning: Linear texture filtering not enabled!");
+    if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0")) {
+        printf("Warning: Nearest texture filtering not enabled!");
     }
 
     const int imgFlags = IMG_INIT_PNG;

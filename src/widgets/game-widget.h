@@ -3,7 +3,7 @@
 
 constexpr int kSimHz = 60;
 constexpr int kAnimFPS = 10;
-constexpr int kRenderFpsCap = 240;
+constexpr int kRenderFpsCap = 0;
 constexpr double kSimStepMs = 1000.0 / kSimHz;
 constexpr double kAnimStepMs = 1000.0 / kAnimFPS;
 constexpr double kBaseRenderMs = 1000.0 / 60.0;
@@ -182,6 +182,7 @@ public:
     void pauseGame() { switchPause(); }
     bool gamePaused() const { return mPaused; }
     void setMessageListWidget(eMessageListWidget* const w);
+    void updateBeforePaint();
 protected:
     void paintEvent(ePainter& p) override;
 
@@ -495,6 +496,8 @@ private:
     bool mMovedSincePress = false;
     int mSmoothScrollX = 0;
     int mSmoothScrollY = 0;
+    double mSmoothScrollFineX = 0.;
+    double mSmoothScrollFineY = 0.;
     int mKeyScrollSpeed = 18;
 
     int mHoverX = -1;
@@ -518,6 +521,17 @@ private:
     int mScale = 100;
     double mZoom = 1.0;
     std::shared_ptr<eTexture> mWorldTex;
+    std::shared_ptr<eTexture> mTerrainCacheTex;
+    bool mTerrainCacheValid = false;
+    int mTerrainCacheW = 0;
+    int mTerrainCacheH = 0;
+    int mTerrainCacheDX = 0;
+    int mTerrainCacheDY = 0;
+    int mTerrainCacheAnimFrame = -1;
+    int mTerrainCacheDir = -1;
+    int mTerrainCacheTileSize = -1;
+    std::shared_ptr<eTexture> mCompassTex;
+    int mCompassDir = -1;
 
     int mUpdateRect = 0;
     std::vector<SDL_Rect> mUpdateRects;
