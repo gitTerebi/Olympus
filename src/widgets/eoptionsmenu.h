@@ -75,11 +75,13 @@ public:
 private:
     void showPage(const int id);
     void clearPage();
+    void rebuild();
 
     std::vector<ePage> mPages;
     eScrollViewport* mPageViewport = nullptr;
     eWidget* mPage = nullptr;
     eLabel* mMainTitle = nullptr;
+    int mCurrentPage = 0;
 };
 
 #endif // EOPTIONSMENU_H

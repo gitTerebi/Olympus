@@ -196,6 +196,9 @@ void eMainWindow::setResolution(const eResolution& res) {
     const int w = res.width();
     const int h = res.height();
     SDL_SetWindowSize(mSdlWindow, w, h);
+    if(mWidget) {
+        mWidget->resize(w, h);
+    }
 }
 
 void eMainWindow::setResolution(const int resolution) {
