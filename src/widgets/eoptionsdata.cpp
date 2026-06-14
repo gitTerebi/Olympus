@@ -6,14 +6,71 @@
 #include "engine/game-board.h"
 #include "widgets/game-widget.h"
 
+namespace {
+std::string aspectName(const eResolution& res) {
+    const int w = res.width();
+    const int h = res.height();
+    if(w * 3 == h * 4) return "4:3";
+    if(w * 9 == h * 16) return "16:9";
+    if(w * 10 == h * 16) return "16:10";
+    return "Other";
+}
+
+std::vector<int> resolutionIndicesForAspect(const std::string& aspect) {
+    std::vector<int> result;
+    for(int i = 0; i < static_cast<int>(eResolution::sResolutions.size()); i++) {
+        if(aspectName(eResolution::sResolutions[i]) == aspect) {
+            result.push_back(i);
+        }
+    }
+    return result;
+}
+
+int bestResolutionForAspect(const std::string& aspect,
+                            const eResolution& current) {
+    const auto indices = resolutionIndicesForAspect(aspect);
+    if(indices.empty()) return -1;
+
+    int best = indices[0];
+    int bestScore = 1000000000;
+    for(const int i : indices) {
+        const auto& res = eResolution::sResolutions[i];
+        int score = std::abs(res.height() - current.height());
+        if(res.uiScale() != current.uiScale()) score += 10000;
+        if(score < bestScore) {
+            best = i;
+            bestScore = score;
+        }
+    }
+    return best;
+}
+}
+
 std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                                                  GameBoard* const board,
                                                  GameWidget* const gw) {
     const auto& settings = window->settings();
+    const std::vector<std::string> aspectOptions{
+        "4:3",
+        "16:9",
+        "16:10",
+        "Other"
+    };
+    const std::string currentAspect = aspectName(settings.fRes);
+    int aspectValue = 0;
+    for(int i = 0; i < static_cast<int>(aspectOptions.size()); i++) {
+        if(aspectOptions[i] == currentAspect) {
+            aspectValue = i;
+            break;
+        }
+    }
+
+    const auto resolutionIndices = resolutionIndicesForAspect(currentAspect);
     std::vector<std::string> resolutionOptions;
     int resolutionValue = 0;
-    for(int i = 0; i < static_cast<int>(eResolution::sResolutions.size()); i++) {
-        const auto& res = eResolution::sResolutions[i];
+    for(int i = 0; i < static_cast<int>(resolutionIndices.size()); i++) {
+        const auto globalIndex = resolutionIndices[i];
+        const auto& res = eResolution::sResolutions[globalIndex];
         resolutionOptions.push_back(res.name());
         if(res == settings.fRes) resolutionValue = i;
     }
@@ -59,10 +116,39 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
             {}, // fDifficulties
             {
                 {
+                    "Aspect",
+                    aspectOptions,
+                    aspectValue,
+                    [window, aspectOptions](const int v) {
+                        if(v < 0 || v >= static_cast<int>(aspectOptions.size())) return;
+                        const int resolution = bestResolutionForAspect(
+                            aspectOptions[v],
+                            window->settings().fRes);
+                        if(resolution >= 0) window->setResolution(resolution);
+                    },
+                    [window, aspectOptions](const int v) {
+                        if(v < 0 || v >= static_cast<int>(aspectOptions.size())) return false;
+                        const int resolution = bestResolutionForAspect(
+                            aspectOptions[v],
+                            window->settings().fRes);
+                        if(resolution < 0) return false;
+                        return eResolution::sResolutions[resolution].uiScale() !=
+                               window->settings().fRes.uiScale();
+                    }
+                },
+                {
                     "Resolution",
                     resolutionOptions,
                     resolutionValue,
-                    [window](const int v) { window->setResolution(v); }
+                    [window, resolutionIndices](const int v) {
+                        if(v < 0 || v >= static_cast<int>(resolutionIndices.size())) return;
+                        window->setResolution(resolutionIndices[v]);
+                    },
+                    [window, resolutionIndices](const int v) {
+                        if(v < 0 || v >= static_cast<int>(resolutionIndices.size())) return false;
+                        return eResolution::sResolutions[resolutionIndices[v]].uiScale() !=
+                               window->settings().fRes.uiScale();
+                    }
                 },
                 {
                     "Display",

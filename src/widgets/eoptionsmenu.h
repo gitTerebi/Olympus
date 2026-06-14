@@ -55,6 +55,7 @@ public:
         std::vector<std::string> fOptions;
         int fValue;
         eSetInt fSet;
+        std::function<bool(const int)> fReloadsUiScale;
     };
 
     struct ePage {
