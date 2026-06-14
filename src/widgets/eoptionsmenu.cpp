@@ -475,22 +475,27 @@ void eOptionsMenu::showPage(const int id) {
         w->setNoPadding();
         w->setWidth(mPage->width());
 
+        const int mult = resolution().multiplier();
+        const bool compact = mPage->width() < 300 * mult;
+
         const auto label = new eLabel(item.fLabel, window());
-        label->setFontSizeXS();
+        if(compact) label->setFontSizeXS();
+        else label->setFontSizeS();
         label->fitContent();
         w->addWidget(label);
 
         const auto button = new FramedButton(window());
         button->setUnderline(false);
-        button->setFontSizeXS();
+        if(compact) button->setFontSizeXS();
+        else button->setFontSizeS();
         const int initial = (item.fValue >= 0 &&
                              item.fValue < int(item.fOptions.size())) ? item.fValue : 0;
         button->setText(item.fOptions.empty() ? "" : item.fOptions[initial]);
-        const int mult = resolution().multiplier();
         const int gap = 6 * mult;
         const int maxControlW = std::max(56 * mult,
                                          mPage->width() - label->width() - gap);
-        const int minControlW = std::min(74 * mult, maxControlW);
+        const int wantedControlW = compact ? 74 * mult : 104 * mult;
+        const int minControlW = std::min(wantedControlW, maxControlW);
         clampButtonWidth(button, minControlW, maxControlW);
         const auto options = item.fOptions;
         const auto set = item.fSet;
