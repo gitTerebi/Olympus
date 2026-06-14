@@ -2,8 +2,10 @@
 
 #include <SDL2/SDL_system.h>
 
+#ifdef _WIN32
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#endif
 
 #include <cstdint>
 #include <cstdio>
@@ -11,6 +13,7 @@
 #include <map>
 #include <string>
 
+#ifdef _WIN32
 // ---------------------------------------------------------------------------
 // Whole-frame upscale (Direct3D 11 + HLSL). Two stages, DisciplesGL parity:
 //   1. optional pixel-art upscale (frame -> Nx intermediate RT)
@@ -968,3 +971,37 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
     if(dsv) dsv->Release();
     return true;
 }
+#else
+namespace {
+int gInterp = 3;
+int gUpscale = 0;
+int gFactor = 2;
+}
+
+void setPostprocessFilters(const int interpolation, const int upscale,
+                           const int factor) {
+    gInterp = interpolation;
+    gUpscale = upscale;
+    gFactor = factor < 2 ? 2 : (factor > 6 ? 6 : factor);
+}
+
+bool applyFullFramePostprocess(SDL_Renderer* const r,
+                               const void* const pixels,
+                               const int pitch,
+                               const int texW,
+                               const int texH) {
+    (void)r;
+    (void)pixels;
+    (void)pitch;
+    (void)texW;
+    (void)texH;
+    static bool once = false;
+    if(!once) {
+        once = true;
+        printf("post-process: OpenGL GLSL backend not initialized yet "
+               "(interp=%d upscale=%d factor=%d)\n",
+               gInterp, gUpscale, gFactor);
+    }
+    return false;
+}
+#endif
