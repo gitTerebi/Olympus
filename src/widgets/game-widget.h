@@ -120,6 +120,7 @@ public:
     ~GameWidget();
 
     void initialize();
+    void reloadUi();
 
     void rebuildGameMenu();
 

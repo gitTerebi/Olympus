@@ -577,6 +577,7 @@ void eMainWindow::showMenuLoading() {
     const auto mlw = new eMenuLoadingWidget(this);
     mlw->setDoneAction([this]() {
         if(mAfterMenuLoadingAction) {
+            if(mGW) mGW->reloadUi();
             const auto action = mAfterMenuLoadingAction;
             mAfterMenuLoadingAction = nullptr;
             action();
@@ -678,6 +679,11 @@ void eMainWindow::applyGraphicsSettings(const eSettings& settings) {
     }
     eGameTextures::setSettings(mSettings);
     if(loadNeeded) showMenuLoading();
+    else if(mGW) {
+        addSlot([this]() {
+            if(mGW) mGW->reloadUi();
+        });
+    }
 }
 
 void eMainWindow::showSettingsMenu() {
