@@ -271,22 +271,17 @@ void eOptionsMenu::showPage(const int id) {
         if(!page.fSliders.empty()) page.fSliders[0].fValue = settings.fKeyScrollSpeed;
         if(page.fCheckboxes.size() >= 1) page.fCheckboxes[0].fValue = settings.fDisableEdgeScroll;
     } else if(page.fButtonLabel == "Display") {
-        if(page.fChoices.size() >= 1) {
-            int resolutionValue = 0;
-            for(int i = 0; i < static_cast<int>(eResolution::sResolutions.size()); i++) {
-                if(eResolution::sResolutions[i] == settings.fRes) {
-                    resolutionValue = i;
-                    break;
-                }
+        for(auto& choice : page.fChoices) {
+            if(choice.fLabel == "Display") {
+                choice.fValue = static_cast<int>(settings.fDisplayMode);
+            } else if(choice.fLabel == "Filter") {
+                choice.fValue = static_cast<int>(settings.fInterpolation);
+            } else if(choice.fLabel == "Upscale") {
+                choice.fValue = static_cast<int>(settings.fUpscale);
+            } else if(choice.fLabel == "Upscale factor") {
+                choice.fValue = settings.fUpscaleFactor >= 4 ? 2 :
+                    (settings.fUpscaleFactor >= 3 ? 1 : 0);
             }
-            page.fChoices[0].fValue = resolutionValue;
-        }
-        if(page.fChoices.size() >= 2) page.fChoices[1].fValue = static_cast<int>(settings.fDisplayMode);
-        if(page.fChoices.size() >= 3) page.fChoices[2].fValue = static_cast<int>(settings.fInterpolation);
-        if(page.fChoices.size() >= 4) page.fChoices[3].fValue = static_cast<int>(settings.fUpscale);
-        if(page.fChoices.size() >= 5) {
-            page.fChoices[4].fValue = settings.fUpscaleFactor >= 4 ? 2 :
-                (settings.fUpscaleFactor >= 3 ? 1 : 0);
         }
     } else if(page.fButtonLabel == "Hotkeys") {
         page.fHotkeys[0].fValue = settings.fHotkeyGameMenu;
@@ -501,20 +496,17 @@ void eOptionsMenu::showPage(const int id) {
         clampButtonWidth(button, minControlW, maxControlW);
         const auto options = item.fOptions;
         const auto set = item.fSet;
-        const bool rebuildOnSet = item.fLabel == "Resolution";
+        const auto reloadsUiScale = item.fReloadsUiScale;
+        const bool rebuildOnSet = item.fLabel == "Aspect" || reloadsUiScale;
         button->setPressAction([this, button, options, set, rebuildOnSet,
-                                minControlW, maxControlW]() {
+                                reloadsUiScale, minControlW, maxControlW]() {
             const auto choose = new eChooseButton(window());
             const auto act = [this, button, options, set, rebuildOnSet,
-                              minControlW, maxControlW](const int val) {
-                bool uiScaleChanged = false;
-                if(rebuildOnSet &&
-                   val >= 0 &&
-                   val < static_cast<int>(eResolution::sResolutions.size())) {
-                    uiScaleChanged =
-                        eResolution::sResolutions[val].uiScale() !=
-                        window()->settings().fRes.uiScale();
-                    if(uiScaleChanged && mReopenPage) {
+                              reloadsUiScale, minControlW, maxControlW](const int val) {
+                bool reloadNeeded = false;
+                if(reloadsUiScale) {
+                    reloadNeeded = reloadsUiScale(val);
+                    if(reloadNeeded && mReopenPage) {
                         const int page = mCurrentPage;
                         window()->setAfterMenuLoadingAction([reopenPage = mReopenPage, page]() {
                             reopenPage(page);
@@ -526,7 +518,13 @@ void eOptionsMenu::showPage(const int id) {
                     clampButtonWidth(button, minControlW, maxControlW);
                 }
                 if(set) set(val);
-                if(rebuildOnSet && !uiScaleChanged) rebuild();
+                if(rebuildOnSet && !reloadNeeded && mReopenPage) {
+                    const int page = mCurrentPage;
+                    window()->addSlot([reopenPage = mReopenPage, page]() {
+                        reopenPage(page);
+                    });
+                    close();
+                }
             };
             choose->initialize(8, options, act);
             window()->execDialog(choose);
