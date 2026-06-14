@@ -575,6 +575,7 @@ set(SOURCES
     src/textures/efertiletodry.cpp
     src/textures/eforesttodry.cpp
     src/textures/egametextures.cpp
+    src/textures/sg-reader.cpp
     src/textures/egodtextures.cpp
     src/textures/einterfacetextures.cpp
     src/textures/elavatodry.cpp
@@ -877,9 +878,11 @@ target_link_libraries(Olympus
 
 # For Windows, link additional libraries
 if(WIN32)
-    target_link_libraries(Olympus 
+    target_link_libraries(Olympus
         pthread
         dbghelp
+        d3d11
+        d3dcompiler
     )
 endif()
 

@@ -5,6 +5,7 @@
 #include "framed-button.h"
 #include "elabel.h"
 #include "echeckbox.h"
+#include "echoosebutton.h"
 #include "edifficultywidget.h"
 #include "ebasicbutton.h"
 #include "ecancelbutton.h"
@@ -233,10 +234,28 @@ void eOptionsMenu::showPage(const int id) {
     const auto& settings = window()->settings();
 
     // Update page values with current settings
-    if(id == 0) { // General
+    if(page.fButtonLabel == "General") {
         if(!page.fSliders.empty()) page.fSliders[0].fValue = settings.fKeyScrollSpeed;
         if(page.fCheckboxes.size() >= 1) page.fCheckboxes[0].fValue = settings.fDisableEdgeScroll;
-    } else if(id == 1) { // Hotkeys
+    } else if(page.fButtonLabel == "Display") {
+        if(page.fChoices.size() >= 1) {
+            int resolutionValue = 0;
+            for(int i = 0; i < static_cast<int>(eResolution::sResolutions.size()); i++) {
+                if(eResolution::sResolutions[i] == settings.fRes) {
+                    resolutionValue = i;
+                    break;
+                }
+            }
+            page.fChoices[0].fValue = resolutionValue;
+        }
+        if(page.fChoices.size() >= 2) page.fChoices[1].fValue = static_cast<int>(settings.fDisplayMode);
+        if(page.fChoices.size() >= 3) page.fChoices[2].fValue = static_cast<int>(settings.fInterpolation);
+        if(page.fChoices.size() >= 4) page.fChoices[3].fValue = static_cast<int>(settings.fUpscale);
+        if(page.fChoices.size() >= 5) {
+            page.fChoices[4].fValue = settings.fUpscaleFactor >= 4 ? 2 :
+                (settings.fUpscaleFactor >= 3 ? 1 : 0);
+        }
+    } else if(page.fButtonLabel == "Hotkeys") {
         page.fHotkeys[0].fValue = settings.fHotkeyGameMenu;
         page.fHotkeys[1].fValue = settings.fHotkeyPause;
         page.fHotkeys[3].fValue = settings.fHotkeySpeedUp;
@@ -273,7 +292,7 @@ void eOptionsMenu::showPage(const int id) {
         page.fHotkeys[39].fValue = settings.fHotkeyMenuTab9;
         page.fHotkeys[40].fValue = settings.fHotkeyMenuTab10;
         page.fHotkeys[41].fValue = settings.fHotkeyMenuTab11;
-    } else if(id == 2) { // Gameplay
+    } else if(page.fButtonLabel == "Gameplay") {
         if(page.fCheckboxes.size() >= 1) page.fCheckboxes[0].fValue = settings.fWarehouseDefaultAcceptNone;
         if(page.fCheckboxes.size() >= 2) page.fCheckboxes[1].fValue = settings.fDoubleCartCapacity;
         if(page.fCheckboxes.size() >= 3) page.fCheckboxes[2].fValue = settings.fAgorasTakeFromTradingPosts;
@@ -282,7 +301,7 @@ void eOptionsMenu::showPage(const int id) {
         if(page.fCheckboxes.size() >= 6) page.fCheckboxes[5].fValue = settings.fPopupForRequests;
         if(page.fCheckboxes.size() >= 7) page.fCheckboxes[6].fValue = settings.fPopupForTributes;
         if(page.fCheckboxes.size() >= 8) page.fCheckboxes[7].fValue = settings.fPopupForTroops;
-    } else if(id == 3) { // Sound
+    } else if(page.fButtonLabel == "Sound") {
         if(page.fSliders.size() >= 1) page.fSliders[0].fValue = settings.fGeneralVolume;
         if(page.fSliders.size() >= 2) page.fSliders[1].fValue = settings.fMusicVolume;
         if(page.fSliders.size() >= 3) page.fSliders[2].fValue = settings.fVoiceVolume;
@@ -416,10 +435,59 @@ void eOptionsMenu::showPage(const int id) {
         return w;
     };
 
+    // A dropdown row: label on the left, a button showing the current option on the
+    // right; pressing it pops an eChooseButton list (same as the editor's choosers).
+    const auto makeChoice = [this](const eOptionsMenu::eChoiceItem& item) {
+        const auto w = new eWidget(window());
+        w->setNoPadding();
+        w->setWidth(mPage->width());
+
+        const auto label = new eLabel(item.fLabel, window());
+        label->setFontSizeS();
+        label->fitContent();
+        w->addWidget(label);
+
+        const auto button = new FramedButton(window());
+        button->setUnderline(false);
+        const int initial = (item.fValue >= 0 &&
+                             item.fValue < int(item.fOptions.size())) ? item.fValue : 0;
+        button->setText(item.fOptions.empty() ? "" : item.fOptions[initial]);
+        button->fitContent();
+        const auto options = item.fOptions;
+        const auto set = item.fSet;
+        button->setPressAction([this, button, options, set]() {
+            const auto choose = new eChooseButton(window());
+            const auto act = [button, options, set](const int val) {
+                if(val >= 0 && val < int(options.size())) {
+                    button->setText(options[val]);
+                    button->fitContent();
+                }
+                if(set) set(val);
+            };
+            choose->initialize(8, options, act);
+            window()->execDialog(choose);
+            choose->align(eAlignment::center);
+        });
+        w->addWidget(button);
+
+        w->fitHeight();
+        w->setWidth(mPage->width());
+        const double center = mPage->width() * 0.65;
+        label->setX(center - label->width());
+        button->setX(center);
+        label->setY((w->height() - label->height()) / 2);
+        button->setY((w->height() - button->height()) / 2);
+        return w;
+    };
+
     for(const auto& diff : page.fDifficulties) {
         const auto w = new eDifficultyWidget(window());
         w->initialize(diff.fGet(), diff.fSet);
         mPage->addWidget(w);
+    }
+
+    for(const auto& choice : page.fChoices) {
+        mPage->addWidget(makeChoice(choice));
     }
 
     for(const auto& checkbox : page.fCheckboxes) {

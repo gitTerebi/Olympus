@@ -53,7 +53,7 @@ eWidget* createTextureBox(eMainWindow* const window,
 }
 
 void eGraphicsMenu::initialize(const eApplyAction& settingsA,
-                               const eFullscreenA& fullscreenA) {
+                               const eDisplayModeA& displayModeA) {
     const auto res = resolution();
 
     const int p = res.paddingL();
@@ -130,20 +130,30 @@ void eGraphicsMenu::initialize(const eApplyAction& settingsA,
     }
 
     {
+        const auto modeText = [](const eDisplayMode mode) {
+            switch(mode) {
+            case eDisplayMode::borderless:
+                return "Borderless Window";
+            case eDisplayMode::fullscreen:
+                return "Full Screen";
+            case eDisplayMode::window:
+            default:
+                return "Windowed Screen";
+            }
+        };
         const auto fs = new FramedButton(window());
         fs->setUnderline(false);
-        fs->setText(mSettings.fFullscreen ?
-                        eLanguage::zeusText(42, 2) : // windowed screen
-                        eLanguage::zeusText(42, 1)); // full screen
+        fs->setText(modeText(mSettings.fDisplayMode));
         fs->fitContent();
         col1->addWidget(fs);
 
-        fs->setPressAction([this, fs, fullscreenA]() {
-            const bool f = !mSettings.fFullscreen;
-            mSettings.fFullscreen = f;
-            fullscreenA(f);
-            fs->setText(f ? eLanguage::zeusText(42, 2) : // windowed screen
-                            eLanguage::zeusText(42, 1)); // full screen
+        fs->setPressAction([this, fs, displayModeA, modeText]() {
+            int next = static_cast<int>(mSettings.fDisplayMode) + 1;
+            if(next >= static_cast<int>(eDisplayMode::count)) next = 0;
+            const auto mode = static_cast<eDisplayMode>(next);
+            mSettings.fDisplayMode = mode;
+            displayModeA(mode);
+            fs->setText(modeText(mode));
             fs->fitContent();
             fs->align(eAlignment::hcenter);
         });

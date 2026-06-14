@@ -2,7 +2,10 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <vector>
+
+#include "sg-reader.h"
 
 eSpriteLoader::~eSpriteLoader() {
     buildSpriteAtlas();
@@ -241,6 +244,16 @@ void eSpriteLoader::loadTex(const int i) {
     if(binary) {
         const auto path = mSize + "/" + mName + "_" + std::to_string(i) + ".png";
         tex = eBinaryImageLoader::load(mRenderer, path);
+        if(!tex) {
+            // Composite strip: build it live from the player's .555 via the
+            // textureTemplates/<name> recipe + this zoom's spriteData rects.
+            const auto surf = SgReader::loadComposite(
+                                  mName, atoi(mSize.c_str()), i, mSds);
+            if(surf) {
+                tex = std::make_shared<eTexture>();
+                tex->load(mRenderer, surf); // takes ownership of surf
+            }
+        }
     } else {
         tex = std::make_shared<eTexture>();
         const std::string dir = eGameDir::texturesDir() + mSize + "/";

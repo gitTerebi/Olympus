@@ -1,6 +1,5 @@
 #include "widgets/game-widget.h"
 #include "widgets/etilepainter.h"
-#include "widgets/paint/world-postprocess-shader.h"
 
 #include <functional>
 
@@ -83,6 +82,9 @@ void GameWidget::paintEvent(ePainter &p)
         mWorldTex->create(r, w, h);
         SDL_SetTextureScaleMode(mWorldTex->tex(), SDL_ScaleModeNearest);
     }
+    // Remember the active target (the whole-frame texture set by emainwindow) so we
+    // can restore it after rendering the world into mWorldTex.
+    SDL_Texture* const prevTarget = SDL_GetRenderTarget(r);
     mWorldTex->setAsRenderTarget(r);
     SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
     SDL_RenderClear(r);
@@ -2469,7 +2471,6 @@ void GameWidget::paintEvent(ePainter &p)
         SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
         SDL_RenderDrawRect(r, &box);
     }
-    SDL_SetRenderTarget(r, nullptr);
     SDL_RenderSetClipRect(r, nullptr);
     const int srcW = std::round(w / mZoom);
     const int srcH = std::round(h / mZoom);
@@ -2477,13 +2478,10 @@ void GameWidget::paintEvent(ePainter &p)
     const int srcY = (h - srcH) / 2;
     const SDL_Rect srcRect{srcX, srcY, srcW, srcH};
     const SDL_Rect dstRect{0, 0, w, h};
-    const bool postprocessed = applyWorldPostprocessShader(
-        r, mWorldTex->tex(), srcRect, dstRect,
-        mWorldTex->width(), mWorldTex->height());
-    SDL_SetRenderTarget(r, nullptr);
-    if(!postprocessed) {
-        SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
-    }
+    // Restore the frame target and blit the zoomed/scrolled world into it. The
+    // whole-frame bicubic upscale happens later at the window level (emainwindow).
+    SDL_SetRenderTarget(r, prevTarget);
+    SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
 
     {
         const char* letters[] = {"N", "W", "S", "E"};

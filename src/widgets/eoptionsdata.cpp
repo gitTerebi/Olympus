@@ -10,6 +10,13 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                                                  GameBoard* const board,
                                                  GameWidget* const gw) {
     const auto& settings = window->settings();
+    std::vector<std::string> resolutionOptions;
+    int resolutionValue = 0;
+    for(int i = 0; i < static_cast<int>(eResolution::sResolutions.size()); i++) {
+        const auto& res = eResolution::sResolutions[i];
+        resolutionOptions.push_back(res.name());
+        if(res == settings.fRes) resolutionValue = i;
+    }
     std::vector<eOptionsMenu::ePage> pages = {
         {
             "General",
@@ -39,6 +46,48 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                         window->setDisableEdgeScroll(b);
                     },
                     "Mouse at screen edge won't auto-scroll the map."
+                }
+            }
+        },
+        {
+            "Display",
+            "Display Options",
+            {},
+            {},
+            {},
+            {},
+            {}, // fDifficulties
+            {
+                {
+                    "Resolution",
+                    resolutionOptions,
+                    resolutionValue,
+                    [window](const int v) { window->setResolution(v); }
+                },
+                {
+                    "Display",
+                    {"Window", "Borderless", "Fullscreen"},
+                    static_cast<int>(settings.fDisplayMode),
+                    [window](const int v) { window->setDisplayMode(v); }
+                },
+                {
+                    "Filter",
+                    {"Nearest", "Linear", "Hermite", "Cubic", "Lanczos"},
+                    static_cast<int>(settings.fInterpolation),
+                    [window](const int v) { window->setInterpolation(v); }
+                },
+                {
+                    "Upscale",
+                    {"None", "xBRZ", "ScaleHQ", "ScaleNx", "Eagle", "xSal"},
+                    static_cast<int>(settings.fUpscale),
+                    [window](const int v) { window->setUpscale(v); }
+                },
+                {
+                    "Upscale factor",
+                    {"2x", "3x", "4x"},
+                    settings.fUpscaleFactor >= 4 ? 2 :
+                        (settings.fUpscaleFactor >= 3 ? 1 : 0),
+                    [window](const int v) { window->setUpscaleFactor(v == 2 ? 4 : (v == 1 ? 3 : 2)); }
                 }
             }
         },

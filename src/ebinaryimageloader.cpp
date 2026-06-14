@@ -1,122 +1,17 @@
 #include "ebinaryimageloader.h"
 
-#include <fstream>
-
-#include "esplitbinary.h"
-#include "egamedir.h"
-
-namespace {
-void applyLooseTextureMasks(SDL_Surface* const surf) {
-    SDL_LockSurface(surf);
-    Uint32* pixels = (Uint32*)surf->pixels;
-    for(int i = 0; i < surf->w * surf->h; i++) {
-        Uint8 r;
-        Uint8 g;
-        Uint8 b;
-        Uint8 a;
-        SDL_GetRGBA(pixels[i], surf->format, &r, &g, &b, &a);
-        if(r == 0 && g == 251 && b == 0) {
-            pixels[i] = SDL_MapRGBA(surf->format, 0, 251, 0, 0);
-        } else if(r >= 250 && g <= 5 && b <= 5) {
-            pixels[i] = SDL_MapRGBA(surf->format, 72, 72, 72, a);
-        }
-    }
-    SDL_UnlockSurface(surf);
-}
-}
+#include "textures/sg-reader.h"
 
 std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
                                                    const std::string& path) {
-    {
-        const auto slash = path.find('/');
-        const std::string rel = (slash != std::string::npos) ? path.substr(slash + 1) : path;
-        const std::string fullLoosePath = eGameDir::exeDir() + "../textures/" + path;
-        const std::string relLoosePath = eGameDir::exeDir() + "../textures/" + rel;
-        std::string loosePath = fullLoosePath;
-        std::ifstream loose(loosePath, std::ios::in | std::ios::binary);
-        if(!loose && relLoosePath != fullLoosePath) {
-            loosePath = relLoosePath;
-            loose.open(loosePath, std::ios::in | std::ios::binary);
-        }
-        if(loose) {
-            loose.close();
-            const auto tex = std::make_shared<eTexture>();
-            const auto loadedSurf = IMG_Load(loosePath.c_str());
-            if(!loadedSurf) {
-                printf("Unable to load image %s! SDL_image Error: %s\n",
-                       loosePath.c_str(), IMG_GetError());
-                return nullptr;
-            }
-            const auto surf = SDL_ConvertSurfaceFormat(
-                                  loadedSurf, SDL_PIXELFORMAT_RGBA32, 0);
-            SDL_FreeSurface(loadedSurf);
-            if(!surf) {
-                printf("Unable to convert image %s! SDL Error: %s\n",
-                       loosePath.c_str(), SDL_GetError());
-                return nullptr;
-            }
-            applyLooseTextureMasks(surf);
-            tex->load(r, surf);
-            return tex;
-        }
-    }
-
-    const auto it = eBinaryDataMap.find(path);
-    if(it == eBinaryDataMap.end()) {
-        printf("Could not find '%s' image\n", path.c_str());
-        return nullptr;
-    }
-    const auto& bd = it->second;
-    std::string epath;
-    switch(bd.fFileId) {
-    case eFileId::i:
-        epath = eGameDir::iBinaryPath();
-        break;
-    case eFileId::i15:
-        epath = eGameDir::i15BinaryPath();
-        break;
-    case eFileId::i30:
-        epath = eGameDir::i30BinaryPath();
-        break;
-    case eFileId::i45:
-        epath = eGameDir::i45BinaryPath();
-        break;
-    case eFileId::i60:
-        epath = eGameDir::i60BinaryPath();
-        break;
-    }
-
-    std::ifstream file(epath, std::ios::in | std::ios::binary);
-    if(!file) {
-        printf("Could not open '%s'\n", epath.c_str());
-        return nullptr;
-    }
-
-    const auto data = new char[bd.fSize];
-    file.seekg(bd.fPos);
-    file.read(data, bd.fSize);
-    file.close();
-    const auto rw = SDL_RWFromMem(data, bd.fSize);
-    const auto surf = IMG_Load_RW(rw, SDL_FALSE);
-    if(!surf) {
-        printf("Unable to load image %s! SDL_image Error: %s\n",
-               path.c_str(), IMG_GetError());
-        return nullptr;
-    }
-    if(surf->format->BytesPerPixel == 4) {
-        SDL_LockSurface(surf);
-        Uint32* pixels = (Uint32*)surf->pixels;
-        const Uint32 green = SDL_MapRGBA(surf->format, 0, 251, 0, 255);
-        const Uint32 transparent = SDL_MapRGBA(surf->format, 0, 251, 0, 0);
-        for(int i = 0; i < surf->w * surf->h; i++) {
-            if(pixels[i] == green) pixels[i] = transparent;
-        }
-        SDL_UnlockSurface(surf);
-    }
-    delete[] data;
+    // Sprites are decoded live from the player's own DATA/*.sg3 + *.555 - the old
+    // loose textures/<zoom>/ PNG override is no longer used. SgReader prints the
+    // specific failure reason on miss.
+    const auto surf = SgReader::load(path);
+    if(!surf) return nullptr;
 
     const auto tex = std::make_shared<eTexture>();
-    tex->load(r, surf);
+    tex->load(r, surf); // takes ownership of surf (frees it)
 
     return tex;
 }

@@ -36,6 +36,8 @@
 
 #include "widgets/eeventbackground.h"
 
+#include "widgets/paint/world-postprocess-shader.h"
+
 namespace {
 bool writeGameSaveFile(const std::string& path,
                        const std::string& format,
@@ -75,6 +77,8 @@ bool writeGameSaveFile(const std::string& path,
 eMainWindow::eMainWindow() {}
 
 eMainWindow::~eMainWindow() {
+    if(mFrameTex) SDL_DestroyTexture(mFrameTex);
+    if(mFrameTexAlt) SDL_DestroyTexture(mFrameTexAlt);
     if(mSdlWindow) SDL_DestroyWindow(mSdlWindow);
     if(mSdlRenderer) SDL_DestroyRenderer(mSdlRenderer);
     setWidget(nullptr);
@@ -84,10 +88,13 @@ bool eMainWindow::initialize(const eSettings& settings) {
     const auto& res = settings.fRes;
     const int w = res.width();
     const int h = res.height();
+    // Resizable so the user can maximize the window past the configured resolution;
+    // the bicubic pass upscales the fixed-resolution frame to fill it.
     const auto window = SDL_CreateWindow("eZeus",
                                          SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
-                                         w, h, SDL_WINDOW_SHOWN);
+                                         w, h,
+                                         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     if(!window) {
         printf("Window could not be created! SDL Error: %s\n",
@@ -113,8 +120,9 @@ bool eMainWindow::initialize(const eSettings& settings) {
     mSdlWindow = window;
     mSdlRenderer = renderer;
     setResolution(res);
-    setFullscreen(settings.fFullscreen);
+    setDisplayMode(settings.fDisplayMode);
     mSettings = settings;
+    applyPostprocessFilters();
     SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     const std::string icoPath = eGameDir::path("zeus.ico");
@@ -150,8 +158,39 @@ void eMainWindow::addSlot(const eSlot& slot) {
     mSlots.push_back(slot);
 }
 
+void eMainWindow::mapWindowToFrame(int& x, int& y) const {
+    // The frame (configured resolution) is bicubic-upscaled into a letterboxed
+    // viewport that fits the frame's aspect inside the current output size. Invert
+    // that: window coords -> viewport-relative -> frame-resolution coords.
+    int outW = 0;
+    int outH = 0;
+    SDL_GetRendererOutputSize(mSdlRenderer, &outW, &outH);
+    const int frameW = width();
+    const int frameH = height();
+    if(outW <= 0 || outH <= 0 || frameW <= 0 || frameH <= 0) return;
+
+    const float srcAspect = float(frameW) / float(frameH);
+    const float outAspect = float(outW) / float(outH);
+    float vpW = float(outW);
+    float vpH = float(outH);
+    if(outAspect > srcAspect) {
+        vpW = vpH * srcAspect;
+    } else {
+        vpH = vpW / srcAspect;
+    }
+    const float vpX = (float(outW) - vpW) * 0.5f;
+    const float vpY = (float(outH) - vpH) * 0.5f;
+
+    float fx = (float(x) - vpX) / vpW * float(frameW);
+    float fy = (float(y) - vpY) / vpH * float(frameH);
+    if(fx < 0) fx = 0; else if(fx > frameW - 1) fx = float(frameW - 1);
+    if(fy < 0) fy = 0; else if(fy > frameH - 1) fy = float(frameH - 1);
+    x = int(fx);
+    y = int(fy);
+}
+
 void eMainWindow::setResolution(const eResolution& res) {
-    if(mSettings.fRes == res && !mFirstFullscrenSetting) return;
+    if(mSettings.fRes == res && !mFirstResolutionSetting) return;
     mFirstResolutionSetting = false;
     mSettings.fRes = res;
     const int w = res.width();
@@ -159,11 +198,57 @@ void eMainWindow::setResolution(const eResolution& res) {
     SDL_SetWindowSize(mSdlWindow, w, h);
 }
 
-void eMainWindow::setFullscreen(const bool f) {
-    if(mSettings.fFullscreen == f && !mFirstFullscrenSetting) return;
-    mFirstFullscrenSetting = false;
-    mSettings.fFullscreen = f;
-    SDL_SetWindowFullscreen(mSdlWindow, f ? SDL_WINDOW_FULLSCREEN : 0);
+void eMainWindow::setResolution(const int resolution) {
+    if(resolution < 0 ||
+       resolution >= static_cast<int>(eResolution::sResolutions.size())) {
+        return;
+    }
+    auto settings = mSettings;
+    settings.fRes = eResolution::sResolutions[resolution];
+    applyGraphicsSettings(settings);
+}
+
+void eMainWindow::setDisplayMode(const eDisplayMode mode) {
+    if(mSettings.fDisplayMode == mode && !mFirstDisplayModeSetting) return;
+    mFirstDisplayModeSetting = false;
+    mSettings.fDisplayMode = mode;
+    Uint32 flags = 0;
+    if(mode == eDisplayMode::fullscreen) {
+        flags = SDL_WINDOW_FULLSCREEN;
+    } else if(mode == eDisplayMode::borderless) {
+        flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+    SDL_SetWindowFullscreen(mSdlWindow, flags);
+}
+
+void eMainWindow::applyPostprocessFilters() {
+    setPostprocessFilters(static_cast<int>(mSettings.fInterpolation),
+                          static_cast<int>(mSettings.fUpscale),
+                          mSettings.fUpscaleFactor);
+}
+
+void eMainWindow::setInterpolation(const int interpolation) {
+    mSettings.fInterpolation = static_cast<eInterpolation>(interpolation);
+    applyPostprocessFilters();
+    mSettings.write();
+}
+
+void eMainWindow::setUpscale(const int upscale) {
+    mSettings.fUpscale = static_cast<eUpscale>(upscale);
+    applyPostprocessFilters();
+    mSettings.write();
+}
+
+void eMainWindow::setUpscaleFactor(const int factor) {
+    mSettings.fUpscaleFactor = factor < 2 ? 2 : (factor > 6 ? 6 : factor);
+    applyPostprocessFilters();
+    mSettings.write();
+}
+
+void eMainWindow::setDisplayMode(const int mode) {
+    if(mode < 0 || mode >= static_cast<int>(eDisplayMode::count)) return;
+    setDisplayMode(static_cast<eDisplayMode>(mode));
+    mSettings.write();
 }
 
 void eMainWindow::setKeyScrollSpeed(const int speed) {
@@ -567,9 +652,9 @@ void eMainWindow::showMainMenu() {
 }
 
 void eMainWindow::applyGraphicsSettings(const eSettings& settings) {
-    const bool loadNeeded = settings.fRes != mSettings.fRes;
+    const bool loadNeeded = settings.fRes.uiScale() != mSettings.fRes.uiScale();
     setResolution(settings.fRes);
-    setFullscreen(settings.fFullscreen);
+    setDisplayMode(settings.fDisplayMode);
     mSettings = settings;
     mSettings.write();
     if(!mSettings.fTinyTextures &&
@@ -587,14 +672,14 @@ void eMainWindow::showSettingsMenu() {
     esm->resize(width(), height());
 
     const auto applyA = [this](const eSettings& settings) {
-        const bool loadNeeded = settings.fRes != mSettings.fRes;
+        const bool loadNeeded = settings.fRes.uiScale() != mSettings.fRes.uiScale();
         applyGraphicsSettings(settings);
         if(!loadNeeded) showMainMenu();
     };
-    const auto fullscrennA = [this](const bool f) {
-        setFullscreen(f);
+    const auto displayModeA = [this](const eDisplayMode mode) {
+        setDisplayMode(mode);
     };
-    esm->initialize(applyA, fullscrennA);
+    esm->initialize(applyA, displayModeA);
     execDialog(esm, true, [this]() { showMainMenu(); });
 }
 
@@ -710,6 +795,7 @@ int eMainWindow::exec() {
         while(SDL_PollEvent(&e)) {
             int x, y;
             SDL_GetMouseState(&x, &y);
+            mapWindowToFrame(x, y);
             const bool shift = mShiftPressed > 0;
             const bool ctrl = mCtrlPressed > 0;
             if(e.type == SDL_QUIT) {
@@ -812,6 +898,35 @@ int eMainWindow::exec() {
             mGW->updateBeforePaint();
         }
 
+        // Render the whole frame at the configured resolution into mFrameTex, then
+        // a D3D11 bicubic pass upscales it to the current window size. Recreate the
+        // target when the configured resolution changes.
+        const int frameW = width();
+        const int frameH = height();
+        if(!mFrameTex || !mFrameTexAlt || mFrameTexW != frameW || mFrameTexH != frameH) {
+            if(mFrameTex) SDL_DestroyTexture(mFrameTex);
+            if(mFrameTexAlt) SDL_DestroyTexture(mFrameTexAlt);
+            mFrameTex = SDL_CreateTexture(mSdlRenderer, SDL_PIXELFORMAT_ARGB8888,
+                                          SDL_TEXTUREACCESS_TARGET, frameW, frameH);
+            mFrameTexAlt = SDL_CreateTexture(mSdlRenderer, SDL_PIXELFORMAT_ARGB8888,
+                                             SDL_TEXTUREACCESS_TARGET, frameW, frameH);
+            if(mFrameTex) SDL_SetTextureScaleMode(mFrameTex, SDL_ScaleModeLinear);
+            if(mFrameTexAlt) SDL_SetTextureScaleMode(mFrameTexAlt, SDL_ScaleModeLinear);
+            if(mFrameTex) SDL_SetTextureBlendMode(mFrameTex, SDL_BLENDMODE_NONE);
+            if(mFrameTexAlt) SDL_SetTextureBlendMode(mFrameTexAlt, SDL_BLENDMODE_NONE);
+            if(!mFrameTex || !mFrameTexAlt) {
+                printf("Frame texture create failed (%dx%d): %s\n",
+                       frameW, frameH, SDL_GetError());
+            }
+            mFrameTexW = frameW;
+            mFrameTexH = frameH;
+        }
+
+        SDL_Texture* const frameTex = mUseAltFrameTex ? mFrameTexAlt : mFrameTex;
+        const bool renderToFrame = frameTex != nullptr;
+        SDL_SetRenderTarget(mSdlRenderer, renderToFrame ? frameTex : nullptr);
+        SDL_RenderSetViewport(mSdlRenderer, nullptr);
+        SDL_RenderSetClipRect(mSdlRenderer, nullptr);
         SDL_SetRenderDrawColor(mSdlRenderer, 0x0, 0x0, 0x0, 0xFF);
         SDL_RenderClear(mSdlRenderer);
 
@@ -828,6 +943,7 @@ int eMainWindow::exec() {
                 const int htt = tooltip.height();
                 int mx, my;
                 SDL_GetMouseState(&mx, &my);
+                mapWindowToFrame(mx, my);
                 int xtt;
                 int ytt;
                 if(mx > width()/2) {
@@ -849,7 +965,31 @@ int eMainWindow::exec() {
             p.drawText(0, 0, std::to_string(fpsVal), eFontColor::dark);
         }
 
+        if(renderToFrame) {
+            SDL_RenderFlush(mSdlRenderer);
+            if(static_cast<int>(mFramePixels.size()) != frameW * frameH) {
+                mFramePixels.resize(frameW * frameH);
+            }
+            const int readFrameResult = SDL_RenderReadPixels(
+                mSdlRenderer, nullptr, SDL_PIXELFORMAT_ARGB8888,
+                mFramePixels.data(), frameW * int(sizeof(Uint32)));
+            SDL_SetRenderTarget(mSdlRenderer, nullptr);
+            SDL_SetRenderDrawColor(mSdlRenderer, 0, 0, 0, 255);
+            SDL_RenderClear(mSdlRenderer);
+            if(readFrameResult != 0 ||
+               !applyFullFramePostprocess(mSdlRenderer,
+                                          mFramePixels.data(),
+                                          frameW * int(sizeof(Uint32)),
+                                          frameW,
+                                          frameH)) {
+                SDL_SetRenderDrawColor(mSdlRenderer, 0, 0, 0, 255);
+                SDL_RenderClear(mSdlRenderer);
+                SDL_RenderCopy(mSdlRenderer, frameTex, nullptr, nullptr);
+            }
+        }
+
         SDL_RenderPresent(mSdlRenderer);
+        mUseAltFrameTex = !mUseAltFrameTex;
 
         std::vector<eSlot> slots;
         std::swap(slots, mSlots);

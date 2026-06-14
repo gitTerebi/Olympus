@@ -36,7 +36,10 @@ To play Olympus you will need original game files (Zeus: Master of Olympus base 
 
 Currently only English and Polish versions are supported due to font glyphs limitations.
 
-Binaries are not provided; you need to build Olympus yourself.
+A pre-built Windows release is available on the [Releases](../../releases) page. Download
+`Olympus-0.1.0-rc.1.zip`, extract it into your `Zeus and Poseidon` directory, and run
+`Bin/Olympus.exe`. See the bundled `README.txt` for details. Alternatively, build it yourself
+(see below).
 
 ## How To Build on Windows
 
