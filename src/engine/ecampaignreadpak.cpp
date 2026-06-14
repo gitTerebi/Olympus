@@ -226,7 +226,7 @@ struct ePakMonster {
 
 struct ePakGod {
     bool fValid = false;
-    eGodType fType = eGodType::zeus;
+    GodType fType = GodType::zeus;
 };
 
 struct ePakPyramid {
@@ -318,25 +318,25 @@ RequestedResourcesType pakIdToRequestedResourcesType(const uint16_t id) {
     return RequestedResourcesType::general;
 }
 
-eGodType pakIdToGodType(const uint8_t id, bool& valid) {
+GodType pakIdToGodType(const uint8_t id, bool& valid) {
     valid = true;
-    if(id == 0) return eGodType::zeus;
-    else if(id == 1) return eGodType::poseidon;
-    else if(id == 2) return eGodType::demeter;
-    else if(id == 3) return eGodType::apollo;
-    else if(id == 4) return eGodType::artemis;
-    else if(id == 5) return eGodType::ares;
-    else if(id == 6) return eGodType::aphrodite;
-    else if(id == 7) return eGodType::hermes;
-    else if(id == 8) return eGodType::athena;
-    else if(id == 9) return eGodType::hephaestus;
-    else if(id == 10) return eGodType::dionysus;
-    else if(id == 11) return eGodType::hades;
-    else if(id == 12) return eGodType::hera;
-    else if(id == 13) return eGodType::atlas;
+    if(id == 0) return GodType::zeus;
+    else if(id == 1) return GodType::poseidon;
+    else if(id == 2) return GodType::demeter;
+    else if(id == 3) return GodType::apollo;
+    else if(id == 4) return GodType::artemis;
+    else if(id == 5) return GodType::ares;
+    else if(id == 6) return GodType::aphrodite;
+    else if(id == 7) return GodType::hermes;
+    else if(id == 8) return GodType::athena;
+    else if(id == 9) return GodType::hephaestus;
+    else if(id == 10) return GodType::dionysus;
+    else if(id == 11) return GodType::hades;
+    else if(id == 12) return GodType::hera;
+    else if(id == 13) return GodType::atlas;
     // printf("Invalid god id %i\n", id);
     valid = false;
-    return eGodType::zeus;
+    return GodType::zeus;
 }
 
 eMonsterType pakIdToMonsterType(const uint8_t id, bool& valid) {
@@ -679,12 +679,12 @@ void readEpisodeEvents(eEpisode& ep, ZeusFile& file,
                                 cid, eGameEventBranch::root, *ep.fBoard);
             ee->setGod(god);
             ee->setHero(hero);
-            ee->setId(questId == 1 ? eGodQuestId::godQuest2 :
-                                     eGodQuestId::godQuest1);
+            ee->setId(questId == 1 ? GodQuestId::godQuest2 :
+                                     GodQuestId::godQuest1);
             e = ee;
         } break;
         case ePakEventType::godAttack: {
-            std::vector<eGodType> godTypes;
+            std::vector<GodType> godTypes;
             bool valid1 = false;
             const auto god1 = pakIdToGodType(value1, valid1);
             if(valid1) godTypes.push_back(god1);

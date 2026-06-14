@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
-#include "characters/gods/actions/egodattackaction.h"
+#include "characters/gods/actions/god-attack-action.h"
 #include "gameEvents/gods/egodtraderesumesevent.h"
 #include "fileIO/esavearchive.h"
 
@@ -17,7 +17,7 @@ void eGodAttackEvent::setSanctuary(const stdptr<eSanctuary>& s) {
     mSanctuary = s;
 }
 
-void eGodAttackEvent::setTypes(const std::vector<eGodType>& types) {
+void eGodAttackEvent::setTypes(const std::vector<GodType>& types) {
     mTypes = types;
     const int nTypes = mTypes.size();
     if(mNextId >= nTypes) mNextId = 0;
@@ -30,7 +30,7 @@ void eGodAttackEvent::setRandom(const bool r) {
 void eGodAttackEvent::loadResources() const {
     eGameEvent::loadResources();
     for(const auto g : mTypes) {
-        eGod::sLoadTextures(g);
+        God::sLoadTextures(g);
     }
 }
 
@@ -47,12 +47,12 @@ void eGodAttackEvent::trigger() {
         if(++mNextId >= nTypes) mNextId = 0;
     }
     const auto t = mTypes.at(tid);
-    const auto god = eGod::sCreateGod(t, *board);
+    const auto god = God::sCreateGod(t, *board);
     god->setOnCityId(cityId());
     god->setCityId(eCityId::neutralAggresive);
 
-    const auto a = e::make_shared<eGodAttackAction>(god.get());
-    god->setAttitude(eGodAttitude::hostile);
+    const auto a = e::make_shared<GodAttackAction>(god.get());
+    god->setAttitude(GodAttitude::hostile);
     god->setAction(a);
     a->increment(1);
     const auto cid = cityId();
@@ -74,17 +74,17 @@ void eGodAttackEvent::trigger() {
             board->event(eEvent::playerGodAttack, ed);
         }
     }
-    if(t == eGodType::zeus) {
+    if(t == GodType::zeus) {
         board->setLandTradeShutdown(cid, true);
         board->setSeaTradeShutdown(cid, true);
-    } else if(t == eGodType::poseidon) {
+    } else if(t == GodType::poseidon) {
         board->setSeaTradeShutdown(cid, true);
-    } else if(t == eGodType::hermes) {
+    } else if(t == GodType::hermes) {
         board->setLandTradeShutdown(cid, true);
     }
-    if(t == eGodType::zeus ||
-       t == eGodType::poseidon ||
-       t == eGodType::hermes) {
+    if(t == GodType::zeus ||
+       t == GodType::poseidon ||
+       t == GodType::hermes) {
         const auto e = e::make_shared<eGodTradeResumesEvent>(
                            cityId(), eGameEventBranch::child, *board);
         e->setGod(t);
@@ -99,7 +99,7 @@ std::string eGodAttackEvent::longName() const {
 
 void eGodAttackEvent::serializeFields(eSaveArchive& ar) {
     eGameEvent::serializeFields(ar);
-    ar.arrayField("types", mTypes, [](eSaveArchive& ar, eGodType& t) {
+    ar.arrayField("types", mTypes, [](eSaveArchive& ar, GodType& t) {
         ar.field("t", t);
     });
     ar.field("random", mRandom, false);

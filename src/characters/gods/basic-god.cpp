@@ -1,17 +1,18 @@
-#include "edionysus.h"
+#include "basic-god.h"
 
 #include "textures/egametextures.h"
 
-eDionysus::eDionysus(GameBoard& board) :
-    eGod(board, eGodType::dionysus) {
-    eGameTextures::loadDionysus();
-}
+BasicGod::BasicGod(GameBoard& board,
+                     const eGodTexs godTexs,
+                     const GodType gt) :
+    God(board, gt),
+    mGodTexs(godTexs) {}
 
 std::shared_ptr<eTexture>
-eDionysus::getTexture(const eTileSize size) const {
+BasicGod::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& godTexs = eGameTextures::gods()[id];
-    const auto& texs = godTexs.fDionysus;
+    const auto& texs = godTexs.*mGodTexs;
     const eTextureCollection* coll = nullptr;
     bool reverse = false;
     bool wrap = true;
@@ -39,20 +40,16 @@ eDionysus::getTexture(const eTileSize size) const {
     case eCharacterActionType::walk: {
         coll = &texs.fWalk[oid];
     } break;
+    case eCharacterActionType::disappear:
     case eCharacterActionType::die:
         wrap = false;
         disappear = true;
         coll = &texs.fDisappear;
         break;
-    case eCharacterActionType::disappear:
-        reverse = true;
-        wrap = false;
-        disappear = true;
-        coll = &texs.fAppear;
-        break;
     case eCharacterActionType::appear:
         wrap = false;
-        coll = &texs.fAppear;
+        reverse = true;
+        coll = &texs.fDisappear;
         break;
     default:
         return nullptr;

@@ -4,7 +4,7 @@
 #include "ebuilding.h"
 
 #include "textures/ebuildingtextures.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 
 class eAestheticsBuilding : public eBuilding {
 public:
@@ -153,23 +153,23 @@ class eSaveArchive;
 
 class eGodMonument : public eBuilding {
 public:
-    eGodMonument(const eGodType god,
-                 const eGodQuestId id,
+    eGodMonument(const GodType god,
+                 const GodQuestId id,
                  GameBoard& board, const eCityId cid);
 
     void erase() override;
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 
-    eGodType god() const { return mGod; }
-    eGodQuestId id() const { return mId; }
+    GodType god() const { return mGod; }
+    GodQuestId id() const { return mId; }
     void addTile(eGodMonumentTile* const tile);
     const std::vector<eGodMonumentTile*>& tiles() const { return mMonumentTilesCache; }
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    const eGodType mGod;
-    const eGodQuestId mId;
+    const GodType mGod;
+    const GodQuestId mId;
     std::vector<eGodMonumentTile*> mMonumentTilesCache;
 };
 

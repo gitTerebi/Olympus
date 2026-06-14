@@ -1,7 +1,7 @@
 #ifndef MONSTER_ACTION_H
 #define MONSTER_ACTION_H
 
-#include "characters/gods/actions/egodmonsteraction.h"
+#include "characters/gods/actions/god-monster-action.h"
 
 #include "characters/monsters/emonster.h"
 #include "audio/sounds.h"
@@ -13,7 +13,7 @@ enum class eMonsterAttackStage {
 
 class eSaveArchive;
 
-class MonsterAction : public eGodMonsterAction {
+class MonsterAction : public GodMonsterAction {
     friend class eMonsterObsticleHandler;
 public:
     MonsterAction(eCharacter* const c);

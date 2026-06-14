@@ -1,11 +1,11 @@
 #ifndef EHERMES_H
 #define EHERMES_H
 
-#include "egod.h"
+#include "god.h"
 
-class eHermes : public eGod {
+class Hermes : public God {
 public:
-    eHermes(GameBoard& board);
+    Hermes(GameBoard& board);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 };

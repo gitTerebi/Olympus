@@ -1,6 +1,6 @@
 #include "emonster.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "characters/heroes/ehero.h"
 
 #include "ecalydonianboar.h"
@@ -126,51 +126,51 @@ stdsptr<eMonster> eMonster::sCreateMonster(const eMonsterType type, GameBoard& b
     return nullptr;
 }
 
-eGodType eMonster::sMonsterSender(const eMonsterType type, bool* const valid) {
+GodType eMonster::sMonsterSender(const eMonsterType type, bool* const valid) {
     if(valid) *valid = true;
     switch(type) {
-    case eMonsterType::calydonianBoar: return eGodType::artemis;
-    case eMonsterType::cerberus: return eGodType::hades;
-    case eMonsterType::chimera: return eGodType::atlas;
-    case eMonsterType::cyclops: return eGodType::zeus;
-    case eMonsterType::dragon: return eGodType::ares;
+    case eMonsterType::calydonianBoar: return GodType::artemis;
+    case eMonsterType::cerberus: return GodType::hades;
+    case eMonsterType::chimera: return GodType::atlas;
+    case eMonsterType::cyclops: return GodType::zeus;
+    case eMonsterType::dragon: return GodType::ares;
 
-    case eMonsterType::hector: return eGodType::aphrodite;
-    case eMonsterType::hydra: return eGodType::athena;
-    case eMonsterType::kraken: return eGodType::poseidon;
-    case eMonsterType::maenads: return eGodType::dionysus;
-    case eMonsterType::medusa: return eGodType::demeter;
-    case eMonsterType::minotaur: return eGodType::hermes;
-    case eMonsterType::scylla: return eGodType::apollo;
-    case eMonsterType::sphinx: return eGodType::hera;
-    case eMonsterType::talos: return eGodType::hephaestus;
-    case eMonsterType::satyr: return eGodType::dionysus;
+    case eMonsterType::hector: return GodType::aphrodite;
+    case eMonsterType::hydra: return GodType::athena;
+    case eMonsterType::kraken: return GodType::poseidon;
+    case eMonsterType::maenads: return GodType::dionysus;
+    case eMonsterType::medusa: return GodType::demeter;
+    case eMonsterType::minotaur: return GodType::hermes;
+    case eMonsterType::scylla: return GodType::apollo;
+    case eMonsterType::sphinx: return GodType::hera;
+    case eMonsterType::talos: return GodType::hephaestus;
+    case eMonsterType::satyr: return GodType::dionysus;
 
     case eMonsterType::echidna:
     case eMonsterType::harpies:
         if(valid) *valid = false;
-        return eGodType::artemis;
+        return GodType::artemis;
     }
-    return eGodType::athena;
+    return GodType::athena;
 }
 
-eMonsterType eMonster::sGodsMinion(const eGodType type) {
+eMonsterType eMonster::sGodsMinion(const GodType type) {
     switch(type) {
-    case eGodType::artemis: return eMonsterType::calydonianBoar;
-    case eGodType::hades: return eMonsterType::cerberus;
-    case eGodType::atlas: return eMonsterType::chimera;
-    case eGodType::zeus: return eMonsterType::cyclops;
-    case eGodType::ares: return eMonsterType::dragon;
+    case GodType::artemis: return eMonsterType::calydonianBoar;
+    case GodType::hades: return eMonsterType::cerberus;
+    case GodType::atlas: return eMonsterType::chimera;
+    case GodType::zeus: return eMonsterType::cyclops;
+    case GodType::ares: return eMonsterType::dragon;
 
-    case eGodType::aphrodite: return eMonsterType::hector;
-    case eGodType::athena: return eMonsterType::hydra;
-    case eGodType::poseidon: return eMonsterType::kraken;
-    case eGodType::dionysus: return eMonsterType::maenads;
-    case eGodType::demeter: return eMonsterType::medusa;
-    case eGodType::hermes: return eMonsterType::minotaur;
-    case eGodType::apollo: return eMonsterType::scylla;
-    case eGodType::hera: return eMonsterType::sphinx;
-    case eGodType::hephaestus: return eMonsterType::talos;
+    case GodType::aphrodite: return eMonsterType::hector;
+    case GodType::athena: return eMonsterType::hydra;
+    case GodType::poseidon: return eMonsterType::kraken;
+    case GodType::dionysus: return eMonsterType::maenads;
+    case GodType::demeter: return eMonsterType::medusa;
+    case GodType::hermes: return eMonsterType::minotaur;
+    case GodType::apollo: return eMonsterType::scylla;
+    case GodType::hera: return eMonsterType::sphinx;
+    case GodType::hephaestus: return eMonsterType::talos;
     }
     return eMonsterType::talos;
 }
@@ -270,22 +270,22 @@ void eMonster::sMonsterStrings(
     }
 
     const std::vector<std::string> monsterGods {
-        eGod::sGodName(eGodType::artemis),
-        eGod::sGodName(eGodType::hades),
-        eGod::sGodName(eGodType::atlas),
-        eGod::sGodName(eGodType::zeus),
-        eGod::sGodName(eGodType::ares),
+        God::sGodName(GodType::artemis),
+        God::sGodName(GodType::hades),
+        God::sGodName(GodType::atlas),
+        God::sGodName(GodType::zeus),
+        God::sGodName(GodType::ares),
         "-",
         "-",
-        eGod::sGodName(eGodType::aphrodite),
-        eGod::sGodName(eGodType::athena),
-        eGod::sGodName(eGodType::poseidon),
-        eGod::sGodName(eGodType::dionysus),
-        eGod::sGodName(eGodType::demeter),
-        eGod::sGodName(eGodType::hermes),
-        eGod::sGodName(eGodType::apollo),
-        eGod::sGodName(eGodType::hera),
-        eGod::sGodName(eGodType::hephaestus)
+        God::sGodName(GodType::aphrodite),
+        God::sGodName(GodType::athena),
+        God::sGodName(GodType::poseidon),
+        God::sGodName(GodType::dionysus),
+        God::sGodName(GodType::demeter),
+        God::sGodName(GodType::hermes),
+        God::sGodName(GodType::apollo),
+        God::sGodName(GodType::hera),
+        God::sGodName(GodType::hephaestus)
     };
     const std::vector<std::string> monsterHeroes {
         eHero::sHeroName(eHeroType::theseus),

@@ -3,7 +3,7 @@
 
 #include "widgets/framed-button.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 
 class GameBoard;
 
@@ -11,13 +11,13 @@ class eGodButton : public FramedButton {
 public:
     using FramedButton::FramedButton;
 
-    using eGodAction = std::function<void(const eGodType)>;
+    using eGodAction = std::function<void(const GodType)>;
     void initialize(const eGodAction& gact);
 
-    eGodType type() const { return mType; }
-    void setType(const eGodType type);
+    GodType type() const { return mType; }
+    void setType(const GodType type);
 private:
-    eGodType mType;
+    GodType mType;
 };
 
 #endif // EGODBUTTON_H

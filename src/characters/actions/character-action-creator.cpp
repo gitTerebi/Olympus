@@ -17,9 +17,9 @@
 #include "fire-fighter-action.h"
 #include "efollowaction.h"
 #include "dionysus-follow-action.h"
-#include "characters/gods/actions/egodattackaction.h"
-#include "characters/gods/actions/egodvisitaction.h"
-#include "characters/gods/actions/egodworshippedaction.h"
+#include "characters/gods/actions/god-attack-action.h"
+#include "characters/gods/actions/god-visit-action.h"
+#include "characters/gods/actions/god-worshipped-action.h"
 #include "characters/gods/actions/god-minion-action.h"
 #include "egroweraction.h"
 #include "eheroaction.h"
@@ -97,11 +97,11 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
     case eCharActionType::dionysusFollowAction:
         return e::make_shared<DionysusFollowAction>(c);
     case eCharActionType::godAttackAction:
-        return e::make_shared<eGodAttackAction>(c);
+        return e::make_shared<GodAttackAction>(c);
     case eCharActionType::godVisitAction:
-        return e::make_shared<eGodVisitAction>(c);
+        return e::make_shared<GodVisitAction>(c);
     case eCharActionType::godWorshippedAction:
-        return e::make_shared<eGodWorshippedAction>(c);
+        return e::make_shared<GodWorshippedAction>(c);
     case eCharActionType::godMinionAction:
         return e::make_shared<eGodMinionAction>(c);
     case eCharActionType::growerAction:
@@ -169,7 +169,7 @@ stdsptr<eCharacterAction> eCharacterAction::sCreate(
         return e::make_shared<eZeusHelpAction>(c);
 
     case eCharActionType::godMonsterActionInd:
-        return e::make_shared<eGodMonsterActionInd>(c);
+        return e::make_shared<GodMonsterActionInd>(c);
     case eCharActionType::sickDisgruntledAction:
         return e::make_shared<eSickDisgruntledAction>(c, nullptr);
 

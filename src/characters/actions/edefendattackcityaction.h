@@ -1,7 +1,7 @@
 #ifndef EDEFENDATTACKCITYACTION_H
 #define EDEFENDATTACKCITYACTION_H
 
-#include "characters/gods/actions/egodmonsteraction.h"
+#include "characters/gods/actions/god-monster-action.h"
 
 class eSaveArchive;
 
@@ -9,9 +9,9 @@ enum class eDefendAttackCityStage {
     none, appear, goTo, wait, fight, comeback, disappear
 };
 
-class eDefendAttackCityAction : public eGodMonsterAction {
+class eDefendAttackCityAction : public GodMonsterAction {
 public:
-    using eGodMonsterAction::eGodMonsterAction;
+    using GodMonsterAction::GodMonsterAction;
 
     void increment(const int by) override;
 protected:

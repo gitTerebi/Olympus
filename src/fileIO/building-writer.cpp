@@ -277,8 +277,8 @@ void BuildingArchive::save(const eBuilding* const b,
         const auto gm = static_cast<const eGodMonument*>(b);
         ar.archiveField("factory", [&](eSaveArchive& it) {
             eCityId cid = b->cityId();
-            eGodType gtype = gm->god();
-            eGodQuestId qid = gm->id();
+            GodType gtype = gm->god();
+            GodQuestId qid = gm->id();
             it.field("cityId", cid);
             it.field("god", gtype);
             it.field("questId", qid);
@@ -360,14 +360,14 @@ void BuildingArchive::save(const eBuilding* const b,
                     it.field("subType", subType);
                 } else if(type == eBuildingType::pyramidStatue) {
                     const auto s = static_cast<const ePyramidStatue*>(b);
-                    eGodType godType = s->type();
+                    GodType godType = s->type();
                     int gid = s->id();
                     it.field("elevation", elevation);
                     it.field("godType", godType);
                     it.field("godId", gid);
                 } else if(type == eBuildingType::pyramidMonument) {
                     const auto s = static_cast<const ePyramidMonument*>(b);
-                    eGodType godType = s->type();
+                    GodType godType = s->type();
                     int gid = s->id();
                     it.field("elevation", elevation);
                     it.field("godType", godType);
@@ -422,7 +422,7 @@ void BuildingArchive::save(const eBuilding* const b,
         const auto s = static_cast<const eTempleStatueBuilding*>(b);
         ar.archiveField("factory", [&](eSaveArchive& it) {
             eCityId cid = b->cityId();
-            eGodType godType = s->godType();
+            GodType godType = s->godType();
             int id = s->id();
             it.field("cityId", cid);
             it.field("godType", godType);
@@ -437,7 +437,7 @@ void BuildingArchive::save(const eBuilding* const b,
         const auto s = static_cast<const eTempleMonumentBuilding*>(b);
         ar.archiveField("factory", [&](eSaveArchive& it) {
             eCityId cid = b->cityId();
-            eGodType godType = s->godType();
+            GodType godType = s->godType();
             int id = s->id();
             it.field("cityId", cid);
             it.field("godType", godType);

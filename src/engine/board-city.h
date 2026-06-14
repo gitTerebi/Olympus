@@ -300,7 +300,7 @@ public:
     int population() const { return mPopData.population(); }
 
     int eliteHouses() const;
-    eSanctuary* sanctuary(const eGodType god) const;
+    eSanctuary* sanctuary(const GodType god) const;
     eHerosHall* heroHall(const eHeroType hero) const;
     int countBanners(const eBannerType bt) const;
     int countSoldiers(const eBannerType bt) const;
@@ -452,7 +452,7 @@ public:
 private:
     int countAnimalCharacters(const eBuildingType t) const;
 
-    void setFriendlyGods(const std::vector<eGodType>& gods);
+    void setFriendlyGods(const std::vector<GodType>& gods);
 
     void payPensions();
     bool replace3By3AestheticByCommemorative();

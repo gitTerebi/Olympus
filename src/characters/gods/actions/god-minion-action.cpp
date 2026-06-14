@@ -12,7 +12,7 @@
 #include "vec2.h"
 
 eGodMinionAction::eGodMinionAction(eCharacter* const c) :
-    eGodMonsterAction(c, eCharActionType::godMinionAction) {}
+    GodMonsterAction(c, eCharActionType::godMinionAction) {}
 
 void eGodMinionAction::increment(const int by) {
 //    if(mStage != eGodMinionStage::huntMonster &&
@@ -46,7 +46,7 @@ void eGodMinionAction::increment(const int by) {
         }
     }
 
-    eGodMonsterAction::increment(by);
+    GodMonsterAction::increment(by);
 }
 
 bool eGodMinionAction::decide() {
@@ -129,11 +129,11 @@ void eGodMinionAction::resumeFromSavedState() {
 
 void eGodMinionAction::rebuildCurrentStage() {
     if(state() != eCharacterActionState::running) return;
-    eGodMonsterAction::resumeFromSavedState();
+    GodMonsterAction::resumeFromSavedState();
 }
 
 void eGodMinionAction::serializeFields(eSaveArchive& ar) {
-    eGodMonsterAction::serializeFields(ar);
+    GodMonsterAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("lookForSoldier", mLookForSoldier);
     ar.field("approachCheck", mApproachCheck);
@@ -184,7 +184,7 @@ void eGodMinionAction::serializeFields(eSaveArchive& ar) {
 //    stdsptr<eCharacterAction> ca;
 //    const int fightTime = 5000;
 //    const int attackTime = 1000;
-//    const auto gm = e::make_shared<eGodMonsterActionInd>(c);
+//    const auto gm = e::make_shared<GodMonsterActionInd>(c);
 //    gm->spawnTimedMissiles(eCharacterActionType::fight,
 //                           c->type(), attackTime, m,
 //                           nullptr, nullptr, nullptr,
@@ -300,7 +300,7 @@ bool eGodMinionAction::fightSoldier(eCharacter* const s) {
         const int attackTime = 1000;
         const auto hitAct = std::make_shared<eLookForAttackGodAct>(board(), c);
         hitAct->find(s->tile());
-        const auto gm = e::make_shared<eGodMonsterActionInd>(c);
+        const auto gm = e::make_shared<GodMonsterActionInd>(c);
         gm->spawnTimedMissiles(eCharacterActionType::fight2,
                                c->type(), attackTime, s,
                                nullptr, hitAct, nullptr,

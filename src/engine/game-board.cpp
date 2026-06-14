@@ -3765,7 +3765,7 @@ std::vector<eSanctuary *> GameBoard::sanctuaries(const eCityId cid) const
     return c->sanctuaries();
 }
 
-eSanctuary *GameBoard::sanctuary(const eCityId cid, const eGodType god) const
+eSanctuary *GameBoard::sanctuary(const eCityId cid, const GodType god) const
 {
     const auto c = boardCityWithId(cid);
     if (!c)
@@ -5264,50 +5264,50 @@ bool GameBoard::buildSanctuary(const int minX, const int maxX,
             const int tx = minX + t.fX;
             const int ty = minY + t.fY;
             const auto tile = this->tile(tx, ty);
-            eGodType statueType;
+            GodType statueType;
             switch (t.fType)
             {
             case eSanctEleType::aphroditeStatue:
-                statueType = eGodType::aphrodite;
+                statueType = GodType::aphrodite;
                 break;
             case eSanctEleType::apolloStatue:
-                statueType = eGodType::apollo;
+                statueType = GodType::apollo;
                 break;
             case eSanctEleType::aresStatue:
-                statueType = eGodType::ares;
+                statueType = GodType::ares;
                 break;
             case eSanctEleType::artemisStatue:
-                statueType = eGodType::artemis;
+                statueType = GodType::artemis;
                 break;
             case eSanctEleType::athenaStatue:
-                statueType = eGodType::athena;
+                statueType = GodType::athena;
                 break;
             case eSanctEleType::atlasStatue:
-                statueType = eGodType::atlas;
+                statueType = GodType::atlas;
                 break;
             case eSanctEleType::demeterStatue:
-                statueType = eGodType::demeter;
+                statueType = GodType::demeter;
                 break;
             case eSanctEleType::dionysusStatue:
-                statueType = eGodType::dionysus;
+                statueType = GodType::dionysus;
                 break;
             case eSanctEleType::hadesStatue:
-                statueType = eGodType::hades;
+                statueType = GodType::hades;
                 break;
             case eSanctEleType::hephaestusStatue:
-                statueType = eGodType::hephaestus;
+                statueType = GodType::hephaestus;
                 break;
             case eSanctEleType::heraStatue:
-                statueType = eGodType::hera;
+                statueType = GodType::hera;
                 break;
             case eSanctEleType::hermesStatue:
-                statueType = eGodType::hermes;
+                statueType = GodType::hermes;
                 break;
             case eSanctEleType::poseidonStatue:
-                statueType = eGodType::poseidon;
+                statueType = GodType::poseidon;
                 break;
             case eSanctEleType::zeusStatue:
-                statueType = eGodType::zeus;
+                statueType = GodType::zeus;
                 break;
             default:
                 statueType = god;

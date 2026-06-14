@@ -7,9 +7,9 @@
 #include "ecityid.h"
 #include "e-city-attitude.h"
 
-enum class eGodType;
+enum class GodType;
 enum class eHeroType;
-enum class eGodQuestId;
+enum class GodQuestId;
 enum class eMonsterType;
 enum class eCityId;
 
@@ -39,8 +39,8 @@ struct eEventData {
     std::map<eCityId, int> fCSpaceCount;
     int fTime = 0;
     std::string fReason;
-    eGodType fGod = static_cast<eGodType>(0);
-    eGodQuestId fQuestId = static_cast<eGodQuestId>(0);
+    GodType fGod = static_cast<GodType>(0);
+    GodQuestId fQuestId = static_cast<GodQuestId>(0);
     eHeroType fHero = static_cast<eHeroType>(0);
     eMonsterType fMonster = static_cast<eMonsterType>(0);
     eCityAttitudeMessage fCityAttitudeMessage = eCityAttitudeMessage::none;

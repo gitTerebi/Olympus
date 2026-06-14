@@ -37,7 +37,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
 
     ar.dateField("startDate", fStartDate);
 
-    // friendlyGods map<eCityId, vector<eGodType>>
+    // friendlyGods map<eCityId, vector<GodType>>
     {
         int cityCount = ar.writing() ? static_cast<int>(fFriendlyGods.size()) : 0;
         ar.field("friendlyGods.count", cityCount);
@@ -45,14 +45,14 @@ void eEpisode::serialize(eSaveArchive& ar) {
             fFriendlyGods.clear();
             for(int i = 0; i < cityCount; i++) {
                 eCityId cid;
-                std::vector<eGodType> gods;
+                std::vector<GodType> gods;
                 ar.archiveField(("friendlyGods." + std::to_string(i)).c_str(),
                     [&](eSaveArchive& cityAr) {
                         cityAr.field("cityId", cid);
                         int godCount = 0;
                         cityAr.field("gods.count", godCount);
                         for(int j = 0; j < godCount; j++) {
-                            eGodType g;
+                            GodType g;
                             cityAr.field(("god." + std::to_string(j)).c_str(), g);
                             gods.push_back(g);
                         }
@@ -70,7 +70,7 @@ void eEpisode::serialize(eSaveArchive& ar) {
                         int godCount = static_cast<int>(gods.size());
                         cityAr.field("gods.count", godCount);
                         for(int j = 0; j < godCount; j++) {
-                            eGodType g = gods[j];
+                            GodType g = gods[j];
                             cityAr.field(("god." + std::to_string(j)).c_str(), g);
                         }
                     });

@@ -3,13 +3,13 @@
 #include "textures/egametextures.h"
 #include "epyramid.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "engine/game-board.h"
 
 ePyramidStatue::ePyramidStatue(const std::vector<eSanctCost>& cost,
                                GameBoard& board,
                                const int elevation,
-                               const eGodType type,
+                               const GodType type,
                                const int id,
                                const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidStatue,
@@ -21,7 +21,7 @@ ePyramidStatue::ePyramidStatue(const std::vector<eSanctCost>& cost,
 ePyramidStatue::ePyramidStatue(ePyramid* const pyramid,
                                GameBoard& board,
                                const int elevation,
-                               const eGodType type,
+                               const GodType type,
                                const int id,
                                const eCityId cid) :
     ePyramidElement(pyramid,
@@ -38,46 +38,46 @@ stdsptr<eTexture> ePyramidStatue::getTexture(const eTileSize size) const {
     const auto& blds = eGameTextures::buildings()[sizeId];
     const eTextureCollection* coll = nullptr;
     switch(mType) {
-    case eGodType::aphrodite:
+    case GodType::aphrodite:
         coll = &blds.fAphroditeStatues;
         break;
-    case eGodType::apollo:
+    case GodType::apollo:
         coll = &blds.fApolloStatues;
         break;
-    case eGodType::ares:
+    case GodType::ares:
         coll = &blds.fAresStatues;
         break;
-    case eGodType::artemis:
+    case GodType::artemis:
         coll = &blds.fArtemisStatues;
         break;
-    case eGodType::athena:
+    case GodType::athena:
         coll = &blds.fAthenaStatues;
         break;
-    case eGodType::atlas:
+    case GodType::atlas:
         coll = &blds.fAtlasStatues;
         break;
-    case eGodType::demeter:
+    case GodType::demeter:
         coll = &blds.fDemeterStatues;
         break;
-    case eGodType::dionysus:
+    case GodType::dionysus:
         coll = &blds.fDionysusStatues;
         break;
-    case eGodType::hades:
+    case GodType::hades:
         coll = &blds.fHadesStatues;
         break;
-    case eGodType::hephaestus:
+    case GodType::hephaestus:
         coll = &blds.fHephaestusStatues;
         break;
-    case eGodType::hera:
+    case GodType::hera:
         coll = &blds.fHeraStatues;
         break;
-    case eGodType::hermes:
+    case GodType::hermes:
         coll = &blds.fHermesStatues;
         break;
-    case eGodType::poseidon:
+    case GodType::poseidon:
         coll = &blds.fPoseidonStatues;
         break;
-    case eGodType::zeus:
+    case GodType::zeus:
         coll = &blds.fZeusStatues;
         break;
     }

@@ -6,7 +6,7 @@
 #include "enumbers.h"
 
 #include "esanctuaryblueprint.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "engine/edate.h"
 
 class eBuildingTextures;
@@ -42,11 +42,11 @@ public:
     bool askForAttack(const eCityId cid, eHelpDenialReason& reason);
     bool askForHelp(eHelpDenialReason& reason);
 
-    eGod* god() const { return mGod; }
+    God* god() const { return mGod; }
 
-    eGodType godType() const;
+    GodType godType() const;
 
-    eGod* spawnGod();
+    God* spawnGod();
     void spawnPatrolingGod();
     void spawnDefenderMinion();
 
@@ -61,7 +61,7 @@ public:
             const int sw, const int sh,
             GameBoard& board, const eCityId cid);
 
-    static void sLoadMonumentTextures(const eGodType type);
+    static void sLoadMonumentTextures(const GodType type);
 
     void setSpawnWait(const int w);
 
@@ -79,7 +79,7 @@ public:
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    stdptr<eGod> mGod;
+    stdptr<God> mGod;
     stdptr<eMonster> mMinion;
     bool mGodAbroad = false;
     int mSpawnWait = 0;

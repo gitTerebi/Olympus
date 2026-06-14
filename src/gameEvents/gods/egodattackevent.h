@@ -5,7 +5,7 @@
 
 class eSanctuary;
 class eSaveArchive;
-enum class eGodType;
+enum class GodType;
 
 class eGodAttackEvent : public eGameEvent {
 public:
@@ -15,8 +15,8 @@ public:
 
     void setSanctuary(const stdptr<eSanctuary>& s);
 
-    const std::vector<eGodType>& types() const { return mTypes; }
-    void setTypes(const std::vector<eGodType>& types);
+    const std::vector<GodType>& types() const { return mTypes; }
+    void setTypes(const std::vector<GodType>& types);
 
     void setRandom(const bool r);
     bool random() const { return mRandom; }
@@ -29,7 +29,7 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
     stdptr<eSanctuary> mSanctuary;
-    std::vector<eGodType> mTypes;
+    std::vector<GodType> mTypes;
     int mNextId = 0;
     bool mRandom = false;
 };

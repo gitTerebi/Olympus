@@ -55,8 +55,8 @@ void eAresHelpAction::goToTarget() {
     const auto c = character();
     auto& board = eGodAction::board();
     const auto cid = cityId();
-    const auto god = static_cast<eGod*>(c);
-    const stdptr<eGod> cptr(god);
+    const auto god = static_cast<God*>(c);
+    const stdptr<God> cptr(god);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
                           board, god);
     const auto finish = std::make_shared<eKillCharacterFinishFail>(

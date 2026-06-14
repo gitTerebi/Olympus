@@ -7,9 +7,9 @@ void eGodButton::initialize(const eGodAction& gact) {
     setUnderline(false);
     setPressAction([this, gact]() {
         const auto choose = new eChooseButton(window());
-        std::vector<eGodType> gods;
+        std::vector<GodType> gods;
         std::vector<std::string> godNames;
-        eGod::sGodStrings(gods, godNames);
+        God::sGodStrings(gods, godNames);
         const auto act = [this, gods, gact](const int val) {
             const auto t = gods[val];
             setType(t);
@@ -20,11 +20,11 @@ void eGodButton::initialize(const eGodAction& gact) {
         window()->execDialog(choose);
         choose->align(eAlignment::center);
     });
-    setType(eGodType::hephaestus);
+    setType(GodType::hephaestus);
     fitContent();
 }
 
-void eGodButton::setType(const eGodType type) {
-    setText(eGod::sGodName(type));
+void eGodButton::setType(const GodType type) {
+    setText(God::sGodName(type));
     mType = type;
 }

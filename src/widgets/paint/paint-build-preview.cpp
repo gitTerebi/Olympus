@@ -1028,7 +1028,7 @@ void GameWidget::paintBuildPreview(
                const stdsptr<eBuilding> &b,
                const int altitude = 0,
                const int templeOverlayDirId = -1,
-               const eGodType statueGod = eGodType::zeus,
+               const GodType statueGod = GodType::zeus,
                const int statueTextureId = -1,
                const int monumentTextureId = -1,
                const bool altar = false,
@@ -1044,7 +1044,7 @@ void GameWidget::paintBuildPreview(
             int fTy;
             int fAltitude;
             int fTempleOverlayDirId;
-            eGodType fStatueGod;
+            GodType fStatueGod;
             int fStatueTextureId;
             int fMonumentTextureId;
             bool fAltar;
@@ -2181,9 +2181,9 @@ void GameWidget::paintBuildPreview(
             const auto am = eBuildingMode::aphroditeMonument;
             const int id = static_cast<int>(mode) -
                            static_cast<int>(am);
-            const auto gt = static_cast<eGodType>(id);
+            const auto gt = static_cast<GodType>(id);
             const auto b1 = e::make_shared<eGodMonument>(
-                gt, eGodQuestId::godQuest1, *mBoard, mViewedCityId);
+                gt, GodQuestId::godQuest1, *mBoard, mViewedCityId);
 
             for (int x = tminX; x < tmaxX; x++)
             {

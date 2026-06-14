@@ -2163,7 +2163,7 @@ int BoardCity::eliteHouses() const {
     return r;
 }
 
-eSanctuary* BoardCity::sanctuary(const eGodType god) const {
+eSanctuary* BoardCity::sanctuary(const GodType god) const {
     for(const auto s : mSanctuaries) {
         if(s->godType() == god) return s;
     }
@@ -2393,7 +2393,7 @@ eEnlistedForces BoardCity::getEnlistableForces() const {
         result.fHeroes.push_back({mId, ht});
     }
 
-    const auto aresSanct = sanctuary(eGodType::ares);
+    const auto aresSanct = sanctuary(GodType::ares);
     if(aresSanct && aresSanct->aresBuffReady()) {
         result.fAres = true;
         result.fAresCity = mId;
@@ -2862,50 +2862,50 @@ void BoardCity::loadResources() {
     mCityEvents.loadResources();
 }
 
-void BoardCity::setFriendlyGods(const std::vector<eGodType>& gods) {
+void BoardCity::setFriendlyGods(const std::vector<GodType>& gods) {
     for(const auto g : gods) {
         eBuildingType bt;
         switch(g) {
-        case eGodType::aphrodite:
+        case GodType::aphrodite:
             bt = eBuildingType::templeAphrodite;
             break;
-        case eGodType::apollo:
+        case GodType::apollo:
             bt = eBuildingType::templeApollo;
             break;
-        case eGodType::ares:
+        case GodType::ares:
             bt = eBuildingType::templeAres;
             break;
-        case eGodType::artemis:
+        case GodType::artemis:
             bt = eBuildingType::templeArtemis;
             break;
-        case eGodType::athena:
+        case GodType::athena:
             bt = eBuildingType::templeAthena;
             break;
-        case eGodType::atlas:
+        case GodType::atlas:
             bt = eBuildingType::templeAtlas;
             break;
-        case eGodType::demeter:
+        case GodType::demeter:
             bt = eBuildingType::templeDemeter;
             break;
-        case eGodType::dionysus:
+        case GodType::dionysus:
             bt = eBuildingType::templeDionysus;
             break;
-        case eGodType::hades:
+        case GodType::hades:
             bt = eBuildingType::templeHades;
             break;
-        case eGodType::hephaestus:
+        case GodType::hephaestus:
             bt = eBuildingType::templeHephaestus;
             break;
-        case eGodType::hera:
+        case GodType::hera:
             bt = eBuildingType::templeHera;
             break;
-        case eGodType::hermes:
+        case GodType::hermes:
             bt = eBuildingType::templeHermes;
             break;
-        case eGodType::poseidon:
+        case GodType::poseidon:
             bt = eBuildingType::templePoseidon;
             break;
-        case eGodType::zeus:
+        case GodType::zeus:
             bt = eBuildingType::templeZeus;
             break;
         default:

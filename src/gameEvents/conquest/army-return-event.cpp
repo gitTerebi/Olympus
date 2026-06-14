@@ -7,7 +7,7 @@
 #include "elanguage.h"
 #include "buildings/eheroshall.h"
 #include "characters/actions/eheroaction.h"
-#include "characters/gods/actions/egodworshippedaction.h"
+#include "characters/gods/actions/god-worshipped-action.h"
 
 ArmyReturnEvent::ArmyReturnEvent(
         const eCityId cid,
@@ -33,13 +33,13 @@ void ArmyReturnEvent::trigger() {
     int wait = 0;
 
     if(mForces.fAres) {
-        const auto as = board->sanctuary(cid, eGodType::ares);
+        const auto as = board->sanctuary(cid, GodType::ares);
         if(as) {
             as->godComeback();
             if(entryPoint) {
                 const auto god = as->spawnGod();
                 if(god) {
-                    const auto ga = e::make_shared<eGodWorshippedAction>(god);
+                    const auto ga = e::make_shared<GodWorshippedAction>(god);
                     god->setAction(ga);
                     god->changeTile(entryPoint);
                     ga->goBackToSanctuary();

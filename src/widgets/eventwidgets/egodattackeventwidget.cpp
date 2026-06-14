@@ -26,7 +26,7 @@ void eGodAttackEventWidget::initialize(eWidget* const parent,
     godsButton->setUnderline(false);
     godsButton->setPressAction([this, parent, e]() {
         const auto choose = new eGodSelectionWidget(window());
-        const auto act = [e](const std::vector<eGodType>& godNs) {
+        const auto act = [e](const std::vector<GodType>& godNs) {
             e->setTypes(godNs);
         };
 

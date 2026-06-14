@@ -2,7 +2,7 @@
 #include "textures/egametextures.h"
 
 eTempleMonumentBuilding::eTempleMonumentBuilding(
-        const eGodType god,
+        const GodType god,
         const int id, GameBoard& board,
         const eCityId cid) :
     eSanctBuilding({{0, 2, 0}, {0, 3, 0}}, board,
@@ -13,37 +13,37 @@ eTempleMonumentBuilding::eTempleMonumentBuilding(
 }
 
 const eTextureCollection* eTempleMonumentBuilding::sGodMonumentTextureCollection(
-        const eTileSize size, const eGodType god) {
+        const eTileSize size, const GodType god) {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
     switch(god) {
-    case eGodType::aphrodite:
+    case GodType::aphrodite:
         return &blds.fAphroditeMonuments;
-    case eGodType::apollo:
+    case GodType::apollo:
         return &blds.fApolloMonuments;
-    case eGodType::ares:
+    case GodType::ares:
         return &blds.fAresMonuments;
-    case eGodType::artemis:
+    case GodType::artemis:
         return &blds.fArtemisMonuments;
-    case eGodType::athena:
+    case GodType::athena:
         return &blds.fAthenaMonuments;
-    case eGodType::atlas:
+    case GodType::atlas:
         return &blds.fAtlasMonuments;
-    case eGodType::demeter:
+    case GodType::demeter:
         return &blds.fDemeterMonuments;
-    case eGodType::dionysus:
+    case GodType::dionysus:
         return &blds.fDionysusMonuments;
-    case eGodType::hades:
+    case GodType::hades:
         return &blds.fHadesMonuments;
-    case eGodType::hephaestus:
+    case GodType::hephaestus:
         return &blds.fHephaestusMonuments;
-    case eGodType::hera:
+    case GodType::hera:
         return &blds.fHeraMonuments;
-    case eGodType::hermes:
+    case GodType::hermes:
         return &blds.fHermesMonuments;
-    case eGodType::poseidon:
+    case GodType::poseidon:
         return &blds.fPoseidonMonuments;
-    case eGodType::zeus:
+    case GodType::zeus:
         return &blds.fZeusMonuments;
     }
     return nullptr;

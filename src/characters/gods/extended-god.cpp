@@ -1,18 +1,17 @@
-#include "ebasicgod.h"
+#include "extended-god.h"
 
 #include "textures/egametextures.h"
 
-eBasicGod::eBasicGod(GameBoard& board,
-                     const eGodTexs godTexs,
-                     const eGodType gt) :
-    eGod(board, gt),
+ExtendedGod::ExtendedGod(GameBoard& board,
+                           const eGodTexs godTexs,
+                           const GodType gt) :
+    God(board, gt),
     mGodTexs(godTexs) {}
 
-std::shared_ptr<eTexture>
-eBasicGod::getTexture(const eTileSize size) const {
+std::shared_ptr<eTexture> ExtendedGod::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& godTexs = eGameTextures::gods()[id];
-    const auto& texs = godTexs.*mGodTexs;
+    const auto& charTexs = eGameTextures::gods()[id];
+    const auto& atn = charTexs.*mGodTexs;
     const eTextureCollection* coll = nullptr;
     bool reverse = false;
     bool wrap = true;
@@ -21,35 +20,35 @@ eBasicGod::getTexture(const eTileSize size) const {
     const auto a = actionType();
     switch(a) {
     case eCharacterActionType::stand:
-        return texs.fWalk[oid].getTexture(0);
+        return atn.fWalk[oid].getTexture(0);
     case eCharacterActionType::bless:
     case eCharacterActionType::curse:
         wrap = false;
-        coll = &texs.fFight[oid];
+        coll = &atn.fBless[oid];
         break;
     case eCharacterActionType::collect:
-    case eCharacterActionType::fight2: {
+    case eCharacterActionType::fight2:
         wrap = false;
-        coll = &texs.fFight[oid];
-    } break;
-    case eCharacterActionType::fight: {
+        coll = &atn.fFight[oid];
+        break;
+    case eCharacterActionType::fight:
         wrap = true;
-        coll = &texs.fFight[oid];
-    } break;
+        coll = &atn.fFight[oid];
+        break;
     case eCharacterActionType::carry:
-    case eCharacterActionType::walk: {
-        coll = &texs.fWalk[oid];
-    } break;
+    case eCharacterActionType::walk:
+        coll = &atn.fWalk[oid];
+        break;
     case eCharacterActionType::disappear:
     case eCharacterActionType::die:
         wrap = false;
         disappear = true;
-        coll = &texs.fDisappear;
+        coll = &atn.fDisappear;
         break;
     case eCharacterActionType::appear:
         wrap = false;
         reverse = true;
-        coll = &texs.fDisappear;
+        coll = &atn.fDisappear;
         break;
     default:
         return nullptr;

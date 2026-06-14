@@ -16,12 +16,12 @@ void eGodTradeResumesEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
     const auto cid = cityId();
-    if(mGod == eGodType::zeus) {
+    if(mGod == GodType::zeus) {
         board->setLandTradeShutdown(cid, false);
         board->setSeaTradeShutdown(cid, false);
-    } else if(mGod == eGodType::poseidon) {
+    } else if(mGod == GodType::poseidon) {
         board->setSeaTradeShutdown(cid, false);
-    } else if(mGod == eGodType::hermes) {
+    } else if(mGod == GodType::hermes) {
         board->setLandTradeShutdown(cid, false);
     }
     eEventData ed(cid);
@@ -35,5 +35,5 @@ std::string eGodTradeResumesEvent::longName() const {
 
 void eGodTradeResumesEvent::serializeFields(eSaveArchive& ar) {
     eGameEvent::serializeFields(ar);
-    ar.field("god", mGod, eGodType::zeus);
+    ar.field("god", mGod, GodType::zeus);
 }

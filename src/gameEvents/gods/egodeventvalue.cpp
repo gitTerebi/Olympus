@@ -6,14 +6,14 @@
 
 #include "estringhelpers.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 
 void eGodEventValue::serialize(eSaveArchive& ar) {
-    ar.field("god", mGod, eGodType::zeus);
+    ar.field("god", mGod, GodType::zeus);
 }
 
 void eGodEventValue::longNameReplaceGod(
     const std::string& id, std::string& tmpl) const {
-    const auto gtstr = eGod::sGodName(mGod);
+    const auto gtstr = God::sGodName(mGod);
     eStringHelpers::replace(tmpl, id, gtstr);
 }

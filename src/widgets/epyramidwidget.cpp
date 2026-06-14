@@ -65,7 +65,7 @@ void ePyramidWidget::initialize(const ePSptr& e, const eAction& updater) {
 
     if(chooseGod) {
         const auto b = new eGodButton(window());
-        b->initialize([e, updater](const eGodType god) {
+        b->initialize([e, updater](const GodType god) {
             e->fType = ePyramid::sSwitchGod(e->fType, god);
             updater();
         });

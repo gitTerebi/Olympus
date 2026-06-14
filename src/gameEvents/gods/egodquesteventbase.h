@@ -13,11 +13,11 @@ public:
 
     const eGodQuest& godQuest() const { return mQuest; }
 
-    eGodType god() const { return mQuest.fGod; }
-    void setGod(const eGodType g);
+    GodType god() const { return mQuest.fGod; }
+    void setGod(const GodType g);
 
-    eGodQuestId id() const { return mQuest.fId; }
-    void setId(const eGodQuestId id);
+    GodQuestId id() const { return mQuest.fId; }
+    void setId(const GodQuestId id);
 
     eHeroType hero() const { return mQuest.fHero; }
     void setHero(const eHeroType h);

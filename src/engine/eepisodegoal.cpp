@@ -3,7 +3,7 @@
 
 #include "elanguage.h"
 #include "estringhelpers.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "characters/soldier-banner.h"
 #include "engine/world-city.h"
 #include "buildings/small-house.h"
@@ -92,8 +92,8 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
     case eEpisodeGoalType::sanctuary: {
         if(fEnumInt1 != -1) {
             auto t = eLanguage::zeusText(194, 19);
-            const auto type = static_cast<eGodType>(fEnumInt1);
-            eStringHelpers::replace(t, "[god]", eGod::sGodName(type));
+            const auto type = static_cast<GodType>(fEnumInt1);
+            eStringHelpers::replace(t, "[god]", God::sGodName(type));
             return t;
         } else if(fRequiredCount == 1) {
             return eLanguage::zeusText(194, 20);
@@ -383,7 +383,7 @@ void eEpisodeGoal::update(const GameBoard& b) {
                 }
             }
         } else {
-            const auto type = static_cast<eGodType>(fEnumInt1);
+            const auto type = static_cast<GodType>(fEnumInt1);
             for(const auto cid : cids) {
                 const auto s = b.sanctuary(cid, type);
                 const int sc = s ? s->progress() : 0;
@@ -462,8 +462,8 @@ void eEpisodeGoal::update(const GameBoard& b) {
     case eEpisodeGoalType::quest: {
         const bool wasMet = met();
         const auto fulfilled = b.fulfilledQuests(ppid);
-        const auto god = static_cast<eGodType>(fEnumInt1);
-        const auto questId = static_cast<eGodQuestId>(fEnumInt2);
+        const auto god = static_cast<GodType>(fEnumInt1);
+        const auto questId = static_cast<GodQuestId>(fEnumInt2);
         fStatusCount = 0;
         for(const auto& f : fulfilled) {
             if(f.fGod != god) continue;

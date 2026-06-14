@@ -6,7 +6,7 @@
 #include "eloadtexthelper.h"
 #include "estringhelpers.h"
 
-#include "characters/gods/egodtype.h"
+#include "characters/gods/god-type.h"
 #include "characters/heroes/ehero.h"
 #include "characters/monsters/emonster.h"
 
@@ -1182,35 +1182,35 @@ eMessageType eMessages::invasionMessage(const eMessageType& baseMsg,
     return msg;
 }
 
-const eGodMessages* eMessages::godMessages(const eGodType godType) const {
+const eGodMessages* eMessages::godMessages(const GodType godType) const {
     switch(godType) {
-    case eGodType::aphrodite:
+    case GodType::aphrodite:
         return &fAphrodite;
-    case eGodType::apollo:
+    case GodType::apollo:
         return &fApollo;
-    case eGodType::ares:
+    case GodType::ares:
         return &fAres;
-    case eGodType::artemis:
+    case GodType::artemis:
         return &fArtemis;
-    case eGodType::athena:
+    case GodType::athena:
         return &fAthena;
-    case eGodType::atlas:
+    case GodType::atlas:
         return &fAtlas;
-    case eGodType::demeter:
+    case GodType::demeter:
         return &fDemeter;
-    case eGodType::dionysus:
+    case GodType::dionysus:
         return &fDionysus;
-    case eGodType::hades:
+    case GodType::hades:
         return &fHades;
-    case eGodType::hephaestus:
+    case GodType::hephaestus:
         return &fHephaestus;
-    case eGodType::hera:
+    case GodType::hera:
         return &fHera;
-    case eGodType::hermes:
+    case GodType::hermes:
         return &fHermes;
-    case eGodType::poseidon:
+    case GodType::poseidon:
         return &fPoseidon;
-    case eGodType::zeus:
+    case GodType::zeus:
         return &fZeus;
     }
     return nullptr;

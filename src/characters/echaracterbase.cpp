@@ -4,7 +4,7 @@
 
 #include "actions/edieaction.h"
 
-#include "gods/egod.h"
+#include "gods/god.h"
 #include "heroes/ehero.h"
 #include "monsters/emonster.h"
 
@@ -63,7 +63,7 @@ bool eCharacterBase::isBoat() const {
 
 bool eCharacterBase::isGod() const {
     bool result;
-    eGod::sCharacterToGodType(type(), &result);
+    God::sCharacterToGodType(type(), &result);
     return result;
 }
 

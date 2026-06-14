@@ -1,7 +1,7 @@
 #ifndef EGODTYPE_H
 #define EGODTYPE_H
 
-enum class eGodType {
+enum class GodType {
     aphrodite,
     apollo,
     ares,

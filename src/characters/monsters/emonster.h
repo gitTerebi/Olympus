@@ -4,7 +4,7 @@
 #include "characters/echaracter.h"
 #include "emonstertype.h"
 
-enum class eGodType;
+enum class GodType;
 enum class eHeroType;
 
 enum class eMonsterAggressivness {
@@ -28,9 +28,9 @@ public:
     static int sMonsterAttackTime(const eMonsterType type);
     static stdsptr<eMonster> sCreateMonster(
             const eMonsterType type, GameBoard& board);
-    static eGodType sMonsterSender(const eMonsterType type,
+    static GodType sMonsterSender(const eMonsterType type,
                                    bool* const valid);
-    static eMonsterType sGodsMinion(const eGodType type);
+    static eMonsterType sGodsMinion(const GodType type);
     static eHeroType sSlayer(const eMonsterType type);
 
     static std::string sMonsterName(const eMonsterType type);

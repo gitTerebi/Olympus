@@ -1,4 +1,4 @@
-﻿#include "egodworshippedaction.h"
+﻿#include "god-worshipped-action.h"
 #include "fileIO/esavearchive.h"
 
 #include "characters/actions/edefendcityaction.h"
@@ -7,10 +7,10 @@
 #include "vec2.h"
 #include "enumbers.h"
 
-eGodWorshippedAction::eGodWorshippedAction(eCharacter* const c) :
+GodWorshippedAction::GodWorshippedAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::godWorshippedAction) {}
 
-void eGodWorshippedAction::increment(const int by) {
+void GodWorshippedAction::increment(const int by) {
     const int blessPeriod = eNumbers::sGodWorshippedBlessPeriod;
     const int blessRange = eNumbers::sGodWorshippedBlessRange;
     const bool r = lookForTargetedBlessCurse(by, mLookForBless,
@@ -21,11 +21,11 @@ void eGodWorshippedAction::increment(const int by) {
         const bool r = lookForSoldierAttack(by, mLookForSoldierAttack,
                                             attackPeriod, attackRange);
         if(!r) {
-            if(mStage != eGodWorshippedStage::defend &&
-               mStage != eGodWorshippedStage::huntMonster &&
-               mStage != eGodWorshippedStage::fightMonster) {
+            if(mStage != GodWorshippedStage::defend &&
+               mStage != GodWorshippedStage::huntMonster &&
+               mStage != GodWorshippedStage::fightMonster) {
                 const auto t = type();
-                if(t == eGodType::apollo) {
+                if(t == GodType::apollo) {
                     const int lookForMonsterCheck = 10000;
                     mLookForMonster += by;
                     if(mLookForMonster > lookForMonsterCheck) {
@@ -42,18 +42,18 @@ void eGodWorshippedAction::increment(const int by) {
             }
         }
     }
-    if(mStage == eGodWorshippedStage::huntMonster) {
+    if(mStage == GodWorshippedStage::huntMonster) {
         lookForMonsterFight();
     }
 
     eGodAction::increment(by);
 }
 
-bool eGodWorshippedAction::decide() {
+bool GodWorshippedAction::decide() {
     const auto c = character();
     switch(mStage) {
-    case eGodWorshippedStage::none:
-        mStage = eGodWorshippedStage::appear;
+    case GodWorshippedStage::none:
+        mStage = GodWorshippedStage::appear;
         if(!c->tile()) randomPlaceOnBoard();
         if(!c->tile()) {
             c->kill();
@@ -61,44 +61,44 @@ bool eGodWorshippedAction::decide() {
             appear();
         }
         break;
-    case eGodWorshippedStage::defend:
-    case eGodWorshippedStage::huntMonster:
-    case eGodWorshippedStage::fightMonster:
-    case eGodWorshippedStage::appear:
-        mStage = eGodWorshippedStage::goTo1;
+    case GodWorshippedStage::defend:
+    case GodWorshippedStage::huntMonster:
+    case GodWorshippedStage::fightMonster:
+    case GodWorshippedStage::appear:
+        mStage = GodWorshippedStage::goTo1;
         goToTarget();
         break;
-    case eGodWorshippedStage::goTo1: {
-        mStage = eGodWorshippedStage::patrol1;
+    case GodWorshippedStage::goTo1: {
+        mStage = GodWorshippedStage::patrol1;
         const auto tile = c->tile();
         const int len = tile->roadLength(5);
         if(len >= 5) patrol();
         else moveAround();
     }   break;
-    case eGodWorshippedStage::patrol1:
-        mStage = eGodWorshippedStage::goTo2;
+    case GodWorshippedStage::patrol1:
+        mStage = GodWorshippedStage::goTo2;
         goToTarget();
         break;
-    case eGodWorshippedStage::goTo2: {
-        mStage = eGodWorshippedStage::patrol2;
+    case GodWorshippedStage::goTo2: {
+        mStage = GodWorshippedStage::patrol2;
         const auto tile = c->tile();
         const int len = tile->roadLength(5);
         if(len >= 5) patrol();
         else moveAround();
     }   break;
-    case eGodWorshippedStage::patrol2:
-        mStage = eGodWorshippedStage::disappear;
+    case GodWorshippedStage::patrol2:
+        mStage = GodWorshippedStage::disappear;
         disappear();
         break;
-    case eGodWorshippedStage::disappear:
+    case GodWorshippedStage::disappear:
         c->kill();
         break;
     }
     return true;
 }
 
-void eGodWorshippedAction::lookForMonster() {
-    const auto& board = eGodWorshippedAction::board();
+void GodWorshippedAction::lookForMonster() {
+    const auto& board = GodWorshippedAction::board();
     const auto& ms = board.monsters(onCityId());
     for(const auto m : ms) {
         if(m->dead()) continue;
@@ -106,29 +106,29 @@ void eGodWorshippedAction::lookForMonster() {
     }
 }
 
-void eGodWorshippedAction::resumeFromSavedState() {
+void GodWorshippedAction::resumeFromSavedState() {
     rebuildCurrentStage();
 }
 
-void eGodWorshippedAction::rebuildCurrentStage() {
+void GodWorshippedAction::rebuildCurrentStage() {
     if(state() != eCharacterActionState::running) return;
     switch(mStage) {
-    case eGodWorshippedStage::none:
-    case eGodWorshippedStage::appear:
-    case eGodWorshippedStage::goTo1:
-    case eGodWorshippedStage::patrol1:
-    case eGodWorshippedStage::goTo2:
-    case eGodWorshippedStage::patrol2:
-    case eGodWorshippedStage::disappear:
-    case eGodWorshippedStage::defend:
-    case eGodWorshippedStage::huntMonster:
-    case eGodWorshippedStage::fightMonster:
+    case GodWorshippedStage::none:
+    case GodWorshippedStage::appear:
+    case GodWorshippedStage::goTo1:
+    case GodWorshippedStage::patrol1:
+    case GodWorshippedStage::goTo2:
+    case GodWorshippedStage::patrol2:
+    case GodWorshippedStage::disappear:
+    case GodWorshippedStage::defend:
+    case GodWorshippedStage::huntMonster:
+    case GodWorshippedStage::fightMonster:
         eGodAction::resumeFromSavedState();
         return;
     }
 }
 
-void eGodWorshippedAction::serializeFields(eSaveArchive& ar) {
+void GodWorshippedAction::serializeFields(eSaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("lookForBless", mLookForBless);
@@ -137,18 +137,18 @@ void eGodWorshippedAction::serializeFields(eSaveArchive& ar) {
     ar.field("lookForMonster", mLookForMonster);
 }
 
-void eGodWorshippedAction::defendCity() {
-    auto& board = eGodWorshippedAction::board();
+void GodWorshippedAction::defendCity() {
+    auto& board = GodWorshippedAction::board();
     const auto cid = cityId();
     const auto i = board.invasionToDefend(cid);
     if(!i) return;
-    mStage = eGodWorshippedStage::defend;
+    mStage = GodWorshippedStage::defend;
     const auto c = character();
     const auto da = e::make_shared<eDefendCityAction>(c);
     setCurrentAction(da);
 }
 
-void eGodWorshippedAction::lookForMonsterFight() {
+void GodWorshippedAction::lookForMonsterFight() {
     const auto c = character();
     const auto ct = c->tile();
     if(!ct) return;
@@ -178,7 +178,7 @@ void eGodWorshippedAction::lookForMonsterFight() {
     }
 }
 
-bool eGodWorshippedAction::fightMonster(eMonster* const m) {
+bool GodWorshippedAction::fightMonster(eMonster* const m) {
     const auto c = character();
     const vec2d cpos{c->absX(), c->absY()};
     const vec2d mpos{m->absX(), m->absY()};
@@ -192,8 +192,8 @@ bool eGodWorshippedAction::fightMonster(eMonster* const m) {
     c->setActionType(eCharacterActionType::fight);
     stdsptr<eCharacterAction> ca;
     const int fightTime = 5000;
-    const int attackTime = eGod::sGodAttackTime(type());
-    const auto gm = e::make_shared<eGodMonsterActionInd>(c);
+    const int attackTime = God::sGodAttackTime(type());
+    const auto gm = e::make_shared<GodMonsterActionInd>(c);
     gm->spawnTimedMissiles(eCharacterActionType::fight,
                            c->type(), attackTime, m,
                            nullptr, nullptr, nullptr,
@@ -205,12 +205,12 @@ bool eGodWorshippedAction::fightMonster(eMonster* const m) {
     ca->setFinishAction(mdie);
     setCurrentAction(ca);
 
-    mStage = eGodWorshippedStage::fightMonster;
+    mStage = GodWorshippedStage::fightMonster;
 
     return true;
 }
 
-void eGodWorshippedAction::huntMonster(eMonster* const m, const bool second) {
+void GodWorshippedAction::huntMonster(eMonster* const m, const bool second) {
     const auto mt = m->tile();
     if(!mt) return;
     const auto mtype = m->type();
@@ -225,12 +225,12 @@ void eGodWorshippedAction::huntMonster(eMonster* const m, const bool second) {
                          eStateRelevance::terrain);
     a->setFailAction(finish);
     a->setFinishAction(finish);
-    const stdptr<eGodWorshippedAction> tptr(this);
+    const stdptr<GodWorshippedAction> tptr(this);
     const stdptr<eMonster> mptr(m);
     a->setFoundAction([tptr, mptr, this, a, c, second]() {
         if(!tptr || !mptr) return;
         if(second) {
-            mStage = eGodWorshippedStage::huntMonster;
+            mStage = GodWorshippedStage::huntMonster;
             c->setActionType(eCharacterActionType::walk);
         } else {
             huntMonster(mptr, true);

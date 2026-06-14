@@ -8,7 +8,7 @@
 #include "actions/edieaction.h"
 #include "actions/fight-action.h"
 
-#include "gods/egod.h"
+#include "gods/god.h"
 #include "heroes/ehero.h"
 #include "audio/sounds.h"
 #include "fileIO/esavearchive.h"
@@ -80,7 +80,7 @@ bool eCharacter::canFight(eCharacter* const c) {
     if(ct == eCharacterType::cattle3) return false;
     if(ct == eCharacterType::chariot) return false;
     bool isGod;
-    eGod::sCharacterToGodType(t, &isGod);
+    God::sCharacterToGodType(t, &isGod);
     if(isGod) return false;
     bool isHero = false;
     eHero::sCharacterToHeroType(t, &isHero);

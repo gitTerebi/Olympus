@@ -1,7 +1,7 @@
 #include "etemplestatuebuilding.h"
 
 eTempleStatueBuilding::eTempleStatueBuilding(
-        const eGodType god,
+        const GodType god,
         const int id, GameBoard& board,
         const eCityId cid) :
     eSanctBuilding({{0, 0, 1}}, board,

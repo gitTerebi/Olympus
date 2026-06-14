@@ -2,11 +2,11 @@
 
 #include "fileIO/esavearchive.h"
 
-void eGodQuestEventBase::setGod(const eGodType g) {
+void eGodQuestEventBase::setGod(const GodType g) {
     mQuest.fGod = g;
 }
 
-void eGodQuestEventBase::setId(const eGodQuestId id) {
+void eGodQuestEventBase::setId(const GodQuestId id) {
     mQuest.fId = id;
 }
 

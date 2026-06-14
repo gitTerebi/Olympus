@@ -1624,9 +1624,9 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             const auto am = eBuildingMode::aphroditeMonument;
             const int id = static_cast<int>(mode) -
                            static_cast<int>(am);
-            const auto gt = static_cast<eGodType>(id);
+            const auto gt = static_cast<GodType>(id);
             const auto s = e::make_shared<eGodMonument>(
-                               gt, eGodQuestId::godQuest1, *mBoard, mViewedCityId);
+                               gt, GodQuestId::godQuest1, *mBoard, mViewedCityId);
             const bool b = mBoard->build(tminX + 1, tminY + 2, 2, 2, cid, pid, mEditorMode, [&]() {
                 return s;
             });

@@ -581,10 +581,10 @@ int eBuildingModeHelpers::toCommemorativeId(const eBuildingMode mode) {
     return -1;
 }
 
-eGodType eBuildingModeHelpers::toGodType(const eBuildingMode mode) {
+GodType eBuildingModeHelpers::toGodType(const eBuildingMode mode) {
     const auto am = eBuildingMode::aphroditeMonument;
     const int id = static_cast<int>(mode) -
                    static_cast<int>(am);
-    const auto gt = static_cast<eGodType>(id);
+    const auto gt = static_cast<GodType>(id);
     return gt;
 }

@@ -9,7 +9,7 @@
 #include "widgets/elabel.h"
 #include "textures/egametextures.h"
 #include "elanguage.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "characters/heroes/ehero.h"
 #include "characters/monsters/emonster.h"
 #include "characters/epeddler.h"
@@ -363,8 +363,8 @@ std::string gCharName(const eCharacterType c, const int seedId)
     case eCharacterType::poseidon:
     case eCharacterType::zeus:
     {
-        const auto g = eGod::sCharacterToGodType(c);
-        return eGod::sGodName(g);
+        const auto g = God::sCharacterToGodType(c);
+        return God::sGodName(g);
     }
     break;
     case eCharacterType::achilles:
@@ -1112,17 +1112,17 @@ eCharMessage gCharMessage(eCharacter *const c)
             break;
         }
 
-        const auto g = static_cast<eGod *>(c);
+        const auto g = static_cast<God *>(c);
         const auto a = g->attitude();
         switch (a)
         {
-        case eGodAttitude::friendly:
+        case GodAttitude::friendly:
             stringId = 0;
             break;
-        case eGodAttitude::hostile:
+        case GodAttitude::hostile:
             stringId = 1;
             break;
-        case eGodAttitude::worshipped:
+        case GodAttitude::worshipped:
             bool provide = false;
             const auto a = g->action();
             if (a)

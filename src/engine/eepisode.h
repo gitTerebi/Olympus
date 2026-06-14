@@ -36,7 +36,7 @@ struct eEpisode {
     std::string fIntroduction;
     std::string fComplete;
 
-    std::map<eCityId, std::vector<eGodType>> fFriendlyGods;
+    std::map<eCityId, std::vector<GodType>> fFriendlyGods;
 
     std::map<eCityId, std::vector<stdsptr<eGameEvent>>> fEvents;
     std::vector<stdsptr<eEpisodeGoal>> fGoals;

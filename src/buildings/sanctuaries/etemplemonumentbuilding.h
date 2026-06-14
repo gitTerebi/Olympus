@@ -2,25 +2,25 @@
 #define ETEMPLEMONUMENTBUILDING_H
 
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 
 #include "esanctbuilding.h"
 
 class eTempleMonumentBuilding : public eSanctBuilding {
 public:
-    eTempleMonumentBuilding(const eGodType god,
+    eTempleMonumentBuilding(const GodType god,
                             const int id, GameBoard& board,
                             const eCityId cid);
 
     static const eTextureCollection* sGodMonumentTextureCollection(
-            const eTileSize size, const eGodType god);
+            const eTileSize size, const GodType god);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize) const override { return nullptr; }
 
-    eGodType godType() const { return mGod; }
+    GodType godType() const { return mGod; }
     int id() const { return mId; }
 private:
-    const eGodType mGod;
+    const GodType mGod;
     const int mId;
 };
 

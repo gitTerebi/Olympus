@@ -28,10 +28,10 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
             const auto gt = godType();
             int string = -1;
             eBannerType bt;
-            if(gt == eGodType::artemis) {
+            if(gt == GodType::artemis) {
                 bt = eBannerType::amazon;
                 string = 30 + id;
-            } else if(gt == eGodType::ares) {
+            } else if(gt == GodType::ares) {
                 bt = eBannerType::aresWarrior;
                 string = 32 + id;
             } else {
@@ -89,9 +89,9 @@ void eSanctuaryWithWarriors::serializeFields(eSaveArchive& ar) {
                 if(!b) continue;
                 const auto gt = tptr->godType();
                 int string = -1;
-                if(gt == eGodType::artemis) {
+                if(gt == GodType::artemis) {
                     string = 30 + i;
-                } else if(gt == eGodType::ares) {
+                } else if(gt == GodType::ares) {
                     string = 32 + i;
                 } else {
                     continue;

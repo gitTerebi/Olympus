@@ -3,7 +3,7 @@
 #include "textures/egametextures.h"
 #include "epyramid.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "engine/game-board.h"
 
 #include "../sanctuaries/etemplemonumentbuilding.h"
@@ -12,7 +12,7 @@ ePyramidMonument::ePyramidMonument(
         const std::vector<eSanctCost>& cost,
         GameBoard& board,
         const int elevation,
-        const eGodType type,
+        const GodType type,
         const int id,
         const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidMonument,
@@ -25,7 +25,7 @@ ePyramidMonument::ePyramidMonument(
         ePyramid* const pyramid,
         GameBoard& board,
         const int elevation,
-        const eGodType type,
+        const GodType type,
         const int id,
         const eCityId cid) :
     ePyramidElement(pyramid,

@@ -246,7 +246,7 @@ void SmallHouse::timeChanged(const int by)
     }
 
     const auto cid = cityId();
-    const auto s = b.sanctuary(cid, eGodType::dionysus);
+    const auto s = b.sanctuary(cid, GodType::dionysus);
     const bool dion = s && s->finished();
     if (mDisgruntled)
     {
@@ -283,7 +283,7 @@ void SmallHouse::timeChanged(const int by)
     }
 
     {
-        const auto s = b.sanctuary(cid, eGodType::aphrodite);
+        const auto s = b.sanctuary(cid, GodType::aphrodite);
         const bool aphr = s && s->finished();
         if (!aphr)
         {

@@ -61,7 +61,7 @@ void eMessageBox::initialize(GameBoard& board,
         }
 
         eStringHelpers::replaceAll(msg.fTitle, "[god]",
-                                   eGod::sGodName(ed.fGod));
+                                   God::sGodName(ed.fGod));
 
         eStringHelpers::replaceAll(msg.fTitle, "[monster]",
                                    eMonster::sMonsterName(ed.fMonster));
@@ -123,7 +123,7 @@ void eMessageBox::initialize(GameBoard& board,
     eStringHelpers::replaceAll(msg.fText, "[player_name]",
                                ed.fPlayerName);
     eStringHelpers::replaceAll(msg.fText, "[god]",
-                               eGod::sGodName(ed.fGod));
+                               God::sGodName(ed.fGod));
     eStringHelpers::replaceAll(msg.fText, "[monster]",
                                eMonster::sMonsterName(ed.fMonster));
 

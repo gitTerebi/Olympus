@@ -3,29 +3,29 @@
 
 #include "epyramidelement.h"
 
-enum class eGodType;
+enum class GodType;
 
 class ePyramidStatue : public ePyramidElement {
 public:
     ePyramidStatue(const std::vector<eSanctCost>& cost,
                    GameBoard& board,
                    const int elevation,
-                   const eGodType type,
+                   const GodType type,
                    const int id,
                    const eCityId cid);
     ePyramidStatue(ePyramid* const pyramid,
                    GameBoard& board,
                    const int elevation,
-                   const eGodType type,
+                   const GodType type,
                    const int id,
                    const eCityId cid);
 
     stdsptr<eTexture> getTexture(const eTileSize size) const override;
 
-    eGodType type() const { return mType; }
+    GodType type() const { return mType; }
     int id() const { return mId; }
 private:
-    const eGodType mType;
+    const GodType mType;
     const int mId;
 };
 

@@ -586,36 +586,36 @@ void eSounds::playSeaSound() {
     sInstance->mSea.playRandomSound();
 }
 
-void eSounds::playGodSound(const eGodType g, const eGodSound s) {
+void eSounds::playGodSound(const GodType g, const eGodSound s) {
     eGodSounds* god = nullptr;
     switch(g) {
-    case eGodType::aphrodite:
+    case GodType::aphrodite:
         god = &sInstance->mAphrodite; break;
-    case eGodType::apollo:
+    case GodType::apollo:
         god = &sInstance->mApollo; break;
-    case eGodType::ares:
+    case GodType::ares:
         god = &sInstance->mAres; break;
-    case eGodType::artemis:
+    case GodType::artemis:
         god = &sInstance->mArtemis; break;
-    case eGodType::athena:
+    case GodType::athena:
         god = &sInstance->mAthena; break;
-    case eGodType::atlas:
+    case GodType::atlas:
         god = &sInstance->mAtlas; break;
-    case eGodType::demeter:
+    case GodType::demeter:
         god = &sInstance->mDemeter; break;
-    case eGodType::dionysus:
+    case GodType::dionysus:
         god = &sInstance->mDionysus; break;
-    case eGodType::hades:
+    case GodType::hades:
         god = &sInstance->mHades; break;
-    case eGodType::hephaestus:
+    case GodType::hephaestus:
         god = &sInstance->mHephaestus; break;
-    case eGodType::hera:
+    case GodType::hera:
         god = &sInstance->mHera; break;
-    case eGodType::hermes:
+    case GodType::hermes:
         god = &sInstance->mHermes; break;
-    case eGodType::poseidon:
+    case GodType::poseidon:
         god = &sInstance->mPoseidon; break;
-    case eGodType::zeus:
+    case GodType::zeus:
         god = &sInstance->mZeus; break;
     }
     god->play(s);

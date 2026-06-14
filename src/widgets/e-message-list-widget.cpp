@@ -7,7 +7,7 @@
 #include "eframedlabel.h"
 #include "estringhelpers.h"
 #include "engine/world-city.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"
 #include "eokbutton.h"
@@ -128,7 +128,7 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
                                eResourceTypeHelpers::typeLongName(ed.fResourceType));
     eStringHelpers::replaceAll(title, "[itemshort]",
                                eResourceTypeHelpers::typeName(ed.fResourceType));
-    eStringHelpers::replaceAll(title, "[god]", eGod::sGodName(ed.fGod));
+    eStringHelpers::replaceAll(title, "[god]", God::sGodName(ed.fGod));
     eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(ed.fMonster));
     lm.fFormattedTitle = title;
 

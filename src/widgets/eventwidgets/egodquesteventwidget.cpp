@@ -12,7 +12,7 @@ void eGodQuestEventWidget::initialize(
     mE = e;
 
     const auto godButtonL = new eLabeledWidget(window());
-    const auto act = [this, e](const eGodType type) {
+    const auto act = [this, e](const GodType type) {
         e->setGod(type);
         setDefaultHero();
     };
@@ -25,8 +25,8 @@ void eGodQuestEventWidget::initialize(
 
     const auto idButtonL = new eLabeledWidget(window());
     const auto switchAct = [this, e](const int id) {
-        const auto eid = id == 0 ? eGodQuestId::godQuest1 :
-                                   eGodQuestId::godQuest2;
+        const auto eid = id == 0 ? GodQuestId::godQuest1 :
+                                   GodQuestId::godQuest2;
         e->setId(eid);
         setDefaultHero();
     };
@@ -36,7 +36,7 @@ void eGodQuestEventWidget::initialize(
     idButton->addValue("2");
     idButton->fitValidContent();
     const auto iniId = e->id();
-    idButton->setValue(iniId == eGodQuestId::godQuest1 ? 0 : 1);
+    idButton->setValue(iniId == GodQuestId::godQuest1 ? 0 : 1);
     idButton->setSwitchAction(switchAct);
     idButtonL->setup(eLanguage::zeusText(44, 357), idButton);
     addWidget(idButtonL);

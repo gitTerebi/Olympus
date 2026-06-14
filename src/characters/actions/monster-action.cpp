@@ -17,7 +17,7 @@
 #include "vec2.h"
 
 MonsterAction::MonsterAction(eCharacter* const c) :
-    eGodMonsterAction(c, eCharActionType::monsterAction),
+    GodMonsterAction(c, eCharActionType::monsterAction),
     mType(eMonster::sCharacterToMonsterType(c->type())) {}
 
 void MonsterAction::increment(const int by) {
@@ -51,7 +51,7 @@ void MonsterAction::increment(const int by) {
         }
     }
 
-    eGodMonsterAction::increment(by);
+    GodMonsterAction::increment(by);
 }
 
 bool MonsterAction::decide() {
@@ -221,7 +221,7 @@ void MonsterAction::spawnBuildingAttackMissiles() {
 }
 
 void MonsterAction::serializeFields(eSaveArchive& ar) {
-    eGodMonsterAction::serializeFields(ar);
+    GodMonsterAction::serializeFields(ar);
     ar.tileField("homeTile", board(), mHomeTile);
     ar.field("aggressivness", mAggressivness);
     ar.field("stage", mStage);
@@ -261,7 +261,7 @@ void MonsterAction::rebuildCurrentStage() {
         return;
     case eMonsterAttackStage::wait:
         if(mWaitRemaining > 0) rebuildWait();
-        else eGodMonsterAction::resumeFromSavedState();
+        else GodMonsterAction::resumeFromSavedState();
         return;
     case eMonsterAttackStage::goTo:
         goToTarget();
@@ -274,7 +274,7 @@ void MonsterAction::rebuildCurrentStage() {
         goBack();
         return;
     case eMonsterAttackStage::none:
-        eGodMonsterAction::resumeFromSavedState();
+        GodMonsterAction::resumeFromSavedState();
         return;
     }
 }
@@ -373,7 +373,7 @@ void MonsterAction::goToTarget() {
         const stdptr<MonsterAction> tptr(this);
         const auto tryAgain = std::make_shared<eGoToTargetTryAgain>(
                                   board(), this);
-        eGodMonsterAction::goToTarget(eHeatGetters::any, tryAgain,
+        GodMonsterAction::goToTarget(eHeatGetters::any, tryAgain,
                                       obsticleHandler(),
                                       eWalkableHelpers::sMonsterTileDistance,
                                       WalkableObject::sCreateAttacker(),

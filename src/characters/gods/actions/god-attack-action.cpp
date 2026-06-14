@@ -1,4 +1,4 @@
-#include "egodattackaction.h"
+#include "god-attack-action.h"
 
 #include "buildings/ebuilding.h"
 #include "engine/game-board.h"
@@ -10,14 +10,14 @@
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
-eGodAttackAction::eGodAttackAction(eCharacter* const c) :
+GodAttackAction::GodAttackAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::godAttackAction) {}
 
-eGodAttackAction::~eGodAttackAction() {
+GodAttackAction::~GodAttackAction() {
     if(mSanctuary) mSanctuary->godComeback();
 }
 
-void eGodAttackAction::increment(const int by) {
+void GodAttackAction::increment(const int by) {
     const auto c = character();
     const auto type = this->type();
     const auto at = c->actionType();
@@ -27,22 +27,22 @@ void eGodAttackAction::increment(const int by) {
         const int lookForGodCheck = 1000;
         int attackPeriod;
         switch(type) {
-        case eGodType::ares:
-        case eGodType::artemis:
-        case eGodType::athena:
-        case eGodType::zeus:
+        case GodType::ares:
+        case GodType::artemis:
+        case GodType::athena:
+        case GodType::zeus:
             attackPeriod = eNumbers::sGodAttackAggressiveAttackPeriod;
             break;
-        case eGodType::aphrodite:
-        case eGodType::apollo:
-        case eGodType::atlas:
-        case eGodType::demeter:
-        case eGodType::dionysus:
-        case eGodType::hades:
-        case eGodType::hephaestus:
-        case eGodType::hera:
-        case eGodType::hermes:
-        case eGodType::poseidon:
+        case GodType::aphrodite:
+        case GodType::apollo:
+        case GodType::atlas:
+        case GodType::demeter:
+        case GodType::dionysus:
+        case GodType::hades:
+        case GodType::hephaestus:
+        case GodType::hera:
+        case GodType::hermes:
+        case GodType::poseidon:
         default:
             attackPeriod = eNumbers::sGodAttackAttackPeriod;
             break;
@@ -63,7 +63,7 @@ void eGodAttackAction::increment(const int by) {
                                              targetedCursePeriod, targetedCurseRange, -1);
         if(!r) lookForGodAttack(by, mLookForGod, lookForGodCheck, godFightRange);
         if(!r) {
-            if(type == eGodType::apollo) {
+            if(type == GodType::apollo) {
                 auto& board = this->board();
                 using eLFPG = eLookForPlagueGodAct;
                 const auto act = std::make_shared<eLFPG>(board);
@@ -76,7 +76,7 @@ void eGodAttackAction::increment(const int by) {
                 lookForRangeAction(by, mLookForSpecial,
                                    plaguePeriod, plagueRange,
                                    at, act, chart, s);
-            } else if(type == eGodType::aphrodite) {
+            } else if(type == GodType::aphrodite) {
                 auto& board = this->board();
                 using eLFEG = eLookForEvictGodAct;
                 const auto act = std::make_shared<eLFEG>(board);
@@ -93,7 +93,7 @@ void eGodAttackAction::increment(const int by) {
         }
     }
 
-    if(type == eGodType::atlas) {
+    if(type == GodType::atlas) {
         auto& board = this->board();
         const auto tile = c->tile();
         if(tile) {
@@ -120,7 +120,7 @@ void eGodAttackAction::increment(const int by) {
     eGodAction::increment(by);
 }
 
-bool eGodAttackAction::lookForRangeAction(const int dtime,
+bool GodAttackAction::lookForRangeAction(const int dtime,
                                           int& time, const int freq,
                                           const int range,
                                           const eCharacterActionType at,
@@ -175,7 +175,7 @@ bool eGodAttackAction::lookForRangeAction(const int dtime,
     return false;
 }
 
-bool eGodAttackAction::lookForAttack(const int dtime,
+bool GodAttackAction::lookForAttack(const int dtime,
                                      int& time, const int freq,
                                      const int range) {
     const auto c = character();
@@ -189,7 +189,7 @@ bool eGodAttackAction::lookForAttack(const int dtime,
                               at, act, chart, s);
 }
 
-bool eGodAttackAction::lookForTargetedAttack(const int dtime,
+bool GodAttackAction::lookForTargetedAttack(const int dtime,
                                              int& time, const int freq,
                                              const int range) {
     const auto c = character();
@@ -204,15 +204,15 @@ bool eGodAttackAction::lookForTargetedAttack(const int dtime,
                               at, act, chart, s);
 }
 
-stdsptr<eObsticleHandler> eGodAttackAction::obsticleHandler() {
+stdsptr<eObsticleHandler> GodAttackAction::obsticleHandler() {
     return std::make_shared<eGodObsticleHandler>(board(), this);
 }
 
-void eGodAttackAction::destroyBuilding(eBuilding* const b) {
+void GodAttackAction::destroyBuilding(eBuilding* const b) {
     pauseAction();
     mPreAttackStage = mStage;
     mAttackBuilding = b;
-    mStage = eGodAttackStage::destroyingBuilding;
+    mStage = GodAttackStage::destroyingBuilding;
     const auto finishAttackA = std::make_shared<eGAA_destroyBuildingFinish>(
                                    board(), this, b);
     const auto playHitSound = std::make_shared<ePlayMonsterBuildingAttackSoundGodAct>(
@@ -225,19 +225,19 @@ void eGodAttackAction::destroyBuilding(eBuilding* const b) {
                              s, playHitSound, finishAttackA, 3);
 }
 
-void eGodAttackAction::goToTarget() {
+void GodAttackAction::goToTarget() {
     const auto gt = type();
     const auto hg = eHeatGetters::godLeaning(gt);
     const stdptr<eGodAction> tptr(this);
     const auto tele = std::make_shared<eTeleportFindFailFunc>(board(), this);
-    eGodMonsterAction::goToTarget(hg, tele, obsticleHandler());
+    GodMonsterAction::goToTarget(hg, tele, obsticleHandler());
 }
 
-bool eGodAttackAction::decide() {
+bool GodAttackAction::decide() {
     const auto c = character();
     switch(mStage) {
-    case eGodAttackStage::none:
-        mStage = eGodAttackStage::appear;
+    case GodAttackStage::none:
+        mStage = GodAttackStage::appear;
         randomPlaceOnBoard();
         if(!c->tile()) {
             c->kill();
@@ -245,55 +245,55 @@ bool eGodAttackAction::decide() {
             appear();
         }
         break;
-    case eGodAttackStage::appear:
-        mStage = eGodAttackStage::goTo1;
+    case GodAttackStage::appear:
+        mStage = GodAttackStage::goTo1;
         initialize();
         goToTarget();
         break;
-    case eGodAttackStage::goTo1: {
-        mStage = eGodAttackStage::patrol1;
+    case GodAttackStage::goTo1: {
+        mStage = GodAttackStage::patrol1;
         goToNearestRoad();
     }   break;
-    case eGodAttackStage::patrol1:
-        mStage = eGodAttackStage::goTo2;
+    case GodAttackStage::patrol1:
+        mStage = GodAttackStage::goTo2;
         goToTarget();
         break;
-    case eGodAttackStage::goTo2: {
-        mStage = eGodAttackStage::patrol2;
+    case GodAttackStage::goTo2: {
+        mStage = GodAttackStage::patrol2;
         goToNearestRoad();
     }   break;
-    case eGodAttackStage::patrol2:
-        mStage = eGodAttackStage::disappear;
+    case GodAttackStage::patrol2:
+        mStage = GodAttackStage::disappear;
         disappear();
         break;
-    case eGodAttackStage::attacking:
+    case GodAttackStage::attacking:
         if(!mAttackTarget.target()) {
             finishAttacking();
             return decide();
         }
         spawnAttackMissile();
         break;
-    case eGodAttackStage::destroyingBuilding:
+    case GodAttackStage::destroyingBuilding:
         if(!mAttackBuilding) {
             finishBuildingAttack();
             return decide();
         }
         spawnDestroyBuildingMissile(mAttackBuilding.get());
         break;
-    case eGodAttackStage::disappear:
+    case GodAttackStage::disappear:
         c->kill();
         break;
     }
     return true;
 }
 
-void eGodAttackAction::beginAttacking(const eMissileTarget& target,
+void GodAttackAction::beginAttacking(const eMissileTarget& target,
                                       const eGodActType kind,
                                       const eCharacterActionType at,
                                       const eGodSound sound,
                                       const int nMissiles,
                                       const double bless,
-                                      const eGodAttackStage prevStage) {
+                                      const GodAttackStage prevStage) {
     mPreAttackStage = prevStage;
     mAttackTarget = target;
     mAttackKind = kind;
@@ -301,22 +301,22 @@ void eGodAttackAction::beginAttacking(const eMissileTarget& target,
     mAttackSoundInt = static_cast<int>(sound);
     mAttackNMissiles = nMissiles;
     mAttackBless = bless;
-    mStage = eGodAttackStage::attacking;
+    mStage = GodAttackStage::attacking;
 }
 
-void eGodAttackAction::finishAttacking() {
+void GodAttackAction::finishAttacking() {
     mStage = mPreAttackStage;
-    mPreAttackStage = eGodAttackStage::none;
+    mPreAttackStage = GodAttackStage::none;
     mAttackTarget = eMissileTarget();
 }
 
-void eGodAttackAction::finishBuildingAttack() {
+void GodAttackAction::finishBuildingAttack() {
     mStage = mPreAttackStage;
-    mPreAttackStage = eGodAttackStage::none;
+    mPreAttackStage = GodAttackStage::none;
     mAttackBuilding = nullptr;
 }
 
-stdsptr<eGodAct> eGodAttackAction::rebuildAttackAct() {
+stdsptr<eGodAct> GodAttackAction::rebuildAttackAct() {
     const auto c = character();
     const auto team = c->teamId();
     const auto gt = type();
@@ -341,7 +341,7 @@ stdsptr<eGodAct> eGodAttackAction::rebuildAttackAct() {
     }
 }
 
-void eGodAttackAction::spawnAttackMissile() {
+void GodAttackAction::spawnAttackMissile() {
     const auto act = rebuildAttackAct();
     if(!act) {
         finishAttacking();
@@ -361,7 +361,7 @@ void eGodAttackAction::spawnAttackMissile() {
     }
 }
 
-void eGodAttackAction::spawnDestroyBuildingMissile(eBuilding* const b) {
+void GodAttackAction::spawnDestroyBuildingMissile(eBuilding* const b) {
     const auto c = character();
     const auto chart = c->type();
     const auto finishCb = std::make_shared<eGAA_destroyBuildingFinish>(
@@ -374,14 +374,14 @@ void eGodAttackAction::spawnDestroyBuildingMissile(eBuilding* const b) {
                              finishCb, 3);
 }
 
-void eGodAttackAction::resumeFromSavedState() {
+void GodAttackAction::resumeFromSavedState() {
     rebuildCurrentStage();
 }
 
-void eGodAttackAction::rebuildCurrentStage() {
+void GodAttackAction::rebuildCurrentStage() {
     if(state() != eCharacterActionState::running) return;
     switch(mStage) {
-    case eGodAttackStage::attacking:
+    case GodAttackStage::attacking:
         if(!mAttackTarget.target()) {
             finishAttacking();
             eGodAction::resumeFromSavedState();
@@ -389,7 +389,7 @@ void eGodAttackAction::rebuildCurrentStage() {
         }
         spawnAttackMissile();
         return;
-    case eGodAttackStage::destroyingBuilding:
+    case GodAttackStage::destroyingBuilding:
         if(!mAttackBuilding) {
             finishBuildingAttack();
             eGodAction::resumeFromSavedState();
@@ -397,19 +397,19 @@ void eGodAttackAction::rebuildCurrentStage() {
         }
         destroyBuilding(mAttackBuilding.get());
         return;
-    case eGodAttackStage::none:
-    case eGodAttackStage::appear:
-    case eGodAttackStage::goTo1:
-    case eGodAttackStage::patrol1:
-    case eGodAttackStage::goTo2:
-    case eGodAttackStage::patrol2:
-    case eGodAttackStage::disappear:
+    case GodAttackStage::none:
+    case GodAttackStage::appear:
+    case GodAttackStage::goTo1:
+    case GodAttackStage::patrol1:
+    case GodAttackStage::goTo2:
+    case GodAttackStage::patrol2:
+    case GodAttackStage::disappear:
         eGodAction::resumeFromSavedState();
         return;
     }
 }
 
-void eGodAttackAction::serializeFields(eSaveArchive& ar) {
+void GodAttackAction::serializeFields(eSaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("lookForCurse", mLookForCurse);
@@ -429,18 +429,18 @@ void eGodAttackAction::serializeFields(eSaveArchive& ar) {
     ar.buildingField("attackBuilding", &board(), mAttackBuilding);
 }
 
-void eGodAttackAction::setSanctuary(const stdptr<eSanctuary>& s) {
+void GodAttackAction::setSanctuary(const stdptr<eSanctuary>& s) {
     mSanctuary = s;
 }
 
-void eGodAttackAction::initialize() {
+void GodAttackAction::initialize() {
     auto& board = this->board();
     const auto cid = cityId();
     const auto c = character();
     const auto tile = c->tile();
     if(!tile) return;
     const auto type = this->type();
-    if(type == eGodType::dionysus) {
+    if(type == GodType::dionysus) {
         eCharacter* f = c;
         DionysusFollowAction* fa = nullptr;
         for(int i = 0; i < 3; i++) {
@@ -453,7 +453,7 @@ void eGodAttackAction::initialize() {
             if(fa) fa->setFollower(s.get());
             fa = a.get();
         }
-    } else if(type == eGodType::hades) {
+    } else if(type == GodType::hades) {
         const auto p = board.palace(cid);
         if(p) p->setBlessed(-1.);
         const auto& chars = board.characters();

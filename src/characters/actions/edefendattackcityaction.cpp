@@ -11,9 +11,9 @@
 #include "fileIO/esavearchive.h"
 
 void eDefendAttackCityAction::serializeFields(eSaveArchive& ar) {
-    eGodMonsterAction::serializeFields(ar);
+    GodMonsterAction::serializeFields(ar);
     ar.field("stage", mStage);
-    ar.tileField("startTile", eGodMonsterAction::board(), mStartTile);
+    ar.tileField("startTile", GodMonsterAction::board(), mStartTile);
     ar.characterAsField("attackTarget", &board(), mAttackTarget);
     ar.field("attack", mAttack);
     ar.field("lookForEnemy", mLookForEnemy);
@@ -86,7 +86,7 @@ bool eDefendAttackCityAction::goTo(const int fx, const int fy, const int dist) {
 }
 
 void eDefendAttackCityAction::goBack() {
-    auto& board = eGodMonsterAction::board();
+    auto& board = GodMonsterAction::board();
     using eGTTT = eGoToTargetTeleport;
     const auto tele = std::make_shared<eGTTT>(board, this);
     goToTile(mStartTile, tele);
@@ -94,7 +94,7 @@ void eDefendAttackCityAction::goBack() {
 
 void eDefendAttackCityAction::increment(const int by) {
     if(mKilled >= mMaxKilled) {
-        return eGodMonsterAction::increment(by);
+        return GodMonsterAction::increment(by);
     }
     const int rangeAttackCheck = 500;
     const int lookForEnemyCheck = 500;
@@ -171,7 +171,7 @@ void eDefendAttackCityAction::increment(const int by) {
             if(mKilled >= mMaxKilled) {
                 mStage = eDefendAttackCityStage::comeback;
                 goBack();
-                return eGodMonsterAction::increment(by);
+                return GodMonsterAction::increment(by);
             }
         } else {
             return;
@@ -262,7 +262,7 @@ void eDefendAttackCityAction::increment(const int by) {
         }
     }
 
-    eGodMonsterAction::increment(by);
+    GodMonsterAction::increment(by);
 }
 
 int eDefendAttackCityAction::range() const {
