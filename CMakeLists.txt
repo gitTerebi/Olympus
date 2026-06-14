@@ -873,7 +873,6 @@ target_link_libraries(Olympus
     ${SDL2_IMAGE_LIBRARY}
     ${SDL2_TTF_LIBRARY}
     ${SDL2_MIXER_LIBRARY}
-    opengl32
 )
 
 # For Windows, link additional libraries
@@ -881,6 +880,7 @@ if(WIN32)
     target_link_libraries(Olympus
         pthread
         dbghelp
+        opengl32
         d3d11
         d3dcompiler
     )
@@ -888,6 +888,8 @@ endif()
 
 # For Unix systems
 if(UNIX)
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(Olympus OpenGL::GL)
     target_link_libraries(Olympus 
         pthread
         stdc++fs
