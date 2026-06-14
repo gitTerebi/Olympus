@@ -149,6 +149,33 @@ private:
 
 using eOptionsPageViewport = eScrollViewport;
 
+namespace {
+void layoutOptionRow(eWidget* const row,
+                     eWidget* const label,
+                     eWidget* const control,
+                     const int rowWidth,
+                     const int gap) {
+    const int controlW = control->width();
+    const int totalW = label->width() + gap + controlW;
+    int x = (rowWidth - totalW)/2;
+    if(x < 0) x = 0;
+    label->setX(x);
+    control->setX(x + label->width() + gap);
+    const int rowH = std::max(label->height(), control->height());
+    row->setHeight(rowH);
+    label->setY((rowH - label->height())/2);
+    control->setY((rowH - control->height())/2);
+}
+
+void clampButtonWidth(FramedButton* const button,
+                      const int minW,
+                      const int maxW) {
+    button->fitContent();
+    if(button->width() < minW) button->setWidth(minW);
+    if(button->width() > maxW) button->setWidth(maxW);
+}
+}
+
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
                            eMainWindow* const window,
                            const eReopenPage& reopenPage) :
@@ -449,22 +476,30 @@ void eOptionsMenu::showPage(const int id) {
         w->setWidth(mPage->width());
 
         const auto label = new eLabel(item.fLabel, window());
-        label->setFontSizeS();
+        label->setFontSizeXS();
         label->fitContent();
         w->addWidget(label);
 
         const auto button = new FramedButton(window());
         button->setUnderline(false);
+        button->setFontSizeXS();
         const int initial = (item.fValue >= 0 &&
                              item.fValue < int(item.fOptions.size())) ? item.fValue : 0;
         button->setText(item.fOptions.empty() ? "" : item.fOptions[initial]);
-        button->fitContent();
+        const int mult = resolution().multiplier();
+        const int gap = 6 * mult;
+        const int maxControlW = std::max(56 * mult,
+                                         mPage->width() - label->width() - gap);
+        const int minControlW = std::min(74 * mult, maxControlW);
+        clampButtonWidth(button, minControlW, maxControlW);
         const auto options = item.fOptions;
         const auto set = item.fSet;
         const bool rebuildOnSet = item.fLabel == "Resolution";
-        button->setPressAction([this, button, options, set, rebuildOnSet]() {
+        button->setPressAction([this, button, options, set, rebuildOnSet,
+                                minControlW, maxControlW]() {
             const auto choose = new eChooseButton(window());
-            const auto act = [this, button, options, set, rebuildOnSet](const int val) {
+            const auto act = [this, button, options, set, rebuildOnSet,
+                              minControlW, maxControlW](const int val) {
                 bool uiScaleChanged = false;
                 if(rebuildOnSet &&
                    val >= 0 &&
@@ -481,7 +516,7 @@ void eOptionsMenu::showPage(const int id) {
                 }
                 if(val >= 0 && val < int(options.size())) {
                     button->setText(options[val]);
-                    button->fitContent();
+                    clampButtonWidth(button, minControlW, maxControlW);
                 }
                 if(set) set(val);
                 if(rebuildOnSet && !uiScaleChanged) rebuild();
@@ -494,11 +529,7 @@ void eOptionsMenu::showPage(const int id) {
 
         w->fitHeight();
         w->setWidth(mPage->width());
-        const double center = mPage->width() * 0.65;
-        label->setX(center - label->width());
-        button->setX(center);
-        label->setY((w->height() - label->height()) / 2);
-        button->setY((w->height() - button->height()) / 2);
+        layoutOptionRow(w, label, button, mPage->width(), gap);
         return w;
     };
 
