@@ -22,10 +22,10 @@ void GameWidget::handleGodQuestEvent(eEventData& ed,
     if(!gm) return;
     const eQuestMessages* qm = nullptr;
     switch(id) {
-    case eGodQuestId::godQuest1:
+    case GodQuestId::godQuest1:
         qm = &gm->fQuest1;
         break;
-    case eGodQuestId::godQuest2:
+    case GodQuestId::godQuest2:
         qm = &gm->fQuest2;
         break;
     }
@@ -1508,11 +1508,11 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::godTradeResumes: {
-        if(ed.fGod == eGodType::zeus) {
+        if(ed.fGod == GodType::zeus) {
             showMessage(ed, inst.fZeusTradeResumes);
-        } else if(ed.fGod == eGodType::poseidon) {
+        } else if(ed.fGod == GodType::poseidon) {
             showMessage(ed, inst.fPoseidonTradeResumes);
-        } else if(ed.fGod == eGodType::hermes) {
+        } else if(ed.fGod == GodType::hermes) {
             showMessage(ed, inst.fHermesTradeResumes);
         }
         return;

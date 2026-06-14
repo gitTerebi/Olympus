@@ -1,7 +1,7 @@
 #ifndef GOD_MINION_ACTION_H
 #define GOD_MINION_ACTION_H
 
-#include "characters/gods/actions/egodmonsteraction.h"
+#include "characters/gods/actions/god-monster-action.h"
 
 class eSaveArchive;
 class eMonster;
@@ -12,7 +12,7 @@ enum class eGodMinionStage {
     huntSoldier, fightSoldier
 };
 
-class eGodMinionAction : public eGodMonsterAction {
+class eGodMinionAction : public GodMonsterAction {
 public:
     eGodMinionAction(eCharacter* const c);
 

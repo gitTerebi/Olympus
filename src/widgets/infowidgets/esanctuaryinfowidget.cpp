@@ -2,7 +2,7 @@
 
 #include "elanguage.h"
 #include "widgets/framed-button.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "estringhelpers.h"
 #include "buildings/sanctuaries/sanctuary.h"
 #include "buildings/pyramids/epyramid.h"
@@ -18,35 +18,35 @@ eSanctuaryInfoWidget::eSanctuaryInfoWidget(
         eMainWidget* const mw) :
     eEmployingBuildingInfoWidget(window, mw, true, false) {}
 
-int sTextGodId(const eGodType god) {
+int sTextGodId(const GodType god) {
     switch(god) {
-    case eGodType::zeus:
+    case GodType::zeus:
         return 0;
-    case eGodType::poseidon:
+    case GodType::poseidon:
         return 1;
-    case eGodType::demeter:
+    case GodType::demeter:
         return 2;
-    case eGodType::apollo:
+    case GodType::apollo:
         return 3;
-    case eGodType::artemis:
+    case GodType::artemis:
         return 4;
-    case eGodType::ares:
+    case GodType::ares:
         return 5;
-    case eGodType::aphrodite:
+    case GodType::aphrodite:
         return 6;
-    case eGodType::hermes:
+    case GodType::hermes:
         return 7;
-    case eGodType::athena:
+    case GodType::athena:
         return 8;
-    case eGodType::hephaestus:
+    case GodType::hephaestus:
         return 9;
-    case eGodType::dionysus:
+    case GodType::dionysus:
         return 10;
-    case eGodType::hades:
+    case GodType::hades:
         return 11;
-    case eGodType::hera:
+    case GodType::hera:
         return 12;
-    case eGodType::atlas:
+    case GodType::atlas:
         return 13;
     }
     return 0;
@@ -139,7 +139,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         reasonLabel->setWrapWidth(cww);
         {
             // initial status line
-            const bool aresGod = (gt == eGodType::ares);
+            const bool aresGod = (gt == GodType::ares);
             if(aresGod && (s->aresBuffReady() || s->godAbroad())) {
                 reasonLabel->setLightFontColor();
                 reasonLabel->setText(eLanguage::zeusText(132, 38 + godId)); // "Ares has heard...next opportunity"
@@ -167,7 +167,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             const auto pb = new FramedButton(eLanguage::zeusText(132, 10 + godId), window());
             pb->setUnderline(false);
             pb->fitContent();
-            if(gt == eGodType::ares && (s->aresBuffReady() || s->godAbroad())) pb->setEnabled(false);
+            if(gt == GodType::ares && (s->aresBuffReady() || s->godAbroad())) pb->setEnabled(false);
             bw->addWidget(pb);
             const auto bar = new eProgressBar(window());
             bar->setRange(0, 100);
@@ -192,7 +192,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                     }
                     reasonLabel->setYellowFontColor();
                     reasonLabel->setText(eLanguage::zeusText(132, string));
-                } else if(gt == eGodType::ares) {
+                } else if(gt == GodType::ares) {
                     reasonLabel->setLightFontColor();
                     reasonLabel->setText(eLanguage::zeusText(132, 38 + godId));
                     pb->setEnabled(false);
@@ -252,7 +252,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                         reasonLabel->setLightFontColor();
                     }
                     const auto godType = s->godType();
-                    const auto godName = eGod::sGodName(godType);
+                    const auto godName = God::sGodName(godType);
                     const auto txt = godName + " " + eLanguage::zeusText(59, string);
                     reasonLabel->setText(txt);
                     reasonLabel->fitContent();
@@ -397,7 +397,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
 
         auto text = eLanguage::zeusText(132, string);
         const auto god = ePyramid::sGod(type);
-        const auto name = eGod::sGodName(god);
+        const auto name = God::sGodName(god);
         eStringHelpers::replace(text, "[god]", name);
         eStringHelpers::replace(text, "[god]", name);
         addText(text);
@@ -426,7 +426,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         const auto pStr = std::to_string(p);
         if(s) {
             const auto god = s->godType();
-            const auto godStr = eGod::sGodName(god);
+            const auto godStr = God::sGodName(god);
             auto complete = eLanguage::zeusText(178, 23);
             eStringHelpers::replace(complete, "[god]", godStr);
             eStringHelpers::replace(complete, "[percent_complete]", pStr + "%");

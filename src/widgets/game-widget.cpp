@@ -19,7 +19,7 @@
 #include "engine/game-board.h"
 #include "engine/egifthelpers.h"
 #include "engine/world-city.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "characters/monsters/emonster.h"
 #include "characters/echaracter.h"
 #include "characters/actions/ecomplexaction.h"
@@ -44,7 +44,7 @@ void formatStoredMessage(eMessage& msg,
         eStringHelpers::replaceAll(text, "[greeting]",
                                    eLanguage::text("greetings"));
         eStringHelpers::replaceAll(text, "[player_name]", playerName);
-        eStringHelpers::replaceAll(text, "[god]", eGod::sGodName(ed.fGod));
+        eStringHelpers::replaceAll(text, "[god]", God::sGodName(ed.fGod));
         eStringHelpers::replaceAll(text, "[monster]",
                                    eMonster::sMonsterName(ed.fMonster));
         eStringHelpers::replaceAll(text, "[amount]",

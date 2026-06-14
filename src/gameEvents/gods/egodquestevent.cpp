@@ -40,10 +40,10 @@ void eGodQuestEvent::trigger() {
     if(!gm) return board->allowHero(cityId(), hero());
     const eQuestMessages* qm = nullptr;
     switch(id()) {
-    case eGodQuestId::godQuest1:
+    case GodQuestId::godQuest1:
         qm = &gm->fQuest1;
         break;
-    case eGodQuestId::godQuest2:
+    case GodQuestId::godQuest2:
         qm = &gm->fQuest2;
         break;
     }
@@ -94,10 +94,10 @@ void eGodQuestEvent::fulfilled() {
     const auto godMsgs = msgs.godMessages(god());
     const eQuestMessages* qMsgs = nullptr;
     switch(id()) {
-    case eGodQuestId::godQuest1:
+    case GodQuestId::godQuest1:
         qMsgs = &godMsgs->fQuest1;
         break;
-    case eGodQuestId::godQuest2:
+    case GodQuestId::godQuest2:
         qMsgs = &godMsgs->fQuest2;
         break;
     }

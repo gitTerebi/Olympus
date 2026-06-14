@@ -3,7 +3,7 @@
 
 #include "sound-vector.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 
 enum class eGodSound {
     wooing0,

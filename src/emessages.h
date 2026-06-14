@@ -5,7 +5,7 @@
 
 #include <map>
 
-enum class eGodType;
+enum class GodType;
 enum class eHeroType;
 enum class eMonsterType;
 
@@ -136,7 +136,7 @@ public:
     eMessageType fCollapse;
     eMessageType fPlagueStrikes;
 
-    const eGodMessages* godMessages(const eGodType godType) const;
+    const eGodMessages* godMessages(const GodType godType) const;
 
     eGodMessages fAphrodite;
     eGodMessages fApollo;

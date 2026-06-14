@@ -80,9 +80,9 @@ void eAvailableBuildings::serialize(eSaveArchive& ar) {
     ar.field("scholarMonument", fScholarMonument);
 
     // godMonuments per-type
-    const int godTypeMax = static_cast<int>(eGodType::zeus) + 1;
+    const int godTypeMax = static_cast<int>(GodType::zeus) + 1;
     for(int i = 0; i < godTypeMax; i++) {
-        const auto godType = static_cast<eGodType>(i);
+        const auto godType = static_cast<GodType>(i);
         ar.field(("godMonument." + std::to_string(i)).c_str(),
                  mGodMonuments[godType]);
     }
@@ -313,7 +313,7 @@ bool eAvailableBuildings::available(
         if(id == 8) return fScholarMonument;
         break;
     case eBuildingType::godMonument: {
-        const auto t = static_cast<eGodType>(id);
+        const auto t = static_cast<GodType>(id);
         return mGodMonuments.at(t);
     } break;
     default:
@@ -349,7 +349,7 @@ void eAvailableBuildings::built(
         *c = std::max(0, *c - 1);
     } break;
     case eBuildingType::godMonument: {
-        const auto t = static_cast<eGodType>(id);
+        const auto t = static_cast<GodType>(id);
         int& c = mGodMonuments[t];
         c = std::max(0, c - 1);
     } break;
@@ -440,7 +440,7 @@ void eAvailableBuildings::allow(
     } break;
 
     case eBuildingType::godMonument: {
-        const auto t = static_cast<eGodType>(id);
+        const auto t = static_cast<GodType>(id);
         int& c = mGodMonuments[t];
         c++;
     } break;

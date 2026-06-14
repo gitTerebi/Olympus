@@ -8,18 +8,18 @@
 
 class eSaveArchive;
 
-enum class eGodAttackStage {
+enum class GodAttackStage {
     none, appear, goTo1, patrol1, goTo2, patrol2, disappear,
     attacking, destroyingBuilding
 };
 
 enum class eGodSound;
 
-class eGodAttackAction : public eGodAction {
+class GodAttackAction : public eGodAction {
     friend class eGodObsticleHandler;
 public:
-    eGodAttackAction(eCharacter* const c);
-    ~eGodAttackAction();
+    GodAttackAction(eCharacter* const c);
+    ~GodAttackAction();
 
     void increment(const int by) override;
     bool decide() override;
@@ -58,12 +58,12 @@ private:
                         const eGodSound sound,
                         const int nMissiles,
                         const double bless,
-                        const eGodAttackStage prevStage);
+                        const GodAttackStage prevStage);
     void spawnAttackMissile();
     void spawnDestroyBuildingMissile(eBuilding* const b);
     stdsptr<eGodAct> rebuildAttackAct();
 
-    eGodAttackStage mStage{eGodAttackStage::none};
+    GodAttackStage mStage{GodAttackStage::none};
 
     int mLookForCurse = eRand::rand() % 2000;
     int mLookForTargetedCurse = eRand::rand() % 2000;
@@ -74,7 +74,7 @@ private:
 
     stdptr<eSanctuary> mSanctuary;
 
-    eGodAttackStage mPreAttackStage{eGodAttackStage::none};
+    GodAttackStage mPreAttackStage{GodAttackStage::none};
     eGodActType mAttackKind{eGodActType::lookForAttack};
     eMissileTarget mAttackTarget;
     eCharacterActionType mAttackActionType{eCharacterActionType::fight2};
@@ -89,7 +89,7 @@ class eGAA_loserDisappearFinish : public eCharActFunc {
 public:
     eGAA_loserDisappearFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_loserDisappearFinish) {}
-    eGAA_loserDisappearFinish(GameBoard& board, eGodMonsterAction* const ca) :
+    eGAA_loserDisappearFinish(GameBoard& board, GodMonsterAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GAA_loserDisappearFinish),
         mLoserPtr(ca) {}
 
@@ -105,7 +105,7 @@ protected:
         ar.characterActionAsField("loser", &board(), mLoserPtr);
     }
 private:
-    stdptr<eGodMonsterAction> mLoserPtr;
+    stdptr<GodMonsterAction> mLoserPtr;
 };
 
 
@@ -114,13 +114,13 @@ public:
     eGAA_destroyBuildingFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_destroyBuildingFinish) {}
     eGAA_destroyBuildingFinish(GameBoard& board,
-                               eGodAttackAction* const tptr,
+                               GodAttackAction* const tptr,
                                eBuilding* const b) :
         eCharActFunc(board, eCharActFuncType::GAA_destroyBuildingFinish),
         mTptr(tptr), mBptr(b) {}
 
     void call() override {
-        const stdptr<eGodAttackAction> t = mTptr;
+        const stdptr<GodAttackAction> t = mTptr;
         if(!t) return;
         const auto b = mBptr;
         t->finishBuildingAttack();
@@ -137,7 +137,7 @@ protected:
         ar.buildingField("building", &board(), mBptr);
     }
 private:
-    stdptr<eGodAttackAction> mTptr;
+    stdptr<GodAttackAction> mTptr;
     stdptr<eBuilding> mBptr;
 };
 
@@ -145,12 +145,12 @@ class eGAA_rangeAttackFinish : public eCharActFunc {
 public:
     eGAA_rangeAttackFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_rangeAttackFinish) {}
-    eGAA_rangeAttackFinish(GameBoard& board, eGodAttackAction* const ca) :
+    eGAA_rangeAttackFinish(GameBoard& board, GodAttackAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GAA_rangeAttackFinish),
         mTptr(ca) {}
 
     void call() override {
-        const stdptr<eGodAttackAction> t = mTptr;
+        const stdptr<GodAttackAction> t = mTptr;
         if(!t) return;
         t->finishAttacking();
         t->resumeAction();
@@ -162,7 +162,7 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eGodAttackAction> mTptr;
+    stdptr<GodAttackAction> mTptr;
 };
 
 class eTeleportFindFailFunc : public eFindFailFunc {
@@ -194,7 +194,7 @@ public:
     eGodObsticleHandler(GameBoard& board) :
         eObsticleHandler(board, eObsticleHandlerType::god) {}
     eGodObsticleHandler(GameBoard& board,
-                        eGodAttackAction* const t) :
+                        GodAttackAction* const t) :
         eObsticleHandler(board, eObsticleHandlerType::god),
         mTptr(t) {}
 
@@ -214,7 +214,7 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eGodAttackAction> mTptr;
+    stdptr<GodAttackAction> mTptr;
 };
 
 #endif // EGODATTACKACTION_H

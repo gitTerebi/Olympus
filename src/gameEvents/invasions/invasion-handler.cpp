@@ -1025,10 +1025,10 @@ void eInvasionHandler::killAllWithCorpse() {
         if(!c) continue;
         bool isGod = false;
         const auto cType = c->type();
-        eGod::sCharacterToGodType(cType, &isGod);
+        God::sCharacterToGodType(cType, &isGod);
         if(isGod) {
             const auto a = c->action();
-            if(const auto aa = dynamic_cast<eGodMonsterAction*>(a)) {
+            if(const auto aa = dynamic_cast<GodMonsterAction*>(a)) {
                 aa->disappear(true);
             } else {
                 c->killWithCorpse();
@@ -1126,8 +1126,8 @@ void eInvasionHandler::generateImmortals(
     };
 
     if(ares) {
-        const auto god = eGod::sCreateGod(eGodType::ares, mBoard);
-        god->setAttitude(eGodAttitude::hostile);
+        const auto god = God::sCreateGod(GodType::ares, mBoard);
+        god->setAttitude(GodAttitude::hostile);
         prcsAttack(god);
     }
 

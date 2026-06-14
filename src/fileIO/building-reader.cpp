@@ -389,8 +389,8 @@ stdsptr<eBuilding> BuildingArchive::load(
     if(type == eBuildingType::godMonument) {
         ar.archiveField("factory", [&](eSaveArchive& it) {
             eCityId cid;
-            eGodType gtype;
-            eGodQuestId qid;
+            GodType gtype;
+            GodQuestId qid;
             it.field("cityId", cid);
             it.field("god", gtype);
             it.field("questId", qid);
@@ -424,7 +424,7 @@ stdsptr<eBuilding> BuildingArchive::load(
     if(type == eBuildingType::templeStatue) {
         ar.archiveField("factory", [&](eSaveArchive& it) {
             eCityId cid;
-            eGodType godType;
+            GodType godType;
             int id;
             it.field("cityId", cid);
             it.field("godType", godType);
@@ -439,7 +439,7 @@ stdsptr<eBuilding> BuildingArchive::load(
     if(type == eBuildingType::templeMonument) {
         ar.archiveField("factory", [&](eSaveArchive& it) {
             eCityId cid;
-            eGodType godType;
+            GodType godType;
             int id;
             it.field("cityId", cid);
             it.field("godType", godType);
@@ -553,7 +553,7 @@ stdsptr<eBuilding> BuildingArchive::load(
                 eOrientation o = eOrientation::topRight;
                 int special = 0;
                 int subType = 0;
-                eGodType godType = eGodType::aphrodite;
+                GodType godType = GodType::aphrodite;
                 int gid = 0;
                 if(type == eBuildingType::pyramidWall) {
                     it.field("orientation", o);

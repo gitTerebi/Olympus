@@ -5,14 +5,14 @@
 
 class eSaveArchive;
 
-enum class eGodWorshippedStage {
+enum class GodWorshippedStage {
     none, appear, goTo1, patrol1, goTo2, patrol2, disappear, defend,
     huntMonster, fightMonster
 };
 
-class eGodWorshippedAction : public eGodAction {
+class GodWorshippedAction : public eGodAction {
 public:
-    eGodWorshippedAction(eCharacter* const c);
+    GodWorshippedAction(eCharacter* const c);
 
     void increment(const int by) override;
     bool decide() override;
@@ -29,7 +29,7 @@ private:
     bool fightMonster(eMonster* const m);
     void huntMonster(eMonster* const m, const bool second);
 
-    eGodWorshippedStage mStage{eGodWorshippedStage::none};
+    GodWorshippedStage mStage{GodWorshippedStage::none};
 
     int mLookForBless = 0;
     int mLookForSoldierAttack = 0;
@@ -41,7 +41,7 @@ class eGWA_huntMonsterFinish : public eCharActFunc {
 public:
     eGWA_huntMonsterFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GWA_huntMonsterFinish) {}
-    eGWA_huntMonsterFinish(GameBoard& board, eGodWorshippedAction* const ca) :
+    eGWA_huntMonsterFinish(GameBoard& board, GodWorshippedAction* const ca) :
         eCharActFunc(board, eCharActFuncType::GWA_huntMonsterFinish),
         mTptr(ca) {}
 
@@ -55,7 +55,7 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eGodWorshippedAction> mTptr;
+    stdptr<GodWorshippedAction> mTptr;
 };
 
 #endif // EGODWORSHIPPEDACTION_H

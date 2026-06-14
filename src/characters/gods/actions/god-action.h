@@ -1,9 +1,9 @@
 #ifndef GOD_ACTION_H
 #define GOD_ACTION_H
 
-#include "characters/gods/actions/egodmonsteraction.h"
+#include "characters/gods/actions/god-monster-action.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "engine/game-board.h"
 #include "audio/sounds.h"
 #include "buildings/small-house.h"
@@ -89,7 +89,7 @@ private:
 
 class ePlayFightGodHitSoundGodAct : public eGodAct {
 public:
-    ePlayFightGodHitSoundGodAct(GameBoard& board, eGod* const g) :
+    ePlayFightGodHitSoundGodAct(GameBoard& board, God* const g) :
         eGodAct(board, eGodActType::playFightGodHitSoundGodAct),
         mG(g) {}
     ePlayFightGodHitSoundGodAct(GameBoard& board) :
@@ -112,7 +112,7 @@ public:
         ar.characterAsField("god", &board(), mG);
     }
 private:
-    stdptr<eGod> mG;
+    stdptr<God> mG;
 };
 
 class eLookForPlagueGodAct : public eGodAct {
@@ -233,13 +233,13 @@ protected:
 class eLookForTargetedBlessGodAct : public eLookForBlessGodActBase {
 public:
     eLookForTargetedBlessGodAct(GameBoard& board, const double bless,
-                                const eGodType type) :
+                                const GodType type) :
         eLookForBlessGodActBase(board, eGodActType::lookForTargetedBless),
         mType(type) {
         mBless = bless;
     }
     eLookForTargetedBlessGodAct(GameBoard& board) :
-        eLookForTargetedBlessGodAct(board, 0, eGodType::zeus) {}
+        eLookForTargetedBlessGodAct(board, 0, GodType::zeus) {}
 
     eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
@@ -251,7 +251,7 @@ public:
         if(!eBuilding::sBlessable(type)) {
             return null;
         }
-        if(!eGod::sTarget(mType, type)) {
+        if(!God::sTarget(mType, type)) {
             return null;
         }
         if(b->blessed() || b->cursed()) {
@@ -269,7 +269,7 @@ public:
         ar.field("godType", mType);
     }
 private:
-    eGodType mType;
+    GodType mType;
 };
 
 class eLookForBlessGodAct : public eLookForBlessGodActBase {
@@ -334,11 +334,11 @@ private:
 class eLookForTargetedAttackGodAct : public eGodAct {
 public:
     eLookForTargetedAttackGodAct(GameBoard& board,
-                                 const eGodType type) :
+                                 const GodType type) :
         eGodAct(board, eGodActType::lookForTargetedAttack),
         mType(type) {}
     eLookForTargetedAttackGodAct(GameBoard& board) :
-        eLookForTargetedAttackGodAct(board, eGodType::zeus) {}
+        eLookForTargetedAttackGodAct(board, GodType::zeus) {}
 
     eMissileTarget find(eTile* const t) override {
         const auto null = static_cast<eTile*>(nullptr);
@@ -346,7 +346,7 @@ public:
         if(!b) return null;
         const auto type = b->type();
         if(!eBuilding::sAttackable(type)) return null;
-        const bool target = eGod::sTarget(mType, type);
+        const bool target = God::sTarget(mType, type);
         if(!target) return null;
         return b->centerTile();
     }
@@ -363,7 +363,7 @@ public:
         ar.buildingField("targetBuilding", &board(), mBTarget);
     }
 private:
-    eGodType mType;
+    GodType mType;
     stdptr<eBuilding> mBTarget;
 };
 
@@ -391,7 +391,7 @@ public:
             for(const auto& cc : chars) {
                 if(mCptr == cc.get()) continue;
                 bool isGod = false;
-                eGod::sCharacterToGodType(cc->type(), &isGod);
+                God::sCharacterToGodType(cc->type(), &isGod);
                 if(isGod) continue;
                 bool isMonster = false;
                 eMonster::sCharacterToMonsterType(cc->type(), &isMonster);
@@ -433,7 +433,7 @@ private:
     stdptr<eBuilding> mBTarget;
 };
 
-class eGodAction : public eGodMonsterAction {
+class eGodAction : public GodMonsterAction {
 public:
     eGodAction(eCharacter* const c, const eCharActionType type);
 
@@ -466,9 +466,9 @@ public:
     void goBackToSanctuary();
     void goToTarget();
 
-    eGodType type() const { return mType; }
+    GodType type() const { return mType; }
 private:
-    const eGodType mType;
+    const GodType mType;
 };
 
 class eGA_lookForSoldierAttackFinish : public eCharActFunc {
@@ -523,7 +523,7 @@ class eGA_teleportFinish : public eCharActFunc {
 public:
     eGA_teleportFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GA_teleportFinish) {}
-    eGA_teleportFinish(GameBoard& board, eGodMonsterAction* const ca,
+    eGA_teleportFinish(GameBoard& board, GodMonsterAction* const ca,
                        eTile* const tile) :
         eCharActFunc(board, eCharActFuncType::GA_teleportFinish),
         mTptr(ca), mTile(tile) {}
@@ -542,7 +542,7 @@ protected:
         ar.tileField("tile", board(), mTile);
     }
 private:
-    stdptr<eGodMonsterAction> mTptr;
+    stdptr<GodMonsterAction> mTptr;
     eTile* mTile = nullptr;
 };
 
@@ -550,7 +550,7 @@ class eGA_hermesRunFinish : public eCharActFunc {
 public:
     eGA_hermesRunFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GA_hermesRunFinish) {}
-    eGA_hermesRunFinish(GameBoard& board, eGodMonsterAction* const ca,
+    eGA_hermesRunFinish(GameBoard& board, GodMonsterAction* const ca,
                         eCharacter* const c, const bool appear) :
         eCharActFunc(board, eCharActFuncType::GA_hermesRunFinish),
         mTptr(ca), mCptr(c), mAppear(appear) {}
@@ -572,7 +572,7 @@ protected:
         ar.field("appear", mAppear);
     }
 private:
-    stdptr<eGodMonsterAction> mTptr;
+    stdptr<GodMonsterAction> mTptr;
     stdptr<eCharacter> mCptr;
     bool mAppear;
 };
@@ -591,7 +591,7 @@ public:
         const auto c = mCptr.get();
         board().ifVisible(c->tile(), [&]() {
             const auto ct = c->type();
-            const auto gt = eGod::sCharacterToGodType(ct);
+            const auto gt = God::sCharacterToGodType(ct);
             eSounds::playGodSound(gt, mSound);
         });
     }
@@ -610,7 +610,7 @@ class eGoToTargetTeleport : public eFindFailFunc {
 public:
     eGoToTargetTeleport(GameBoard& board) :
         eFindFailFunc(board, eFindFailFuncType::teleport2) {}
-    eGoToTargetTeleport(GameBoard& board, eGodMonsterAction* const ca) :
+    eGoToTargetTeleport(GameBoard& board, GodMonsterAction* const ca) :
         eFindFailFunc(board, eFindFailFuncType::teleport2),
         mTptr(ca) {}
 
@@ -624,7 +624,7 @@ protected:
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
-    stdptr<eGodMonsterAction> mTptr;
+    stdptr<GodMonsterAction> mTptr;
 };
 
 class eSpawnImpactPuffsGodAct : public eGodAct {

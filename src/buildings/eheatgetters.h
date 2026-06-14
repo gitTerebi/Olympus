@@ -6,7 +6,7 @@
 
 class eTileBase;
 
-enum class eGodType;
+enum class GodType;
 enum class Difficulty;
 
 namespace eHeatGetters {
@@ -20,7 +20,7 @@ namespace eHeatGetters {
     eHeat farming(const eBuildingType type);
     eHeat storage(const eBuildingType type);
 
-    eHeatGetter godLeaning(const eGodType gt);
+    eHeatGetter godLeaning(const GodType gt);
 
     eHeat empty(const eBuildingType type);
     eHeat any(const eBuildingType type);

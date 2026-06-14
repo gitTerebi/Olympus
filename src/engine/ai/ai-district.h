@@ -4,7 +4,7 @@
 #include "ai-building.h"
 
 #include "engine/eresourcetype.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 
 class eSaveArchive;
 
@@ -25,7 +25,7 @@ struct eDistrictReadyCondition {
     void serialize(eSaveArchive& ar);
     eType fType;
     eResourceType fResource = eResourceType::drachmas;
-    eGodType fSanctuary = eGodType::zeus;
+    GodType fSanctuary = GodType::zeus;
     int fValue = 0;
 };
 

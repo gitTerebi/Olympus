@@ -365,7 +365,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
 
     if(const auto ee = dynamic_cast<eGodEventValue*>(e.get())) {
         const auto godButtonL = new eLabeledWidget(window());
-        const auto act = [ee](const eGodType type) {
+        const auto act = [ee](const GodType type) {
             ee->setGod(type);
         };
         const auto godButton = new eGodButton(window());

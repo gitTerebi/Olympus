@@ -5,13 +5,13 @@
 
 class eSaveArchive;
 
-enum class eGodVisitStage {
+enum class GodVisitStage {
     none, appear, patrol, disappear
 };
 
-class eGodVisitAction : public eGodAction {
+class GodVisitAction : public eGodAction {
 public:
-    eGodVisitAction(eCharacter* const c);
+    GodVisitAction(eCharacter* const c);
 
     void increment(const int by) override;
     bool decide() override;
@@ -21,7 +21,7 @@ protected:
 private:
     void rebuildCurrentStage();
 
-    eGodVisitStage mStage{eGodVisitStage::none};
+    GodVisitStage mStage{GodVisitStage::none};
 
     int mLookForBless = 0;
     int mLookForSoldierAttack = 0;

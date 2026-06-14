@@ -73,7 +73,7 @@ void ConditionSettingsWidget::initialize(
     innerW->addWidget(typeButton);
 
     const auto godButton = new eGodButton(window());
-    godButton->initialize([setter, value](const eGodType type) {
+    godButton->initialize([setter, value](const GodType type) {
         value->fSanctuary = type;
         setter(*value);
     });

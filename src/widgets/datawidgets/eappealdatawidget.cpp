@@ -146,7 +146,7 @@ void eAppealDataWidget::paintEvent(ePainter& p) {
             commParser(7, 9); // diplomacy
             commParser(8, 12); // scholar
 
-            std::map<eGodType, std::vector<eTile*>> gods;
+            std::map<GodType, std::vector<eTile*>> gods;
             for(const auto b : mBuildings) {
                 const auto bt = b->type();
                 if(bt != eBuildingType::godMonument) continue;
@@ -167,7 +167,7 @@ void eAppealDataWidget::paintEvent(ePainter& p) {
                 } else {
                     title = templ1;
                 }
-                const auto name = eGod::sGodName(g);
+                const auto name = God::sGodName(g);
                 eStringHelpers::replace(title, "[commemorative_monument]", name);
 
                 const auto w = new eMonumentButton(window());

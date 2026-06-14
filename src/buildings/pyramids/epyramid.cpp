@@ -982,7 +982,7 @@ void ePyramid::initialize(const std::vector<bool>& levels) {
             h = 2;
         } break;
         case ePyramidTopType::statue: {
-            const auto godType = static_cast<eGodType>(t.fSpecial);
+            const auto godType = static_cast<GodType>(t.fSpecial);
             b = e::make_shared<ePyramidStatue>(
                     this, board, t.fElevation,
                     godType, t.fSpecial2, cid);
@@ -990,7 +990,7 @@ void ePyramid::initialize(const std::vector<bool>& levels) {
             h = 1;
         } break;
         case ePyramidTopType::monument: {
-            const auto godType = static_cast<eGodType>(t.fSpecial);
+            const auto godType = static_cast<GodType>(t.fSpecial);
             b = e::make_shared<ePyramidMonument>(
                     this, board, t.fElevation,
                     godType, t.fSpecial2, cid);
@@ -1389,102 +1389,102 @@ int ePyramid::sLevels(const eBuildingType type) {
     }
 }
 
-eGodType ePyramid::sGod(const eBuildingType type) {
+GodType ePyramid::sGod(const eBuildingType type) {
     switch(type) {
     case eBuildingType::minorShrineAphrodite:
-        return eGodType::aphrodite;
+        return GodType::aphrodite;
     case eBuildingType::minorShrineApollo:
-        return eGodType::apollo;
+        return GodType::apollo;
     case eBuildingType::minorShrineAres:
-        return eGodType::ares;
+        return GodType::ares;
     case eBuildingType::minorShrineArtemis:
-        return eGodType::artemis;
+        return GodType::artemis;
     case eBuildingType::minorShrineAthena:
-        return eGodType::athena;
+        return GodType::athena;
     case eBuildingType::minorShrineAtlas:
-        return eGodType::atlas;
+        return GodType::atlas;
     case eBuildingType::minorShrineDemeter:
-        return eGodType::demeter;
+        return GodType::demeter;
     case eBuildingType::minorShrineDionysus:
-        return eGodType::dionysus;
+        return GodType::dionysus;
     case eBuildingType::minorShrineHades:
-        return eGodType::hades;
+        return GodType::hades;
     case eBuildingType::minorShrineHephaestus:
-        return eGodType::hephaestus;
+        return GodType::hephaestus;
     case eBuildingType::minorShrineHera:
-        return eGodType::hera;
+        return GodType::hera;
     case eBuildingType::minorShrineHermes:
-        return eGodType::hermes;
+        return GodType::hermes;
     case eBuildingType::minorShrinePoseidon:
-        return eGodType::poseidon;
+        return GodType::poseidon;
     case eBuildingType::minorShrineZeus:
-        return eGodType::zeus;
+        return GodType::zeus;
 
     case eBuildingType::shrineAphrodite:
-        return eGodType::aphrodite;
+        return GodType::aphrodite;
     case eBuildingType::shrineApollo:
-        return eGodType::apollo;
+        return GodType::apollo;
     case eBuildingType::shrineAres:
-        return eGodType::ares;
+        return GodType::ares;
     case eBuildingType::shrineArtemis:
-        return eGodType::artemis;
+        return GodType::artemis;
     case eBuildingType::shrineAthena:
-        return eGodType::athena;
+        return GodType::athena;
     case eBuildingType::shrineAtlas:
-        return eGodType::atlas;
+        return GodType::atlas;
     case eBuildingType::shrineDemeter:
-        return eGodType::demeter;
+        return GodType::demeter;
     case eBuildingType::shrineDionysus:
-        return eGodType::dionysus;
+        return GodType::dionysus;
     case eBuildingType::shrineHades:
-        return eGodType::hades;
+        return GodType::hades;
     case eBuildingType::shrineHephaestus:
-        return eGodType::hephaestus;
+        return GodType::hephaestus;
     case eBuildingType::shrineHera:
-        return eGodType::hera;
+        return GodType::hera;
     case eBuildingType::shrineHermes:
-        return eGodType::hermes;
+        return GodType::hermes;
     case eBuildingType::shrinePoseidon:
-        return eGodType::poseidon;
+        return GodType::poseidon;
     case eBuildingType::shrineZeus:
-        return eGodType::zeus;
+        return GodType::zeus;
 
     case eBuildingType::majorShrineAphrodite:
-        return eGodType::aphrodite;
+        return GodType::aphrodite;
     case eBuildingType::majorShrineApollo:
-        return eGodType::apollo;
+        return GodType::apollo;
     case eBuildingType::majorShrineAres:
-        return eGodType::ares;
+        return GodType::ares;
     case eBuildingType::majorShrineArtemis:
-        return eGodType::artemis;
+        return GodType::artemis;
     case eBuildingType::majorShrineAthena:
-        return eGodType::athena;
+        return GodType::athena;
     case eBuildingType::majorShrineAtlas:
-        return eGodType::atlas;
+        return GodType::atlas;
     case eBuildingType::majorShrineDemeter:
-        return eGodType::demeter;
+        return GodType::demeter;
     case eBuildingType::majorShrineDionysus:
-        return eGodType::dionysus;
+        return GodType::dionysus;
     case eBuildingType::majorShrineHades:
-        return eGodType::hades;
+        return GodType::hades;
     case eBuildingType::majorShrineHephaestus:
-        return eGodType::hephaestus;
+        return GodType::hephaestus;
     case eBuildingType::majorShrineHera:
-        return eGodType::hera;
+        return GodType::hera;
     case eBuildingType::majorShrineHermes:
-        return eGodType::hermes;
+        return GodType::hermes;
     case eBuildingType::majorShrinePoseidon:
-        return eGodType::poseidon;
+        return GodType::poseidon;
     case eBuildingType::majorShrineZeus:
-        return eGodType::zeus;
+        return GodType::zeus;
 
     default:
-        return eGodType::poseidon;
+        return GodType::poseidon;
     }
 }
 
 eBuildingType ePyramid::sSwitchGod(const eBuildingType srcType,
-                                   const eGodType god) {
+                                   const GodType god) {
     const int godId = static_cast<int>(god);
     eBuildingType type;
     switch(srcType) {

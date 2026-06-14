@@ -2,7 +2,7 @@
 #define SANCTUARY_PREVIEW_H
 
 #include "engine/eworlddirection.h"
-#include "characters/gods/egodtype.h"
+#include "characters/gods/god-type.h"
 #include "pointers/estdselfref.h"
 
 #include <SDL2/SDL_rect.h>
@@ -26,7 +26,7 @@ struct SanctuaryPreviewEntry
                           int worldTileY,
                           int altitude,
                           int templeOverlayDirId,
-                          eGodType statueGod,
+                          GodType statueGod,
                           int statueTextureId,
                           int monumentTextureId,
                           bool altar,
@@ -37,7 +37,7 @@ struct SanctuaryPreviewEntry
     int fTy;
     int fAltitude;
     int fTempleOverlayDirId;
-    eGodType fStatueGod;
+    GodType fStatueGod;
     int fStatueTextureId;
     int fMonumentTextureId;
     bool fAltar;
@@ -91,13 +91,13 @@ SanctuaryTempleTextures sanctuaryTempleGetTextures(
 
 std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
     const eBuildingTextures& builTexs,
-    eGodType god,
+    GodType god,
     int rotateId,
     eWorldDirection dir);
 
 std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
     const eBuildingTextures& builTexs,
-    eGodType god,
+    GodType god,
     int rotateId,
     eWorldDirection dir);
 
@@ -131,7 +131,7 @@ void drawSanctuaryStatuePreview(
     GameBoard &board,
     eTilePainter &tp,
     const eBuildingTextures &builTexs,
-    eGodType god,
+    GodType god,
     int statueTextureId,
     int worldTileX,
     int worldTileY,
@@ -143,7 +143,7 @@ void drawSanctuaryMonumentPreview(
     GameBoard &board,
     eTilePainter &tp,
     const eBuildingTextures &builTexs,
-    eGodType god,
+    GodType god,
     int monumentTextureId,
     int worldTileX,
     int worldTileY,

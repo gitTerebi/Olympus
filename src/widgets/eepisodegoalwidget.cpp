@@ -59,11 +59,11 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     } break;
     case eEpisodeGoalType::sanctuary: {
         const auto g = new eGodButton(window());
-        g->initialize([e, updateText](const eGodType god) {
+        g->initialize([e, updateText](const GodType god) {
             e->fEnumInt1 = static_cast<int>(god);
             updateText();
         });
-        const auto t = static_cast<eGodType>(e->fEnumInt1);
+        const auto t = static_cast<GodType>(e->fEnumInt1);
         g->setType(t);
         detailsW->addWidget(g);
     } break;
@@ -92,7 +92,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
         auto t = static_cast<eBuildingType>(e->fEnumInt1);
         p->setType(t);
 
-        g->initialize([e, updateText](const eGodType god) {
+        g->initialize([e, updateText](const GodType god) {
             auto t = static_cast<eBuildingType>(e->fEnumInt1);
             t = ePyramid::sSwitchGod(t, god);
             e->fEnumInt1 = static_cast<int>(t);
@@ -154,11 +154,11 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     } break;
     case eEpisodeGoalType::quest: {
         const auto b = new eGodButton(window());
-        b->initialize([e, updateText](const eGodType g) {
+        b->initialize([e, updateText](const GodType g) {
             e->fEnumInt1 = static_cast<int>(g);
             updateText();
         });
-        const auto g = static_cast<eGodType>(e->fEnumInt1);
+        const auto g = static_cast<GodType>(e->fEnumInt1);
         b->setType(g);
         detailsW->addWidget(b);
 

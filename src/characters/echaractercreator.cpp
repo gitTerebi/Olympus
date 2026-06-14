@@ -83,10 +83,10 @@
 
 #include "monsters/ecalydonianboar.h"
 
-#include "gods/eathena.h"
-#include "gods/edemeter.h"
-#include "gods/edionysus.h"
-#include "gods/ehermes.h"
+#include "gods/athena.h"
+#include "gods/demeter.h"
+#include "gods/dionysus.h"
+#include "gods/hermes.h"
 
 #include "heroes/achilles.h"
 
@@ -280,33 +280,33 @@ stdsptr<eCharacter> eCharacter::sCreate(
         return e::make_shared<eSatyr>(board);
 
     case eCharacterType::aphrodite:
-        return e::make_shared<eAphrodite>(board);
+        return e::make_shared<Aphrodite>(board);
     case eCharacterType::apollo:
-        return e::make_shared<eApollo>(board);
+        return e::make_shared<Apollo>(board);
     case eCharacterType::ares:
-        return e::make_shared<eAres>(board);
+        return e::make_shared<Ares>(board);
     case eCharacterType::artemis:
-        return e::make_shared<eArtemis>(board);
+        return e::make_shared<Artemis>(board);
     case eCharacterType::athena:
-        return e::make_shared<eAthena>(board);
+        return e::make_shared<Athena>(board);
     case eCharacterType::atlas:
-        return e::make_shared<eAtlas>(board);
+        return e::make_shared<Atlas>(board);
     case eCharacterType::demeter:
-        return e::make_shared<eDemeter>(board);
+        return e::make_shared<Demeter>(board);
     case eCharacterType::dionysus:
-        return e::make_shared<eDionysus>(board);
+        return e::make_shared<Dionysus>(board);
     case eCharacterType::hades:
-        return e::make_shared<eHades>(board);
+        return e::make_shared<Hades>(board);
     case eCharacterType::hephaestus:
-        return e::make_shared<eHephaestus>(board);
+        return e::make_shared<Hephaestus>(board);
     case eCharacterType::hera:
-        return e::make_shared<eHera>(board);
+        return e::make_shared<Hera>(board);
     case eCharacterType::hermes:
-        return e::make_shared<eHermes>(board);
+        return e::make_shared<Hermes>(board);
     case eCharacterType::poseidon:
-        return e::make_shared<ePoseidon>(board);
+        return e::make_shared<Poseidon>(board);
     case eCharacterType::zeus:
-        return e::make_shared<eZeus>(board);
+        return e::make_shared<Zeus>(board);
 
     case eCharacterType::achilles:
         return e::make_shared<Achilles>(board);

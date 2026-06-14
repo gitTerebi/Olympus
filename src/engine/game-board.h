@@ -23,7 +23,7 @@
 #include "world-board.h"
 #include "widgets/ebuildingmode.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "characters/monsters/emonster.h"
 #include "buildings/sanctuaries/sanctuary.h"
 
@@ -254,7 +254,7 @@ public:
 
     int maxSanctuaries(const eCityId cid) const;
     std::vector<eSanctuary*> sanctuaries(const eCityId cid) const;
-    eSanctuary* sanctuary(const eCityId cid, const eGodType god) const;
+    eSanctuary* sanctuary(const eCityId cid, const GodType god) const;
 
     std::vector<ePyramid*> pyramids(const eCityId cid) const;
     ePyramid* pyramid(const eCityId cid, const eBuildingType type) const;

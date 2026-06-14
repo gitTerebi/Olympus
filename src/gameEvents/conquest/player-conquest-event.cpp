@@ -32,7 +32,7 @@ void PlayerConquestEvent::initialize(
     if(mForces.fAres) {
         const auto bc = board->boardCityWithId(mForces.fAresCity);
         if(bc) {
-            const auto aresSanct = bc->sanctuary(eGodType::ares);
+            const auto aresSanct = bc->sanctuary(GodType::ares);
             if(aresSanct) {
                 aresSanct->consumeAresBuff();
                 aresSanct->sendAresAbroad();

@@ -1063,7 +1063,7 @@ std::string eDistrictReadyCondition::name() const {
         eStringHelpers::replace(result, "%1", std::to_string(fValue));
         break;
     case eType::sanctuaryReady:
-        eStringHelpers::replace(result, "%1", eGod::sGodName(fSanctuary));
+        eStringHelpers::replace(result, "%1", God::sGodName(fSanctuary));
         break;
     case eType::count:
         return "";

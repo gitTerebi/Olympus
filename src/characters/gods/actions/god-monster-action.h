@@ -11,7 +11,7 @@
 
 #include "textures/edestructiontextures.h"
 
-class eGod;
+class God;
 class eGodAct;
 enum class eGodSound;
 
@@ -106,7 +106,7 @@ inline bool findFailFuncField(eSaveArchive& ar, const char* name,
     return ok;
 }
 
-class eGodMonsterAction : public eComplexAction {
+class GodMonsterAction : public eComplexAction {
 public:
     using eComplexAction::eComplexAction;
 
@@ -159,7 +159,7 @@ public:
 
     bool lookForGodAttack(const int dtime, int& time,
                           const int freq, const int range);
-    void fightGod(eGod* const g, const stdsptr<eCharActFunc>& finishAttackA);
+    void fightGod(God* const g, const stdsptr<eCharActFunc>& finishAttackA);
 
     void spawnGodMultipleMissiles(
             const eCharacterActionType at,
@@ -206,9 +206,9 @@ class eGAA_fightFinish : public eCharActFunc {
 public:
     eGAA_fightFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GAA_fightFinish) {}
-    eGAA_fightFinish(GameBoard& board, eGodMonsterAction* const winnerA,
-                     eGodMonsterAction* const loserA, const eGodType wt,
-                     const eGodType lt) :
+    eGAA_fightFinish(GameBoard& board, GodMonsterAction* const winnerA,
+                     GodMonsterAction* const loserA, const GodType wt,
+                     const GodType lt) :
         eCharActFunc(board, eCharActFuncType::GAA_fightFinish),
         mWinnerPtr(winnerA), mLoserPtr(loserA),
         mWt(wt), mLt(lt) {}
@@ -223,17 +223,17 @@ protected:
         ar.field("loserGodType", mLt);
     }
 private:
-    stdptr<eGodMonsterAction> mWinnerPtr;
-    stdptr<eGodMonsterAction> mLoserPtr;
-    eGodType mWt;
-    eGodType mLt;
+    stdptr<GodMonsterAction> mWinnerPtr;
+    stdptr<GodMonsterAction> mLoserPtr;
+    GodType mWt;
+    GodType mLt;
 };
 
 class eGMA_patrolFailFail : public eCharActFunc {
 public:
     eGMA_patrolFailFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFailFail) {}
-    eGMA_patrolFailFail(GameBoard& board, eGodMonsterAction* const ca,
+    eGMA_patrolFailFail(GameBoard& board, GodMonsterAction* const ca,
                         const stdsptr<eCharActFunc>& finishAct) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFailFail),
         mTptr(ca), mFinishAct(finishAct) {}
@@ -250,7 +250,7 @@ protected:
         ar.charActFuncField("finishAction", board(), mFinishAct);
     }
 private:
-    stdptr<eGodMonsterAction> mTptr;
+    stdptr<GodMonsterAction> mTptr;
     stdsptr<eCharActFunc> mFinishAct;
 };
 
@@ -258,7 +258,7 @@ class eGMA_patrolFailFinish : public eCharActFunc {
 public:
     eGMA_patrolFailFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFailFinish) {}
-    eGMA_patrolFailFinish(GameBoard& board, eGodMonsterAction* const ca,
+    eGMA_patrolFailFinish(GameBoard& board, GodMonsterAction* const ca,
                           const stdsptr<eCharActFunc>& finishAct,
                           const int dist) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFailFinish),
@@ -277,7 +277,7 @@ protected:
         ar.field("distance", mDist);
     }
 private:
-    stdptr<eGodMonsterAction> mTptr;
+    stdptr<GodMonsterAction> mTptr;
     stdsptr<eCharActFunc> mFinishAct;
     int mDist = 100;
 };
@@ -287,7 +287,7 @@ public:
     eGMA_patrolFail(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFail) {}
     eGMA_patrolFail(GameBoard& board,
-                    eGodMonsterAction* const ca,
+                    GodMonsterAction* const ca,
                     const stdsptr<eCharActFunc>& finishAct,
                     const int dist) :
         eCharActFunc(board, eCharActFuncType::GMA_patrolFail),
@@ -305,7 +305,7 @@ protected:
         ar.field("distance", mDist);
     }
 private:
-    stdptr<eGodMonsterAction> mTptr;
+    stdptr<GodMonsterAction> mTptr;
     stdsptr<eCharActFunc> mFinishAct;
     int mDist = 100;
 };
@@ -352,7 +352,7 @@ public:
     eGMA_spawnMultipleMissilesFinish(GameBoard& board) :
         eCharActFunc(board, eCharActFuncType::GMA_spawnMultipleMissilesFinish) {}
     eGMA_spawnMultipleMissilesFinish(GameBoard& board,
-                                     eGodMonsterAction* const ca,
+                                     GodMonsterAction* const ca,
                                      const eCharacterActionType at,
                                      const eCharacterType chart,
                                      const int attackTime,
@@ -387,7 +387,7 @@ protected:
         ar.field("missileCount", mNMissiles);
     }
 private:
-    stdptr<eGodMonsterAction> mTptr;
+    stdptr<GodMonsterAction> mTptr;
     eCharacterActionType mAt;
     eCharacterType mChart;
     int mAttackTime = 0;
@@ -421,10 +421,10 @@ private:
     stdsptr<eFindFailFunc> mFunc;
 };
 
-class eGodMonsterActionInd : public eGodMonsterAction {
+class GodMonsterActionInd : public GodMonsterAction {
 public:
-    eGodMonsterActionInd(eCharacter* const c) :
-        eGodMonsterAction(c, eCharActionType::godMonsterActionInd) {}
+    GodMonsterActionInd(eCharacter* const c) :
+        GodMonsterAction(c, eCharActionType::godMonsterActionInd) {}
 
     bool decide() override {
         setState(eCharacterActionState::finished);

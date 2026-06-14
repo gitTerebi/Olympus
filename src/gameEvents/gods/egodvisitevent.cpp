@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
-#include "characters/gods/actions/egodvisitaction.h"
+#include "characters/gods/actions/god-visit-action.h"
 #include "elanguage.h"
 #include "fileIO/esavearchive.h"
 
@@ -12,7 +12,7 @@ eGodVisitEvent::eGodVisitEvent(const eCityId cid,
                                GameBoard& board) :
     eGameEvent(cid, eGameEventType::godVisit, branch, board) {}
 
-void eGodVisitEvent::setTypes(const std::vector<eGodType>& types) {
+void eGodVisitEvent::setTypes(const std::vector<GodType>& types) {
     mTypes = types;
     const int nTypes = mTypes.size();
     if(mNextId >= nTypes) mNextId = 0;
@@ -25,14 +25,14 @@ void eGodVisitEvent::setRandom(const bool r) {
 void eGodVisitEvent::loadResources() const {
     eGameEvent::loadResources();
     for(const auto g : mTypes) {
-        eGod::sLoadTextures(g);
+        God::sLoadTextures(g);
     }
 }
 
 void eGodVisitEvent::trigger() {
     const auto board = gameBoard();
     if(!board) return;
-    std::vector<eGodType> types;
+    std::vector<GodType> types;
     const auto cid = cityId();
     for(const auto t : mTypes) {
         const auto s = board->sanctuary(cid, t);
@@ -56,13 +56,13 @@ void eGodVisitEvent::trigger() {
         }
     }
     const auto t = types.at(tid);
-    const auto god = eGod::sCreateGod(t, *board);
+    const auto god = God::sCreateGod(t, *board);
     god->setOnCityId(cityId());
     god->setCityId(eCityId::neutralFriendly);
 
-    const auto a = e::make_shared<eGodVisitAction>(god.get());
+    const auto a = e::make_shared<GodVisitAction>(god.get());
     god->setAction(a);
-    god->setAttitude(eGodAttitude::friendly);
+    god->setAttitude(GodAttitude::friendly);
     a->increment(1);
     eEventData ed(cityId());
     ed.fChar = god.get();
@@ -77,7 +77,7 @@ std::string eGodVisitEvent::longName() const {
 
 void eGodVisitEvent::serializeFields(eSaveArchive& ar) {
     eGameEvent::serializeFields(ar);
-    ar.arrayField("types", mTypes, [](eSaveArchive& ar, eGodType& t) {
+    ar.arrayField("types", mTypes, [](eSaveArchive& ar, GodType& t) {
         ar.field("t", t);
     });
     ar.field("random", mRandom, false);

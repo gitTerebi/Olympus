@@ -198,10 +198,10 @@ set(SOURCES
     src/characters/actions/efollowaction.cpp
     src/characters/actions/egodactcreator.cpp
     src/characters/gods/actions/god-action.cpp
-    src/characters/gods/actions/egodattackaction.cpp
-    src/characters/gods/actions/egodmonsteraction.cpp
-    src/characters/gods/actions/egodvisitaction.cpp
-    src/characters/gods/actions/egodworshippedaction.cpp
+    src/characters/gods/actions/god-attack-action.cpp
+    src/characters/gods/actions/god-monster-action.cpp
+    src/characters/gods/actions/god-visit-action.cpp
+    src/characters/gods/actions/god-worshipped-action.cpp
     src/characters/gods/actions/god-minion-action.cpp
     src/characters/actions/egroweraction.cpp
     src/characters/actions/eheroaction.cpp
@@ -353,13 +353,13 @@ set(SOURCES
     src/characters/water-distributor.cpp
     src/characters/ewildanimal.cpp
     src/characters/wolf.cpp
-    src/characters/gods/eathena.cpp
-    src/characters/gods/ebasicgod.cpp
-    src/characters/gods/edemeter.cpp
-    src/characters/gods/edionysus.cpp
-    src/characters/gods/eextendedgod.cpp
-    src/characters/gods/egod.cpp
-    src/characters/gods/ehermes.cpp
+    src/characters/gods/athena.cpp
+    src/characters/gods/basic-god.cpp
+    src/characters/gods/demeter.cpp
+    src/characters/gods/dionysus.cpp
+    src/characters/gods/extended-god.cpp
+    src/characters/gods/god.cpp
+    src/characters/gods/hermes.cpp
     src/characters/heroes/achilles.cpp
     src/characters/heroes/ebasichero.cpp
     src/characters/heroes/ehero.cpp

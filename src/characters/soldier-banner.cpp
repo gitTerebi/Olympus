@@ -311,8 +311,8 @@ void SoldierBanner::moveToPalace() {
     case eBannerType::amazon:
     case eBannerType::aresWarrior: {
         const auto s = mType == eBannerType::amazon ?
-                            mBoard.sanctuary(cid, eGodType::artemis) :
-                            mBoard.sanctuary(cid, eGodType::ares);
+                            mBoard.sanctuary(cid, GodType::artemis) :
+                            mBoard.sanctuary(cid, GodType::ares);
         if(!s) return;
         const auto ts = s->warriorTiles();
         for(const auto t : ts) {
@@ -804,8 +804,8 @@ void SoldierBanner::sHandleHomeBuildingPlacement(
                 for(int i = 0; i < (int)bs.size(); i++) {
                     const auto bb = bs[i];
                     const auto bbt = bb->type();
-                    if((bbt == eBannerType::amazon && gt == eGodType::artemis) ||
-                       (bbt == eBannerType::aresWarrior && gt == eGodType::ares)) {
+                    if((bbt == eBannerType::amazon && gt == GodType::artemis) ||
+                       (bbt == eBannerType::aresWarrior && gt == GodType::ares)) {
                         bb->moveToPalace();
                         bb->goHome();
                         eVectorHelpers::remove(bs, bb);

@@ -4,7 +4,7 @@
 #include "characters/monsters/emonster.h"
 #include "characters/heroes/ehero.h"
 
-#include "characters/gods/actions/egodmonsteraction.h"
+#include "characters/gods/actions/god-monster-action.h"
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/epatrolmoveaction.h"
 #include "characters/actions/edefendcityaction.h"
@@ -300,7 +300,7 @@ bool eHeroAction::fightMonster(eMonster* const m) {
     const int fightTime = 5000;
     if(ranged) {
         const int attackTime = eHero::sHeroAttackTime(heroType());
-        const auto gm = e::make_shared<eGodMonsterActionInd>(c);
+        const auto gm = e::make_shared<GodMonsterActionInd>(c);
         gm->spawnTimedMissiles(eCharacterActionType::fight,
                                c->type(), attackTime, m,
                                nullptr, nullptr, nullptr,

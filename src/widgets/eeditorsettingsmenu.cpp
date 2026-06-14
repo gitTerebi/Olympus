@@ -3,7 +3,7 @@
 #include "framed-button.h"
 #include "elanguage.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "widgets/gods/egodselectionwidget.h"
 #include "emonsterselectionwidget.h"
 #include "buildings/pyramids/epyramid.h"
@@ -184,7 +184,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         for(const auto& cid : cids) {
             const auto friendGodsAct = [this, ep, cid]() {
                 const auto choose = new eGodSelectionWidget(window());
-                const auto act = [ep, cid](const std::vector<eGodType>& godNs) {
+                const auto act = [ep, cid](const std::vector<GodType>& godNs) {
                     ep->fFriendlyGods[cid] = godNs;
                 };
 

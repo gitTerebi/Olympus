@@ -3,7 +3,7 @@
 
 #include "../emonument.h"
 
-enum class eGodType;
+enum class GodType;
 class eSaveArchive;
 
 struct ePyramidSettings {
@@ -31,9 +31,9 @@ public:
     static void sDimensions(const eBuildingType type,
                             int& sw, int& sh);
     static int sLevels(const eBuildingType type);
-    static eGodType sGod(const eBuildingType type);
+    static GodType sGod(const eBuildingType type);
     static eBuildingType sSwitchGod(const eBuildingType srcType,
-                                    const eGodType god);
+                                    const GodType god);
     static bool sIsToGod(const eBuildingType type);
 protected:
     void serializeFields(eSaveArchive& ar) override;

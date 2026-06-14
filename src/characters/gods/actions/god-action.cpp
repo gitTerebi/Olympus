@@ -15,8 +15,8 @@
 
 eGodAction::eGodAction(eCharacter* const c,
                        const eCharActionType type) :
-    eGodMonsterAction(c, type),
-    mType(eGod::sCharacterToGodType(c->type())) {}
+    GodMonsterAction(c, type),
+    mType(God::sCharacterToGodType(c->type())) {}
 
 bool eGodAction::lookForBlessCurse(
         const int dtime,
@@ -146,8 +146,8 @@ void eGodAction::spawnGodMissile(
         const stdsptr<eGodAct>& act,
         const stdsptr<eCharActFunc>& finishAttackA) {
     const int time = at == eCharacterActionType::bless ?
-                         eGod::sGodBlessTime(type()) :
-                         eGod::sGodAttackTime(type());
+                         God::sGodBlessTime(type()) :
+                         God::sGodAttackTime(type());
     const auto c = character();
     using eGA_SGMPS = eGA_spawnGodMissilePlaySound;
     const auto playSound = std::make_shared<eGA_SGMPS>(
@@ -161,8 +161,8 @@ void eGodAction::goBackToSanctuary() {
     const auto s = board.sanctuary(cityId(), type());
     if(!s) return;
     const auto c = character();
-    const auto god = static_cast<eGod*>(c);
-    const stdptr<eGod> cptr(god);
+    const auto god = static_cast<God*>(c);
+    const stdptr<God> cptr(god);
     const auto fail = std::make_shared<eKillCharacterFinishFail>(
                           board, god);
     const auto finish = std::make_shared<eKillCharacterFinishFail>(
@@ -186,7 +186,7 @@ void eGodAction::goToTarget() {
     const auto hg = eHeatGetters::godLeaning(gt);
     using eGTTT = eGoToTargetTeleport;
     const auto tele = std::make_shared<eGTTT>(board(), this);
-    eGodMonsterAction::goToTarget(hg, tele);
+    GodMonsterAction::goToTarget(hg, tele);
 }
 
 void eSpawnImpactPuffsGodAct::act() {

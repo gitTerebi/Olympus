@@ -1,16 +1,16 @@
 #ifndef EEXTENDEDGOD_H
 #define EEXTENDEDGOD_H
 
-#include "egod.h"
+#include "god.h"
 
 #include "textures/egodtextures.h"
 
-class eExtendedGod : public eGod {
+class ExtendedGod : public God {
 public:
     using eGodTexs = eExtendedGodTextures eGodTextures::*;
-    eExtendedGod(GameBoard& board,
+    ExtendedGod(GameBoard& board,
                  const eGodTexs godTexs,
-                 const eGodType gt);
+                 const GodType gt);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 private:

@@ -1,7 +1,7 @@
 #include "eobsticlehandler.h"
 
 #include "characters/actions/monster-action.h"
-#include "characters/gods/actions/egodattackaction.h"
+#include "characters/gods/actions/god-attack-action.h"
 #include "characters/actions/soldier-action.h"
 
 stdsptr<eObsticleHandler> eObsticleHandler::sCreate(

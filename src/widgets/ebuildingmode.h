@@ -3,7 +3,7 @@
 
 #include "buildings/ebuilding.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 
 enum class eBuildingMode {
     none,
@@ -245,7 +245,7 @@ namespace eBuildingModeHelpers {
     eBuildingType toBuildingType(const eBuildingMode mode);
     eBuildingMode fromBuildingType(const eBuildingType type);
     int toCommemorativeId(const eBuildingMode mode);
-    eGodType toGodType(const eBuildingMode mode);
+    GodType toGodType(const eBuildingMode mode);
     bool isCloneable(const eBuildingMode mode);
 }
 

@@ -175,7 +175,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
                 for(const auto s : ss) {
                     const auto nameB = new eMythologyButton(window());
                     const auto gt = s->godType();
-                    const auto name = eGod::sGodName(gt);
+                    const auto name = God::sGodName(gt);
                     nameB->initialize(name);
                     w->addWidget(nameB);
                     nameB->align(eAlignment::hcenter);
@@ -242,8 +242,8 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
                 for(const auto g : ga) {
                     const auto nameB = new eMythologyButton(window());
                     const auto ct = g->type();
-                    const auto gt = eGod::sCharacterToGodType(ct);
-                    const auto name = eGod::sGodName(gt);
+                    const auto gt = God::sCharacterToGodType(ct);
+                    const auto name = God::sGodName(gt);
                     nameB->initialize(name);
                     w->addWidget(nameB);
                     nameB->align(eAlignment::hcenter);

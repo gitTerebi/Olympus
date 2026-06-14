@@ -1,11 +1,11 @@
 #ifndef EDIONYSUS_H
 #define EDIONYSUS_H
 
-#include "egod.h"
+#include "god.h"
 
-class eDionysus : public eGod {
+class Dionysus : public God {
 public:
-    eDionysus(GameBoard& board);
+    Dionysus(GameBoard& board);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 };

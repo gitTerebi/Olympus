@@ -2,7 +2,7 @@
 
 #include "widgets/eflatbutton.h"
 #include "estringhelpers.h"
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"
 #include "engine/game-board.h"
@@ -100,7 +100,7 @@ void GameWidget::createToastWidget(eToast &toast)
                                eResourceTypeHelpers::typeLongName(toast.fEd.fResourceType));
     eStringHelpers::replaceAll(title, "[itemshort]",
                                eResourceTypeHelpers::typeName(toast.fEd.fResourceType));
-    eStringHelpers::replaceAll(title, "[god]", eGod::sGodName(toast.fEd.fGod));
+    eStringHelpers::replaceAll(title, "[god]", God::sGodName(toast.fEd.fGod));
     eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(toast.fEd.fMonster));
     if (title.length() > 40)
         title = title.substr(0, 37) + "...";

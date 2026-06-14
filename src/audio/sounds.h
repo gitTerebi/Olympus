@@ -119,7 +119,7 @@ public:
 
     static void playSeaSound();
 
-    static void playGodSound(const eGodType g,
+    static void playGodSound(const GodType g,
                              const eGodSound s);
     static void playHeroSound(const eHeroType h,
                               const eHeroSound s);

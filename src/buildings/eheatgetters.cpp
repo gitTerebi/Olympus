@@ -1,7 +1,7 @@
 #include "eheatgetters.h"
 #include "engine/etilebase.h"
 
-#include "characters/gods/egodtype.h"
+#include "characters/gods/god-type.h"
 #include "engine/difficulty.h"
 #include "engine/model-data.h"
 
@@ -373,49 +373,49 @@ eHeat eHeatGetters::culture(const eBuildingType type) {
     }
 }
 
-eHeatGetters::eHeatGetter eHeatGetters::godLeaning(const eGodType gt) {
+eHeatGetters::eHeatGetter eHeatGetters::godLeaning(const GodType gt) {
     eHeatGetter hg;
     switch(gt) {
-    case eGodType::aphrodite:
+    case GodType::aphrodite:
         hg = eHeatGetters::housing;
         break;
-    case eGodType::apollo:
+    case GodType::apollo:
         hg = eHeatGetters::culture;
         break;
-    case eGodType::ares:
+    case GodType::ares:
         hg = eHeatGetters::industry;
         break;
-    case eGodType::artemis:
+    case GodType::artemis:
         hg = eHeatGetters::farming;
         break;
-    case eGodType::athena:
+    case GodType::athena:
         hg = eHeatGetters::industry;
         break;
-    case eGodType::atlas:
+    case GodType::atlas:
         hg = eHeatGetters::industry;
         break;
-    case eGodType::demeter:
+    case GodType::demeter:
         hg = eHeatGetters::farming;
         break;
-    case eGodType::dionysus:
+    case GodType::dionysus:
         hg = eHeatGetters::farming;
         break;
-    case eGodType::hades:
+    case GodType::hades:
         hg = eHeatGetters::storage;
         break;
-    case eGodType::hephaestus:
+    case GodType::hephaestus:
         hg = eHeatGetters::industry;
         break;
-    case eGodType::hera:
+    case GodType::hera:
         hg = eHeatGetters::farming;
         break;
-    case eGodType::hermes:
+    case GodType::hermes:
         hg = eHeatGetters::culture;
         break;
-    case eGodType::poseidon:
+    case GodType::poseidon:
         hg = eHeatGetters::farming;
         break;
-    case eGodType::zeus:
+    case GodType::zeus:
         hg = eHeatGetters::storage;
         break;
     }

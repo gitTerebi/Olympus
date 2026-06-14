@@ -1,4 +1,4 @@
-﻿#include "egodmonsteraction.h"
+﻿#include "god-monster-action.h"
 
 #include "fileIO/esavearchive.h"
 
@@ -13,25 +13,25 @@
 #include "etilehelper.h"
 #include "missiles/egodmissile.h"
 
-#include "characters/gods/actions/egodattackaction.h"
+#include "characters/gods/actions/god-attack-action.h"
 #include "characters/gods/actions/god-action.h"
 #include "characters/actions/monster-action.h"
 #include "characters/actions/epatrolmoveaction.h"
 
 
-void eGodMonsterAction::appear() {
+void GodMonsterAction::appear() {
     const auto c = character();
     const auto ct = c->type();
     bool isGod;
-    const auto gt = eGod::sCharacterToGodType(ct, &isGod);
+    const auto gt = God::sCharacterToGodType(ct, &isGod);
     if(isGod) {
-        if(gt == eGodType::hermes) {
+        if(gt == GodType::hermes) {
             hermesRun(true);
         } else {
             const auto c = character();
             c->setActionType(eCharacterActionType::appear);
             const auto a = e::make_shared<eWaitAction>(c);
-            const int time = eGod::sGodAppearTime(gt);
+            const int time = God::sGodAppearTime(gt);
             a->setTime(time);
             setCurrentAction(a);
             playAppearSound();
@@ -39,15 +39,15 @@ void eGodMonsterAction::appear() {
     }
 }
 
-void eGodMonsterAction::disappear(
+void GodMonsterAction::disappear(
         const bool die,
         const stdsptr<eCharActFunc>& finish) {
     const auto c = character();
     const auto ct = c->type();
     bool isGod;
-    const auto gt = eGod::sCharacterToGodType(ct, &isGod);
+    const auto gt = God::sCharacterToGodType(ct, &isGod);
     if(isGod) {
-        if(gt == eGodType::hermes) {
+        if(gt == GodType::hermes) {
             hermesRun(false);
         } else {
             const auto c = character();
@@ -63,42 +63,42 @@ void eGodMonsterAction::disappear(
     }
 }
 
-void eGodMonsterAction::teleport(eTile* const tile) {
+void GodMonsterAction::teleport(eTile* const tile) {
     using eGA_TF = eGA_teleportFinish;
     const auto finish = std::make_shared<eGA_TF>(
                             board(), this, tile);
     disappear(false, finish);
 }
 
-void eGodMonsterAction::playAppearSound() {
+void GodMonsterAction::playAppearSound() {
     const auto c = character();
     auto& board = c->getBoard();
     const auto ct = c->type();
     bool isGod;
-    const auto gt = eGod::sCharacterToGodType(ct, &isGod);
+    const auto gt = God::sCharacterToGodType(ct, &isGod);
     if(!isGod) return;
     board.ifVisible(c->tile(), [gt]() {
         eSounds::playGodSound(gt, eGodSound::appear);
     });
 }
 
-void eGodMonsterAction::playDisappearSound() {
+void GodMonsterAction::playDisappearSound() {
     const auto c = character();
     auto& board = c->getBoard();
     const auto ct = c->type();
     bool isGod;
-    const auto gt = eGod::sCharacterToGodType(ct, &isGod);
+    const auto gt = God::sCharacterToGodType(ct, &isGod);
     if(!isGod) return;
     board.ifVisible(c->tile(), [gt]() {
         eSounds::playGodSound(gt, eGodSound::disappear);
     });
 }
 
-void eGodMonsterAction::hermesRun(const bool appear) {
+void GodMonsterAction::hermesRun(const bool appear) {
     const auto c = character();
     c->setSpeed(105.0);
     const auto tile = c->tile();
-    const stdptr<eGodMonsterAction> tptr(this);
+    const stdptr<GodMonsterAction> tptr(this);
     using eGA_HRF = eGA_hermesRunFinish;
     const auto finish = std::make_shared<eGA_HRF>(
                             board(), this, c, appear);
@@ -112,7 +112,7 @@ void eGodMonsterAction::hermesRun(const bool appear) {
     if(appear) playAppearSound();
 }
 
-void eGodMonsterAction::randomPlaceOnBoard() {
+void GodMonsterAction::randomPlaceOnBoard() {
     const auto c = character();
     auto& board = c->getBoard();
     const auto cid = c->onCityId();
@@ -125,7 +125,7 @@ void eGodMonsterAction::randomPlaceOnBoard() {
     c->changeTile(tile);
 }
 
-void eGodMonsterAction::moveAround(
+void GodMonsterAction::moveAround(
         const stdsptr<eCharActFunc>& finishAct,
         const int time,
         const stdsptr<WalkableObject>& walkable) {
@@ -143,14 +143,14 @@ void eGodMonsterAction::moveAround(
     setCurrentAction(a);
 }
 
-void eGodMonsterAction::goToTarget(const eHeatGetters::eHeatGetter hg,
+void GodMonsterAction::goToTarget(const eHeatGetters::eHeatGetter hg,
                                    const stdsptr<eFindFailFunc>& findFailFunc,
                                    const stdsptr<eObsticleHandler>& oh,
                                    const eTileDistance& tileDistance,
                                    const stdsptr<WalkableObject>& pathFindWalkable,
                                    const stdsptr<WalkableObject>& moveWalkable) {
     const auto c = character();
-    const stdptr<eGodMonsterAction> tptr(this);
+    const stdptr<GodMonsterAction> tptr(this);
     const stdptr<eCharacter> cptr(c);
     const auto hmFinish = [tptr, this, cptr,
                           c, findFailFunc, oh,
@@ -189,7 +189,7 @@ void eGodMonsterAction::goToTarget(const eHeatGetters::eHeatGetter hg,
     wait();
 }
 
-void eGodMonsterAction::goToTile(
+void GodMonsterAction::goToTile(
         eTile* const tile,
         const stdsptr<eFindFailFunc>& findFailFunc,
         const stdsptr<eObsticleHandler>& oh,
@@ -215,7 +215,7 @@ void eGodMonsterAction::goToTile(
     c->setActionType(eCharacterActionType::walk);
 }
 
-void eGodMonsterAction::spawnMissile(const eCharacterActionType at,
+void GodMonsterAction::spawnMissile(const eCharacterActionType at,
                                      const eCharacterType chart,
                                      const int attackTime,
                                      const eMissileTarget& target,
@@ -250,7 +250,7 @@ void eGodMonsterAction::spawnMissile(const eCharacterActionType at,
     });
 
     const auto a = e::make_shared<eWaitAction>(c);
-    const stdptr<eGodMonsterAction> tptr(this);
+    const stdptr<GodMonsterAction> tptr(this);
     const auto finish = std::make_shared<eGMA_spawnMissileFinish>(
                             board, character(),
                             at, chart, target.target(),
@@ -261,7 +261,7 @@ void eGodMonsterAction::spawnMissile(const eCharacterActionType at,
     setCurrentAction(a);
 }
 
-void eGodMonsterAction::spawnMultipleMissiles(
+void GodMonsterAction::spawnMultipleMissiles(
           const eCharacterActionType at,
           const eCharacterType ct,
           const int attackTime,
@@ -287,7 +287,7 @@ void eGodMonsterAction::spawnMultipleMissiles(
                  playSound, playHitSound, finishAA);
 }
 
-void eGodMonsterAction::spawnTimedMissiles(
+void GodMonsterAction::spawnTimedMissiles(
         const eCharacterActionType at,
         const eCharacterType ct,
         const int attackTime,
@@ -302,13 +302,13 @@ void eGodMonsterAction::spawnTimedMissiles(
                           finishA, n);
 }
 
-bool eGodMonsterAction::lookForGodAttack(const int dtime, int& time,
+bool GodMonsterAction::lookForGodAttack(const int dtime, int& time,
                                          const int freq, const int range) {
     const auto c = character();
     const auto cType = c->type();
     const auto cat = c->actionType();
     bool isGod = false;
-    eGod::sCharacterToGodType(cType, &isGod);
+    God::sCharacterToGodType(cType, &isGod);
     if(!isGod) return false;
     const bool walking = cat == eCharacterActionType::walk;
     if(!walking) return false;
@@ -321,7 +321,7 @@ bool eGodMonsterAction::lookForGodAttack(const int dtime, int& time,
     time += dtime;
     if(time > freq) {
         time -= freq;
-        eGod* otherGod = nullptr;
+        God* otherGod = nullptr;
         for(int i = -range; i <= range && !otherGod; i++) {
             for(int j = -range; j <= range; j++) {
                 const int ttx = tx + i;
@@ -330,14 +330,14 @@ bool eGodMonsterAction::lookForGodAttack(const int dtime, int& time,
                 if(!t) continue;
                 const auto& chars = t->characters();
                 for(const auto& ch : chars) {
-                    if(const auto god = dynamic_cast<eGod*>(ch.get())) {
+                    if(const auto god = dynamic_cast<God*>(ch.get())) {
                         const auto att = god->attitude();
                         const auto at = god->actionType();
                         if(at != eCharacterActionType::walk) {
                             continue;
                         }
-                        if(att == eGodAttitude::friendly ||
-                           att == eGodAttitude::worshipped) {
+                        if(att == GodAttitude::friendly ||
+                           att == GodAttitude::worshipped) {
                             otherGod = god;
                             break;
                         }
@@ -348,15 +348,15 @@ bool eGodMonsterAction::lookForGodAttack(const int dtime, int& time,
 
         if(otherGod) {
             const auto aa = otherGod->action();
-            if(const auto otherAction = dynamic_cast<eGodMonsterAction*>(aa)) {
-                const auto thisGod = static_cast<eGod*>(c);
-                const stdptr<eGod> g1ptr(thisGod);
-                const stdptr<eGodMonsterAction> g1Aptr(this);
-                const stdptr<eGod> g2ptr(otherGod);
-                const stdptr<eGodMonsterAction> g2Aptr(otherAction);
+            if(const auto otherAction = dynamic_cast<GodMonsterAction*>(aa)) {
+                const auto thisGod = static_cast<God*>(c);
+                const stdptr<God> g1ptr(thisGod);
+                const stdptr<GodMonsterAction> g1Aptr(this);
+                const stdptr<God> g2ptr(otherGod);
+                const stdptr<GodMonsterAction> g2Aptr(otherAction);
                 const auto g1t = g1ptr->type();
                 const auto g2t = g2ptr->type();
-                const auto wt = eGod::sFightWinner(g1t, g2t);
+                const auto wt = God::sFightWinner(g1t, g2t);
                 const auto lt = g1t == wt ? g2t : g1t;
                 const auto winnerA = g1t == wt ? g1Aptr : g2Aptr;
                 const auto loserA = g1t == wt ? g2Aptr : g1Aptr;
@@ -373,8 +373,8 @@ bool eGodMonsterAction::lookForGodAttack(const int dtime, int& time,
     return false;
 }
 
-void eGodMonsterAction::fightGod(
-        eGod* const g,
+void GodMonsterAction::fightGod(
+        God* const g,
         const stdsptr<eCharActFunc>& finishAttackA) {
     const auto at = eCharacterActionType::fight2;
     const auto s = eGodSound::attack;
@@ -386,7 +386,7 @@ void eGodMonsterAction::fightGod(
                           playHitSound, finishAttackA, 6000);
 }
 
-void eGodMonsterAction::spawnGodMultipleMissiles(
+void GodMonsterAction::spawnGodMultipleMissiles(
         const eCharacterActionType at,
         const eCharacterType chart,
         const eMissileTarget& target,
@@ -396,8 +396,8 @@ void eGodMonsterAction::spawnGodMultipleMissiles(
         const int nMissiles) {
     const auto c = character();
     const auto cType = c->type();
-    const auto godType = eGod::sCharacterToGodType(cType);
-    const int time = eGod::sGodAttackTime(godType);
+    const auto godType = God::sCharacterToGodType(cType);
+    const int time = God::sGodAttackTime(godType);
     using eGA_SGMPS = eGA_spawnGodMissilePlaySound;
     const auto playSound = std::make_shared<eGA_SGMPS>(
                                board(), sound, c);
@@ -406,7 +406,7 @@ void eGodMonsterAction::spawnGodMultipleMissiles(
                           finishA, nMissiles);
 }
 
-void eGodMonsterAction::spawnGodTimedMissiles(
+void GodMonsterAction::spawnGodTimedMissiles(
         const eCharacterActionType at,
         const eCharacterType chart,
         eTile* const target,
@@ -416,15 +416,15 @@ void eGodMonsterAction::spawnGodTimedMissiles(
         const int time) {
     const auto c = character();
     const auto cType = c->type();
-    const auto godType = eGod::sCharacterToGodType(cType);
-    const int atime = eGod::sGodAttackTime(godType);
+    const auto godType = God::sCharacterToGodType(cType);
+    const int atime = God::sGodAttackTime(godType);
     const int n = std::round(double(time)/atime);
     spawnGodMultipleMissiles(at, chart, target,
                              sound, playHitSound,
                              finishA, n);
 }
 
-void eGodMonsterAction::patrol(
+void GodMonsterAction::patrol(
         const stdsptr<eCharActFunc>& finishAct,
         const int dist) {
     const auto c = character();
@@ -438,7 +438,7 @@ void eGodMonsterAction::patrol(
     setCurrentAction(a);
 }
 
-void eGodMonsterAction::goToNearestRoad(
+void GodMonsterAction::goToNearestRoad(
         const stdsptr<eCharActFunc>& finishAct,
         const int dist) {
     const auto c = character();
@@ -465,7 +465,7 @@ void eGodMonsterAction::goToNearestRoad(
     }
 }
 
-void eGodMonsterAction::pauseAction() {
+void GodMonsterAction::pauseAction() {
     const auto ca = currentAction();
     if(!ca) return;
     auto& p = mPausedActions.emplace_back();
@@ -475,7 +475,7 @@ void eGodMonsterAction::pauseAction() {
     p.fO = c->orientation();
 }
 
-void eGodMonsterAction::resumeAction() {
+void GodMonsterAction::resumeAction() {
     if(mPausedActions.empty()) return;
     const auto p = mPausedActions.back();
     mPausedActions.pop_back();
@@ -484,7 +484,7 @@ void eGodMonsterAction::resumeAction() {
     c->setActionType(p.fAt);
 }
 
-void eGodMonsterAction::serializeFields(eSaveArchive& ar) {
+void GodMonsterAction::serializeFields(eSaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     if(ar.reading()) mPausedActions.clear();
 }
@@ -561,14 +561,14 @@ void eGAA_fightFinish::call() {
     ePlayerCityTarget target;
     const auto winnerPtr = mWinnerPtr;
     const auto loserPtr = mLoserPtr;
-    const auto tip = eGod::sFightResultString(mWt, mLt);
+    const auto tip = God::sFightResultString(mWt, mLt);
     if(winnerPtr) winnerPtr->resumeAction();
     if(loserPtr) {
         const auto loser = loserPtr->character();
         target = ePlayerCityTarget(loser->onCityId());
-        const auto loserGod = static_cast<eGod*>(loser);
+        const auto loserGod = static_cast<God*>(loser);
         const auto att = loserGod->attitude();
-        if(att == eGodAttitude::worshipped) {
+        if(att == GodAttitude::worshipped) {
             const auto type = loserGod->type();
             const auto cid = loserGod->cityId();
             const auto s = board.sanctuary(cid, type);

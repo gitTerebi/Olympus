@@ -3,7 +3,7 @@
 
 #include "gameEvents/egameevent.h"
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 
 class eSaveArchive;
 
@@ -16,12 +16,12 @@ public:
     void trigger() override;
     std::string longName() const override;
 
-    void setGod(const eGodType god) { mGod = god; }
-    eGodType god() const { return mGod; }
+    void setGod(const GodType god) { mGod = god; }
+    GodType god() const { return mGod; }
 protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
-    eGodType mGod = eGodType::zeus;
+    GodType mGod = GodType::zeus;
 };
 
 #endif // EGODTRADERESUMESEVENT_H

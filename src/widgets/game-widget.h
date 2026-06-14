@@ -57,9 +57,9 @@ class eBuildingRenderer;
 class eTilePainter;
 
 enum class eAgoraOrientation;
-enum class eGodType;
+enum class GodType;
 enum class eHeroType;
-enum class eGodQuestId;
+enum class GodQuestId;
 enum class eWorldDirection;
 
 using eBuildingCreator = std::function<stdsptr<eBuilding>()>;

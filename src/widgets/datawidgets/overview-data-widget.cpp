@@ -148,39 +148,39 @@ void OverviewDataWidget::shown() {
 }
 
 stdsptr<eTexture> sGodIcon(const eUIScale scale,
-                           const eGodType god) {
+                           const GodType god) {
     const auto& intrfc = eGameTextures::interface();
     const int iRes = static_cast<int>(scale);
     const auto& coll = intrfc[iRes];
     switch(god) {
-    case eGodType::zeus:
+    case GodType::zeus:
         return coll.fZeusQuestIcon;
-    case eGodType::poseidon:
+    case GodType::poseidon:
         return coll.fPoseidonQuestIcon;
-    case eGodType::demeter:
+    case GodType::demeter:
         return coll.fDemeterQuestIcon;
-    case eGodType::apollo:
+    case GodType::apollo:
         return coll.fApolloQuestIcon;
-    case eGodType::artemis:
+    case GodType::artemis:
         return coll.fArtemisQuestIcon;
-    case eGodType::ares:
+    case GodType::ares:
         return coll.fAresQuestIcon;
-    case eGodType::aphrodite:
+    case GodType::aphrodite:
         return coll.fAphroditeQuestIcon;
-    case eGodType::hermes:
+    case GodType::hermes:
         return coll.fHermesQuestIcon;
-    case eGodType::athena:
+    case GodType::athena:
         return coll.fAthenaQuestIcon;
-    case eGodType::hephaestus:
+    case GodType::hephaestus:
         return coll.fHephaestusQuestIcon;
-    case eGodType::dionysus:
+    case GodType::dionysus:
         return coll.fDionysusQuestIcon;
-    case eGodType::hades:
+    case GodType::hades:
         return coll.fHadesQuestIcon;
 
-    case eGodType::hera:
+    case GodType::hera:
         return coll.fHeraQuestIcon;
-    case eGodType::atlas:
+    case GodType::atlas:
         return coll.fAtlasQuestIcon;
     }
     return nullptr;
@@ -340,9 +340,9 @@ class eGodQuestButton : public eRequestButton {
 public:
     using eRequestButton::eRequestButton;
 
-    void initialize(const eGodType god,
+    void initialize(const GodType god,
                     const eViableChecker& checker) {
-        const auto godName = eGod::sGodName(god);
+        const auto godName = God::sGodName(god);
         const auto res = resolution();
         const auto uiScale = res.uiScale();
         const auto godIcon = sGodIcon(uiScale, god);

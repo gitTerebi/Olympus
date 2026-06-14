@@ -173,23 +173,23 @@ void finishSanctuaryPart(eSanctBuilding* const part)
     }
 }
 
-eGodType statueGod(const eSanctEleType type, const eGodType fallback)
+GodType statueGod(const eSanctEleType type, const GodType fallback)
 {
     switch(type) {
-    case eSanctEleType::aphroditeStatue: return eGodType::aphrodite;
-    case eSanctEleType::apolloStatue: return eGodType::apollo;
-    case eSanctEleType::aresStatue: return eGodType::ares;
-    case eSanctEleType::artemisStatue: return eGodType::artemis;
-    case eSanctEleType::athenaStatue: return eGodType::athena;
-    case eSanctEleType::atlasStatue: return eGodType::atlas;
-    case eSanctEleType::demeterStatue: return eGodType::demeter;
-    case eSanctEleType::dionysusStatue: return eGodType::dionysus;
-    case eSanctEleType::hadesStatue: return eGodType::hades;
-    case eSanctEleType::hephaestusStatue: return eGodType::hephaestus;
-    case eSanctEleType::heraStatue: return eGodType::hera;
-    case eSanctEleType::hermesStatue: return eGodType::hermes;
-    case eSanctEleType::poseidonStatue: return eGodType::poseidon;
-    case eSanctEleType::zeusStatue: return eGodType::zeus;
+    case eSanctEleType::aphroditeStatue: return GodType::aphrodite;
+    case eSanctEleType::apolloStatue: return GodType::apollo;
+    case eSanctEleType::aresStatue: return GodType::ares;
+    case eSanctEleType::artemisStatue: return GodType::artemis;
+    case eSanctEleType::athenaStatue: return GodType::athena;
+    case eSanctEleType::atlasStatue: return GodType::atlas;
+    case eSanctEleType::demeterStatue: return GodType::demeter;
+    case eSanctEleType::dionysusStatue: return GodType::dionysus;
+    case eSanctEleType::hadesStatue: return GodType::hades;
+    case eSanctEleType::hephaestusStatue: return GodType::hephaestus;
+    case eSanctEleType::heraStatue: return GodType::hera;
+    case eSanctEleType::hermesStatue: return GodType::hermes;
+    case eSanctEleType::poseidonStatue: return GodType::poseidon;
+    case eSanctEleType::zeusStatue: return GodType::zeus;
     default: return fallback;
     }
 }
@@ -361,46 +361,46 @@ std::shared_ptr<eTexture> sanctuaryTerrainTexture(
 
 const eTextureCollection* statueTextureCollection(
     const eBuildingTextures& builTexs,
-    const eGodType god)
+    const GodType god)
 {
     switch(god) {
-    case eGodType::aphrodite: return &builTexs.fAphroditeStatues;
-    case eGodType::apollo: return &builTexs.fApolloStatues;
-    case eGodType::ares: return &builTexs.fAresStatues;
-    case eGodType::artemis: return &builTexs.fArtemisStatues;
-    case eGodType::athena: return &builTexs.fAthenaStatues;
-    case eGodType::atlas: return &builTexs.fAtlasStatues;
-    case eGodType::demeter: return &builTexs.fDemeterStatues;
-    case eGodType::dionysus: return &builTexs.fDionysusStatues;
-    case eGodType::hades: return &builTexs.fHadesStatues;
-    case eGodType::hephaestus: return &builTexs.fHephaestusStatues;
-    case eGodType::hera: return &builTexs.fHeraStatues;
-    case eGodType::hermes: return &builTexs.fHermesStatues;
-    case eGodType::poseidon: return &builTexs.fPoseidonStatues;
-    case eGodType::zeus: return &builTexs.fZeusStatues;
+    case GodType::aphrodite: return &builTexs.fAphroditeStatues;
+    case GodType::apollo: return &builTexs.fApolloStatues;
+    case GodType::ares: return &builTexs.fAresStatues;
+    case GodType::artemis: return &builTexs.fArtemisStatues;
+    case GodType::athena: return &builTexs.fAthenaStatues;
+    case GodType::atlas: return &builTexs.fAtlasStatues;
+    case GodType::demeter: return &builTexs.fDemeterStatues;
+    case GodType::dionysus: return &builTexs.fDionysusStatues;
+    case GodType::hades: return &builTexs.fHadesStatues;
+    case GodType::hephaestus: return &builTexs.fHephaestusStatues;
+    case GodType::hera: return &builTexs.fHeraStatues;
+    case GodType::hermes: return &builTexs.fHermesStatues;
+    case GodType::poseidon: return &builTexs.fPoseidonStatues;
+    case GodType::zeus: return &builTexs.fZeusStatues;
     }
     return nullptr;
 }
 
 const eTextureCollection* monumentTextureCollection(
     const eBuildingTextures& builTexs,
-    const eGodType god)
+    const GodType god)
 {
     switch(god) {
-    case eGodType::aphrodite: return &builTexs.fAphroditeMonuments;
-    case eGodType::apollo: return &builTexs.fApolloMonuments;
-    case eGodType::ares: return &builTexs.fAresMonuments;
-    case eGodType::artemis: return &builTexs.fArtemisMonuments;
-    case eGodType::athena: return &builTexs.fAthenaMonuments;
-    case eGodType::atlas: return &builTexs.fAtlasMonuments;
-    case eGodType::demeter: return &builTexs.fDemeterMonuments;
-    case eGodType::dionysus: return &builTexs.fDionysusMonuments;
-    case eGodType::hades: return &builTexs.fHadesMonuments;
-    case eGodType::hephaestus: return &builTexs.fHephaestusMonuments;
-    case eGodType::hera: return &builTexs.fHeraMonuments;
-    case eGodType::hermes: return &builTexs.fHermesMonuments;
-    case eGodType::poseidon: return &builTexs.fPoseidonMonuments;
-    case eGodType::zeus: return &builTexs.fZeusMonuments;
+    case GodType::aphrodite: return &builTexs.fAphroditeMonuments;
+    case GodType::apollo: return &builTexs.fApolloMonuments;
+    case GodType::ares: return &builTexs.fAresMonuments;
+    case GodType::artemis: return &builTexs.fArtemisMonuments;
+    case GodType::athena: return &builTexs.fAthenaMonuments;
+    case GodType::atlas: return &builTexs.fAtlasMonuments;
+    case GodType::demeter: return &builTexs.fDemeterMonuments;
+    case GodType::dionysus: return &builTexs.fDionysusMonuments;
+    case GodType::hades: return &builTexs.fHadesMonuments;
+    case GodType::hephaestus: return &builTexs.fHephaestusMonuments;
+    case GodType::hera: return &builTexs.fHeraMonuments;
+    case GodType::hermes: return &builTexs.fHermesMonuments;
+    case GodType::poseidon: return &builTexs.fPoseidonMonuments;
+    case GodType::zeus: return &builTexs.fZeusMonuments;
     }
     return nullptr;
 }
@@ -411,7 +411,7 @@ SanctuaryPreviewEntry::SanctuaryPreviewEntry(
     const int order,
     const int worldTileX, const int worldTileY, const int altitude,
     const int templeOverlayDirId,
-    const eGodType statueGod,
+    const GodType statueGod,
     const int statueTextureId,
     const int monumentTextureId,
     const bool altar,
@@ -432,7 +432,7 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
     SDL_Rect& footprint)
 {
     const auto type = eBuildingModeHelpers::toBuildingType(mode);
-    const auto god = static_cast<eGodType>(
+    const auto god = static_cast<GodType>(
         static_cast<int>(mode) -
         static_cast<int>(eBuildingMode::templeAphrodite));
     const auto h = eSanctBlueprints::sSanctuaryBlueprint(type, rotateId);
@@ -533,7 +533,7 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
         case eSanctEleType::poseidonStatue:
         case eSanctEleType::zeusStatue:
         {
-            const eGodType sg = statueGod(te.fType, god);
+            const GodType sg = statueGod(te.fType, god);
             const int statueTextureId = rotateId;
             const auto b = e::make_shared<eTempleStatueBuilding>(
                 sg,
@@ -657,7 +657,7 @@ SanctuaryTempleTextures sanctuaryTempleGetTextures(
 
 std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
     const eBuildingTextures& builTexs,
-    const eGodType god,
+    const GodType god,
     const int rotateId,
     const eWorldDirection dir)
 {
@@ -668,7 +668,7 @@ std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
 
 std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
     const eBuildingTextures& builTexs,
-    const eGodType god,
+    const GodType god,
     const int rotateId,
     const eWorldDirection dir)
 {
@@ -774,7 +774,7 @@ void drawSanctuaryStatuePreview(
     GameBoard& board,
     eTilePainter& tp,
     const eBuildingTextures& builTexs,
-    const eGodType god,
+    const GodType god,
     const int statueTextureId,
     const int worldTileX,
     const int worldTileY,
@@ -799,7 +799,7 @@ void drawSanctuaryMonumentPreview(
     GameBoard& board,
     eTilePainter& tp,
     const eBuildingTextures& builTexs,
-    const eGodType god,
+    const GodType god,
     const int monumentTextureId,
     const int worldTileX,
     const int worldTileY,

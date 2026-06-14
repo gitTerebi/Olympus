@@ -36,8 +36,8 @@ eGodMissile::getTexture(const eTileSize size) const {
         case eCharacterType::hermes:
         case eCharacterType::poseidon:
         case eCharacterType::zeus: {
-            const auto gt = eGod::sCharacterToGodType(mCharType);
-            collsptr = eGod::sGodMissile(gt);
+            const auto gt = God::sCharacterToGodType(mCharType);
+            collsptr = God::sGodMissile(gt);
         } break;
         case eCharacterType::atalanta: {
             const auto ht = eHero::sCharacterToHeroType(mCharType);

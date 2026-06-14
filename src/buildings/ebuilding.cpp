@@ -608,7 +608,7 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::minorShrineZeus: { // 3x3
         string = 107;
         const auto text = eLanguage::zeusText(group, string);
-        return eGod::sGodName(ePyramid::sGod(type)) + " " + text;
+        return God::sGodName(ePyramid::sGod(type)) + " " + text;
     } break;
     case eBuildingType::shrineAphrodite:
     case eBuildingType::shrineApollo:
@@ -626,7 +626,7 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::shrineZeus: { // 6x6
         string = 108;
         const auto text = eLanguage::zeusText(group, string);
-        return eGod::sGodName(ePyramid::sGod(type)) + " " + text;
+        return God::sGodName(ePyramid::sGod(type)) + " " + text;
     } break;
     case eBuildingType::majorShrineAphrodite:
     case eBuildingType::majorShrineApollo:
@@ -644,7 +644,7 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::majorShrineZeus: { // 8x8
         string = 109;
         const auto text = eLanguage::zeusText(group, string);
-        return eGod::sGodName(ePyramid::sGod(type)) + " " + text;
+        return God::sGodName(ePyramid::sGod(type)) + " " + text;
     } break;
 
     case eBuildingType::pyramidOfThePantheon: // 11x9
@@ -1204,94 +1204,94 @@ void eBuilding::sInfoText(eBuilding* const b,
         group = 90;
         employmentInfoString = -1;
         switch(id) {
-        case eGodQuestId::godQuest1: {
+        case GodQuestId::godQuest1: {
             switch(god) {
-            case eGodType::zeus:
+            case GodType::zeus:
                 infoString = 10;
                 break;
-            case eGodType::poseidon:
+            case GodType::poseidon:
                 infoString = 11;
                 break;
-            case eGodType::demeter:
+            case GodType::demeter:
                 infoString = 12;
                 break;
-            case eGodType::apollo:
+            case GodType::apollo:
                 infoString = 13;
                 break;
-            case eGodType::artemis:
+            case GodType::artemis:
                 infoString = 14;
                 break;
-            case eGodType::ares:
+            case GodType::ares:
                 infoString = 15;
                 break;
-            case eGodType::aphrodite:
+            case GodType::aphrodite:
                 infoString = 16;
                 break;
-            case eGodType::hermes:
+            case GodType::hermes:
                 infoString = 17;
                 break;
-            case eGodType::athena:
+            case GodType::athena:
                 infoString = 18;
                 break;
-            case eGodType::hephaestus:
+            case GodType::hephaestus:
                 infoString = 19;
                 break;
-            case eGodType::dionysus:
+            case GodType::dionysus:
                 infoString = 20;
                 break;
-            case eGodType::hades:
+            case GodType::hades:
                 infoString = 21;
                 break;
-            case eGodType::hera:
+            case GodType::hera:
                 infoString = 34;
                 break;
-            case eGodType::atlas:
+            case GodType::atlas:
                 infoString = 35;
                 break;
             }
         } break;
-        case eGodQuestId::godQuest2: {
+        case GodQuestId::godQuest2: {
             switch(god) {
-            case eGodType::zeus:
+            case GodType::zeus:
                 infoString = 38;
                 break;
-            case eGodType::poseidon:
+            case GodType::poseidon:
                 infoString = 39;
                 break;
-            case eGodType::demeter:
+            case GodType::demeter:
                 infoString = 40;
                 break;
-            case eGodType::apollo:
+            case GodType::apollo:
                 infoString = 41;
                 break;
-            case eGodType::artemis:
+            case GodType::artemis:
                 infoString = 42;
                 break;
-            case eGodType::ares:
+            case GodType::ares:
                 infoString = 43;
                 break;
-            case eGodType::aphrodite:
+            case GodType::aphrodite:
                 infoString = 44;
                 break;
-            case eGodType::hermes:
+            case GodType::hermes:
                 infoString = 45;
                 break;
-            case eGodType::athena:
+            case GodType::athena:
                 infoString = 46;
                 break;
-            case eGodType::hephaestus:
+            case GodType::hephaestus:
                 infoString = 47;
                 break;
-            case eGodType::dionysus:
+            case GodType::dionysus:
                 infoString = 48;
                 break;
-            case eGodType::hades:
+            case GodType::hades:
                 infoString = 49;
                 break;
-            case eGodType::hera:
+            case GodType::hera:
                 infoString = 62;
                 break;
-            case eGodType::atlas:
+            case GodType::atlas:
                 infoString = 63;
                 break;
             }

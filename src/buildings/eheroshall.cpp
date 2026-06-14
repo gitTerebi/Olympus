@@ -48,33 +48,33 @@ eHeroType eHerosHall::sHallTypeToHeroType(const eBuildingType type,
     return eHeroType::achilles;
 }
 
-eGodType athenaHephaestus(BoardCity& c) {
+GodType athenaHephaestus(BoardCity& c) {
     const bool athena = c.availableBuilding(eBuildingType::templeAthena) ||
                         c.hasBuilding(eBuildingType::templeAthena);
-    if(athena) return eGodType::athena;
-    return eGodType::hephaestus;
+    if(athena) return GodType::athena;
+    return GodType::hephaestus;
 }
 
-std::pair<eGodType, eGodType> athenaHermesZeusHades(BoardCity& c) {
-    std::vector<eGodType> allowed;
+std::pair<GodType, GodType> athenaHermesZeusHades(BoardCity& c) {
+    std::vector<GodType> allowed;
     const bool athena = c.availableBuilding(eBuildingType::templeAthena) ||
                         c.hasBuilding(eBuildingType::templeAthena);
-    if(athena) allowed.push_back(eGodType::athena);
+    if(athena) allowed.push_back(GodType::athena);
     const bool hermes = c.availableBuilding(eBuildingType::templeHermes) ||
                         c.hasBuilding(eBuildingType::templeHermes);
-    if(hermes) allowed.push_back(eGodType::hermes);
+    if(hermes) allowed.push_back(GodType::hermes);
     const bool hades = c.availableBuilding(eBuildingType::templeHades) ||
                        c.hasBuilding(eBuildingType::templeHades);
-    if(hades) allowed.push_back(eGodType::hades);
+    if(hades) allowed.push_back(GodType::hades);
     const bool zeus = c.availableBuilding(eBuildingType::templeZeus) ||
                       c.hasBuilding(eBuildingType::templeZeus);
-    if(zeus) allowed.push_back(eGodType::zeus);
+    if(zeus) allowed.push_back(GodType::zeus);
     if(allowed.size() >= 2) {
         return {allowed[0], allowed[1]};
     } else if(allowed.size() == 1) {
         return {allowed[0], allowed[0]};
     } else {
-        return {eGodType::athena, eGodType::hermes};
+        return {GodType::athena, GodType::hermes};
     }
 }
 
@@ -93,7 +93,7 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr,
         }
     case eHeroRequirementType::sanctuaryAthenaOrHephaestus: {
         const auto god = athenaHephaestus(c);
-        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(god);
+        return eLanguage::zeusText(185, 47) + " " + God::sGodName(god);
     } break;
     case eHeroRequirementType::noUnrest:
         return eLanguage::zeusText(185, 48);;
@@ -143,11 +143,11 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr,
 
     case eHeroRequirementType::sanctuaryAthenaHermesZeusHades1: {
         const auto types = athenaHermesZeusHades(c);
-        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(types.first);
+        return eLanguage::zeusText(185, 47) + " " + God::sGodName(types.first);
     } break;
     case eHeroRequirementType::sanctuaryAthenaHermesZeusHades2: {
         const auto types = athenaHermesZeusHades(c);
-        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(types.second);
+        return eLanguage::zeusText(185, 47) + " " + God::sGodName(types.second);
     } break;
     case eHeroRequirementType::drachmas:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::drachmas);
@@ -166,7 +166,7 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr,
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::marble);
 
     case eHeroRequirementType::sanctuaryArtemis:
-        return eLanguage::zeusText(185, 47) + " " + eGod::sGodName(eGodType::artemis);
+        return eLanguage::zeusText(185, 47) + " " + God::sGodName(GodType::artemis);
     case eHeroRequirementType::stadiumMuseum:
         if(atlantean) {
             return eLanguage::zeusText(185, 129);
@@ -688,7 +688,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
         break;
 
     case eHeroRequirementType::sanctuaryArtemis: {
-        const auto sts = board.sanctuary(cid, eGodType::artemis);
+        const auto sts = board.sanctuary(cid, GodType::artemis);
         sc = sts ? sts->progress() : 0;
     } break;
     case eHeroRequirementType::stadiumMuseum:

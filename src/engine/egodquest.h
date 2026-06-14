@@ -1,17 +1,17 @@
 #ifndef EGODQUEST_H
 #define EGODQUEST_H
 
-#include "characters/gods/egod.h"
+#include "characters/gods/god.h"
 #include "characters/heroes/ehero.h"
 #include "fileIO/esavearchive.h"
 
 struct eGodQuest {
     static eHeroType sDefaultHero(
-            const eGodType gt, const eGodQuestId gqi);
+            const GodType gt, const GodQuestId gqi);
 
     void serialize(eSaveArchive& ar) {
-        ar.field("god", fGod, eGodType::zeus);
-        ar.field("questId", fId, eGodQuestId::godQuest1);
+        ar.field("god", fGod, GodType::zeus);
+        ar.field("questId", fId, GodQuestId::godQuest1);
         ar.field("hero", fHero, eGodQuest::sDefaultHero(fGod, fId));
     }
 
@@ -23,8 +23,8 @@ struct eGodQuest {
 
     std::string name() const;
 
-    eGodType fGod = eGodType::zeus;
-    eGodQuestId fId = eGodQuestId::godQuest1;
+    GodType fGod = GodType::zeus;
+    GodQuestId fId = GodQuestId::godQuest1;
     eHeroType fHero = eGodQuest::sDefaultHero(fGod, fId);
 };
 

@@ -232,8 +232,8 @@ eCommemorative::getTexture(const eTileSize size) const {
     return texs.fCommemorative.getTexture(mId);
 }
 
-eGodMonument::eGodMonument(const eGodType god,
-                           const eGodQuestId id,
+eGodMonument::eGodMonument(const GodType god,
+                           const GodQuestId id,
                            GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::godMonument, 2, 2, cid),
     mGod(god), mId(id) {
