@@ -150,11 +150,16 @@ private:
 using eOptionsPageViewport = eScrollViewport;
 
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
-                           eMainWindow* const window) :
+                           eMainWindow* const window,
+                           const eReopenPage& reopenPage) :
     eModal(window),
-    mPages(pages) {}
+    mPages(pages),
+    mReopenPage(reopenPage) {}
 
-void eOptionsMenu::initialize() {
+void eOptionsMenu::initialize(const int initialPage) {
+    if(initialPage >= 0 && initialPage < static_cast<int>(mPages.size())) {
+        mCurrentPage = initialPage;
+    }
     const int mult = resolution().multiplier();
     const int pad = 100 * mult;
     const int sw = std::max(520*mult, 3*resolution().width()/5);
@@ -467,6 +472,12 @@ void eOptionsMenu::showPage(const int id) {
                     uiScaleChanged =
                         eResolution::sResolutions[val].uiScale() !=
                         window()->settings().fRes.uiScale();
+                    if(uiScaleChanged && mReopenPage) {
+                        const int page = mCurrentPage;
+                        window()->setAfterMenuLoadingAction([reopenPage = mReopenPage, page]() {
+                            reopenPage(page);
+                        });
+                    }
                 }
                 if(val >= 0 && val < int(options.size())) {
                     button->setText(options[val]);
@@ -540,7 +551,7 @@ void eOptionsMenu::rebuild() {
     if(parent()) {
         parent()->resize(window()->width(), window()->height());
     }
-    initialize();
+    initialize(mCurrentPage);
 }
 
 

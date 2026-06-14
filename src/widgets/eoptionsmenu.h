@@ -17,6 +17,7 @@ public:
     using eSetInt = std::function<void(const int)>;
     using eClampInt = std::function<int(const int)>;
     using eSetBool = std::function<void(const bool)>;
+    using eReopenPage = std::function<void(const int)>;
 
     struct eSliderItem {
         std::string fLabel;
@@ -68,9 +69,10 @@ public:
     };
 
     eOptionsMenu(const std::vector<ePage>& pages,
-                 eMainWindow* const window);
+                 eMainWindow* const window,
+                 const eReopenPage& reopenPage = nullptr);
 
-    void initialize();
+    void initialize(const int initialPage = 0);
 
 private:
     void showPage(const int id);
@@ -78,6 +80,7 @@ private:
     void rebuild();
 
     std::vector<ePage> mPages;
+    eReopenPage mReopenPage;
     eScrollViewport* mPageViewport = nullptr;
     eWidget* mPage = nullptr;
     eLabel* mMainTitle = nullptr;

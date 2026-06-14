@@ -3005,8 +3005,19 @@ void GameWidget::showGoals()
 
 void GameWidget::showOptionsMenu()
 {
-    const auto d = new eOptionsMenu(getOptionsPages(window(), mBoard.get(), this), window());
-    d->initialize();
+    showOptionsMenu(0);
+}
+
+void GameWidget::showOptionsMenu(const int initialPage)
+{
+    const auto reopenPage = [this](const int page) {
+        window()->setWidget(this);
+        showOptionsMenu(page);
+    };
+    const auto d = new eOptionsMenu(getOptionsPages(window(), mBoard.get(), this),
+                                    window(),
+                                    reopenPage);
+    d->initialize(initialPage);
     window()->execDialog(d, true, [this]()
                          { window()->setWidget(this); });
 }

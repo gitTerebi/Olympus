@@ -82,10 +82,12 @@ public:
 
     void showRosterOfLeaders();
     void showMenuLoading();
+    void setAfterMenuLoadingAction(const eAction& action);
     void showMainMenu();
     void applyGraphicsSettings(const eSettings& settings);
     void showSettingsMenu();
     void showOptionsMenu();
+    void showOptionsMenu(const int initialPage);
     void showChooseGameMenu();
     void showChooseGameEditMenu();
     void showGame(const stdsptr<eCampaign>& c,
@@ -131,6 +133,7 @@ private:
     bool mFirstResolutionSetting = true;
 
     std::vector<eSlot> mSlots;
+    eAction mAfterMenuLoadingAction;
 
     int mShiftPressed = 0;
     int mCtrlPressed = 0;

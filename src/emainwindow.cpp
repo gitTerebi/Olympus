@@ -576,6 +576,12 @@ void eMainWindow::showRosterOfLeaders() {
 void eMainWindow::showMenuLoading() {
     const auto mlw = new eMenuLoadingWidget(this);
     mlw->setDoneAction([this]() {
+        if(mAfterMenuLoadingAction) {
+            const auto action = mAfterMenuLoadingAction;
+            mAfterMenuLoadingAction = nullptr;
+            action();
+            return;
+        }
         const auto ls = eRosterOfLeaders::sLeaders();
         if(ls.size() == 1) setLeader(ls[0]);
         if(mLeader.empty()) {
@@ -587,6 +593,10 @@ void eMainWindow::showMenuLoading() {
     mlw->initialize();
     mlw->resize(width(), height());
     setWidget(mlw);
+}
+
+void eMainWindow::setAfterMenuLoadingAction(const eAction& action) {
+    mAfterMenuLoadingAction = action;
 }
 
 void eMainWindow::showMainMenu() {
@@ -687,8 +697,16 @@ void eMainWindow::showSettingsMenu() {
 }
 
 void eMainWindow::showOptionsMenu() {
-    const auto d = new eOptionsMenu(getOptionsPages(this), this);
-    d->initialize();
+    showOptionsMenu(0);
+}
+
+void eMainWindow::showOptionsMenu(const int initialPage) {
+    const auto reopenPage = [this](const int page) {
+        showMainMenu();
+        showOptionsMenu(page);
+    };
+    const auto d = new eOptionsMenu(getOptionsPages(this), this, reopenPage);
+    d->initialize(initialPage);
     execDialog(d, true, [this]() { showMainMenu(); });
 }
 
