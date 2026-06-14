@@ -464,6 +464,46 @@ void GameWidget::rebuildGameMenu()
     createGameMenu();
 }
 
+void GameWidget::reloadUi()
+{
+    const bool armyVisible = mAm && mAm->visible();
+    const bool terrainEditMode = mTerrainEditMode;
+    const bool buyCityVisible = mBuyCityWidget && mBuyCityWidget->visible();
+    const eCityId viewedCity = mViewedCityId;
+
+    removeChildren();
+    mPausedLabel = nullptr;
+    mSpeedLabel = nullptr;
+    mZoomLabel = nullptr;
+    mTopBar = nullptr;
+    mMsgBox = nullptr;
+    mMsgListWidget = nullptr;
+    mTem = nullptr;
+    mGm = nullptr;
+    mPierDebugPanel = nullptr;
+    mAm = nullptr;
+    mStampTemplatePanel = nullptr;
+    mStampTemplateStats = nullptr;
+    mBuyCityWidget = nullptr;
+    mBuyCityName = nullptr;
+    mBuyCityPrice = nullptr;
+    mBuyCityButton = nullptr;
+    mTips.clear();
+    mToasts.clear();
+    mPendingToasts.clear();
+
+    initialize();
+    if(mAm) mAm->setVisible(armyVisible);
+    mTerrainEditMode = terrainEditMode;
+    if(mTem) mTem->setVisible(mTerrainEditMode);
+    if(mGm) mGm->setVisible(!mTerrainEditMode);
+    if(buyCityVisible) showBuyCity(viewedCity);
+    updateViewBoxSize();
+    updateTipPositions();
+    updateToastPositions();
+    syncModeCursor();
+}
+
 void GameWidget::initialize()
 {
     mEditorMode = mBoard->editorMode();
