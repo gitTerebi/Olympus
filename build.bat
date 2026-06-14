@@ -6,7 +6,7 @@ set "ROOT=%ROOT:~0,-1%"
 set "MINGW=%ROOT%\build-deps\llvm-mingw\bin"
 set "NINJA=%ROOT%\build-deps\ninja\ninja.exe"
 set "BUILD_DIR=%ROOT%\build-ninja"
-set "DEPLOY_DIR=G:\games\eZeus\eZeus-0.8.2-beta\Bin"
+set "DEPLOY_DIR=G:\games\eZeus\olympus\Bin"
 set "JOBS=%NUMBER_OF_PROCESSORS%"
 if "%JOBS%"=="" set "JOBS=8"
 

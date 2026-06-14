@@ -36,6 +36,11 @@ bool init() {
         printf("Warning: Nearest texture filtering not enabled!");
     }
 
+    // The whole-frame upscale is a D3D11/HLSL pass, so force the d3d11 renderer.
+    if(!SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d11")) {
+        printf("Warning: could not request Direct3D 11 render driver!\n");
+    }
+
     const int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags)) {
         printf("SDL_image could not initialize! SDL_image Error: %s\n",

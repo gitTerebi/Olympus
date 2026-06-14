@@ -7,7 +7,6 @@
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/stamp-template-writer.h"
 #include "widgets/paint/sanctuary-preview.h"
-#include "widgets/paint/world-postprocess-shader.h"
 #include "buildings/emonument.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
 #include "cursors.h"
@@ -3019,7 +3018,7 @@ void GameWidget::showGraphicsMenu()
     esm->resize(width(), height());
     const auto applyA = [this, esm, w](const eSettings &settings)
     {
-        const bool loadNeeded = settings.fRes != w->settings().fRes;
+        const bool loadNeeded = settings.fRes.uiScale() != w->settings().fRes.uiScale();
         w->applyGraphicsSettings(settings);
         if (!loadNeeded)
         {
@@ -3027,11 +3026,11 @@ void GameWidget::showGraphicsMenu()
             esm->deleteLater();
         }
     };
-    const auto fullscreenA = [w](const bool f)
+    const auto displayModeA = [w](const eDisplayMode mode)
     {
-        w->setFullscreen(f);
+        w->setDisplayMode(mode);
     };
-    esm->initialize(applyA, fullscreenA);
+    esm->initialize(applyA, displayModeA);
     addWidget(esm);
     esm->align(eAlignment::center);
     w->execDialog(esm);

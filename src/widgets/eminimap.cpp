@@ -246,6 +246,9 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
             return;
         }
     }
+    // Remember the active target (the whole-frame texture set by emainwindow, or
+    // null) so we restore it instead of forcing the backbuffer.
+    SDL_Texture* const prevTarget = SDL_GetRenderTarget(rend);
     fTex->setAsRenderTarget(rend);
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
     ePainter p(rend);
@@ -341,7 +344,7 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
         }
     }
 
-    SDL_SetRenderTarget(rend, nullptr);
+    SDL_SetRenderTarget(rend, prevTarget);
 }
 
 void eMiniMap::viewFraction(const double fx, const double fy) {

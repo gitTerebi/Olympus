@@ -143,8 +143,8 @@ void eSettings::write() const {
             (fMediumTextures ? "\"true\"" : "\"false\"") << "\n";
     file << "large_textures" << " " <<
             (fLargeTextures ? "\"true\"" : "\"false\"") << "\n";
-    file << "fullscreen" << " " <<
-            (fFullscreen ? "\"true\"" : "\"false\"") << "\n";
+    file << "display_mode" << " " << "\"" <<
+            std::to_string(static_cast<int>(fDisplayMode)) << "\"" << "\n";
     file << "warehouse_default_accept_none" << " " <<
             (fWarehouseDefaultAcceptNone ? "\"true\"" : "\"false\"") << "\n";
     file << "double_cart_capacity" << " " <<
@@ -169,6 +169,12 @@ void eSettings::write() const {
             std::to_string(fKeyScrollSpeed) << "\"" << "\n";
     file << "game_speed" << " " << "\"" <<
             std::to_string(fGameSpeed) << "\"" << "\n";
+    file << "interpolation" << " " << "\"" <<
+            std::to_string(static_cast<int>(fInterpolation)) << "\"" << "\n";
+    file << "upscale" << " " << "\"" <<
+            std::to_string(static_cast<int>(fUpscale)) << "\"" << "\n";
+    file << "upscale_factor" << " " << "\"" <<
+            std::to_string(fUpscaleFactor) << "\"" << "\n";
     file << "general_volume" << " " << "\"" <<
             std::to_string(fGeneralVolume) << "\"" << "\n";
     file << "music_volume" << " " << "\"" <<
@@ -267,7 +273,15 @@ void eSettings::read() {
     fSmallTextures = settings["small_textures"] == "true";
     fMediumTextures = settings["medium_textures"] == "true";
     fLargeTextures = settings["large_textures"] == "true";
-    fFullscreen = settings["fullscreen"] == "true";
+    const auto displayModeStr = settings["display_mode"];
+    if(!displayModeStr.empty()) {
+        const int v = std::stoi(displayModeStr);
+        if(v >= 0 && v < static_cast<int>(eDisplayMode::count)) {
+            fDisplayMode = static_cast<eDisplayMode>(v);
+        }
+    } else if(settings["fullscreen"] == "true") {
+        fDisplayMode = eDisplayMode::fullscreen;
+    }
     fWarehouseDefaultAcceptNone = settings["warehouse_default_accept_none"] == "true";
     fDoubleCartCapacity = settings["double_cart_capacity"] == "true";
     fAgorasTakeFromTradingPosts = settings["agoras_take_from_trading_posts"] == "true";
@@ -295,6 +309,25 @@ void eSettings::read() {
     const auto gameSpeedStr = settings["game_speed"];
     if(!gameSpeedStr.empty()) {
         fGameSpeed = clampGameSpeed(std::stoi(gameSpeedStr));
+    }
+    const auto interpolationStr = settings["interpolation"];
+    if(!interpolationStr.empty()) {
+        const int v = std::stoi(interpolationStr);
+        if(v >= 0 && v < static_cast<int>(eInterpolation::count)) {
+            fInterpolation = static_cast<eInterpolation>(v);
+        }
+    }
+    const auto upscaleStr = settings["upscale"];
+    if(!upscaleStr.empty()) {
+        const int v = std::stoi(upscaleStr);
+        if(v >= 0 && v < static_cast<int>(eUpscale::count)) {
+            fUpscale = static_cast<eUpscale>(v);
+        }
+    }
+    const auto upscaleFactorStr = settings["upscale_factor"];
+    if(!upscaleFactorStr.empty()) {
+        const int v = std::stoi(upscaleFactorStr);
+        fUpscaleFactor = (v < 2) ? 2 : (v > 6 ? 6 : v);
     }
     const auto generalVolumeStr = settings["general_volume"];
     if(!generalVolumeStr.empty()) {

@@ -41,7 +41,13 @@ public:
     SDL_Renderer* renderer() const { return mSdlRenderer; }
 
     void setResolution(const eResolution& res);
-    void setFullscreen(const bool f);
+    void setResolution(const int resolution);
+    void setDisplayMode(const eDisplayMode mode);
+    void setInterpolation(const int interpolation);
+    void setUpscale(const int upscale);
+    void setUpscaleFactor(const int factor);
+    void setDisplayMode(const int mode);
+    void applyPostprocessFilters();
     void setKeyScrollSpeed(const int speed);
     void setDisableEdgeScroll(const bool b);
     void setGameSpeed(const int speed);
@@ -112,13 +118,16 @@ public:
 private:
     void clearWidgets();
     std::string mostRecentSavePath() const;
+    // Map raw window mouse coords to frame-resolution coords, undoing the bicubic
+    // upscale + letterbox so hit-testing matches the on-screen image.
+    void mapWindowToFrame(int& x, int& y) const;
 
     eSettings mSettings;
 
     std::string mLeader;
 
     bool mQuit = false;
-    bool mFirstFullscrenSetting = true;
+    bool mFirstDisplayModeSetting = true;
     bool mFirstResolutionSetting = true;
 
     std::vector<eSlot> mSlots;
@@ -134,6 +143,14 @@ private:
     eWidget* mWidget = nullptr;
     SDL_Window* mSdlWindow = nullptr;
     SDL_Renderer* mSdlRenderer = nullptr;
+    // Frame is rendered at the configured resolution into mFrameTex, then a D3D11
+    // bicubic pass upscales it to fill the current window (maximize/fullscreen).
+    SDL_Texture* mFrameTex = nullptr;
+    SDL_Texture* mFrameTexAlt = nullptr;
+    int mFrameTexW = 0;
+    int mFrameTexH = 0;
+    bool mUseAltFrameTex = false;
+    std::vector<Uint32> mFramePixels;
 };
 
 #endif // EMAINWINDOW_H

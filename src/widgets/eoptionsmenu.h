@@ -48,6 +48,14 @@ public:
         std::function<void(const Difficulty)> fSet;
     };
 
+    // A labelled dropdown: shows the current option; clicking pops a chooser.
+    struct eChoiceItem {
+        std::string fLabel;
+        std::vector<std::string> fOptions;
+        int fValue;
+        eSetInt fSet;
+    };
+
     struct ePage {
         std::string fButtonLabel;
         std::string fTitle;
@@ -56,6 +64,7 @@ public:
         std::vector<std::string> fLines;
         std::vector<eCheckboxItem> fCheckboxes;
         std::vector<eDifficultyItem> fDifficulties;
+        std::vector<eChoiceItem> fChoices;
     };
 
     eOptionsMenu(const std::vector<ePage>& pages,

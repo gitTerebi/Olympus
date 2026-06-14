@@ -6,7 +6,7 @@
 
 inline bool operator==(const eSettings& s0, const eSettings& s1) {
     if(s0.fRes != s1.fRes) return false;
-    if(s0.fFullscreen != s1.fFullscreen) return false;
+    if(s0.fDisplayMode != s1.fDisplayMode) return false;
     if(s0.fKeyScrollSpeed != s1.fKeyScrollSpeed) return false;
     if(s0.fDisableEdgeScroll != s1.fDisableEdgeScroll) return false;
     return true;
@@ -18,9 +18,9 @@ public:
                   eMainWindow* const window);
 
     using eApplyAction = std::function<void(const eSettings&)>;
-    using eFullscreenA = std::function<void(const bool)>;
+    using eDisplayModeA = std::function<void(const eDisplayMode)>;
     void initialize(const eApplyAction& settingsA,
-                    const eFullscreenA& fullscreenA);
+                    const eDisplayModeA& displayModeA);
 
 protected:
     void close() override;

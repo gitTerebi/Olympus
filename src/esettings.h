@@ -7,6 +7,34 @@
 
 #include <SDL2/SDL_scancode.h>
 
+// Whole-frame upscale filters (DisciplesGL parity). Two stages: an optional pixel-art
+// upscale into an Nx intermediate, then an interpolation resample to the window.
+enum class eInterpolation {
+    nearest = 0,
+    linear  = 1,
+    hermite = 2,
+    cubic   = 3,
+    lanczos = 4,
+    count
+};
+
+enum class eUpscale {
+    none    = 0,
+    xbrz    = 1,
+    scalehq = 2,
+    scalenx = 3,
+    eagle   = 4,
+    xsal    = 5,
+    count
+};
+
+enum class eDisplayMode {
+    window = 0,
+    borderless = 1,
+    fullscreen = 2,
+    count
+};
+
 enum class eHotkeyId {
     gameMenu,
     speedUp,
@@ -59,7 +87,7 @@ struct eSettings {
     bool fSmallTextures = true;
     bool fMediumTextures = true;
     bool fLargeTextures = true;
-    bool fFullscreen = false;
+    eDisplayMode fDisplayMode = eDisplayMode::window;
     bool fWarehouseDefaultAcceptNone = false;
     bool fDoubleCartCapacity = false;
     bool fAgorasTakeFromTradingPosts = false;
@@ -78,6 +106,11 @@ struct eSettings {
     int fEventVolume = 100;
     int fAmbientVolume = 100;
     eResolution fRes = eResolution(1280, 720);
+
+    // Whole-frame upscale (window-level D3D11 pass).
+    eInterpolation fInterpolation = eInterpolation::cubic;
+    eUpscale fUpscale = eUpscale::none;
+    int fUpscaleFactor = 2; // 2..6, clamped per upscale filter
 
     SDL_Scancode fHotkeyGameMenu = SDL_SCANCODE_ESCAPE;
     SDL_Scancode fHotkeySpeedUp = SDL_SCANCODE_RIGHTBRACKET;
