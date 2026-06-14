@@ -16,6 +16,12 @@ void eModal::initializeMask(const int w, const int h) {
     mFrame->align(eAlignment::center);
 }
 
+void eModal::resetModal() {
+    removeChildren();
+    mFrame = nullptr;
+    mMask = false;
+}
+
 void eModal::close() {
     if(mCloseAction) mCloseAction();
     else deleteLater();

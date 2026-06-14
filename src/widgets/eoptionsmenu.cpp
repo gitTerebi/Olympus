@@ -222,12 +222,13 @@ void eOptionsMenu::initialize() {
     mPage->setWidth(mPageViewport->width());
     mPageViewport->setPage(mPage);
 
-    showPage(0);
+    showPage(mCurrentPage);
 }
 
 void eOptionsMenu::showPage(const int id) {
     clearPage();
     if(id < 0 || id >= static_cast<int>(mPages.size())) return;
+    mCurrentPage = id;
 
     const int p = frame()->padding();
     auto& page = mPages[id];
@@ -455,14 +456,24 @@ void eOptionsMenu::showPage(const int id) {
         button->fitContent();
         const auto options = item.fOptions;
         const auto set = item.fSet;
-        button->setPressAction([this, button, options, set]() {
+        const bool rebuildOnSet = item.fLabel == "Resolution";
+        button->setPressAction([this, button, options, set, rebuildOnSet]() {
             const auto choose = new eChooseButton(window());
-            const auto act = [button, options, set](const int val) {
+            const auto act = [this, button, options, set, rebuildOnSet](const int val) {
+                bool uiScaleChanged = false;
+                if(rebuildOnSet &&
+                   val >= 0 &&
+                   val < static_cast<int>(eResolution::sResolutions.size())) {
+                    uiScaleChanged =
+                        eResolution::sResolutions[val].uiScale() !=
+                        window()->settings().fRes.uiScale();
+                }
                 if(val >= 0 && val < int(options.size())) {
                     button->setText(options[val]);
                     button->fitContent();
                 }
                 if(set) set(val);
+                if(rebuildOnSet && !uiScaleChanged) rebuild();
             };
             choose->initialize(8, options, act);
             window()->execDialog(choose);
@@ -517,6 +528,19 @@ void eOptionsMenu::showPage(const int id) {
 void eOptionsMenu::clearPage() {
     if(!mPage) return;
     mPage->removeChildren();
+}
+
+void eOptionsMenu::rebuild() {
+    const int page = mCurrentPage;
+    resetModal();
+    mPageViewport = nullptr;
+    mPage = nullptr;
+    mMainTitle = nullptr;
+    mCurrentPage = page;
+    if(parent()) {
+        parent()->resize(window()->width(), window()->height());
+    }
+    initialize();
 }
 
 

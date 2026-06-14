@@ -18,6 +18,8 @@ public:
     eFramedWidget* frame() const { return mFrame; }
 
 protected:
+    void resetModal();
+
     void paintEvent(ePainter& p) override;
     bool keyPressEvent(const eKeyPressEvent& e) override;
     bool mousePressEvent(const eMouseEvent& e) override;
