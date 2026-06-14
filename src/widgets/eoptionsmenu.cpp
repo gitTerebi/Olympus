@@ -491,10 +491,12 @@ void eOptionsMenu::showPage(const int id) {
         const int initial = (item.fValue >= 0 &&
                              item.fValue < int(item.fOptions.size())) ? item.fValue : 0;
         button->setText(item.fOptions.empty() ? "" : item.fOptions[initial]);
-        const int gap = 6 * mult;
+        const int gap = 8 * mult;
         const int maxControlW = std::max(56 * mult,
                                          mPage->width() - label->width() - gap);
-        const int wantedControlW = compact ? 74 * mult : 104 * mult;
+        const int wantedControlW = compact ?
+            std::max(90 * mult, mPage->width()/3) :
+            std::max(130 * mult, mPage->width()/3);
         const int minControlW = std::min(wantedControlW, maxControlW);
         clampButtonWidth(button, minControlW, maxControlW);
         const auto options = item.fOptions;
