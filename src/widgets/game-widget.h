@@ -260,6 +260,7 @@ private:
     void createGameMenu();
     void showGoals();
     void showOptionsMenu();
+    void showOptionsMenu(const int initialPage);
     void showGraphicsMenu();
     void showStampManager();
     void beginStampTemplateCreate();
