@@ -195,7 +195,12 @@ void eMainWindow::setResolution(const eResolution& res) {
     mSettings.fRes = res;
     const int w = res.width();
     const int h = res.height();
+    const bool wasMaximized =
+        (SDL_GetWindowFlags(mSdlWindow) & SDL_WINDOW_MAXIMIZED) != 0;
     SDL_SetWindowSize(mSdlWindow, w, h);
+    if(wasMaximized) {
+        SDL_MaximizeWindow(mSdlWindow);
+    }
     if(mWidget) {
         mWidget->resize(w, h);
     }
