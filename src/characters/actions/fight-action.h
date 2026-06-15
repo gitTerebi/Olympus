@@ -4,7 +4,7 @@
 #include "character-action.h"
 #include "characters/echaracter.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class FightAction : public eCharacterAction {
 public:
@@ -13,7 +13,7 @@ public:
 
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
 

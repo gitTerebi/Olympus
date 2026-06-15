@@ -2,14 +2,14 @@
 
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 Archer::Archer(GameBoard& board) :
     eCharacter(board, eCharacterType::archer) {
-    setAttack(eNumbers::sWallArcherAttack);
+    setAttack(Numbers::sWallArcherAttack);
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 Archer::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& texs = GameTextures::characters()[id];
@@ -21,7 +21,7 @@ Archer::getTexture(const eTileSize size) const {
         GameTextures::loadArcher();
         charTexs = &texs.fArcher;
     }
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
     bool wrap = true;
     const auto a = actionType();

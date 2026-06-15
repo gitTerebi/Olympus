@@ -2,13 +2,13 @@
 #define BUILDING_WRITER_H
 
 #include "buildings/ebuilding.h"
-#include "fileIO/ewritestream.h"
+#include "fileIO/write-stream.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 namespace BuildingArchive {
     void save(const eBuilding* const b,
-              eSaveArchive& ar);
+              SaveArchive& ar);
 };
 
 #endif // BUILDING_WRITER_H

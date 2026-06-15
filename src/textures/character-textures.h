@@ -1,58 +1,58 @@
 #ifndef CHARACTER_TEXTURES_H
 #define CHARACTER_TEXTURES_H
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 struct BasicCharacterTextures {
     BasicCharacterTextures(SDL_Renderer* const renderer) :
         fDie(renderer) {}
 
-    std::vector<eTextureCollection> fWalk;
-    eTextureCollection fDie;
+    std::vector<TextureCollection> fWalk;
+    TextureCollection fDie;
 };
 
 struct FishingBoatTextures {
     FishingBoatTextures(SDL_Renderer* const renderer) :
         fStand(renderer) {}
 
-    eTextureCollection fStand;
-    std::vector<eTextureCollection> fSwim;
-    std::vector<eTextureCollection> fCollect;
-    std::vector<eTextureCollection> fDie;
+    TextureCollection fStand;
+    std::vector<TextureCollection> fSwim;
+    std::vector<TextureCollection> fCollect;
+    std::vector<TextureCollection> fDie;
 };
 
 struct UrchinGathererTextures {
     UrchinGathererTextures(SDL_Renderer* const renderer) :
         fDie(renderer) {}
 
-    std::vector<eTextureCollection> fSwim;
-    std::vector<eTextureCollection> fCollect;
-    std::vector<eTextureCollection> fCarry;
-    std::vector<eTextureCollection> fDeposit;
-    eTextureCollection fDie;
+    std::vector<TextureCollection> fSwim;
+    std::vector<TextureCollection> fCollect;
+    std::vector<TextureCollection> fCarry;
+    std::vector<TextureCollection> fDeposit;
+    TextureCollection fDie;
 };
 
 struct TradeBoatTextures {
     TradeBoatTextures(SDL_Renderer* const renderer) :
         fStand(renderer) {}
 
-    eTextureCollection fStand;
-    std::vector<eTextureCollection> fSwim;
-    std::vector<eTextureCollection> fDie;
+    TextureCollection fStand;
+    std::vector<TextureCollection> fSwim;
+    std::vector<TextureCollection> fDie;
 };
 
 struct ResourceCollectorTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fCarry;
-    std::vector<eTextureCollection> fCollect;
+    std::vector<TextureCollection> fCarry;
+    std::vector<TextureCollection> fCollect;
 };
 
 struct ArtisanTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fBuild;
-    std::vector<eTextureCollection> fBuildStanding;
+    std::vector<TextureCollection> fBuild;
+    std::vector<TextureCollection> fBuildStanding;
 };
 
 struct ShepherdTextures : public BasicCharacterTextures {
@@ -61,120 +61,120 @@ struct ShepherdTextures : public BasicCharacterTextures {
         fCollect(renderer),
         fFight(renderer) {}
 
-    std::vector<eTextureCollection> fCarry;
-    eTextureCollection fCollect;
-    eTextureCollection fFight;
+    std::vector<TextureCollection> fCarry;
+    TextureCollection fCollect;
+    TextureCollection fFight;
 };
 
 struct OrangeTenderTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fWorkOnTree;
-    std::vector<eTextureCollection> fCollect;
+    std::vector<TextureCollection> fWorkOnTree;
+    std::vector<TextureCollection> fCollect;
 };
 
 struct GrowerTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fWorkOnGrapes;
-    std::vector<eTextureCollection> fWorkOnOlives;
+    std::vector<TextureCollection> fWorkOnGrapes;
+    std::vector<TextureCollection> fWorkOnOlives;
 
-    std::vector<eTextureCollection> fCollectGrapes;
-    std::vector<eTextureCollection> fCollectOlives;
+    std::vector<TextureCollection> fCollectGrapes;
+    std::vector<TextureCollection> fCollectOlives;
 };
 
 struct FightingCharacterTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fFight;
+    std::vector<TextureCollection> fFight;
 };
 
 struct FireFighterTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fCarry;
-    std::vector<eTextureCollection> fPutOut;
+    std::vector<TextureCollection> fCarry;
+    std::vector<TextureCollection> fPutOut;
 };
 
 struct AnimalTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fFight;
-    std::vector<eTextureCollection> fLayDown;
+    std::vector<TextureCollection> fFight;
+    std::vector<TextureCollection> fLayDown;
 };
 
 struct HorseTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fStand;
+    std::vector<TextureCollection> fStand;
 };
 
 struct CattleTextures : public BasicCharacterTextures {
     using BasicCharacterTextures::BasicCharacterTextures;
 
-    std::vector<eTextureCollection> fStand;
+    std::vector<TextureCollection> fStand;
 };
 
 struct BullTextures : public CattleTextures {
     using CattleTextures::CattleTextures;
 
-    std::vector<eTextureCollection> fAttack;
+    std::vector<TextureCollection> fAttack;
 };
 
 struct ArcherTextures : public FightingCharacterTextures {
     using FightingCharacterTextures::FightingCharacterTextures;
 
-    std::vector<eTextureCollection> fPatrol;
+    std::vector<TextureCollection> fPatrol;
 };
 
 struct RockThrowerTextures : public FightingCharacterTextures {
     using FightingCharacterTextures::FightingCharacterTextures;
 
-    std::vector<eTextureCollection> fFight2;
+    std::vector<TextureCollection> fFight2;
 };
 
 struct MonsterTextures {
-    std::vector<eTextureCollection> fWalk;
-    std::vector<eTextureCollection> fDie;
-    std::vector<eTextureCollection> fFight;
-    std::vector<eTextureCollection> fFight2;
+    std::vector<TextureCollection> fWalk;
+    std::vector<TextureCollection> fDie;
+    std::vector<TextureCollection> fFight;
+    std::vector<TextureCollection> fFight2;
 };
 
 struct HeroTextures {
-    std::vector<eTextureCollection> fWalk;
-    std::vector<eTextureCollection> fDie;
-    std::vector<eTextureCollection> fFight;
+    std::vector<TextureCollection> fWalk;
+    std::vector<TextureCollection> fDie;
+    std::vector<TextureCollection> fFight;
 };
 
 struct AresWarriorTextures {
-    std::vector<eTextureCollection> fWalk;
-    std::vector<eTextureCollection> fDie;
-    std::vector<eTextureCollection> fFight;
+    std::vector<TextureCollection> fWalk;
+    std::vector<TextureCollection> fDie;
+    std::vector<TextureCollection> fFight;
 };
 
 struct ChariotTextures {
-    std::vector<eTextureCollection> fWalk;
-    std::vector<eTextureCollection> fDie;
-    std::vector<eTextureCollection> fFight;
+    std::vector<TextureCollection> fWalk;
+    std::vector<TextureCollection> fDie;
+    std::vector<TextureCollection> fFight;
 };
 
 struct WaterMonsterTextures {
     WaterMonsterTextures(SDL_Renderer* const renderer) :
         fDie(renderer) {}
 
-    std::vector<eTextureCollection> fWalk;
-    eTextureCollection fDie;
-    std::vector<eTextureCollection> fFight;
-    std::vector<eTextureCollection> fFight2;
+    std::vector<TextureCollection> fWalk;
+    TextureCollection fDie;
+    std::vector<TextureCollection> fFight;
+    std::vector<TextureCollection> fFight2;
 };
 
 struct RacingHorseTextures {
     RacingHorseTextures(SDL_Renderer* const renderer) :
         fDie(renderer) {}
 
-    std::vector<eTextureCollection> fRace;
-    std::vector<eTextureCollection> fStand;
-    eTextureCollection fDie;
+    std::vector<TextureCollection> fRace;
+    std::vector<TextureCollection> fStand;
+    TextureCollection fDie;
 };
 
 class CharacterTextures {
@@ -486,18 +486,18 @@ public:
     BasicCharacterTextures fOx;
     BasicCharacterTextures fOxHandler;
 
-    eTextureCollection fEmptyTrailer;
-    eTextureCollection fWoodTrailer1;
-    eTextureCollection fWoodTrailer2;
-    eTextureCollection fMarbleTrailer1;
-    eTextureCollection fMarbleTrailer2;
-    eTextureCollection fBlackMarbleTrailer1;
-    eTextureCollection fBlackMarbleTrailer2;
-    eTextureCollection fSculptureTrailer;
+    TextureCollection fEmptyTrailer;
+    TextureCollection fWoodTrailer1;
+    TextureCollection fWoodTrailer2;
+    TextureCollection fMarbleTrailer1;
+    TextureCollection fMarbleTrailer2;
+    TextureCollection fBlackMarbleTrailer1;
+    TextureCollection fBlackMarbleTrailer2;
+    TextureCollection fSculptureTrailer;
 
-    eTextureCollection fEmptyBigTrailer;
-    eTextureCollection fMarbleBigTrailer;
-    eTextureCollection fBlackMarbleBigTrailer;
+    TextureCollection fEmptyBigTrailer;
+    TextureCollection fMarbleBigTrailer;
+    TextureCollection fBlackMarbleBigTrailer;
 
     ResourceCollectorTextures fMarbleMiner;
     ResourceCollectorTextures fSilverMiner;
@@ -542,24 +542,24 @@ public:
 
     BasicCharacterTextures fTransporter;
 
-    eTextureCollection fEmptyCart;
-    std::vector<eTextureCollection> fUrchinCart;
-    std::vector<eTextureCollection> fFishCart;
-    std::vector<eTextureCollection> fMeatCart;
-    std::vector<eTextureCollection> fCheeseCart;
-    std::vector<eTextureCollection> fCarrotsCart;
-    std::vector<eTextureCollection> fOnionsCart;
-    std::vector<eTextureCollection> fWheatCart;
-    std::vector<eTextureCollection> fBronzeCart;
-    std::vector<eTextureCollection> fGrapesCart;
-    std::vector<eTextureCollection> fOlivesCart;
-    std::vector<eTextureCollection> fFleeceCart;
-    std::vector<eTextureCollection> fArmorCart;
-    std::vector<eTextureCollection> fOliveOilCart;
-    std::vector<eTextureCollection> fWineCart;
+    TextureCollection fEmptyCart;
+    std::vector<TextureCollection> fUrchinCart;
+    std::vector<TextureCollection> fFishCart;
+    std::vector<TextureCollection> fMeatCart;
+    std::vector<TextureCollection> fCheeseCart;
+    std::vector<TextureCollection> fCarrotsCart;
+    std::vector<TextureCollection> fOnionsCart;
+    std::vector<TextureCollection> fWheatCart;
+    std::vector<TextureCollection> fBronzeCart;
+    std::vector<TextureCollection> fGrapesCart;
+    std::vector<TextureCollection> fOlivesCart;
+    std::vector<TextureCollection> fFleeceCart;
+    std::vector<TextureCollection> fArmorCart;
+    std::vector<TextureCollection> fOliveOilCart;
+    std::vector<TextureCollection> fWineCart;
 
-    std::vector<eTextureCollection> fOrangesCart;
-    std::vector<eTextureCollection> fOrichalcCart;
+    std::vector<TextureCollection> fOrangesCart;
+    std::vector<TextureCollection> fOrichalcCart;
 
     OrangeTenderTextures fOrangeTender;
 
@@ -611,10 +611,10 @@ public:
 
     AresWarriorTextures fAresWarrior;
 
-    eTextureCollection fBannerRod;
-    std::vector<eTextureCollection> fBanners;
-    eTextureCollection fBannerTops;
-    eTextureCollection fPoseidonBannerTops;
+    TextureCollection fBannerRod;
+    std::vector<TextureCollection> fBanners;
+    TextureCollection fBannerTops;
+    TextureCollection fPoseidonBannerTops;
 
     BasicCharacterTextures fPriest;
 
@@ -627,9 +627,9 @@ public:
     UrchinGathererTextures fUrchinGatherer;
     TradeBoatTextures fTradeBoat;
     TradeBoatTextures fTrireme;
-    std::vector<eTextureCollection> fTriremeOverlay;
-    std::vector<eTextureCollection> fTriremeFightOverlay;
-    std::vector<eTextureCollection> fTriremeDieOverlay;
+    std::vector<TextureCollection> fTriremeOverlay;
+    std::vector<TextureCollection> fTriremeFightOverlay;
+    std::vector<TextureCollection> fTriremeDieOverlay;
     TradeBoatTextures fEnemyBoat;
 
     FightingCharacterTextures fDisgruntled;
@@ -670,7 +670,7 @@ public:
     BasicCharacterTextures fCurator;
 
     BasicCharacterTextures fChariotVendor;
-    std::vector<eTextureCollection> fChariot;
+    std::vector<TextureCollection> fChariot;
 
     BasicCharacterTextures fElephant;
 

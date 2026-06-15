@@ -1,7 +1,7 @@
 #include "ehasresourcewalkableobject.h"
 
 #include "ehasresourceobject.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eHasResourceWalkableObject::eHasResourceWalkableObject(
         const stdsptr<eHasResourceObject>& hr,
@@ -16,7 +16,7 @@ bool eHasResourceWalkableObject::walkable(eTileBase* const t) const {
     return mHr->has(t) || mW->walkable(t);
 }
 
-void eHasResourceWalkableObject::serializeFields(eSaveArchive& ar) {
+void eHasResourceWalkableObject::serializeFields(SaveArchive& ar) {
     ar.hasResourceField("hasResource", mHr);
     ar.walkableField("walkable", mW);
 }

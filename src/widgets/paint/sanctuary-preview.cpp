@@ -6,7 +6,7 @@
 #include "textures/game-textures.h"
 #include "engine/etile.h"
 #include "engine/game-board.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "textures/building-textures.h"
 #include "textures/terrain-textures.h"
 #include "widgets/ebuildingmode.h"
@@ -230,10 +230,10 @@ void sortByDrawOrder(std::vector<PreviewTile>& tiles,
                          int lhsViewTileY;
                          int rhsViewTileX;
                          int rhsViewTileY;
-                         eTileHelper::tileIdToRotatedTileId(
+                         TileHelper::tileIdToRotatedTileId(
                              lhs.fX, lhs.fY, lhsViewTileX, lhsViewTileY,
                              dir, boardWidth, boardHeight);
-                         eTileHelper::tileIdToRotatedTileId(
+                         TileHelper::tileIdToRotatedTileId(
                              rhs.fX, rhs.fY, rhsViewTileX, rhsViewTileY,
                              dir, boardWidth, boardHeight);
                          if (lhsViewTileY != rhsViewTileY)
@@ -256,7 +256,7 @@ void previewDrawXY(GameBoard& board,
     int viewTileY = worldTileY;
     if (dir != eWorldDirection::N)
     {
-        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+        TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                            viewTileX, viewTileY,
                                            dir, board.width(), board.height());
     }
@@ -274,7 +274,7 @@ void previewDrawXY(GameBoard& board,
 }
 
 int sanctuaryStairTextureId(const int seed,
-                            const eTextureCollection& coll,
+                            const TextureCollection& coll,
                             const eWorldDirection dir)
 {
     int texId = seed % coll.size();
@@ -333,7 +333,7 @@ bool isTempleFloorTile(const eSanctEleType type)
 }
 
 
-std::shared_ptr<eTexture> sanctuaryTerrainTexture(
+std::shared_ptr<Texture> sanctuaryTerrainTexture(
     const PreviewTile& tile,
     GameBoard& board,
     const eCityId viewedCityId,
@@ -359,7 +359,7 @@ std::shared_ptr<eTexture> sanctuaryTerrainTexture(
     return coll.getTexture(tile.fId % coll.size());
 }
 
-const eTextureCollection* statueTextureCollection(
+const TextureCollection* statueTextureCollection(
     const BuildingTextures& builTexs,
     const GodType god)
 {
@@ -382,7 +382,7 @@ const eTextureCollection* statueTextureCollection(
     return nullptr;
 }
 
-const eTextureCollection* monumentTextureCollection(
+const TextureCollection* monumentTextureCollection(
     const BuildingTextures& builTexs,
     const GodType god)
 {
@@ -655,7 +655,7 @@ SanctuaryTempleTextures sanctuaryTempleGetTextures(
 }
 
 
-std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
+std::shared_ptr<Texture> sanctuaryStatueGetTexture(
     const BuildingTextures& builTexs,
     const GodType god,
     const int rotateId,
@@ -666,7 +666,7 @@ std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
     return coll->getTexture(sanctuaryFigureDirId(rotateId, dir));
 }
 
-std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
+std::shared_ptr<Texture> sanctuaryMonumentGetTexture(
     const BuildingTextures& builTexs,
     const GodType god,
     const int rotateId,
@@ -677,7 +677,7 @@ std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
     return coll->getTexture(sanctuaryFigureDirId(rotateId, dir));
 }
 
-std::shared_ptr<eTexture> sanctuaryAltarGetTexture(
+std::shared_ptr<Texture> sanctuaryAltarGetTexture(
     const BuildingTextures& builTexs,
     const int rotateId)
 {
@@ -749,9 +749,9 @@ void drawSanctuaryTempleBuildingPreview(
     previewDrawXY(board, worldTileX, worldTileY, drawX, drawY, 4, 4, altitude);
     applyPreviewSpanCameraOffset(drawX, drawY, 4, 4, dir);
 
-    const auto drawLayer = [&](const std::shared_ptr<eTexture>& tex) {
+    const auto drawLayer = [&](const std::shared_ptr<Texture>& tex) {
         if(!tex) return;
-        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+        tp.drawTexture(drawX, drawY, tex, Alignment::top);
         tex->clearColorMod();
     };
 
@@ -765,7 +765,7 @@ void drawSanctuaryTempleBuildingPreview(
         previewDrawXY(board, worldTileX, worldTileY, womanDrawX, womanDrawY, 1, 1, altitude);
         womanDrawX += sanctuaryWomanTileDX(r, d);
         womanDrawY += sanctuaryWomanTileDY(r, d);
-        tp.drawTexture(womanDrawX, womanDrawY, t.fWoman, eAlignment::bottom);
+        tp.drawTexture(womanDrawX, womanDrawY, t.fWoman, Alignment::bottom);
         t.fWoman->clearColorMod();
     }
 }
@@ -791,7 +791,7 @@ void drawSanctuaryStatuePreview(
     double drawY;
     previewDrawXY(board, worldTileX, worldTileY, drawX, drawY, 1, 1, altitude);
     const auto tex = coll->getTexture(dirId);
-    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+    tp.drawTexture(drawX, drawY, tex, Alignment::top);
     tex->clearColorMod();
 }
 
@@ -817,7 +817,7 @@ void drawSanctuaryMonumentPreview(
     previewDrawXY(board, worldTileX, worldTileY, drawX, drawY, 2, 2, altitude);
     applyPreviewSpanCameraOffset(drawX, drawY, 2, 2, dir);
     const auto tex = coll->getTexture(dirId);
-    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+    tp.drawTexture(drawX, drawY, tex, Alignment::top);
     tex->clearColorMod();
 }
 
@@ -841,7 +841,7 @@ void drawSanctuaryAltarPreview(
     const auto tex = (rotateId % 2 == 1) ? builTexs.fSanctuaryAltarFlipped
                                           : builTexs.fSanctuaryAltar;
     if(!tex) return;
-    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+    tp.drawTexture(drawX, drawY, tex, Alignment::top);
     tex->clearColorMod();
 }
 
@@ -861,7 +861,7 @@ void drawSanctuaryTorchPreview(
     if(coll.size() == 0) return;
     const int texId = (animFrame / 4) % coll.size();
     const auto& tex = coll.getTexture(texId);
-    tp.drawTexture(drawX + 0.5, drawY - 0.5, tex, eAlignment::bottom);
+    tp.drawTexture(drawX + 0.5, drawY - 0.5, tex, Alignment::bottom);
 }
 
 void drawSanctuaryTerrainPreview(
@@ -917,6 +917,6 @@ void drawSanctuaryTerrainPreview(
         double drawY;
         previewDrawXY(board, tile.fX, tile.fY, drawX, drawY, 1, 1,
                       tile.fAltitude);
-        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+        tp.drawTexture(drawX, drawY, tex, Alignment::top);
     }
 }

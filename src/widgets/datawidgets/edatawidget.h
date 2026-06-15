@@ -12,7 +12,7 @@ enum class eCityId;
 
 class eDataWidget : public eWidget {
 public:
-    eDataWidget(GameBoard& b, eMainWindow* const w);
+    eDataWidget(GameBoard& b, MainWindow* const w);
 
     virtual void initialize();
 

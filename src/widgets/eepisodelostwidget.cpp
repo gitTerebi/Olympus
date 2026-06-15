@@ -4,7 +4,7 @@
 
 #include "eframedlabel.h"
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 
 void eEpisodeLostWidget::initialize(const eAction& proceedA) {
     const auto res = resolution();
@@ -15,19 +15,19 @@ void eEpisodeLostWidget::initialize(const eAction& proceedA) {
 
     const auto defeatLabel = new eFramedLabel(window());
     defeatLabel->setType(eFrameType::message);
-    defeatLabel->setText(eLanguage::zeusText(62, 1));
+    defeatLabel->setText(Language::zeusText(62, 1));
     defeatLabel->setFontSizeXL();
     defeatLabel->fitContent();
     addWidget(defeatLabel);
-    defeatLabel->align(eAlignment::center);
+    defeatLabel->align(Alignment::center);
 
     const auto proceedButton = new FramedButton(window());
     proceedButton->setRenderBg(true);
     proceedButton->setUnderline(false);
-    proceedButton->setText(eLanguage::zeusText(62, 2));
+    proceedButton->setText(Language::zeusText(62, 2));
     proceedButton->fitContent();
     addWidget(proceedButton);
-    proceedButton->align(eAlignment::hcenter);
+    proceedButton->align(Alignment::hcenter);
     proceedButton->setY(2*height()/3);
     proceedButton->setPressAction(proceedA);
 }

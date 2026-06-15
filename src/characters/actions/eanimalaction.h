@@ -6,7 +6,7 @@
 #include "walkable/ewalkableobject.h"
 
 class eTileBase;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eAnimalActionStage {
     idle, walking, laying
@@ -30,7 +30,7 @@ public:
     int spawnerX() const { return mSpawnerX; }
     int spawnerY() const { return mSpawnerY; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
     void walkAround();
     void lay();

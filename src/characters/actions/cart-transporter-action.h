@@ -5,9 +5,9 @@
 
 #include "characters/ecarttransporter.h"
 #include "buildings/ebuildingwithresource.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-class eSaveArchive;
+class SaveArchive;
 class eThreadBuilding;
 
 enum class eCartState {
@@ -80,7 +80,7 @@ protected:
     virtual bool acceptsTargetForTask(const eCartTask& task,
                                       const eThreadBuilding& target) const;
 
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
     virtual bool savesCartState() const;
 
@@ -140,7 +140,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.field("buildingX", mBx);
         ar.field("buildingY", mBy);
@@ -172,7 +172,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -194,7 +194,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);
     }
 private:

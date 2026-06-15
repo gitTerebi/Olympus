@@ -1,10 +1,10 @@
 #include "eaphroditehelpaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "engine/eplague.h"
 #include "buildings/ehousebase.h"
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 
 eAphroditeHelpAction::eAphroditeHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::aphroditeHelpAction) {}
@@ -40,7 +40,7 @@ bool eAphroditeHelpAction::decide() {
     return true;
 }
 
-void eAphroditeHelpAction::serializeFields(eSaveArchive& ar) {
+void eAphroditeHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("prePopulatingStage", mPrePopulatingStage);
@@ -145,7 +145,7 @@ void eAphroditeHelpAction::goToTarget() {
         const auto ct = nearest->centerTile();
         const int tx = ct->x();
         const int ty = ct->y();
-        const auto tile = eTileHelper::closestRoad(tx, ty, board);
+        const auto tile = TileHelper::closestRoad(tx, ty, board);
         using eGTTT = eGoToTargetTeleport;
         const auto tele = std::make_shared<eGTTT>(board, this);
         goToTile(tile, tele);

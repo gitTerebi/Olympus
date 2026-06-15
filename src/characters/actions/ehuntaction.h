@@ -6,7 +6,7 @@
 #include "characters/ehunter.h"
 
 class eHuntingLodge;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eHuntActionStage {
     idle, findingResource, goingBack, waiting
@@ -21,7 +21,7 @@ public:
     void increment(const int by) override;
     bool decide() override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void rebuildCurrentStage();

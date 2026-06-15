@@ -1,11 +1,11 @@
 #include "etooltip.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 #include "widgets/ewidget.h"
 
 #include <SDL2/SDL.h>
 
-eTooltip::eTooltip(eMainWindow& w) : mWindow(w) {}
+eTooltip::eTooltip(MainWindow& w) : mWindow(w) {}
 
 void eTooltip::update() {
     const auto txt = eWidget::sTooltip();
@@ -28,7 +28,7 @@ void eTooltip::update() {
         if(mText.empty()) {
             mTexture->reset();
         } else {
-            mTexture->loadText(r, mText, eFontColor::light, *mFont, 50*fontSize);
+            mTexture->loadText(r, mText, FontColor::light, *mFont, 50*fontSize);
         }
     }
 }

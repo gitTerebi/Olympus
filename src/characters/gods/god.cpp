@@ -1,12 +1,12 @@
 #include "god.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "athena.h"
 #include "demeter.h"
 #include "dionysus.h"
 #include "hermes.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "buildings/ebuilding.h"
 
@@ -401,7 +401,7 @@ std::string God::sFightResultString(const GodType g1, const GodType g2) {
     const int li = sGodTextId(l);
     const int group = 332;
     const int string = 14*wi + li;
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 int sGodAttackSpriteLength(const GodType gt) {
@@ -567,7 +567,7 @@ bool God::sTarget(const GodType gt, const eBuildingType bt) {
 std::string God::sGodName(const GodType gt) {
     const int group = 157;
     const int string = sGodTextId(gt);
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 void God::sGodStrings(std::vector<GodType>& gods,
@@ -638,7 +638,7 @@ void God::sLoadTextures(const GodType g) {
     }
 }
 
-void God::serializeFields(eSaveArchive& ar) {
+void God::serializeFields(SaveArchive& ar) {
     eCharacter::serializeFields(ar);
     ar.field("mAttitude", mAttitude);
 }

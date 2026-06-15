@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "textures/game-textures.h"
 #include "epalacetile.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 ePalace::ePalace(GameBoard& board, const bool r,
                  const eCityId cid) :
@@ -86,11 +86,11 @@ eTextureSpace ePalace::getTextureSpace(const int tx, const int ty,
     }
 }
 
-std::vector<eOverlay> ePalace::getOverlays(const eTileSize size) const {
+std::vector<Overlay> ePalace::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
 
-    std::vector<eOverlay> os;
+    std::vector<Overlay> os;
 
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -99,7 +99,7 @@ std::vector<eOverlay> ePalace::getOverlays(const eTileSize size) const {
     const int tt = textureTime();
     if(mRotated != dirRot) {
         const auto& coll = texs.fPalaceHOverlay;
-        eOverlay a0;
+        Overlay a0;
         a0.fX = 1.0;
         a0.fY = -2.75;
         const int ttt = tt % coll.size();
@@ -107,7 +107,7 @@ std::vector<eOverlay> ePalace::getOverlays(const eTileSize size) const {
         os.push_back(a0);
     } else {
         const auto& coll = texs.fPalaceWOverlay;
-        eOverlay a0;
+        Overlay a0;
         a0.fX = 1.15;
         a0.fY = -3.25;
         const int ttt = tt % coll.size();
@@ -124,7 +124,7 @@ void ePalace::addTile(ePalaceTile* const tile) {
     mPalaceTilesCache.push_back(tile);
 }
 
-void ePalace::serializeFields(eSaveArchive& ar) {
+void ePalace::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     if(ar.reading()) {
         mPalaceTilesCache.clear();

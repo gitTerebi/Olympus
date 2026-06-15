@@ -1,6 +1,6 @@
 ﻿#include "god-monster-action.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "characters/actions/ewaitaction.h"
 #include "characters/actions/emovetoaction.h"
@@ -10,8 +10,8 @@
 #include "engine/boardData/eheatmapdivisor.h"
 #include "engine/boardData/eheatmaptask.h"
 
-#include "etilehelper.h"
-#include "missiles/egodmissile.h"
+#include "tile-helper.h"
+#include "missiles/god-missile.h"
 
 #include "characters/gods/actions/god-attack-action.h"
 #include "characters/gods/actions/god-action.h"
@@ -120,7 +120,7 @@ void GodMonsterAction::randomPlaceOnBoard() {
     const auto rtile = city->randomTile();
     const int tx = rtile->x();
     const int ty = rtile->y();
-    const auto tile = eTileHelper::closestRoad(tx, ty, board);
+    const auto tile = TileHelper::closestRoad(tx, ty, board);
     if(!tile) return;
     c->changeTile(tile);
 }
@@ -167,8 +167,8 @@ void GodMonsterAction::goToTarget(const eHeatGetters::eHeatGetter hg,
             auto& board = c->getBoard();
             int tx;
             int ty;
-            eTileHelper::dtileIdToTileId(dtx, dty, tx, ty);
-            const auto tile = eTileHelper::closestRoad(tx, ty, board);
+            TileHelper::dtileIdToTileId(dtx, dty, tx, ty);
+            const auto tile = TileHelper::closestRoad(tx, ty, board);
             if(tile) {
                 goToTile(tile, findFailFunc, oh, tileDistance,
                          pathFindWalkable, moveWalkable);
@@ -447,7 +447,7 @@ void GodMonsterAction::goToNearestRoad(
         patrol(finishAct, dist);
         return;
     }
-    const auto cr = eTileHelper::closestRoad(t->x(), t->y(), board(), 5);
+    const auto cr = TileHelper::closestRoad(t->x(), t->y(), board(), 5);
     if(cr && cr->roadLength(5) >= 5) {
         const auto fail = std::make_shared<eGMA_patrolFailFail>(
                               board(), this, finishAct);
@@ -484,7 +484,7 @@ void GodMonsterAction::resumeAction() {
     c->setActionType(p.fAt);
 }
 
-void GodMonsterAction::serializeFields(eSaveArchive& ar) {
+void GodMonsterAction::serializeFields(SaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     if(ar.reading()) mPausedActions.clear();
 }
@@ -538,7 +538,7 @@ void eGMA_spawnMissileFinish::call() {
             height = 0;
         }
 
-        const auto missile = eMissile::sCreate<eGodMissile>(
+        const auto missile = Missile::sCreate<GodMissile>(
                     brd, charTileX, charTileY, height,
                     targetTileX, targetTileY, height, 0);
 

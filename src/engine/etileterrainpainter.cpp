@@ -1,8 +1,8 @@
 #include "etileterrainpainter.h"
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
-stdsptr<eTexture> eTileTerrainPainter::getTexture(const int frame) const {
+stdsptr<Texture> eTileTerrainPainter::getTexture(const int frame) const {
     if(const auto coll = fColl) {
         const int ff = frame/20;
         const int id = ff % coll->size();

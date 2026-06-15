@@ -4,8 +4,8 @@
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
 #include "characters/gods/actions/god-visit-action.h"
-#include "elanguage.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "fileIO/save-archive.h"
 
 eGodVisitEvent::eGodVisitEvent(const eCityId cid,
                                const eGameEventBranch branch,
@@ -44,7 +44,7 @@ void eGodVisitEvent::trigger() {
     int tid;
     const int nTypes = types.size();
     if(mRandom) {
-        tid = eRand::rand() % types.size();
+        tid = Rand::rand() % types.size();
     } else {
         tid = mNextId;
         if(tid >= nTypes) {
@@ -72,12 +72,12 @@ void eGodVisitEvent::trigger() {
 }
 
 std::string eGodVisitEvent::longName() const {
-    return eLanguage::text("god_visit");
+    return Language::text("god_visit");
 }
 
-void eGodVisitEvent::serializeFields(eSaveArchive& ar) {
+void eGodVisitEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
-    ar.arrayField("types", mTypes, [](eSaveArchive& ar, GodType& t) {
+    ar.arrayField("types", mTypes, [](SaveArchive& ar, GodType& t) {
         ar.field("t", t);
     });
     ar.field("random", mRandom, false);

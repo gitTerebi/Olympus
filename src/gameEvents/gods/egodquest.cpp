@@ -1,6 +1,6 @@
 #include "engine/egodquest.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 eHeroType eGodQuest::sDefaultHero(
         const GodType gt, const GodQuestId gqi) {
@@ -125,113 +125,113 @@ std::string eGodQuest::name() const {
     case GodType::aphrodite: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 6);
+            return Language::zeusText(52, 6);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 20);
+            return Language::zeusText(52, 20);
         }
     } break;
     case GodType::apollo: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 3);
+            return Language::zeusText(52, 3);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 17);
+            return Language::zeusText(52, 17);
         }
     } break;
     case GodType::ares: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 5);
+            return Language::zeusText(52, 5);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 19);
+            return Language::zeusText(52, 19);
         }
     } break;
     case GodType::artemis: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 4);
+            return Language::zeusText(52, 4);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 18);
+            return Language::zeusText(52, 18);
         }
     } break;
     case GodType::athena: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 8);
+            return Language::zeusText(52, 8);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 22);
+            return Language::zeusText(52, 22);
         }
     } break;
     case GodType::atlas: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 13);
+            return Language::zeusText(52, 13);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 27);
+            return Language::zeusText(52, 27);
         }
     } break;
     case GodType::demeter: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 2);
+            return Language::zeusText(52, 2);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 16);
+            return Language::zeusText(52, 16);
         }
     } break;
     case GodType::dionysus: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 10);
+            return Language::zeusText(52, 10);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 24);
+            return Language::zeusText(52, 24);
         }
     } break;
     case GodType::hades: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 11);
+            return Language::zeusText(52, 11);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 25);
+            return Language::zeusText(52, 25);
         }
     } break;
     case GodType::hephaestus: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 9);
+            return Language::zeusText(52, 9);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 23);
+            return Language::zeusText(52, 23);
         }
     } break;
     case GodType::hera: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 12);
+            return Language::zeusText(52, 12);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 26);
+            return Language::zeusText(52, 26);
         }
     } break;
     case GodType::hermes: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 7);
+            return Language::zeusText(52, 7);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 21);
+            return Language::zeusText(52, 21);
         }
     } break;
     case GodType::poseidon: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 1);
+            return Language::zeusText(52, 1);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 15);
+            return Language::zeusText(52, 15);
         }
     } break;
     case GodType::zeus: {
         switch(fId) {
         case GodQuestId::godQuest1:
-            return eLanguage::zeusText(52, 0);
+            return Language::zeusText(52, 0);
         case GodQuestId::godQuest2:
-            return eLanguage::zeusText(52, 14);
+            return Language::zeusText(52, 14);
         }
     } break;
     }

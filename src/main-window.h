@@ -1,5 +1,5 @@
-﻿#ifndef EMAINWINDOW_H
-#define EMAINWINDOW_H
+﻿#ifndef MAIN_WINDOW_H
+#define MAIN_WINDOW_H
 
 #include "widgets/ewidget.h"
 #include "widgets/eresolution.h"
@@ -7,7 +7,6 @@
 #include "textures/god-textures.h"
 #include "textures/building-textures.h"
 #include "textures/character-textures.h"
-#include "widgets/egraphicsmenu.h"
 #include "widgets/eoptionsmenu.h"
 
 using eSlot = std::function<void()>;
@@ -19,12 +18,12 @@ class eCampaign;
 
 struct GameWidgetSettings;
 
-class eMainWindow {
+class MainWindow {
 public:
-    eMainWindow();
-    ~eMainWindow();
+    MainWindow();
+    ~MainWindow();
 
-    bool initialize(const eSettings& settings);
+    bool initialize(const Settings& settings);
 public:
 
     void setWidget(eWidget* const w);
@@ -34,24 +33,25 @@ public:
 
     void addSlot(const eSlot& slot);
 
-    int width() const { return resolution().width(); }
-    int height() const { return resolution().height(); }
+    int width() const;
+    int height() const;
     const eResolution& resolution() const { return mSettings.fRes; }
     SDL_Window* window() const { return mSdlWindow; }
     SDL_Renderer* renderer() const { return mSdlRenderer; }
 
     void setResolution(const eResolution& res);
     void setResolution(const int resolution);
-    void setDisplayMode(const eDisplayMode mode);
+    void setDisplayMode(const DisplayMode mode);
     void setInterpolation(const int interpolation);
     void setUpscale(const int upscale);
     void setUpscaleFactor(const int factor);
+    void setUiScale(const int scale);
     void setDisplayMode(const int mode);
     void applyPostprocessFilters();
     void setKeyScrollSpeed(const int speed);
     void setDisableEdgeScroll(const bool b);
     void setGameSpeed(const int speed);
-    void setHotkey(const eHotkeyId id, const SDL_Scancode key);
+    void setHotkey(const HotkeyId id, const SDL_Scancode key);
     void setGeneralVolume(const int volume);
     void setMusicVolume(const int volume);
     void setVoiceVolume(const int volume);
@@ -84,8 +84,7 @@ public:
     void showMenuLoading();
     void setAfterMenuLoadingAction(const eAction& action);
     void showMainMenu();
-    void applyGraphicsSettings(const eSettings& settings);
-    void showSettingsMenu();
+    void applyGraphicsSettings(const Settings& settings);
     void showOptionsMenu();
     void showOptionsMenu(const int initialPage);
     void showChooseGameMenu();
@@ -99,7 +98,7 @@ public:
     eWidget* currentWidget() const { return mWidget; }
     eWorldWidget* worldWidget() const { return mWW; }
 
-    const eSettings& settings() const { return mSettings; }
+    const Settings& settings() const { return mSettings; }
 
     void execDialog(eWidget* const d,
                     const bool closable = true,
@@ -120,17 +119,20 @@ public:
 private:
     void clearWidgets();
     std::string mostRecentSavePath() const;
+    void emitWindowSizeChanged();
     // Map raw window mouse coords to frame-resolution coords, undoing the bicubic
     // upscale + letterbox so hit-testing matches the on-screen image.
     void mapWindowToFrame(int& x, int& y) const;
 
-    eSettings mSettings;
+    Settings mSettings;
 
     std::string mLeader;
 
     bool mQuit = false;
     bool mFirstDisplayModeSetting = true;
     bool mFirstResolutionSetting = true;
+    int mLastWindowEventW = 0;
+    int mLastWindowEventH = 0;
 
     std::vector<eSlot> mSlots;
     eAction mAfterMenuLoadingAction;
@@ -156,4 +158,4 @@ private:
     std::vector<Uint32> mFramePixels;
 };
 
-#endif // EMAINWINDOW_H
+#endif // MAIN_WINDOW_H

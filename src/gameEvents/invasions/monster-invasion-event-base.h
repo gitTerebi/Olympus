@@ -7,7 +7,7 @@
 
 #include "characters/monsters/emonster.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eMonsterInvasionEventBase : public eGameEvent,
                                   public ePointEventValue,
@@ -34,7 +34,7 @@ public:
     eEventTrigger& killedTrigger() { return *mKilledTrigger; }
 protected:
     eMonster* triggerBase();
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdsptr<eEventTrigger> mKilledTrigger;
     bool mChooseMonster = false;

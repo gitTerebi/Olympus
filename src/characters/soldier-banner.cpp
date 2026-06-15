@@ -13,22 +13,22 @@
 #include "engine/eorientation.h"
 #include "characters/esoldier.h"
 #include "characters/actions/soldier-action.h"
-#include "fileIO/esavearchive.h"
-#include "eiteratesquare.h"
+#include "fileIO/save-archive.h"
+#include "iterate-square.h"
 
-#include "evectorhelpers.h"
-#include "ewalkablehelpers.h"
+#include "vector-helpers.h"
+#include "walkable-helpers.h"
 
 #include "buildings/epalace.h"
 #include "buildings/epalacetile.h"
 #include "buildings/ebuilding.h"
 
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "engine/epathfinder.h"
 
-#include "elanguage.h"
-#include "estringhelpers.h"
-#include "enumbers.h"
+#include "language.h"
+#include "string-helpers.h"
+#include "numbers.h"
 
 #include "gameEvents/invasions/invasion-targeting.h"
 
@@ -115,8 +115,8 @@ SoldierBanner::SoldierBanner(const eBannerType type,
     mType(type), mId(gNextId++), mBoard(board), mFacing(0) {
     mBoard.registerAllSoldierBanner(this);
     const int nameId = mId % 30;
-    auto name = eLanguage::zeusText(138, nameId);
-    eStringHelpers::replaceAll(name, "&quot;", "\"");
+    auto name = Language::zeusText(138, nameId);
+    StringHelpers::replaceAll(name, "&quot;", "\"");
     setName(name);
 }
 
@@ -177,7 +177,7 @@ void SoldierBanner::commandFormation(const int facing,
         // formation adjacent to a building parked on, so soldiers stop at the wall
         // and the fighting-action building pass bulldozes inward toward the banner
         // instead of phasing through the structure.
-        return eWalkableHelpers::sDefaultWalkable(tt);
+        return WalkableHelpers::sDefaultWalkable(tt);
     };
 
     int depthDX = 0;
@@ -434,7 +434,7 @@ void SoldierBanner::removeSoldier(eSoldier* const s) {
     mPlaces.erase(s);
     mCombatAssignments.erase(s);
     mCombatBlockages.erase(s);
-    const bool r = eVectorHelpers::remove(mSoldiers, s);
+    const bool r = VectorHelpers::remove(mSoldiers, s);
     if(r) updatePlaces();
 }
 
@@ -661,7 +661,7 @@ int SoldierBanner::soldierRange() const {
     return 0;
 }
 
-void SoldierBanner::serializeFields(eSaveArchive& ar) {
+void SoldierBanner::serializeFields(SaveArchive& ar) {
     ar.field("mIOID", mIOID);
     ar.field("mMilitaryAid", mMilitaryAid);
     ar.field("mHome", mHome);
@@ -682,7 +682,7 @@ void SoldierBanner::serializeFields(eSaveArchive& ar) {
         const stdptr<SoldierBanner> tptr(this);
         auto places = std::make_shared<std::vector<std::pair<eSoldier*, eTile*>>>();
         ar.arrayField("places", *places,
-            [this](eSaveArchive& itemAr, std::pair<eSoldier*, eTile*>& p) {
+            [this](SaveArchive& itemAr, std::pair<eSoldier*, eTile*>& p) {
                 itemAr.tileField("tile", mBoard, p.second);
                 itemAr.characterField("soldier", &mBoard, p.first);
             });
@@ -698,7 +698,7 @@ void SoldierBanner::serializeFields(eSaveArchive& ar) {
         places.reserve(mPlaces.size());
         for(const auto& p : mPlaces) places.emplace_back(p.first, p.second);
         ar.arrayField("places", places,
-            [this](eSaveArchive& itemAr, std::pair<eSoldier*, eTile*>& p) {
+            [this](SaveArchive& itemAr, std::pair<eSoldier*, eTile*>& p) {
                 itemAr.tileField("tile", mBoard, p.second);
                 itemAr.characterField("soldier", &mBoard, p.first);
             });
@@ -707,7 +707,7 @@ void SoldierBanner::serializeFields(eSaveArchive& ar) {
         const stdptr<SoldierBanner> tptr(this);
         auto soldiers = std::make_shared<std::vector<eSoldier*>>();
         ar.arrayField("soldiers", *soldiers,
-            [this](eSaveArchive& itemAr, eSoldier*& s) {
+            [this](SaveArchive& itemAr, eSoldier*& s) {
                 itemAr.characterField("soldier", &mBoard, s);
             });
         ar.addPostFunc([tptr, soldiers]() {
@@ -720,14 +720,14 @@ void SoldierBanner::serializeFields(eSaveArchive& ar) {
     } else {
         std::vector<eSoldier*> soldiers = mSoldiers;
         ar.arrayField("soldiers", soldiers,
-            [this](eSaveArchive& itemAr, eSoldier*& s) {
+            [this](SaveArchive& itemAr, eSoldier*& s) {
                 itemAr.characterField("soldier", &mBoard, s);
             });
     }
     ar.field("formationRole", mFormationRole, eBannerFormationRole::other);
 }
 
-void SoldierBanner::serialize(eSaveArchive& ar) {
+void SoldierBanner::serialize(SaveArchive& ar) {
     serializeFields(ar);
     if(ar.reading()) {
         const stdptr<SoldierBanner> tptr(this);
@@ -756,14 +756,14 @@ void SoldierBanner::sSendPalaceBannersHomeAndRepack(
         case eBannerType::horseman:
             bb->goHome();
             changed = true;
-            eVectorHelpers::remove(bs, bb);
+            VectorHelpers::remove(bs, bb);
             i--;
             break;
         case eBannerType::amazon:
         case eBannerType::aresWarrior:
             bb->moveToPalace();
             bb->goHome();
-            eVectorHelpers::remove(bs, bb);
+            VectorHelpers::remove(bs, bb);
             i--;
             break;
         case eBannerType::enemy:
@@ -808,7 +808,7 @@ void SoldierBanner::sHandleHomeBuildingPlacement(
                        (bbt == eBannerType::aresWarrior && gt == GodType::ares)) {
                         bb->moveToPalace();
                         bb->goHome();
-                        eVectorHelpers::remove(bs, bb);
+                        VectorHelpers::remove(bs, bb);
                         i--;
                     }
                 }
@@ -864,7 +864,7 @@ void SoldierBanner::sPlaceNoPathTrace(std::vector<SoldierBanner*> bs,
     const int kinc = slds == 1 ? 1 : bannerDist;
     for(int k = 0; isld < slds; k += kinc) {
         (void)isld;
-        eIterateSquare::iterateSquare(k, prcsTile, bannerDist);
+        IterateSquare::iterateSquare(k, prcsTile, bannerDist);
     }
 }
 
@@ -909,7 +909,7 @@ void SoldierBanner::sPlace(std::vector<SoldierBanner*> bs,
     };
 
     for(int k = 0; k < 9; k++) {
-        eIterateSquare::iterateSquare(k, prcsTile, bannerDist);
+        IterateSquare::iterateSquare(k, prcsTile, bannerDist);
         if(startTile) break;
     }
 
@@ -1105,26 +1105,26 @@ std::string SoldierBanner::sName(
     if(atlantean) {
         switch(type) {
         case eBannerType::hoplite:
-            return eLanguage::zeusText(138, 79);
+            return Language::zeusText(138, 79);
         case eBannerType::rockThrower:
-            return eLanguage::zeusText(138, 77);
+            return Language::zeusText(138, 77);
         case eBannerType::horseman:
-            return eLanguage::zeusText(138, 80);
+            return Language::zeusText(138, 80);
         case eBannerType::trireme:
-            return eLanguage::zeusText(138, 76);
+            return Language::zeusText(138, 76);
         default:
             break;
         }
     } else {
         switch(type) {
         case eBannerType::hoplite:
-            return eLanguage::zeusText(138, 72);
+            return Language::zeusText(138, 72);
         case eBannerType::rockThrower:
-            return eLanguage::zeusText(138, 74);
+            return Language::zeusText(138, 74);
         case eBannerType::horseman:
-            return eLanguage::zeusText(138, 71);
+            return Language::zeusText(138, 71);
         case eBannerType::trireme:
-            return eLanguage::zeusText(138, 73);
+            return Language::zeusText(138, 73);
         default:
             break;
         }
@@ -1148,7 +1148,7 @@ void SoldierBanner::updatePlaces() {
         // Reject building-occupied tiles (incl. enemy banners). Keeps formation
         // slots adjacent to a building parked on so soldiers bulldoze in from the
         // wall rather than phasing into the structure. See commandFormation.
-        return eWalkableHelpers::sDefaultWalkable(tt);
+        return WalkableHelpers::sDefaultWalkable(tt);
     };
 
     const auto rotateOffset = [this](const int side, const int depth,
@@ -1218,7 +1218,7 @@ void SoldierBanner::updatePlaces() {
             places[s] = tt;
             return false;
         };
-        eIterateSquare::iterateSquare(k, prcsTile);
+        IterateSquare::iterateSquare(k, prcsTile);
     }
     if(!places.empty()) {
         mPlaces = places;
@@ -1315,7 +1315,7 @@ bool SoldierBanner::enemyNear(const int by) {
         return false;
     }
 
-    const int hrange = eNumbers::sInvasionEngageDefenderRange;
+    const int hrange = Numbers::sInvasionEngageDefenderRange;
     const int tx = mTile->x();
     const int ty = mTile->y();
     const auto tid = teamId();
@@ -1375,7 +1375,7 @@ void SoldierBanner::updateCombatAssignments() {
     if(mSoldiers.empty()) return;
 
     const auto tid = teamId();
-    const int range = eNumbers::sInvasionEngageDefenderRange;
+    const int range = Numbers::sInvasionEngageDefenderRange;
     std::vector<eCharacter*> enemies;
     // Scan from the banner tile only — scanning from each soldier lets wandering
     // soldiers pull in enemies far from the formation, causing chase oscillation.

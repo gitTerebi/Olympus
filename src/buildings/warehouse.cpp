@@ -1,7 +1,7 @@
 #include "warehouse.h"
 
 #include "engine/game-board.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "textures/game-textures.h"
 
 #include <algorithm>
@@ -57,8 +57,8 @@ WarehouseSlot sSlotFromRealTile(const SDL_Rect& rect,
                                  SDL_Rect& rotatedRect) {
     const SDL_Point realDoor{rect.x, rect.y};
     SDL_Point rotatedDoor;
-    rotatedRect = eTileHelper::toRotatedRect(rect, dir, boardW, boardH);
-    eTileHelper::tileIdToRotatedTileId(realDoor.x, realDoor.y,
+    rotatedRect = TileHelper::toRotatedRect(rect, dir, boardW, boardH);
+    TileHelper::tileIdToRotatedTileId(realDoor.x, realDoor.y,
                                        rotatedDoor.x, rotatedDoor.y,
                                        dir, boardW, boardH);
     const int localX = rotatedDoor.x - rotatedRect.x;
@@ -77,7 +77,7 @@ WarehouseSlot sRotatedSlotFromRealSlot(
     const int tileY = rect.y + slot.fY + 3;
     int rotatedX;
     int rotatedY;
-    eTileHelper::tileIdToRotatedTileId(tileX, tileY,
+    TileHelper::tileIdToRotatedTileId(tileX, tileY,
                                        rotatedX, rotatedY,
                                        dir, boardW, boardH);
     const int localX = rotatedX - rotatedRect.x;
@@ -124,7 +124,7 @@ Warehouse::Warehouse(GameBoard& board, const eCityId cid) :
     setOverlayEnabledFunc([]() { return true; });
 }
 
-std::shared_ptr<eTexture> Warehouse::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> Warehouse::getTexture(const eTileSize size) const {
     (void)size;
     return nullptr;
 }
@@ -134,8 +134,8 @@ eTextureSpace Warehouse::getTextureSpace(const int tx, const int ty,
     return eBuilding::getTextureSpace(tx, ty, size);
 }
 
-std::vector<eOverlay> Warehouse::getOverlays(const eTileSize size) const {
-    std::vector<eOverlay> os;
+std::vector<Overlay> Warehouse::getOverlays(const eTileSize size) const {
+    std::vector<Overlay> os;
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];

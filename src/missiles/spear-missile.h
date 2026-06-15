@@ -1,12 +1,12 @@
-#ifndef ESPEARMISSILE_H
-#define ESPEARMISSILE_H
+#ifndef SPEAR_MISSILE_H
+#define SPEAR_MISSILE_H
 
-#include "earrowspearbase.h"
+#include "arrow-spear-base.h"
 
-class eSpearMissile : public eArrowSpearBase {
+class SpearMissile : public ArrowSpearBase {
 public:
-    eSpearMissile(GameBoard& board,
-                  const std::vector<ePathPoint>& path = {});
+    SpearMissile(GameBoard& board,
+                  const std::vector<PathPoint>& path = {});
 };
 
-#endif // ESPEARMISSILE_H
+#endif // SPEAR_MISSILE_H

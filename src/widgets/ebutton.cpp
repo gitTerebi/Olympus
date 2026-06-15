@@ -3,20 +3,20 @@
 #include <algorithm>
 #include <initializer_list>
 
-void eButton::setHoverTexture(const std::shared_ptr<eTexture>& tex) {
+void eButton::setHoverTexture(const std::shared_ptr<Texture>& tex) {
     mHoverTexture = tex;
 }
 
-void eButton::setPressedTexture(const std::shared_ptr<eTexture>& tex) {
+void eButton::setPressedTexture(const std::shared_ptr<Texture>& tex) {
     mPressedTexture = tex;
 }
 
-void eButton::setDisabledTexture(const std::shared_ptr<eTexture>& tex) {
+void eButton::setDisabledTexture(const std::shared_ptr<Texture>& tex) {
     mDisabledTexture = tex;
 }
 
-eButton* eButton::sCreate(const eTextureCollection& texs,
-                          eMainWindow* const window,
+eButton* eButton::sCreate(const TextureCollection& texs,
+                          MainWindow* const window,
                           eWidget* const buttons) {
     const auto b = sCreateButtonBase<eButton>(texs, window, buttons);
     b->setPressedTexture(texs.getTexture(2));
@@ -63,7 +63,7 @@ void eButton::paintEvent(ePainter& p) {
 
                 SDL_Color col1;
                 SDL_Color col2;
-                eFontColorHelpers::colors(fontColor(), col1, col2);
+                FontColorHelpers::colors(fontColor(), col1, col2);
                 const SDL_Rect rect2{ww, ah - hh,
                                      width() - 2*ww,
                                      lineWidth()};

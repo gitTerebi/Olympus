@@ -6,10 +6,10 @@
 #include "ewaitaction.h"
 #include "emovetoaction.h"
 
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 #include "engine/game-board.h"
-#include "erand.h"
+#include "rand.h"
 
 #include <cstdlib>
 #include <vector>
@@ -157,7 +157,7 @@ void ShepherdAction::increment(const int by) {
     eActionWithComeback::increment(by);
 }
 
-void ShepherdAction::serializeFields(eSaveArchive& ar) {
+void ShepherdAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.field("animalType", mAnimalType);
     ar.characterAsField("shepherd", &board(), mCharacter);
@@ -259,7 +259,7 @@ eDomesticatedAnimal* ShepherdAction::findAnimal(
     const auto origin = mShed->centerTile();
     const int ox = origin->x();
     const int oy = origin->y();
-    const int dist = eNumbers::sShepherdGoatherdMaxDistance;
+    const int dist = Numbers::sShepherdGoatherdMaxDistance;
     std::vector<eDomesticatedAnimal*> candidates;
     eDomesticatedAnimal* lastCandidate = nullptr;
     for(int dy = -dist; dy <= dist; dy++) {
@@ -282,7 +282,7 @@ eDomesticatedAnimal* ShepherdAction::findAnimal(
         }
     }
     if(candidates.empty()) return lastCandidate;
-    return candidates[eRand::rand() % candidates.size()];
+    return candidates[Rand::rand() % candidates.size()];
 }
 
 void ShepherdAction::reserveAnimal(eDomesticatedAnimal* const a) {
@@ -347,7 +347,7 @@ stdsptr<eMoveToAction> ShepherdAction::makeFindAnimalMove() {
         if(!action->mCharacter) return;
         action->mCharacter->setActionType(eCharacterActionType::walk);
     });
-    m->setMaxFindDistance(eNumbers::sShepherdGoatherdMaxDistance);
+    m->setMaxFindDistance(Numbers::sShepherdGoatherdMaxDistance);
     return m;
 }
 
@@ -356,7 +356,7 @@ void ShepherdAction::collectDecision(eDomesticatedAnimal* const a) {
     mStage = eShepherdActionStage::collecting;
     mTargetAnimal = a;
     if(mWaitRemaining <= 0) {
-        mWaitRemaining = eNumbers::sShepherdGoatherdCollectTime;
+        mWaitRemaining = Numbers::sShepherdGoatherdCollectTime;
     }
     mLastAnimal = a;
     a->setBusy(true);
@@ -379,7 +379,7 @@ void ShepherdAction::groomDecision(eDomesticatedAnimal* const a) {
     mStage = eShepherdActionStage::grooming;
     mTargetAnimal = a;
     if(mWaitRemaining <= 0) {
-        mWaitRemaining = eNumbers::sShepherdGoatherdGroomTime;
+        mWaitRemaining = Numbers::sShepherdGoatherdGroomTime;
     }
     mLastAnimal = a;
     a->setBusy(true);
@@ -413,7 +413,7 @@ void ShepherdAction::waitDecision() {
     if(!mCharacter) return;
     mStage = eShepherdActionStage::waiting;
     if(mWaitRemaining <= 0) {
-        mWaitRemaining = eNumbers::sShepherdGoatherdWaitTime;
+        mWaitRemaining = Numbers::sShepherdGoatherdWaitTime;
     }
     wait(mWaitRemaining);
 }

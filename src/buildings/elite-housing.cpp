@@ -1,14 +1,14 @@
 #include "elite-housing.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/difficulty.h"
 #include "engine/model-data.h"
-#include "erand.h"
+#include "rand.h"
 
 #include "textures/game-textures.h"
-#include "elanguage.h"
-#include "enumbers.h"
+#include "language.h"
+#include "numbers.h"
 #include "buildings/epalace.h"
 
 #include "characters/ehomeless.h"
@@ -108,7 +108,7 @@ eTextureSpace EliteHousing::getTextureSpace(
     return {};
 }
 
-std::vector<eOverlay> EliteHousing::getOverlays(const eTileSize size) const {
+std::vector<Overlay> EliteHousing::getOverlays(const eTileSize size) const {
 //    auto& board = getBoard();
 //    if(board.atlantean()) return {};
 //    return getHorseOverlays(size);
@@ -116,32 +116,32 @@ std::vector<eOverlay> EliteHousing::getOverlays(const eTileSize size) const {
     return {};
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 EliteHousing::getLeftTexture(const eTileSize size) const {
     const auto& coll = getTextureCollection(size);
     const int id = seed() % 2;
     return coll.getTexture(id);
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 EliteHousing::getBottomTexture(const eTileSize size) const {
     const auto& coll = getTextureCollection(size);
     return coll.getTexture(2);
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 EliteHousing::getTopTexture(const eTileSize size) const {
     const auto& coll = getTextureCollection(size);
     return coll.getTexture(3);
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 EliteHousing::getRightTexture(const eTileSize size) const {
     const auto& coll = getTextureCollection(size);
     return coll.getTexture(4);
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 EliteHousing::getHorseOverlays(const eTileSize size) const {
     if(mLevel < 3 || mHorses < 1 || mPeople <= 0) {
         return {};
@@ -151,7 +151,7 @@ EliteHousing::getHorseOverlays(const eTileSize size) const {
 
     GameTextures::loadEliteHouse();
     const auto& coll = texs.fEliteHouseHorses;
-    eOverlay h;
+    Overlay h;
     h.fX = -2.0;
     h.fY = -2.5;
     h.fTex = coll.getTexture(mHorses - 1);
@@ -211,7 +211,7 @@ int EliteHousing::provide(const eProvide p, const int n) {
         const auto diff = b.difficulty(pid);
         const int taxMult = DifficultyHelpers::taxMultiplier(
                                 diff, type(), mLevel);
-        const double tax = eNumbers::sEliteHousingTaxMultiplier *
+        const double tax = Numbers::sEliteHousingTaxMultiplier *
                            mPeople * taxMult * b.taxRateF(cid);
         const int iTax = std::round(tax);
         b.payTaxes(cid, iTax, mPeople);
@@ -309,7 +309,7 @@ eHouseMissing EliteHousing::missing() const {
     return eHouseMissing::nothing;
 }
 
-void EliteHousing::serializeFields(eSaveArchive& ar) {
+void EliteHousing::serializeFields(SaveArchive& ar) {
     eHouseBase::serializeFields(ar);
     ar.field("updateLevel", mUpdateLevel);
     ar.field("wine", mWine);
@@ -318,10 +318,10 @@ void EliteHousing::serializeFields(eSaveArchive& ar) {
 }
 
 std::string EliteHousing::sName(const int level) {
-    return eLanguage::zeusText(28, 11 + level);
+    return Language::zeusText(28, 11 + level);
 }
 
-const eTextureCollection& EliteHousing::getTextureCollection(
+const TextureCollection& EliteHousing::getTextureCollection(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];
@@ -383,7 +383,7 @@ void EliteHousing::updateLevel() {
             const int spawnCount = std::min(20, mPendingEvict);
             eHomeless::spawn(*board, centerTile(), cid, spawnCount, waitTime);
             mPendingEvict -= spawnCount;
-            waitTime += 10 + eRand::rand() % 25;
+            waitTime += 10 + Rand::rand() % 25;
         }
     }
 }

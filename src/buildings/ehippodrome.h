@@ -2,9 +2,9 @@
 #define EHIPPODROME_H
 
 #include "ehippodromepiece.h"
-#include "missiles/emissile.h"
+#include "missiles/missile.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eHippodrome {
 public:
@@ -36,7 +36,7 @@ public:
 
     int finishPartId() const { return mFinish; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
 
     using eN = eHippodromePiece::eNeighbour;
@@ -52,10 +52,10 @@ private:
     std::vector<eN> mPieces;
     int mFinish = -1;
     int mNHorses = 0;
-    std::vector<ePathPoint> mPath1;
-    std::vector<ePathPoint> mPath2;
+    std::vector<PathPoint> mPath1;
+    std::vector<PathPoint> mPath2;
 
-    std::vector<stdptr<eMissile>> mHorses;
+    std::vector<stdptr<Missile>> mHorses;
 
     stdptr<eCartTransporter> mCart;
 };

@@ -1,12 +1,12 @@
-#include "egamedir.h"
+#include "game-dir.h"
 
 #include <SDL2/SDL_filesystem.h>
 #include <cstdio>
 #include <fstream>
 
-std::string eGameDir::sPath;
+std::string GameDir::sPath;
 
-void eGameDir::initialize() {
+void GameDir::initialize() {
     sPath = exeDir() + "../../";
     const auto zp = exeDir() + "../zeus_path.txt";
     std::ifstream file(zp);
@@ -26,65 +26,65 @@ void eGameDir::initialize() {
     printf("Game data path: %s (from %s)\n", sPath.c_str(), zp.c_str());
 }
 
-std::string eGameDir::path(const std::string& path) {
+std::string GameDir::path(const std::string& path) {
     return sPath + path;
 }
 
-std::string eGameDir::settingsPath() {
+std::string GameDir::settingsPath() {
     return exeDir() + "../settings.txt";
 }
 
-std::string eGameDir::numbersPath() {
+std::string GameDir::numbersPath() {
     return exeDir() + "../numbers.txt";
 }
 
-std::string eGameDir::iBinaryPath() {
+std::string GameDir::iBinaryPath() {
     return exeDir() + "../interface.e";
 }
 
-std::string eGameDir::i15BinaryPath() {
+std::string GameDir::i15BinaryPath() {
     return exeDir() + "../i15.e";
 }
 
-std::string eGameDir::i30BinaryPath() {
+std::string GameDir::i30BinaryPath() {
     return exeDir() + "../i30.e";
 }
 
-std::string eGameDir::i45BinaryPath() {
+std::string GameDir::i45BinaryPath() {
     return exeDir() + "../i45.e";
 }
 
-std::string eGameDir::i60BinaryPath() {
+std::string GameDir::i60BinaryPath() {
     return exeDir() + "../i60.e";
 }
 
-std::string eGameDir::exeDir() {
+std::string GameDir::exeDir() {
     const auto d = SDL_GetBasePath();
     const std::string str(d);
     return str;
 }
 
-std::string eGameDir::adventuresDir() {
+std::string GameDir::adventuresDir() {
     return exeDir() + "../Adventures/";
 }
 
-std::string eGameDir::pakAdventuresDir() {
+std::string GameDir::pakAdventuresDir() {
     // return "/home/ailuropoda/.eZeus/Zeus/Adventures/"; // !!!
-    return eGameDir::path("Adventures/");
+    return GameDir::path("Adventures/");
 }
 
-std::string eGameDir::saveDir() {
+std::string GameDir::saveDir() {
     return exeDir() + "../Save/";
 }
 
-std::string eGameDir::stampsDir() {
+std::string GameDir::stampsDir() {
     return exeDir() + "../stamps/";
 }
 
-std::string eGameDir::texturesDir() {
+std::string GameDir::texturesDir() {
     return exeDir() + "../Textures/";
 }
 
-std::string eGameDir::cursorsDir() {
+std::string GameDir::cursorsDir() {
     return exeDir() + "../cursors/";
 }

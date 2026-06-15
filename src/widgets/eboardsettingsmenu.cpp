@@ -1,7 +1,7 @@
 ﻿#include "eboardsettingsmenu.h"
 
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 
 #include "engine/emapgenerator.h"
 
@@ -10,11 +10,11 @@
 #include "enumlineedit.h"
 
 #include "engine/game-board.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "game-widget.h"
 #include "eswitchbutton.h"
 
-#include "estringhelpers.h"
+#include "string-helpers.h"
 
 #include "ecityonboardselectionwidget.h"
 
@@ -26,19 +26,19 @@ void eBoardSettingsMenu::initialize(
 
     const auto fogButt = new eSwitchButton(window());
     fogButt->setUnderline(false);
-    fogButt->addValue(eLanguage::text("no_fog_of_war"));
-    fogButt->addValue(eLanguage::text("fog_of_war"));
+    fogButt->addValue(Language::text("no_fog_of_war"));
+    fogButt->addValue(Language::text("fog_of_war"));
     fogButt->fitValidContent();
     fogButt->setValue(board.fogOfWar() ? 1 : 0);
     fogButt->setSwitchAction([boardPtr](const int val) {
         boardPtr->setFogOfWar(val);
     });
     addWidget(fogButt);
-    fogButt->align(eAlignment::hcenter);
+    fogButt->align(Alignment::hcenter);
 
     const auto citiesButt = new FramedButton(window());
     citiesButt->setUnderline(false);
-    citiesButt->setText(eLanguage::text("cities_on_board"));
+    citiesButt->setText(Language::text("cities_on_board"));
     citiesButt->fitContent();
     citiesButt->setPressAction([this, gw, boardPtr]() {
         const auto citiesMenu = new eCityOnBoardSelectionWidget(window());
@@ -70,14 +70,14 @@ void eBoardSettingsMenu::initialize(
         citiesMenu->initialize(get, add, remove, boardPtr, wboard);
 
         window()->execDialog(citiesMenu);
-        citiesMenu->align(eAlignment::center);
+        citiesMenu->align(Alignment::center);
     });
     addWidget(citiesButt);
-    citiesButt->align(eAlignment::hcenter);
+    citiesButt->align(Alignment::hcenter);
 
     const auto resizeButt = new FramedButton(window());
     resizeButt->setUnderline(false);
-    resizeButt->setText(eLanguage::text("resize"));
+    resizeButt->setText(Language::text("resize"));
     resizeButt->fitContent();
     resizeButt->setPressAction([this, gw, boardPtr]() {
         const auto resizeMenu = new eFramedWidget(window());
@@ -97,7 +97,7 @@ void eBoardSettingsMenu::initialize(
         iw->addWidget(editW);
 
         const auto widthL = new eLabel(window());
-        widthL->setText(eLanguage::text("width"));
+        widthL->setText(Language::text("width"));
         widthL->fitContent();
         editW->addWidget(widthL);
 
@@ -110,7 +110,7 @@ void eBoardSettingsMenu::initialize(
         editW->addWidget(width);
 
         const auto heightL = new eLabel(window());
-        heightL->setText(eLanguage::text("height"));
+        heightL->setText(Language::text("height"));
         heightL->fitContent();
         editW->addWidget(heightL);
 
@@ -125,10 +125,10 @@ void eBoardSettingsMenu::initialize(
         editW->stackHorizontally();
         editW->fitContent();
 
-        widthL->align(eAlignment::vcenter);
-        width->align(eAlignment::vcenter);
-        heightL->align(eAlignment::vcenter);
-        height->align(eAlignment::vcenter);
+        widthL->align(Alignment::vcenter);
+        width->align(Alignment::vcenter);
+        heightL->align(Alignment::vcenter);
+        height->align(Alignment::vcenter);
 
         const auto buttonsW = new eWidget(window());
         buttonsW->setNoPadding();
@@ -163,15 +163,15 @@ void eBoardSettingsMenu::initialize(
         resizeMenu->resize(2*p + iw->width(), 2*p + iw->height());
 
         window()->execDialog(resizeMenu);
-        resizeMenu->align(eAlignment::center);
+        resizeMenu->align(Alignment::center);
     });
     addWidget(resizeButt);
-    resizeButt->align(eAlignment::hcenter);
+    resizeButt->align(Alignment::hcenter);
 
 #ifdef __unix__
     const auto generateButt = new FramedButton(window());
     generateButt->setUnderline(false);
-    generateButt->setText(eLanguage::text("generate"));
+    generateButt->setText(Language::text("generate"));
     generateButt->fitContent();
     generateButt->setPressAction([this, gw, boardPtr]() {
         const auto generateMenu = new eFramedWidget(window());
@@ -206,7 +206,7 @@ void eBoardSettingsMenu::initialize(
             w->setNoPadding();
 
             const auto label = new eLabel(window());
-            label->setText(eLanguage::text(name));
+            label->setText(Language::text(name));
             label->fitContent();
             w->addWidget(label);
 
@@ -336,15 +336,15 @@ void eBoardSettingsMenu::initialize(
         generateMenu->resize(2*p + iw->width(), 2*p + iw->height());
 
         window()->execDialog(generateMenu);
-        generateMenu->align(eAlignment::center);
+        generateMenu->align(Alignment::center);
     });
     addWidget(generateButt);
-    generateButt->align(eAlignment::hcenter);
+    generateButt->align(Alignment::hcenter);
 #endif
 
     const auto clearButt = new FramedButton(window());
     clearButt->setUnderline(false);
-    clearButt->setText(eLanguage::text("clear"));
+    clearButt->setText(Language::text("clear"));
     clearButt->fitContent();
     clearButt->setPressAction([gw, boardPtr]() {
         boardPtr->initialize(boardPtr->width(), boardPtr->height());
@@ -352,7 +352,7 @@ void eBoardSettingsMenu::initialize(
         gw->updateMaps(true);
     });
     addWidget(clearButt);
-    clearButt->align(eAlignment::hcenter);
+    clearButt->align(Alignment::hcenter);
 
     layoutVertically();
 }

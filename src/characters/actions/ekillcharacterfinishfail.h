@@ -15,7 +15,7 @@ public:
 
     void call() override;
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);
     }
 private:

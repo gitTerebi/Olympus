@@ -11,7 +11,7 @@ public:
     void incCollected(const int by = 1) { mResCollected += by; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mResCollected = 0;
 };

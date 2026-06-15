@@ -3,7 +3,7 @@
 
 #include "eresourceeventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eCountEventValue {
 public:
@@ -15,7 +15,7 @@ public:
     int maxCount() const { return mMaxCount; }
     void setMaxCount(const int c) { mMaxCount = c; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 protected:
     void chooseCount();
 

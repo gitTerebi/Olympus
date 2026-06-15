@@ -3,9 +3,9 @@
 
 #include "engine/eresourcetype.h"
 
-class eWriteStream;
-class eReadStream;
-class eSaveArchive;
+class WriteStream;
+class ReadStream;
+class SaveArchive;
 
 class eResourceEventValue {
 public:
@@ -19,7 +19,7 @@ public:
     { mResources[id] = type; }
 
 protected:
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void chooseType();
 

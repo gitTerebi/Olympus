@@ -1,275 +1,275 @@
-#include "enumbers.h"
+#include "numbers.h"
 
-#include "egamedir.h"
-#include "eloadtexthelper.h"
+#include "game-dir.h"
+#include "load-text-helper.h"
 
 #include <iostream>
 
-int eNumbers::sDayLength;
+int Numbers::sDayLength;
 
-double eNumbers::sEliteHousingTaxMultiplier;
-double eNumbers::sCommonHousingTaxMulitplier;
+double Numbers::sEliteHousingTaxMultiplier;
+double Numbers::sCommonHousingTaxMulitplier;
 
-double eNumbers::sWageMultiplier;
+double Numbers::sWageMultiplier;
 
-int eNumbers::sReinforcementsTravelTime;
-int eNumbers::sArmyTravelTime;
-int eNumbers::sAIInvasionMonthsBreak;
-int eNumbers::sInvasionAppearAtPlaces;
-double eNumbers::sArmyStrengthHorsemanMult;
+int Numbers::sReinforcementsTravelTime;
+int Numbers::sArmyTravelTime;
+int Numbers::sAIInvasionMonthsBreak;
+int Numbers::sInvasionAppearAtPlaces;
+double Numbers::sArmyStrengthHorsemanMult;
 
-int eNumbers::sRabbleDivisor;
-int eNumbers::sSoldiersPerBanner;
-int eNumbers::sSoldiersPerAresArtemisBanner;
+int Numbers::sRabbleDivisor;
+int Numbers::sSoldiersPerBanner;
+int Numbers::sSoldiersPerAresArtemisBanner;
 
-int eNumbers::sEarthquakeProgressPeriod;
+int Numbers::sEarthquakeProgressPeriod;
 
-int eNumbers::sBoarMaxCount;
-int eNumbers::sBoarSpawnPeriod;
-int eNumbers::sDeerMaxCount;
-int eNumbers::sDeerSpawnPeriod;
-int eNumbers::sWolfMaxCount;
-int eNumbers::sWolfSpawnPeriod;
-int eNumbers::sWolfHuntWait;
-int eNumbers::sWolfHuntDistance;
+int Numbers::sBoarMaxCount;
+int Numbers::sBoarSpawnPeriod;
+int Numbers::sDeerMaxCount;
+int Numbers::sDeerSpawnPeriod;
+int Numbers::sWolfMaxCount;
+int Numbers::sWolfSpawnPeriod;
+int Numbers::sWolfHuntWait;
+int Numbers::sWolfHuntDistance;
 
-int eNumbers::sOlivePressProcessingPeriod;
-int eNumbers::sWineryProcessingPeriod;
-int eNumbers::sArmoryProcessingPeriod;
-int eNumbers::sSculptureStudioProcessingPeriod;
+int Numbers::sOlivePressProcessingPeriod;
+int Numbers::sWineryProcessingPeriod;
+int Numbers::sArmoryProcessingPeriod;
+int Numbers::sSculptureStudioProcessingPeriod;
 
-int eNumbers::sFarmRipePeriod;
+int Numbers::sFarmRipePeriod;
 
-int eNumbers::sShepherdGoatherdMaxDistance;
-int eNumbers::sShepherdGoatherdMaxGroom;
-int eNumbers::sShepherdGoatherdGroomTime;
-int eNumbers::sShepherdGoatherdCollectTime;
-int eNumbers::sShepherdGoatherdWaitTime;
+int Numbers::sShepherdGoatherdMaxDistance;
+int Numbers::sShepherdGoatherdMaxGroom;
+int Numbers::sShepherdGoatherdGroomTime;
+int Numbers::sShepherdGoatherdCollectTime;
+int Numbers::sShepherdGoatherdWaitTime;
 
-int eNumbers::sSheepMaxGroom;
-int eNumbers::sGoatMaxGroom;
-int eNumbers::sAnimalMoveRange;
+int Numbers::sSheepMaxGroom;
+int Numbers::sGoatMaxGroom;
+int Numbers::sAnimalMoveRange;
 
-int eNumbers::sCorralProcessingPeriod;
-int eNumbers::sCorralTakePeriod;
-int eNumbers::sCorralKillPeriod;
-int eNumbers::sCorralReplacePeriod;
-int eNumbers::sCattleMaturePeriod;
+int Numbers::sCorralProcessingPeriod;
+int Numbers::sCorralTakePeriod;
+int Numbers::sCorralKillPeriod;
+int Numbers::sCorralReplacePeriod;
+int Numbers::sCattleMaturePeriod;
 
-int eNumbers::sUrchinQuayUnpackTime;
-int eNumbers::sFisheryBoatBuildTime;
-int eNumbers::sFisheryUnpackTime;
+int Numbers::sUrchinQuayUnpackTime;
+int Numbers::sFisheryBoatBuildTime;
+int Numbers::sFisheryUnpackTime;
 
-int eNumbers::sHuntingLodgeWaitPeriod;
+int Numbers::sHuntingLodgeWaitPeriod;
 
-int eNumbers::sMintDrachmasPerSilver;
+int Numbers::sMintDrachmasPerSilver;
 
-int eNumbers::sSpreadFirePeriod;
-int eNumbers::sFireCollapsePeriod;
-int eNumbers::sRuinsFireEndPeriod;
-int eNumbers::sMaintenanceDecrementPeriod;
-double eNumbers::sFireRiskPeriodMultiplier;
-double eNumbers::sFireRiskPeriodBaseIncrement;
-double eNumbers::sFireRiskPeriodExponent;
-double eNumbers::sCollapseRiskPeriodMultiplier;
-double eNumbers::sCollapseRiskPeriodBaseIncrement;
-double eNumbers::sCollapseRiskPeriodExponent;
-int eNumbers::sFireRiskPeriodTable[101];
-int eNumbers::sCollapseRiskPeriodTable[101];
+int Numbers::sSpreadFirePeriod;
+int Numbers::sFireCollapsePeriod;
+int Numbers::sRuinsFireEndPeriod;
+int Numbers::sMaintenanceDecrementPeriod;
+double Numbers::sFireRiskPeriodMultiplier;
+double Numbers::sFireRiskPeriodBaseIncrement;
+double Numbers::sFireRiskPeriodExponent;
+double Numbers::sCollapseRiskPeriodMultiplier;
+double Numbers::sCollapseRiskPeriodBaseIncrement;
+double Numbers::sCollapseRiskPeriodExponent;
+int Numbers::sFireRiskPeriodTable[101];
+int Numbers::sCollapseRiskPeriodTable[101];
 
-int eNumbers::sHouseCultureDecrementPeriod;
-int eNumbers::sHouseWaterDecrementPeriod;
-int eNumbers::sHouseHygieneDecrementPeriod;
-double eNumbers::sHouseHealPlaguePeriodMultiplier;
-double eNumbers::sHouseHealPlaguePeriodBaseMultiplier;
-double eNumbers::sHouseHealPlaguePeriodExponent;
-double eNumbers::sHousePlagueRiskPeriodMultiplier;
-double eNumbers::sHousePlagueRiskPeriodBaseIncrement;
-double eNumbers::sHousePlagueRiskPeriodExponent;
-int eNumbers::sHouseDisgruntledRemovePeriod;
-double eNumbers::sHouseDisgruntledRiskPeriodMultiplier;
-double eNumbers::sHouseDisgruntledRiskPeriodBaseIncrement;
-double eNumbers::sHouseDisgruntledRiskPeriodExponent;
-double eNumbers::sHouseLeaveRiskPeriodMultiplier;
-double eNumbers::sHouseLeaveRiskPeriodBaseIncrement;
-double eNumbers::sHouseLeaveRiskPeriodExponent;
-int eNumbers::sHouseSatisfactionUpdatePeriod;
-int eNumbers::sHouseDisgruntledSpawnPeriod;
-int eNumbers::sHouseSickSpawnPeriod;
+int Numbers::sHouseCultureDecrementPeriod;
+int Numbers::sHouseWaterDecrementPeriod;
+int Numbers::sHouseHygieneDecrementPeriod;
+double Numbers::sHouseHealPlaguePeriodMultiplier;
+double Numbers::sHouseHealPlaguePeriodBaseMultiplier;
+double Numbers::sHouseHealPlaguePeriodExponent;
+double Numbers::sHousePlagueRiskPeriodMultiplier;
+double Numbers::sHousePlagueRiskPeriodBaseIncrement;
+double Numbers::sHousePlagueRiskPeriodExponent;
+int Numbers::sHouseDisgruntledRemovePeriod;
+double Numbers::sHouseDisgruntledRiskPeriodMultiplier;
+double Numbers::sHouseDisgruntledRiskPeriodBaseIncrement;
+double Numbers::sHouseDisgruntledRiskPeriodExponent;
+double Numbers::sHouseLeaveRiskPeriodMultiplier;
+double Numbers::sHouseLeaveRiskPeriodBaseIncrement;
+double Numbers::sHouseLeaveRiskPeriodExponent;
+int Numbers::sHouseSatisfactionUpdatePeriod;
+int Numbers::sHouseDisgruntledSpawnPeriod;
+int Numbers::sHouseSickSpawnPeriod;
 
-int eNumbers::sHerosHallArrivalPeriod;
-int eNumbers::sHerosHallSpawnPeriod;
+int Numbers::sHerosHallArrivalPeriod;
+int Numbers::sHerosHallSpawnPeriod;
 
-int eNumbers::sHorseRanchWheatUsePeriod;
-int eNumbers::sHorseRanchHorseSpawnPeriod;
+int Numbers::sHorseRanchWheatUsePeriod;
+int Numbers::sHorseRanchHorseSpawnPeriod;
 
-int eNumbers::sPatrolerMaxDistance;
-int eNumbers::sPatrolWalkerSpawnCooldown;
-int eNumbers::sWaterCarrierSpawnCooldown;
-int eNumbers::sInfirmarySpawnCooldown;
-int eNumbers::sScheduledWalkerSpawnCooldown;
-int eNumbers::sDestinationWalkerRecurringSpawnDays;
-int eNumbers::sDestinationWalkerInitialSpawnWaitDays;
-int eNumbers::sCulturePatrolSpawnCooldownDays;
-int eNumbers::sCultureShowDays;
+int Numbers::sPatrolerMaxDistance;
+int Numbers::sPatrolWalkerSpawnCooldown;
+int Numbers::sWaterCarrierSpawnCooldown;
+int Numbers::sInfirmarySpawnCooldown;
+int Numbers::sScheduledWalkerSpawnCooldown;
+int Numbers::sDestinationWalkerRecurringSpawnDays;
+int Numbers::sDestinationWalkerInitialSpawnWaitDays;
+int Numbers::sCulturePatrolSpawnCooldownDays;
+int Numbers::sCultureShowDays;
 
-int eNumbers::sArtisanWaitTime;
-int eNumbers::sArtisanBuildTime;
+int Numbers::sArtisanWaitTime;
+int Numbers::sArtisanBuildTime;
 
-int eNumbers::sTowerSpawnPeriod;
+int Numbers::sTowerSpawnPeriod;
 
-int eNumbers::sTraderSpawnPeriod;
-int eNumbers::sTwoWayTradeMax;
+int Numbers::sTraderSpawnPeriod;
+int Numbers::sTwoWayTradeMax;
 
-int eNumbers::sChariotBuildingTime;
+int Numbers::sChariotBuildingTime;
 
-int eNumbers::sOliveTreeRipePeriod;
-int eNumbers::sVineRipePeriod;
-int eNumbers::sOrangeTreeRipePeriod;
+int Numbers::sOliveTreeRipePeriod;
+int Numbers::sVineRipePeriod;
+int Numbers::sOrangeTreeRipePeriod;
 
-double eNumbers::sTreeVineFullyRipePeriodMultiplier;
+double Numbers::sTreeVineFullyRipePeriodMultiplier;
 
-double eNumbers::sTreeVineBlessedFullyRipePeriodMultiplier;
-double eNumbers::sTreeVineBlessedRipePeriodMultiplier;
-double eNumbers::sTreeVineCursedFullyRipePeriodMultiplier;
-double eNumbers::sTreeVineCursedRipePeriodMultiplier;
+double Numbers::sTreeVineBlessedFullyRipePeriodMultiplier;
+double Numbers::sTreeVineBlessedRipePeriodMultiplier;
+double Numbers::sTreeVineCursedFullyRipePeriodMultiplier;
+double Numbers::sTreeVineCursedRipePeriodMultiplier;
 
-int eNumbers::sMarbleCollectTime;
-int eNumbers::sBronzeCollectTime;
-int eNumbers::sSilverCollectTime;
-int eNumbers::sWoodCollectTime;
-int eNumbers::sFishCollectTime;
-int eNumbers::sUrchinCollectTime;
+int Numbers::sMarbleCollectTime;
+int Numbers::sBronzeCollectTime;
+int Numbers::sSilverCollectTime;
+int Numbers::sWoodCollectTime;
+int Numbers::sFishCollectTime;
+int Numbers::sUrchinCollectTime;
 
-int eNumbers::sGrowerMaxDistance;
-int eNumbers::sGrowerMaxGroom;
-int eNumbers::sGrowerWorkTime;
-int eNumbers::sGrowerSpawnWaitTime;
+int Numbers::sGrowerMaxDistance;
+int Numbers::sGrowerMaxGroom;
+int Numbers::sGrowerWorkTime;
+int Numbers::sGrowerSpawnWaitTime;
 
-int eNumbers::sMonsterAttackRange;
+int Numbers::sMonsterAttackRange;
 
-int eNumbers::sPassiveMonsterAttackPeriod;
-int eNumbers::sActiveMonsterAttackPeriod;
-int eNumbers::sVeryActiveMonsterAttackPeriod;
-int eNumbers::sAggressiveMonsterAttackPeriod;
+int Numbers::sPassiveMonsterAttackPeriod;
+int Numbers::sActiveMonsterAttackPeriod;
+int Numbers::sVeryActiveMonsterAttackPeriod;
+int Numbers::sAggressiveMonsterAttackPeriod;
 
-int eNumbers::sPassiveLandMonsterInvadePeriod;
-int eNumbers::sActiveLandMonsterInvadePeriod;
-int eNumbers::sVeryActiveLandMonsterInvadePeriod;
-int eNumbers::sAggressiveLandMonsterInvadePeriod;
+int Numbers::sPassiveLandMonsterInvadePeriod;
+int Numbers::sActiveLandMonsterInvadePeriod;
+int Numbers::sVeryActiveLandMonsterInvadePeriod;
+int Numbers::sAggressiveLandMonsterInvadePeriod;
 
-int eNumbers::sPassiveWaterMonsterInvadePeriod;
-int eNumbers::sActiveWaterMonsterInvadePeriod;
-int eNumbers::sVeryActiveWaterMonsterInvadePeriod;
-int eNumbers::sAggressiveWaterMonsterInvadePeriod;
+int Numbers::sPassiveWaterMonsterInvadePeriod;
+int Numbers::sActiveWaterMonsterInvadePeriod;
+int Numbers::sVeryActiveWaterMonsterInvadePeriod;
+int Numbers::sAggressiveWaterMonsterInvadePeriod;
 
-int eNumbers::sPassiveLandMonsterMoveAroundPeriod;
-int eNumbers::sActiveLandMonsterMoveAroundPeriod;
-int eNumbers::sVeryActiveLandMonsterMoveAroundPeriod;
-int eNumbers::sAggressiveLandMonsterMoveAroundPeriod;
+int Numbers::sPassiveLandMonsterMoveAroundPeriod;
+int Numbers::sActiveLandMonsterMoveAroundPeriod;
+int Numbers::sVeryActiveLandMonsterMoveAroundPeriod;
+int Numbers::sAggressiveLandMonsterMoveAroundPeriod;
 
-int eNumbers::sPassiveWaterMonsterMoveAroundPeriod;
-int eNumbers::sActiveWaterMonsterMoveAroundPeriod;
-int eNumbers::sVeryActiveWaterMonsterMoveAroundPeriod;
-int eNumbers::sAggressiveWaterMonsterMoveAroundPeriod;
+int Numbers::sPassiveWaterMonsterMoveAroundPeriod;
+int Numbers::sActiveWaterMonsterMoveAroundPeriod;
+int Numbers::sVeryActiveWaterMonsterMoveAroundPeriod;
+int Numbers::sAggressiveWaterMonsterMoveAroundPeriod;
 
-int eNumbers::sFriendlyGodVisitPeriod;
-int eNumbers::sGodHelpPeriod;
-int eNumbers::sGodHelpAttackPeriod;
-int eNumbers::sGodHelpAttackPlayerPeriod;
+int Numbers::sFriendlyGodVisitPeriod;
+int Numbers::sGodHelpPeriod;
+int Numbers::sGodHelpAttackPeriod;
+int Numbers::sGodHelpAttackPlayerPeriod;
 
-int eNumbers::sGodAttackCursePeriod;
-int eNumbers::sGodAttackCurseRange;
-int eNumbers::sGodAttackAttackPeriod;
-int eNumbers::sGodAttackAttackRange;
-int eNumbers::sGodAttackAggressiveAttackPeriod;
-int eNumbers::sGodAttackTargetedCursePeriod;
-int eNumbers::sGodAttackTargetedCurseRange;
-int eNumbers::sGodAttackTargetedAttackPeriod;
-int eNumbers::sGodAttackTargetedAttackRange;
-int eNumbers::sGodAttackGodFightRange;
-int eNumbers::sGodAttackApolloPlaguePeriod;
-int eNumbers::sGodAttackApolloPlagueRange;
-int eNumbers::sGodAttackAphroditeEvictPeriod;
-int eNumbers::sGodAttackAphroditeEvictRange;
+int Numbers::sGodAttackCursePeriod;
+int Numbers::sGodAttackCurseRange;
+int Numbers::sGodAttackAttackPeriod;
+int Numbers::sGodAttackAttackRange;
+int Numbers::sGodAttackAggressiveAttackPeriod;
+int Numbers::sGodAttackTargetedCursePeriod;
+int Numbers::sGodAttackTargetedCurseRange;
+int Numbers::sGodAttackTargetedAttackPeriod;
+int Numbers::sGodAttackTargetedAttackRange;
+int Numbers::sGodAttackGodFightRange;
+int Numbers::sGodAttackApolloPlaguePeriod;
+int Numbers::sGodAttackApolloPlagueRange;
+int Numbers::sGodAttackAphroditeEvictPeriod;
+int Numbers::sGodAttackAphroditeEvictRange;
 
-int eNumbers::sGodVisitSoldierAttackPeriod;
-int eNumbers::sGodVisitSoldierAttackRange;
-int eNumbers::sGodVisitBlessPeriod;
-int eNumbers::sGodVisitBlessRange;
-int eNumbers::sGodVisitPatrolDistance;
-int eNumbers::sGodVisitMoveAroundTime;
+int Numbers::sGodVisitSoldierAttackPeriod;
+int Numbers::sGodVisitSoldierAttackRange;
+int Numbers::sGodVisitBlessPeriod;
+int Numbers::sGodVisitBlessRange;
+int Numbers::sGodVisitPatrolDistance;
+int Numbers::sGodVisitMoveAroundTime;
 
-int eNumbers::sGodWorshippedSoldierAttackPeriod;
-int eNumbers::sGodWorshippedSoldierAttackRange;
-int eNumbers::sGodWorshippedBlessPeriod;
-int eNumbers::sGodWorshippedBlessRange;
+int Numbers::sGodWorshippedSoldierAttackPeriod;
+int Numbers::sGodWorshippedSoldierAttackRange;
+int Numbers::sGodWorshippedBlessPeriod;
+int Numbers::sGodWorshippedBlessRange;
 
-int eNumbers::sSoldierBeingAttackedCallRange;
-int eNumbers::sInvasionEngageDefenderRange;
+int Numbers::sSoldierBeingAttackedCallRange;
+int Numbers::sInvasionEngageDefenderRange;
 
-int eNumbers::sTowerHP;
-int eNumbers::sTowerRange;
-double eNumbers::sTowerAttack;
+int Numbers::sTowerHP;
+int Numbers::sTowerRange;
+double Numbers::sTowerAttack;
 
-int eNumbers::sWallHP;
+int Numbers::sWallHP;
 
-int eNumbers::sWallArcherRange;
-double eNumbers::sWallArcherAttack;
+int Numbers::sWallArcherRange;
+double Numbers::sWallArcherAttack;
 
-int eNumbers::sRabbleHP;
-int eNumbers::sRabbleRange;
-double eNumbers::sRabbleAttack;
+int Numbers::sRabbleHP;
+int Numbers::sRabbleRange;
+double Numbers::sRabbleAttack;
 
-int eNumbers::sSpearthrowerHP;
-int eNumbers::sSpearthrowerRange;
-double eNumbers::sSpearthrowerAttack;
+int Numbers::sSpearthrowerHP;
+int Numbers::sSpearthrowerRange;
+double Numbers::sSpearthrowerAttack;
 
-int eNumbers::sArcherHP;
-int eNumbers::sArcherRange;
-double eNumbers::sArcherAttack;
+int Numbers::sArcherHP;
+int Numbers::sArcherRange;
+double Numbers::sArcherAttack;
 
-int eNumbers::sHopliteHP;
-double eNumbers::sHopliteAttack;
+int Numbers::sHopliteHP;
+double Numbers::sHopliteAttack;
 
-int eNumbers::sChariotHP;
-double eNumbers::sChariotAttack;
+int Numbers::sChariotHP;
+double Numbers::sChariotAttack;
 
-int eNumbers::sHorsemanHP;
-double eNumbers::sHorsemanAttack;
+int Numbers::sHorsemanHP;
+double Numbers::sHorsemanAttack;
 
-int eNumbers::sWatchmanHP;
-double eNumbers::sWatchmanAttack;
-int eNumbers::sWatchmanSatisfactionProvide;
+int Numbers::sWatchmanHP;
+double Numbers::sWatchmanAttack;
+int Numbers::sWatchmanSatisfactionProvide;
 
-int eNumbers::sDefendCityMaxKilled;
-int eNumbers::sDefendCityTalosMaxKilled;
+int Numbers::sDefendCityMaxKilled;
+int Numbers::sDefendCityTalosMaxKilled;
 
-int eNumbers::sAttackCityMaxKilled;
-int eNumbers::sAttackCityAresMaxKilled;
+int Numbers::sAttackCityMaxKilled;
+int Numbers::sAttackCityAresMaxKilled;
 
-int eNumbers::sBasicVendorMaxResourceTakeDistance;
-int eNumbers::sHorseVendorMaxResourceTakeDistance;
-int eNumbers::sResourceBuildingMaxResourceGiveDistance;
-int eNumbers::sProcessingBuildingMaxResourceTakeDistance;
-int eNumbers::sTriremeWharfMaxResourceTakeDistance;
+int Numbers::sBasicVendorMaxResourceTakeDistance;
+int Numbers::sHorseVendorMaxResourceTakeDistance;
+int Numbers::sResourceBuildingMaxResourceGiveDistance;
+int Numbers::sProcessingBuildingMaxResourceTakeDistance;
+int Numbers::sTriremeWharfMaxResourceTakeDistance;
 
-int eNumbers::sTriremeWharfBuildTime;
-int eNumbers::sTriremeWharfBuildStages;
+int Numbers::sTriremeWharfBuildTime;
+int Numbers::sTriremeWharfBuildStages;
 
-int eNumbers::sNewBuildingEmployWaitDays;
+int Numbers::sNewBuildingEmployWaitDays;
 
-int eNumbers::sSacrificeDurationDays;
-int eNumbers::sPriestSacrificeRecurringSpawnDays;
+int Numbers::sSacrificeDurationDays;
+int Numbers::sPriestSacrificeRecurringSpawnDays;
 
-void eNumbers::sLoad() {
-    const auto path = eGameDir::numbersPath();
+void Numbers::sLoad() {
+    const auto path = GameDir::numbersPath();
     sLoad(path);
 }
 
-void eNumbers::sLoad(const std::string& path) {
+void Numbers::sLoad(const std::string& path) {
     std::map<std::string, std::string> map;
-    eLoadTextHelper::load(path, map);
+    LoadTextHelper::load(path, map);
 
     const bool missing = map.empty();
 

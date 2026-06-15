@@ -62,7 +62,7 @@ bool isSingle(eTile* const t,
     return single;
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eAvenue::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];

@@ -7,12 +7,12 @@ eArtisan::eArtisan(GameBoard& board) :
     GameTextures::loadArtisan();
 }
 
-std::shared_ptr<eTexture> eArtisan::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eArtisan::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto& charTexs = colls.fArtisan;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
     bool wrap = true;
     const auto a = actionType();

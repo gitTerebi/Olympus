@@ -1,42 +1,42 @@
-#include "etexturecollection.h"
+#include "texture-collection.h"
 #include "widgets/epainter.h"
 
-eTextureCollection::eTextureCollection(SDL_Renderer* const r) :
+TextureCollection::TextureCollection(SDL_Renderer* const r) :
     mRenderer(r) {
 
 }
 
-void eTextureCollection::draw(ePainter& p,
+void TextureCollection::draw(ePainter& p,
                               const int x, const int y,
                               const int id) const {
     p.drawTexture(x, y, mTexs[id]);
 }
 
-void eTextureCollection::draw(ePainter& p,
+void TextureCollection::draw(ePainter& p,
                               const int x, const int y,
                               const int id,
-                              const eAlignment align) const {
+                              const Alignment align) const {
     p.drawTexture(x, y, mTexs[id], align);
 }
 
-std::shared_ptr<eTexture>& eTextureCollection::addTexture() {
-    return mTexs.emplace_back(std::make_shared<eTexture>());
+std::shared_ptr<Texture>& TextureCollection::addTexture() {
+    return mTexs.emplace_back(std::make_shared<Texture>());
 }
 
-std::shared_ptr<eTexture> eTextureCollection::loadTexture(
+std::shared_ptr<Texture> TextureCollection::loadTexture(
         const std::string& path) {
-    const auto t = std::make_shared<eTexture>();
+    const auto t = std::make_shared<Texture>();
     const bool r = t->load(mRenderer, path);
     if(!r) return nullptr;
     mTexs.push_back(t);
     return mTexs.back();
 }
 
-const std::shared_ptr<eTexture>&
-eTextureCollection::getTexture(const int id) const {
+const std::shared_ptr<Texture>&
+TextureCollection::getTexture(const int id) const {
     return mTexs[id];
 }
 
-int eTextureCollection::size() const {
+int TextureCollection::size() const {
     return mTexs.size();
 }

@@ -4,14 +4,14 @@
 #include "widgets/elinewidget.h"
 #include "engine/game-board.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 eWidget* eCultureDataWidget::createCoverageWidget(
         const int gamesName,
         const int disciplineName,
         eLabel** const clabel) {
-    const auto gamesNameStr = eLanguage::zeusText(58, gamesName);
-    const auto disciplineNameStr = eLanguage::zeusText(58, disciplineName);
+    const auto gamesNameStr = Language::zeusText(58, gamesName);
+    const auto disciplineNameStr = Language::zeusText(58, disciplineName);
 
     const auto cw = new eWidget(window());
     cw->setNoPadding();
@@ -37,7 +37,7 @@ eWidget* eCultureDataWidget::createCoverageWidget(
     const int p = covLabel->padding()/2;
     covLabel->setNoPadding();
     covLabel->setFontSizeXS();
-    covLabel->setText(eLanguage::zeusText(58, 14)); // terrible
+    covLabel->setText(Language::zeusText(58, 14)); // terrible
     covLabel->fitContent();
     ccw->addWidget(covLabel);
     covLabel->setX(disciplineLabel->width() + p);
@@ -55,31 +55,31 @@ eWidget* eCultureDataWidget::createCoverageWidget(
 
 void eCultureDataWidget::initialize() {
     const auto seePhilosophers = new eViewModeButton(
-                     eLanguage::zeusText(14, 12), // see philosophers
+                     Language::zeusText(14, 12), // see philosophers
                      eViewMode::philosophers,
                      window());
     addViewButton(seePhilosophers);
 
     const auto seeAthletes = new eViewModeButton(
-                     eLanguage::zeusText(14, 13),
+                     Language::zeusText(14, 13),
                      eViewMode::athletes,
                      window());
     addViewButton(seeAthletes);
 
     const auto seeActors = new eViewModeButton(
-                     eLanguage::zeusText(14, 14),
+                     Language::zeusText(14, 14),
                      eViewMode::actors,
                      window());
     addViewButton(seeActors);
 
     const auto seeCompetitors = new eViewModeButton(
-                     eLanguage::zeusText(14, 11),
+                     Language::zeusText(14, 11),
                      eViewMode::competitors,
                      window());
     addViewButton(seeCompetitors);
 
     const auto seeAllCulture = new eViewModeButton(
-                     eLanguage::zeusText(14, 10),
+                     Language::zeusText(14, 10),
                      eViewMode::allCulture,
                      window());
     addViewButton(seeAllCulture);
@@ -95,7 +95,7 @@ void eCultureDataWidget::initialize() {
     title->setFontSizeXS();
     title->setNoPadding();
     title->setWrapWidth(iw->width());
-    title->setText(eLanguage::zeusText(58, 1)); // Likely standing in Panhellenic Games
+    title->setText(Language::zeusText(58, 1)); // Likely standing in Panhellenic Games
     title->fitContent();
     cw->addWidget(title);
 
@@ -138,7 +138,7 @@ void eCultureDataWidget::updateCoverage() {
     {
         const int pc = mBoard.philosophyResearchCoverage(cid);
         const auto pt = sCoverageToText(pc);
-        const auto ptt = eLanguage::zeusText(58, pt);
+        const auto ptt = Language::zeusText(58, pt);
         mPhilosophyCoverage->setText(ptt);
         mPhilosophyCoverage->fitContent();
     }
@@ -146,7 +146,7 @@ void eCultureDataWidget::updateCoverage() {
     {
         const int ac = mBoard.athleticsLearningCoverage(cid);
         const auto at = sCoverageToText(ac);
-        const auto att = eLanguage::zeusText(58, at);
+        const auto att = Language::zeusText(58, at);
         mAthleticsCoverage->setText(att);
         mAthleticsCoverage->fitContent();
     }
@@ -154,7 +154,7 @@ void eCultureDataWidget::updateCoverage() {
     {
         const int dc = mBoard.dramaAstronomyCoverage(cid);
         const auto dt = sCoverageToText(dc);
-        const auto dtt = eLanguage::zeusText(58, dt);
+        const auto dtt = Language::zeusText(58, dt);
         mDramaCoverage->setText(dtt);
         mDramaCoverage->fitContent();
     }
@@ -162,7 +162,7 @@ void eCultureDataWidget::updateCoverage() {
     {
         const int ddc = mBoard.allCultureScienceCoverage(cid);
         const auto ddt = sCoverageToText(ddc);
-        const auto ddtt = eLanguage::zeusText(58, ddt);
+        const auto ddtt = Language::zeusText(58, ddt);
         mAllCoverage->setText(ddtt);
         mAllCoverage->fitContent();
     }

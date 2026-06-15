@@ -3,12 +3,12 @@
 #include "characters/echaracter.h"
 #include "characters/ecarttransporter.h"
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "buildings/eagorabase.h"
 #include "characters/actions/eactionwithcomeback.h"
 #include "characters/actions/vendor-cart-action.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -44,13 +44,13 @@ eVendor::~eVendor() {
     if(mCart) mCart->kill();
 }
 
-std::shared_ptr<eTexture> eVendor::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eVendor::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     return blds[sizeId].*mBaseTex;
 }
 
-std::vector<eOverlay> eVendor::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eVendor::getOverlays(const eTileSize size) const {
     if(mResource <= 0) return {};
 
     auto os = eEmployingBuilding::getOverlays(size);
@@ -58,7 +58,7 @@ std::vector<eOverlay> eVendor::getOverlays(const eTileSize size) const {
     const auto& texs = GameTextures::buildings();
 
     if(mOverlayTex) {
-        eOverlay o;
+        Overlay o;
         o.fTex = texs[sizeId].*mOverlayTex;
         o.fX = mOverlayX;
         o.fY = mOverlayY;
@@ -66,7 +66,7 @@ std::vector<eOverlay> eVendor::getOverlays(const eTileSize size) const {
     }
 
     if(mOverlayTex2) {
-        eOverlay o2;
+        Overlay o2;
         const auto& coll = texs[sizeId].*mOverlayTex2;
         o2.fTex = coll.getTexture(textureTime() % coll.size());
         o2.fX = mOverlayX2;
@@ -168,11 +168,11 @@ void eVendor::timeChanged(const int by) {
             case eResourceType::oliveOil:
             case eResourceType::wine:
             case eResourceType::armor:
-                mCart->setMaxDistance(eNumbers::sBasicVendorMaxResourceTakeDistance);
+                mCart->setMaxDistance(Numbers::sBasicVendorMaxResourceTakeDistance);
                 break;
             case eResourceType::horse:
             case eResourceType::chariot:
-                mCart->setMaxDistance(eNumbers::sHorseVendorMaxResourceTakeDistance);
+                mCart->setMaxDistance(Numbers::sHorseVendorMaxResourceTakeDistance);
                 break;
             default:
                 break;
@@ -216,7 +216,7 @@ int eVendor::takeForPeddler(const int t) {
     return tt;
 }
 
-void eVendor::serializeFields(eSaveArchive& ar) {
+void eVendor::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     int agoraId = ar.writing() && mAgora ? mAgora->ioID() : -1;
     int agoraSpaceId = ar.writing() ? this->agoraSpaceId() : -1;

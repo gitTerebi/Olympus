@@ -1,8 +1,8 @@
 #include "epyramidbutton.h"
 
 #include "echoosebutton.h"
-#include "emainwindow.h"
-#include "elanguage.h"
+#include "main-window.h"
+#include "language.h"
 
 void ePyramidButton::initialize(const ePyramidAction& pact) {
     setUnderline(false);
@@ -33,7 +33,7 @@ void ePyramidButton::initialize(const ePyramidAction& pact) {
         std::vector<std::string> pyramidNames;
         for(const auto type : pyramids) {
             if(type == eBuildingType::none) {
-                pyramidNames.push_back(eLanguage::zeusText(194, 39));
+                pyramidNames.push_back(Language::zeusText(194, 39));
             } else {
                 pyramidNames.push_back(eBuilding::sNameForBuilding(type));
             }
@@ -47,7 +47,7 @@ void ePyramidButton::initialize(const ePyramidAction& pact) {
         choose->initialize(7, pyramidNames, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     setType(eBuildingType::grandMonumentToTheSky);
     fitContent();
@@ -55,7 +55,7 @@ void ePyramidButton::initialize(const ePyramidAction& pact) {
 
 void ePyramidButton::setType(const eBuildingType type) {
     if(type == eBuildingType::none) {
-        setText(eLanguage::zeusText(194, 39));
+        setText(Language::zeusText(194, 39));
     } else {
         setText(eBuilding::sNameForBuilding(type));
     }

@@ -1,7 +1,7 @@
 #include "eruins.h"
 
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eRuins::eRuins(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::ruins, 1, 1, cid) {
@@ -15,7 +15,7 @@ void eRuins::setOrigin(const int x, const int y, const int w, const int h) {
     mOriginH = h;
 }
 
-stdsptr<eTexture> eRuins::getTexture(const eTileSize size) const {
+stdsptr<Texture> eRuins::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::terrain();
     const auto& coll = texs[sizeId].fTinyStones;
@@ -26,14 +26,14 @@ struct eByteVecRef {
     std::vector<uint8_t>& fVec;
 };
 
-static eWriteStream& operator<<(eWriteStream& dst, const eByteVecRef& ref) {
+static WriteStream& operator<<(WriteStream& dst, const eByteVecRef& ref) {
     const int32_t sz = static_cast<int32_t>(ref.fVec.size());
     dst.write(&sz, sizeof(sz));
     if(sz > 0) dst.write(ref.fVec.data(), sz);
     return dst;
 }
 
-static eReadStream& operator>>(eReadStream& src, eByteVecRef& ref) {
+static ReadStream& operator>>(ReadStream& src, eByteVecRef& ref) {
     int32_t sz;
     src.read(&sz, sizeof(sz));
     ref.fVec.clear();
@@ -44,13 +44,13 @@ static eReadStream& operator>>(eReadStream& src, eByteVecRef& ref) {
     return src;
 }
 
-static void byteVecField(eSaveArchive& ar, const char* const name,
+static void byteVecField(SaveArchive& ar, const char* const name,
                          std::vector<uint8_t>& v) {
     eByteVecRef ref{v};
     ar.field(name, ref);
 }
 
-void eRuins::serializeFields(eSaveArchive& ar) {
+void eRuins::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.field("wasType", mWasType);
     ar.field("originX", mOriginX);

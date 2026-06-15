@@ -5,7 +5,7 @@
 
 #include "engine/world-city.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eGiftToEvent : public eGameEvent {
 public:
@@ -20,7 +20,7 @@ public:
     void trigger() override;
     std::string longName() const override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdsptr<WorldCity> mCity;
     eResourceType mResource{};

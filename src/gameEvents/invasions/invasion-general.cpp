@@ -6,7 +6,7 @@
 #include "engine/game-board.h"
 #include "engine/eknownendpathfinder.h"
 #include "engine/etile.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "buildings/ebuilding.h"
 #include "characters/soldier-banner.h"
 #include "characters/formation-facing.h"

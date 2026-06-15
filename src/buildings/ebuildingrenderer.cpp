@@ -7,12 +7,12 @@ eBuildingRenderer::eBuildingRenderer(const stdsptr<eBuilding>& b,
     mBuilding(b),
     mType(type) {}
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eBuildingRenderer::getTexture(const eTileSize size) const {
     return mBuilding->getTexture(size);
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eBuildingRenderer::getOverlays(const eTileSize size) const {
     return mBuilding->getOverlays(size);
 }
@@ -31,7 +31,7 @@ void eBuildingRenderer::draw(eTilePainter& p,
     const auto tex = getTexture(p.size());
     if(tex) {
         if(erase) tex->setColorMod(255, 175, 175);
-        p.drawTexture(x, y, tex, eAlignment::top);
+        p.drawTexture(x, y, tex, Alignment::top);
         if(erase) tex->clearColorMod();
     }
     if(mBuilding->overlayEnabled()) {
@@ -41,7 +41,7 @@ void eBuildingRenderer::draw(eTilePainter& p,
             const double dx = x + o.fX;
             const double dy = y + o.fY;
             if(erase) tex->setColorMod(255, 175, 175);
-            if(o.fAlignTop) p.drawTexture(dx, dy, tex, eAlignment::top);
+            if(o.fAlignTop) p.drawTexture(dx, dy, tex, Alignment::top);
             else p.drawTexture(dx, dy, tex);
             if(erase) tex->clearColorMod();
         }

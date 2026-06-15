@@ -5,7 +5,7 @@
 #include "enumlineedit.h"
 #include "eokbutton.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 void eDateWidget::initialize(const eDateAction& a,
                              const bool actOnChange) {
@@ -49,7 +49,7 @@ void eDateWidget::initialize(const eDateAction& a,
         };
         choose->initialize(4, monthStrs, cact);
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
 
     mYearEdit = new eNumLineEdit(window());
@@ -89,7 +89,7 @@ void eDateWidget::initialize(const eDateAction& a,
             deleteLater();
         });
         addWidget(ok);
-        ok->align(eAlignment::right | eAlignment::bottom);
+        ok->align(Alignment::right | Alignment::bottom);
         ok->setX(ok->x() - 1.5*p);
         ok->setY(ok->y() - 1.5*p);
     }

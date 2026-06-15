@@ -3,9 +3,9 @@
 #include "characters/efishingboat.h"
 #include "characters/actions/ecollectresourceaction.h"
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eFishery::eFishery(GameBoard& board,
                    const eDiagonalOrientation o,
@@ -30,14 +30,14 @@ void eFishery::timeChanged(const int by) {
         }
         switch(mState) {
         case eFisheryState::buildingBoat: {
-            if(mStateCount > eNumbers::sFisheryBoatBuildTime) {
+            if(mStateCount > Numbers::sFisheryBoatBuildTime) {
                 mStateCount = 0;
                 mState = eFisheryState::waiting;
                 spawnBoat();
             }
         } break;
         case eFisheryState::unpacking: {
-            if(mStateCount > eNumbers::sFisheryUnpackTime) {
+            if(mStateCount > Numbers::sFisheryUnpackTime) {
                 mStateCount = 0;
                 mState = eFisheryState::waiting;
                 trackProduced(addProduced(eResourceType::fish, 3));
@@ -50,7 +50,7 @@ void eFishery::timeChanged(const int by) {
     eResourceBuildingBase::timeChanged(by);
 }
 
-std::shared_ptr<eTexture> eFishery::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eFishery::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].fFishery;
@@ -79,7 +79,7 @@ std::shared_ptr<eTexture> eFishery::getTexture(const eTileSize size) const {
     return coll.getTexture(id);
 }
 
-std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eFishery::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];
     auto& board = getBoard();
@@ -87,8 +87,8 @@ std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
     const auto oo = sRotated(mO, dir);
     switch(mState) {
     case eFisheryState::buildingBoat: {
-        eOverlay o;
-        const eTextureCollection* coll;
+        Overlay o;
+        const TextureCollection* coll;
         switch(oo) {
         case eDiagonalOrientation::topRight:
             coll = &blds.fFisheryBoatBuildingH;
@@ -118,8 +118,8 @@ std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
         return {o};
     } break;
     case eFisheryState::waiting: {
-        eOverlay o;
-        const eTextureCollection* coll;
+        Overlay o;
+        const TextureCollection* coll;
         switch(oo) {
         case eDiagonalOrientation::topRight:
             coll = &blds.fFisheryOverlay[0];
@@ -149,8 +149,8 @@ std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
         return {o};
     } break;
     case eFisheryState::unpacking: {
-        eOverlay o;
-        const eTextureCollection* coll;
+        Overlay o;
+        const TextureCollection* coll;
         switch(oo) {
         case eDiagonalOrientation::topRight:
             coll = &blds.fFisheryUnpackingOverlayTR;
@@ -246,7 +246,7 @@ void eFishery::spawnBoat() {
                        this, b.get(), hasRes);
     const auto w = WalkableObject::sCreateDeepWater();
     a->setWalkable(w);
-    a->setWaitTime(eNumbers::sFisheryUnpackTime);
+    a->setWaitTime(Numbers::sFisheryUnpackTime);
     a->setFinishOnce(false);
     b->setAction(a);
 }
@@ -258,7 +258,7 @@ void eFishery::updateDisabled() {
     mDisabled = d;
 }
 
-void eFishery::serializeFields(eSaveArchive& ar) {
+void eFishery::serializeFields(SaveArchive& ar) {
     eResourceCollectBuildingBase::serializeFields(ar);
     ar.field("disabled", mDisabled);
     ar.field("stateCount", mStateCount);

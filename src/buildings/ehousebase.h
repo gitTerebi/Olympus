@@ -4,7 +4,7 @@
 #include "ebuilding.h"
 
 class ePopulationData;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eHouseMissing {
     water,
@@ -62,7 +62,7 @@ public:
     int vacancies() const;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void setLevel(const int l);
     int evict();
     void setPeople(const int p);

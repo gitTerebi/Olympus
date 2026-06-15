@@ -13,14 +13,14 @@
 #include "etileterrainpainter.h"
 #include "etilesize.h"
 
-class eMissile;
+class Missile;
 class eCharacter;
 class eBuilding;
 class eBuildingRenderer;
-class eBanner;
+class Banner;
 class SoldierBanner;
 enum class eWorldDirection;
-class eSaveArchive;
+class SaveArchive;
 
 struct eTerritoryBorder {
     bool fTR = false;
@@ -64,10 +64,10 @@ public:
     const std::vector<stdsptr<eCharacter>>& characters() const
     { return mCharacters; }
 
-    void addMissile(const stdsptr<eMissile>& m);
-    bool removeMissile(const stdsptr<eMissile>& m);
+    void addMissile(const stdsptr<Missile>& m);
+    bool removeMissile(const stdsptr<Missile>& m);
 
-    const std::vector<stdsptr<eMissile>>& missiles() const
+    const std::vector<stdsptr<Missile>>& missiles() const
     { return mMissiles; }
 
     bool hasRoad() const override;
@@ -77,11 +77,11 @@ public:
     { return mUnderBuilding.get(); }
     eBuildingType underBuildingType() const override;
 
-    void addBanner(const stdsptr<eBanner>& b);
-    void removeBanner(const stdsptr<eBanner>& b);
+    void addBanner(const stdsptr<Banner>& b);
+    void removeBanner(const stdsptr<Banner>& b);
     void removeAllBanners();
-    void removeBanner(eBanner* const b);
-    const std::vector<stdsptr<eBanner>>& banners() const
+    void removeBanner(Banner* const b);
+    const std::vector<stdsptr<Banner>>& banners() const
     { return mBanners; }
 
     void setSoldierBanner(SoldierBanner* const b);
@@ -157,7 +157,7 @@ public:
     void setTerrain(const eTerrain terr) override;
     void setMarbleLevel(const int l) override;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
 
     void updateIsElevationTile();
@@ -180,10 +180,10 @@ private:
     bool mLavaZone = false;
     bool mLandSlideZone = false;
 
-    std::vector<stdsptr<eMissile>> mMissiles;
+    std::vector<stdsptr<Missile>> mMissiles;
     std::vector<stdsptr<eCharacter>> mCharacters;
     stdsptr<eBuilding> mUnderBuilding;
-    std::vector<stdsptr<eBanner>> mBanners;
+    std::vector<stdsptr<Banner>> mBanners;
     stdptr<SoldierBanner> mSoldierBanner;
 };
 

@@ -3,7 +3,7 @@
 
 #include "eframedwidget.h"
 
-#include "emessage.h"
+#include "message.h"
 #include "engine/edate.h"
 #include "engine/ecityid.h"
 
@@ -21,7 +21,7 @@ public:
                     const eEventData& ed,
                     const eAction& viewTile,
                     const eAction& closeFunc,
-                    eMessage msg);
+                    Message msg);
 
     void close();
     bool closable() const { return mClosable; }

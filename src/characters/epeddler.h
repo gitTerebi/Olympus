@@ -4,7 +4,7 @@
 #include "ebasicpatroler.h"
 
 class eAgoraBase;
-class eSaveArchive;
+class SaveArchive;
 
 class ePeddler : public eBasicPatroler {
 public:
@@ -16,7 +16,7 @@ public:
     eAgoraBase* agora() const;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdptr<eAgoraBase> mAgora;
 };

@@ -1,7 +1,7 @@
 #include "elandslideevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
@@ -18,7 +18,7 @@ eLandSlideEvent::eLandSlideEvent(
     GameBoard& board) :
     eGameEvent(cid, eGameEventType::landSlide,
                branch, board),
-    ePointEventValue(eBannerTypeS::landSlidePoint,
+    ePointEventValue(BannerTypeS::landSlidePoint,
                      cid, board, validLandSlideEventTile) {}
 
 void eLandSlideEvent::trigger() {
@@ -34,16 +34,16 @@ void eLandSlideEvent::trigger() {
     board->addLandSlide(startTile);
     board->event(eEvent::landSlide, ed);
 
-    const auto b = board->banner(cid, eBannerTypeS::landSlidePoint, pt);
+    const auto b = board->banner(cid, BannerTypeS::landSlidePoint, pt);
     const auto t = b ? b->tile() : nullptr;
     if(t) t->removeBanner(b);
 }
 
 std::string eLandSlideEvent::longName() const {
-    return eLanguage::zeusText(156, 5);
+    return Language::zeusText(156, 5);
 }
 
-void eLandSlideEvent::serializeFields(eSaveArchive& ar) {
+void eLandSlideEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ePointEventValue::serialize(ar);
 }

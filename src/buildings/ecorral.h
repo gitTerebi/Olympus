@@ -3,14 +3,14 @@
 
 #include "eresourcebuildingbase.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eCorral : public eResourceBuildingBase {
 public:
     eCorral(GameBoard& board, const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 
@@ -19,7 +19,7 @@ public:
     bool noCattle() const { return mNoCattle; }
     void setNoCattle(const bool c);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool killCattle();
 

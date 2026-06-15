@@ -3,7 +3,7 @@
 
 #include "../egameevent.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class AskForStrikeEvent : public eGameEvent {
 public:
@@ -23,7 +23,7 @@ public:
     void setRivalCity(const stdsptr<WorldCity>& c) { mRivalCity = c; }
     const stdsptr<WorldCity>& rivalCity() const { return mRivalCity; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool mEnd = false;
     stdsptr<WorldCity> mCity;

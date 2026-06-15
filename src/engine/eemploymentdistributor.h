@@ -8,7 +8,7 @@
 enum class eBuildingType;
 class eEmploymentData;
 enum class eResourceType;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eSector {
     husbandry,
@@ -58,7 +58,7 @@ public:
 
     int employees(const eSector s);
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void distribute();
 

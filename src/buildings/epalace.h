@@ -4,7 +4,7 @@
 #include "ebuilding.h"
 
 class ePalaceTile;
-class eSaveArchive;
+class SaveArchive;
 
 class ePalace : public eBuilding {
 public:
@@ -14,14 +14,14 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize) const override { return nullptr; }
 
     eTextureSpace
     getTextureSpace(const int tx, const int ty,
                     const eTileSize size) const override;
 
-    std::vector<eOverlay>
+    std::vector<Overlay>
     getOverlays(const eTileSize size) const override;
 
     void addTile(ePalaceTile* const tile);
@@ -31,7 +31,7 @@ public:
     bool rotated() const { return mRotated; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     const bool mRotated;
     std::vector<ePalaceTile*> mPalaceTilesCache;

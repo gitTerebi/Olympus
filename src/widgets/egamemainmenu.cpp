@@ -2,10 +2,10 @@
 
 #include "framed-button.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "engine/game-board.h"
-#include "fileIO/ewritestream.h"
+#include "fileIO/write-stream.h"
 
 void eGameMainMenu::initialize(const eAction& resumeAct,
                                const eAction& saveAct,
@@ -16,27 +16,27 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
 
     const auto resButt = new FramedButton(window());
     resButt->setUnderline(false);
-    resButt->setText(eLanguage::text("resume_game"));
+    resButt->setText(Language::text("resume_game"));
     resButt->fitContent();
     resButt->setPressAction(resumeAct);
     addWidget(resButt);
-    resButt->align(eAlignment::hcenter);
+    resButt->align(Alignment::hcenter);
 
     const auto saveButt = new FramedButton(window());
     saveButt->setUnderline(false);
-    saveButt->setText(eLanguage::zeusText(1, 4));
+    saveButt->setText(Language::zeusText(1, 4));
     saveButt->fitContent();
     saveButt->setPressAction(saveAct);
     addWidget(saveButt);
-    saveButt->align(eAlignment::hcenter);
+    saveButt->align(Alignment::hcenter);
 
     const auto loadButt = new FramedButton(window());
     loadButt->setUnderline(false);
-    loadButt->setText(eLanguage::zeusText(1, 3));
+    loadButt->setText(Language::zeusText(1, 3));
     loadButt->fitContent();
     loadButt->setPressAction(loadAct);
     addWidget(loadButt);
-    loadButt->align(eAlignment::hcenter);
+    loadButt->align(Alignment::hcenter);
 
     const auto optionsButt = new FramedButton(window());
     optionsButt->setUnderline(false);
@@ -44,15 +44,15 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
     optionsButt->fitContent();
     optionsButt->setPressAction(optionsAct);
     addWidget(optionsButt);
-    optionsButt->align(eAlignment::hcenter);
+    optionsButt->align(Alignment::hcenter);
 
     const auto exitButt = new FramedButton(window());
     exitButt->setUnderline(false);
-    exitButt->setText(eLanguage::zeusText(1, 5));
+    exitButt->setText(Language::zeusText(1, 5));
     exitButt->fitContent();
     exitButt->setPressAction(exitAct);
     addWidget(exitButt);
-    exitButt->align(eAlignment::hcenter);
+    exitButt->align(Alignment::hcenter);
 
     layoutVertically();
 }

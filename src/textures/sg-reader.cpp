@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 
-#include "egamedir.h"
+#include "game-dir.h"
 #include "spriteData/espritedata.h"
 #include "composite-templates.h"
 
@@ -79,8 +79,8 @@ constexpr int kBitmapStart = 680;
 constexpr int kBitmapSize  = 200;
 
 std::shared_ptr<SgFile> parseSg(const std::string& sgName) {
-    const auto sg3Path = eGameDir::path("DATA/" + sgName + ".sg3");
-    const auto p555Path = eGameDir::path("DATA/" + sgName + ".555");
+    const auto sg3Path = GameDir::path("DATA/" + sgName + ".sg3");
+    const auto p555Path = GameDir::path("DATA/" + sgName + ".555");
 
     auto file = std::make_shared<SgFile>();
 
@@ -382,7 +382,7 @@ SDL_Surface* SgReader::load(const std::string& path) {
         const auto m = path.find(marker);
         if(m != std::string::npos) {
             const std::string file = path.substr(m + marker.size());
-            const std::string full = eGameDir::path("DATA/" + file);
+            const std::string full = GameDir::path("DATA/" + file);
             SDL_Surface* const loaded = IMG_Load(full.c_str());
             if(!loaded) {
                 printf("SG miss '%s': DATA image '%s' not loadable (%s)\n",

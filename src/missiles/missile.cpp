@@ -1,35 +1,35 @@
-#include "emissile.h"
+#include "missile.h"
 
 #include "engine/game-board.h"
 #include "engine/etile.h"
 #include "characters/gods/actions/god-action.h"
 
-#include "erockmissile.h"
-#include "egodmissile.h"
-#include "earrowmissile.h"
-#include "espearmissile.h"
-#include "ewavemissile.h"
-#include "elavamissile.h"
-#include "edustmissile.h"
-#include "fileIO/esavearchive.h"
+#include "rock-missile.h"
+#include "god-missile.h"
+#include "arrow-missile.h"
+#include "spear-missile.h"
+#include "wave-missile.h"
+#include "lava-missile.h"
+#include "dust-missile.h"
+#include "fileIO/save-archive.h"
 #include "characters/eracinghorse.h"
 
-eMissile::eMissile(GameBoard& board, const eMissileType type,
-                   const std::vector<ePathPoint>& path) :
+Missile::Missile(GameBoard& board, const MissileType type,
+                   const std::vector<PathPoint>& path) :
     mType(type), mBoard(board), mPath(path) {
     mBoard.registerMissile(this);
 }
 
-eMissile::~eMissile() {
+Missile::~Missile() {
     board().unregisterMissile(this);
 }
 
-GameBoard& eMissile::board() const {
+GameBoard& Missile::board() const {
     if(mTile) return mTile->board();
     return mBoard;
 }
 
-void eMissile::incTime(const int by) {
+void Missile::incTime(const int by) {
     mTime += by;
     if(mPath.finished()) return;
     mPath.progress(0.025*mSpeed*by);
@@ -45,11 +45,11 @@ void eMissile::incTime(const int by) {
     }
 }
 
-void eMissile::destroy() {
+void Missile::destroy() {
     changeTile(nullptr);
 }
 
-double eMissile::x() const {
+double Missile::x() const {
     if(mTile) {
         return mPath.pos().fX - mTile->x();
     } else {
@@ -57,7 +57,7 @@ double eMissile::x() const {
     }
 }
 
-double eMissile::y() const {
+double Missile::y() const {
     if(mTile) {
         return mPath.pos().fY - mTile->y();
     } else {
@@ -65,23 +65,23 @@ double eMissile::y() const {
     }
 }
 
-double eMissile::globalX() const {
+double Missile::globalX() const {
     return mPath.pos().fX;
 }
 
-double eMissile::globalY() const {
+double Missile::globalY() const {
     return mPath.pos().fY;
 }
 
-void eMissile::setFinishAction(const stdsptr<eGodAct>& act) {
+void Missile::setFinishAction(const stdsptr<eGodAct>& act) {
     mFinish = act;
 }
 
-void eMissile::serialize(eSaveArchive& ar) {
+void Missile::serialize(SaveArchive& ar) {
     serializeFields(ar);
 }
 
-void eMissile::serializeFields(eSaveArchive& ar) {
+void Missile::serializeFields(SaveArchive& ar) {
     ar.objectField("path", mPath);
     ar.field("time", mTime);
     ar.field("speed", mSpeed);
@@ -95,32 +95,32 @@ void eMissile::serializeFields(eSaveArchive& ar) {
     }
 }
 
-stdsptr<eMissile> eMissile::sCreate(
-        GameBoard& brd, const eMissileType type) {
+stdsptr<Missile> Missile::sCreate(
+        GameBoard& brd, const MissileType type) {
     switch(type) {
-    case eMissileType::rock:
-        return e::make_shared<eRockMissile>(brd);
-    case eMissileType::god:
-        return e::make_shared<eGodMissile>(brd);
-    case eMissileType::arrow:
-        return e::make_shared<eArrowMissile>(brd);
-    case eMissileType::spear:
-        return e::make_shared<eSpearMissile>(brd);
-    case eMissileType::wave:
-        return e::make_shared<eWaveMissile>(brd);
-    case eMissileType::lava:
-        return e::make_shared<eLavaMissile>(brd);
-    case eMissileType::dust:
-        return e::make_shared<eDustMissile>(brd);
-    case eMissileType::racingHorse:
+    case MissileType::rock:
+        return e::make_shared<RockMissile>(brd);
+    case MissileType::god:
+        return e::make_shared<GodMissile>(brd);
+    case MissileType::arrow:
+        return e::make_shared<ArrowMissile>(brd);
+    case MissileType::spear:
+        return e::make_shared<SpearMissile>(brd);
+    case MissileType::wave:
+        return e::make_shared<WaveMissile>(brd);
+    case MissileType::lava:
+        return e::make_shared<LavaMissile>(brd);
+    case MissileType::dust:
+        return e::make_shared<DustMissile>(brd);
+    case MissileType::racingHorse:
         return e::make_shared<eRacingHorse>(brd);
     }
     return nullptr;
 }
 
-void eMissile::changeTile(eTile* const t) {
+void Missile::changeTile(eTile* const t) {
     if(t != mTile) {
-        const auto r = ref<eMissile>();
+        const auto r = ref<Missile>();
         if(mTile) {
             mTile->removeMissile(r);
         }

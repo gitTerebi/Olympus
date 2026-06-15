@@ -4,7 +4,7 @@
 #include "buildings/eresourcecollectbuilding.h"
 #include "emovetoaction.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eCollectResourceAction::eCollectResourceAction(
         eResourceCollectBuildingBase* const b,
@@ -32,7 +32,7 @@ bool eCollectResourceAction::decide() {
     const auto t = c->tile();
     const int coll = cc->collected();
 
-    const bool inside = eWalkableHelpers::sTileUnderBuilding(t, mBuilding) ||
+    const bool inside = WalkableHelpers::sTileUnderBuilding(t, mBuilding) ||
                         t == startTile();
 
     if(coll > 0) {
@@ -132,7 +132,7 @@ void eCollectResourceAction::callCollectedAction(eTile* const tile) const {
     }
 }
 
-void eCollectResourceAction::serializeFields(eSaveArchive& ar) {
+void eCollectResourceAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.hasResourceField("hasResource", mHasResource);
     ar.buildingAsField("building", &board(), mBuilding);

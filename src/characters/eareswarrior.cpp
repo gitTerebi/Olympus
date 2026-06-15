@@ -2,21 +2,21 @@
 
 #include "textures/character-textures.h"
 #include "textures/game-textures.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eAresWarrior::eAresWarrior(GameBoard& board) :
     eSoldier(board, nullptr, eCharacterType::aresWarrior) {
     GameTextures::loadAresWarrior();
-    setAttack(eNumbers::sHopliteAttack);
-    setHP(eNumbers::sHopliteHP);
+    setAttack(Numbers::sHopliteAttack);
+    setHP(Numbers::sHopliteHP);
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eAresWarrior::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& gTexs = GameTextures::characters();
     const auto& texs = gTexs[id].fAresWarrior;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     bool wrap = true;
     const int oid = static_cast<int>(rotatedOrientation());
     const auto a = actionType();

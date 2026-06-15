@@ -9,14 +9,14 @@
 
 #include "eviewmodebutton.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "widgets/emultilinelabel.h"
 #include "widgets/moreinfo/city-finances-widget.h"
 
 void eAdminDataWidget::initialize() {
     {
         mSeeTaxes = new eViewModeButton(
-                        eLanguage::zeusText(14, 9), // see taxes
+                        Language::zeusText(14, 9), // see taxes
                         eViewMode::taxes,
                         window());
         addViewButton(mSeeTaxes);
@@ -31,10 +31,10 @@ void eAdminDataWidget::initialize() {
         const auto l = new eLabel(window());
         l->setNoPadding();
         l->setFontSizeXS();
-        l->setText(eLanguage::zeusText(131, 0)); // tax rate
+        l->setText(Language::zeusText(131, 0)); // tax rate
         l->fitContent();
         inner->addWidget(l);
-        l->align(eAlignment::hcenter);
+        l->align(Alignment::hcenter);
 
         mTaxLabel = new eLabel(window());
         mTaxLabel->setNoPadding();
@@ -43,7 +43,7 @@ void eAdminDataWidget::initialize() {
         mTaxLabel->setText(eTaxRateHelpers::name(eTaxRate::normal));
         mTaxLabel->fitContent();
         inner->addWidget(mTaxLabel);
-        mTaxLabel->align(eAlignment::hcenter);
+        mTaxLabel->align(Alignment::hcenter);
 
         const auto w = new eWidget(window());
         w->setNoPadding();
@@ -64,34 +64,34 @@ void eAdminDataWidget::initialize() {
         w->stackHorizontally();
         w->fitContent();
         inner->addWidget(w);
-        w->align(eAlignment::hcenter);
+        w->align(Alignment::hcenter);
     }
 
     {
         mYields = new eLabel(window());
         mYields->setWrapWidth(iw);
-        mYields->setWrapAlignment(eAlignment::hcenter);
+        mYields->setWrapAlignment(Alignment::hcenter);
         mYields->setNoPadding();
         mYields->setFontSizeXS();
-        const auto yt = eLanguage::zeusText(60, 4); // yields an estimated
-        const auto dr = eLanguage::zeusText(8, 1);
+        const auto yt = Language::zeusText(60, 4); // yields an estimated
+        const auto dr = Language::zeusText(8, 1);
         mYields->setText(yt + " 0 " + dr);
         mYields->fitContent();
         inner->addWidget(mYields);
-        mYields->align(eAlignment::hcenter);
+        mYields->align(Alignment::hcenter);
     }
 
     {
         mPerPop = new eLabel(window());
         mPerPop->setWrapWidth(iw);
-        mPerPop->setWrapAlignment(eAlignment::hcenter);
+        mPerPop->setWrapAlignment(Alignment::hcenter);
         mPerPop->setNoPadding();
         mPerPop->setFontSizeXS();
-        const auto pt = eLanguage::zeusText(60, 5); // of population visited by clerk
+        const auto pt = Language::zeusText(60, 5); // of population visited by clerk
         mPerPop->setText("0% " + pt);
         mPerPop->fitContent();
         inner->addWidget(mPerPop);
-        mPerPop->align(eAlignment::hcenter);
+        mPerPop->align(Alignment::hcenter);
     }
 
     inner->stackVertically();
@@ -105,7 +105,7 @@ void eAdminDataWidget::setTaxRate(const eTaxRate tr) {
     mTaxRate = tr;
     mTaxLabel->setText(eTaxRateHelpers::name(tr));
     mTaxLabel->fitContent();
-    mTaxLabel->align(eAlignment::hcenter);
+    mTaxLabel->align(Alignment::hcenter);
 }
 
 void eAdminDataWidget::paintEvent(ePainter& p) {
@@ -113,22 +113,22 @@ void eAdminDataWidget::paintEvent(ePainter& p) {
     if(update) {
         const auto cid = viewedCity();
         {
-            const auto yt = eLanguage::zeusText(60, 4); // yields an estimated
+            const auto yt = Language::zeusText(60, 4); // yields an estimated
             const int y = mBoard.taxesPaidLastYear(cid);
-            const auto dr = eLanguage::zeusText(8, 1);
+            const auto dr = Language::zeusText(8, 1);
             mYields->setText(yt + " " + std::to_string(y) + " " + dr);
             mYields->fitContent();
-            mYields->align(eAlignment::hcenter);
+            mYields->align(Alignment::hcenter);
         }
         {
-            const auto pt = eLanguage::zeusText(60, 5); // of population visited by clerk
+            const auto pt = Language::zeusText(60, 5); // of population visited by clerk
             const int paid = mBoard.peoplePaidTaxesLastYear(cid);
             const int pop = mBoard.population(cid);
             int per = pop == 0 ? 0 : std::round(100.*paid/pop);
             per = std::clamp(per, 0, 100);
             mPerPop->setText(std::to_string(per) + "% " + pt);
             mPerPop->fitContent();
-            mPerPop->align(eAlignment::hcenter);
+            mPerPop->align(Alignment::hcenter);
         }
         const auto inner = innerWidget();
         inner->stackVertically();

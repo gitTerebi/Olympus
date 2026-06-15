@@ -7,8 +7,8 @@
 #include "characters/efightingpatroler.h"
 #include "characters/eresourcecollector.h"
 #include "characters/animal.h"
-#include "fileIO/esavearchive.h"
-#include "enumbers.h"
+#include "fileIO/save-archive.h"
+#include "numbers.h"
 #include "combat-timing.h"
 
 #include <cstdlib>
@@ -58,7 +58,7 @@ void FightAction::increment(const int by)
         setState(eCharacterActionState::finished);
 }
 
-void FightAction::serializeFields(eSaveArchive &ar)
+void FightAction::serializeFields(SaveArchive &ar)
 {
     eCharacterAction::serializeFields(ar);
     ar.characterField("opponent", &board(), mOpponent);

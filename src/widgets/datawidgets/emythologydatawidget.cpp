@@ -2,11 +2,11 @@
 
 #include "eviewmodebutton.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "widgets/elinewidget.h"
 #include "engine/game-board.h"
 #include "widgets/ebuttonbase.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 class eTitledWidget : public eWidget {
 public:
@@ -20,7 +20,7 @@ public:
         titleLabel->setText(title);
         titleLabel->fitContent();
         addWidget(titleLabel);
-        titleLabel->align(eAlignment::hcenter);
+        titleLabel->align(Alignment::hcenter);
 
         mWidget = new eWidget(window());
         mWidget->setNoPadding();
@@ -58,18 +58,18 @@ public:
 };
 
 eWidget* createNoneLabel(eWidget* const parent,
-                         eMainWindow* const w) {
+                         MainWindow* const w) {
     const auto none = new eMythologyButton(w);
-    none->initialize(eLanguage::zeusText(283, 12)); // none
+    none->initialize(Language::zeusText(283, 12)); // none
     parent->addWidget(none);
-    none->align(eAlignment::hcenter);
+    none->align(Alignment::hcenter);
     return none;
 }
 
 void eMythologyDataWidget::initialize() {
     {
         mSeeImmortals = new eViewModeButton(
-                        eLanguage::zeusText(14, 15),
+                        Language::zeusText(14, 15),
                         eViewMode::immortals,
                         window());
         addViewButton(mSeeImmortals);
@@ -82,7 +82,7 @@ void eMythologyDataWidget::initialize() {
 
     mSanctuaries = new eTitledWidget(window());
     mSanctuaries->setWidth(innerW);
-    mSanctuaries->initialize(eLanguage::zeusText(59, 1)); // sanctuaries
+    mSanctuaries->initialize(Language::zeusText(59, 1)); // sanctuaries
     inner->addWidget(mSanctuaries);
 
     const auto saw = mSanctuaries->widget();
@@ -108,7 +108,7 @@ void eMythologyDataWidget::initialize() {
 
     mGodsAttacking = new eTitledWidget(window());
     mGodsAttacking->setWidth(innerW);
-    mGodsAttacking->initialize(eLanguage::zeusText(59, 16)); // gods attacking
+    mGodsAttacking->initialize(Language::zeusText(59, 16)); // gods attacking
     inner->addWidget(mGodsAttacking);
 
     const auto gaw = mGodsAttacking->widget();
@@ -120,7 +120,7 @@ void eMythologyDataWidget::initialize() {
 
     mMonstersAttacking = new eTitledWidget(window());
     mMonstersAttacking->setWidth(innerW);
-    mMonstersAttacking->initialize(eLanguage::zeusText(59, 17)); // monsters attacking
+    mMonstersAttacking->initialize(Language::zeusText(59, 17)); // monsters attacking
     inner->addWidget(mMonstersAttacking);
 
     const auto maw = mMonstersAttacking->widget();
@@ -178,7 +178,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
                     const auto name = God::sGodName(gt);
                     nameB->initialize(name);
                     w->addWidget(nameB);
-                    nameB->align(eAlignment::hcenter);
+                    nameB->align(Alignment::hcenter);
                     const stdptr<eSanctuary> sptr(s);
                     nameB->setPressAction([this, sptr]() {
                         if(!sptr) return;
@@ -205,9 +205,9 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
                     } else {
                         textId = 9; // needs materials
                     }
-                    stateB->initialize(eLanguage::zeusText(59, textId));
+                    stateB->initialize(Language::zeusText(59, textId));
                     w->addWidget(stateB);
-                    stateB->align(eAlignment::hcenter);
+                    stateB->align(Alignment::hcenter);
                     stateB->setPressAction([this, sptr]() {
                         if(!sptr) return;
                         const auto tile = sptr->centerTile();
@@ -230,7 +230,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
 
         {
             const auto ga = mBoard.attackingGods(cid);
-            const bool changed = !eVectorHelpers::same(ga, mGodsAttackingV);
+            const bool changed = !VectorHelpers::same(ga, mGodsAttackingV);
 
             if(changed || mGodsAttackingF) {
                 mGodsAttackingF = false;
@@ -246,7 +246,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
                     const auto name = God::sGodName(gt);
                     nameB->initialize(name);
                     w->addWidget(nameB);
-                    nameB->align(eAlignment::hcenter);
+                    nameB->align(Alignment::hcenter);
                     const stdptr<eCharacter> gptr(g);
                     nameB->setPressAction([this, gptr]() {
                         if(!gptr) return;
@@ -270,7 +270,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
 
         {
             const auto ma = mBoard.monsters(cid);
-            const bool changed = !eVectorHelpers::same(ma, mMonstersAttackingV);
+            const bool changed = !VectorHelpers::same(ma, mMonstersAttackingV);
 
             if(changed || mMonstersAttackingF) {
                 mMonstersAttackingF = false;
@@ -286,7 +286,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
                     const auto name = eMonster::sMonsterName(mt);
                     nameB->initialize(name);
                     w->addWidget(nameB);
-                    nameB->align(eAlignment::hcenter);
+                    nameB->align(Alignment::hcenter);
                     const stdptr<eCharacter> mptr(m);
                     nameB->setPressAction([this, mptr]() {
                         if(!mptr) return;

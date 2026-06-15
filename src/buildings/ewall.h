@@ -8,7 +8,7 @@ public:
     eWall(GameBoard& board, const eCityId cid);
     ~eWall();
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getTexture(const eTileSize size) const;
 
     void setDeleteArchers(const bool d) { mDeleteArchers = d; }

@@ -1,10 +1,10 @@
 #include "einfowidget.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include "widgets/eokbutton.h"
 
-eInfoWidget::eInfoWidget(eMainWindow* const window,
+eInfoWidget::eInfoWidget(MainWindow* const window,
                          eMainWidget* const mw,
                          const bool narrow, const bool shrt) :
     eModal(window),
@@ -20,16 +20,16 @@ void eInfoWidget::initialize(const std::string& title) {
     const int hh = mShort ? res.centralWidgetSmallHeight() :
                             res.centralWidgetLargeHeight();
     resize(ww, hh);
-    align(eAlignment::center);
+    align(Alignment::center);
 
     mTitleLabel = new eLabel(title, window());
     mTitleLabel->fitContent();
     addWidget(mTitleLabel);
-    mTitleLabel->align(eAlignment::top | eAlignment::hcenter);
+    mTitleLabel->align(Alignment::top | Alignment::hcenter);
 
     mOk = new eOkButton(window());
     addWidget(mOk);
-    mOk->align(eAlignment::bottom | eAlignment::right);
+    mOk->align(Alignment::bottom | Alignment::right);
     const int p = padding();
     mOk->move(mOk->x() - 2*p, mOk->y() - 2*p);
 }

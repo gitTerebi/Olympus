@@ -1,9 +1,9 @@
 #ifndef EFIGHTINGCHARACTER_H
 #define EFIGHTINGCHARACTER_H
 
-class eReadStream;
-class eWriteStream;
-class eSaveArchive;
+class ReadStream;
+class WriteStream;
+class SaveArchive;
 
 class eCharacter;
 class FightingAction;
@@ -12,7 +12,7 @@ class eFightingCharacter {
 public:
     eFightingCharacter(eCharacter* const c);
 
-    void serializeFields(eSaveArchive& ar);
+    void serializeFields(SaveArchive& ar);
 
     FightingAction* fightingAction() const;
 private:

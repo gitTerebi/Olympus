@@ -4,7 +4,7 @@
 #include "eemployingbuilding.h"
 
 class HorseRanchEnclosure;
-class eSaveArchive;
+class SaveArchive;
 
 class eHorseRanch : public eEmployingBuilding {
 public:
@@ -13,8 +13,8 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 
@@ -37,7 +37,7 @@ public:
     bool takeHorse();
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mWheat = 0;
     int mWheatTime = 0;

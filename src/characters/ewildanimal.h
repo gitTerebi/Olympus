@@ -5,8 +5,8 @@
 
 #include "textures/character-textures.h"
 
-class eSpawner;
-class eSaveArchive;
+class Spawner;
+class SaveArchive;
 
 class eWildAnimal : public Animal {
 public:
@@ -15,13 +15,13 @@ public:
                 const eCharacterType type);
     ~eWildAnimal();
 
-    void setSpawner(eSpawner* const s)
+    void setSpawner(Spawner* const s)
     { mSpawner = s; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
-    eSpawner* mSpawner = nullptr;
+    Spawner* mSpawner = nullptr;
 };
 
 #endif // EWILDANIMAL_H

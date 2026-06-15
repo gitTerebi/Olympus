@@ -5,7 +5,7 @@
 
 #include "buildings/ehousebase.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eAphroditeHelpStage {
     none, appear, goTo, populate, populating, disappear
@@ -23,7 +23,7 @@ public:
     void rebuildCurrentStage();
     void finishPopulating();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     eHouseBase* nearestHouseWithVacancies();
@@ -54,7 +54,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -83,7 +83,7 @@ public:
         mTarget->moveIn(v);
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:

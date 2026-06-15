@@ -80,7 +80,7 @@ enum class eHeroSummoningStage {
 };
 
 class BoardCity;
-class eSaveArchive;
+class SaveArchive;
 
 class eHerosHall : public eBuilding {
 public:
@@ -88,8 +88,8 @@ public:
                const eCityId cid);
     ~eHerosHall();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 
@@ -122,7 +122,7 @@ public:
 
     void updateRequirementsStatus();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void addRequirement(const eHeroRequirement& hr);
     void updateRequirementStatus(eHeroRequirement& hr);

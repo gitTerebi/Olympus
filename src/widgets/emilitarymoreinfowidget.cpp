@@ -4,50 +4,50 @@
 #include "characters/soldier-banner.h"
 #include "elabel.h"
 #include "emicrobutton.h"
-#include "elanguage.h"
+#include "language.h"
 #include "escrollwidget.h"
 
 eMilitaryMoreInfoWidget::eMilitaryMoreInfoWidget(
-        eMainWindow* const window,
+        MainWindow* const window,
         eMainWidget* const mw) :
     eInfoWidget(window, mw, false, false) {}
 
 void sArmySectionButtonUpdate(const stdsptr<SoldierBanner>& b,
                               eMicroButton* const mb) {
     if(b->isAbroad()) { // abroad
-        mb->setText(eLanguage::zeusText(51, 24));
-        mb->setTooltip(eLanguage::zeusText(51, 31));
+        mb->setText(Language::zeusText(51, 24));
+        mb->setTooltip(Language::zeusText(51, 31));
     } else if(b->fighting()) { // fighting
-        mb->setText(eLanguage::zeusText(51, 23));
-        mb->setTooltip(eLanguage::zeusText(51, 27));
+        mb->setText(Language::zeusText(51, 23));
+        mb->setTooltip(Language::zeusText(51, 27));
         mb->setPressAction([b, mb]() {
             b->goHome();
             sArmySectionButtonUpdate(b, mb);
         });
     } else if(b->isGoingHome()) { // going home
-        mb->setText(eLanguage::zeusText(51, 21));
-        mb->setTooltip(eLanguage::zeusText(51, 28));
+        mb->setText(Language::zeusText(51, 21));
+        mb->setTooltip(Language::zeusText(51, 28));
         mb->setPressAction([b, mb]() {
             b->backFromHome();
             sArmySectionButtonUpdate(b, mb);
         });
     } else if(b->isHome()) { // at home
-        mb->setText(eLanguage::zeusText(51, 18));
-        mb->setTooltip(eLanguage::zeusText(51, 25));
+        mb->setText(Language::zeusText(51, 18));
+        mb->setTooltip(Language::zeusText(51, 25));
         mb->setPressAction([b, mb]() {
             b->backFromHome();
             sArmySectionButtonUpdate(b, mb);
         });
     } else if(b->stationary()) { // still
-        mb->setText(eLanguage::zeusText(51, 19));
-        mb->setTooltip(eLanguage::zeusText(51, 26));
+        mb->setText(Language::zeusText(51, 19));
+        mb->setTooltip(Language::zeusText(51, 26));
         mb->setPressAction([b, mb]() {
             b->goHome();
             sArmySectionButtonUpdate(b, mb);
         });
     } else { // marching
-        mb->setText(eLanguage::zeusText(51, 20));
-        mb->setTooltip(eLanguage::zeusText(51, 27));
+        mb->setText(Language::zeusText(51, 20));
+        mb->setTooltip(Language::zeusText(51, 27));
         mb->setPressAction([b, mb]() {
             b->goHome();
             sArmySectionButtonUpdate(b, mb);
@@ -114,10 +114,10 @@ public:
             const auto troopsL = new eLabel(window());
             troopsL->setNoPadding();
             troopsL->setFontSizeXS();
-            troopsL->setText(eLanguage::zeusText(51, 17));
+            troopsL->setText(Language::zeusText(51, 17));
             troopsL->fitContent();
             rowW->addWidget(troopsL);
-            troopsL->align(eAlignment::right);
+            troopsL->align(Alignment::right);
 
             rowW->fitHeight();
             addWidget(rowW);
@@ -128,7 +128,7 @@ public:
             const auto noneL = new eLabel(window());
             noneL->setNoPadding();
             noneL->setFontSizeXS();
-            noneL->setText(eLanguage::zeusText(283, 12));
+            noneL->setText(Language::zeusText(283, 12));
             noneL->fitContent();
             inner->addWidget(noneL);
         }
@@ -154,7 +154,7 @@ public:
             }
 
             {
-                stdsptr<eTexture> tex;
+                stdsptr<Texture> tex;
                 bool valid = false;
                 if(atlantean && type != eBannerType::amazon &&
                    type != eBannerType::aresWarrior) {
@@ -255,7 +255,7 @@ public:
             ww->stackHorizontally(p);
             ww->fitContent();
             w->addWidget(ww);
-            ww->align(eAlignment::right);
+            ww->align(Alignment::right);
 
             w->fitHeight();
             if(scrollW) {
@@ -307,10 +307,10 @@ void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
     const auto citizenArmy = new eLabel(window());
     citizenArmy->setNoPadding();
     citizenArmy->setFontSizeS();
-    citizenArmy->setText(eLanguage::zeusText(51, 13));
+    citizenArmy->setText(Language::zeusText(51, 13));
     citizenArmy->fitContent();
     leftW->addWidget(citizenArmy);
-    citizenArmy->align(eAlignment::hcenter);
+    citizenArmy->align(Alignment::hcenter);
 
     const auto& banners = board.banners(cid);
 
@@ -346,8 +346,8 @@ void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
     if(!horsemenBanners.empty()) {
         const auto horsemen = new eArmySection(window());
         horsemen->setWidth(ww);
-        const auto title = atlantean ? eLanguage::zeusText(51, 86) :
-                                       eLanguage::zeusText(51, 14);
+        const auto title = atlantean ? Language::zeusText(51, 86) :
+                                       Language::zeusText(51, 14);
         horsemen->initialize(title, horsemenBanners, atlantean);
         leftW->addWidget(horsemen);
     }
@@ -355,8 +355,8 @@ void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
     if(!hopliteBanners.empty()) {
         const auto hoplites = new eArmySection(window());
         hoplites->setWidth(ww);
-        const auto title = atlantean ? eLanguage::zeusText(51, 87) :
-                                       eLanguage::zeusText(51, 15);
+        const auto title = atlantean ? Language::zeusText(51, 87) :
+                                       Language::zeusText(51, 15);
         hoplites->initialize(title, hopliteBanners, atlantean);
         leftW->addWidget(hoplites);
     }
@@ -364,8 +364,8 @@ void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
     if(!rabbleBanners.empty()) {
         const auto rabble = new eArmySection(window());
         rabble->setWidth(ww);
-        const auto title = atlantean ? eLanguage::zeusText(51, 88) :
-                                       eLanguage::zeusText(51, 16);
+        const auto title = atlantean ? Language::zeusText(51, 88) :
+                                       Language::zeusText(51, 16);
         rabble->initialize(title, rabbleBanners, atlantean);
         leftW->addWidget(rabble);
     }
@@ -381,10 +381,10 @@ void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
     const auto navyL = new eLabel(window());
     navyL->setNoPadding();
     navyL->setFontSizeS();
-    navyL->setText(eLanguage::zeusText(51, 32));
+    navyL->setText(Language::zeusText(51, 32));
     navyL->fitContent();
     rightW->addWidget(navyL);
-    navyL->align(eAlignment::hcenter);
+    navyL->align(Alignment::hcenter);
 
     const auto navy = new eArmySection(window());
     navy->setWidth(ww);
@@ -394,27 +394,27 @@ void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
     const auto otherForesL = new eLabel(window());
     otherForesL->setNoPadding();
     otherForesL->setFontSizeS();
-    otherForesL->setText(eLanguage::zeusText(51, 54));
+    otherForesL->setText(Language::zeusText(51, 54));
     otherForesL->fitContent();
     rightW->addWidget(otherForesL);
-    otherForesL->align(eAlignment::hcenter);
+    otherForesL->align(Alignment::hcenter);
 
     const auto mercenaries = new eArmySection(window());
     mercenaries->setWidth(ww);
-    mercenaries->initialize(eLanguage::zeusText(51, 67),
+    mercenaries->initialize(Language::zeusText(51, 67),
                             {}, atlantean);
     rightW->addWidget(mercenaries);
 
     const auto mythical = new eArmySection(window());
     mythical->setWidth(ww);
-    mythical->initialize(eLanguage::zeusText(51, 68),
+    mythical->initialize(Language::zeusText(51, 68),
                          mythicalBanners, atlantean);
     rightW->addWidget(mythical);
 
     rightW->stackVertically(p);
     rightW->fitHeight();
     cw->addWidget(rightW);
-    rightW->align(eAlignment::right);
+    rightW->align(Alignment::right);
 
     setCloseAction([this]() {
         deleteLater();

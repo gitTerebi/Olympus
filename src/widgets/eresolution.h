@@ -12,6 +12,7 @@ class eResolution {
 public:
     eResolution() {}
     eResolution(const int width, const int height);
+    eResolution(const int width, const int height, const eUIScale uiScale);
 
     int width() const { return mWidth; }
     int height() const { return mHeight; }

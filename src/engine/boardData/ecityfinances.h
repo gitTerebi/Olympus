@@ -1,7 +1,7 @@
 #ifndef ECITYFINANCES_H
 #define ECITYFINANCES_H
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 enum class eFinanceTarget {
     // income
@@ -79,7 +79,7 @@ struct eFinanceYear {
         }
     }
 
-    void serialize(eSaveArchive& ar) {
+    void serialize(SaveArchive& ar) {
         ar.field("taxesIn", fTaxesIn, 0);
         ar.field("exports", fExports, 0);
         ar.field("giftsReceived", fGiftsReceived, 0);
@@ -134,7 +134,7 @@ public:
     const eFinanceYear& lastYear() const { return mLastYear; }
     const eFinanceYear& thisYear() const { return mThisYear; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
     eFinanceYear mLastYear;
     eFinanceYear mThisYear;

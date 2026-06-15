@@ -1,10 +1,10 @@
 ﻿#include "game-widget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include "audio/sounds.h"
-#include "emessages.h"
+#include "messages.h"
 #include "engine/eevent.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 #include "engine/game-board.h"
 
 void GameWidget::handleGodQuestEvent(eEventData& ed,
@@ -17,10 +17,10 @@ void GameWidget::handleGodQuestEvent(eEventData& ed,
     } else {
         eSounds::playGodSound(god, eGodSound::quest);
     }
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.godMessages(god);
     if(!gm) return;
-    const eQuestMessages* qm = nullptr;
+    const QuestMessages* qm = nullptr;
     switch(id) {
     case GodQuestId::godQuest1:
         qm = &gm->fQuest1;
@@ -29,7 +29,7 @@ void GameWidget::handleGodQuestEvent(eEventData& ed,
         qm = &gm->fQuest2;
         break;
     }
-    const eEventMessageType* emt = nullptr;
+    const EventMessageType* emt = nullptr;
     if(fulfilled) {
         emt = &qm->fFulfilled;
     } else {
@@ -37,14 +37,14 @@ void GameWidget::handleGodQuestEvent(eEventData& ed,
     }
     auto msg = emt->fFull;
     const auto hm = eHero::sHeroName(hero);
-    eStringHelpers::replaceAll(msg.fTitle, "[hero_needed]", hm);
-    eStringHelpers::replaceAll(msg.fText, "[hero_needed]", hm);
+    StringHelpers::replaceAll(msg.fTitle, "[hero_needed]", hm);
+    StringHelpers::replaceAll(msg.fText, "[hero_needed]", hm);
     showMessage(ed, msg);
 }
 
 void GameWidget::handleGodVisitEvent(eEventData& ed) {
     const auto god = ed.fGod;
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto msgs = inst.godMessages(god);
     int& lm = msgs->fLastMessage;
     lm = lm > 2 ? 0 : (lm + 1);
@@ -61,28 +61,28 @@ void GameWidget::handleGodVisitEvent(eEventData& ed) {
 }
 
 void GameWidget::handleGodInvasionEvent(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto msgs = inst.godMessages(ed.fGod);
     showMessage(ed, msgs->fInvades);
     eSounds::playGodSound(ed.fGod, eGodSound::invade);
 }
 
 void GameWidget::handleGodHelpEvent(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto msgs = inst.godMessages(ed.fGod);
     showMessage(ed, msgs->fHelps);
     eSounds::playGodSound(ed.fGod, eGodSound::help);
 }
 
 void GameWidget::handleSanctuaryComplete(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.godMessages(ed.fGod);
     if(!gm) return;
     showMessage(ed, gm->fSanctuaryComplete);
 }
 
 void GameWidget::handleMonsterUnleashEvent(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.godMessages(ed.fGod);
     if(!gm) return;
     eSounds::playGodSound(ed.fGod, eGodSound::monster);
@@ -90,7 +90,7 @@ void GameWidget::handleMonsterUnleashEvent(eEventData& ed) {
 }
 
 void GameWidget::handleMonsterInCityEvent(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     eSounds::playMonsterSound(ed.fMonster, eMonsterSound::voice);
@@ -98,51 +98,51 @@ void GameWidget::handleMonsterInCityEvent(eEventData& ed) {
 }
 
 void GameWidget::handleMonsterInvasionInitialEvent(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
-    eMessageType msg = gm->fInvasion36;
+    MessageType msg = gm->fInvasion36;
     std::string reason = ed.fReason;
     if(reason.empty()) {
         reason = gm->fMonsterAttackReason;
     }
     const auto timeStr = std::to_string(ed.fTime);
-    eStringHelpers::replace(msg.fFull.fText, "[reason_phrase]", reason);
-    eStringHelpers::replace(msg.fFull.fText, "[time_until_attack]", timeStr);
-    eStringHelpers::replace(msg.fCondensed.fText, "[time_until_attack]", timeStr);
+    StringHelpers::replace(msg.fFull.fText, "[reason_phrase]", reason);
+    StringHelpers::replace(msg.fFull.fText, "[time_until_attack]", timeStr);
+    StringHelpers::replace(msg.fCondensed.fText, "[time_until_attack]", timeStr);
     showMessage(ed, msg);
 }
 
 void GameWidget::handleMonsterInvasion24Event(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fInvasion24);
 }
 
 void GameWidget::handleMonsterInvasion12Event(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fInvasion12);
 }
 
 void GameWidget::handleMonsterInvasion6Event(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fInvasion6);
 }
 
 void GameWidget::handleMonsterInvasion1Event(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fInvasion1);
 }
 
 void GameWidget::handleMonsterInvasionEvent(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     eSounds::playMonsterSound(ed.fMonster, eMonsterSound::voice);
@@ -150,14 +150,14 @@ void GameWidget::handleMonsterInvasionEvent(eEventData& ed) {
 }
 
 void GameWidget::handleMonsterSlainEvent(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(ed.fMonster);
     if(!gm) return;
     showMessage(ed, gm->fSlain);
 }
 
 void GameWidget::handleHeroArrivalEvent(eEventData& ed) {
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.heroMessages(ed.fHero);
     if(!gm) return;
     eSounds::playHeroSound(ed.fHero, eHeroSound::arrived);
@@ -175,7 +175,7 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         const auto pid = mBoard->cityIdToPlayerId(cid);
         if(pid != ppid) return;
     }
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     switch(e) {
     case eEvent::fire: {
         eSounds::playFireSound();
@@ -291,23 +291,23 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
 
     case eEvent::invasionInitial: {
         const bool forcePopup = window()->settings().fPopupForInvasion;
-        const auto msg = eMessages::invasionMessage(inst.fInvasionInitial, ed.fReason, ed.fTime);
+        const auto msg = Messages::invasionMessage(inst.fInvasionInitial, ed.fReason, ed.fTime);
         showMessage(ed, msg.fFull, false, forcePopup, true);
     } break;
     case eEvent::invasion24: {
-        showMessage(ed, eMessages::invasionMessage(inst.fInvasion24, ed.fReason, 24));
+        showMessage(ed, Messages::invasionMessage(inst.fInvasion24, ed.fReason, 24));
     } break;
     case eEvent::invasion12: {
-        showMessage(ed, eMessages::invasionMessage(inst.fInvasion12, ed.fReason, 12));
+        showMessage(ed, Messages::invasionMessage(inst.fInvasion12, ed.fReason, 12));
     } break;
     case eEvent::invasion6: {
-        showMessage(ed, eMessages::invasionMessage(inst.fInvasion6, ed.fReason, 6));
+        showMessage(ed, Messages::invasionMessage(inst.fInvasion6, ed.fReason, 6));
     } break;
     case eEvent::invasion1: {
-        showMessage(ed, eMessages::invasionMessage(inst.fInvasion1, ed.fReason, 1));
+        showMessage(ed, Messages::invasionMessage(inst.fInvasion1, ed.fReason, 1));
     } break;
     case eEvent::invasion: {
-        showMessage(ed, eMessages::invasionMessage(inst.fInvasion, ed.fReason, 0));
+        showMessage(ed, Messages::invasionMessage(inst.fInvasion, ed.fReason, 0));
     } break;
     case eEvent::invasionBribed: {
         showMessage(ed, inst.fInvasionBribed);
@@ -465,19 +465,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::generalRequestAllyComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fGeneralRequestAllyS.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestAllyTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fGeneralRequestAllyS.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestAllyRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fGeneralRequestAllyS.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -500,19 +500,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::generalRequestRivalComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fGeneralRequestRivalD.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestRivalTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fGeneralRequestRivalD.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestRivalRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fGeneralRequestRivalD.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -535,19 +535,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::generalRequestSubjectComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fGeneralRequestSubjectP.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestSubjectTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fGeneralRequestSubjectP.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestSubjectRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fGeneralRequestSubjectP.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -570,19 +570,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::generalRequestParentComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fGeneralRequestParentR.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestParentTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fGeneralRequestParentR.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestParentRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fGeneralRequestParentR.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -605,19 +605,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::generalRequestTributeComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fTributeRequest.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestTributeTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fTributeRequest.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::generalRequestTributeRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fTributeRequest.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -640,19 +640,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::famineAllyComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFamineAllyS.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::famineAllyTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFamineAllyS.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::famineAllyRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFamineAllyS.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -675,19 +675,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::famineRivalComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFamineRivalD.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::famineRivalTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFamineRivalD.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::famineRivalRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFamineRivalD.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -710,19 +710,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::famineSubjectComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFamineSubjectP.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::famineSubjectTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFamineSubjectP.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::famineSubjectRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFamineSubjectP.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -745,19 +745,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::famineParentComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFamineParentR.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::famineParentTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFamineParentR.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::famineParentRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFamineParentR.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -780,19 +780,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::projectAllyComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fProjectAllyS.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::projectAllyTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fProjectAllyS.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::projectAllyRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fProjectAllyS.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -815,19 +815,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::projectRivalComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fProjectRivalD.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::projectRivalTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fProjectRivalD.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::projectRivalRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fProjectRivalD.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -850,19 +850,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::projectSubjectComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fProjectSubjectP.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::projectSubjectTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fProjectSubjectP.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::projectSubjectRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fProjectSubjectP.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -885,19 +885,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::projectParentComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fProjectParentR.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::projectParentTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fProjectParentR.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::projectParentRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fProjectParentR.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -920,19 +920,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::festivalAllyComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFestivalAllyS.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::festivalAllyTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFestivalAllyS.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::festivalAllyRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFestivalAllyS.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -955,19 +955,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::festivalRivalComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFestivalRivalD.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::festivalRivalTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFestivalRivalD.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::festivalRivalRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFestivalRivalD.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -990,19 +990,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::festivalSubjectComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFestivalSubjectP.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::festivalSubjectTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFestivalSubjectP.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::festivalSubjectRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFestivalSubjectP.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -1025,19 +1025,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::festivalParentComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFestivalParentR.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::festivalParentTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFestivalParentR.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::festivalParentRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFestivalParentR.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -1060,19 +1060,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::financialWoesAllyComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFinancialWoesAllyS.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::financialWoesAllyTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFinancialWoesAllyS.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::financialWoesAllyRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFinancialWoesAllyS.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -1095,19 +1095,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::financialWoesRivalComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFinancialWoesRivalD.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::financialWoesRivalTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFinancialWoesRivalD.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::financialWoesRivalRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFinancialWoesRivalD.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -1130,19 +1130,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::financialWoesSubjectComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFinancialWoesSubjectP.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::financialWoesSubjectTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFinancialWoesSubjectP.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::financialWoesSubjectRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFinancialWoesSubjectP.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -1165,19 +1165,19 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::financialWoesParentComply: {
-        const auto m = eMessages::favorMessage(
+        const auto m = Messages::favorMessage(
                     inst.fFinancialWoesParentR.fComply);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::financialWoesParentTooLate: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                     inst.fFinancialWoesParentR.fTooLate);
         showMessage(ed, m, true);
         return;
     } break;
     case eEvent::financialWoesParentRefuse: {
-        const auto m = eMessages::dfavorMessage(
+        const auto m = Messages::dfavorMessage(
                            inst.fFinancialWoesParentR.fRefuse);
         showMessage(ed, m, true);
         return;
@@ -1626,7 +1626,7 @@ void GameWidget::handleEvent(const eEvent e, eEventData& ed) {
         return;
     } break;
     case eEvent::cityAttitudeChanged: {
-        const eMessageType* msg = nullptr;
+        const MessageType* msg = nullptr;
         switch(ed.fCityAttitudeMessage) {
         case eCityAttitudeMessage::allyResentful:
             msg = &inst.fAllyResentful;

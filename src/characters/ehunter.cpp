@@ -1,7 +1,7 @@
 #include "ehunter.h"
 
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eHunter::eHunter(GameBoard& board) :
     eResourceCollector(board, &CharacterTextures::fHunter,
@@ -19,7 +19,7 @@ void eHunter::setDeerHunter(const bool h) {
     }
 }
 
-void eHunter::serializeFields(eSaveArchive& ar) {
+void eHunter::serializeFields(SaveArchive& ar) {
     eResourceCollector::serializeFields(ar);
     bool deerHunter = mDeerHunter;
     ar.field("deerHunter", deerHunter);

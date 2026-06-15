@@ -1,29 +1,29 @@
-#include "ewolfspawner.h"
+#include "wolf-spawner.h"
 
 #include "characters/wolf.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "characters/soldier-banner.h"
 
-eWolfSpawner::eWolfSpawner(const int id,
+WolfSpawner::WolfSpawner(const int id,
                            eTile* const tile,
                            GameBoard& board) :
-    eAnimalSpawner(eBannerTypeS::wolf, id, tile,
-                   eNumbers::sWolfMaxCount,
-                   eNumbers::sWolfSpawnPeriod, board) {}
+    AnimalSpawner(BannerTypeS::wolf, id, tile,
+                   Numbers::sWolfMaxCount,
+                   Numbers::sWolfSpawnPeriod, board) {}
 
 
-stdsptr<eWildAnimal> eWolfSpawner::create(GameBoard& board) {
+stdsptr<eWildAnimal> WolfSpawner::create(GameBoard& board) {
     const auto b = e::make_shared<Wolf>(board);
     b->setOnCityId(cityId());
     return b;
 }
 
-void eWolfSpawner::incTime(const int by) {
-    eSpawner::incTime(by);
+void WolfSpawner::incTime(const int by) {
+    Spawner::incTime(by);
     if(count() >= maxCount()) disableSpawning();
 }
 
-void eWolfSpawner::spawnMax() {
-    eSpawner::spawnMax();
+void WolfSpawner::spawnMax() {
+    Spawner::spawnMax();
     disableSpawning();
 }

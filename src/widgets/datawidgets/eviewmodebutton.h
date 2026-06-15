@@ -9,7 +9,7 @@ class eViewModeButton : public eCheckableButton {
 public:
     eViewModeButton(const std::string& text,
                     const eViewMode vm,
-                    eMainWindow* const window);
+                    MainWindow* const window);
 
     void setGameWidget(GameWidget* const gw);
 protected:

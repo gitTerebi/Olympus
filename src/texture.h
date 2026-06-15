@@ -1,5 +1,5 @@
-#ifndef ETEXTURE_H
-#define ETEXTURE_H
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -9,10 +9,10 @@
 
 #include "widgets/efonts.h"
 
-#include "efontcolor.h"
+#include "font-color.h"
 
 
-enum class eAlignment {
+enum class Alignment {
     none = 0x0000,
     left = 0x0001,
     right = 0x0002,
@@ -25,18 +25,18 @@ enum class eAlignment {
     center = vcenter | hcenter
 };
 
-inline eAlignment operator|(const eAlignment a, const eAlignment b) {
-    return static_cast<eAlignment>(static_cast<int>(a) | static_cast<int>(b));
+inline Alignment operator|(const Alignment a, const Alignment b) {
+    return static_cast<Alignment>(static_cast<int>(a) | static_cast<int>(b));
 }
 
-inline eAlignment operator&(const eAlignment a, const eAlignment b) {
-    return static_cast<eAlignment>(static_cast<int>(a) & static_cast<int>(b));
+inline Alignment operator&(const Alignment a, const Alignment b) {
+    return static_cast<Alignment>(static_cast<int>(a) & static_cast<int>(b));
 }
 
-class eTexture {
+class Texture {
 public:
-    eTexture();
-    ~eTexture();
+    Texture();
+    ~Texture();
 
     void reset();
     bool create(SDL_Renderer* const r,
@@ -48,16 +48,16 @@ public:
               SDL_Surface* const surf);
     bool loadText(SDL_Renderer* const r,
                   const std::string& text,
-                  const eFontColor color,
+                  const FontColor color,
                   TTF_Font& font,
                   const int width = 0,
-                  const eAlignment align = eAlignment::left);
+                  const Alignment align = Alignment::left);
     bool loadText(SDL_Renderer* const r,
                   const std::string& text,
-                  const eFontColor color,
+                  const FontColor color,
                   const eFont& font,
                   const int width = 0,
-                  const eAlignment align = eAlignment::left);
+                  const Alignment align = Alignment::left);
 
     void renderRelPortion(SDL_Renderer* const r,
                           const int dstX,
@@ -92,21 +92,21 @@ public:
     void setColorMod(const Uint8 r, const Uint8 g, const Uint8 b);
     void clearColorMod();
 
-    void setFlipTex(const std::shared_ptr<eTexture>& tex);
+    void setFlipTex(const std::shared_ptr<Texture>& tex);
     void setParentTexture(const SDL_Rect& rect,
-                          const std::shared_ptr<eTexture>& tex);
+                          const std::shared_ptr<Texture>& tex);
 
     SDL_Texture* tex() const { return mTex; }
 
 private:
-    std::shared_ptr<eTexture> mParentTex;
+    std::shared_ptr<Texture> mParentTex;
     int mX = 0;
     int mY = 0;
     int mWidth = 0;
     int mHeight = 0;
     int mOffsetX = 0;
     int mOffsetY = 0;
-    std::shared_ptr<eTexture> mFlipTex;
+    std::shared_ptr<Texture> mFlipTex;
     SDL_Texture* mTex = nullptr;
     Uint8 mAlpha = 255;
     Uint8 mColorR = 255;
@@ -114,4 +114,4 @@ private:
     Uint8 mColorB = 255;
 };
 
-#endif // ETEXTURE_H
+#endif // TEXTURE_H

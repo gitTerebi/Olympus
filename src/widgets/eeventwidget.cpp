@@ -40,13 +40,13 @@ void eEventWidget::setViewTileHandler(const eViewTileHandler& h) {
 }
 
 eEventButton::eEventButton(const eEvent e,
-                           eMainWindow* const window) :
+                           MainWindow* const window) :
     eButton(window) {
     const auto intrfc = GameTextures::interface();
     const auto uiScale = resolution().uiScale();
     const int iRes = static_cast<int>(uiScale);
     const auto& texs = intrfc[iRes];
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     switch(e) {
     case eEvent::fire:
         coll = &texs.fFireAlert;

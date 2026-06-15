@@ -1,7 +1,7 @@
 #include "eolivepress.h"
 
 #include "textures/game-textures.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include <algorithm>
 
 namespace {
@@ -19,7 +19,7 @@ eOlivePress::eOlivePress(GameBoard& board,
                         eBuildingType::olivePress, 2, 2, 12,
                         eResourceType::olives,
                         eResourceType::oliveOil, 1,
-                        eNumbers::sOlivePressProcessingPeriod,
+                        Numbers::sOlivePressProcessingPeriod,
                         cid) {
     GameTextures::loadOlivePress();
     GameTextures::loadWaitingOverlay();
@@ -28,8 +28,8 @@ eOlivePress::eOlivePress(GameBoard& board,
     });
 }
 
-std::vector<eOverlay> eOlivePress::getOverlays(const eTileSize size) const {
-    std::vector<eOverlay> os;
+std::vector<Overlay> eOlivePress::getOverlays(const eTileSize size) const {
+    std::vector<Overlay> os;
     const int olives = rawCount();
     if(olives > 0) {
         os = eProcessingBuilding::getOverlays(size);
@@ -38,7 +38,7 @@ std::vector<eOverlay> eOlivePress::getOverlays(const eTileSize size) const {
         const auto& coll = texs.fWaitingOlives;
         const int resMax = coll.size() - 1;
         const int res = std::clamp(olives - 1, 0, resMax);
-        eOverlay o;
+        Overlay o;
         o.fTex = coll.getTexture(res);
         o.fX = -0.5;
         o.fY = -2.10;
@@ -52,7 +52,7 @@ std::vector<eOverlay> eOlivePress::getOverlays(const eTileSize size) const {
         if(sIdleFacing < static_cast<int>(colls.size())) {
             const auto& coll = colls[sIdleFacing];
             if(coll.size() > 0) {
-                eOverlay o;
+                Overlay o;
                 o.fTex = coll.getTexture(textureTime() % coll.size());
                 o.fX = sIdleX;
                 o.fY = sIdleY;

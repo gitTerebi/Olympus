@@ -3,7 +3,7 @@
 
 #include "characters/gods/actions/god-action.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eHermesHelpStage {
     none, appear, provide, providing, disappear
@@ -21,7 +21,7 @@ public:
     void rebuildCurrentStage();
     void finishProviding();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void provide();
@@ -49,7 +49,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

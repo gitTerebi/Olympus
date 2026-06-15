@@ -5,7 +5,7 @@
 
 #include "characters/gods/god.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eBuildingType;
 
@@ -21,7 +21,7 @@ struct ePyramidAvailable {
 };
 
 struct eAvailableBuildings {
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void allowPyramid(const eBuildingType type,
                       const std::vector<bool>& levels);

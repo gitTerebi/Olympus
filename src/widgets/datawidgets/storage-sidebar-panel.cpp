@@ -6,12 +6,12 @@
 #include "widgets/moreinfo/storage-distribution-dialog.h"
 #include "eviewmodebutton.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 namespace {
 class eClickRow : public eWidget {
 public:
-    eClickRow(eMainWindow* w, std::function<void()> onClick)
+    eClickRow(MainWindow* w, std::function<void()> onClick)
         : eWidget(w), mOnClick(std::move(onClick)) { setNoPadding(); }
 protected:
     bool mousePressEvent(const eMouseEvent&) override {
@@ -57,15 +57,15 @@ eWidget* StorageSidebarPanel::sdwColumn(
         l->fitContent();
         lbls.push_back(l);
         lw->addWidget(l);
-        l->align(eAlignment::right);
+        l->align(Alignment::right);
 
         w->addWidget(lw);
         w->addWidget(ic);
         w->stackHorizontally(2*pp);
         w->fitContent();
-        ic->align(eAlignment::vcenter);
-        l->align(eAlignment::vcenter);
-        lw->align(eAlignment::vcenter);
+        ic->align(Alignment::vcenter);
+        l->align(Alignment::vcenter);
+        lw->align(Alignment::vcenter);
         w0->addWidget(w);
     }
     w0->stackVertically(2*pp);
@@ -76,7 +76,7 @@ eWidget* StorageSidebarPanel::sdwColumn(
 void StorageSidebarPanel::initialize() {
     {
         mSeeDistribution = new eViewModeButton(
-                        eLanguage::zeusText(14, 4),
+                        Language::zeusText(14, 4),
                         eViewMode::distribution,
                         window());
         addViewButton(mSeeDistribution);
@@ -112,7 +112,7 @@ void StorageSidebarPanel::initialize() {
     w->fitContent();
 
     inner->addWidget(w);
-    w->align(eAlignment::center);
+    w->align(Alignment::center);
     w->setX(w->x() + 2*pp);
 
     showMoreInfoButton();
@@ -138,7 +138,7 @@ void StorageSidebarPanel::paintEvent(ePainter& p) {
                 const auto l = mResourceLabels[i];
                 l->setText(std::to_string(c));
                 l->fitContent();
-                l->align(eAlignment::right);
+                l->align(Alignment::right);
             }
         }
         const auto city = mBoard.boardCityWithId(cid);

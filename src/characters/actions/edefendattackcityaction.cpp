@@ -1,6 +1,6 @@
 ﻿#include "edefendattackcityaction.h"
 
-#include "enumbers.h"
+#include "numbers.h"
 #include "emovetoaction.h"
 #include "engine/game-board.h"
 #include "characters/esoldier.h"
@@ -8,9 +8,9 @@
 #include "characters/gods/actions/god-action.h"
 #include "characters/actions/combat-timing.h"
 #include "vec2.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-void eDefendAttackCityAction::serializeFields(eSaveArchive& ar) {
+void eDefendAttackCityAction::serializeFields(SaveArchive& ar) {
     GodMonsterAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.tileField("startTile", GodMonsterAction::board(), mStartTile);

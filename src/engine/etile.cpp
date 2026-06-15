@@ -8,17 +8,17 @@
 #include "characters/soldier-banner.h"
 #include "game-board.h"
 
-#include "evectorhelpers.h"
-#include "spawners/ebanner.h"
-#include "fileIO/esavearchive.h"
+#include "vector-helpers.h"
+#include "spawners/banner.h"
+#include "fileIO/save-archive.h"
 
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 
 eTile::eTile(const int x, const int y,
              const int dx, const int dy,
              GameBoard &board) :
     mBoard(board) {
-    setSeed(eRand::rand());
+    setSeed(Rand::rand());
     setX(x);
     setY(y);
     setDX(dx);
@@ -105,7 +105,7 @@ std::vector<eTile*> eTile::surroundingRoads() const {
 eTile* eTile::nearestRoad() const {
     const auto tiles = surroundingRoads();
     if(tiles.empty()) return nullptr;
-    return tiles[eRand::rand() % tiles.size()];
+    return tiles[Rand::rand() % tiles.size()];
 }
 
 int eTile::roadLength(const int skipAfter) const {
@@ -116,7 +116,7 @@ int eTile::roadLength(const int skipAfter) const {
         if(result >= skipAfter) return;
         if(!tile) return;
         if(!tile->hasRoad()) return;
-        const bool v = eVectorHelpers::contains(visited, tile);
+        const bool v = VectorHelpers::contains(visited, tile);
         if(v) return;
         result++;
         visited.push_back(tile);
@@ -317,7 +317,7 @@ void eTile::updateTerritoryBorder() {
             }
             return false;
         };
-        eIterateSquare::iterateSquare(k, prcs);
+        IterateSquare::iterateSquare(k, prcs);
         if(found) break;
     }
 }
@@ -361,7 +361,7 @@ void eTile::setMarbleLevel(const int l) {
     scheduleNeighboursTerrainUpdate();
 }
 
-void eTile::serialize(eSaveArchive& ar) {
+void eTile::serialize(SaveArchive& ar) {
     ar.field("doubleAltitude", mDoubleAltitude);
     ar.field("scrub", mScrub);
 
@@ -382,22 +382,22 @@ void eTile::serialize(eSaveArchive& ar) {
 
     const int bannerCount = static_cast<int>(mBanners.size());
     ar.countedArrayField("banners", bannerCount,
-        [&](eSaveArchive& itemAr, const int i) {
-            eBannerTypeS bannerType = ar.writing() ? mBanners[i]->type() : eBannerTypeS::none;
+        [&](SaveArchive& itemAr, const int i) {
+            BannerTypeS bannerType = ar.writing() ? mBanners[i]->type() : BannerTypeS::none;
             int bannerId = ar.writing() ? mBanners[i]->id() : -1;
             itemAr.archiveField("factory",
-                [&](eSaveArchive& factoryAr) {
+                [&](SaveArchive& factoryAr) {
                     factoryAr.field("bannerType", bannerType);
                     factoryAr.field("bannerId", bannerId);
                 });
-            eBanner* b = nullptr;
+            Banner* b = nullptr;
             if(ar.reading()) {
-                b = eBanner::sCreate(bannerId, this, mBoard, bannerType);
+                b = Banner::sCreate(bannerId, this, mBoard, bannerType);
             } else {
                 b = mBanners[i].get();
             }
             itemAr.archiveField("state",
-                [&](eSaveArchive& stateAr) {
+                [&](SaveArchive& stateAr) {
                     if(b) b->serialize(stateAr);
                 });
         });
@@ -413,15 +413,15 @@ void eTile::addCharacter(const stdsptr<eCharacter>& c,
 }
 
 bool eTile::removeCharacter(const stdsptr<eCharacter>& c) {
-    return eVectorHelpers::remove(mCharacters, c);
+    return VectorHelpers::remove(mCharacters, c);
 }
 
-void eTile::addMissile(const stdsptr<eMissile>& m) {
+void eTile::addMissile(const stdsptr<Missile>& m) {
     mMissiles.push_back(m);
 }
 
-bool eTile::removeMissile(const stdsptr<eMissile>& m) {
-    return eVectorHelpers::remove(mMissiles, m);
+bool eTile::removeMissile(const stdsptr<Missile>& m) {
+    return VectorHelpers::remove(mMissiles, m);
 }
 
 bool eTile::hasCharacter(const eHasChar& func) const {
@@ -453,19 +453,19 @@ eBuildingType eTile::underBuildingType() const {
     else return mUnderBuilding->type();
 }
 
-void eTile::addBanner(const stdsptr<eBanner>& b) {
+void eTile::addBanner(const stdsptr<Banner>& b) {
     mBanners.push_back(b);
 }
 
-void eTile::removeBanner(const stdsptr<eBanner>& b) {
-    eVectorHelpers::remove(mBanners, b);
+void eTile::removeBanner(const stdsptr<Banner>& b) {
+    VectorHelpers::remove(mBanners, b);
 }
 
 void eTile::removeAllBanners() {
     mBanners.clear();
 }
 
-void eTile::removeBanner(eBanner * const b) {
+void eTile::removeBanner(Banner * const b) {
     const int iMax = mBanners.size();
     for(int i = 0; i < iMax; i++) {
         const auto& bb = mBanners[i];
@@ -479,8 +479,8 @@ void eTile::removeBanner(eBanner * const b) {
 bool eTile::hasPrey() const {
     for(const auto& b : mBanners) {
         const auto type = b->type();
-        if(type == eBannerTypeS::boar ||
-           type == eBannerTypeS::deer) {
+        if(type == BannerTypeS::boar ||
+           type == BannerTypeS::deer) {
             return true;;
         }
     }

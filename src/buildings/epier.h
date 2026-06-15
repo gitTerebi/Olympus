@@ -8,8 +8,8 @@ class ePier : public eBuilding {
 public:
     ePier(GameBoard& board, const eDiagonalOrientation o, const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void collapse() override;
     void erase() override;
@@ -28,7 +28,7 @@ public:
     static double sLoadOvY[4];
     static int sOrientIndex(const eDiagonalOrientation o);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     const eDiagonalOrientation mO;
     eBuilding* mTradePost = nullptr;

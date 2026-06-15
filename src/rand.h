@@ -1,9 +1,9 @@
-#ifndef ERAND_H
-#define ERAND_H
+#ifndef RAND_H
+#define RAND_H
 
 #include <random>
 
-class eRand {
+class Rand {
 public:
     static int rand();
     static int rollDice(const int nDice, const int faces);
@@ -16,4 +16,4 @@ private:
     static std::uniform_int_distribution<int> sDist;
 };
 
-#endif // ERAND_H
+#endif // RAND_H

@@ -36,7 +36,7 @@ ePyramidMonument::ePyramidMonument(
     eSanctuary::sLoadMonumentTextures(type);
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 ePyramidMonument::getTexture(const eTileSize size) const {
     const int p = 2 - maxProgress() + progress();
     if(p <= 0) return nullptr;

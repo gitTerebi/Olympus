@@ -23,7 +23,7 @@ eCardingShed::eCardingShed(GameBoard& board, const eCityId cid) :
     GameTextures::loadCardingShed();
 }
 
-std::vector<eOverlay> eCardingShed::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eCardingShed::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::interface()[sizeId];
     auto os = eShepherBuildingBase::getOverlays(size);
@@ -31,7 +31,7 @@ std::vector<eOverlay> eCardingShed::getOverlays(const eTileSize size) const {
         const int res = std::clamp((resource() + 1)/2, 0, 4);
 
         for(int i = 0; i < res; i++) {
-            eOverlay fleece;
+            Overlay fleece;
             fleece.fTex = texs.fFleeceUnit;
             fleece.fX = 0.3 - i*0.2 + (i > 1 ? 0.5 : 0);
             fleece.fY = -1.6 - i*0.2;

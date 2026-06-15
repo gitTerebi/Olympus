@@ -3,11 +3,11 @@
 #include "textures/game-textures.h"
 #include "audio/music.h"
 #include "audio/sounds.h"
-#include "emessages.h"
-#include "elanguage.h"
-#include "emainwindow.h"
+#include "messages.h"
+#include "language.h"
+#include "main-window.h"
 
-eMenuLoadingWidget::eMenuLoadingWidget(eMainWindow* const window) :
+eMenuLoadingWidget::eMenuLoadingWidget(MainWindow* const window) :
     eLoadingWidget(GameTextures::menuSize(),
                    [window](std::string& text) {
     const auto& sett = window->settings();
@@ -16,7 +16,7 @@ eMenuLoadingWidget::eMenuLoadingWidget(eMainWindow* const window) :
             text = "Loading music...";
             eMusic::loadMenu();
             eSounds::loadButtonSound();
-            eLanguage::load();
+            Language::load();
             return true;
         }
         return false;

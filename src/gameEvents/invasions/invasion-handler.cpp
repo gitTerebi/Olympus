@@ -1,7 +1,7 @@
 ﻿#include "invasion-handler.h"
 
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
@@ -49,8 +49,8 @@
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 
-#include "enumbers.h"
-#include "etilehelper.h"
+#include "numbers.h"
+#include "tile-helper.h"
 #include "buildings/epalace.h"
 
 #include "invasion-event.h"
@@ -62,8 +62,8 @@
 #include "buildings/ebuilding.h"
 #include "engine/boardData/eheatmaptask.h"
 
-#include "eiteratesquare.h"
-#include "erand.h"
+#include "iterate-square.h"
+#include "rand.h"
 
 const int boatSpawnPeriod = 825;
 const int spawnWaitDays = 14;
@@ -76,7 +76,7 @@ eInvasionHandler::eInvasionHandler(GameBoard& board,
     board.addInvasionHandler(targetCity, this);
     if(event) event->addInvasionHandler(this);
     mAttackType = static_cast<InvasionAttackType>(
-            eRand::rand() % static_cast<int>(InvasionAttackType::count));
+            Rand::rand() % static_cast<int>(InvasionAttackType::count));
 }
 
 eInvasionHandler::~eInvasionHandler() {
@@ -189,13 +189,13 @@ void eInvasionHandler::disembark() {
     int lineDY;
     spawnFacingTowardTarget(tx, ty, facing, lineDX, lineDY);
     SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, facing, lineDX, lineDY, 3, 3);
-    if(eNumbers::sInvasionAppearAtPlaces) {
+    if(Numbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
         }
     }
     mGState.fCurrentTile = mTile;
-    mGState.fSpawnWait = spawnWaitDays*eNumbers::sDayLength;
+    mGState.fSpawnWait = spawnWaitDays*Numbers::sDayLength;
 }
 
 void eInvasionHandler::initializeSeaInvasion(
@@ -456,13 +456,13 @@ void eInvasionHandler::initializeLandInvasion(
     int lineDY;
     spawnFacingTowardTarget(tx, ty, facing, lineDX, lineDY);
     SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, facing, lineDX, lineDY, 3, 3);
-    if(eNumbers::sInvasionAppearAtPlaces) {
+    if(Numbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
         }
     }
     mGState.fCurrentTile = tile;
-    mGState.fSpawnWait = spawnWaitDays*eNumbers::sDayLength;
+    mGState.fSpawnWait = spawnWaitDays*Numbers::sDayLength;
 }
 
 void eInvasionHandler::initializeLandInvasion(
@@ -507,13 +507,13 @@ void eInvasionHandler::initializeLandInvasion(
     int lineDY;
     spawnFacingTowardTarget(tx, ty, facing, lineDX, lineDY);
     SoldierBanner::sPlaceFacing(solds, tx, ty, mBoard, facing, lineDX, lineDY, 3, 3);
-    if(eNumbers::sInvasionAppearAtPlaces) {
+    if(Numbers::sInvasionAppearAtPlaces) {
         for(const auto b : solds) {
             b->teleportSoldiersToPlaces();
         }
     }
     mGState.fCurrentTile = tile;
-    mGState.fSpawnWait = spawnWaitDays*eNumbers::sDayLength;
+    mGState.fSpawnWait = spawnWaitDays*Numbers::sDayLength;
 }
 
 void
@@ -732,7 +732,7 @@ void eInvasionHandler::incTime(const int by) {
                                   mAresLeft, mHeroesLeft);
                 mStage = eInvasionStage::active;
                 mGState.fPhase = eGeneralPhase::spread;
-                mGState.fSpawnWait = spawnWaitDays*eNumbers::sDayLength;
+                mGState.fSpawnWait = spawnWaitDays*Numbers::sDayLength;
             }
         }
         return;
@@ -940,7 +940,7 @@ void eInvasionHandler::spawnFacingTowardTarget(
                                           facing, lineDX, lineDY);
 }
 
-void eInvasionHandler::serialize(eSaveArchive& ar) {
+void eInvasionHandler::serialize(SaveArchive& ar) {
     ar.field("ioId", mIOID);
     ar.worldCityField("city", &mBoard, mCity);
     ar.tileField("tile", mBoard, mTile);
@@ -964,7 +964,7 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
 
 
     ar.arrayField("banners", mBanners,
-        [this](eSaveArchive& itemAr, stdsptr<SoldierBanner>& b) {
+        [this](SaveArchive& itemAr, stdsptr<SoldierBanner>& b) {
             eBannerType type = b ? b->type() : eBannerType::hoplite;
             itemAr.field("type", type);
             if(itemAr.reading()) {
@@ -985,7 +985,7 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.gameEventField("conquestEvent", &mBoard, mConquestEvent);
 
     ar.arrayField("heroesAndGods", mHeroesAndGods,
-        [this](eSaveArchive& itemAr, stdptr<eCharacter>& c) {
+        [this](SaveArchive& itemAr, stdptr<eCharacter>& c) {
             itemAr.characterField("c", &mBoard, c);
         });
 
@@ -994,7 +994,7 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("archersLeft", mArchersLeft);
 
     ar.arrayField("forcesLeft", mForcesLeft,
-        [](eSaveArchive& itemAr, std::pair<ePlayerSoldierType, int>& s) {
+        [](SaveArchive& itemAr, std::pair<ePlayerSoldierType, int>& s) {
             itemAr.field("type", s.first);
             itemAr.field("count", s.second);
         });
@@ -1002,7 +1002,7 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("aresLeft", mAresLeft);
 
     ar.arrayField("heroesLeft", mHeroesLeft,
-        [](eSaveArchive& itemAr, eHeroType& h) {
+        [](SaveArchive& itemAr, eHeroType& h) {
             itemAr.field("hero", h);
         });
 
@@ -1011,7 +1011,7 @@ void eInvasionHandler::serialize(eSaveArchive& ar) {
     ar.field("boatsLeft", mBoatsLeft);
 
     ar.arrayField("boats", mBoats,
-        [this](eSaveArchive& itemAr, stdptr<eCharacter>& b) {
+        [this](SaveArchive& itemAr, stdptr<eCharacter>& b) {
             itemAr.characterField("c", &mBoard, b);
         });
 }
@@ -1118,7 +1118,7 @@ void eInvasionHandler::generateImmortals(
         };
         for(int k = 0; !found; k++) {
             (void)found;
-            eIterateSquare::iterateSquare(k, prcsTile);
+            IterateSquare::iterateSquare(k, prcsTile);
         }
         const auto a = e::make_shared<eAttackCityAction>(c.get());
         c->setAction(a);

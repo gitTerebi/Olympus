@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 #include <algorithm>
 #include <functional>
@@ -19,7 +19,7 @@ void GameWidget::scheduleConnectedTerrainUpdate(eTile *const startTile)
             return;
         if (!check(tile))
             return;
-        if (eVectorHelpers::contains(tiles, tile))
+        if (VectorHelpers::contains(tiles, tile))
             return;
         tiles.push_back(tile);
         tile->scheduleTerrainUpdate();

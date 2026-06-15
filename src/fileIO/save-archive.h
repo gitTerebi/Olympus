@@ -1,5 +1,5 @@
-﻿#ifndef ESAVEARCHIVE_H
-#define ESAVEARCHIVE_H
+﻿#ifndef SAVE_ARCHIVE_H
+#define SAVE_ARCHIVE_H
 
 #include <functional>
 #include <map>
@@ -12,7 +12,7 @@
 #include <cstdint>
 #include <string>
 
-#include "estreams.h"
+#include "streams.h"
 #include "characters/actions/walkable/walkable-object.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
 
@@ -29,7 +29,7 @@ class eCharacterAction;
 class eCharacterActionFunction;
 class eTile;
 class SoldierBanner;
-class eBanner;
+class Banner;
 class WorldBoard;
 class WorldCity;
 class eGameEvent;
@@ -37,11 +37,11 @@ class eInvasionHandler;
 class eDate;
 enum class eCharActionType;
 
-class eSaveArchive {
+class SaveArchive {
 public:
-    explicit eSaveArchive(eReadStream& src) : mSrc(&src) {}
-    explicit eSaveArchive(eWriteStream& dst) : mDst(&dst) {}
-    ~eSaveArchive() {
+    explicit SaveArchive(ReadStream& src) : mSrc(&src) {}
+    explicit SaveArchive(WriteStream& dst) : mDst(&dst) {}
+    ~SaveArchive() {
         if(mTaggedTouched && writing()) {
             *mDst << std::string();
             *mDst << int32_t(-1);
@@ -83,8 +83,8 @@ public:
         mTaggedTouched = true;
         if(writing()) {
             mFieldBuffer.clear();
-            eWriteTarget target(&mFieldBuffer);
-            eWriteStream tmp(target);
+            WriteTarget target(&mFieldBuffer);
+            WriteStream tmp(target);
             tmp << value;
 
             *mDst << name;
@@ -104,8 +104,8 @@ public:
                 }
                 return false;
             }
-            eReadSource source(const_cast<char*>(data.data()));
-            eReadStream src(source);
+            ReadSource source(const_cast<char*>(data.data()));
+            ReadStream src(source);
             src >> value;
             return true;
         }
@@ -113,7 +113,7 @@ public:
 
     template <typename T>
     bool objectField(const char* const name, T& obj) {
-        return archiveField(name, [&obj](eSaveArchive& childAr) {
+        return archiveField(name, [&obj](SaveArchive& childAr) {
             obj.serialize(childAr);
         });
     }
@@ -122,12 +122,12 @@ public:
     bool archiveField(const char* const name, const Func& func) {
         return payloadFieldImpl(
             name,
-            [&func](eWriteStream& dst) {
-                eSaveArchive childAr(dst);
+            [&func](WriteStream& dst) {
+                SaveArchive childAr(dst);
                 func(childAr);
             },
-            [&func](eReadStream& src) {
-                eSaveArchive childAr(src);
+            [&func](ReadStream& src) {
+                SaveArchive childAr(src);
                 func(childAr);
             });
     }
@@ -139,8 +139,8 @@ public:
         mTaggedTouched = true;
         if(writing()) {
             mFieldBuffer.clear();
-            eWriteTarget target(&mFieldBuffer);
-            eWriteStream tmp(target);
+            WriteTarget target(&mFieldBuffer);
+            WriteStream tmp(target);
             tmp.setFormat(mDst->format());
             writeFunc(tmp);
 
@@ -155,8 +155,8 @@ public:
                 printf("Invalid save: missing payload '%s'.\n", name);
                 return false;
             }
-            eReadSource source(const_cast<char*>(data.data()));
-            eReadStream src(source);
+            ReadSource source(const_cast<char*>(data.data()));
+            ReadStream src(source);
             src.setFormat(mSrc->format());
             readFunc(src);
             src.transferPostFuncsTo(*mSrc);
@@ -178,10 +178,10 @@ public:
                    GameBoard& board,
                    eTile*& value) {
         return payloadFieldImpl(name,
-            [this, &value](eWriteStream& dst) {
+            [this, &value](WriteStream& dst) {
                 dst.writeTile(value);
             },
-            [this, &board, &value](eReadStream& src) {
+            [this, &board, &value](ReadStream& src) {
                 value = src.readTile(board);
             });
     }
@@ -220,8 +220,8 @@ public:
         Ptr* const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeCharacter(tgt->get()); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeCharacter(tgt->get()); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readCharacter(board, [tgt](eCharacter* const c) {
                     *tgt = static_cast<T*>(c);
@@ -236,8 +236,8 @@ public:
         T** const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeCharacter(*tgt); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeCharacter(*tgt); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readCharacter(board, [tgt](eCharacter* const c) {
                     *tgt = static_cast<T*>(c);
@@ -252,8 +252,8 @@ public:
         Ptr* const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeBuilding(tgt->get()); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeBuilding(tgt->get()); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readBuilding(board, [tgt](eBuilding* const b) {
                     *tgt = b;
@@ -281,8 +281,8 @@ public:
         stdptr<T>* const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeBuilding(tgt->get()); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeBuilding(tgt->get()); },
+            [board, tgt](ReadStream& src) {
                 tgt->clear();
                 src.readBuilding(board, [tgt](eBuilding* const b) {
                     *tgt = static_cast<T*>(b);
@@ -297,8 +297,8 @@ public:
         T** const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeBuilding(*tgt); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeBuilding(*tgt); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readBuilding(board, [tgt](eBuilding* const b) {
                     *tgt = static_cast<T*>(b);
@@ -326,8 +326,8 @@ public:
         stdptr<T>* const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeCharacter(tgt->get()); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeCharacter(tgt->get()); },
+            [board, tgt](ReadStream& src) {
                 tgt->clear();
                 src.readCharacter(board, [tgt](eCharacter* const c) {
                     *tgt = static_cast<T*>(c);
@@ -355,8 +355,8 @@ public:
         T** const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeCharacter(*tgt); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeCharacter(*tgt); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readCharacter(board, [tgt](eCharacter* const c) {
                     *tgt = static_cast<T*>(c);
@@ -394,8 +394,8 @@ public:
         stdsptr<WorldCity>* const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeCity(tgt->get()); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeCity(tgt->get()); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readCity(board, [tgt](const stdsptr<WorldCity>& c) {
                     *tgt = c;
@@ -409,8 +409,8 @@ public:
         stdsptr<WorldCity>* const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) { dst.writeCity(tgt->get()); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeCity(tgt->get()); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readCity(board, [tgt](const stdsptr<WorldCity>& c) {
                     *tgt = c;
@@ -436,8 +436,8 @@ public:
                             Ptr& value) {
         Ptr* const tgt = &value;
         return payloadFieldImpl(name,
-            [tgt](eWriteStream& dst) { dst.writSoldierBanner(tgt->get()); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writSoldierBanner(tgt->get()); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readSoldierBanner(board, [tgt](const stdsptr<SoldierBanner>& b) {
                     *tgt = b;
@@ -451,10 +451,10 @@ public:
                      T*& value) {
         T** const tgt = &value;
         return payloadFieldImpl(name,
-            [tgt](eWriteStream& dst) { dst.writeBanner(*tgt); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeBanner(*tgt); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
-                src.readBanner(board, [tgt](eBanner* const b) {
+                src.readBanner(board, [tgt](Banner* const b) {
                     *tgt = static_cast<T*>(b);
                 });
             });
@@ -502,8 +502,8 @@ public:
     bool gameEventField(const char* const name, GameBoard* board, stdptr<T>& val) {
         stdptr<T>* const tgt = &val;
         return payloadFieldImpl(name,
-            [tgt](eWriteStream& dst) { dst.writeGameEvent(tgt->get()); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeGameEvent(tgt->get()); },
+            [board, tgt](ReadStream& src) {
                 tgt->clear();
                 src.readGameEvent(board, [tgt](eGameEvent* const e) {
                     *tgt = static_cast<T*>(e);
@@ -515,8 +515,8 @@ public:
     bool gameEventField(const char* const name, GameBoard* board, T*& val) {
         T** const tgt = &val;
         return payloadFieldImpl(name,
-            [tgt](eWriteStream& dst) { dst.writeGameEvent(*tgt); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeGameEvent(*tgt); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readGameEvent(board, [tgt](eGameEvent* const e) {
                     *tgt = static_cast<T*>(e);
@@ -541,7 +541,7 @@ public:
                    name, static_cast<int>(type));
             return false;
         }
-        const bool ok = archiveField(name, [&](eSaveArchive& childAr) {
+        const bool ok = archiveField(name, [&](SaveArchive& childAr) {
             val->serialize(childAr);
         });
         if(!ok) printf("[saveLoad] walkableField '%s' missing data.\n", name);
@@ -565,7 +565,7 @@ public:
                    name, static_cast<int>(type));
             return false;
         }
-        const bool ok = archiveField(name, [&](eSaveArchive& childAr) {
+        const bool ok = archiveField(name, [&](SaveArchive& childAr) {
             val->serialize(childAr);
         });
         if(!ok) printf("[saveLoad] hasResourceField '%s' missing data.\n", name);
@@ -583,8 +583,8 @@ public:
         }
         eDirectionTimes empty;
         return payloadFieldImpl(name,
-            [&empty](eWriteStream& dst) { dst.writeDirectionTimes(&empty); },
-            [](eReadStream&) {});
+            [&empty](WriteStream& dst) { dst.writeDirectionTimes(&empty); },
+            [](ReadStream&) {});
     }
 
     bool godActField(const char* const name,
@@ -598,8 +598,8 @@ public:
             return true;
         }
         return payloadFieldImpl(name,
-             [&val](eWriteStream& dst) { dst.writeGodAct(val.get()); },
-             [&board, &val](eReadStream& src) { val = src.readGodAct(board); });
+             [&val](WriteStream& dst) { dst.writeGodAct(val.get()); },
+             [&board, &val](ReadStream& src) { val = src.readGodAct(board); });
     }
 
     template <typename T>
@@ -609,10 +609,10 @@ public:
         stdptr<T>* const tgt = &value;
         return payloadFieldImpl(
             name,
-            [tgt](eWriteStream& dst) {
+            [tgt](WriteStream& dst) {
                 dst.writeCharacterAction(tgt->get());
             },
-            [board, tgt](eReadStream& src) {
+            [board, tgt](ReadStream& src) {
                 tgt->clear();
                 src.readCharacterAction(board, [tgt](eCharacterAction* const a) {
                     *tgt = static_cast<T*>(a);
@@ -625,8 +625,8 @@ public:
                               eInvasionHandler*& val) {
         eInvasionHandler** const tgt = &val;
         return payloadFieldImpl(name,
-            [tgt](eWriteStream& dst) { dst.writeInvasionHandler(*tgt); },
-            [board, tgt](eReadStream& src) {
+            [tgt](WriteStream& dst) { dst.writeInvasionHandler(*tgt); },
+            [board, tgt](ReadStream& src) {
                 *tgt = nullptr;
                 src.readInvasionHandler(board, [tgt](eInvasionHandler* const i) {
                     *tgt = i;
@@ -645,8 +645,8 @@ public:
             return true;
         }
         return payloadFieldImpl(name,
-            [&val](eWriteStream& dst) { dst.writeCharActFunc(val.get()); },
-            [&board, &val](eReadStream& src) { val = src.readCharActFunc(board); });
+            [&val](WriteStream& dst) { dst.writeCharActFunc(val.get()); },
+            [&board, &val](ReadStream& src) { val = src.readCharActFunc(board); });
     }
 
     // Saved arrays must use these helpers. Raw stream loops are legacy-only.
@@ -664,7 +664,7 @@ public:
         if(reading()) values.resize(count);
         for(int i = 0; i < count; i++) {
             const std::string itemName = std::string(name) + "." + std::to_string(i);
-            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+            archiveField(itemName.c_str(), [&](SaveArchive& itemAr) {
                 itemFunc(itemAr, values[i]);
             });
         }
@@ -685,7 +685,7 @@ public:
         if(reading()) values.resize(count);
         for(int i = 0; i < count; i++) {
             const std::string itemName = std::string(name) + "." + std::to_string(i);
-            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+            archiveField(itemName.c_str(), [&](SaveArchive& itemAr) {
                 itemFunc(itemAr, values[i]);
             });
         }
@@ -705,7 +705,7 @@ public:
         }
         for(int i = 0; i < count; i++) {
             const std::string itemName = std::string(name) + "." + std::to_string(i);
-            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+            archiveField(itemName.c_str(), [&](SaveArchive& itemAr) {
                 itemFunc(itemAr, i);
             });
         }
@@ -731,14 +731,14 @@ public:
         const int readCount = std::min(count, expected);
         for(int i = 0; i < readCount; i++) {
             const std::string itemName = std::string(name) + "." + std::to_string(i);
-            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+            archiveField(itemName.c_str(), [&](SaveArchive& itemAr) {
                 itemFunc(itemAr, values[i]);
             });
         }
         for(int i = readCount; i < count; i++) {
             auto scratch = std::make_shared<std::decay_t<decltype(values[0])>>();
             const std::string itemName = std::string(name) + "." + std::to_string(i);
-            archiveField(itemName.c_str(), [&](eSaveArchive& itemAr) {
+            archiveField(itemName.c_str(), [&](SaveArchive& itemAr) {
                 itemFunc(itemAr, *scratch);
                 itemAr.addPostFunc([scratch]() {}, "fixedArrayField::scratch");
             });
@@ -867,12 +867,12 @@ private:
         }
     }
 
-    eReadStream* mSrc = nullptr;
-    eWriteStream* mDst = nullptr;
+    ReadStream* mSrc = nullptr;
+    WriteStream* mDst = nullptr;
     bool mTaggedTouched = false;
     bool mTaggedEnded = false;
     std::map<std::string, std::vector<std::vector<char>>> mFields;
     std::vector<char> mFieldBuffer;
 };
 
-#endif // ESAVEARCHIVE_H
+#endif // SAVE_ARCHIVE_H

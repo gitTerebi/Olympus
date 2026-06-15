@@ -7,9 +7,9 @@
 
 class eFramedLabel : public eFramedWidget, public eLabelBase {
 public:
-    eFramedLabel(eMainWindow* const window);
+    eFramedLabel(MainWindow* const window);
     eFramedLabel(const std::string& text,
-                 eMainWindow* const window);
+                 MainWindow* const window);
 
     void renderTargetsReset() override;
 protected:

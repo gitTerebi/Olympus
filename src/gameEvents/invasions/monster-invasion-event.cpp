@@ -1,10 +1,10 @@
 #include "monster-invasion-event.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "emessages.h"
+#include "messages.h"
 
 eMonsterInvasionWarning::eMonsterInvasionWarning(const int warningDays,
                                                            eGameEvent &parent,
@@ -110,7 +110,7 @@ void eMonsterInvasionEvent::trigger() {
     ed.fMonster = mMonster;
     board->event(eEvent::monsterInvasion, ed);
 
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(mMonster);
     const auto& m = gm->fToSlainReason;
     const auto heroType = eMonster::sSlayer(mMonster);
@@ -118,5 +118,5 @@ void eMonsterInvasionEvent::trigger() {
 }
 
 std::string eMonsterInvasionEvent::longName() const {
-    return eLanguage::zeusText(182, 2);
+    return Language::zeusText(182, 2);
 }

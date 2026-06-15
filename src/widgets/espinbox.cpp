@@ -35,9 +35,9 @@ void eSpinBox::initialize(const eAction& changed) {
     addWidget(up);    
     stackHorizontally();
 
-    mValueLabel->align(eAlignment::vcenter);
-    up->align(eAlignment::vcenter);
-    down->align(eAlignment::vcenter);
+    mValueLabel->align(Alignment::vcenter);
+    up->align(Alignment::vcenter);
+    down->align(Alignment::vcenter);
 }
 
 void eSpinBox::setRange(const int min, const int max) {

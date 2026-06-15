@@ -32,11 +32,11 @@ ePyramidStatue::ePyramidStatue(ePyramid* const pyramid,
     GameTextures::loadSanctuary();
 }
 
-stdsptr<eTexture> ePyramidStatue::getTexture(const eTileSize size) const {
+stdsptr<Texture> ePyramidStatue::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     switch(mType) {
     case GodType::aphrodite:
         coll = &blds.fAphroditeStatues;

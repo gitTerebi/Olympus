@@ -1,7 +1,7 @@
 ﻿#include "egiftsizedialog.h"
 
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 #include "elabel.h"
 #include "framed-button-with-icon.h"
 #include "engine/game-board.h"
@@ -24,8 +24,8 @@ void eGiftSizeDialog::initialize(const eResourceType type,
     innerWid->move(p, p/2);
 
     const auto name = c->name();
-    auto rof = eLanguage::zeusText(41, 0); // give to
-    eStringHelpers::replace(rof, "[city_name]", name);
+    auto rof = Language::zeusText(41, 0); // give to
+    StringHelpers::replace(rof, "[city_name]", name);
     const auto rofLabel = new eLabel(window());
     rofLabel->setFontSizeXS();
     rofLabel->setPaddingS();
@@ -46,9 +46,9 @@ void eGiftSizeDialog::initialize(const eResourceType type,
         if(count > avCount) break;
         const auto countStr = std::to_string(count);
         const int string = g.second;
-        auto giftStr = eLanguage::zeusText(41, string);
-        eStringHelpers::replace(giftStr, "[amount]", countStr);
-        eStringHelpers::replace(giftStr, "[item]", typeStr);
+        auto giftStr = Language::zeusText(41, string);
+        StringHelpers::replace(giftStr, "[amount]", countStr);
+        StringHelpers::replace(giftStr, "[item]", typeStr);
 
         const auto b = new FramedButtonWithIcon(window());
         b->setPressAction([type, count, func, cid]() {
@@ -62,5 +62,5 @@ void eGiftSizeDialog::initialize(const eResourceType type,
     innerWid->fitContent();
 
     fitContent();
-    rofLabel->align(eAlignment::hcenter);
+    rofLabel->align(Alignment::hcenter);
 }

@@ -10,7 +10,7 @@ class eRotateButton : public eLabel {
         left, center, right
     };
 public:
-    eRotateButton(eMainWindow* const window);
+    eRotateButton(MainWindow* const window);
 
     void setEnabled(const bool b);
     bool enabled() const;

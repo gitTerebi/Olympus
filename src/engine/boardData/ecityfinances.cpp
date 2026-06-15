@@ -11,7 +11,7 @@ void eCityFinances::nextYear() {
     mThisYear = eFinanceYear();
 }
 
-void eCityFinances::serialize(eSaveArchive& ar) {
-    ar.archiveField("lastYear", [this](eSaveArchive& itemAr) { mLastYear.serialize(itemAr); });
-    ar.archiveField("thisYear", [this](eSaveArchive& itemAr) { mThisYear.serialize(itemAr); });
+void eCityFinances::serialize(SaveArchive& ar) {
+    ar.archiveField("lastYear", [this](SaveArchive& itemAr) { mLastYear.serialize(itemAr); });
+    ar.archiveField("thisYear", [this](SaveArchive& itemAr) { mThisYear.serialize(itemAr); });
 }

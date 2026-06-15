@@ -1,14 +1,14 @@
 #include "eloadingwidget.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 #include "textures/game-textures.h"
 #include "textures/interface-textures.h"
 
-#include "erand.h"
+#include "rand.h"
 
 eLoadingWidget::eLoadingWidget(const int size,
                                const eLoader& loader,
-                               eMainWindow* const window,
+                               MainWindow* const window,
                                const bool useTextures) :
     eWidget(window), mUseTextures(useTextures),
     mSize(size), mLoader(loader) {
@@ -33,7 +33,7 @@ void eLoadingWidget::initialize() {
     }
     mLabelW->fitContent();
     addWidget(mLabelW);
-    mLabelW->align(eAlignment::hcenter);
+    mLabelW->align(Alignment::hcenter);
     mLabelW->setY(2*height()/3);
 
     mPB = new eProgressBar(window());
@@ -41,7 +41,7 @@ void eLoadingWidget::initialize() {
     mPB->setWidth(mLabelW->width());
     mPB->setHeight(mLabelW->height()/10);
     mPB->setY(mLabelW->height());
-    mPB->align(eAlignment::hcenter);
+    mPB->align(Alignment::hcenter);
     mPB->setRange(0, mSize);
 
     mPB->hide();
@@ -58,7 +58,7 @@ void eLoadingWidget::setLoadImage(const int id) {
     const auto res = resolution();
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes];
-    stdsptr<eTexture> tex;
+    stdsptr<Texture> tex;
     if(id == 1) {
         tex = texs.fLoadImage1;
     } else if(id == 2) {
@@ -86,7 +86,7 @@ void eLoadingWidget::setLoadImage(const int id) {
     }
     mImageLabel->setTexture(tex);
     mImageLabel->fitContent();
-    mImageLabel->align(eAlignment::center);
+    mImageLabel->align(Alignment::center);
 }
 
 void eLoadingWidget::paintEvent(ePainter& p) {
@@ -98,11 +98,11 @@ void eLoadingWidget::paintEvent(ePainter& p) {
         mPB->setValue(mPB->value() + 1);
         mLabel->setText(text);
         mLabelW->fitContent();
-        mLabelW->align(eAlignment::hcenter);
-        setLoadImage(eRand::rand() % 12 + 1);
+        mLabelW->align(Alignment::hcenter);
+        setLoadImage(Rand::rand() % 12 + 1);
 
         mPB->setWidth(mLabelW->width());
-        mPB->align(eAlignment::hcenter);
+        mPB->align(Alignment::hcenter);
     }
     eWidget::paintEvent(p);
 }

@@ -22,7 +22,7 @@ class GameBoard;
 class eCharacterActionFunction;
 class eGodAct;
 class WorldCity;
-class eBanner;
+class Banner;
 class SoldierBanner;
 class eGameEvent;
 class WorldBoard;
@@ -30,13 +30,13 @@ class eInvasionHandler;
 
 #include "engine/edirectionlastusetime.h"
 
-class eReadSource {
+class ReadSource {
 public:
-    eReadSource(std::ifstream* const file) :
+    ReadSource(std::ifstream* const file) :
         fFile(file) {}
-    eReadSource(void* mem, size_t size) :
+    ReadSource(void* mem, size_t size) :
         fMem(mem), fMemSize(size) {}
-    eReadSource(void* mem) :
+    ReadSource(void* mem) :
         fMem(mem), fMemSize(SIZE_MAX) {}
 
     inline size_t read(void* const data, const size_t len) {
@@ -78,9 +78,9 @@ private:
 #define EREAD_STRINGIFY(x) EREAD_STRINGIFY2(x)
 #define EREAD_STRINGIFY2(x) #x
 
-class eReadStream {
+class ReadStream {
 public:
-    eReadStream(const eReadSource& src);
+    ReadStream(const ReadSource& src);
 
     void readFormat();
 
@@ -96,38 +96,38 @@ public:
         if(len > 0) read(buffer.data(), len);
     }
 
-    inline eReadStream& operator>>(bool& val) {
+    inline ReadStream& operator>>(bool& val) {
         read(&val, sizeof(bool));
         return *this;
     }
 
-    inline eReadStream& operator>>(unsigned char& val) {
+    inline ReadStream& operator>>(unsigned char& val) {
         read(&val, sizeof(unsigned char));
         return *this;
     }
 
-    inline eReadStream& operator>>(char& val) {
+    inline ReadStream& operator>>(char& val) {
         read(&val, sizeof(char));
         return *this;
     }
 
-    inline eReadStream& operator>>(float& val) {
+    inline ReadStream& operator>>(float& val) {
         read(&val, sizeof(float));
         return *this;
     }
 
-    inline eReadStream& operator>>(double& val) {
+    inline ReadStream& operator>>(double& val) {
         read(&val, sizeof(double));
         return *this;
     }
 
-    inline eReadStream& operator>>(int32_t& val) {
+    inline ReadStream& operator>>(int32_t& val) {
         read(&val, sizeof(int32_t));
         return *this;
     }
 
     template <typename T>
-    inline eReadStream& operator>>(T& val) {
+    inline ReadStream& operator>>(T& val) {
         int32_t val32_t;
         read(&val32_t, sizeof(int32_t));
         val = static_cast<T>(val32_t);
@@ -135,7 +135,7 @@ public:
     }
 
     template <typename T>
-    inline eReadStream& operator>>(std::vector<T>& val) {
+    inline ReadStream& operator>>(std::vector<T>& val) {
         int size;
         *this >> size;
         for(int i = 0; i < size; i++) {
@@ -145,7 +145,7 @@ public:
         return *this;
     }
 
-    inline eReadStream& operator>>(SDL_Rect& val) {
+    inline ReadStream& operator>>(SDL_Rect& val) {
         *this >> val.x;
         *this >> val.y;
         *this >> val.w;
@@ -153,7 +153,7 @@ public:
         return *this;
     }
 
-    inline eReadStream& operator>>(std::string& val) {
+    inline ReadStream& operator>>(std::string& val) {
         int32_t size;
         *this >> size;
         if(size == 0) {
@@ -186,7 +186,7 @@ public:
     using eCityFunc = std::function<void(stdsptr<WorldCity>)>;
     void readCity(GameBoard* board, const eCityFunc& func);
     void readCity(WorldBoard* board, const eCityFunc& func);
-    using eBannerFunc = std::function<void(eBanner*)>;
+    using eBannerFunc = std::function<void(Banner*)>;
     void readBanner(GameBoard* board, const eBannerFunc& func);
     using SoldierBannerFunc = std::function<void(stdsptr<SoldierBanner>)>;
     void readSoldierBanner(GameBoard* board, const SoldierBannerFunc& func);
@@ -197,7 +197,7 @@ public:
 
     using eFunc = std::function<void()>;
     void addPostFunc(const eFunc& func, const char* tag = "?");
-    void transferPostFuncsTo(eReadStream& dst);
+    void transferPostFuncsTo(ReadStream& dst);
     void handlePostFuncs();
 
     const std::string& format() const { return mFormat; }
@@ -205,7 +205,7 @@ public:
 private:
     std::vector<std::pair<eFunc, const char*>> mPostFuncs;
 
-    eReadSource mSrc;
+    ReadSource mSrc;
 
     std::string mFormat;
 };

@@ -3,9 +3,9 @@
 #include "characters/eurchingatherer.h"
 #include "characters/actions/ecollectresourceaction.h"
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eUrchinQuay::eUrchinQuay(GameBoard& board,
                          const eDiagonalOrientation o,
@@ -29,7 +29,7 @@ void eUrchinQuay::timeChanged(const int by) {
         }
         switch(mState) {
         case eUrchinQuayState::unpacking: {
-            if(mStateCount > eNumbers::sUrchinQuayUnpackTime) {
+            if(mStateCount > Numbers::sUrchinQuayUnpackTime) {
                 mStateCount = 0;
                 mState = eUrchinQuayState::waiting;
                 trackProduced(addProduced(eResourceType::urchin, 3));
@@ -42,7 +42,7 @@ void eUrchinQuay::timeChanged(const int by) {
     eResourceBuildingBase::timeChanged(by);
 }
 
-std::shared_ptr<eTexture> eUrchinQuay::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eUrchinQuay::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].fUrchinQuay;
@@ -71,7 +71,7 @@ std::shared_ptr<eTexture> eUrchinQuay::getTexture(const eTileSize size) const {
     return coll.getTexture(id);
 }
 
-std::vector<eOverlay> eUrchinQuay::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eUrchinQuay::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];
     auto& board = getBoard();
@@ -79,8 +79,8 @@ std::vector<eOverlay> eUrchinQuay::getOverlays(const eTileSize size) const {
     const auto oo = sRotated(mO, dir);
     switch(mState) {
     case eUrchinQuayState::waiting: {
-        eOverlay o;
-        const eTextureCollection* coll;
+        Overlay o;
+        const TextureCollection* coll;
         switch(oo) {
         case eDiagonalOrientation::topRight:
             coll = &blds.fFisheryOverlay[0];
@@ -110,8 +110,8 @@ std::vector<eOverlay> eUrchinQuay::getOverlays(const eTileSize size) const {
         return {o};
     } break;
     case eUrchinQuayState::unpacking: {
-        eOverlay o;
-        const eTextureCollection* coll;
+        Overlay o;
+        const TextureCollection* coll;
         switch(oo) {
         case eDiagonalOrientation::topRight:
             coll = &blds.fUrchinQuayUnpackingOverlayTR;
@@ -205,7 +205,7 @@ void eUrchinQuay::spawnGatherer() {
                        this, b.get(), hasRes);
     const auto w = WalkableObject::sCreateDeepWater();
     a->setWalkable(w);
-    a->setWaitTime(eNumbers::sUrchinQuayUnpackTime);
+    a->setWaitTime(Numbers::sUrchinQuayUnpackTime);
     a->setFinishOnce(false);
     b->setAction(a);
 }
@@ -217,7 +217,7 @@ void eUrchinQuay::updateDisabled() {
     mDisabled = d;
 }
 
-void eUrchinQuay::serializeFields(eSaveArchive& ar) {
+void eUrchinQuay::serializeFields(SaveArchive& ar) {
     eResourceCollectBuildingBase::serializeFields(ar);
     ar.field("disabled", mDisabled);
     ar.field("stateCount", mStateCount);

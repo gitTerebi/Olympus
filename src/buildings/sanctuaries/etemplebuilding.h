@@ -3,7 +3,7 @@
 
 #include "esanctbuilding.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eTempleBuilding : public eSanctBuilding {
 public:
@@ -11,10 +11,10 @@ public:
     eTempleBuilding(const int id, GameBoard& board,
                     const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize) const override { return nullptr; }
+    std::shared_ptr<Texture> getTexture(const eTileSize) const override { return nullptr; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mId;
 };

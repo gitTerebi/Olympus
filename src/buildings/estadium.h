@@ -13,7 +13,7 @@ public:
     getTextureSpace(const int tx, const int ty,
                     const eTileSize size) const override;
 
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     bool rotated() const { return mRotated; }
 private:

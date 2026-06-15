@@ -1,5 +1,5 @@
 #include "ehippodrome.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <memory>
 
@@ -135,7 +135,7 @@ void eHippodrome::nextCleaningPartId() {
     mCleaningPartId = (mCleaningPartId + 1) % l;
 }
 
-void eHippodrome::serialize(eSaveArchive& ar) {
+void eHippodrome::serialize(SaveArchive& ar) {
     ar.field("finish", mFinish);
     ar.field("nHorses", mNHorses);
     ar.characterAsField("cart", &mBoard, mCart);
@@ -143,7 +143,7 @@ void eHippodrome::serialize(eSaveArchive& ar) {
         auto pieces = std::make_shared<std::vector<std::shared_ptr<eN>>>();
         mPieces.clear();
         ar.countedArrayField("pieces", 0,
-            [this, pieces](eSaveArchive& itemAr, const int i) {
+            [this, pieces](SaveArchive& itemAr, const int i) {
                 if(i >= static_cast<int>(pieces->size())) pieces->resize(i + 1);
                 if(!(*pieces)[i]) (*pieces)[i] = std::make_shared<eN>();
                 auto& p = *(*pieces)[i];
@@ -167,7 +167,7 @@ void eHippodrome::serialize(eSaveArchive& ar) {
     } else {
         const int n = static_cast<int>(mPieces.size());
         ar.countedArrayField("pieces", n,
-            [this](eSaveArchive& itemAr, const int i) {
+            [this](SaveArchive& itemAr, const int i) {
                 auto& p = mPieces[i];
                 itemAr.field("orientation", p.fO);
                 itemAr.buildingAsField("piece", &mBoard, p.fPtr);
@@ -209,8 +209,8 @@ void eHippodrome::updatePaths() {
     };
 
     const auto& r = current->fPtr->tileRect();
-    mPath1.push_back(ePathPoint{r.x + 1., (double)r.y, 0.});
-    mPath2.push_back(ePathPoint{r.x + 2., (double)r.y, 0.});
+    mPath1.push_back(PathPoint{r.x + 1., (double)r.y, 0.});
+    mPath2.push_back(PathPoint{r.x + 2., (double)r.y, 0.});
     while(current) {
         next();
         const auto ptr = current->fPtr;

@@ -7,7 +7,7 @@
 #include "widgets/gods/egodbutton.h"
 #include "epyramidbutton.h"
 #include "echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "ecitybutton.h"
 #include "edatebutton.h"
 #include "emonsterbutton.h"
@@ -36,7 +36,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     const auto updateText = [textL, e, board]() {
         textL->setText(e->text(false, false, *board));
         textL->fitContent();
-        textL->align(eAlignment::hcenter);
+        textL->align(Alignment::hcenter);
     };
 
     updateText();
@@ -136,7 +136,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
             choose->initialize(8, names, act);
 
             window()->execDialog(choose);
-            choose->align(eAlignment::center);
+            choose->align(Alignment::center);
         });
         const auto t = static_cast<eBannerType>(e->fEnumInt1);
         type->setText(SoldierBanner::sName(t, false));
@@ -271,7 +271,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
             choose->initialize(7, names, act);
 
             window()->execDialog(choose);
-            choose->align(eAlignment::center);
+            choose->align(Alignment::center);
         });
         detailsW->addWidget(type);
 
@@ -341,7 +341,7 @@ void eEpisodeGoalWidget::initialize(const stdsptr<eEpisodeGoal>& e,
     cont->stackVertically();
     cont->fitContent();
 
-    cont->align(eAlignment::center);
+    cont->align(Alignment::center);
     updateText();
 }
 

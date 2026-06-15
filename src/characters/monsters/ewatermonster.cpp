@@ -7,12 +7,12 @@ eWaterMonster::eWaterMonster(GameBoard& board,
                              const eMonsterType type) :
     eMonster(board, type), mCharTexs(charTexs) {}
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eWaterMonster::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& gTexs = GameTextures::characters();
     const auto& texs = gTexs[id].*mCharTexs;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     bool reverse = false;
     bool wrap = true;
     const int oid = static_cast<int>(rotatedOrientation());

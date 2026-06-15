@@ -12,7 +12,7 @@ eTempleMonumentBuilding::eTempleMonumentBuilding(
 
 }
 
-const eTextureCollection* eTempleMonumentBuilding::sGodMonumentTextureCollection(
+const TextureCollection* eTempleMonumentBuilding::sGodMonumentTextureCollection(
         const eTileSize size, const GodType god) {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];

@@ -2,7 +2,7 @@
 
 #include "sanctuary.h"
 #include "engine/etile.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 bool sanctuaryTempleFrontFacing(const int rotateId, const eWorldDirection dir)
 {
@@ -94,7 +94,7 @@ void eSanctBuilding::setMonument(eMonument* const s) {
     mMonument = s;
 }
 
-void eSanctBuilding::serializeFields(eSaveArchive& ar) {
+void eSanctBuilding::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.field("workedOn", mWorkedOn);
     ar.field("progress", mProgress);

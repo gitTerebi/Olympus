@@ -5,7 +5,7 @@
 
 class eSwitchButton : public FramedButton {
 public:
-    eSwitchButton(eMainWindow* const window);
+    eSwitchButton(MainWindow* const window);
 
     int addValue(const std::string& v);
     int currentValue() const { return mCurrentValue; }

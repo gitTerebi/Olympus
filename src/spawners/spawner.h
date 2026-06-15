@@ -1,25 +1,25 @@
-#ifndef ESPAWNER_H
-#define ESPAWNER_H
+#ifndef SPAWNER_H
+#define SPAWNER_H
 
-#include "ebanner.h"
+#include "banner.h"
 
-class eSaveArchive;
+class SaveArchive;
 
-class eSpawner : public eBanner {
+class Spawner : public Banner {
 public:
-    eSpawner(const eBannerTypeS type,
+    Spawner(const BannerTypeS type,
              const int id,
              eTile* const tile,
              const int maxCount,
              const int spawnFreq,
              GameBoard& board);
-    virtual ~eSpawner();
+    virtual ~Spawner();
 
     virtual void spawn(eTile* const tile) = 0;
 
     virtual void incTime(const int by);
 
-    void serialize(eSaveArchive& ar) override;
+    void serialize(SaveArchive& ar) override;
 
     void decCount();
 
@@ -39,4 +39,4 @@ private:
     bool mSpawningEnabled = true;
 };
 
-#endif // ESPAWNER_H
+#endif // SPAWNER_H

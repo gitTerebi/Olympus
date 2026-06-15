@@ -1,6 +1,6 @@
 #include "emultilinelabel.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 #include "widgets/elabel.h"
 
 #include <sstream>
@@ -56,7 +56,7 @@ void eMultiLineLabel::setFontSize(const int s) {
     mFontSize = s;
 }
 
-void eMultiLineLabel::setFontColor(const eFontColor color) {
+void eMultiLineLabel::setFontColor(const FontColor color) {
     mFontColor = color;
 }
 
@@ -77,7 +77,7 @@ void eMultiLineLabel::setText(const std::string& text) {
     stackVertically();
     fitContent();
     for(const auto l : mLabels) {
-        l->align(eAlignment::hcenter);
+        l->align(Alignment::hcenter);
     }
 }
 
@@ -89,13 +89,13 @@ void eMultiLineLabel::clear() {
 }
 
 void eMultiLineLabel::setLightFontColor() {
-    setFontColor(eFontColor::light);
+    setFontColor(FontColor::light);
 }
 
 void eMultiLineLabel::setDarkFontColor() {
-    setFontColor(eFontColor::dark);
+    setFontColor(FontColor::dark);
 }
 
 void eMultiLineLabel::setYellowFontColor() {
-    setFontColor(eFontColor::yellow);
+    setFontColor(FontColor::yellow);
 }

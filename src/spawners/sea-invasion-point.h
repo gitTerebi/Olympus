@@ -1,13 +1,13 @@
-#ifndef ESEAINVASIONPOINT_H
-#define ESEAINVASIONPOINT_H
+#ifndef SEA_INVASION_POINT_H
+#define SEA_INVASION_POINT_H
 
-#include "ebanner.h"
+#include "banner.h"
 
-class eSeaInvasionPoint : public eBanner {
+class SeaInvasionPoint : public Banner {
 public:
-    eSeaInvasionPoint(const int id,
+    SeaInvasionPoint(const int id,
                       eTile* const tile,
                       GameBoard& board);
 };
 
-#endif // ESEAINVASIONPOINT_H
+#endif // SEA_INVASION_POINT_H

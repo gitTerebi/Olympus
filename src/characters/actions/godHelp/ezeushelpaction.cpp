@@ -1,5 +1,5 @@
 #include "ezeushelpaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "../ewaitaction.h"
 #include "gameEvents/invasions/invasion-handler.h"
@@ -34,7 +34,7 @@ bool eZeusHelpAction::decide() {
     return true;
 }
 
-void eZeusHelpAction::serializeFields(eSaveArchive& ar) {
+void eZeusHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
 }

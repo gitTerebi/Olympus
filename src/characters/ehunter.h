@@ -3,7 +3,7 @@
 
 #include "eresourcecollector.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eHunter : public eResourceCollector {
 public:
@@ -13,7 +13,7 @@ public:
     void setDeerHunter(const bool h);
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool mDeerHunter{false};
 };

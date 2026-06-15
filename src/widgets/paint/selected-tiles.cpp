@@ -1,6 +1,6 @@
 #include "widgets/game-widget.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "engine/game-board.h"
 
 #include <algorithm>
@@ -22,10 +22,10 @@ std::vector<eTile *> GameWidget::selectedTiles() const
 
     int dt0x;
     int dt0y;
-    eTileHelper::tileIdToDTileId(t0x, t0y, dt0x, dt0y);
+    TileHelper::tileIdToDTileId(t0x, t0y, dt0x, dt0y);
     int dt1x;
     int dt1y;
-    eTileHelper::tileIdToDTileId(t1x, t1y, dt1x, dt1y);
+    TileHelper::tileIdToDTileId(t1x, t1y, dt1x, dt1y);
 
     const int xMin = std::min(dt0x, dt1x);
     const int xMax = std::max(dt0x, dt1x);

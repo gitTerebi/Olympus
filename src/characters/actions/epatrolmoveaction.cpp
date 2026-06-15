@@ -5,9 +5,9 @@
 #include "emovepathaction.h"
 #include "engine/epathfinder.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-void eDirectionLastUseTime::serialize(eSaveArchive& ar) {
+void eDirectionLastUseTime::serialize(SaveArchive& ar) {
     ar.field("time", mTime);
 }
 
@@ -68,7 +68,7 @@ ePatrolMoveAction::ePatrolMoveAction(eCharacter* const c,
     mO = c->orientation();
 }
 
-void ePatrolMoveAction::serializeFields(eSaveArchive& ar) {
+void ePatrolMoveAction::serializeFields(SaveArchive& ar) {
     eMoveAction::serializeFields(ar);
     ar.field("diagonalOnly", mDiagonalOnly);
     ar.walkableField("walkable", mWalkable);
@@ -122,7 +122,7 @@ eCharacterActionState ePatrolMoveAction::nextTurn(eOrientation& t) {
     const auto c = character();
     const auto picker = [](const std::vector<eOrientation>& options,
                            const eOrientation) {
-        const int id = eRand::rand() % options.size();
+        const int id = Rand::rand() % options.size();
         return options[id];
     };
     const auto r = sNextTurn(c->tile(), mDiagonalOnly, *mWalkable, *mOs,

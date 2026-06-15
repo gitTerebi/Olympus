@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 #include "epalace.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 ePalaceTile::ePalaceTile(GameBoard& board,
                          const bool other,
@@ -16,7 +16,7 @@ void ePalaceTile::erase() {
     mPalace->erase();
 }
 
-std::shared_ptr<eTexture> ePalaceTile::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> ePalaceTile::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings();
     const auto& coll = texs[sizeId].fPalaceTiles;
@@ -36,7 +36,7 @@ ePalace* ePalaceTile::palace() const {
     return mPalace;
 }
 
-void ePalaceTile::serializeFields(eSaveArchive& ar) {
+void ePalaceTile::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.buildingAsField("palace", &getBoard(), mPalace);
     if(ar.reading()) {

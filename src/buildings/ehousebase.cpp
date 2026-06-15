@@ -8,8 +8,8 @@
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/esettleraction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eHouseBase::eHouseBase(GameBoard& board,
                        const eBuildingType type,
@@ -32,7 +32,7 @@ eHouseBase::~eHouseBase() {
 void eHouseBase::timeChanged(const int by) {
     if(mPeople <= 0) return;
     mUpdateCulture += by;
-    if(mUpdateCulture > eNumbers::sHouseCultureDecrementPeriod) {
+    if(mUpdateCulture > Numbers::sHouseCultureDecrementPeriod) {
         mUpdateCulture = 0;
         mPhilosophers = std::max(0, mPhilosophers - 1);
         mActors = std::max(0, mActors - 1);
@@ -116,7 +116,7 @@ int eHouseBase::vacancies() const {
     return mMaxPeople[mLevel] - mPeople;
 }
 
-void eHouseBase::serializeFields(eSaveArchive& ar) {
+void eHouseBase::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.field("paidTaxes", mPaidTaxes);
     ar.field("paidTaxesLastMonth", mPaidTaxesLastMonth);

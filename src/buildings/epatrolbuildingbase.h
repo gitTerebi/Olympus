@@ -4,9 +4,9 @@
 #include "eemployingbuilding.h"
 #include "engine/patrol-waypoint.h"
 #include "characters/actions/epatrolaction.h"
-#include "enumbers.h"
+#include "numbers.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class ePatrolBuildingBase : public eEmployingBuilding {
     friend class eWaypointMovePathTask;
@@ -67,10 +67,10 @@ public:
 
     virtual eTile* patrolStartTile() const;
 
-    virtual int spawnCooldown() const { return eNumbers::sPatrolWalkerSpawnCooldown; }
+    virtual int spawnCooldown() const { return Numbers::sPatrolWalkerSpawnCooldown; }
 protected:
     void resetSpawnTimer();
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool spawn();
 
@@ -93,7 +93,7 @@ private:
 
     bool mSpawnPatrolers = true;
 
-    const int mMaxDistance = eNumbers::sPatrolerMaxDistance;
+    const int mMaxDistance = Numbers::sPatrolerMaxDistance;
 
     double mSpawnTimer = 1000000;
     stdptr<eCharacter> mChar;

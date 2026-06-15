@@ -9,7 +9,7 @@
 #include "character-action-function.h"
 
 class eCharacter;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eCityId;
 
@@ -113,14 +113,14 @@ public:
             eCharacter* const c,
             const eCharActionType type);
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
 
     GameBoard& board();
 protected:
-    virtual void serializeFields(eSaveArchive& ar);
+    virtual void serializeFields(SaveArchive& ar);
     virtual void resumeFromSavedState() {}
 
 private:

@@ -10,7 +10,7 @@
 #include "characters/actions/efollowaction.h"
 #include "characters/actions/emovetoaction.h"
 
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "engine/game-board.h"
 
 eBlackMarbleWorkshop::eBlackMarbleWorkshop(GameBoard& board, const eCityId cid) :
@@ -28,7 +28,7 @@ eBlackMarbleWorkshop::eBlackMarbleWorkshop(GameBoard& board, const eCityId cid) 
     setRawCountCollect(0);
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eBlackMarbleWorkshop::getOverlays(const eTileSize size) const {
     auto os = eResourceCollectBuilding::getOverlays(size);
     const int sizeId = static_cast<int>(size);
@@ -39,7 +39,7 @@ eBlackMarbleWorkshop::getOverlays(const eTileSize size) const {
         const auto& stones = btexs.fBlackMarbleWorkshopStones;
         const int sid = std::clamp(8 - rc, 0, stones.size());
 
-        eOverlay& o = os.emplace_back();
+        Overlay& o = os.emplace_back();
         o.fAlignTop = true;
         o.fTex = stones.getTexture(sid);
         o.fX = 0.25;
@@ -60,14 +60,14 @@ eBlackMarbleWorkshop::getOverlays(const eTileSize size) const {
         }
 
         if(sid < 4) {
-            eOverlay& o = os.emplace_back();
+            Overlay& o = os.emplace_back();
             const auto& ov = btexs.fMasonryShopOverlay1[0];
             const int id = t % ov.size();
             o.fTex = ov.getTexture(id);
             o.fX = 0.50;
             o.fY = -0.90;
         } else {
-            eOverlay& o = os.emplace_back();
+            Overlay& o = os.emplace_back();
             const auto& ov = btexs.fMasonryShopOverlay2[0];
             const int id = t % ov.size();
             o.fTex = ov.getTexture(id);

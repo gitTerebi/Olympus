@@ -1,10 +1,10 @@
 #include "efarmbase.h"
 
 #include "textures/game-textures.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "engine/edate.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <algorithm>
 #include <cmath>
@@ -19,13 +19,13 @@ eFarmBase::eFarmBase(GameBoard& board,
     GameTextures::loadPlantation();
 }
 
-std::shared_ptr<eTexture> eFarmBase::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eFarmBase::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     return mTextures[sizeId].fPlantation;
 }
 
-std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
-    std::vector<eOverlay> os;
+std::vector<Overlay> eFarmBase::getOverlays(const eTileSize size) const {
+    std::vector<Overlay> os;
     const int sizeId = static_cast<int>(size);
     const auto& texs = mTextures[sizeId];
     const std::pair<int, int> xy[5] = {{-1, -1},
@@ -36,7 +36,7 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
     const double e = effectiveness();
     const int usedFields = std::clamp((int)std::round(1 + e*4), 0, 5);
     for(int i = 0; i < 5; i++) {
-        eOverlay& o = os.emplace_back();
+        Overlay& o = os.emplace_back();
         const auto& xxyy = xy[i];
         o.fX = xxyy.first;
         o.fY = xxyy.second;
@@ -66,7 +66,7 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
 void eFarmBase::timeChanged(const int by) {
     if(enabled()) {
         mNextRipe += by*effectiveness();
-        if(mNextRipe > eNumbers::sFarmRipePeriod / 5.0) {
+        if(mNextRipe > Numbers::sFarmRipePeriod / 5.0) {
             mNextRipe = 0;
             if(++mFieldStage >= 5) {
                 mFieldStage = 0;
@@ -104,7 +104,7 @@ eMonth eFarmBase::nextHarvestMonth() const {
     return eMonth::july;
 }
 
-void eFarmBase::serializeFields(eSaveArchive& ar) {
+void eFarmBase::serializeFields(SaveArchive& ar) {
     eResourceBuildingBase::serializeFields(ar);
     ar.field("nextRipe", mNextRipe);
     int growthSteps = ar.writing() ? (mGrownFields * 5 + mFieldStage) : 0;

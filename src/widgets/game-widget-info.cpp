@@ -2,16 +2,16 @@
 #include "infowidgets/einfowidget.h"
 #include "infowidgets/eemployingbuildinginfowidget.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "buildings/allbuildings.h"
 #include "buildings/efarmbase.h"
 #include "buildings/eshepherbuildingbase.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include "engine/edate.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "infowidgets/eagorainfowidget.h"
 #include "infowidgets/echaracterinfowidget.h"
 #include "infowidgets/common-house-info-widget.h"
@@ -46,7 +46,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
                 }
             }
             if(posts.size() <= 1) return;
-            int id = eVectorHelpers::index(posts, stor);
+            int id = VectorHelpers::index(posts, stor);
             if(next) {
                 id++;
             } else {
@@ -131,7 +131,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
                 group = 112;
                 break;
             }
-            std::string prodStr = eLanguage::zeusText(group, 2) + " " + std::to_string(p) + "% " + eLanguage::zeusText(group, 3);
+            std::string prodStr = Language::zeusText(group, 2) + " " + std::to_string(p) + "% " + Language::zeusText(group, 3);
             ebWid->addText(prodStr);
             constexpr int maxYearly = 8;
             const double eff = maxYearly > 0 ? (double)fb->producedThisYear() / maxYearly : 0;
@@ -140,7 +140,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             ebWid->addText(effStr);
             ebWid->addEmploymentWidget(fb, employmentInfo);
             const eMonth hm = fb->nextHarvestMonth();
-            std::string harvestStr = eLanguage::zeusText(group, 14) + " " + eMonthHelper::name(hm) + ".";
+            std::string harvestStr = Language::zeusText(group, 14) + " " + eMonthHelper::name(hm) + ".";
             ebWid->addText(harvestStr);
             ebWid->addText(info);
             wid = ebWid;
@@ -187,17 +187,17 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
                 group = 122;
                 break;
             }
-            std::string storedStr = eLanguage::zeusText(group, 12);
+            std::string storedStr = Language::zeusText(group, 12);
             if(storedStr.empty()) {
-                storedStr = eLanguage::zeusText(group, 11);
+                storedStr = Language::zeusText(group, 11);
             }
             if(!storedStr.empty()) {
                 storedStr += " " + std::to_string(pb->rawCount());
                 ebWid->addText(storedStr);
             }
-            std::string prodStr = eLanguage::zeusText(group, 2) + " " + std::to_string(p) + "% " + eLanguage::zeusText(group, 3);
+            std::string prodStr = Language::zeusText(group, 2) + " " + std::to_string(p) + "% " + Language::zeusText(group, 3);
             ebWid->addText(prodStr);
-            const int maxYearly = (360 * eNumbers::sDayLength) / pb->processWaitTime();
+            const int maxYearly = (360 * Numbers::sDayLength) / pb->processWaitTime();
             const double eff = maxYearly > 0 ? (double)pb->producedThisYear() / maxYearly : 0;
             const int effPercent = static_cast<int>(eff * 100 + 0.5);
             std::string effStr = "Efficiency: " + std::to_string(effPercent) + "% (" + std::to_string(pb->producedThisYear()) + "/" + std::to_string(maxYearly) + ")";
@@ -214,7 +214,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             eBuilding::sInfoText(sb, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
             const int group = sb->type() == eBuildingType::dairy ? 121 : 123;
-            const std::string holdsStr = eLanguage::zeusText(group, 2) + " " + std::to_string(sb->resource()) + " " + eLanguage::zeusText(group, 3);
+            const std::string holdsStr = Language::zeusText(group, 2) + " " + std::to_string(sb->resource()) + " " + Language::zeusText(group, 3);
             ebWid->addText(holdsStr);
             constexpr int maxYearly = 8;
             const double eff = (double)sb->producedThisYear() / maxYearly;
@@ -236,11 +236,11 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             if(gl->type() == eGrowerType::oranges) {
                 line = "Oranges: " + std::to_string(gl->orangeUnits());
             } else {
-                std::string storedStr = eLanguage::zeusText(179, 11); // olives
+                std::string storedStr = Language::zeusText(179, 11); // olives
                 if(!storedStr.empty()) {
                     line += storedStr + " " + std::to_string(gl->oliveUnits());
                 }
-                storedStr = eLanguage::zeusText(179, 12); // grapes
+                storedStr = Language::zeusText(179, 12); // grapes
                 if(!storedStr.empty()) {
                     if(!line.empty()) line += "       ";
                     line += storedStr + " " + std::to_string(gl->grapeUnits());
@@ -298,7 +298,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             std::string additionalInfo;
             eBuilding::sInfoText(tm, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
-            const std::string holdsStr = eLanguage::zeusText(120, 2) + " " + std::to_string(tm->resource()) + " " + eLanguage::zeusText(120, 3);
+            const std::string holdsStr = Language::zeusText(120, 2) + " " + std::to_string(tm->resource()) + " " + Language::zeusText(120, 3);
             ebWid->addText(holdsStr);
             constexpr int maxYearly = 13;
             const double eff = (double)tm->producedThisYear() / maxYearly;
@@ -316,7 +316,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             std::string additionalInfo;
             eBuilding::sInfoText(ms, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
-            const std::string holdsStr = eLanguage::zeusText(118, 2) + " " + std::to_string(ms->resource()) + " " + eLanguage::zeusText(118, 3);
+            const std::string holdsStr = Language::zeusText(118, 2) + " " + std::to_string(ms->resource()) + " " + Language::zeusText(118, 3);
             ebWid->addText(holdsStr);
             constexpr int maxYearly = 12;
             const double eff = (double)ms->producedThisYear() / maxYearly;
@@ -334,7 +334,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             std::string additionalInfo;
             eBuilding::sInfoText(bm, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
-            const std::string holdsStr = eLanguage::zeusText(169, 2) + " " + std::to_string(bm->resource()) + " " + eLanguage::zeusText(169, 3);
+            const std::string holdsStr = Language::zeusText(169, 2) + " " + std::to_string(bm->resource()) + " " + Language::zeusText(169, 3);
             ebWid->addText(holdsStr);
             constexpr int maxYearly = 12;
             const double eff = (double)bm->producedThisYear() / maxYearly;
@@ -352,7 +352,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             std::string additionalInfo;
             eBuilding::sInfoText(rf, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
-            const std::string holdsStr = eLanguage::zeusText(109, 2) + " " + std::to_string(rf->resource()) + " " + eLanguage::zeusText(109, 3);
+            const std::string holdsStr = Language::zeusText(109, 2) + " " + std::to_string(rf->resource()) + " " + Language::zeusText(109, 3);
             ebWid->addText(holdsStr);
             constexpr int maxYearly = 12;
             const double eff = (double)rf->producedThisYear() / maxYearly;
@@ -370,7 +370,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             std::string additionalInfo;
             eBuilding::sInfoText(fd, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
-            const std::string holdsStr = eLanguage::zeusText(117, 2) + " " + std::to_string(fd->resource()) + " " + eLanguage::zeusText(117, 3);
+            const std::string holdsStr = Language::zeusText(117, 2) + " " + std::to_string(fd->resource()) + " " + Language::zeusText(117, 3);
             ebWid->addText(holdsStr);
             constexpr int maxYearly = 12;
             const double eff = (double)fd->producedThisYear() / maxYearly;
@@ -388,7 +388,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             std::string additionalInfo;
             eBuilding::sInfoText(mt, title, info, employmentInfo, additionalInfo);
             ebWid->initialize(title);
-            const std::string holdsStr = eLanguage::zeusText(119, 2) + " " + std::to_string(mt->resource()) + " " + eLanguage::zeusText(119, 3);
+            const std::string holdsStr = Language::zeusText(119, 2) + " " + std::to_string(mt->resource()) + " " + Language::zeusText(119, 3);
             ebWid->addText(holdsStr);
             constexpr int maxYearly = 12;
             const double eff = (double)mt->producedThisYear() / maxYearly;
@@ -470,9 +470,9 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             }
             const int pct = rb->ripe() * 100 / 5;
             // xml strings (groupId, 2) + (groupId, 3) â†’ e.g. "Fruit is 80% ripe."
-            const std::string ripeStr = eLanguage::zeusText(group, 2) + " " +
+            const std::string ripeStr = Language::zeusText(group, 2) + " " +
                                         std::to_string(pct) + "% " +
-                                        eLanguage::zeusText(group, 3);
+                                        Language::zeusText(group, 3);
             rbWid->addText(ripeStr);
 
             const auto curMonth = rb->getBoard().date().month();
@@ -481,8 +481,8 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             const int he = static_cast<int>(harvestEnd);
             const bool inSeason = cm >= hs && cm <= he;
             // xml group 160 = month names, ids 0..11 = January..December
-            const std::string startName = eLanguage::zeusText(160, hs);
-            const std::string endName = eLanguage::zeusText(160, he);
+            const std::string startName = Language::zeusText(160, hs);
+            const std::string endName = Language::zeusText(160, he);
             std::string seasonStr;
             if(inSeason) {
                 // xml (group, 14) = "The next X harvest is in" â€” reused here to label the season
@@ -490,7 +490,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
                             "-" + endName + ")";
             } else {
                 // xml (group, 14) = "The next X harvest is in <start month>"
-                seasonStr = eLanguage::zeusText(group, 14) + " " + startName;
+                seasonStr = Language::zeusText(group, 14) + " " + startName;
             }
             rbWid->addText(seasonStr);
             wid = rbWid;
@@ -498,8 +498,8 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
             const auto bWid = new eInfoWidget(window(), this, true, true);
             if(const auto r = dynamic_cast<eRoad*>(b)) {
                 if(r->isRoadblock()) {
-                    bWid->initialize(eLanguage::zeusText(155, 0));
-                    bWid->addText(eLanguage::zeusText(155, 1));
+                    bWid->initialize(Language::zeusText(155, 0));
+                    bWid->addText(Language::zeusText(155, 1));
                     wid = bWid;
                 }
             }
@@ -513,7 +513,7 @@ eInfoWidget* GameWidget::openInfoWidget(eBuilding* const b) {
     if(wid) {
         addWidget(wid);
         wid->setX((width() - mGm->width() - wid->width())/2);
-        wid->align(eAlignment::vcenter);
+        wid->align(Alignment::vcenter);
         wid->setCloseAction([this, wid, closeAct]() {
             if(closeAct) closeAct();
             removeWidget(wid);
@@ -528,7 +528,7 @@ eInfoWidget *GameWidget::openInfoWidget(const std::vector<eCharacter*> chars) {
     if(wid) {
         addWidget(wid);
         wid->setX((width() - mGm->width() - wid->width())/2);
-        wid->align(eAlignment::vcenter);
+        wid->align(Alignment::vcenter);
         wid->setCloseAction([this, wid]() {
             removeWidget(wid);
         });

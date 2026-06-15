@@ -6,7 +6,7 @@
 
 enum class eResourceType;
 enum class eTradePostType;
-class eSaveArchive;
+class SaveArchive;
 
 struct AIBuilding {
     eBuildingType fType;
@@ -25,7 +25,7 @@ struct AIBuilding {
     eTradePostType feTradePostType;
     SDL_Rect fOtherRect;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 };
 
 #endif // AIBuilding_H

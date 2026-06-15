@@ -1,7 +1,7 @@
 ﻿#include "ecityonboardselectionwidget.h"
 
 #include "widgets/echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "engine/board-city.h"
 #include "ecitysettingswidget.h"
 #include "engine/game-board.h"
@@ -29,7 +29,7 @@ void eCityOnBoardSelectionWidget::initialize(
         settings->initialize(wc, board, wboard);
 
         window()->execDialog(settings);
-        settings->align(eAlignment::center);
+        settings->align(Alignment::center);
     };
 
     setButtonPressEvent([get, editCity](const int id) {
@@ -48,7 +48,7 @@ void eCityOnBoardSelectionWidget::initialize(
         choose->initialize(wboard, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
 
     setButtonRemoveEvent([get, remove](const int id) {

@@ -2,8 +2,8 @@
 
 #include "engine/eeventdata.h"
 #include "engine/game-board.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 
 #include <algorithm>
 
@@ -53,16 +53,16 @@ std::string resourceRequestInfo(
     const auto resName = eResourceTypeHelpers::typeLongName(resource);
     std::string status;
     if(!overdue) {
-        status = eLanguage::zeusText(212, 63); // [months_remaining] months remain
-        eStringHelpers::replaceAll(status, "[months_remaining]",
+        status = Language::zeusText(212, 63); // [months_remaining] months remain
+        StringHelpers::replaceAll(status, "[months_remaining]",
                                    std::to_string(remainingMonths));
     } else {
         status = std::to_string(remainingMonths) + " " +
-                 eLanguage::zeusText(5, 150) + " " +
-                 eLanguage::zeusText(5, 205);
+                 Language::zeusText(5, 150) + " " +
+                 Language::zeusText(5, 205);
     }
 
-    auto stockText = eLanguage::zeusText(44, 278); // in stock
+    auto stockText = Language::zeusText(44, 278); // in stock
     auto result = std::to_string(requested) + " " + resName +
                   " (" + std::to_string(stock) + " " + stockText + ")";
     if(!status.empty()) result += ", " + status;
@@ -71,7 +71,7 @@ std::string resourceRequestInfo(
 
 std::string resourceDispatchText(const std::string& requestInfo)
 {
-    return eLanguage::zeusText(5, 12) + " " + requestInfo + "?";
+    return Language::zeusText(5, 12) + " " + requestInfo + "?";
 }
 
 void addRequestDispatchResponses(

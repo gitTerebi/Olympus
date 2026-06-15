@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <algorithm>
 #include <cmath>
@@ -35,21 +35,21 @@ eProcessingBuilding::eProcessingBuilding(
 
 eProcessingBuilding::~eProcessingBuilding() {}
 
-std::shared_ptr<eTexture> eProcessingBuilding::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eProcessingBuilding::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     return mTextures[sizeId].*mBaseTex;
 }
 
-std::vector<eOverlay> eProcessingBuilding::getOverlays(
+std::vector<Overlay> eProcessingBuilding::getOverlays(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& coll = mTextures[sizeId].*mOverlays;
     const int texId = textureTime() % coll.size();
-    eOverlay o;
+    Overlay o;
     o.fTex = coll.getTexture(texId);
     o.fX = mOverlayX;
     o.fY = mOverlayY;
-    return std::vector<eOverlay>({o});
+    return std::vector<Overlay>({o});
 }
 
 void eProcessingBuilding::timeChanged(const int by) {
@@ -104,7 +104,7 @@ std::vector<eCartTask> eProcessingBuilding::cartTasks() const {
     return tasks;
 }
 
-void eProcessingBuilding::serializeFields(eSaveArchive& ar) {
+void eProcessingBuilding::serializeFields(SaveArchive& ar) {
     eResourceBuildingBase::serializeFields(ar);
     ar.field("rawCount", mRawCount);
     ar.field("processTime", mProcessTime);

@@ -19,7 +19,7 @@ protected:
 
     void paintEvent(ePainter& p);
 private:
-    std::shared_ptr<eTexture> texture() const;
+    std::shared_ptr<Texture> texture() const;
 
     int mBitmap = 0;
     double mScaling = 1.;

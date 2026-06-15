@@ -4,7 +4,7 @@
 #include "ecomplexaction.h"
 #include "pointers/estdpointer.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eArcherAction : public eComplexAction {
 public:
@@ -13,7 +13,7 @@ public:
     void increment(const int by) override;
     bool decide() override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
 
@@ -38,7 +38,7 @@ public:
         t->setState(eCharacterActionState::failed);
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -59,7 +59,7 @@ public:
         t->setState(eCharacterActionState::finished);
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

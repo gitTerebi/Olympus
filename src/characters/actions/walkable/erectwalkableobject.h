@@ -3,7 +3,7 @@
 
 #include "walkable-object.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eRectWalkableObject : public WalkableObject {
 public:
@@ -15,7 +15,7 @@ public:
     bool walkable(eTileBase* const t) const override;
     eWalkableObjectType rootType() const override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdsptr<WalkableObject> mOther;
     SDL_Rect mRect;

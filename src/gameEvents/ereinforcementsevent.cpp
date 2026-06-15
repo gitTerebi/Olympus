@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "characters/soldier-banner.h"
 
 eReinforcementsEvent::eReinforcementsEvent(const eCityId cid,
@@ -28,7 +28,7 @@ void eReinforcementsEvent::trigger() {
     const auto fromPid = board->cityIdToPlayerId(fromCid);
     const auto c = board->boardCityWithId(cid);
     if(!c || pid != fromPid) {
-        planArmyReturn(eNumbers::sReinforcementsTravelTime);
+        planArmyReturn(Numbers::sReinforcementsTravelTime);
         return;
     }
     const auto entryPoint = board->entryPoint(cid);
@@ -46,7 +46,7 @@ void eReinforcementsEvent::trigger() {
         b->setOnCityId(cid);
         b->setMilitaryAid(true);
         b->backFromHome();
-        for(int i = 0; i < eNumbers::sSoldiersPerBanner && i < b->count(); i++) {
+        for(int i = 0; i < Numbers::sSoldiersPerBanner && i < b->count(); i++) {
             b->createSoldier(entryPoint);
         }
     }

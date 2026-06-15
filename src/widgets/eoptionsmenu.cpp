@@ -1,7 +1,7 @@
 #include "eoptionsmenu.h"
 
 #include "eframedwidget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "framed-button.h"
 #include "elabel.h"
 #include "echeckbox.h"
@@ -28,7 +28,7 @@ public:
                    const int value,
                    const eClamp& clamp,
                    const eChangeAction& action,
-                   eMainWindow* const window) :
+                   MainWindow* const window) :
         eWidget(window),
         mMin(min),
         mMax(max),
@@ -94,21 +94,21 @@ public:
 
     eOptionsHotkeyButton(const SDL_Scancode value,
                          const eChangeAction& action,
-                         eMainWindow* const window) :
+                         MainWindow* const window) :
         FramedButton(window),
         mValue(value),
         mAction(action) {
-        setPadding(2 * resolution().multiplier());
+        setPadding(scalePx(2));
         setUnderline(false);
         setFontSizeXS();
         updateText();
-        setWidth(60 * resolution().multiplier());
+        setWidth(scalePx(60));
         setPressAction([this]() {
             mListening = true;
             setText("Press key");
             setTooltip("Press key or DEL to clear");
             fitContent();
-            const int minW = 60 * resolution().multiplier();
+            const int minW = scalePx(60);
             if(width() < minW) setWidth(minW);
             grabKeyboard();
         });
@@ -138,7 +138,7 @@ private:
             setText("None");
         }
         fitContent();
-        const int minW = 60 * resolution().multiplier();
+        const int minW = scalePx(60);
         if(width() < minW) setWidth(minW);
     }
 
@@ -177,7 +177,7 @@ void clampButtonWidth(FramedButton* const button,
 }
 
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
-                           eMainWindow* const window,
+                           MainWindow* const window,
                            const eReopenPage& reopenPage) :
     eModal(window),
     mPages(pages),
@@ -187,10 +187,9 @@ void eOptionsMenu::initialize(const int initialPage) {
     if(initialPage >= 0 && initialPage < static_cast<int>(mPages.size())) {
         mCurrentPage = initialPage;
     }
-    const int mult = resolution().multiplier();
-    const int pad = 100 * mult;
-    const int sw = std::max(520*mult, 3*resolution().width()/5);
-    const int sh = std::max(300*mult, 4*resolution().height()/5);
+    const int pad = scalePx(100);
+    const int sw = std::max(scalePx(520), 3*resolution().width()/5);
+    const int sh = std::max(scalePx(300), 4*resolution().height()/5);
     const int p0 = padding();
     const int fw = std::min(sw, resolution().width() - 2*p0);
     const int fh = std::min(sh, resolution().height() - 2*p0);
@@ -201,7 +200,7 @@ void eOptionsMenu::initialize(const int initialPage) {
 
     const auto cancel = new eCancelButton(window());
     f->addWidget(cancel);
-    cancel->align(eAlignment::bottom | eAlignment::right);
+    cancel->align(Alignment::bottom | Alignment::right);
     cancel->move(cancel->x() - 2*p, cancel->y() - 2*p);
     cancel->setPressAction([this]() { close(); });
 
@@ -209,7 +208,7 @@ void eOptionsMenu::initialize(const int initialPage) {
     mMainTitle->setFontSizeXL();
     mMainTitle->fitContent();
     f->addWidget(mMainTitle);
-    mMainTitle->align(eAlignment::hcenter);
+    mMainTitle->align(Alignment::hcenter);
     mMainTitle->setY(p);
 
     const int contentY = mMainTitle->y() + mMainTitle->height() + p;
@@ -217,7 +216,7 @@ void eOptionsMenu::initialize(const int initialPage) {
 
     const auto categories = new eWidget(window());
     categories->setNoPadding();
-    categories->resize(140*mult, contentH);
+    categories->resize(scalePx(140), contentH);
     f->addWidget(categories);
     categories->move(2*p, contentY);
 
@@ -274,6 +273,8 @@ void eOptionsMenu::showPage(const int id) {
         for(auto& choice : page.fChoices) {
             if(choice.fLabel == "Display") {
                 choice.fValue = static_cast<int>(settings.fDisplayMode);
+            } else if(choice.fLabel == "UI scale") {
+                choice.fValue = static_cast<int>(settings.fUiScale);
             } else if(choice.fLabel == "Filter") {
                 choice.fValue = static_cast<int>(settings.fInterpolation);
             } else if(choice.fLabel == "Upscale") {
@@ -339,7 +340,7 @@ void eOptionsMenu::showPage(const int id) {
 
     mMainTitle->setText(page.fTitle);
     mMainTitle->fitContent();
-    mMainTitle->align(eAlignment::hcenter);
+    mMainTitle->align(Alignment::hcenter);
 
     const auto makeSlider = [this](const std::string& label,
                                     const std::string& suffix,
@@ -367,18 +368,17 @@ void eOptionsMenu::showPage(const int id) {
                 if(action) action(v);
                 valueLabel->setText(label + ": " + std::to_string(v) + suffix);
                 valueLabel->fitContent();
-                valueLabel->align(eAlignment::hcenter);
+                valueLabel->align(Alignment::hcenter);
             },
             window());
-        slider->resize(220*resolution().multiplier(),
-                       24*resolution().multiplier());
+        slider->resize(scalePx(220), scalePx(24));
         w->addWidget(slider);
 
         slider->setY(valueLabel->height());
         w->setHeight(valueLabel->height() + slider->height());
         w->setWidth(mPage->width());
-        valueLabel->align(eAlignment::hcenter);
-        slider->align(eAlignment::hcenter);
+        valueLabel->align(Alignment::hcenter);
+        slider->align(Alignment::hcenter);
         return w;
     };
 
@@ -404,14 +404,14 @@ void eOptionsMenu::showPage(const int id) {
             w->fitHeight();
             const int rowH = std::max(button->height(), label->height());
             w->setHeight(rowH);
-            const int gap = 4 * resolution().multiplier();
+            const int gap = scalePx(4);
             label->setX(mPage->width()/2 - label->width() - gap);
             button->setX(mPage->width()/2 + gap);
             label->setY((rowH - label->height()) / 2);
             button->setY((rowH - button->height()) / 2);
         } else {
             label->setYellowFontColor();
-            label->align(eAlignment::hcenter);
+            label->align(Alignment::hcenter);
             w->setHeight(label->height());
         }
         return w;
@@ -470,10 +470,18 @@ void eOptionsMenu::showPage(const int id) {
         w->setNoPadding();
         w->setWidth(mPage->width());
 
-        const int mult = resolution().multiplier();
-        const bool compact = mPage->width() < 300 * mult;
+        const bool compact = mPage->width() < scalePx(300);
 
         const auto label = new eLabel(item.fLabel, window());
+        if(item.fOptions.empty()) {
+            label->setYellowFontColor();
+            label->setFontSizeXS();
+            label->fitContent();
+            w->addWidget(label);
+            w->setHeight(label->height());
+            label->align(Alignment::hcenter);
+            return w;
+        }
         if(compact) label->setFontSizeXS();
         else label->setFontSizeS();
         label->fitContent();
@@ -486,12 +494,12 @@ void eOptionsMenu::showPage(const int id) {
         const int initial = (item.fValue >= 0 &&
                              item.fValue < int(item.fOptions.size())) ? item.fValue : 0;
         button->setText(item.fOptions.empty() ? "" : item.fOptions[initial]);
-        const int gap = 8 * mult;
-        const int maxControlW = std::max(56 * mult,
+        const int gap = scalePx(8);
+        const int maxControlW = std::max(scalePx(56),
                                          mPage->width() - label->width() - gap);
         const int wantedControlW = compact ?
-            std::max(90 * mult, mPage->width()/3) :
-            std::max(130 * mult, mPage->width()/3);
+            std::max(scalePx(90), mPage->width()/3) :
+            std::max(scalePx(130), mPage->width()/3);
         const int minControlW = std::min(wantedControlW, maxControlW);
         clampButtonWidth(button, minControlW, maxControlW);
         const auto options = item.fOptions;
@@ -504,21 +512,24 @@ void eOptionsMenu::showPage(const int id) {
             const auto act = [this, button, options, set, rebuildOnSet,
                               reloadsUiScale, minControlW, maxControlW](const int val) {
                 bool reloadNeeded = false;
-                if(reloadsUiScale) {
-                    reloadNeeded = reloadsUiScale(val);
-                    if(reloadNeeded && mReopenPage) {
-                        const int page = mCurrentPage;
-                        window()->setAfterMenuLoadingAction([reopenPage = mReopenPage, page]() {
-                            reopenPage(page);
-                        });
-                    }
-                }
+                if(reloadsUiScale) reloadNeeded = reloadsUiScale(val);
                 if(val >= 0 && val < int(options.size())) {
                     button->setText(options[val]);
                     clampButtonWidth(button, minControlW, maxControlW);
                 }
+                if(reloadNeeded && mReopenPage) {
+                    const int page = mCurrentPage;
+                    const auto reopen = mReopenPage;
+                    window()->setAfterMenuLoadingAction([reopen, page]() {
+                        reopen(page);
+                    });
+                    if(set) set(val);
+                    close();
+                    window()->showMenuLoading();
+                    return;
+                }
                 if(set) set(val);
-                if(rebuildOnSet && !reloadNeeded && mReopenPage) {
+                if(rebuildOnSet && mReopenPage) {
                     const int page = mCurrentPage;
                     window()->addSlot([reopenPage = mReopenPage, page]() {
                         reopenPage(page);
@@ -528,7 +539,7 @@ void eOptionsMenu::showPage(const int id) {
             };
             choose->initialize(8, options, act);
             window()->execDialog(choose);
-            choose->align(eAlignment::center);
+            choose->align(Alignment::center);
         });
         w->addWidget(button);
 
@@ -559,7 +570,7 @@ void eOptionsMenu::showPage(const int id) {
         mPage->addWidget(line);
     }
 
-    const int rowSpacing = 2 * resolution().multiplier();
+    const int rowSpacing = scalePx(2);
     int y = 0;
     for(const auto child : mPage->children()) {
         child->setY(y);
@@ -567,7 +578,7 @@ void eOptionsMenu::showPage(const int id) {
     }
     mPage->setHeight(y);
     for(const auto child : mPage->children()) {
-        child->align(eAlignment::hcenter);
+        child->align(Alignment::hcenter);
     }
     mPageViewport->scrollToTop();
 }
@@ -589,5 +600,3 @@ void eOptionsMenu::rebuild() {
     }
     initialize(mCurrentPage);
 }
-
-

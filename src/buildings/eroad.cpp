@@ -6,8 +6,8 @@
 #include "eagorabase.h"
 #include "egatehouse.h"
 #include "ehippodromepiece.h"
-#include "elanguage.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "fileIO/save-archive.h"
 
 eRoad::eRoad(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::road, 1, 1, cid) {}
@@ -21,7 +21,7 @@ void eRoad::erase() {
         const auto cid = cityId();
         const bool a = board.hasActiveInvasions(cid);
         if(a) {
-            board.showTip(cid, eLanguage::zeusText(19, 229)); // can't demolish during invasion
+            board.showTip(cid, Language::zeusText(19, 229)); // can't demolish during invasion
             return;
         }
         std::vector<eTile*> tiles;
@@ -29,7 +29,7 @@ void eRoad::erase() {
         for(const auto t : tiles) {
             const auto c = t->characters();
             if(!c.empty()) {
-                board.showTip(cid, eLanguage::zeusText(19, 24)); // can't demolish water crossing with people
+                board.showTip(cid, Language::zeusText(19, 24)); // can't demolish water crossing with people
                 return;
             }
         }
@@ -44,7 +44,7 @@ void eRoad::erase() {
     }
 }
 
-std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eRoad::getTexture(const eTileSize size) const {
     if(mAboveHippodrome) return nullptr;
 
     auto& board = getBoard();
@@ -321,7 +321,7 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
         const int dy = t->dy();
         const double a = b.appeal(dx, dy);
 
-        const eTextureCollection* coll;
+        const TextureCollection* coll;
         if(a > 3) {
             coll = &pcoll;
         } else {
@@ -354,7 +354,7 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
 
         return coll->getTexture(12);
     }
-    return std::shared_ptr<eTexture>();
+    return std::shared_ptr<Texture>();
 }
 
 int eRoad::getHippodromeTextureId() const {
@@ -504,7 +504,7 @@ void eRoad::bridgeConnectedTiles(std::vector<eTile*>& tiles) const {
     }
 }
 
-void eRoad::serializeFields(eSaveArchive& ar) {
+void eRoad::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     auto& board = getBoard();
     ar.field("roadblock", mRoadblock);

@@ -2,7 +2,7 @@
 #define EOPTIONSMENU_H
 
 #include "emodal.h"
-#include "esettings.h"
+#include "settings.h"
 #include "escrollbar.h"
 #include "engine/difficulty.h"
 
@@ -31,9 +31,9 @@ public:
 
     struct eHotkeyItem {
         std::string fLabel;
-        eHotkeyId fId;
+        HotkeyId fId;
         SDL_Scancode fValue;
-        std::function<void(const eHotkeyId, const SDL_Scancode)> fSet;
+        std::function<void(const HotkeyId, const SDL_Scancode)> fSet;
     };
 
     struct eCheckboxItem {
@@ -70,7 +70,7 @@ public:
     };
 
     eOptionsMenu(const std::vector<ePage>& pages,
-                 eMainWindow* const window,
+                 MainWindow* const window,
                  const eReopenPage& reopenPage = nullptr);
 
     void initialize(const int initialPage = 0);

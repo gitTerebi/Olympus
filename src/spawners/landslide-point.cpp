@@ -1,9 +1,9 @@
-#include "elandslidepoint.h"
+#include "landslide-point.h"
 
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
 
-eLandSlidePoint::eLandSlidePoint(const int id,
+LandSlidePoint::LandSlidePoint(const int id,
                                  eTile* const tile,
                                  GameBoard& board) :
-    eBanner(eBannerTypeS::landSlidePoint, id, tile, board) {}
+    Banner(BannerTypeS::landSlidePoint, id, tile, board) {}

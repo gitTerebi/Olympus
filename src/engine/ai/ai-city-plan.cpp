@@ -2,12 +2,12 @@
 
 #include "engine/game-board.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 #include "engine/epathfinder.h"
 
-#include "etilehelper.h"
-#include "fileIO/esavearchive.h"
+#include "tile-helper.h"
+#include "fileIO/save-archive.h"
 
 AICityPlan::AICityPlan(const eCityId cid) :
     mCid(cid) {}
@@ -114,15 +114,15 @@ void AICityPlan::editorDisplayBuildings(GameBoard& board) {
     }
 }
 
-void AICityPlan::serialize(eSaveArchive& ar) {
+void AICityPlan::serialize(SaveArchive& ar) {
     ar.field("cityId", mCid);
     ar.field("lastBuildDistrict", mLastBuildDistrict);
 
     ar.arrayField("districts", mDistricts,
-        [](eSaveArchive& itemAr, AIDistrict& d) { d.serialize(itemAr); });
+        [](SaveArchive& itemAr, AIDistrict& d) { d.serialize(itemAr); });
 
     ar.arrayField("scheduledBuildings", mScheduledBuildings,
-        [](eSaveArchive& itemAr, std::pair<int, AIBuilding>& bp) {
+        [](SaveArchive& itemAr, std::pair<int, AIBuilding>& bp) {
             itemAr.field("districtId", bp.first);
             bp.second.serialize(itemAr);
         });

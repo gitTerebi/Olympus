@@ -28,8 +28,8 @@ void eTilePainter::translate(const double x, const double y) {
 }
 
 void eTilePainter::drawTexture(const double x, const double y,
-                               const std::shared_ptr<eTexture>& tex,
-                               const eAlignment align) const {
+                               const std::shared_ptr<Texture>& tex,
+                               const Alignment align) const {
     if(!tex) return;
     const double dx = mTileH*tex->offsetX()/30.;
     const double dy = mTileH*tex->offsetY()/30.;
@@ -40,7 +40,7 @@ void eTilePainter::drawTexture(const double x, const double y,
 }
 
 void eTilePainter::drawTexture(const double x, const double y,
-                               const std::shared_ptr<eTexture>& tex) const {
+                               const std::shared_ptr<Texture>& tex) const {
     if(!tex) return;
     const double dx = mTileH*tex->offsetX()/30.;
     const double dy = mTileH*tex->offsetY()/30.;
@@ -51,7 +51,7 @@ void eTilePainter::drawTexture(const double x, const double y,
 }
 
 void eTilePainter::scheduleDrawTexture(const double x, const double y,
-                                       const std::shared_ptr<eTexture>& tex) {
+                                       const std::shared_ptr<Texture>& tex) {
     auto& s = mScheduled.emplace_back();
     s.fX = x;
     s.fY = y;
@@ -59,8 +59,8 @@ void eTilePainter::scheduleDrawTexture(const double x, const double y,
 }
 
 void eTilePainter::scheduleDrawTexture(const double x, const double y,
-                                       const std::shared_ptr<eTexture>& tex,
-                                       const eAlignment align) {
+                                       const std::shared_ptr<Texture>& tex,
+                                       const Alignment align) {
     auto& s = mScheduled.emplace_back();
     s.fX = x;
     s.fY = y;
@@ -70,8 +70,8 @@ void eTilePainter::scheduleDrawTexture(const double x, const double y,
 }
 
 void eTilePainter::scheduleDrawTexture(const double x, const double y,
-                                       const std::shared_ptr<eTexture>& tex,
-                                       const eAlignment align,
+                                       const std::shared_ptr<Texture>& tex,
+                                       const Alignment align,
                                        const SDL_Color& colorMod) {
     auto& s = mScheduled.emplace_back();
     s.fX = x;

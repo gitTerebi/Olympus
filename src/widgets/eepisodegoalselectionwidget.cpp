@@ -1,7 +1,7 @@
 #include "eepisodegoalselectionwidget.h"
 
 #include "widgets/echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "engine/eepisodegoal.h"
 #include "eepisodegoalwidget.h"
 #include "engine/game-board.h"
@@ -26,7 +26,7 @@ void eEpisodeGoalSelectionWidget::initialize(
         settings->initialize(e, board);
 
         window()->execDialog(settings);
-        settings->align(eAlignment::center);
+        settings->align(Alignment::center);
     };
 
     setButtonPressEvent([get, editEvent](const int id) {
@@ -97,7 +97,7 @@ void eEpisodeGoalSelectionWidget::initialize(
         echoose->initialize(8, labels, act);
 
         window()->execDialog(echoose);
-        echoose->align(eAlignment::center);
+        echoose->align(Alignment::center);
     });
 
     setButtonRemoveEvent([get, remove](const int id) {

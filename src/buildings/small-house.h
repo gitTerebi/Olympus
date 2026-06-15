@@ -7,14 +7,14 @@
 class eCharacter;
 class eSick;
 class eDisgruntled;
-class eSaveArchive;
+class SaveArchive;
 
 class SmallHouse : public eHouseBase {
 public:
     SmallHouse(GameBoard& board, const eCityId cid);
     ~SmallHouse();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
 
     int provide(const eProvide p, const int n) override;
 
@@ -49,7 +49,7 @@ public:
 
     static std::string sName(const int level);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool hasRequiredForLevel(const int level) const;
     bool canStayAtLevel(const int level) const;

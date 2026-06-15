@@ -4,7 +4,7 @@
 #include "eemployingbuilding.h"
 
 class eCartTransporter;
-class eSaveArchive;
+class SaveArchive;
 
 class eResourceBuildingBase : public eEmployingBuilding {
 public:
@@ -33,7 +33,7 @@ public:
     int maxResource() const { return mMaxResource; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 
 private:
     const int mMaxResource = 8;

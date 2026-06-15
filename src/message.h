@@ -1,39 +1,39 @@
-#ifndef EMESSAGE_H
-#define EMESSAGE_H
+#ifndef MESSAGE_H
+#define MESSAGE_H
 
 #include <memory>
 #include <string>
 
-struct eMessage {
+struct Message {
     std::string fTitle;
     std::string fText;
 };
 
-struct eReason {
+struct Reason {
     std::string fFull;
     std::string fCondensed;
 };
 
-struct eMessageType {
-    eMessage fFull;
-    eMessage fCondensed;
+struct MessageType {
+    Message fFull;
+    Message fCondensed;
 };
 
-struct eEventMessageType : public eMessageType {
+struct EventMessageType : public MessageType {
     std::string fReason;
     std::string fNoReason;
 };
 
-struct eConsequenceMessageType : public eMessageType {
+struct ConsequenceMessageType : public MessageType {
     std::string fNoReason;
 };
 
-struct eGameMessages {
-    eMessageType fBegin;
-    eMessageType fNoPart;
-    eMessageType fWon;
-    eMessageType fLost;
-    eMessageType fSecond;
+struct GameMessages {
+    MessageType fBegin;
+    MessageType fNoPart;
+    MessageType fWon;
+    MessageType fLost;
+    MessageType fSecond;
 };
 
-#endif // EMESSAGE_H
+#endif // MESSAGE_H

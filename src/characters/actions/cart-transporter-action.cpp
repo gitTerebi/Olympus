@@ -7,10 +7,10 @@
 #include "buildings/ehorseranch.h"
 #include "buildings/evendor.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "emovetoaction.h"
 #include "ewaitaction.h"
-#include "ewalkablehelpers.h"
+#include "walkable-helpers.h"
 
 CartTransporterAction::CartTransporterAction(
         eCharacter* const c,
@@ -43,7 +43,7 @@ void CartTransporterAction::increment(const int by) {
         const auto c = character();
         const auto t = c->tile();
         if(t && !t->hasRoad() && !t->hasAvenue() &&
-           !eWalkableHelpers::sTileUnderBuilding(t, mBuilding)) {
+           !WalkableHelpers::sTileUnderBuilding(t, mBuilding)) {
             enterReturning();
             return;
         }
@@ -340,7 +340,7 @@ void CartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
         if(!t->isUnderBuilding()) return false;
 
         // 2.2 Skip tiles part of cart's home building
-        const bool r = eWalkableHelpers::sTileUnderBuilding(t, buildingRect);
+        const bool r = WalkableHelpers::sTileUnderBuilding(t, buildingRect);
         if(r) return false;
         if(hasAvoided) {
             const SDL_Point p{t->x(), t->y()};
@@ -649,7 +649,7 @@ bool CartTransporterAction::acceptsTargetForTask(
     return true;
 }
 
-void CartTransporterAction::serializeFields(eSaveArchive& ar) {
+void CartTransporterAction::serializeFields(SaveArchive& ar) {
     // skip mCurrentAction (walk/wait "feet") on write; rebuilt from FSM state on load.
     const bool writing = ar.writing();
     stdsptr<eCharacterAction> savedFeet;
@@ -755,7 +755,7 @@ stdsptr<WalkableObject> CartTransporterAction::getWalkable(bool excludeHomeRect)
 void CartTransporterAction::updateWaiting() {
     if(!mBuilding) return;
     const auto c = static_cast<eCartTransporter*>(character());
-    const bool r = eWalkableHelpers::sTileUnderBuilding(
+    const bool r = WalkableHelpers::sTileUnderBuilding(
                        c->tile(), mBuilding);
     c->setWaiting(mState == eCartState::waitOutside || r);
 }

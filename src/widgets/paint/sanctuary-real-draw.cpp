@@ -3,7 +3,7 @@
 #include "buildings/allbuildings.h"
 #include "engine/game-board.h"
 #include "engine/etile.h"
-#include "etexture.h"
+#include "texture.h"
 #include "textures/game-textures.h"
 #include "textures/building-textures.h"
 #include "widgets/etilepainter.h"
@@ -13,10 +13,10 @@ namespace {
 
 void drawTintedTexture(
     eTilePainter& tilePainter,
-    const std::shared_ptr<eTexture>& texture,
+    const std::shared_ptr<Texture>& texture,
     const double drawX,
     const double drawY,
-    const eAlignment alignment,
+    const Alignment alignment,
     const bool colorMod,
     const int colorModRed,
     const int colorModGreen,
@@ -35,7 +35,7 @@ void drawTintedTexture(
 void drawAtTextureAnchor(
     eTilePainter& tilePainter,
     const eTextureSpace& textureSpace,
-    const std::shared_ptr<eTexture>& texture,
+    const std::shared_ptr<Texture>& texture,
     const double buildingDrawX,
     const double buildingDrawY,
     const bool colorMod,
@@ -47,7 +47,7 @@ void drawAtTextureAnchor(
         tilePainter, texture,
         buildingDrawX + textureSpace.fX,
         buildingDrawY + textureSpace.fY,
-        eAlignment::top,
+        Alignment::top,
         colorMod, colorModRed, colorModGreen, colorModBlue);
 }
 
@@ -117,7 +117,7 @@ void drawTemple(
     drawTintedTexture(
         tilePainter, textures.fWoman,
         womanDrawX, womanDrawY,
-        eAlignment::bottom,
+        Alignment::bottom,
         colorMod, colorModRed, colorModGreen, colorModBlue);
 }
 
@@ -195,7 +195,7 @@ void drawAltar(
         tilePainter, altarTexture,
         buildingDrawX + textureSpace.fX + altarOffsetX,
         buildingDrawY + textureSpace.fY + altarOffsetY,
-        eAlignment::top,
+        Alignment::top,
         colorMod, colorModRed, colorModGreen, colorModBlue);
 }
 

@@ -4,7 +4,7 @@
 #include "eresourcecollectbuildingbase.h"
 
 class eUrchinGatherer;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eUrchinQuayState {
     waiting,
@@ -20,8 +20,8 @@ public:
 
     void timeChanged(const int by) override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void addRaw() override;
 
@@ -31,7 +31,7 @@ public:
 
     eUrchinQuayState state() const { return mState; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void spawnGatherer();
     void updateDisabled();

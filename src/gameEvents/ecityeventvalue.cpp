@@ -1,16 +1,16 @@
 ﻿#include "ecityeventvalue.h"
 
-#include "estringhelpers.h"
-#include "elanguage.h"
+#include "string-helpers.h"
+#include "language.h"
 #include "engine/world-city.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eCityEventValue::eCityEventValue(GameBoard &board,
                                  const eValidator& v) :
     mBoard(board), mValidator(v) {}
 
-void eCityEventValue::serialize(eSaveArchive& ar, GameBoard& board) {
+void eCityEventValue::serialize(SaveArchive& ar, GameBoard& board) {
     ar.worldCityField("city", &board, mCity);
     ar.field("minCityId", mMinCityId, 0);
     ar.field("maxCityId", mMaxCityId, 0);
@@ -59,8 +59,8 @@ int eCityEventValue::chooseCityId() const {
 
 void eCityEventValue::longNameReplaceCity(
         const std::string& id, std::string& tmpl) const {
-    const auto none = eLanguage::text("none");
+    const auto none = Language::text("none");
     const auto city = this->city();
     const auto ctstr = city ? city->name() : none;
-    eStringHelpers::replace(tmpl, id, ctstr);
+    StringHelpers::replace(tmpl, id, ctstr);
 }

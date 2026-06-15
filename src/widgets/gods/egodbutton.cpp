@@ -1,7 +1,7 @@
 #include "egodbutton.h"
 
 #include "widgets/echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 void eGodButton::initialize(const eGodAction& gact) {
     setUnderline(false);
@@ -18,7 +18,7 @@ void eGodButton::initialize(const eGodAction& gact) {
         choose->initialize(7, godNames, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     setType(GodType::hephaestus);
     fitContent();

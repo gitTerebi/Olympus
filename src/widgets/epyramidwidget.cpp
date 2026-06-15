@@ -93,8 +93,8 @@ void ePyramidWidget::initialize(const ePSptr& e, const eAction& updater) {
     cont->fitContent();
     const auto& cs = cont->children();
     for(const auto c : cs) {
-        c->align(eAlignment::hcenter);
+        c->align(Alignment::hcenter);
     }
 
-    cont->align(eAlignment::center);
+    cont->align(Alignment::center);
 }

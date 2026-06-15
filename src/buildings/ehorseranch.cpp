@@ -1,11 +1,11 @@
 ﻿#include "ehorseranch.h"
 
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "horse-ranch-enclosure.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include <algorithm>
 
@@ -24,14 +24,14 @@ void eHorseRanch::erase() {
     eBuilding::erase();
 }
 
-std::shared_ptr<eTexture> eHorseRanch::getTexture(
+std::shared_ptr<Texture> eHorseRanch::getTexture(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     return blds[sizeId].fHorseRanch;
 }
 
-std::vector<eOverlay> eHorseRanch::getOverlays(
+std::vector<Overlay> eHorseRanch::getOverlays(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
@@ -39,15 +39,15 @@ std::vector<eOverlay> eHorseRanch::getOverlays(
     const auto& coll = texs.fHorseRanchOverlay;
     const int texId = textureTime() % coll.size();
 
-    std::vector<eOverlay> os;
-    eOverlay& o = os.emplace_back();
+    std::vector<Overlay> os;
+    Overlay& o = os.emplace_back();
     o.fTex = coll.getTexture(texId);
     o.fX = -2.1;
     o.fY = -2.85;
 
     if(mWheat > 0) {
         const int nw = std::clamp((mWheat - 50)/100, 0, 7);
-        eOverlay& wo = os.emplace_back();
+        Overlay& wo = os.emplace_back();
         wo.fTex = texs.fWaitingWheat.getTexture(nw);
         wo.fX = -0.4;
         wo.fY = -2.7;
@@ -63,12 +63,12 @@ void eHorseRanch::timeChanged(const int by) {
         }
         if(mWheat > 0) {
             mWheatTime += by;
-            if(mWheatTime > eNumbers::sHorseRanchWheatUsePeriod) {
+            if(mWheatTime > Numbers::sHorseRanchWheatUsePeriod) {
                 mWheatTime = 0;
                 mWheat -= 10;
             }
             mHorseTime += by;
-            if(mHorseTime > eNumbers::sHorseRanchHorseSpawnPeriod) {
+            if(mHorseTime > Numbers::sHorseRanchHorseSpawnPeriod) {
                 mHorseTime = 0;
                 if(mEnclosure) mEnclosure->spawnHorse();
 
@@ -140,7 +140,7 @@ bool eHorseRanch::takeHorse() {
     return mEnclosure ? mEnclosure->takeHorse() : false;
 }
 
-void eHorseRanch::serializeFields(eSaveArchive& ar) {
+void eHorseRanch::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("wheat", mWheat);
     ar.field("wheatTime", mWheatTime);

@@ -10,6 +10,11 @@ void eFlatButton::sizeHint(int &w, int &h) {
     const int dim = 8*mult;
     h = dim;
     w += 4*dim;
+    const auto& intrfc = GameTextures::interface()[iRes];
+    if(intrfc.fLoaded) {
+        const auto tex = intrfc.fBuildingButton.getTexture(0);
+        if(tex && tex->height() > h) h = tex->height();
+    }
 }
 
 void eFlatButton::paintEvent(ePainter& p) {
@@ -23,13 +28,13 @@ void eFlatButton::paintEvent(ePainter& p) {
     const int iMax = width()/dim + 1;
     const int lastX = width() - dim;
 
-    const eTextureCollection& coll =
+    const TextureCollection& coll =
             hovered() ? intrfc.fBuildingButtonHover :
                         intrfc.fBuildingButton;
 
     for(int i = 0; i < iMax; i++) {
         const int x = i == iMax - 1 ? lastX : dim*i;
-        stdsptr<eTexture> tex;
+        stdsptr<Texture> tex;
         if(i == 0) {
             tex = coll.getTexture(0);
         } else if(i == iMax - 1) {

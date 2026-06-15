@@ -1,11 +1,11 @@
 #ifndef entry_point_H
 #define entry_point_H
 
-#include "espawner.h"
+#include "spawner.h"
 
 #include "characters/actions/character-action-function.h"
 
-class EntryPoint : public eSpawner {
+class EntryPoint : public Spawner {
 public:
     EntryPoint(const int id,
                 eTile* const tile,
@@ -26,9 +26,9 @@ public:
     void call() override;
 };
 
-class eRiverEntryPoint : public eBanner {
+class RiverEntryPoint : public Banner {
 public:
-    eRiverEntryPoint(const int id,
+    RiverEntryPoint(const int id,
                      eTile* const tile,
                      GameBoard& board);
 };

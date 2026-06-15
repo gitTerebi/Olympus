@@ -9,7 +9,7 @@
 
 class eDomesticatedAnimal;
 class eMoveToAction;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eShepherdActionStage {
     idle, findingAnimal, collecting, grooming, goingBack, waiting
@@ -28,7 +28,7 @@ public:
     bool decide() override;
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void rebuildCurrentStage();
@@ -80,7 +80,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.characterAsField("animal", &board(), mAptr);
     }
@@ -106,7 +106,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterAsField("animal", &board(), mAptr);
     }
 private:
@@ -135,7 +135,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.characterAsField("animal", &board(), mAptr);
     }
@@ -160,7 +160,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterAsField("animal", &board(), mAptr);
     }
 private:

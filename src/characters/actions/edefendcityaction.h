@@ -4,7 +4,7 @@
 #include "edefendattackcityaction.h"
 
 class eInvasionEvent;
-class eSaveArchive;
+class SaveArchive;
 
 class eDefendCityAction : public eDefendAttackCityAction {
 public:
@@ -12,7 +12,7 @@ public:
 
     bool decide() override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void goToTarget();
     bool goToNearestSoldier();

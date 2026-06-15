@@ -4,12 +4,12 @@
 #include "eresourcebuildingbase.h"
 #include "textures/building-textures.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eProcessingBuilding : public eResourceBuildingBase {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
-    using eOverlays = eTextureCollection BuildingTextures::*;
+    using eBaseTex = std::shared_ptr<Texture> BuildingTextures::*;
+    using eOverlays = TextureCollection BuildingTextures::*;
     eProcessingBuilding(GameBoard& board,
                         const eBaseTex baseTex,
                         const double overlayX,
@@ -25,8 +25,8 @@ public:
                         const eCityId cid);
     ~eProcessingBuilding();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
     void nextMonth() override;
@@ -45,7 +45,7 @@ public:
 
     int productionPercent() const;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
 
     const std::vector<BuildingTextures>& mTextures;

@@ -41,7 +41,7 @@ bool MarbleTile::edge(eTile* const tile) {
     return edge(tile, tl, tr, br, bl, t, r, b, l, eWorldDirection::N);
 }
 
-std::shared_ptr<eTexture> MarbleTile::get(
+std::shared_ptr<Texture> MarbleTile::get(
         eTile* const tile,
         const TerrainTextures& textures,
         const eWorldDirection dir) {

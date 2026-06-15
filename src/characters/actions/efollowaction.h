@@ -9,7 +9,7 @@
 
 class eTile;
 class eMovePathAction;
-class eSaveArchive;
+class SaveArchive;
 
 class eFollowAction : public eMoveAction {
 protected:
@@ -25,7 +25,7 @@ public:
     void setDistance(const int d);
 protected:
     void increment(const int by) override;
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eCharacterActionState nextTurn(eOrientation& turn) override;
 

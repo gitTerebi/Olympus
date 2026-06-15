@@ -1,21 +1,21 @@
-#ifndef EARROWSPEARBASE_H
-#define EARROWSPEARBASE_H
+#ifndef ARROW_SPEAR_BASE_H
+#define ARROW_SPEAR_BASE_H
 
-#include "emissile.h"
+#include "missile.h"
 
 #include "textures/destruction-textures.h"
 
-class eArrowSpearBase : public eMissile {
+class ArrowSpearBase : public Missile {
 public:
-    using eMissileTexs = eTextureCollection DestructionTextures::*;
-    eArrowSpearBase(GameBoard& board,
+    using eMissileTexs = TextureCollection DestructionTextures::*;
+    ArrowSpearBase(GameBoard& board,
                     const eMissileTexs missileTexs,
-                    const eMissileType type,
-                    const std::vector<ePathPoint>& path = {});
+                    const MissileType type,
+                    const std::vector<PathPoint>& path = {});
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 private:
     const eMissileTexs mTexs;
 };
 
-#endif // EARROWSPEARBASE_H
+#endif // ARROW_SPEAR_BASE_H

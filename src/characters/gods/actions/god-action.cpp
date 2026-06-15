@@ -2,14 +2,14 @@
 
 #include "engine/game-board.h"
 #include "audio/sounds.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 
 #include "characters/actions/ewaitaction.h"
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
 #include "destruction-puff.h"
-#include "erand.h"
-#include "enumbers.h"
+#include "rand.h"
+#include "numbers.h"
 
 #include <cmath>
 
@@ -192,17 +192,17 @@ void eGodAction::goToTarget() {
 void eSpawnImpactPuffsGodAct::act() {
     auto& brd = board();
     const int groupCounts[4] = {
-        2 + (std::abs(eRand::rand()) % 3),
-        2 + (std::abs(eRand::rand()) % 3),
-        4 + (std::abs(eRand::rand()) % 5),
-        4 + (std::abs(eRand::rand()) % 5)
+        2 + (std::abs(Rand::rand()) % 3),
+        2 + (std::abs(Rand::rand()) % 3),
+        4 + (std::abs(Rand::rand()) % 5),
+        4 + (std::abs(Rand::rand()) % 5)
     };
     // spawn groups 3+4 first (draw underneath), then 1+2 on top
     const int spawnOrder[4] = {2, 3, 0, 1};
     for(const int group : spawnOrder) {
         for(int j = 0; j < groupCounts[group]; j++) {
-            const double angle = (std::abs(eRand::rand()) % 360) * (M_PI / 180.0);
-            const int stepCount = std::abs(eRand::rand()) % 11;
+            const double angle = (std::abs(Rand::rand()) % 360) * (M_PI / 180.0);
+            const int stepCount = std::abs(Rand::rand()) % 11;
             const double dirX = std::cos(angle);
             const double dirY = std::sin(angle);
             new DestructionPuff(brd, mImpactX, mImpactY, dirX, dirY, stepCount, group);

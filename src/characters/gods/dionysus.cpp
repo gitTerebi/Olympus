@@ -7,12 +7,12 @@ Dionysus::Dionysus(GameBoard& board) :
     GameTextures::loadDionysus();
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 Dionysus::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& godTexs = GameTextures::gods()[id];
     const auto& texs = godTexs.fDionysus;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     bool reverse = false;
     bool wrap = true;
     bool disappear = false;

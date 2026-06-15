@@ -6,7 +6,7 @@
 #include "characters/monsters/emonster.h"
 #include "characters/actions/monster-action.h"
 #include "characters/gods/actions/god-minion-action.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
 #include "gameEvents/conquest/player-conquest-event-base.h"
@@ -35,12 +35,12 @@
 #include "eartemissanctuary.h"
 #include "ehephaestussanctuary.h"
 #include "ezeussanctuary.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "etemplealtarbuilding.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include "etemplealtarbuilding.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eSanctuary::eSanctuary(GameBoard& board,
                        const eBuildingType type,
@@ -123,7 +123,7 @@ God* eSanctuary::spawnGod() {
     const auto ct = centerTile();
     const int tx = ct->x();
     const int ty = ct->y();
-    const auto cr = eTileHelper::closestRoad(tx, ty, board);
+    const auto cr = TileHelper::closestRoad(tx, ty, board);
     if(!cr) return nullptr;
     mGod->changeTile(cr);
     return c.get();
@@ -144,7 +144,7 @@ void eSanctuary::spawnDefenderMinion() {
     if(!m) return;
     m->setBothCityIds(cityId());
     const auto ct = centerTile();
-    const auto cr = eTileHelper::closestRoad(ct->x(), ct->y(), board);
+    const auto cr = TileHelper::closestRoad(ct->x(), ct->y(), board);
     if(!cr) return;
     m->changeTile(cr);
     const auto a = e::make_shared<eGodMinionAction>(m.get());
@@ -246,7 +246,7 @@ void eSanctuary::sendAresAbroad() {
 }
 
 double eSanctuary::helpTimeFraction() const {
-    return double(mHelpTimer)/eNumbers::sGodHelpPeriod;
+    return double(mHelpTimer)/Numbers::sGodHelpPeriod;
 }
 
 double eSanctuary::helpAttackTimeFraction() const {
@@ -254,8 +254,8 @@ double eSanctuary::helpAttackTimeFraction() const {
     const auto pid = playerId();
     const auto p = board.boardPlayerWithId(pid);
     const int pTimer = p->godAttackTimer();
-    const double v1 = double(mHelpTimer)/eNumbers::sGodHelpAttackPeriod;
-    const double v2 = double(pTimer)/eNumbers::sGodHelpAttackPlayerPeriod;
+    const double v1 = double(mHelpTimer)/Numbers::sGodHelpAttackPeriod;
+    const double v2 = double(pTimer)/Numbers::sGodHelpAttackPlayerPeriod;
     return std::min(v1, v2);
 }
 
@@ -374,7 +374,7 @@ void eSanctuary::registerElement(const stdsptr<eSanctBuilding>& e) {
 
 void eSanctuary::boostHelpTimer() {
     // each completed sacrifice adds 15 days worth of prayer progress
-    mHelpTimer += 15 * eNumbers::sDayLength;
+    mHelpTimer += 15 * Numbers::sDayLength;
 }
 
 void eSanctuary::timeChanged(const int by) {
@@ -412,7 +412,7 @@ void eSanctuary::nextMonth() {
     if(person) return;
     if(!finished()) return;
     eHelpDenialReason reason;
-    if(eRand::rand() % 5 == 0) {
+    if(Rand::rand() % 5 == 0) {
         const bool r = askForHelp(reason);
         mAskedForHelp = false;
         if(r) return;
@@ -434,7 +434,7 @@ void eSanctuary::nextMonth() {
     }
 }
 
-void eSanctuary::serializeFields(eSaveArchive& ar) {
+void eSanctuary::serializeFields(SaveArchive& ar) {
     eMonument::serializeFields(ar);
     auto& board = getBoard();
     ar.characterAsField("god", &board, mGod);
@@ -451,7 +451,7 @@ void eSanctuary::serializeFields(eSaveArchive& ar) {
     const int nw = ar.writing() ? static_cast<int>(mWarriorTiles.size()) : 0;
     if(ar.reading()) mWarriorTiles.clear();
     ar.countedArrayField("warriorTiles", nw,
-        [this, &board](eSaveArchive& itemAr, const int i) {
+        [this, &board](SaveArchive& itemAr, const int i) {
             eTile* t = itemAr.writing() ? mWarriorTiles[i] : nullptr;
             itemAr.tileField("tile", board, t);
             if(itemAr.reading()) mWarriorTiles.push_back(t);
@@ -460,7 +460,7 @@ void eSanctuary::serializeFields(eSaveArchive& ar) {
     const int ns = ar.writing() ? static_cast<int>(mSpecialTiles.size()) : 0;
     if(ar.reading()) mSpecialTiles.clear();
     ar.countedArrayField("specialTiles", ns,
-        [this, &board](eSaveArchive& itemAr, const int i) {
+        [this, &board](SaveArchive& itemAr, const int i) {
             eTile* t = itemAr.writing() ? mSpecialTiles[i] : nullptr;
             itemAr.tileField("tile", board, t);
             if(itemAr.reading()) mSpecialTiles.push_back(t);
@@ -484,8 +484,8 @@ bool eSanctuary::askForAttack(const eCityId cid, eHelpDenialReason& reason) {
     const auto pid = playerId();
     const auto p = board.boardPlayerWithId(pid);
     const int pTimer = p->godAttackTimer();
-    if(mGodAbroad || mHelpTimer < eNumbers::sGodHelpAttackPeriod ||
-       pTimer < eNumbers::sGodHelpAttackPlayerPeriod) {
+    if(mGodAbroad || mHelpTimer < Numbers::sGodHelpAttackPeriod ||
+       pTimer < Numbers::sGodHelpAttackPlayerPeriod) {
         reason = eHelpDenialReason::tooSoon;
         return false;
     }
@@ -521,7 +521,7 @@ bool eSanctuary::askForAttack(const eCityId cid, eHelpDenialReason& reason) {
 }
 
 bool eSanctuary::askForHelp(eHelpDenialReason& reason) {
-    if(mGodAbroad || mHelpTimer < eNumbers::sGodHelpPeriod) {
+    if(mGodAbroad || mHelpTimer < Numbers::sGodHelpPeriod) {
         reason = eHelpDenialReason::tooSoon;
         return false;
     }

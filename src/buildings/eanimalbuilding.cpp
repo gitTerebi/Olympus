@@ -1,6 +1,6 @@
 #include "eanimalbuilding.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eAnimalBuilding::eAnimalBuilding(
          GameBoard& board,
@@ -21,7 +21,7 @@ void eAnimalBuilding::nextMonth() {
     if(!mA && !isCattle) erase();
 }
 
-void eAnimalBuilding::serializeFields(eSaveArchive& ar) {
+void eAnimalBuilding::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.characterField("animal", &getBoard(), mA);
 }

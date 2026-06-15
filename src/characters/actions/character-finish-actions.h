@@ -5,7 +5,7 @@
 #include "pointers/estdpointer.h"
 
 class eCharacter;
-class eSaveArchive;
+class SaveArchive;
 
 class eChar_fightFinish : public eCharActFunc {
 public:
@@ -15,7 +15,7 @@ public:
     void call() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdptr<eCharacter> mTptr;
 };
@@ -29,7 +29,7 @@ public:
     void call() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool mWithCorpse;
     stdptr<eCharacter> mTptr;

@@ -12,7 +12,7 @@
 
 class TradePostInfoWidget : public eEmployingBuildingInfoWidget {
 public:
-    TradePostInfoWidget(eMainWindow* const window,
+    TradePostInfoWidget(MainWindow* const window,
                          eMainWidget* const mw);
 
     using ePrevNextAction = std::function<void(bool)>;

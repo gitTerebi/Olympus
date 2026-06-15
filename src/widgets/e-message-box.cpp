@@ -9,14 +9,14 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include "elanguage.h"
+#include "language.h"
 
-#include "estringhelpers.h"
+#include "string-helpers.h"
 #include "engine/world-city.h"
 #include "widgets/game-widget.h"
 
 #include "engine/game-board.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "eboardcityswitchbutton.h"
 
 #include "engine/egifthelpers.h"
@@ -35,7 +35,7 @@ void eMessageBox::initialize(GameBoard& board,
                              const eEventData& ed,
                              const eAction& viewTile,
                              const eAction& closeFunc,
-                             eMessage msg) {
+                             Message msg) {
     const auto boardPtr = &board;
     mCloseFunc = closeFunc;
     setType(eFrameType::message);
@@ -46,24 +46,24 @@ void eMessageBox::initialize(GameBoard& board,
     {
         w0->setNoPadding();
         if(const auto& c = ed.fCity) {
-            eStringHelpers::replaceAll(msg.fTitle, "[city_name]",
+            StringHelpers::replaceAll(msg.fTitle, "[city_name]",
                                        c->name());
         }
         if(const auto& c = ed.fRivalCity) {
-            eStringHelpers::replaceAll(msg.fTitle, "[rival_city_name]",
+            StringHelpers::replaceAll(msg.fTitle, "[rival_city_name]",
                                        c->name());
         }
         {
             const auto type = ed.fResourceType;
             const auto nameShort = eResourceTypeHelpers::typeName(type);
-            eStringHelpers::replaceAll(msg.fTitle, "[itemshort]",
+            StringHelpers::replaceAll(msg.fTitle, "[itemshort]",
                                        nameShort);
         }
 
-        eStringHelpers::replaceAll(msg.fTitle, "[god]",
+        StringHelpers::replaceAll(msg.fTitle, "[god]",
                                    God::sGodName(ed.fGod));
 
-        eStringHelpers::replaceAll(msg.fTitle, "[monster]",
+        StringHelpers::replaceAll(msg.fTitle, "[monster]",
                                    eMonster::sMonsterName(ed.fMonster));
 
         const auto title = new eLabel(msg.fTitle, window());
@@ -72,7 +72,7 @@ void eMessageBox::initialize(GameBoard& board,
         w0->addWidget(title);
         w0->fitContent();
         w0->setWidth(width() - 2*p);
-        title->align(eAlignment::hcenter);
+        title->align(Alignment::hcenter);
         addWidget(w0);
     }
 
@@ -81,7 +81,7 @@ void eMessageBox::initialize(GameBoard& board,
     ww->setPaddingS();
 
     {
-        const auto to = eLanguage::zeusText(63, 5); // to
+        const auto to = Language::zeusText(63, 5); // to
         const auto dateStr = ed.fDate.shortString();
         auto str = dateStr + "     " + to + " " + ed.fPlayerName;
         const auto& target = ed.fTarget;
@@ -103,14 +103,14 @@ void eMessageBox::initialize(GameBoard& board,
         const auto butt = new eExclamationButton(window());
         butt->setPressAction(viewTile);
         www->addWidget(butt);
-        const auto go = eLanguage::zeusText(12, 1); // got to site of event
+        const auto go = Language::zeusText(12, 1); // got to site of event
         const auto l = new eLabel(go, window());
         l->setFontSizeS();
         l->fitContent();
         www->addWidget(l);
         www->stackHorizontally();
         www->fitContent();
-        butt->align(eAlignment::vcenter);
+        butt->align(Alignment::vcenter);
         ww->addWidget(www);
         www->setX(3*p);
     }
@@ -118,13 +118,13 @@ void eMessageBox::initialize(GameBoard& board,
     const auto text = new eLabel(window());
     text->setFontSizeS();
     text->setWrapWidth(width() - 8*p);
-    eStringHelpers::replaceAll(msg.fText, "[greeting]",
-                               eLanguage::text("greetings"));
-    eStringHelpers::replaceAll(msg.fText, "[player_name]",
+    StringHelpers::replaceAll(msg.fText, "[greeting]",
+                               Language::text("greetings"));
+    StringHelpers::replaceAll(msg.fText, "[player_name]",
                                ed.fPlayerName);
-    eStringHelpers::replaceAll(msg.fText, "[god]",
+    StringHelpers::replaceAll(msg.fText, "[god]",
                                God::sGodName(ed.fGod));
-    eStringHelpers::replaceAll(msg.fText, "[monster]",
+    StringHelpers::replaceAll(msg.fText, "[monster]",
                                eMonster::sMonsterName(ed.fMonster));
 
     const auto type = ed.fResourceType;
@@ -133,41 +133,41 @@ void eMessageBox::initialize(GameBoard& board,
     const int count = ed.fResourceCount;
     const auto countStr = std::to_string(count);
 
-    eStringHelpers::replaceAll(msg.fText, "[amount]",
+    StringHelpers::replaceAll(msg.fText, "[amount]",
                                countStr);
-    eStringHelpers::replaceAll(msg.fText, "[amount_granted]",
+    StringHelpers::replaceAll(msg.fText, "[amount_granted]",
                                countStr);
-    eStringHelpers::replaceAll(msg.fText, "[item]",
+    StringHelpers::replaceAll(msg.fText, "[item]",
                                item);
-    eStringHelpers::replaceAll(msg.fText, "[itemshort]",
+    StringHelpers::replaceAll(msg.fText, "[itemshort]",
                                itemshort);
 
     const int giftSize = eGiftHelpers::giftCount(type);
     if(giftSize > 0) {
         const int size = count/giftSize;
         std::string giftSize;
-        if(size < 2) giftSize = eLanguage::zeusText(162, 0);
-        else if(size < 3) giftSize = eLanguage::zeusText(162, 1);
-        else giftSize = eLanguage::zeusText(162, 2);
-        eStringHelpers::replaceAll(msg.fText, "[gift_size]",
+        if(size < 2) giftSize = Language::zeusText(162, 0);
+        else if(size < 3) giftSize = Language::zeusText(162, 1);
+        else giftSize = Language::zeusText(162, 2);
+        StringHelpers::replaceAll(msg.fText, "[gift_size]",
                                    giftSize);
     }
 
     if(const auto c = ed.fCity) {
         const auto nat = c->nationality();
         const auto natName = WorldCity::sNationalityName(nat);
-        eStringHelpers::replaceAll(msg.fText, "[nationality]",
+        StringHelpers::replaceAll(msg.fText, "[nationality]",
                                    natName);
-        eStringHelpers::replaceAll(msg.fText, "[city_name]",
+        StringHelpers::replaceAll(msg.fText, "[city_name]",
                                    c->name());
-        eStringHelpers::replaceAll(msg.fText, "[last_colony]",
+        StringHelpers::replaceAll(msg.fText, "[last_colony]",
                                    c->name());
-        eStringHelpers::replaceAll(msg.fText, "[leader_name]",
+        StringHelpers::replaceAll(msg.fText, "[leader_name]",
                                    c->leader());
-        eStringHelpers::replaceAll(msg.fText, "[a_foreign_army]",
+        StringHelpers::replaceAll(msg.fText, "[a_foreign_army]",
                                    c->anArmy());
         if(ed.fType == eMessageEventType::invasionMessage) {
-            eStringHelpers::replaceAll(msg.fText, "[time_until_attack]",
+            StringHelpers::replaceAll(msg.fText, "[time_until_attack]",
                                       std::to_string(ed.fTime));
         }
     }
@@ -175,9 +175,9 @@ void eMessageBox::initialize(GameBoard& board,
     if(c) {
         const auto nat = c->nationality();
         const auto natName = WorldCity::sNationalityName(nat);
-        eStringHelpers::replaceAll(msg.fText, "[rival_nationality]",
+        StringHelpers::replaceAll(msg.fText, "[rival_nationality]",
                                    natName);
-        eStringHelpers::replaceAll(msg.fText, "[rival_city_name]",
+        StringHelpers::replaceAll(msg.fText, "[rival_city_name]",
                                    c->name());
     }
 
@@ -202,7 +202,7 @@ void eMessageBox::initialize(GameBoard& board,
         const auto surrenderB = new FramedButton(window());
         surrenderB->setFontSizeS();
         surrenderB->setUnderline(false);
-        surrenderB->setText(eLanguage::zeusText(44, 282));
+        surrenderB->setText(Language::zeusText(44, 282));
         surrenderB->fitContent();
         wid->addWidget(surrenderB);
         surrenderB->setPressAction([this, boardPtr, ed]() {
@@ -217,8 +217,8 @@ void eMessageBox::initialize(GameBoard& board,
         bribeB->setEnabled(canBribe);
         bribeB->setFontSizeS();
         bribeB->setUnderline(false);
-        auto bribeStr = eLanguage::zeusText(44, 281);
-        eStringHelpers::replace(bribeStr, "[bribe_amount]",
+        auto bribeStr = Language::zeusText(44, 281);
+        StringHelpers::replace(bribeStr, "[bribe_amount]",
                                 std::to_string(ed.fBribe));
         bribeB->setText(bribeStr);
         bribeB->fitContent();
@@ -235,7 +235,7 @@ void eMessageBox::initialize(GameBoard& board,
         const auto fightToDefend = new FramedButton(window());
         fightToDefend->setFontSizeS();
         fightToDefend->setUnderline(false);
-        fightToDefend->setText(eLanguage::zeusText(44, 283));
+        fightToDefend->setText(Language::zeusText(44, 283));
         fightToDefend->fitContent();
         wid->addWidget(fightToDefend);
         fightToDefend->setPressAction([this, boardPtr, ed]() {
@@ -250,9 +250,9 @@ void eMessageBox::initialize(GameBoard& board,
         wid->fitContent();
         wid->setWidth(w);
 
-        surrenderB->align(eAlignment::vcenter);
-        bribeB->align(eAlignment::vcenter);
-        fightToDefend->align(eAlignment::vcenter);
+        surrenderB->align(Alignment::vcenter);
+        bribeB->align(Alignment::vcenter);
+        fightToDefend->align(Alignment::vcenter);
 
         addWidget(wid);
     } else if(ed.fType == eMessageEventType::requestTributeGranted) {
@@ -271,7 +271,7 @@ void eMessageBox::initialize(GameBoard& board,
             const auto acceptB = new FramedButton(window());
             acceptB->setFontSizeS();
             acceptB->setUnderline(false);
-            acceptB->setText(eLanguage::zeusText(44, 209));
+            acceptB->setText(Language::zeusText(44, 209));
             acceptB->fitContent();
             if(type == eResourceType::drachmas) {
                 wid->addWidget(acceptB);
@@ -330,7 +330,7 @@ void eMessageBox::initialize(GameBoard& board,
             const auto postponeB = new FramedButton(window());
             postponeB->setFontSizeS();
             postponeB->setUnderline(false);
-            postponeB->setText(eLanguage::zeusText(44, 211));
+            postponeB->setText(Language::zeusText(44, 211));
             postponeB->fitContent();
             wid->addWidget(postponeB);
             postponeB->setPressAction([this, boardPtr, ed]() {
@@ -343,7 +343,7 @@ void eMessageBox::initialize(GameBoard& board,
             const auto declineB = new FramedButton(window());
             declineB->setFontSizeS();
             declineB->setUnderline(false);
-            declineB->setText(eLanguage::zeusText(44, 210));
+            declineB->setText(Language::zeusText(44, 210));
             declineB->fitContent();
             wid->addWidget(declineB);
             declineB->setPressAction([this, boardPtr, ed]() {
@@ -360,7 +360,7 @@ void eMessageBox::initialize(GameBoard& board,
 
             const auto cs = wid->children();
             for(const auto c : cs) {
-                c->align(eAlignment::vcenter);
+                c->align(Alignment::vcenter);
             }
 
         addWidget(wid);
@@ -383,7 +383,7 @@ void eMessageBox::initialize(GameBoard& board,
                                                     nullptr, &board, iniCid, &stockLabel);
 
         if(time > 0) {
-            eStringHelpers::replaceAll(msg.fText, "[time_allotted]",
+            StringHelpers::replaceAll(msg.fText, "[time_allotted]",
                                        timeStr);
         }
 
@@ -396,7 +396,7 @@ void eMessageBox::initialize(GameBoard& board,
         const auto a0B = new FramedButton(window());
         a0B->setFontSizeS();
         a0B->setUnderline(false);
-        a0B->setText(eLanguage::zeusText(44, 275));
+        a0B->setText(Language::zeusText(44, 275));
         a0B->fitContent();
 
         if(type == eResourceType::drachmas) {
@@ -445,7 +445,7 @@ void eMessageBox::initialize(GameBoard& board,
         const auto a1B = new FramedButton(window());
         a1B->setFontSizeS();
         a1B->setUnderline(false);
-        a1B->setText(eLanguage::zeusText(44, 211));
+        a1B->setText(Language::zeusText(44, 211));
         a1B->fitContent();
         wid->addWidget(a1B);
         a1B->setPressAction([this, boardPtr, ed]() {
@@ -462,7 +462,7 @@ void eMessageBox::initialize(GameBoard& board,
             a2B = new FramedButton(window());
             a2B->setFontSizeS();
             a2B->setUnderline(false);
-            a2B->setText(eLanguage::zeusText(44, 212));
+            a2B->setText(Language::zeusText(44, 212));
             a2B->fitContent();
         }
         wid->addWidget(a2B);
@@ -477,9 +477,9 @@ void eMessageBox::initialize(GameBoard& board,
         wid->layoutHorizontallyWithoutSpaces();
         wid->fitContent();
         wid->setWidth(w);
-        a0B->align(eAlignment::vcenter);
-        a1B->align(eAlignment::vcenter);
-        a2B->align(eAlignment::vcenter);
+        a0B->align(Alignment::vcenter);
+        a1B->align(Alignment::vcenter);
+        a2B->align(Alignment::vcenter);
 
         addWidget(wid);
     } else if(ed.fType == eMessageEventType::troopsRequest) {
@@ -488,7 +488,7 @@ void eMessageBox::initialize(GameBoard& board,
         const int time = ed.fTime;
         const auto timeStr = std::to_string(time);
 
-        eStringHelpers::replaceAll(msg.fText, "[travel_time]",
+        StringHelpers::replaceAll(msg.fText, "[travel_time]",
                                    timeStr);
 
         wid = new eWidget(window());
@@ -497,7 +497,7 @@ void eMessageBox::initialize(GameBoard& board,
         const auto a0B = new FramedButton(window());
         a0B->setFontSizeS();
         a0B->setUnderline(false);
-        a0B->setText(eLanguage::zeusText(44, 275));
+        a0B->setText(Language::zeusText(44, 275));
         a0B->fitContent();
         wid->addWidget(a0B);
         if(ed.fCloseResponse >= 0) {
@@ -518,7 +518,7 @@ void eMessageBox::initialize(GameBoard& board,
         const auto a1B = new FramedButton(window());
         a1B->setFontSizeS();
         a1B->setUnderline(false);
-        a1B->setText(eLanguage::zeusText(44, 211));
+        a1B->setText(Language::zeusText(44, 211));
         a1B->fitContent();
         wid->addWidget(a1B);
         a1B->setPressAction([this, boardPtr, ed]() {
@@ -531,7 +531,7 @@ void eMessageBox::initialize(GameBoard& board,
         const auto a2B = new FramedButton(window());
         a2B->setFontSizeS();
         a2B->setUnderline(false);
-        a2B->setText(eLanguage::zeusText(44, 212));
+        a2B->setText(Language::zeusText(44, 212));
         a2B->fitContent();
         wid->addWidget(a2B);
         a2B->setPressAction([this, boardPtr, ed]() {
@@ -546,9 +546,9 @@ void eMessageBox::initialize(GameBoard& board,
         wid->layoutHorizontallyWithoutSpaces();
         wid->fitContent();
         wid->setWidth(w);
-        a0B->align(eAlignment::vcenter);
-        a1B->align(eAlignment::vcenter);
-        a2B->align(eAlignment::vcenter);
+        a0B->align(Alignment::vcenter);
+        a1B->align(Alignment::vcenter);
+        a2B->align(Alignment::vcenter);
 
         addWidget(wid);
     }
@@ -576,19 +576,19 @@ void eMessageBox::initialize(GameBoard& board,
             wid->layoutHorizontallyWithoutSpaces();
             wid->fitContent();
             wid->setWidth(w);
-            ok->align(eAlignment::vcenter);
+            ok->align(Alignment::vcenter);
         } else {
-            ok->align(eAlignment::right | eAlignment::bottom);
+            ok->align(Alignment::right | Alignment::bottom);
             ok->setX(ok->x() - 1.5*p);
             ok->setY(ok->y() - 1.5*p);
         }
     }
     if(wid) {
-        wid->align(eAlignment::hcenter);
+        wid->align(Alignment::hcenter);
         wid->setY(wid->y() + p/2);
     }
-    w0->align(eAlignment::hcenter);
-    ww->align(eAlignment::hcenter);
+    w0->align(Alignment::hcenter);
+    ww->align(Alignment::hcenter);
 }
 
 void eMessageBox::close() {
@@ -635,12 +635,12 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
 
     if(stockLabelPtr && board) {
         const int stock = board->resourceCount(cid, type);
-        const auto stockText = eLanguage::zeusText(44, 278); // in stock
+        const auto stockText = Language::zeusText(44, 278); // in stock
         const auto stockLabel = addLabel("");
         stockLabel->setText("(" + std::to_string(stock) + " " +
                             stockText + ") ");
         *stockLabelPtr = stockLabel;
-        stockLabel->align(eAlignment::hcenter);
+        stockLabel->align(Alignment::hcenter);
         stockLabel->fitContent();
     }
 
@@ -649,13 +649,13 @@ eWidget* eMessageBox::createTributeWidget(const eResourceType type,
 
     if(months > 0) {
         const auto monthsStr = std::to_string(months);
-        const auto m = eLanguage::zeusText(8, 5);
-        const auto c = eLanguage::zeusText(12, 2);
+        const auto m = Language::zeusText(8, 5);
+        const auto c = Language::zeusText(12, 2);
         const auto mtc = m + " " + c;
         addLabel("        " + mtc + " " + monthsStr);
     } else if(space != -1 && type != eResourceType::drachmas) {
         const auto spaceStr = std::to_string(std::min(count, space));
-        addLabel(" / " + eLanguage::zeusText(130, 6) + " ");
+        addLabel(" / " + Language::zeusText(130, 6) + " ");
         addIcon(type);
         const auto spaceLabel = addLabel("9999");
         if(spaceLabelPtr) *spaceLabelPtr = spaceLabel;

@@ -1,9 +1,9 @@
 #include "eeventtrigger.h"
 
 #include "egameevent.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eEventTrigger::eEventTrigger(const eCityId cid,
                              const std::string& name,
@@ -29,8 +29,8 @@ void eEventTrigger::loadResources() const {
     }
 }
 
-void eEventTrigger::serialize(eSaveArchive& ar) {
-    ar.arrayField("events", mEvents, [this](eSaveArchive& ar, auto& e) {
+void eEventTrigger::serialize(SaveArchive& ar) {
+    ar.arrayField("events", mEvents, [this](SaveArchive& ar, auto& e) {
         eGameEventType type;
         if(ar.writing()) {
             type = e->type();
@@ -40,12 +40,12 @@ void eEventTrigger::serialize(eSaveArchive& ar) {
             const auto branch = eGameEventBranch::trigger;
             e = eGameEvent::sCreate(mCid, type, branch, mBoard);
         }
-        ar.archiveField("state", [&e](eSaveArchive& childAr) {
+        ar.archiveField("state", [&e](SaveArchive& childAr) {
             e->serialize(childAr);
         });
     });
     if(ar.reading()) {
-        eVectorHelpers::removeAll(mEvents, stdsptr<eGameEvent>(nullptr));
+        VectorHelpers::removeAll(mEvents, stdsptr<eGameEvent>(nullptr));
     }
 }
 
@@ -58,7 +58,7 @@ void eEventTrigger::addEvent(const stdsptr<eGameEvent>& e) {
 }
 
 void eEventTrigger::removeEvent(const stdsptr<eGameEvent>& e) {
-    eVectorHelpers::remove(mEvents, e);
+    VectorHelpers::remove(mEvents, e);
 }
 
 WorldBoard* eEventTrigger::worldBoard() const {

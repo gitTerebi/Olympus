@@ -1,7 +1,7 @@
 #include "ehephaestushelpaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "buildings/epalace.h"
 #include "gameEvents/invasions/invasion-event.h"
 #include "characters/monsters/ecalydonianboar.h"
@@ -35,7 +35,7 @@ bool eHephaestusHelpAction::decide() {
     return true;
 }
 
-void eHephaestusHelpAction::serializeFields(eSaveArchive& ar) {
+void eHephaestusHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("preProvidingStage", mPreProvidingStage);

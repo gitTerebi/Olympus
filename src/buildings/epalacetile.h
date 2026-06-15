@@ -4,7 +4,7 @@
 #include "ebuilding.h"
 
 class ePalace;
-class eSaveArchive;
+class SaveArchive;
 
 class ePalaceTile : public eBuilding {
 public:
@@ -14,7 +14,7 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
 
     int provide(const eProvide p, const int n) override;
 
@@ -23,7 +23,7 @@ public:
 
     bool other() const { return mOther; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     ePalace* mPalace = nullptr;
     const bool mOther;

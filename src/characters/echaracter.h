@@ -4,17 +4,17 @@
 #include "pointers/eobject.h"
 #include "pointers/estdpointer.h"
 
-#include "eoverlay.h"
+#include "overlay.h"
 #include "engine/eorientation.h"
 #include "engine/etilesize.h"
-#include "etexture.h"
+#include "texture.h"
 #include "echaracterbase.h"
 
 class GameBoard;
 class eTile;
 class eCharacterAction;
-class eTextureCollection;
-class eSaveArchive;
+class TextureCollection;
+class SaveArchive;
 enum class eProvide;
 
 struct ePausedAction {
@@ -28,10 +28,10 @@ public:
     eCharacter(GameBoard& board, const eCharacterType type);
     virtual ~eCharacter();
 
-    virtual std::shared_ptr<eTexture> getTexture(const eTileSize size) const = 0;
-    virtual eOverlay getSecondaryTexture(const eTileSize size) const {
+    virtual std::shared_ptr<Texture> getTexture(const eTileSize size) const = 0;
+    virtual Overlay getSecondaryTexture(const eTileSize size) const {
         (void)size;
-        return eOverlay();
+        return Overlay();
     }
     virtual bool canFight(eCharacter* const c);
 
@@ -98,11 +98,11 @@ public:
     eTeamId teamId() const;
     int seedId() const { return mSeedId; }
 protected:
-    std::shared_ptr<eTexture> getTexture(
-            const eTextureCollection* const coll,
+    std::shared_ptr<Texture> getTexture(
+            const TextureCollection* const coll,
             const bool wrap, const bool reverse,
             const bool disappear = false) const;
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     GameBoard& ownerBoard() const;
 private:
     void restorePausedAction(const ePausedAction& p);

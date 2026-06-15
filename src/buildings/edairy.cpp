@@ -23,12 +23,12 @@ eDairy::eDairy(GameBoard& board, const eCityId cid) :
     GameTextures::loadDairy();
 }
 
-std::vector<eOverlay> eDairy::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eDairy::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = mTextures[sizeId];
     auto os = eShepherBuildingBase::getOverlays(size);
     if(resource() > 0) {
-        eOverlay cheeese;
+        Overlay cheeese;
         const int res = std::clamp(resource() - 1, 0, 4);
         cheeese.fTex = texs.fWaitingCheese.getTexture(res);
         cheeese.fX = 0;

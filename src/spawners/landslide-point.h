@@ -1,13 +1,13 @@
-#ifndef ELANDSLIDEPOINT_H
-#define ELANDSLIDEPOINT_H
+#ifndef LANDSLIDE_POINT_H
+#define LANDSLIDE_POINT_H
 
-#include "ebanner.h"
+#include "banner.h"
 
-class eLandSlidePoint : public eBanner {
+class LandSlidePoint : public Banner {
 public:
-    eLandSlidePoint(const int id,
+    LandSlidePoint(const int id,
                     eTile* const tile,
                     GameBoard& board);
 };
 
-#endif // ELANDSLIDEPOINT_H
+#endif // LANDSLIDE_POINT_H

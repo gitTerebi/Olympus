@@ -5,8 +5,8 @@
 #include "characters/actions/egroweraction.h"
 #include "buildings/eresourcebuilding.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 #include <algorithm>
 #include <memory>
@@ -55,7 +55,7 @@ void eGrowersLodge::killWalkers() {
     }
 }
 
-std::shared_ptr<eTexture> eGrowersLodge::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eGrowersLodge::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
     switch(mType) {
@@ -67,17 +67,17 @@ std::shared_ptr<eTexture> eGrowersLodge::getTexture(const eTileSize size) const 
     return nullptr;
 }
 
-std::vector<eOverlay> eGrowersLodge::
+std::vector<Overlay> eGrowersLodge::
     getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
-    std::vector<eOverlay> os;
+    std::vector<Overlay> os;
 
     switch(mType) {
     case eGrowerType::grapesAndOlives: {
         const auto& coll = texs.fGrowersLodgeOverlay;
         const int texId = textureTime() % coll.size();
-        eOverlay o;
+        Overlay o;
         o.fTex = coll.getTexture(texId);
         o.fX = -1.45;
         o.fY = -2.2;
@@ -86,7 +86,7 @@ std::vector<eOverlay> eGrowersLodge::
     case eGrowerType::oranges: {
         const auto& coll = texs.fOrangeTendersLodgeOverlay;
         const int texId = textureTime() % coll.size();
-        eOverlay o;
+        Overlay o;
         o.fTex = coll.getTexture(texId);
         o.fX = -1.75;
         o.fY = -2.3;
@@ -98,7 +98,7 @@ std::vector<eOverlay> eGrowersLodge::
     const int oliveLoads = mOlives / sUnitsPerLoad;
     const int orangeLoads = mOranges / sUnitsPerLoad;
     if(grapeLoads > 0) {
-        eOverlay grapes;
+        Overlay grapes;
         const auto& coll = texs.fWaitingGrapes;
         const int resMax = coll.size() - 1;
         const int res = std::clamp(grapeLoads - 1, 0, resMax);
@@ -108,7 +108,7 @@ std::vector<eOverlay> eGrowersLodge::
         os.push_back(grapes);
     }
     if(oliveLoads > 0) {
-        eOverlay olives;
+        Overlay olives;
         const auto& coll = texs.fWaitingOlives;
         const int resMax = coll.size() - 1;
         const int res = std::clamp(oliveLoads - 1, 0, resMax);
@@ -118,7 +118,7 @@ std::vector<eOverlay> eGrowersLodge::
         os.push_back(olives);
     }
     if(orangeLoads > 0) {
-        eOverlay oranges;
+        Overlay oranges;
         const auto& coll = texs.fWaitingOranges;
         const int resMax = coll.size() - 1;
         const int res = std::clamp(orangeLoads - 1, 0, resMax);
@@ -136,7 +136,7 @@ void eGrowersLodge::timeChanged(const int by) {
             mCart = spawnCart(eCartActionTypeSupport::deliver);
         }
         if(mCart) {
-            mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
+            mCart->setMaxDistance(Numbers::sResourceBuildingMaxResourceGiveDistance);
         }
         if(mSpawnEnabled) {
             const int readyOlives = readyOliveCount();
@@ -171,7 +171,7 @@ void eGrowersLodge::timeChanged(const int by) {
                 return (mGrower ? 1 : 0) + harvesters;
             };
             const double eff = effectiveness();
-            const double waitMax = eNumbers::sGrowerSpawnWaitTime;
+            const double waitMax = Numbers::sGrowerSpawnWaitTime;
             const bool needHarvester =
                 canHarvest && harvesters < fieldCap;
             if(needHarvester) {
@@ -311,7 +311,7 @@ void eGrowersLodge::nextMonth() {
                              curMonth == eMonth::january;
     if(startGrape || startOlive || startOrange) {
         for(auto& t : mOliveHarvesterSpawnTimes) {
-            t = eNumbers::sGrowerSpawnWaitTime;
+            t = Numbers::sGrowerSpawnWaitTime;
         }
     }
 }
@@ -330,7 +330,7 @@ void eGrowersLodge::growerDelivered(const eResourceType type, const int count) {
     mMonthlyProduced[mRingIdx] += added;
 }
 
-void eGrowersLodge::serializeFields(eSaveArchive& ar) {
+void eGrowersLodge::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("noTarget", mNoTarget);
     ar.field("spawnEnabled", mSpawnEnabled);
@@ -344,7 +344,7 @@ void eGrowersLodge::serializeFields(eSaveArchive& ar) {
     ar.countedArrayField(
         "oliveHarvesters",
         static_cast<int>(mOliveHarvesters.size()),
-        [this](eSaveArchive& itemAr, const int i) {
+        [this](SaveArchive& itemAr, const int i) {
             if(i >= 0 && i < static_cast<int>(mOliveHarvesters.size())) {
                 itemAr.characterAsField("harvester", &getBoard(), mOliveHarvesters[i]);
             } else {

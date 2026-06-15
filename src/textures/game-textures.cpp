@@ -3,7 +3,7 @@
 #include <functional>
 #include <filesystem>
 
-#include "egamedir.h"
+#include "game-dir.h"
 
 bool GameTextures::sInitialized = false;
 std::vector<TerrainTextures> GameTextures::sTerrainTextures;
@@ -12,7 +12,7 @@ std::vector<BuildingTextures> GameTextures::sBuildingTextures;
 std::vector<CharacterTextures> GameTextures::sCharacterTextures;
 std::vector<InterfaceTextures> GameTextures::sInterfaceTextures;
 std::vector<DestructionTextures> GameTextures::sDestructionTextures;
-eSettings GameTextures::sSettings;
+Settings GameTextures::sSettings;
 
 struct eLoader {
     using eFunc = std::function<void(std::string&)>;
@@ -38,8 +38,7 @@ void GameTextures::loadTexture(const std::function<void(int)>& func) {
 }
 
 void GameTextures::loadInterfaceTexture(const std::function<void(int)>& func) {
-    const auto& res = sSettings.fRes;
-    const auto scale =  res.uiScale();
+    const auto scale = sSettings.fUiScale;
     for(int i = 0; i < 4; i++) {
         if(i == 0 && scale != eUIScale::tiny) continue;
         if(i == 1 && scale != eUIScale::small) continue;
@@ -2289,7 +2288,7 @@ bool checkTextureFiles() {
 
     bool missing = false;
     for(const auto& f : files) {
-        const auto path = eGameDir::path("DATA/" + f.fFilename);
+        const auto path = GameDir::path("DATA/" + f.fFilename);
         const bool e = std::filesystem::exists(path);
         if(!e) {
             missing = true;
@@ -2303,7 +2302,7 @@ bool checkTextureFiles() {
 bool GameTextures::initialize(SDL_Renderer* const r) {
     if(sInitialized) return true;
 //    const bool e = checkTextureFiles();
-    const auto path = eGameDir::path("DATA");
+    const auto path = GameDir::path("DATA");
     const bool e = std::filesystem::exists(path);
     if(!e) {
         printf("DATA folder missing from Zeus and Poseidon directory.\n"
@@ -2370,11 +2369,10 @@ bool GameTextures::initialize(SDL_Renderer* const r) {
     return true;
 }
 
-bool GameTextures::loadNextMenu(const eSettings& settings,
+bool GameTextures::loadNextMenu(const Settings& settings,
                                  std::string& text) {
     const int iMax = gMenuLoaders.size();
-    const auto res = settings.fRes;
-    const auto uiScale = res.uiScale();
+    const auto uiScale = settings.fUiScale;
     for(int i = 0; i < iMax; i++) {
         auto& g = gMenuLoaders[i];
         if(g.fFinished) continue;
@@ -2394,7 +2392,7 @@ bool GameTextures::loadNextMenu(const eSettings& settings,
     return true;
 }
 
-bool GameTextures::loadNextGame(const eSettings& settings,
+bool GameTextures::loadNextGame(const Settings& settings,
                                  std::string& text) {
     const int iMax = gGameLoaders.size();
     for(int i = 0; i < iMax; i++) {
@@ -2416,7 +2414,7 @@ bool GameTextures::loadNextGame(const eSettings& settings,
     return true;
 }
 
-int GameTextures::gameSize(const eSettings& settings) {
+int GameTextures::gameSize(const Settings& settings) {
     int result = 0;
     const int iMax = gGameLoaders.size();
     for(int i = 0; i < iMax; i++) {
@@ -2439,6 +2437,6 @@ int GameTextures::menuSize() {
     return sInterfaceTextures.size();
 }
 
-void GameTextures::setSettings(const eSettings& s) {
+void GameTextures::setSettings(const Settings& s) {
     sSettings = s;
 }

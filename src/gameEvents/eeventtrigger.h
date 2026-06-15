@@ -7,7 +7,7 @@
 
 class eGameEvent;
 class WorldBoard;
-class eSaveArchive;
+class SaveArchive;
 enum class eCityId;
 
 class eEventTrigger : public eStdSelfRef {
@@ -24,7 +24,7 @@ public:
 
     void loadResources() const;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void addEvent(const stdsptr<eGameEvent>& e);
     void removeEvent(const stdsptr<eGameEvent>& e);

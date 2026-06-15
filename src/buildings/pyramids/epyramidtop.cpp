@@ -19,7 +19,7 @@ ePyramidTop::ePyramidTop(ePyramid* const pyramid,
                     board, eBuildingType::pyramidTop,
                     elevation, 1, cid) {}
 
-stdsptr<eTexture> ePyramidTop::getTexture(const eTileSize size) const {
+stdsptr<Texture> ePyramidTop::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];

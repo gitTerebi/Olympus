@@ -6,9 +6,9 @@
 #include "game-board.h"
 #include "eevent.h"
 #include "eeventdata.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "egifthelpers.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <algorithm>
 
@@ -103,12 +103,12 @@ void eBoardPlayer::addSlayedMonster(const eMonsterType m) {
 }
 
 void eBoardPlayer::addGodQuest(eGodQuestEvent* const q) {
-    eVectorHelpers::remove(mGodQuests, q);
+    VectorHelpers::remove(mGodQuests, q);
     mGodQuests.push_back(q);
 }
 
 void eBoardPlayer::removeGodQuest(eGodQuestEvent* const q) {
-    eVectorHelpers::remove(mGodQuests, q);
+    VectorHelpers::remove(mGodQuests, q);
 }
 
 void eBoardPlayer::addCityRequest(SendResourcesToCityEvent* const q) {
@@ -132,13 +132,13 @@ void eBoardPlayer::removeCityRequest(SendResourcesToCityEvent* const q) {
 }
 
 void eBoardPlayer::addTributeRequest(ReceiveTributeEvent* const q) {
-    if(!eVectorHelpers::contains(mTributeRequests, q)) {
+    if(!VectorHelpers::contains(mTributeRequests, q)) {
         mTributeRequests.push_back(q);
     }
 }
 
 void eBoardPlayer::removeTributeRequest(ReceiveTributeEvent* const q) {
-    eVectorHelpers::remove(mTributeRequests, q);
+    VectorHelpers::remove(mTributeRequests, q);
 }
 
 void eBoardPlayer::addCityTroopsRequest(SendTroopsEvent* const q) {
@@ -146,7 +146,7 @@ void eBoardPlayer::addCityTroopsRequest(SendTroopsEvent* const q) {
 }
 
 void eBoardPlayer::removeCityTroopsRequest(SendTroopsEvent* const q) {
-    eVectorHelpers::remove(mCityTroopsRequests, q);
+    VectorHelpers::remove(mCityTroopsRequests, q);
 }
 
 void eBoardPlayer::addConquest(PlayerConquestEventBase* const q) {
@@ -154,25 +154,25 @@ void eBoardPlayer::addConquest(PlayerConquestEventBase* const q) {
 }
 
 void eBoardPlayer::removeConquest(PlayerConquestEventBase* const q) {
-    eVectorHelpers::remove(mConquests, q);
+    VectorHelpers::remove(mConquests, q);
 }
 
-void eBoardPlayer::serialize(eSaveArchive& ar) {
+void eBoardPlayer::serialize(SaveArchive& ar) {
     ar.field("playerId", mId);
     ar.field("difficulty", mDifficulty);
 
     ar.arrayField("fulfilledQuests", mFulfilledQuests,
-        [](eSaveArchive& itemAr, eGodQuest& q) {
+        [](SaveArchive& itemAr, eGodQuest& q) {
             q.serialize(itemAr);
         });
 
     ar.arrayField("slayedMonsters", mSlayedMonsters,
-        [](eSaveArchive& itemAr, eMonsterType& m) {
+        [](SaveArchive& itemAr, eMonsterType& m) {
             itemAr.field("monsterType", m);
         });
 
     ar.arrayField("godQuests", mGodQuests,
-        [this](eSaveArchive& itemAr, eGodQuestEvent*& q) {
+        [this](SaveArchive& itemAr, eGodQuestEvent*& q) {
             itemAr.gameEventField("event", &mBoard, q);
         });
 
@@ -181,7 +181,7 @@ void eBoardPlayer::serialize(eSaveArchive& ar) {
     ar.field("godAttackTimer", mGodAttackTimer);
 
     ar.archiveField("finances",
-        [this](eSaveArchive& itemAr) { mFinances.serialize(itemAr); });
+        [this](SaveArchive& itemAr) { mFinances.serialize(itemAr); });
 }
 
 void eBoardPlayer::giftAllies() {

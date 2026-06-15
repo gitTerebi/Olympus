@@ -3,7 +3,7 @@
 
 #include "characters/gods/actions/god-monster-action.h"
 
-class eSaveArchive;
+class SaveArchive;
 class eMonster;
 
 enum class eGodMinionStage {
@@ -22,7 +22,7 @@ public:
     //void lookForMonster();
     void lookForSoldier();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void rebuildCurrentStage();
@@ -59,7 +59,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -80,7 +80,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -109,7 +109,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("action", &board(), mTptr);
         ar.characterAsField("soldier", &board(), mSptr);
         ar.field("melee", mMelee);

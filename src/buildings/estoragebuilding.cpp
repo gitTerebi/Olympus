@@ -1,5 +1,5 @@
 ﻿#include "estoragebuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <algorithm>
 
@@ -520,7 +520,7 @@ void eStorageBuilding::getOrders(eResourceType& get,
     accept = mAccept;
 }
 
-void eStorageBuilding::serializeFields(eSaveArchive& ar) {
+void eStorageBuilding::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("get", mGet);
     ar.field("empty", mEmpty);
@@ -540,7 +540,7 @@ void eStorageBuilding::serializeFields(eSaveArchive& ar) {
         for(int i = 0; i < maxCountCount; i++) {
             eResourceType rt; int c;
             ar.archiveField(("maxCount." + std::to_string(i)).c_str(),
-                [&](eSaveArchive& it) {
+                [&](SaveArchive& it) {
                     it.field("resource", rt);
                     it.field("count", c);
                 });
@@ -551,7 +551,7 @@ void eStorageBuilding::serializeFields(eSaveArchive& ar) {
         for(auto& kv : mMaxCount) {
             eResourceType rt = kv.first; int c = kv.second;
             ar.archiveField(("maxCount." + std::to_string(i++)).c_str(),
-                [&](eSaveArchive& it) {
+                [&](SaveArchive& it) {
                     it.field("resource", rt);
                     it.field("count", c);
                 });

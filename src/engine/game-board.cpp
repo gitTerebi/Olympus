@@ -16,7 +16,7 @@
 #include "characters/egoat.h"
 #include "characters/ecattle.h"
 #include "buildings/ebuilding.h"
-#include "spawners/espawner.h"
+#include "spawners/spawner.h"
 
 #include "buildings/estoragebuilding.h"
 
@@ -34,19 +34,19 @@
 
 #include "engine/boardData/eheatmaptask.h"
 
-#include "missiles/emissile.h"
+#include "missiles/missile.h"
 #include "destruction-puff.h"
 #include <algorithm>
-#include "missiles/ewavemissile.h"
-#include "missiles/elavamissile.h"
-#include "missiles/edustmissile.h"
+#include "missiles/wave-missile.h"
+#include "missiles/lava-missile.h"
+#include "missiles/dust-missile.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 
-#include "emessages.h"
+#include "messages.h"
 
-#include "spawners/emonsterpoint.h"
-#include "spawners/elandinvasionpoint.h"
+#include "spawners/monster-point.h"
+#include "spawners/land-invasion-point.h"
 
 #include "buildings/eheatgetters.h"
 
@@ -72,9 +72,9 @@
 #include "gameEvents/invasions/invasion-handler.h"
 #include "characters/actions/monster-action.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "egifthelpers.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 
 #include "buildings/eheroshall.h"
 #include "buildings/emuseum.h"
@@ -87,11 +87,11 @@
 #include "audio/music.h"
 
 #include "ecampaign.h"
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "ecolonymonumentaction.h"
 #include "textures/marble-tile.h"
-#include "elanguage.h"
-#include "enumbers.h"
+#include "language.h"
+#include "numbers.h"
 
 #include "characters/actions/animal-action.h"
 
@@ -145,7 +145,7 @@ void GameBoard::initialize(const int w, const int h)
         {
             int tx;
             int ty;
-            eTileHelper::dtileIdToTileId(x, y, tx, ty);
+            TileHelper::dtileIdToTileId(x, y, tx, ty);
             const auto tile = new eTile(tx, ty, x, y, *this);
             yArr.push_back(tile);
         }
@@ -194,7 +194,7 @@ void GameBoard::resize(const int w, const int h)
                 continue;
             int tx;
             int ty;
-            eTileHelper::dtileIdToTileId(x, y, tx, ty);
+            TileHelper::dtileIdToTileId(x, y, tx, ty);
             const auto tile = new eTile(tx, ty, x, y, *this);
             yArr.push_back(tile);
         }
@@ -273,7 +273,7 @@ eTile *GameBoard::rotateddtile(const int x, const int y) const
 {
     int rx;
     int ry;
-    eTileHelper::rotatedDTileIdToDTileId(
+    TileHelper::rotatedDTileIdToDTileId(
         x, y, rx, ry, mDirection, mWidth, mHeight);
     return dtile(rx, ry);
 }
@@ -407,7 +407,7 @@ void GameBoard::clearBannerSelection()
 
 void GameBoard::deselectBanner(SoldierBanner *const c)
 {
-    eVectorHelpers::remove(mSelectedBanners, c);
+    VectorHelpers::remove(mSelectedBanners, c);
     c->setSelected(false);
     if(mBannerSelectionChanged) mBannerSelectionChanged();
 }
@@ -430,7 +430,7 @@ void GameBoard::clearTriremeSelection()
 
 void GameBoard::deselectTrireme(eTrireme *const c)
 {
-    eVectorHelpers::remove(mSelectedTriremes, c);
+    VectorHelpers::remove(mSelectedTriremes, c);
     c->setSelected(false);
 }
 
@@ -472,7 +472,7 @@ void GameBoard::bannersGoHome()
         const auto e = e::make_shared<ArmyReturnEvent>(
             r.first, eGameEventBranch::root, *this);
         const auto boardDate = date();
-        const int period = eNumbers::sReinforcementsTravelTime;
+        const int period = Numbers::sReinforcementsTravelTime;
         const auto date = boardDate + period;
         e->initializeDate(date, period, 1);
         eEnlistedForces forces;
@@ -716,7 +716,7 @@ void GameBoard::restockMarbleTiles()
 
 bool GameBoard::eMarbleTiles::contains(eTile *const tile) const
 {
-    return eVectorHelpers::contains(fTiles, tile);
+    return VectorHelpers::contains(fTiles, tile);
 }
 
 void GameBoard::eMarbleTiles::add(eTile *const tile)
@@ -818,13 +818,13 @@ void GameBoard::allowHero(const eCityId cid, const eHeroType heroType,
 {
     const auto hallType = eHerosHall::sHeroTypeToHallType(heroType);
     allow(cid, hallType);
-    const auto &inst = eMessages::instance;
+    const auto &inst = Messages::instance;
     const auto hm = inst.heroMessages(heroType);
     if (!hm)
         return;
     eEventData ed(cid);
     auto msg = hm->fHallAvailable;
-    eStringHelpers::replaceAll(msg.fFull.fText, "[reason_phrase]",
+    StringHelpers::replaceAll(msg.fFull.fText, "[reason_phrase]",
                                reason.empty() ? msg.fNoReason : reason);
     showMessage(ed, msg);
 }
@@ -868,7 +868,7 @@ eCharacterAction *GameBoard::characterActionWithIOID(const int id) const
     return nullptr;
 }
 
-eBanner *GameBoard::bannerWithIOID(const int id) const
+Banner *GameBoard::bannerWithIOID(const int id) const
 {
     if (id == -1)
         return nullptr;
@@ -1390,7 +1390,7 @@ std::vector<ePlayerId> GameBoard::playersOnBoard() const
         if (pid == ePlayerId::neutralFriendly ||
             pid == ePlayerId::neutralAggresive)
             continue;
-        if (eVectorHelpers::contains(result, pid))
+        if (VectorHelpers::contains(result, pid))
             continue;
         result.push_back(pid);
     }
@@ -1732,7 +1732,7 @@ void GameBoard::addInvasion(eInvasionEvent *const i)
 
 void GameBoard::removeInvasion(eInvasionEvent *const i)
 {
-    eVectorHelpers::remove(mInvasions, i);
+    VectorHelpers::remove(mInvasions, i);
 }
 
 GameBoard::eArmyEvents GameBoard::armyEvents() const
@@ -1747,7 +1747,7 @@ void GameBoard::addArmyEvent(ArmyEventBase *const q)
 
 void GameBoard::removeArmyEvent(ArmyEventBase *const q)
 {
-    eVectorHelpers::remove(mArmyEvents, q);
+    VectorHelpers::remove(mArmyEvents, q);
 }
 
 std::vector<eMonster *> GameBoard::monsters(const eCityId cid) const
@@ -1994,7 +1994,7 @@ void GameBoard::registerSoldierBanner(const stdsptr<SoldierBanner> &b)
 
 bool GameBoard::unregisterSoldierBanner(const stdsptr<SoldierBanner> &b)
 {
-    eVectorHelpers::remove(mSelectedBanners, b.get());
+    VectorHelpers::remove(mSelectedBanners, b.get());
     if(mBannerSelectionChanged) mBannerSelectionChanged();
     const auto cid = b->cityId();
     const auto c = boardCityWithId(cid);
@@ -2033,7 +2033,7 @@ void GameBoard::addGameEvent(eGameEvent *const e)
 
 void GameBoard::removeGameEvent(eGameEvent *const e)
 {
-    eVectorHelpers::remove(mAllGameEvents, e);
+    VectorHelpers::remove(mAllGameEvents, e);
     e->setRuntimeId(-1);
 }
 
@@ -2051,20 +2051,20 @@ eGameEvent *GameBoard::eventWithRuntimeId(const int id) const
 
 void GameBoard::handleGamesBegin(const eGames game)
 {
-    eGameMessages *msgs = nullptr;
+    GameMessages *msgs = nullptr;
     switch (game)
     {
     case eGames::isthmian:
-        msgs = &eMessages::instance.fIsthmianGames;
+        msgs = &Messages::instance.fIsthmianGames;
         break;
     case eGames::nemean:
-        msgs = &eMessages::instance.fNemeanGames;
+        msgs = &Messages::instance.fNemeanGames;
         break;
     case eGames::pythian:
-        msgs = &eMessages::instance.fPythianGames;
+        msgs = &Messages::instance.fPythianGames;
         break;
     case eGames::olympian:
-        msgs = &eMessages::instance.fOlympianGames;
+        msgs = &Messages::instance.fOlympianGames;
         break;
     }
 
@@ -2089,20 +2089,20 @@ void GameBoard::handleGamesBegin(const eGames game)
 
 void GameBoard::handleGamesEnd(const eGames game)
 {
-    eGameMessages *msgs = nullptr;
+    GameMessages *msgs = nullptr;
     switch (game)
     {
     case eGames::isthmian:
-        msgs = &eMessages::instance.fIsthmianGames;
+        msgs = &Messages::instance.fIsthmianGames;
         break;
     case eGames::nemean:
-        msgs = &eMessages::instance.fNemeanGames;
+        msgs = &Messages::instance.fNemeanGames;
         break;
     case eGames::pythian:
-        msgs = &eMessages::instance.fPythianGames;
+        msgs = &Messages::instance.fPythianGames;
         break;
     case eGames::olympian:
-        msgs = &eMessages::instance.fOlympianGames;
+        msgs = &Messages::instance.fOlympianGames;
         break;
     }
 
@@ -2123,7 +2123,7 @@ void GameBoard::handleGamesEnd(const eGames game)
     eCityId winner = eCityId::neutralFriendly;
     for (const auto &c : chances)
     {
-        const bool won = eRand::rand() % 101 < 100 * c.second;
+        const bool won = Rand::rand() % 101 < 100 * c.second;
         if (!won)
             continue;
         const auto cid = c.first;
@@ -2162,7 +2162,7 @@ void GameBoard::handleGamesEnd(const eGames game)
         const auto cid = c.first;
         if (cid == winner)
             continue;
-        const bool second = eRand::rand() % 101 < 200 * c.second;
+        const bool second = Rand::rand() % 101 < 200 * c.second;
         eEventData ed(cid);
         if (second && secondCid == eCityId::neutralFriendly)
         {
@@ -2190,7 +2190,7 @@ eTile *GameBoard::tile(const int x, const int y) const
 {
     int dtx;
     int dty;
-    eTileHelper::tileIdToDTileId(x, y, dtx, dty);
+    TileHelper::tileIdToDTileId(x, y, dtx, dty);
     return dtile(dtx, dty);
 }
 
@@ -2394,10 +2394,10 @@ bool GameBoard::unregisterCharacter(eCharacter *const c)
         const bool r = cc->unregisterAttackingGod(c);
         updateMusic = updateMusic || r;
     }
-    eVectorHelpers::remove(mSelectedTriremes, static_cast<eTrireme *>(c));
+    VectorHelpers::remove(mSelectedTriremes, static_cast<eTrireme *>(c));
     if (updateMusic)
         this->updateMusic();
-    return eVectorHelpers::remove(mCharacters, c);
+    return VectorHelpers::remove(mCharacters, c);
 }
 
 void GameBoard::registerCharacterAction(eCharacterAction *const ca)
@@ -2407,7 +2407,7 @@ void GameBoard::registerCharacterAction(eCharacterAction *const ca)
 
 bool GameBoard::unregisterCharacterAction(eCharacterAction *const ca)
 {
-    return eVectorHelpers::remove(mCharacterActions, ca);
+    return VectorHelpers::remove(mCharacterActions, ca);
 }
 
 void GameBoard::registerSoldier(eSoldier *const c)
@@ -2417,17 +2417,17 @@ void GameBoard::registerSoldier(eSoldier *const c)
 
 bool GameBoard::unregisterSoldier(eSoldier *const c)
 {
-    return eVectorHelpers::remove(mSoldiers, c);
+    return VectorHelpers::remove(mSoldiers, c);
 }
 
 void GameBoard::registerBuilding(eBuilding *const b)
 {
     if (!mRegisterBuildingsEnabled)
         return;
-    if (eVectorHelpers::contains(mAllBuildings, b)) {
+    if (VectorHelpers::contains(mAllBuildings, b)) {
         const auto bt = b->type();
         if (eBuilding::sTimedBuilding(bt) &&
-            !eVectorHelpers::contains(mTimedBuildings, b))
+            !VectorHelpers::contains(mTimedBuildings, b))
             mTimedBuildings.push_back(b);
         return;
     }
@@ -2449,13 +2449,13 @@ bool GameBoard::unregisterBuilding(eBuilding *const b)
 {
     if (!mRegisterBuildingsEnabled)
         return false;
-    eVectorHelpers::remove(mAllBuildings, b);
+    VectorHelpers::remove(mAllBuildings, b);
     const auto cid = b->cityId();
     const auto city = boardCityWithId(cid);
     if (!city)
         return false;
     city->unregisterBuilding(b);
-    eVectorHelpers::remove(mTimedBuildings, b);
+    VectorHelpers::remove(mTimedBuildings, b);
     scheduleAppealMapUpdate(cid);
     return true;
 }
@@ -2520,14 +2520,14 @@ bool GameBoard::hasTradePost(const eCityId cid, const WorldCity &city)
     return c->hasTradePost(city);
 }
 
-void GameBoard::registerSpawner(eSpawner *const s)
+void GameBoard::registerSpawner(Spawner *const s)
 {
     mSpawners.push_back(s);
 }
 
-bool GameBoard::unregisterSpawner(eSpawner *const s)
+bool GameBoard::unregisterSpawner(Spawner *const s)
 {
-    return eVectorHelpers::remove(mSpawners, s);
+    return VectorHelpers::remove(mSpawners, s);
     ;
 }
 
@@ -2658,14 +2658,14 @@ bool GameBoard::unregisterHeroHall(eHerosHall *const b)
     return r;
 }
 
-void GameBoard::registerMissile(eMissile *const m)
+void GameBoard::registerMissile(Missile *const m)
 {
     mMissiles.push_back(m);
 }
 
-bool GameBoard::unregisterMissile(eMissile *const m)
+bool GameBoard::unregisterMissile(Missile *const m)
 {
-    return eVectorHelpers::remove(mMissiles, m);
+    return VectorHelpers::remove(mMissiles, m);
 }
 
 void GameBoard::registerDestructionPuff(DestructionPuff* const p)
@@ -2675,7 +2675,7 @@ void GameBoard::registerDestructionPuff(DestructionPuff* const p)
 
 bool GameBoard::unregisterDestructionPuff(DestructionPuff* const p)
 {
-    return eVectorHelpers::remove(mDestructionPuffs, p);
+    return VectorHelpers::remove(mDestructionPuffs, p);
 }
 
 bool GameBoard::hasStadium(const eCityId cid) const
@@ -2752,8 +2752,8 @@ void GameBoard::unregisterMonster(const eCityId cid, eMonster *const m)
     updateMusic();
 }
 
-eBanner *GameBoard::banner(const eCityId cid,
-                            const eBannerTypeS type,
+Banner *GameBoard::banner(const eCityId cid,
+                            const BannerTypeS type,
                             const int id) const
 {
     const auto c = boardCityWithId(cid);
@@ -2762,7 +2762,7 @@ eBanner *GameBoard::banner(const eCityId cid,
     return c->banner(type, id);
 }
 
-void GameBoard::registerBanner(eBanner *const b)
+void GameBoard::registerBanner(Banner *const b)
 {
     const auto t = b->tile();
     if (!t)
@@ -2775,14 +2775,14 @@ void GameBoard::registerBanner(eBanner *const b)
     return c->registerBanner(b);
 }
 
-void GameBoard::unregisterBanner(eBanner *const b)
+void GameBoard::unregisterBanner(Banner *const b)
 {
     const auto t = b->tile();
     const auto cid = t->cityId();
     const auto c = boardCityWithId(cid);
     if (!c)
         return;
-    eVectorHelpers::remove(mBanners, b);
+    VectorHelpers::remove(mBanners, b);
     return c->unregisterBanner(b);
 }
 
@@ -2793,8 +2793,8 @@ void GameBoard::registerAllSoldierBanner(SoldierBanner *const b)
 
 void GameBoard::unregisterAllSoldierBanner(SoldierBanner *const b)
 {
-    eVectorHelpers::remove(mAllSoldierBanners, b);
-    eVectorHelpers::remove(mSelectedBanners, b);
+    VectorHelpers::remove(mAllSoldierBanners, b);
+    VectorHelpers::remove(mSelectedBanners, b);
     if(mBannerSelectionChanged) mBannerSelectionChanged();
 }
 
@@ -2827,7 +2827,7 @@ void GameBoard::incTime(const int by)
     if (mEpisodeLost)
         return;
     mUndo.incTime(by);
-    const int dayLen = eNumbers::sDayLength;
+    const int dayLen = Numbers::sDayLength;
     { // autosave
         const int time = mTime + by;
         bool nextMonth = false;
@@ -2867,13 +2867,13 @@ void GameBoard::incTime(const int by)
     //    }
 
     //    for(const auto& p : mPlagues) {
-    //        const int r = eRand::rand() % 5000;
+    //        const int r = Rand::rand() % 5000;
     //        const bool spread = r/by == 0;
     //        if(spread) p->randomSpread();
     //    }
 
     mProgressEarthquakes += by;
-    const int earthquakeWait = eNumbers::sEarthquakeProgressPeriod;
+    const int earthquakeWait = Numbers::sEarthquakeProgressPeriod;
     if (mProgressEarthquakes > earthquakeWait)
     {
         mProgressEarthquakes -= earthquakeWait;
@@ -2981,7 +2981,7 @@ void GameBoard::incTime(const int by)
         }
     }
 
-    const int initialAttitudeWait = 180 * eNumbers::sDayLength;
+    const int initialAttitudeWait = 180 * Numbers::sDayLength;
     if (prevTotalTime < initialAttitudeWait &&
         mTotalTime >= initialAttitudeWait)
     {
@@ -3016,7 +3016,7 @@ void GameBoard::incTime(const int by)
             auto &les = mLastEmploymentState[cid];
             if (les.fV != emplState)
             {
-                const auto &inst = eMessages::instance;
+                const auto &inst = Messages::instance;
                 eEventData ed(cid);
                 if (emplState == -1)
                 { // unemployed
@@ -3462,7 +3462,7 @@ void GameBoard::requestForces(const eEnlistAction &action,
                 const auto sCid = s->cityId();
                 if (cid != sCid)
                     continue;
-                eVectorHelpers::remove(f.fSoldiers, s);
+                VectorHelpers::remove(f.fSoldiers, s);
             }
         }
         std::vector<eHeroType> heroesAbroad;
@@ -3475,7 +3475,7 @@ void GameBoard::requestForces(const eEnlistAction &action,
         }
         for (const auto &e : exclude)
         {
-            eVectorHelpers::remove(f.fAllies, e);
+            VectorHelpers::remove(f.fAllies, e);
         }
         mEnlistRequester(f, cids, cnames, heroesAbroad, action, plunderResources);
     }
@@ -3847,9 +3847,9 @@ void GameBoard::startEpisode(eEpisode *const e,
         for (const auto s : mSpawners)
         {
             const auto type = s->type();
-            if (type == eBannerTypeS::boar ||
-                type == eBannerTypeS::deer ||
-                type == eBannerTypeS::wolf)
+            if (type == BannerTypeS::boar ||
+                type == BannerTypeS::deer ||
+                type == BannerTypeS::wolf)
             {
                 s->spawnMax();
             }
@@ -4124,7 +4124,7 @@ eOrientation randomOrientation()
                                  eOrientation::bottomRight,
                                  eOrientation::bottomLeft,
                                  eOrientation::topLeft};
-    return os[eRand::rand() % os.size()];
+    return os[Rand::rand() % os.size()];
 }
 
 void GameBoard::earthquake(eTile *const startTile, const int size)
@@ -4163,7 +4163,7 @@ void GameBoard::earthquake(eTile *const startTile, const int size)
                                      eOrientation::bottomLeft,
                                      eOrientation::topLeft};
         std::random_shuffle(os.begin(), os.end());
-        if (eRand::rand() % 7)
+        if (Rand::rand() % 7)
         {
             os.insert(os.begin(), t.fLastO);
         }
@@ -4180,7 +4180,7 @@ void GameBoard::earthquake(eTile *const startTile, const int size)
             {
                 ends.push({tt, o});
                 tiles.push_back(tt);
-                if (eRand::rand() % 5 == 0)
+                if (Rand::rand() % 5 == 0)
                 {
                     ends.push({tt});
                 }
@@ -4200,7 +4200,7 @@ void GameBoard::conqueredBy(const eCityId conquered,
 {
     auto &defs = mConqueredBy[by->cityId()];
     const auto conqueredCity = world().cityWithId(conquered);
-    const bool r = eVectorHelpers::contains(defs, conqueredCity);
+    const bool r = VectorHelpers::contains(defs, conqueredCity);
     if (r)
     {
         const auto ccid = currentCityId();
@@ -4299,7 +4299,7 @@ void GameBoard::progressEarthquakes()
             const auto t = tile(tx, ty);
             if (!t)
                 return false;
-            const bool r = eVectorHelpers::contains(e->fTiles, t);
+            const bool r = VectorHelpers::contains(e->fTiles, t);
             if (!r)
                 return false;
             t->setTerrain(eTerrain::quake);
@@ -4309,14 +4309,14 @@ void GameBoard::progressEarthquakes()
             if (c)
                 c->incTerrainState();
             earthquakeWaveCollapse(t);
-            eVectorHelpers::removeAll(e->fTiles, t);
+            VectorHelpers::removeAll(e->fTiles, t);
             return false;
         };
-        eIterateSquare::iterateSquare(e->fLastDim, prcs);
+        IterateSquare::iterateSquare(e->fLastDim, prcs);
         e->fLastDim++;
         if (e->fTiles.empty() || e->fLastDim > 50)
         {
-            eVectorHelpers::remove(mEarthquakes, e);
+            VectorHelpers::remove(mEarthquakes, e);
             i--;
         }
     }
@@ -4338,7 +4338,7 @@ void GameBoard::progressTidalWaves()
             {
                 const auto t = wd.fTile;
                 const auto o = wd.fO;
-                std::vector<ePathPoint> path;
+                std::vector<PathPoint> path;
                 eTile *from = nullptr;
                 eTile *to = nullptr;
                 if (w->fRegres)
@@ -4362,7 +4362,7 @@ void GameBoard::progressTidalWaves()
                 t->scheduleNeighboursTerrainUpdate(2);
                 path.push_back({(double)from->x(), (double)from->y(), 0.});
                 path.push_back({(double)to->x(), (double)to->y(), 0.});
-                const auto m = e::make_shared<eWaveMissile>(*this, path);
+                const auto m = e::make_shared<WaveMissile>(*this, path);
                 m->incTime(0);
             }
         }
@@ -4375,7 +4375,7 @@ void GameBoard::progressTidalWaves()
         {
             if (w->fPermanent || w->fRegres)
             {
-                eVectorHelpers::remove(mTidalWaves, w);
+                VectorHelpers::remove(mTidalWaves, w);
                 i--;
             }
             else
@@ -4398,7 +4398,7 @@ void GameBoard::sinkLand(const eCityId cid, const int amount)
             const auto tcid = t->cityId();
             if (tcid != cid)
                 return;
-            const bool c = eVectorHelpers::contains(used, t);
+            const bool c = VectorHelpers::contains(used, t);
             if (c)
                 return;
             used.push_back(t);
@@ -4429,7 +4429,7 @@ void GameBoard::sinkLand(const eCityId cid, const int amount)
                 const auto tt = static_cast<eTile *>(n.second);
                 if (tt->hasWater())
                     continue;
-                const bool c = eVectorHelpers::contains(used, tt);
+                const bool c = VectorHelpers::contains(used, tt);
                 if (c)
                     continue;
                 while ((int)w->fTiles.size() < dist + 1)
@@ -4468,7 +4468,7 @@ void GameBoard::addTidalWave(eTile *const startTile,
         std::function<void(eTile *const)> addShore;
         addShore = [&](eTile *const t)
         {
-            const bool c = eVectorHelpers::contains(used, t);
+            const bool c = VectorHelpers::contains(used, t);
             if (c)
                 return;
             used.push_back(t);
@@ -4497,7 +4497,7 @@ void GameBoard::addTidalWave(eTile *const startTile,
                     continue;
                 if (tt->hasWater())
                     continue;
-                const bool c = eVectorHelpers::contains(used, tt);
+                const bool c = VectorHelpers::contains(used, tt);
                 if (c)
                     continue;
                 while ((int)w->fTiles.size() < dist + 1)
@@ -4545,7 +4545,7 @@ void GameBoard::addLandSlide(eTile *const startTile)
         std::function<void(eTile *const)> addShore;
         addShore = [&](eTile *const t)
         {
-            const bool c = eVectorHelpers::contains(used, t);
+            const bool c = VectorHelpers::contains(used, t);
             if (c)
                 return;
             used.push_back(t);
@@ -4580,7 +4580,7 @@ void GameBoard::addLandSlide(eTile *const startTile)
                     continue;
                 if (downTiles && !tt->landSlideZone())
                     continue;
-                const bool c = eVectorHelpers::contains(used, tt);
+                const bool c = VectorHelpers::contains(used, tt);
                 if (c)
                     continue;
                 while ((int)tiles.size() < dist + 1)
@@ -4697,7 +4697,7 @@ void GameBoard::progressLandSlide()
             {
                 const auto t = wd.fTile;
                 const auto o = wd.fO;
-                std::vector<ePathPoint> path;
+                std::vector<PathPoint> path;
                 eTile *from = nullptr;
                 eTile *to = nullptr;
                 from = t->neighbour<eTile>(!o);
@@ -4713,7 +4713,7 @@ void GameBoard::progressLandSlide()
                 t->scheduleNeighboursTerrainUpdate(2);
                 path.push_back({(double)from->x(), (double)from->y(), 0.});
                 path.push_back({(double)to->x(), (double)to->y(), 0.});
-                const auto m = e::make_shared<eDustMissile>(*this, path);
+                const auto m = e::make_shared<DustMissile>(*this, path);
                 m->incTime(0);
             }
         }
@@ -4721,7 +4721,7 @@ void GameBoard::progressLandSlide()
         w->fLastId++;
         if (w->fLastId < 0 || w->fLastId >= (int)w->fTiles.size())
         {
-            eVectorHelpers::remove(mLandSlides, w);
+            VectorHelpers::remove(mLandSlides, w);
         }
     }
 }
@@ -4742,7 +4742,7 @@ void GameBoard::progressLavaFlow()
             {
                 const auto t = wd.fTile;
                 const auto o = wd.fO;
-                std::vector<ePathPoint> path;
+                std::vector<PathPoint> path;
                 eTile *from = nullptr;
                 eTile *to = nullptr;
                 from = t->neighbour<eTile>(!o);
@@ -4757,7 +4757,7 @@ void GameBoard::progressLavaFlow()
                 t->scheduleNeighboursTerrainUpdate(2);
                 path.push_back({(double)from->x(), (double)from->y(), 0.});
                 path.push_back({(double)to->x(), (double)to->y(), 0.});
-                const auto m = e::make_shared<eLavaMissile>(*this, path);
+                const auto m = e::make_shared<LavaMissile>(*this, path);
                 m->incTime(0);
             }
         }
@@ -4765,7 +4765,7 @@ void GameBoard::progressLavaFlow()
         w->fLastId++;
         if (w->fLastId < 0 || w->fLastId >= (int)w->fTiles.size())
         {
-            eVectorHelpers::remove(mLavaFlows, w);
+            VectorHelpers::remove(mLavaFlows, w);
         }
     }
 }
@@ -4786,7 +4786,7 @@ void GameBoard::addLavaFlow(eTile *const startTile)
                     continue;
                 if (tt->hasLava())
                     continue;
-                const bool c = eVectorHelpers::contains(used, tt);
+                const bool c = VectorHelpers::contains(used, tt);
                 if (c)
                     continue;
                 while ((int)w->fTiles.size() < dist + 1)
@@ -5077,7 +5077,7 @@ bool GameBoard::buildBase(const int minX, const int minY,
         incDrachmas(pid, -cost, eFinanceTarget::construction);
     }
     mUndo.valid() = true;
-    mUndo.timeoutTicks() = 20 * eNumbers::sDayLength;
+    mUndo.timeoutTicks() = 20 * Numbers::sDayLength;
     return true;
 }
 
@@ -5144,7 +5144,7 @@ bool GameBoard::buildAnimal(eTile *const tile,
     }
     const auto a = creator(*this);
     a->changeTile(tile);
-    const auto o = static_cast<eOrientation>(eRand::rand() % 8);
+    const auto o = static_cast<eOrientation>(Rand::rand() % 8);
     a->setOrientation(o);
     const auto w = WalkableObject::sCreateFertile();
     const auto aa = e::make_shared<AnimalAction>(a.get(), tx, ty, w);

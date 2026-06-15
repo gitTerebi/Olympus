@@ -7,7 +7,7 @@
 
 class eWorldMapWidget : public eLabel {
 public:
-    eWorldMapWidget(eMainWindow* const window);
+    eWorldMapWidget(MainWindow* const window);
 
     using eColonySelection = std::vector<stdsptr<WorldCity>>;
     void setSelectColonyMode(const bool scm, const eColonySelection& s);
@@ -40,7 +40,7 @@ private:
     WorldBoard* mWorldBoard = nullptr;
     int mFrame = 0;
 
-    std::map<std::string, stdsptr<eTexture>> mNames;
+    std::map<std::string, stdsptr<Texture>> mNames;
 
     eSelectCityAction mSelectCityAction;
     eSetTextAction mSetTextAction;

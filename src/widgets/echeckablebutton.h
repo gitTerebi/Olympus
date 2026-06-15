@@ -7,7 +7,7 @@ using eCheckAction = std::function<void(bool)>;
 
 class eCheckableButton : public eButton {
 public:
-    eCheckableButton(eMainWindow* const window);
+    eCheckableButton(MainWindow* const window);
 
     bool checked() const { return mChecked; }
 
@@ -15,20 +15,20 @@ public:
 
     void setChecked(const bool c);
     void check();
-    void setCheckedTexture(const std::shared_ptr<eTexture>& tex);
-    void setCheckedHoverTexture(const std::shared_ptr<eTexture>& tex);
+    void setCheckedTexture(const std::shared_ptr<Texture>& tex);
+    void setCheckedHoverTexture(const std::shared_ptr<Texture>& tex);
 
     static eCheckableButton* sCreate(
-            const eTextureCollection& texs,
-            eMainWindow* const window,
+            const TextureCollection& texs,
+            MainWindow* const window,
             eWidget* const buttons = nullptr);
 protected:
     void paintEvent(ePainter& p);
 private:
     using eButton::setPressAction;
 private:
-    std::shared_ptr<eTexture> mCheckedTexture;
-    std::shared_ptr<eTexture> mCheckedHoverTexture;
+    std::shared_ptr<Texture> mCheckedTexture;
+    std::shared_ptr<Texture> mCheckedHoverTexture;
     bool mChecked = false;
     eCheckAction mCheckAction;
 };

@@ -1,12 +1,12 @@
-#ifndef ETILEHELPER_H
-#define ETILEHELPER_H
+#ifndef TILE_HELPER_H
+#define TILE_HELPER_H
 
 class GameBoard;
 class eTile;
 enum class eWorldDirection;
 struct SDL_Rect;
 
-namespace eTileHelper {
+namespace TileHelper {
     void rotatedDTileIdToDTileId(const int viewDTileX, const int viewDTileY,
                                  int& dTileX, int& dTileY,
                                  const eWorldDirection dir,
@@ -36,4 +36,4 @@ namespace eTileHelper {
                            const int boardWidth, const int boardHeight);
 };
 
-#endif // ETILEHELPER_H
+#endif // TILE_HELPER_H

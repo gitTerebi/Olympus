@@ -1,5 +1,5 @@
 #include "epyramidelement.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "epyramid.h"
 #include "textures/game-textures.h"
@@ -151,7 +151,7 @@ bool ePyramidElement::renderBuilding() const {
     return p > 4*mElevation;
 }
 
-void ePyramidElement::serializeFields(eSaveArchive& ar) {
+void ePyramidElement::serializeFields(SaveArchive& ar) {
     eSanctBuilding::serializeFields(ar);
     ar.field("currentElevation", mCurrentElevation);
 }

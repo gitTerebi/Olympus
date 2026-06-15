@@ -25,7 +25,7 @@ void eScrollWidgetComplete::initialize() {
     mSB->setScrollWidget(mSW);
     addWidget(swww);
 
-    mSB->align(eAlignment::right);
+    mSB->align(Alignment::right);
 }
 
 void eScrollWidgetComplete::setScrollArea(eWidget* const widget) {

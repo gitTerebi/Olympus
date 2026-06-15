@@ -4,8 +4,8 @@
 #include "characters/actions/ecollectresourceaction.h"
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eResourceCollectBuilding::eResourceCollectBuilding(
         GameBoard& board,
@@ -39,20 +39,20 @@ eResourceCollectBuilding::~eResourceCollectBuilding() {
     if(mCollector) mCollector->kill();
 }
 
-std::shared_ptr<eTexture> eResourceCollectBuilding::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eResourceCollectBuilding::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     return mTextures[sizeId].*mBaseTex;
 }
 
-std::vector<eOverlay> eResourceCollectBuilding::
+std::vector<Overlay> eResourceCollectBuilding::
     getOverlays(const eTileSize size) const {
-    std::vector<eOverlay> result;
+    std::vector<Overlay> result;
     const int sizeId = static_cast<int>(size);
     const auto& btexs = GameTextures::buildings()[sizeId];
     if(mRawCount <= 0) {
-        eOverlay& o = result.emplace_back();
+        Overlay& o = result.emplace_back();
         const int wo = seed() % 2;
-        const std::vector<eTextureCollection>* coll;
+        const std::vector<TextureCollection>* coll;
         if(wo) {
             coll = &btexs.fWaitingOverlay0;
         } else {
@@ -68,14 +68,14 @@ std::vector<eOverlay> eResourceCollectBuilding::
     } else if(mOverlays) {
         const auto& coll = btexs.*mOverlays;
         const int texId = textureTime() % coll.size();
-        eOverlay& o = result.emplace_back();
+        Overlay& o = result.emplace_back();
         o.fTex = coll.getTexture(texId);
         o.fX = mOverlayX;
         o.fY = mOverlayY;
     }
     if(resource() > 0) {
         const auto& texs = mTextures[sizeId];
-        const eTextureCollection* coll = nullptr;
+        const TextureCollection* coll = nullptr;
         double x = -0.5;
         double y = -2;
         switch(resourceType()) {
@@ -116,7 +116,7 @@ std::vector<eOverlay> eResourceCollectBuilding::
         if(coll) {
             const int resMax = coll->size() - 1;
             const int res = std::clamp(resource() - 1, 0, resMax);
-            eOverlay& resO = result.emplace_back();
+            Overlay& resO = result.emplace_back();
             resO.fTex = coll->getTexture(res);
             resO.fX = x;
             resO.fY = y;
@@ -136,7 +136,7 @@ void eResourceCollectBuilding::timeChanged(const int by) {
                 if(type == eResourceType::silver) {
                     auto& brd = getBoard();
                     const auto pid = playerId();
-                    brd.incDrachmas(pid, eNumbers::sMintDrachmasPerSilver,
+                    brd.incDrachmas(pid, Numbers::sMintDrachmasPerSilver,
                                     eFinanceTarget::minedSilver);
                     mRawCount--;
                 } else {
@@ -158,7 +158,7 @@ void eResourceCollectBuilding::timeChanged(const int by) {
     }
 }
 
-void eResourceCollectBuilding::serializeFields(eSaveArchive& ar) {
+void eResourceCollectBuilding::serializeFields(SaveArchive& ar) {
     eResourceCollectBuildingBase::serializeFields(ar);
     ar.field("collectedAction", mCollectedAction);
     ar.characterField("collector", &getBoard(), mCollector);

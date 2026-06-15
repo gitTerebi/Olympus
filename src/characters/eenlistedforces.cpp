@@ -5,8 +5,8 @@
 
 #include "characters/soldier-banner.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 std::map<eCityId, eEnlistedForces>
 eEnlistedForces::splitIntoCities() const {
@@ -31,12 +31,12 @@ eEnlistedForces::splitIntoCities() const {
     return forces;
 }
 
-void eEnlistedForces::serialize(eSaveArchive& ar, GameBoard* board) {
+void eEnlistedForces::serialize(SaveArchive& ar, GameBoard* board) {
     WorldBoard* wboard = board ? &board->world() : nullptr;
     {
         if(ar.reading()) {
             const auto soldiers = std::make_shared<std::vector<stdsptr<SoldierBanner>>>();
-            ar.arrayField("soldiers", *soldiers, [board](eSaveArchive& ar, auto& soldier) {
+            ar.arrayField("soldiers", *soldiers, [board](SaveArchive& ar, auto& soldier) {
                 ar.soldierBanner(board, soldier);
             });
             ar.addPostFunc([this, soldiers]() {
@@ -46,13 +46,13 @@ void eEnlistedForces::serialize(eSaveArchive& ar, GameBoard* board) {
                                 fSoldiers.end());
             }, "eEnlistedForces::soldiers");
         } else {
-            ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& ar, auto& soldier) {
+            ar.arrayField("soldiers", fSoldiers, [board](SaveArchive& ar, auto& soldier) {
                 ar.soldierBanner(board, soldier);
             });
         }
     }
     {
-        ar.arrayField("heroes", fHeroes, [](eSaveArchive& ar, auto& h) {
+        ar.arrayField("heroes", fHeroes, [](SaveArchive& ar, auto& h) {
             ar.field("h.first", h.first);
             ar.field("h.second", h.second);
         });
@@ -60,7 +60,7 @@ void eEnlistedForces::serialize(eSaveArchive& ar, GameBoard* board) {
     {
         if(ar.reading()) {
             const auto allies = std::make_shared<std::vector<stdsptr<WorldCity>>>();
-            ar.arrayField("allies", *allies, [wboard](eSaveArchive& ar, auto& ally) {
+            ar.arrayField("allies", *allies, [wboard](SaveArchive& ar, auto& ally) {
                 ar.city(wboard, ally);
             });
             ar.addPostFunc([this, allies]() {
@@ -70,7 +70,7 @@ void eEnlistedForces::serialize(eSaveArchive& ar, GameBoard* board) {
                               fAllies.end());
             }, "eEnlistedForces::allies");
         } else {
-            ar.arrayField("allies", fAllies, [wboard](eSaveArchive& ar, auto& ally) {
+            ar.arrayField("allies", fAllies, [wboard](SaveArchive& ar, auto& ally) {
                 ar.city(wboard, ally);
             });
         }
@@ -109,7 +109,7 @@ int eEnlistedForces::strength() const {
         double mult = 1.;
         switch(s->type()) {
         case eBannerType::horseman:
-            mult = eNumbers::sArmyStrengthHorsemanMult;
+            mult = Numbers::sArmyStrengthHorsemanMult;
             break;
         default:
             break;
@@ -130,7 +130,7 @@ void eEnlistedForces::kill(const double killFrac) const {
         const auto cid = s->cityId();
         const int oC = s->count();
         int nC = std::round((1 - killFrac)*oC);
-        nC = std::clamp(nC, 0, eNumbers::sSoldiersPerBanner);
+        nC = std::clamp(nC, 0, Numbers::sSoldiersPerBanner);
         auto& board = s->getBoard();
         const auto type = s->type();
         for(int i = nC; i < oC; i++) {

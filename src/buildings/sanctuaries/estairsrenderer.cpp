@@ -9,7 +9,7 @@ eStairsRenderer::eStairsRenderer(
 
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eStairsRenderer::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& terr = GameTextures::terrain()[sizeId];

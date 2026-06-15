@@ -12,7 +12,7 @@ struct eEventData;
 class eEventButton : public eButton {
 public:
     eEventButton(const eEvent e,
-                 eMainWindow* const window);
+                 MainWindow* const window);
 };
 
 class eEventWidget : public eWidget {

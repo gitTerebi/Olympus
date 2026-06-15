@@ -4,8 +4,8 @@
 #include "emoveaction.h"
 #include "engine/emovedirection.h"
 #include "engine/edirectionlastusetime.h"
-#include "ewalkablehelpers.h"
-#include "fileIO/esavearchive.h"
+#include "walkable-helpers.h"
+#include "fileIO/save-archive.h"
 
 #include <SDL2/SDL_rect.h>
 #include <functional>
@@ -41,7 +41,7 @@ public:
         int time,
         const eOrientationPicker& pickOrientation);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eCharacterActionState nextTurn(eOrientation& t) override;
 

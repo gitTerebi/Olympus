@@ -1,7 +1,7 @@
 #include "edate.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 eDate::eDate(const int day, const eMonth month, const int year) :
     mDay(day), mMonth(month), mYear(year) {
@@ -13,8 +13,8 @@ std::string eDate::shortString() const {
     const auto m = eMonthHelper::shortName(mMonth);
     const auto y = std::to_string(std::abs(mYear));
     std::string bcad;
-    if(mYear < 0) bcad = eLanguage::zeusText(20, 0);
-    else bcad = eLanguage::zeusText(20, 1);
+    if(mYear < 0) bcad = Language::zeusText(20, 0);
+    else bcad = Language::zeusText(20, 1);
     return d + "  " + m + "  " + y + "  " + bcad;
 }
 
@@ -169,14 +169,14 @@ int eDate::operator-(const eDate& d) const {
     return nd;
 }
 
-void eDate::serialize(eSaveArchive& ar) {
+void eDate::serialize(SaveArchive& ar) {
     ar.field("day", mDay, 1);
     ar.field("month", mMonth, eMonth::january);
     ar.field("year", mYear, 0);
 }
 
-bool eSaveArchive::dateField(const char* const name, eDate& d) {
-    return archiveField(name, [&d](eSaveArchive& childAr) {
+bool SaveArchive::dateField(const char* const name, eDate& d) {
+    return archiveField(name, [&d](SaveArchive& childAr) {
         d.serialize(childAr);
     });
 }
@@ -184,13 +184,13 @@ bool eSaveArchive::dateField(const char* const name, eDate& d) {
 std::string eMonthHelper::name(const eMonth m) {
     const int group = 160;
     const int string = static_cast<int>(m);
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 std::string eMonthHelper::shortName(const eMonth m) {
     const int group = 25;
     const int string = static_cast<int>(m);
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 int eMonthHelper::days(const eMonth m) {

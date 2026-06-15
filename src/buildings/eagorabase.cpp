@@ -9,7 +9,7 @@
 #include "eroad.h"
 
 #include "characters/epeddler.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <cstdio>
 
@@ -58,7 +58,7 @@ void eAgoraBase::erase() {
     eBuilding::erase();
 }
 
-void eAgoraBase::serializeFields(eSaveArchive& ar) {
+void eAgoraBase::serializeFields(SaveArchive& ar) {
     ePatrolBuildingBase::serializeFields(ar);
     if(ar.reading()) {
         setMaxEmployees(0);

@@ -3,7 +3,7 @@
 
 #include "engine/world-city.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eCityEventValue {
 public:
@@ -20,7 +20,7 @@ public:
     int maxCityId() const { return mMaxCityId; }
     void setMaxCityId(const int max) { mMaxCityId = max; }
 protected:
-    void serialize(eSaveArchive& ar, GameBoard& board);
+    void serialize(SaveArchive& ar, GameBoard& board);
 
     void chooseCity();
 

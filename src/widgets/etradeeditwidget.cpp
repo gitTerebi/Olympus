@@ -1,7 +1,7 @@
 #include "etradeeditwidget.h"
 
-#include "evectorhelpers.h"
-#include "elanguage.h"
+#include "vector-helpers.h"
+#include "language.h"
 #include "evaluebutton.h"
 #include "eresourcebutton.h"
 #include "ecancelbutton.h"
@@ -34,7 +34,7 @@ public:
         addWidget(closeButton);
 
         setTypeAndCount(type, count);
-        closeButton->align(eAlignment::vcenter);
+        closeButton->align(Alignment::vcenter);
     }
 
     void setTypeAndCount(const eResourceType type, const int count) {
@@ -75,12 +75,12 @@ void eTradeEditWidget::initialize(std::vector<eResourceTrade>* const trade) {
         const auto b = new eTradeResourceButton(window());
         b->initialize(r.fType, r.fMax, changeAction,
                       [this, b, changeAction]() {
-            eVectorHelpers::remove(mButtons, b);
+            VectorHelpers::remove(mButtons, b);
             b->deleteLater();
             changeAction();
         });
         mButtonsWidget->addWidget(b);
-        b->align(eAlignment::hcenter);
+        b->align(Alignment::hcenter);
         mButtons.push_back(b);
     }
     mButtonsWidget->stackVertically();
@@ -92,12 +92,12 @@ void eTradeEditWidget::initialize(std::vector<eResourceTrade>* const trade) {
         const auto r = eResourceType::marble;
         b->initialize(r, 12, changeAction,
                       [this, b, changeAction]() {
-            eVectorHelpers::remove(mButtons, b);
+            VectorHelpers::remove(mButtons, b);
             b->deleteLater();
             changeAction();
         });
         mButtonsWidget->addWidget(b);
-        b->align(eAlignment::hcenter);
+        b->align(Alignment::hcenter);
         mButtons.push_back(b);
 
         mButtonsWidget->stackVertically();
@@ -106,11 +106,11 @@ void eTradeEditWidget::initialize(std::vector<eResourceTrade>* const trade) {
         mInnerWidget->stackVertically();
         changeAction();
     });
-    addButton->setText(eLanguage::text("add"));
+    addButton->setText(Language::text("add"));
     addButton->setUnderline(false);
     addButton->fitContent();
     mInnerWidget->addWidget(addButton);
-    addButton->align(eAlignment::hcenter);
+    addButton->align(Alignment::hcenter);
 
     mInnerWidget->stackVertically();
 }

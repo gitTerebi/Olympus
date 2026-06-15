@@ -2,7 +2,7 @@
 
 #include "engine/eresourcetype.h"
 
-void FramedButtonWithIcon::initialize(const std::shared_ptr<eTexture>& icon,
+void FramedButtonWithIcon::initialize(const std::shared_ptr<Texture>& icon,
                                       const std::string& text) {
     const auto r = resolution();
     const double mult = r.multiplier();
@@ -29,8 +29,8 @@ void FramedButtonWithIcon::initialize(const std::shared_ptr<eTexture>& icon,
     iconLabel->setX(p);
     textLabel->setX(iconLabel->x() + iconLabel->width() + p);
 
-    iconLabel->align(eAlignment::vcenter);
-    textLabel->align(eAlignment::vcenter);
+    iconLabel->align(Alignment::vcenter);
+    textLabel->align(Alignment::vcenter);
 }
 
 void FramedButtonWithIcon::initialize(const eResourceType type,

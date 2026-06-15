@@ -6,9 +6,9 @@
 #include "characters/egrower.h"
 #include "buildings/egrowerslodge.h"
 #include "buildings/eresourcebuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eGrowerActionStage {
     idle, findingResource, working, goingBack, waiting
@@ -30,7 +30,7 @@ public:
     bool decide() override;
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void rebuildCurrentStage();
@@ -75,7 +75,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.tileField("tile", board(), mTile);
         ar.field("buildingType", mType);
@@ -97,7 +97,7 @@ public:
     void call() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.tileField("tile", board(), mTile);
     }
 private:

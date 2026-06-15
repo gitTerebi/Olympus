@@ -7,7 +7,7 @@
 #include <vector>
 
 class eTile;
-class eSaveArchive;
+class SaveArchive;
 
 class eDirectionLastUseTime {
 public:
@@ -22,7 +22,7 @@ public:
         return mTime[id];
     }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
     std::vector<int> mTime;
 };

@@ -14,7 +14,7 @@ protected:
 private:
     void updateBackgroundCache(ePainter& p);
 
-    std::shared_ptr<eTexture> mBackgroundCache;
+    std::shared_ptr<Texture> mBackgroundCache;
 };
 
 #endif // EMAINMENUBASE_H

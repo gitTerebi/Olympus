@@ -10,7 +10,7 @@ enum class eResourceType;
 
 class StorageDistributionWidget : public eInfoWidget {
 public:
-    StorageDistributionWidget(eMainWindow* const window,
+    StorageDistributionWidget(MainWindow* const window,
                               eMainWidget* const mw);
     void initialize(GameBoard& board, const eCityId cid);
 private:

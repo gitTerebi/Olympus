@@ -3,7 +3,7 @@
 
 #include "egodquesteventbase.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eGodQuestEvent : public eGodQuestEventBase {
 public:
@@ -21,7 +21,7 @@ public:
 
     eEventTrigger& fulfilledTrigger() { return *mFulfilledTrigger; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdsptr<eEventTrigger> mFulfilledTrigger;
     bool mFulfilled = false;

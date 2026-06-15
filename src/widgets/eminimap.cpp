@@ -2,11 +2,11 @@
 
 #include "textures/game-textures.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
-eMiniMap::eMiniMap(eMainWindow* const window) :
+eMiniMap::eMiniMap(MainWindow* const window) :
     eWidget(window) {
     mTexture = &mTextures[eWorldDirection::N];
     mTextures[eWorldDirection::E];
@@ -239,7 +239,7 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
     const int tw = fTex ? fTex->width() : -1;
     const int th = fTex ? fTex->height() : -1;
     if(tw != w || th != h) {
-        fTex = std::make_shared<eTexture>();
+        fTex = std::make_shared<Texture>();
         const bool v = fTex->create(rend, w, h);
         if(!v) {
             fTex.reset();
@@ -323,7 +323,7 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
             const int dy = tile->dy();
             int rdx;
             int rdy;
-            eTileHelper::dTileIdToRotatedDTileId(
+            TileHelper::dTileIdToRotatedDTileId(
                         dx, dy, rdx, rdy, dir, bw, bh);
             drawTile(tile, rdx, rdy);
         }
@@ -338,7 +338,7 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
             const int dy = tile->dy();
             int rdx;
             int rdy;
-            eTileHelper::dTileIdToRotatedDTileId(
+            TileHelper::dTileIdToRotatedDTileId(
                         dx, dy, rdx, rdy, dir, bw, bh);
             drawTile(tile, rdx, rdy);
         }

@@ -1,13 +1,13 @@
-#ifndef ETEXTURECOLLECTION_H
-#define ETEXTURECOLLECTION_H
+#ifndef TEXTURE_COLLECTION_H
+#define TEXTURE_COLLECTION_H
 
-#include "etexture.h"
+#include "texture.h"
 
 class ePainter;
 
-class eTextureCollection {
+class TextureCollection {
 public:
-    eTextureCollection(SDL_Renderer* const r);
+    TextureCollection(SDL_Renderer* const r);
 
     void draw(ePainter& p,
               const int x, const int y,
@@ -15,14 +15,14 @@ public:
     void draw(ePainter& p,
               const int x, const int y,
               const int id,
-              const eAlignment align) const;
-    std::shared_ptr<eTexture>& addTexture();
-    std::shared_ptr<eTexture> loadTexture(const std::string& path);
-    const std::shared_ptr<eTexture>& getTexture(const int id) const;
+              const Alignment align) const;
+    std::shared_ptr<Texture>& addTexture();
+    std::shared_ptr<Texture> loadTexture(const std::string& path);
+    const std::shared_ptr<Texture>& getTexture(const int id) const;
     int size() const;
 private:
     SDL_Renderer* const mRenderer;
-    std::vector<std::shared_ptr<eTexture>> mTexs;
+    std::vector<std::shared_ptr<Texture>> mTexs;
 };
 
-#endif // ETEXTURECOLLECTION_H
+#endif // TEXTURE_COLLECTION_H

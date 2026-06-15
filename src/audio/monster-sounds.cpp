@@ -2,7 +2,7 @@
 
 
 #include "audio/sounds.h"
-#include "egamedir.h"
+#include "game-dir.h"
 
 eMonsterSounds::eMonsterSounds(const std::string& shortName,
                                const std::string& longName) :
@@ -11,8 +11,8 @@ eMonsterSounds::eMonsterSounds(const std::string& shortName,
 void eMonsterSounds::load() {
     if(mLoaded) return;
     mLoaded = true;
-    const std::string voiceDir{eGameDir::path("Audio/Voice/Walker/")};
-    const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+    const std::string voiceDir{GameDir::path("Audio/Voice/Walker/")};
+    const std::string wavsDir{GameDir::path("Audio/Wavs/")};
 
     fVoice->addPath(voiceDir + "M_" + fShortName + ".mp3");
 
@@ -46,8 +46,8 @@ void eMonsterSoundsBase::play(const eMonsterSound s) {
 void eSatyrSounds::load() {
     if(mLoaded) return;
     mLoaded = true;
-    const std::string voiceDir{eGameDir::path("Audio/Voice/Walker/")};
-    const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+    const std::string voiceDir{GameDir::path("Audio/Voice/Walker/")};
+    const std::string wavsDir{GameDir::path("Audio/Wavs/")};
 
     fVoice->addPath(voiceDir + "sat_e_1.mp3");
 

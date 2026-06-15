@@ -1,10 +1,10 @@
 #include "eearthquakeevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 #include "characters/soldier-banner.h"
 
 eEarthquakeEvent::eEarthquakeEvent(
@@ -13,7 +13,7 @@ eEarthquakeEvent::eEarthquakeEvent(
         GameBoard& board) :
     eGameEvent(cid, eGameEventType::earthquake,
                branch, board),
-    ePointEventValue(eBannerTypeS::disasterPoint,
+    ePointEventValue(BannerTypeS::disasterPoint,
                     cid, board) {}
 
 void eEarthquakeEvent::trigger() {
@@ -35,10 +35,10 @@ void eEarthquakeEvent::trigger() {
 }
 
 std::string eEarthquakeEvent::longName() const {
-    return eLanguage::text("earthquake_long_name");
+    return Language::text("earthquake_long_name");
 }
 
-void eEarthquakeEvent::serializeFields(eSaveArchive& ar) {
+void eEarthquakeEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ePointEventValue::serialize(ar);
     eCountEventValue::serialize(ar);

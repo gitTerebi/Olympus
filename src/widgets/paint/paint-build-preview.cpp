@@ -3,8 +3,8 @@
 #include "characters/actions/walkable/walkable-object.h"
 #include "engine/etile.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
-#include "evectorhelpers.h"
+#include "numbers.h"
+#include "vector-helpers.h"
 #include "widgets/etilepainter.h"
 #include "widgets/epainter.h"
 #include "textures/terrain-textures.h"
@@ -14,7 +14,7 @@
 #include "buildings/ebuildingrenderer.h"
 #include "buildings/eagorabase.h"
 #include "buildings/eagoraspace.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "textures/tile-to-texture.h"
 #include "widgets/gamebuild/ecommonhousingbuild.h"
 #include "widgets/paint/build-preview-render.h"
@@ -38,7 +38,7 @@ void GameWidget::paintBuildPreview(
 {
     const auto drawBuildText = [&](const std::string &text)
     {
-        painter.drawText(mHoverX - mDX + padding(), mHoverY - mDY + padding(), text, eFontColor::light);
+        painter.drawText(mHoverX - mDX + padding(), mHoverY - mDY + padding(), text, FontColor::light);
     };
 
     const auto drawStampCostEstimate = [&]()
@@ -47,7 +47,7 @@ void GameWidget::paintBuildPreview(
         painter.drawText(mHoverX - mDX + padding(),
                    mHoverY - mDY + padding(),
                    std::to_string(mStampTool->estimatedCost(diff)),
-                   eFontColor::red,
+                   FontColor::red,
                     resolution().fontSizeXS());
     };
 
@@ -71,7 +71,7 @@ void GameWidget::paintBuildPreview(
             double drawX;
             double drawY;
             drawXY(tile->x(), tile->y(), drawX, drawY, 1, 1, tile->altitude());
-            tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+            tp.drawTexture(drawX, drawY, tex, Alignment::top);
         }
         tex->clearAlphaMod();
         tex->clearColorMod();
@@ -104,7 +104,7 @@ void GameWidget::paintBuildPreview(
         if(cattleTexs && !cattleTexs->fWalk.empty()) {
             return cattleTexs->fWalk[0].getTexture(0);
         }
-        return std::shared_ptr<eTexture>{};
+        return std::shared_ptr<Texture>{};
     };
     const auto drawAnimalBuildGhost = [&](eTile* const tile,
                                           const bool valid) {
@@ -115,7 +115,7 @@ void GameWidget::paintBuildPreview(
         const int worldTileY = tile->y();
         int viewTileX;
         int viewTileY;
-        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+        TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                            viewTileX, viewTileY, dir,
                                            boardWidth, boardHeight);
         const int da = tile->characterDoubleAltitude();
@@ -177,7 +177,7 @@ void GameWidget::paintBuildPreview(
             double drawX;
             double drawY;
             drawXY(t->x(), t->y(), drawX, drawY, 1, 1, t->altitude());
-            tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+            tp.drawTexture(drawX, drawY, tex, Alignment::top);
 
             buildW = std::max(buildW, 1 + std::abs(mHoverTX - t->x()));
             buildH = std::max(buildH, 1 + std::abs(mHoverTY - t->y()));
@@ -247,7 +247,7 @@ void GameWidget::paintBuildPreview(
                 const int hy = hoverTile->y();
                 const int ha = hoverTile->altitude();
                 drawXY(hx, hy, drawX, drawY, 1, 1, ha);
-                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                tp.drawTexture(drawX, drawY, tex, Alignment::top);
                 tex->clearColorMod();
             }
         }
@@ -260,7 +260,7 @@ void GameWidget::paintBuildPreview(
             mode == eBuildingMode::orangeTree)
         {
             int buildCount = 0;
-            std::shared_ptr<eTexture> tex;
+            std::shared_ptr<Texture> tex;
             if (mode == eBuildingMode::vine)
             {
                 tex = builTexs.fVine.getTexture(0);
@@ -295,7 +295,7 @@ void GameWidget::paintBuildPreview(
                         continue;
                     const int altitude = t->altitude();
                     drawXY(x, y, drawX, drawY, 1, 1, altitude);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
 
                     buildCount++;
                 }
@@ -369,7 +369,7 @@ void GameWidget::paintBuildPreview(
                     }
                     const int altitude = t->altitude();
                     drawXY(x, y, drawX, drawY, 1, 1, altitude);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
 
                     buildW = 1 + std::max(buildW, std::abs(mHoverTX - t->x()));
                     buildH = 1 + std::max(buildH, std::abs(mHoverTY - t->y()));
@@ -394,10 +394,10 @@ void GameWidget::paintBuildPreview(
                     continue;
                 const int altitude = t->altitude();
                 drawXY(rect.fX, rect.fY, drawX, drawY, 1, 1, altitude);
-                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
-                tp.drawTexture(drawX + 1, drawY, tex, eAlignment::top);
-                tp.drawTexture(drawX, drawY + 1, tex, eAlignment::top);
-                tp.drawTexture(drawX + 1, drawY + 1, tex, eAlignment::top);
+                tp.drawTexture(drawX, drawY, tex, Alignment::top);
+                tp.drawTexture(drawX + 1, drawY, tex, Alignment::top);
+                tp.drawTexture(drawX, drawY + 1, tex, Alignment::top);
+                tp.drawTexture(drawX + 1, drawY + 1, tex, Alignment::top);
             }
 
             const auto bounds = commonHousingBuildBounds(rects);
@@ -458,7 +458,7 @@ void GameWidget::paintBuildPreview(
                     double drawX;
                     double drawY;
                     drawXY(i, j, drawX, drawY, 1, 1, altitude);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                 }
             }
             tex->clearColorMod();
@@ -473,7 +473,7 @@ void GameWidget::paintBuildPreview(
                 double drawX;
                 double drawY;
                 drawXY(worldTileX - 1, j, drawX, drawY, 1, 1, altitude);
-                tp.drawTexture(drawX, drawY, road, eAlignment::top);
+                tp.drawTexture(drawX, drawY, road, Alignment::top);
             }
             road->clearColorMod();
         }
@@ -486,7 +486,7 @@ void GameWidget::paintBuildPreview(
                 for (int i = 0; i < iMax; i++)
                 {
                     const auto t = p[i];
-                    stdsptr<eTexture> tex;
+                    stdsptr<Texture> tex;
                     int dim;
                     if (i < 6)
                     {
@@ -530,7 +530,7 @@ void GameWidget::paintBuildPreview(
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -540,7 +540,7 @@ void GameWidget::paintBuildPreview(
                 for (int i = 0; i < iMax; i++)
                 {
                     const auto t = p[i];
-                    stdsptr<eTexture> tex;
+                    stdsptr<Texture> tex;
                     int dim;
                     if (i < 6)
                     {
@@ -582,7 +582,7 @@ void GameWidget::paintBuildPreview(
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -592,7 +592,7 @@ void GameWidget::paintBuildPreview(
                 for (int i = 0; i < iMax; i++)
                 {
                     const auto t = p[i];
-                    stdsptr<eTexture> tex;
+                    stdsptr<Texture> tex;
                     int dim;
                     if (i < 6)
                     {
@@ -634,7 +634,7 @@ void GameWidget::paintBuildPreview(
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -644,7 +644,7 @@ void GameWidget::paintBuildPreview(
                 for (int i = 0; i < iMax; i++)
                 {
                     const auto t = p[i];
-                    stdsptr<eTexture> tex;
+                    stdsptr<Texture> tex;
                     int dim;
                     if (i < 6)
                     {
@@ -686,7 +686,7 @@ void GameWidget::paintBuildPreview(
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -712,7 +712,7 @@ void GameWidget::paintBuildPreview(
                     double drawX;
                     double drawY;
                     drawXY(i, j, drawX, drawY, 1, 1, altitude);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                 }
             }
             tex->clearColorMod();
@@ -727,7 +727,7 @@ void GameWidget::paintBuildPreview(
                 double drawX;
                 double drawY;
                 drawXY(worldTileX, j, drawX, drawY, 1, 1, altitude);
-                tp.drawTexture(drawX, drawY, road, eAlignment::top);
+                tp.drawTexture(drawX, drawY, road, Alignment::top);
             }
             road->clearColorMod();
         }
@@ -743,7 +743,7 @@ void GameWidget::paintBuildPreview(
                     const int worldTileX = t->x();
                     const int worldTileY = t->y();
                     const int altitude = t->altitude();
-                    stdsptr<eTexture> tex;
+                    stdsptr<Texture> tex;
                     int dim;
                     if (i < 6)
                     {
@@ -782,7 +782,7 @@ void GameWidget::paintBuildPreview(
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -795,7 +795,7 @@ void GameWidget::paintBuildPreview(
                     const int worldTileX = t->x();
                     const int worldTileY = t->y();
                     const int altitude = t->altitude();
-                    stdsptr<eTexture> tex;
+                    stdsptr<Texture> tex;
                     int dim;
                     if (i < 6)
                     {
@@ -834,7 +834,7 @@ void GameWidget::paintBuildPreview(
                         }
                     }
                     tex->setColorMod(0, 255, 0);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -1192,7 +1192,7 @@ void GameWidget::paintBuildPreview(
                         continue;
                     const int altitude = t->altitude();
                     drawXY(x, y, drawX, drawY, 1, 1, altitude);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                 }
             }
             if (!cb)
@@ -1818,7 +1818,7 @@ void GameWidget::paintBuildPreview(
                 if(centerTile) {
                     const int altitude = centerTile->altitude();
                     drawXY(mHoverTX, mHoverTY, drawX, drawY, 2, 2, altitude);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                 }
                 tex->clearColorMod();
             } else {
@@ -1831,7 +1831,7 @@ void GameWidget::paintBuildPreview(
                         int dd;
                         auto tex = TileToTexture::get(t, trrTexs, builTexs, mTileSize, false, dd, nullptr, eWorldDirection::N);
                         tex->setColorMod(255, 0, 0);
-                        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                        tp.drawTexture(drawX, drawY, tex, Alignment::top);
                         tex->clearColorMod();
                     }
                 }
@@ -2349,8 +2349,8 @@ void GameWidget::paintBuildPreview(
                              if (isSanctuaryPreview) {
                                  const SDL_Rect lr{lhs.fTx, lhs.fTy, 1, 1};
                                  const SDL_Rect rr{rhs.fTx, rhs.fTy, 1, 1};
-                                 const auto rl = eTileHelper::toRotatedRect(lr, dir, boardWidth, boardHeight);
-                                 const auto rr2 = eTileHelper::toRotatedRect(rr, dir, boardWidth, boardHeight);
+                                 const auto rl = TileHelper::toRotatedRect(lr, dir, boardWidth, boardHeight);
+                                 const auto rr2 = TileHelper::toRotatedRect(rr, dir, boardWidth, boardHeight);
                                  if (rl.y != rr2.y) return rl.y < rr2.y;
                                  return rl.x < rr2.x;
                              }
@@ -2362,9 +2362,9 @@ void GameWidget::paintBuildPreview(
                                                     lhsSpanW, lhsSpanH};
                              const SDL_Rect rhsRect{rhs.fTx, rhs.fTy,
                                                     rhsSpanW, rhsSpanH};
-                             const auto rotatedLhsRect = eTileHelper::toRotatedRect(
+                             const auto rotatedLhsRect = TileHelper::toRotatedRect(
                                  lhsRect, dir, boardWidth, boardHeight);
-                             const auto rotatedRhsRect = eTileHelper::toRotatedRect(
+                             const auto rotatedRhsRect = TileHelper::toRotatedRect(
                                  rhsRect, dir, boardWidth, boardHeight);
                              const int lhsY = rotatedLhsRect.y + rotatedLhsRect.h - 1;
                              const int rhsY = rotatedRhsRect.y + rotatedRhsRect.h - 1;

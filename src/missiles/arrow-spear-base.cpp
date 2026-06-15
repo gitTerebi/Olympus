@@ -1,14 +1,14 @@
-#include "earrowspearbase.h"
+#include "arrow-spear-base.h"
 
-eArrowSpearBase::eArrowSpearBase(GameBoard& board,
+ArrowSpearBase::ArrowSpearBase(GameBoard& board,
                                  const eMissileTexs missileTexs,
-                                 const eMissileType type,
-                                 const std::vector<ePathPoint>& path) :
-    eMissile(board, type, path),
+                                 const MissileType type,
+                                 const std::vector<PathPoint>& path) :
+    Missile(board, type, path),
     mTexs(missileTexs) {}
 
-std::shared_ptr<eTexture>
-eArrowSpearBase::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture>
+ArrowSpearBase::getTexture(const eTileSize size) const {
     auto& board = this->board();
     const auto dir = board.direction();
     const int id = static_cast<int>(size);

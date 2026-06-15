@@ -6,12 +6,12 @@
 #include <libnoise/module/perlin.h>
 using namespace noise;
 
-#include "spawners/eboarspawner.h"
-#include "spawners/edeerspawner.h"
+#include "spawners/boar-spawner.h"
+#include "spawners/deer-spawner.h"
 
 #include "game-board.h"
 
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 
 int eMapGeneratorSettings::sLastWater = 25;
 int eMapGeneratorSettings::sLastForest = 8;
@@ -31,7 +31,7 @@ eMapGenerator::eMapGenerator(GameBoard& board) :
 void eMapGenerator::generateTerrain(const eMGS& settings) {
     (void)settings;
     module::Perlin p;
-    p.SetSeed(eRand::rand());
+    p.SetSeed(Rand::rand());
     p.SetOctaveCount(4.0);
     p.SetFrequency(1.0);
     p.SetPersistence(0.5);
@@ -58,7 +58,7 @@ void eMapGenerator::generateTerrain(const eMGS& settings) {
                 if(cid != sCid) {
                     bool found = false;
                     for(int k = 0; k < 10 && !found; k++) {
-                        eIterateSquare::iterateSquare(k, [&found, tile, sCid](const int dx, const int dy) {
+                        IterateSquare::iterateSquare(k, [&found, tile, sCid](const int dx, const int dy) {
                             const auto t = tile->tileRel<eTile>(dx, dy);
                             if(!t) return false;
                             const auto tCid = t->cityId();
@@ -86,7 +86,7 @@ void eMapGenerator::generateTerrain(const eMGS& settings) {
             } else if(checker(settings.fForest)) {
                 terr = eTerrain::forest;
             } else if(checker(settings.fForestToFertile)) {
-                if(eRand::rand() % 2) {
+                if(Rand::rand() % 2) {
                     terr = eTerrain::forest;
                 } else {
                     terr = eTerrain::fertile;
@@ -177,7 +177,7 @@ void eMapGenerator::generateStonesResource(
     while(generated < min && it++ < maxIt) {
         const double div = 12.5;
         module::Perlin p;
-        p.SetSeed(eRand::rand());
+        p.SetSeed(Rand::rand());
         p.SetOctaveCount(1.0);
         p.SetFrequency(1.0);
         p.SetPersistence(0.5);
@@ -220,8 +220,8 @@ void eMapGenerator::generateAnimals(const eMGS& settings) {
         const int h = mBoard.height();
 
         const int margin = 10;
-        const int x = margin + eRand::rand() % (w - 2*margin);
-        const int y = margin + eRand::rand() % (h - 2*margin);
+        const int x = margin + Rand::rand() % (w - 2*margin);
+        const int y = margin + Rand::rand() % (h - 2*margin);
 
         const auto tile = mBoard.dtile(x, y);
         const auto terr = tile->terrain();
@@ -231,11 +231,11 @@ void eMapGenerator::generateAnimals(const eMGS& settings) {
             i--;
             continue;
         }
-        stdsptr<eSpawner> spawner;
-        if(eRand::rand() % 2) {
-            spawner = std::make_shared<eBoarSpawner>(0, tile, mBoard);
+        stdsptr<Spawner> spawner;
+        if(Rand::rand() % 2) {
+            spawner = std::make_shared<BoarSpawner>(0, tile, mBoard);
         } else {
-            spawner = std::make_shared<eDeerSpawner>(0, tile, mBoard);
+            spawner = std::make_shared<DeerSpawner>(0, tile, mBoard);
         }
         tile->addBanner(spawner);
     }

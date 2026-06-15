@@ -1,8 +1,8 @@
 #include "raid-resource-event.h"
 
 #include "engine/game-board.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
@@ -25,5 +25,5 @@ RaidResourceEvent::RaidResourceEvent(
         board) {}
 
 std::string RaidResourceEvent::longName() const {
-    return eLanguage::text("raid_resource_long_name");
+    return Language::text("raid_resource_long_name");
 }

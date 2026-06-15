@@ -1,13 +1,13 @@
 #include "eavailablebuildings.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "buildings/ebuilding.h"
 
 #include <algorithm>
 #include <iterator>
 
-void eAvailableBuildings::serialize(eSaveArchive& ar) {
+void eAvailableBuildings::serialize(SaveArchive& ar) {
     ar.field("eliteHousing", fEliteHousing);
 
     ar.field("wheatFarm", fWheatFarm);
@@ -97,7 +97,7 @@ void eAvailableBuildings::serialize(eSaveArchive& ar) {
                 eBuildingType buildingType;
                 ePyramidAvailable pyramidData;
                 ar.archiveField(("pyramids." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&](SaveArchive& itemAr) {
                         itemAr.field("buildingType", buildingType);
                         itemAr.field("availability", pyramidData.fA);
                         int levelCount = 0;
@@ -117,7 +117,7 @@ void eAvailableBuildings::serialize(eSaveArchive& ar) {
                 eBuildingType buildingType = kv.first;
                 ePyramidAvailable& pyramidData = kv.second;
                 ar.archiveField(("pyramids." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&](SaveArchive& itemAr) {
                         itemAr.field("buildingType", buildingType);
                         itemAr.field("availability", pyramidData.fA);
                         int levelCount = static_cast<int>(pyramidData.fLevels.size());

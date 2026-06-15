@@ -2,7 +2,7 @@
 
 #include "characters/echaracter.h"
 #include "engine/etile.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eMovePathAction::eMovePathAction(eCharacter* const c,
                                  const std::vector<eOrientation>& path,
@@ -29,9 +29,9 @@ eCharacterActionState eMovePathAction::nextTurn(eOrientation& turn) {
     return eCharacterActionState::running;
 }
 
-void eMovePathAction::serializeFields(eSaveArchive& ar) {
+void eMovePathAction::serializeFields(SaveArchive& ar) {
     eMoveAction::serializeFields(ar);
-    ar.arrayField("turns", mTurns, [](eSaveArchive& itemAr, eOrientation& o) {
+    ar.arrayField("turns", mTurns, [](SaveArchive& itemAr, eOrientation& o) {
         itemAr.field("orientation", o);
     });
     ar.field("maxDistance", mMaxDistance);

@@ -6,7 +6,7 @@
 #include "gods/egodeventvalue.h"
 #include "gods/egodreasoneventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eLavaEvent : public eGameEvent,
                    public ePointEventValue,
@@ -22,7 +22,7 @@ public:
 
     void loadResources() const override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 };
 
 #endif // ELAVAEVENT_H

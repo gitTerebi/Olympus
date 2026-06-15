@@ -2,18 +2,18 @@
 
 #include "widgets/elabel.h"
 #include "widgets/elinewidget.h"
-#include "elanguage.h"
+#include "language.h"
 #include "engine/game-board.h"
 
 eCityFinancesWidget::eCityFinancesWidget(
-    eMainWindow * const window,
+    MainWindow * const window,
     eMainWidget * const mw) :
     eInfoWidget(window, mw, false, true) {}
 
 void eCityFinancesWidget::initialize(
     GameBoard& board, const eCityId cid) {
     const int p = padding();
-    const auto title = eLanguage::zeusText(60, 0);
+    const auto title = Language::zeusText(60, 0);
     eInfoWidget::initialize(title);
 
     const int ww = widgetWidth();
@@ -40,7 +40,7 @@ void eCityFinancesWidget::initialize(
         {
             const auto l = new eLabel(window());
             l->setFontSizeS();
-            l->setText(eLanguage::zeusText(60, 6)); // last year
+            l->setText(Language::zeusText(60, 6)); // last year
             l->setNoPadding();
             l->fitContent();
             row->addWidget(l);
@@ -50,7 +50,7 @@ void eCityFinancesWidget::initialize(
         {
             const auto l = new eLabel(window());
             l->setFontSizeS();
-            l->setText(eLanguage::zeusText(60, 7)); // so far this year
+            l->setText(Language::zeusText(60, 7)); // so far this year
             l->setNoPadding();
             l->fitContent();
             row->addWidget(l);
@@ -141,30 +141,30 @@ void eCityFinancesWidget::initialize(
     const auto& lastYear = f.lastYear();
     const auto& soFar = f.thisYear();
 
-    addFirstRow(eLanguage::zeusText(60, 10)); // income
-    addRow(eLanguage::zeusText(60, 8), lastYear.fTaxesIn, soFar.fTaxesIn); // taxes in
-    addRow(eLanguage::zeusText(60, 9), lastYear.fExports, soFar.fExports); // exports
-    addRow(eLanguage::zeusText(60, 20), lastYear.fGiftsReceived, soFar.fGiftsReceived); // gifts received
-    addRow(eLanguage::zeusText(60, 24), lastYear.fMinedSilver, soFar.fMinedSilver); // mined silver
-    addRow(eLanguage::zeusText(60, 16), lastYear.fTributeReceived, soFar.fTributeReceived); // tribute received
-    addRow(eLanguage::zeusText(60, 27), lastYear.fHippodrome, soFar.fHippodrome); // hippodrome
+    addFirstRow(Language::zeusText(60, 10)); // income
+    addRow(Language::zeusText(60, 8), lastYear.fTaxesIn, soFar.fTaxesIn); // taxes in
+    addRow(Language::zeusText(60, 9), lastYear.fExports, soFar.fExports); // exports
+    addRow(Language::zeusText(60, 20), lastYear.fGiftsReceived, soFar.fGiftsReceived); // gifts received
+    addRow(Language::zeusText(60, 24), lastYear.fMinedSilver, soFar.fMinedSilver); // mined silver
+    addRow(Language::zeusText(60, 16), lastYear.fTributeReceived, soFar.fTributeReceived); // tribute received
+    addRow(Language::zeusText(60, 27), lastYear.fHippodrome, soFar.fHippodrome); // hippodrome
     addLine();
-    addRow(eLanguage::zeusText(60, 25), lastYear.totalIncome(), soFar.totalIncome()); // total income
+    addRow(Language::zeusText(60, 25), lastYear.totalIncome(), soFar.totalIncome()); // total income
 
     addSpacer();
 
-    addFirstRow(eLanguage::zeusText(60, 17)); // expenses
-    addRow(eLanguage::zeusText(60, 11), lastYear.fImportCosts, soFar.fImportCosts); // import costs
-    addRow(eLanguage::zeusText(60, 12), lastYear.fWages, soFar.fWages); // wages
-    addRow(eLanguage::zeusText(60, 13), lastYear.fConstruction, soFar.fConstruction); // construction
-    addRow(eLanguage::zeusText(60, 21), lastYear.fBribesTributePaid, soFar.fBribesTributePaid); // bribes/tribute paid
-    addRow(eLanguage::zeusText(60, 22), lastYear.fGiftsAndAidGiven, soFar.fGiftsAndAidGiven); // gifts and aid given
+    addFirstRow(Language::zeusText(60, 17)); // expenses
+    addRow(Language::zeusText(60, 11), lastYear.fImportCosts, soFar.fImportCosts); // import costs
+    addRow(Language::zeusText(60, 12), lastYear.fWages, soFar.fWages); // wages
+    addRow(Language::zeusText(60, 13), lastYear.fConstruction, soFar.fConstruction); // construction
+    addRow(Language::zeusText(60, 21), lastYear.fBribesTributePaid, soFar.fBribesTributePaid); // bribes/tribute paid
+    addRow(Language::zeusText(60, 22), lastYear.fGiftsAndAidGiven, soFar.fGiftsAndAidGiven); // gifts and aid given
     addLine();
-    addRow(eLanguage::zeusText(60, 26), lastYear.totalExpenses(), soFar.totalExpenses()); // total expenses
+    addRow(Language::zeusText(60, 26), lastYear.totalExpenses(), soFar.totalExpenses()); // total expenses
 
     addSpacer();
 
-    addRow(eLanguage::zeusText(60, 18), lastYear.netInOutFlow(), soFar.netInOutFlow()); // net in/out flow
+    addRow(Language::zeusText(60, 18), lastYear.netInOutFlow(), soFar.netInOutFlow()); // net in/out flow
 
     col->stackVertically();
     col->fitContent();

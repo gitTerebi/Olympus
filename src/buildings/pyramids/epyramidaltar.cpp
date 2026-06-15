@@ -23,7 +23,7 @@ ePyramidAltar::ePyramidAltar(ePyramid* const pyramid,
     GameTextures::loadSanctuary();
 }
 
-stdsptr<eTexture> ePyramidAltar::getTexture(const eTileSize size) const {
+stdsptr<Texture> ePyramidAltar::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];

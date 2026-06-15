@@ -1,15 +1,15 @@
 ﻿#include "trade-post.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "textures/game-textures.h"
 
 #include "engine/game-board.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 
 #include "characters/trader.h"
 #include "characters/actions/trader-action.h"
 #include "characters/etradeboat.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include <algorithm>
 #include <vector>
@@ -71,8 +71,8 @@ TradePostSlot sTradePostSlotFromRealTile(const SDL_Rect& rect,
                                           SDL_Rect& rotatedRect) {
     const SDL_Point realDoor{rect.x, rect.y};
     SDL_Point rotatedDoor;
-    rotatedRect = eTileHelper::toRotatedRect(rect, dir, boardW, boardH);
-    eTileHelper::tileIdToRotatedTileId(realDoor.x, realDoor.y,
+    rotatedRect = TileHelper::toRotatedRect(rect, dir, boardW, boardH);
+    TileHelper::tileIdToRotatedTileId(realDoor.x, realDoor.y,
                                        rotatedDoor.x, rotatedDoor.y,
                                        dir, boardW, boardH);
     return sTradePostSlotFromLocalTile(rotatedDoor.x - rotatedRect.x,
@@ -90,7 +90,7 @@ TradePostSlot sTradePostRotatedSlotFromRealSlot(
     const int tileY = rect.y + slot.fY;
     int rotatedX;
     int rotatedY;
-    eTileHelper::tileIdToRotatedTileId(tileX, tileY,
+    TileHelper::tileIdToRotatedTileId(tileX, tileY,
                                        rotatedX, rotatedY,
                                        dir, boardW, boardH);
     return sTradePostSlotFromLocalTile(rotatedX - rotatedRect.x,
@@ -163,7 +163,7 @@ TradePost::~TradePost() {
     ownerBoard().unregisterTradePost(this);
 }
 
-std::shared_ptr<eTexture> TradePost::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> TradePost::getTexture(const eTileSize size) const {
     (void)size;
     return nullptr;
 
@@ -176,8 +176,8 @@ eTextureSpace TradePost::getTextureSpace(const int tx, const int ty,
     return result;
 }
 
-std::vector<eOverlay> TradePost::getOverlays(const eTileSize size) const {
-    std::vector<eOverlay> os;
+std::vector<Overlay> TradePost::getOverlays(const eTileSize size) const {
+    std::vector<Overlay> os;
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
@@ -223,7 +223,7 @@ std::vector<eOverlay> TradePost::getOverlays(const eTileSize size) const {
 
 void TradePost::timeChanged(const int by) {
     mRouteTimer += by;
-    if(mRouteTimer > eNumbers::sTraderSpawnPeriod) {
+    if(mRouteTimer > Numbers::sTraderSpawnPeriod) {
         mRouteTimer = 0;
         if(trades()) spawnTrader();
     }
@@ -338,8 +338,8 @@ int TradePost::buy(const int cash, std::map<eResourceType, int>& bought) {
             if(price > cash) continue;
             const int c = count(e);
             if(c <= 0) continue;
-            const int max = e == eResourceType::sculpture ? eNumbers::sTwoWayTradeMax :
-                                                            4*eNumbers::sTwoWayTradeMax;
+            const int max = e == eResourceType::sculpture ? Numbers::sTwoWayTradeMax :
+                                                            4*Numbers::sTwoWayTradeMax;
             if(thisC->exported(targetCid, e) > max) continue;
             take(e, 1);
             thisC->addExported(targetCid, e, 1);
@@ -436,7 +436,7 @@ void TradePost::setCharacterCreator(const eCharacterCreator& c) {
     mCharGen = c;
 }
 
-void TradePost::serializeFields(eSaveArchive& ar) {
+void TradePost::serializeFields(SaveArchive& ar) {
     eStorageBuilding::serializeFields(ar);
     ar.field("imports", mImports, eResourceType::none);
     ar.field("exports", mExports, eResourceType::none);

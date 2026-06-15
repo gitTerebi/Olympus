@@ -2,5 +2,5 @@
 
 #include "textures/interface-textures.h"
 
-eAcceptButton::eAcceptButton(eMainWindow* const window) :
+eAcceptButton::eAcceptButton(MainWindow* const window) :
     eBasicButton(&InterfaceTextures::fAcceptButton, window) {}

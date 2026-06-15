@@ -1,7 +1,7 @@
 #ifndef DESTRUCTION_TEXTURES_H
 #define DESTRUCTION_TEXTURES_H
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 class DestructionTextures {
 public:
@@ -68,37 +68,37 @@ public:
     bool fDustLoaded = false;
     void loadDust();
 
-    std::vector<eTextureCollection> fFire;
-//    std::vector<eTextureCollection> fBigFire;
+    std::vector<TextureCollection> fFire;
+//    std::vector<TextureCollection> fBigFire;
 
-    eTextureCollection fBlessed;
-    eTextureCollection fCursed;
+    TextureCollection fBlessed;
+    TextureCollection fCursed;
 
-    eTextureCollection fRock;
-    eTextureCollection fBlackSpear;
-    eTextureCollection fSpear;
-    eTextureCollection fBlackArrow;
-    eTextureCollection fArrow;
+    TextureCollection fRock;
+    TextureCollection fBlackSpear;
+    TextureCollection fSpear;
+    TextureCollection fBlackArrow;
+    TextureCollection fArrow;
 
-    std::vector<eTextureCollection> fBless;
-    std::vector<eTextureCollection> fCurse;
+    std::vector<TextureCollection> fBless;
+    std::vector<TextureCollection> fCurse;
 
-    eTextureCollection fPlague;
+    TextureCollection fPlague;
 
-    std::vector<eTextureCollection> fGodOrangeMissile;
-    std::vector<eTextureCollection> fGodBlueArrow;
-    std::vector<eTextureCollection> fGodOrangeArrow;
-    std::vector<eTextureCollection> fMonsterMissile;
-    std::vector<eTextureCollection> fGodBlueMissile;
-    std::vector<eTextureCollection> fGodRedMissile;
-    std::vector<eTextureCollection> fGodGreenMissile;
-    std::vector<eTextureCollection> fGodPinkMissile;
-    std::vector<eTextureCollection> fGodPurpleMissile;
-    std::vector<eTextureCollection> fOrichalcMissile;
+    std::vector<TextureCollection> fGodOrangeMissile;
+    std::vector<TextureCollection> fGodBlueArrow;
+    std::vector<TextureCollection> fGodOrangeArrow;
+    std::vector<TextureCollection> fMonsterMissile;
+    std::vector<TextureCollection> fGodBlueMissile;
+    std::vector<TextureCollection> fGodRedMissile;
+    std::vector<TextureCollection> fGodGreenMissile;
+    std::vector<TextureCollection> fGodPinkMissile;
+    std::vector<TextureCollection> fGodPurpleMissile;
+    std::vector<TextureCollection> fOrichalcMissile;
 
-    eTextureCollection fWave;
-    std::vector<eTextureCollection> fLava;
-    std::vector<eTextureCollection> fDust;
+    TextureCollection fWave;
+    std::vector<TextureCollection> fLava;
+    std::vector<TextureCollection> fDust;
 };
 
 #endif // DESTRUCTION_TEXTURES_H

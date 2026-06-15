@@ -3,9 +3,9 @@
 #include "engine/eevent.h"
 #include "engine/tribute.h"
 #include "engine/eeventdata.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "string-helpers.h"
+#include "fileIO/save-archive.h"
 
 PayTributeEvent::PayTributeEvent(
         const eCityId cid,
@@ -156,14 +156,14 @@ void PayTributeEvent::decline() {
 }
 
 std::string PayTributeEvent::longName() const {
-    auto tmpl = eLanguage::text("receive_tribute_from");
-    const auto none = eLanguage::text("none");
+    auto tmpl = Language::text("receive_tribute_from");
+    const auto none = Language::text("none");
     const auto ctstr = mCity ? mCity->name() : none;
-    eStringHelpers::replace(tmpl, "%1", ctstr);
+    StringHelpers::replace(tmpl, "%1", ctstr);
     return tmpl;
 }
 
-void PayTributeEvent::serializeFields(eSaveArchive& ar) {
+void PayTributeEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);
     ar.field("awaitingResponse", mAwaitingResponse, false);

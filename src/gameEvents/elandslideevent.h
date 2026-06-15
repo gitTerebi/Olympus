@@ -4,7 +4,7 @@
 #include "egameevent.h"
 #include "epointeventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eLandSlideEvent : public eGameEvent,
                         public ePointEventValue {
@@ -18,7 +18,7 @@ public:
 
     void loadResources() const override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 };
 
 #endif // ELANDSLIDEEVENT_H

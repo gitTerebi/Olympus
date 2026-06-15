@@ -2,10 +2,10 @@
 #define DRAW_COLUMN_H
 
 class eTilePainter;
-class eTextureCollection;
+class TextureCollection;
 
 void drawColumn(eTilePainter& tp, const int n,
                 const double drawX, const double drawY,
-                const eTextureCollection& coll);
+                const TextureCollection& coll);
 
 #endif // DRAW_COLUMN_H

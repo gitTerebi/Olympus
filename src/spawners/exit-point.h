@@ -1,20 +1,20 @@
-#ifndef EEXITPOINT_H
-#define EEXITPOINT_H
+#ifndef EXIT_POINT_H
+#define EXIT_POINT_H
 
-#include "ebanner.h"
+#include "banner.h"
 
-class eExitPoint : public eBanner {
+class ExitPoint : public Banner {
 public:
-    eExitPoint(const int id,
+    ExitPoint(const int id,
                eTile* const tile,
                GameBoard& board);
 };
 
-class eRiverExitPoint : public eBanner {
+class RiverExitPoint : public Banner {
 public:
-    eRiverExitPoint(const int id,
+    RiverExitPoint(const int id,
                     eTile* const tile,
                     GameBoard& board);
 };
 
-#endif // EEXITPOINT_H
+#endif // EXIT_POINT_H

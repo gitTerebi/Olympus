@@ -3,8 +3,8 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "fileIO/save-archive.h"
 
 eRivalArmyAwayEvent::eRivalArmyAwayEvent(
         const eCityId cid,
@@ -27,10 +27,10 @@ void eRivalArmyAwayEvent::trigger() {
 }
 
 std::string eRivalArmyAwayEvent::longName() const {
-    return eLanguage::text("rival_army_away_long_name");
+    return Language::text("rival_army_away_long_name");
 }
 
-void eRivalArmyAwayEvent::serializeFields(eSaveArchive& ar) {
+void eRivalArmyAwayEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCityEventValue::serialize(ar, *gameBoard());
 }

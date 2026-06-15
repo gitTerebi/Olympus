@@ -8,7 +8,7 @@
 #include "engine/eevent.h"
 #include "engine/eresourcetype.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class GetTributeResult {
     comply,
@@ -39,7 +39,7 @@ public:
     void advanceIfNeeded(const eDate& currentDate);
     bool isPostponed() const;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     enum class eResponse {
         dispatch,

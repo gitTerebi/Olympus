@@ -12,7 +12,7 @@ enum class eAgoraOrientation {
 };
 
 class eVendor;
-class eSaveArchive;
+class SaveArchive;
 
 class eAgoraBase : public ePatrolBuildingBase {
 public:
@@ -25,7 +25,7 @@ public:
 
     virtual SDL_Point pt(const int id) const = 0;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override {
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override {
         (void)size;
         return nullptr;
     }
@@ -59,7 +59,7 @@ public:
     std::vector<eTile*> findAgoraExits() const;
     eTile* agoraRoadExit() const;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     const int mNPts;
 protected:

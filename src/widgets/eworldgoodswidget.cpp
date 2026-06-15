@@ -8,12 +8,12 @@
 #include "framed-button.h"
 #include "eresourcebutton.h"
 #include "evaluebutton.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 #include "ecancelbutton.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 void eTradeTypesWidget::initialize() {
     setType(eFrameType::inner);
@@ -46,14 +46,14 @@ void eTradeTypesWidget::setTrade(const ePlayerId pid,
         iconLabel->setTexture(icon);
         iconLabel->fitContent();
         w->addWidget(iconLabel);
-        iconLabel->align(eAlignment::vcenter | eAlignment::left);
+        iconLabel->align(Alignment::vcenter | Alignment::left);
 
         const auto name = eResourceTypeHelpers::typeName(t.fType);
         const auto nameLabel = new eLabel(name, window());
         nameLabel->setFontSizeXS();
         nameLabel->fitContent();
         w->addWidget(nameLabel);
-        nameLabel->align(eAlignment::vcenter | eAlignment::left);
+        nameLabel->align(Alignment::vcenter | Alignment::left);
         nameLabel->setX(iconLabel->x() + iconLabel->width());
 
         const auto used = std::to_string(t.used(pid));
@@ -63,7 +63,7 @@ void eTradeTypesWidget::setTrade(const ePlayerId pid,
         usedLabel->setFontSizeXS();
         usedLabel->fitContent();
         w->addWidget(usedLabel);
-        usedLabel->align(eAlignment::vcenter | eAlignment::right);
+        usedLabel->align(Alignment::vcenter | Alignment::right);
 
         addWidget(w);
         w->setY(i*h);
@@ -84,7 +84,7 @@ void eWorldTradeWidget::initialize(const std::string& name) {
     mNameLabel->setText(name);
     mNameLabel->fitContent();
     addWidget(mNameLabel);
-    mNameLabel->align(eAlignment::top | eAlignment::hcenter);
+    mNameLabel->align(Alignment::top | Alignment::hcenter);
 
     mTradeTypesWidget = new eTradeTypesWidget(window());
     mTradeTypesWidget->setY(mNameLabel->height());
@@ -99,7 +99,7 @@ void eWorldTradeWidget::initialize(const std::string& name) {
 void eWorldTradeWidget::setName(const std::string &name) {
     mNameLabel->setText(name);
     mNameLabel->fitContent();
-    mNameLabel->align(eAlignment::top | eAlignment::hcenter);
+    mNameLabel->align(Alignment::top | Alignment::hcenter);
 }
 
 void eWorldTradeWidget::setTrade(const ePlayerId pid,
@@ -122,29 +122,29 @@ void eWorldGoodsWidget::initialize() {
     mGoodsLabel = new eLabel(window());
     mGoodsLabel->setFontSizeS();
     mGoodsLabel->setPaddingXS();
-    const auto goodsStr = eLanguage::zeusText(47, 6);
+    const auto goodsStr = Language::zeusText(47, 6);
     mGoodsLabel->setText(goodsStr);
     mGoodsLabel->fitContent();
     addWidget(mGoodsLabel);
-    mGoodsLabel->align(eAlignment::top | eAlignment::hcenter);
+    mGoodsLabel->align(Alignment::top | Alignment::hcenter);
 
     mOrdersButton = eButton::sCreate(coll.fWorldSmallButton, window(), this);
 
-    const auto ordersStr = eLanguage::zeusText(47, 7);
+    const auto ordersStr = Language::zeusText(47, 7);
     const auto ordersTxt = new eLabel(ordersStr, window());
     ordersTxt->setFontSizeS();
     ordersTxt->fitContent();
     mOrdersButton->addWidget(ordersTxt);
-    ordersTxt->align(eAlignment::center);
-    mOrdersButton->align(eAlignment::hcenter);
+    ordersTxt->align(Alignment::center);
+    mOrdersButton->align(Alignment::hcenter);
     mOrdersButton->setY(mGoodsLabel->y() + mGoodsLabel->height());
 
     mBuysWidget = new eWorldTradeWidget(window());
-    mBuysWidget->initialize(eLanguage::zeusText(47, 1));
+    mBuysWidget->initialize(Language::zeusText(47, 1));
     addWidget(mBuysWidget);
 
     mSellsWidget = new eWorldTradeWidget(window());
-    mSellsWidget->initialize(eLanguage::zeusText(47, 2));
+    mSellsWidget->initialize(Language::zeusText(47, 2));
     addWidget(mSellsWidget);
 
     updateTradeY();
@@ -166,11 +166,11 @@ void eWorldGoodsWidget::setCity(const stdsptr<WorldCity>& c) {
 
     if(c) {
         if(c->isRival()) {
-            mBuysWidget->setName(eLanguage::zeusText(47, 3));
-            mSellsWidget->setName(eLanguage::zeusText(47, 4));
+            mBuysWidget->setName(Language::zeusText(47, 3));
+            mSellsWidget->setName(Language::zeusText(47, 4));
         } else {
-            mBuysWidget->setName(eLanguage::zeusText(47, 1));
-            mSellsWidget->setName(eLanguage::zeusText(47, 2));
+            mBuysWidget->setName(Language::zeusText(47, 1));
+            mSellsWidget->setName(Language::zeusText(47, 2));
         }
     }
 }

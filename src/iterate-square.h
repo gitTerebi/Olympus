@@ -1,9 +1,9 @@
-#ifndef EITERATESQUARE_H
-#define EITERATESQUARE_H
+#ifndef ITERATE_SQUARE_H
+#define ITERATE_SQUARE_H
 
 #include <functional>
 
-namespace eIterateSquare {
+namespace IterateSquare {
     using eTileFunc = std::function<bool(int, int)>;
     void iterateSquare(const int k, const eTileFunc& prcs,
                        const int inc = 1);
@@ -13,4 +13,4 @@ namespace eIterateSquare {
                          const int inc = 1);
 };
 
-#endif // EITERATESQUARE_H
+#endif // ITERATE_SQUARE_H

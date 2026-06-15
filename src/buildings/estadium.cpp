@@ -82,11 +82,11 @@ eTextureSpace eStadium::getTextureSpace(const int tx, const int ty,
     }
 }
 
-std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eStadium::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
 
-    std::vector<eOverlay> os;
+    std::vector<Overlay> os;
 
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -100,7 +100,7 @@ std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
     if(mRotated != dirRot) {
         {
             const auto& coll = texs.fStadiumAudiance1H;
-            eOverlay a0;
+            Overlay a0;
             a0.fX = -2.0;
             a0.fY = -7.5;
             const int ttt = tt % coll.size();
@@ -109,7 +109,7 @@ std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
         }
         {
             const auto& coll = texs.fStadiumAudiance2H;
-            eOverlay a0;
+            Overlay a0;
             a0.fX = 1.5;
             a0.fY = -7.5;
             const int ttt = tt % coll.size();
@@ -120,7 +120,7 @@ std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
         bool wrap = true;
         double ox = 0;
         double oy = -6;
-        const eTextureCollection* coll = nullptr;
+        const TextureCollection* coll = nullptr;
         if(oi == 0) {
             coll = &texs.fStadiumOverlay1;
             oy -= 2;
@@ -143,11 +143,11 @@ std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
 
         const int ttt = wrap ? t % coll->size() :
                                std::clamp(t, 0, coll->size() - 1);
-        os.push_back(eOverlay{ox, oy, coll->getTexture(ttt)});
+        os.push_back(Overlay{ox, oy, coll->getTexture(ttt)});
     } else {
         {
             const auto& coll = texs.fStadiumAudiance1W;
-            eOverlay a0;
+            Overlay a0;
             a0.fX = -2.1;
             a0.fY = -7.2;
             const int ttt = tt % coll.size();
@@ -156,7 +156,7 @@ std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
         }
         {
             const auto& coll = texs.fStadiumAudiance2W;
-            eOverlay a0;
+            Overlay a0;
             a0.fX = -2.1;
             a0.fY = -3.5;
             const int ttt = tt % coll.size();
@@ -168,7 +168,7 @@ std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
         bool wrap = true;
         double ox = 0;
         double oy = -5;
-        const eTextureCollection* coll = nullptr;
+        const TextureCollection* coll = nullptr;
         if(oi == 0) {
             coll = &texs.fStadiumOverlay1;
             ox -= 2;
@@ -190,7 +190,7 @@ std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
 
         const int ttt = wrap ? t % coll->size() :
                                std::clamp(t, 0, coll->size() - 1);
-        os.push_back(eOverlay{ox, oy, coll->getTexture(ttt)});
+        os.push_back(Overlay{ox, oy, coll->getTexture(ttt)});
     }
     return os;
 }

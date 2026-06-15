@@ -1,10 +1,10 @@
 #include "eracinghorse.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eRacingHorse::eRacingHorse(GameBoard& board, const int id,
-                           const std::vector<ePathPoint>& path) :
-    eMissile(board, eMissileType::racingHorse, path),
+                           const std::vector<PathPoint>& path) :
+    Missile(board, MissileType::racingHorse, path),
     mId(id) {
     GameTextures::loadRacingHorses();
 }
@@ -12,7 +12,7 @@ eRacingHorse::eRacingHorse(GameBoard& board, const int id,
 eRacingHorse::eRacingHorse(GameBoard& board) :
     eRacingHorse(board, 0, {}) {}
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eRacingHorse::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& ctexs = GameTextures::characters()[sizeId];
@@ -30,7 +30,7 @@ eRacingHorse::getTexture(const eTileSize size) const {
     if(!texs) return nullptr;
     const auto& race = texs->fRace;
     const double a = angle();
-    const auto& board = eMissile::board();
+    const auto& board = Missile::board();
     const auto dir = board.direction();
     double da;
     if(dir == eWorldDirection::N) {
@@ -48,7 +48,7 @@ eRacingHorse::getTexture(const eTileSize size) const {
     return coll.getTexture(time % coll.size());
 }
 
-void eRacingHorse::serializeFields(eSaveArchive& ar) {
-    eMissile::serializeFields(ar);
+void eRacingHorse::serializeFields(SaveArchive& ar) {
+    Missile::serializeFields(ar);
     ar.field("mId", mId);
 }

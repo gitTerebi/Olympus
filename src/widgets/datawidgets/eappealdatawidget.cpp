@@ -5,15 +5,15 @@
 #include "widgets/game-widget.h"
 #include "widgets/emultilinelabel.h"
 #include "engine/game-board.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "buildings/eaestheticsbuilding.h"
 
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 
 void eAppealDataWidget::initialize() {
     mSeeAppeal = new eViewModeButton(
-                     eLanguage::zeusText(14, 17), // see appeal
+                     Language::zeusText(14, 17), // see appeal
                      eViewMode::appeal,
                      window());
     addViewButton(mSeeAppeal);
@@ -27,8 +27,8 @@ void eAppealDataWidget::initialize() {
     title->setNoPadding();
     title->setFontSizeXS();
     title->setWrapWidth(iw);
-    title->setWrapAlignment(eAlignment::hcenter);
-    title->setText(eLanguage::zeusText(133, 1)); // commemorative monuments
+    title->setWrapAlignment(Alignment::hcenter);
+    title->setText(Language::zeusText(133, 1)); // commemorative monuments
     title->fitContent();
     inner->addWidget(title);
 
@@ -39,20 +39,20 @@ void eAppealDataWidget::initialize() {
     inner->addWidget(mMonumentsWidget);
 
     inner->stackVertically();
-    title->align(eAlignment::hcenter);
+    title->align(Alignment::hcenter);
 
     mNoMonumentsWidget = new eLabel(window());
     mNoMonumentsWidget->setWrapWidth(iw);
-    mNoMonumentsWidget->setWrapAlignment(eAlignment::hcenter);
+    mNoMonumentsWidget->setWrapAlignment(Alignment::hcenter);
     mNoMonumentsWidget->setYellowFontColor();
     mNoMonumentsWidget->setNoPadding();
     mNoMonumentsWidget->setFontSizeXS();
-    const auto text = eLanguage::zeusText(133, 2); // no commemorative monuments
+    const auto text = Language::zeusText(133, 2); // no commemorative monuments
     mNoMonumentsWidget->setText(text);
     mNoMonumentsWidget->fitContent();
     inner->addWidget(mNoMonumentsWidget);
     mNoMonumentsWidget->setY(mMonumentsWidget->y());
-    mNoMonumentsWidget->align(eAlignment::hcenter);
+    mNoMonumentsWidget->align(Alignment::hcenter);
 }
 
 class eMonumentButton : public eButtonBase {
@@ -94,15 +94,15 @@ void eAppealDataWidget::paintEvent(ePainter& p) {
     if(update) {
         const auto cid = viewedCity();
         const auto& bs = mBoard.commemorativeBuildings(cid);
-        const bool changed = !eVectorHelpers::same(bs, mBuildings);
+        const bool changed = !VectorHelpers::same(bs, mBuildings);
         if(changed) {
             mNoMonumentsWidget->setVisible(bs.empty());
             mBuildings = bs;
             mMonumentsWidget->removeAllWidgets();
             const auto gw = gameWidget();
 
-            const auto templ1 = eLanguage::zeusText(133, 3); // [commemorative_monument]
-            const auto templ2 = eLanguage::zeusText(133, 4); // [commemorative_monument] ([amount])
+            const auto templ1 = Language::zeusText(133, 3); // [commemorative_monument]
+            const auto templ2 = Language::zeusText(133, 4); // [commemorative_monument] ([amount])
 
             const auto commParser = [&](const int id, const int string) {
                 std::vector<eTile*> tiles;
@@ -123,17 +123,17 @@ void eAppealDataWidget::paintEvent(ePainter& p) {
                 if(count > 1) {
                     title = templ2;
                     const auto countStr = std::to_string(count);
-                    eStringHelpers::replace(title, "[amount]", countStr);
+                    StringHelpers::replace(title, "[amount]", countStr);
                 } else {
                     title = templ1;
                 }
-                const auto monStr = eLanguage::zeusText(133, string);
-                eStringHelpers::replace(title, "[commemorative_monument]", monStr);
+                const auto monStr = Language::zeusText(133, string);
+                StringHelpers::replace(title, "[commemorative_monument]", monStr);
 
                 const auto w = new eMonumentButton(window());
                 w->initialize(title, tiles, gw);
                 mMonumentsWidget->addWidget(w);
-                w->align(eAlignment::hcenter);
+                w->align(Alignment::hcenter);
             };
 
             commParser(0, 5); // population
@@ -163,17 +163,17 @@ void eAppealDataWidget::paintEvent(ePainter& p) {
                 if(count > 1) {
                     title = templ2;
                     const auto countStr = std::to_string(count);
-                    eStringHelpers::replace(title, "[amount]", countStr);
+                    StringHelpers::replace(title, "[amount]", countStr);
                 } else {
                     title = templ1;
                 }
                 const auto name = God::sGodName(g);
-                eStringHelpers::replace(title, "[commemorative_monument]", name);
+                StringHelpers::replace(title, "[commemorative_monument]", name);
 
                 const auto w = new eMonumentButton(window());
                 w->initialize(title, tiles, gw);
                 mMonumentsWidget->addWidget(w);
-                w->align(eAlignment::hcenter);
+                w->align(Alignment::hcenter);
             }
 
             mMonumentsWidget->stackVertically();

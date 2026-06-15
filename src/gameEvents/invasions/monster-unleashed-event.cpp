@@ -1,10 +1,10 @@
 #include "monster-unleashed-event.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "emessages.h"
+#include "messages.h"
 
 eMonsterUnleashedEvent::eMonsterUnleashedEvent(
         const eCityId cid,
@@ -31,7 +31,7 @@ void eMonsterUnleashedEvent::trigger() {
     ed.fMonster = mMonster;
     board->event(eEvent::godMonsterUnleash, ed);
 
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.godMessages(godType);
     const auto& m = gm->fMonster;
     const auto heroType = eMonster::sSlayer(mMonster);
@@ -40,5 +40,5 @@ void eMonsterUnleashedEvent::trigger() {
 }
 
 std::string eMonsterUnleashedEvent::longName() const {
-    return eLanguage::zeusText(182, 1);
+    return Language::zeusText(182, 1);
 }

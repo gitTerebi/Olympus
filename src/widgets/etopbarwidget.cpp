@@ -8,7 +8,7 @@
 #include "edatewidget.h"
 #include "game-widget.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include <string>
 
@@ -80,7 +80,7 @@ void eTopBarWidget::initialize() {
         }, false);
         dw->setDate(mBoard->date());
         window()->execDialog(dw);
-        dw->align(eAlignment::center);
+        dw->align(Alignment::center);
     });
     const eDate date(30, eMonth::january, -1500);
     mDateLabel->setFontSizeS();
@@ -108,11 +108,11 @@ void eTopBarWidget::initialize() {
 
     setHeight(12*mult);
 
-    mCityLabel->align(eAlignment::vcenter);
-    mDrachmasWidget->align(eAlignment::vcenter);
-    mPopulationWidget->align(eAlignment::vcenter);
-    mUnemployedWidget->align(eAlignment::vcenter);
-    mDateLabel->align(eAlignment::vcenter);
+    mCityLabel->align(Alignment::vcenter);
+    mDrachmasWidget->align(Alignment::vcenter);
+    mPopulationWidget->align(Alignment::vcenter);
+    mUnemployedWidget->align(Alignment::vcenter);
+    mDateLabel->align(Alignment::vcenter);
 
     layoutHorizontally();
 }

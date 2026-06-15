@@ -7,7 +7,7 @@ class eHouseBase;
 
 class CommonHouseInfoWidget : public eInfoWidget {
 public:
-    CommonHouseInfoWidget(eMainWindow* const window,
+    CommonHouseInfoWidget(MainWindow* const window,
                            eMainWidget* const mw);
 
     void initialize(eHouseBase* const house);

@@ -1,10 +1,10 @@
 #include "ai-building.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <iterator>
 
-void AIBuilding::serialize(eSaveArchive& ar) {
+void AIBuilding::serialize(SaveArchive& ar) {
     ar.field("fType", fType);
     ar.field("fRect", fRect);
     ar.field("fGet", fGet);

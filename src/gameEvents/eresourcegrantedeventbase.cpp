@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eResourceGrantedEventBase::eResourceGrantedEventBase(
         const eCityId cid,
@@ -238,7 +238,7 @@ void eResourceGrantedEventBase::decline()
     board->event(mGiftRefused, ed);
 }
 
-void eResourceGrantedEventBase::serializeFields(eSaveArchive& ar) {
+void eResourceGrantedEventBase::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCityEventValue::serialize(ar, *gameBoard());
     eResourceEventValue::serialize(ar);

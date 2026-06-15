@@ -1,7 +1,7 @@
 ﻿#ifndef INTERFACE_TEXTURES_H
 #define INTERFACE_TEXTURES_H
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 class InterfaceTextures {
 public:
@@ -19,7 +19,7 @@ public:
 
     void loadMapBinary(bool& loaded,
                        const std::string& name,
-                       std::shared_ptr<eTexture>& tex) const;
+                       std::shared_ptr<Texture>& tex) const;
     std::string loadMapDirPath() const;
 
     bool fMapOfGreece1Loaded = false;
@@ -61,389 +61,389 @@ public:
     bool fPoseidonCampaign6Loaded = false;
     void loadPoseidonCampaign6();
 
-    std::shared_ptr<eTexture> fGameTopBar;
-    std::shared_ptr<eTexture> fGameMenuBackground;
-    std::shared_ptr<eTexture> fGameArmyBackground;
-    std::shared_ptr<eTexture> fArmyStatus;
-    eTextureCollection fGoToCompany;
-    eTextureCollection fRotateCompany;
-    eTextureCollection fGoToBanner;
-    eTextureCollection fGoHome;
-    eTextureCollection fDefensiveTactics;
-    eTextureCollection fOffensiveTactics;
-    eTextureCollection fSpecialTactics;
+    std::shared_ptr<Texture> fGameTopBar;
+    std::shared_ptr<Texture> fGameMenuBackground;
+    std::shared_ptr<Texture> fGameArmyBackground;
+    std::shared_ptr<Texture> fArmyStatus;
+    TextureCollection fGoToCompany;
+    TextureCollection fRotateCompany;
+    TextureCollection fGoToBanner;
+    TextureCollection fGoHome;
+    TextureCollection fDefensiveTactics;
+    TextureCollection fOffensiveTactics;
+    TextureCollection fSpecialTactics;
 
     // normal, hover, selected, disabled
-    eTextureCollection fShowInfo;
-    eTextureCollection fShowMap;
+    TextureCollection fShowInfo;
+    TextureCollection fShowMap;
 
     // normal, hover, selected, disabled
-    eTextureCollection fPopulation;
-    eTextureCollection fHusbandry;
-    eTextureCollection fIndustry;
-    eTextureCollection fDistribution;
-    eTextureCollection fHygieneSafety;
-    eTextureCollection fAdministration;
-    eTextureCollection fCulture;
-    eTextureCollection fScience; // poseidon
-    eTextureCollection fMythology;
-    eTextureCollection fMilitary;
-    eTextureCollection fAesthetics;
-    eTextureCollection fOverview;
+    TextureCollection fPopulation;
+    TextureCollection fHusbandry;
+    TextureCollection fIndustry;
+    TextureCollection fDistribution;
+    TextureCollection fHygieneSafety;
+    TextureCollection fAdministration;
+    TextureCollection fCulture;
+    TextureCollection fScience; // poseidon
+    TextureCollection fMythology;
+    TextureCollection fMilitary;
+    TextureCollection fAesthetics;
+    TextureCollection fOverview;
 
-    std::shared_ptr<eTexture> fWorldMenuBackground;
+    std::shared_ptr<Texture> fWorldMenuBackground;
 
-    eTextureCollection fWorldSmallButton;
-    eTextureCollection fWorldBigButton;
+    TextureCollection fWorldSmallButton;
+    TextureCollection fWorldBigButton;
 
-    eTextureCollection fRequestButton;
-    eTextureCollection fFulfillButton;
-    eTextureCollection fGiftButton;
-    eTextureCollection fRaidButton;
-    eTextureCollection fConquerButton;
+    TextureCollection fRequestButton;
+    TextureCollection fFulfillButton;
+    TextureCollection fGiftButton;
+    TextureCollection fRaidButton;
+    TextureCollection fConquerButton;
 
-    eTextureCollection fWorldLeftArrowButton;
-    eTextureCollection fWorldRightArrowButton;
-    eTextureCollection fWorldHistoryButton;
+    TextureCollection fWorldLeftArrowButton;
+    TextureCollection fWorldRightArrowButton;
+    TextureCollection fWorldHistoryButton;
 
-    eTextureCollection fWorldBgsButton;
+    TextureCollection fWorldBgsButton;
 
-    std::shared_ptr<eTexture> fMapEditMenuBackground;
+    std::shared_ptr<Texture> fMapEditMenuBackground;
 
-    eTextureCollection fBrushSize;
-    eTextureCollection fEmptyLand;
-    eTextureCollection fForest;
-    eTextureCollection fWaterMarshBeach;
-    eTextureCollection fMeadow;
-    eTextureCollection fFishAndUrchin;
-    eTextureCollection fRocks;
-    eTextureCollection fScrub;
-    eTextureCollection fElevation;
-    eTextureCollection fDisasters;
-    eTextureCollection fWaterPoints;
-    eTextureCollection fLandInvasionPoints;
-    eTextureCollection fExitEndEntryPoints;
-    eTextureCollection fAnimalPoints;
+    TextureCollection fBrushSize;
+    TextureCollection fEmptyLand;
+    TextureCollection fForest;
+    TextureCollection fWaterMarshBeach;
+    TextureCollection fMeadow;
+    TextureCollection fFishAndUrchin;
+    TextureCollection fRocks;
+    TextureCollection fScrub;
+    TextureCollection fElevation;
+    TextureCollection fDisasters;
+    TextureCollection fWaterPoints;
+    TextureCollection fLandInvasionPoints;
+    TextureCollection fExitEndEntryPoints;
+    TextureCollection fAnimalPoints;
 
     // normal, hover, pressed
-    eTextureCollection fCommonHousing;
-    eTextureCollection fEliteHousing;
+    TextureCollection fCommonHousing;
+    TextureCollection fEliteHousing;
 
-    eTextureCollection fPoseidonCommonHousing;
-    eTextureCollection fPoseidonEliteHousing;
+    TextureCollection fPoseidonCommonHousing;
+    TextureCollection fPoseidonEliteHousing;
 
-    eTextureCollection fFoodFarming;
-    eTextureCollection fOtherFarming; // e.g. wine
-    eTextureCollection fAnimalFarming;
-    eTextureCollection fAnimalHunting;
+    TextureCollection fFoodFarming;
+    TextureCollection fOtherFarming; // e.g. wine
+    TextureCollection fAnimalFarming;
+    TextureCollection fAnimalHunting;
 
-    eTextureCollection fResources; // e.g. wood, marble
-    eTextureCollection fProcessing; // e.g. olives
-    eTextureCollection fArtisansGuild;
+    TextureCollection fResources; // e.g. wood, marble
+    TextureCollection fProcessing; // e.g. olives
+    TextureCollection fArtisansGuild;
 
-    eTextureCollection fGranary;
-    eTextureCollection fWarehouse;
-    eTextureCollection fAgoras;
-    eTextureCollection fTrade;
+    TextureCollection fGranary;
+    TextureCollection fWarehouse;
+    TextureCollection fAgoras;
+    TextureCollection fTrade;
 
-    eTextureCollection fFireFighter;
-    eTextureCollection fFountain;
-    eTextureCollection fPolice;
-    eTextureCollection fHospital;
+    TextureCollection fFireFighter;
+    TextureCollection fFountain;
+    TextureCollection fPolice;
+    TextureCollection fHospital;
 
-    eTextureCollection fPalace;
-    eTextureCollection fTaxCollector;
-    eTextureCollection fBridge;
+    TextureCollection fPalace;
+    TextureCollection fTaxCollector;
+    TextureCollection fBridge;
 
-    eTextureCollection fPoseidonBridge;
+    TextureCollection fPoseidonBridge;
 
-    eTextureCollection fPhilosophy;
-    eTextureCollection fGymnasium;
-    eTextureCollection fDrama;
-    eTextureCollection fStadium;
+    TextureCollection fPhilosophy;
+    TextureCollection fGymnasium;
+    TextureCollection fDrama;
+    TextureCollection fStadium;
 
-    eTextureCollection fBibliotheke;
-    eTextureCollection fAstronomy;
-    eTextureCollection fTechnology;
-    eTextureCollection fMuseum;
+    TextureCollection fBibliotheke;
+    TextureCollection fAstronomy;
+    TextureCollection fTechnology;
+    TextureCollection fMuseum;
 
-    eTextureCollection fTemples;
-    eTextureCollection fHeroShrines;
+    TextureCollection fTemples;
+    TextureCollection fHeroShrines;
 
-    eTextureCollection fPoseidonTemples;
-    eTextureCollection fPoseidonHeroShrines;
+    TextureCollection fPoseidonTemples;
+    TextureCollection fPoseidonHeroShrines;
 
-    eTextureCollection fPiramids;
-    eTextureCollection fHipodrome;
+    TextureCollection fPiramids;
+    TextureCollection fHipodrome;
 
-    eTextureCollection fFortifications;
-    eTextureCollection fMilitaryProduction;
+    TextureCollection fFortifications;
+    TextureCollection fMilitaryProduction;
 
-    eTextureCollection fBeautification;
-    eTextureCollection fRecreation;
-    eTextureCollection fMonuments;
+    TextureCollection fBeautification;
+    TextureCollection fRecreation;
+    TextureCollection fMonuments;
 
     // normal, hover, pressed, disabled
-    eTextureCollection fBuildRoad;
-    eTextureCollection fRoadBlock;
-    eTextureCollection fClear;
-    eTextureCollection fUndo;
+    TextureCollection fBuildRoad;
+    TextureCollection fRoadBlock;
+    TextureCollection fClear;
+    TextureCollection fUndo;
 
-    eTextureCollection fMessages;
-    eTextureCollection fMoreInfo;
+    TextureCollection fMessages;
+    TextureCollection fMoreInfo;
 
-    eTextureCollection fGoals;
-    eTextureCollection fRotation;
-    eTextureCollection fWorld;
+    TextureCollection fGoals;
+    TextureCollection fRotation;
+    TextureCollection fWorld;
 
     // normal, hoer, pressed
-    eTextureCollection fFireAlert;
-    eTextureCollection fGroundFissureAlert;
-    eTextureCollection fFloodAlert;
-    eTextureCollection fAvalancheAltert;
-    eTextureCollection fLavaAltert;
-    eTextureCollection fCollapseAltert;
-    eTextureCollection fRoadBlockAltert;
-    eTextureCollection fVirusAlert;
-    eTextureCollection fIllnessAlert;
-    eTextureCollection fInvasionAlert;
-    eTextureCollection fMonsterAltert;
-    eTextureCollection fGodAttackAlert;
-    eTextureCollection fGodVisitAlert;
-    eTextureCollection fHeroArrivalAlert;
-    eTextureCollection fArmyComebackAlert;
+    TextureCollection fFireAlert;
+    TextureCollection fGroundFissureAlert;
+    TextureCollection fFloodAlert;
+    TextureCollection fAvalancheAltert;
+    TextureCollection fLavaAltert;
+    TextureCollection fCollapseAltert;
+    TextureCollection fRoadBlockAltert;
+    TextureCollection fVirusAlert;
+    TextureCollection fIllnessAlert;
+    TextureCollection fInvasionAlert;
+    TextureCollection fMonsterAltert;
+    TextureCollection fGodAttackAlert;
+    TextureCollection fGodVisitAlert;
+    TextureCollection fHeroArrivalAlert;
+    TextureCollection fArmyComebackAlert;
 
     // 4 left, 4 middle, 4 right
     // normal, hover, pressed, disabled
-    std::vector<eTextureCollection> fMicroButton;
+    std::vector<TextureCollection> fMicroButton;
 
     // normal, hover, pressed, disabled
-    eTextureCollection fMilitaryControlManual;
-    eTextureCollection fMilitaryControlAutomatic;
+    TextureCollection fMilitaryControlManual;
+    TextureCollection fMilitaryControlAutomatic;
 
-    std::shared_ptr<eTexture> fSoldiersIcon;
-    std::shared_ptr<eTexture> fShipsIcon;
-    std::shared_ptr<eTexture> fTowersIcon;
+    std::shared_ptr<Texture> fSoldiersIcon;
+    std::shared_ptr<Texture> fShipsIcon;
+    std::shared_ptr<Texture> fTowersIcon;
 
     // topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight,
-    std::vector<eTextureCollection> fComboBox;
-    std::vector<eTextureCollection> fMessageBox;
-    std::vector<eTextureCollection> fInnerBox;
+    std::vector<TextureCollection> fComboBox;
+    std::vector<TextureCollection> fMessageBox;
+    std::vector<TextureCollection> fInnerBox;
 
-    eTextureCollection fBuildingButton;
-    eTextureCollection fBuildingButtonHover;
+    TextureCollection fBuildingButton;
+    TextureCollection fBuildingButtonHover;
 
-    std::shared_ptr<eTexture> fLoadImage1;
-    std::shared_ptr<eTexture> fLoadImage2;
-    std::shared_ptr<eTexture> fLoadImage3;
-    std::shared_ptr<eTexture> fLoadImage4;
-    std::shared_ptr<eTexture> fLoadImage5;
-    std::shared_ptr<eTexture> fLoadImage6;
-    std::shared_ptr<eTexture> fLoadImage7;
-    std::shared_ptr<eTexture> fLoadImage8;
-    std::shared_ptr<eTexture> fLoadImage9;
-    std::shared_ptr<eTexture> fLoadImage10;
-    std::shared_ptr<eTexture> fLoadImage11;
-    std::shared_ptr<eTexture> fLoadImage12;
-    std::shared_ptr<eTexture> fMainMenuImage;
-    std::shared_ptr<eTexture> fIntroductionImage;
-    std::shared_ptr<eTexture> fDefeatImage;
+    std::shared_ptr<Texture> fLoadImage1;
+    std::shared_ptr<Texture> fLoadImage2;
+    std::shared_ptr<Texture> fLoadImage3;
+    std::shared_ptr<Texture> fLoadImage4;
+    std::shared_ptr<Texture> fLoadImage5;
+    std::shared_ptr<Texture> fLoadImage6;
+    std::shared_ptr<Texture> fLoadImage7;
+    std::shared_ptr<Texture> fLoadImage8;
+    std::shared_ptr<Texture> fLoadImage9;
+    std::shared_ptr<Texture> fLoadImage10;
+    std::shared_ptr<Texture> fLoadImage11;
+    std::shared_ptr<Texture> fLoadImage12;
+    std::shared_ptr<Texture> fMainMenuImage;
+    std::shared_ptr<Texture> fIntroductionImage;
+    std::shared_ptr<Texture> fDefeatImage;
 
-    std::shared_ptr<eTexture> fPoseidonCampaign1;
-    std::shared_ptr<eTexture> fPoseidonCampaign2;
-    std::shared_ptr<eTexture> fPoseidonCampaign3;
-    std::shared_ptr<eTexture> fPoseidonCampaign4;
-    std::shared_ptr<eTexture> fPoseidonCampaign5;
-    std::shared_ptr<eTexture> fPoseidonCampaign6;
+    std::shared_ptr<Texture> fPoseidonCampaign1;
+    std::shared_ptr<Texture> fPoseidonCampaign2;
+    std::shared_ptr<Texture> fPoseidonCampaign3;
+    std::shared_ptr<Texture> fPoseidonCampaign4;
+    std::shared_ptr<Texture> fPoseidonCampaign5;
+    std::shared_ptr<Texture> fPoseidonCampaign6;
 
-    eTextureCollection fCheckBox;
-    eTextureCollection fLargeCheckBox;
+    TextureCollection fCheckBox;
+    TextureCollection fLargeCheckBox;
 
-    eTextureCollection fRequestWaitingBox;
-    eTextureCollection fRequestFulfilledBox;
+    TextureCollection fRequestWaitingBox;
+    TextureCollection fRequestFulfilledBox;
 
-    eTextureCollection fSeeButton;
+    TextureCollection fSeeButton;
 
     //
 
-    std::shared_ptr<eTexture> fDrachmasTopMenu;
-    std::shared_ptr<eTexture> fPopulationTopMenu;
-    std::shared_ptr<eTexture> fDrachmasUnit;
+    std::shared_ptr<Texture> fDrachmasTopMenu;
+    std::shared_ptr<Texture> fPopulationTopMenu;
+    std::shared_ptr<Texture> fDrachmasUnit;
 
-    std::shared_ptr<eTexture> fZeusQuestIcon;
-    std::shared_ptr<eTexture> fPoseidonQuestIcon;
-    std::shared_ptr<eTexture> fDemeterQuestIcon;
-    std::shared_ptr<eTexture> fApolloQuestIcon;
-    std::shared_ptr<eTexture> fArtemisQuestIcon;
-    std::shared_ptr<eTexture> fAresQuestIcon;
-    std::shared_ptr<eTexture> fAphroditeQuestIcon;
-    std::shared_ptr<eTexture> fHermesQuestIcon;
-    std::shared_ptr<eTexture> fAthenaQuestIcon;
-    std::shared_ptr<eTexture> fHephaestusQuestIcon;
-    std::shared_ptr<eTexture> fDionysusQuestIcon;
-    std::shared_ptr<eTexture> fHadesQuestIcon;
+    std::shared_ptr<Texture> fZeusQuestIcon;
+    std::shared_ptr<Texture> fPoseidonQuestIcon;
+    std::shared_ptr<Texture> fDemeterQuestIcon;
+    std::shared_ptr<Texture> fApolloQuestIcon;
+    std::shared_ptr<Texture> fArtemisQuestIcon;
+    std::shared_ptr<Texture> fAresQuestIcon;
+    std::shared_ptr<Texture> fAphroditeQuestIcon;
+    std::shared_ptr<Texture> fHermesQuestIcon;
+    std::shared_ptr<Texture> fAthenaQuestIcon;
+    std::shared_ptr<Texture> fHephaestusQuestIcon;
+    std::shared_ptr<Texture> fDionysusQuestIcon;
+    std::shared_ptr<Texture> fHadesQuestIcon;
 
-    std::shared_ptr<eTexture> fHeraQuestIcon;
-    std::shared_ptr<eTexture> fAtlasQuestIcon;
+    std::shared_ptr<Texture> fHeraQuestIcon;
+    std::shared_ptr<Texture> fAtlasQuestIcon;
 
-    std::shared_ptr<eTexture> fTroopsRequestIcon;
+    std::shared_ptr<Texture> fTroopsRequestIcon;
 
-    std::shared_ptr<eTexture> fUrchinUnit;
-    std::shared_ptr<eTexture> fFishUnit;
-    std::shared_ptr<eTexture> fMeatUnit;
-    std::shared_ptr<eTexture> fCheeseUnit;
-    std::shared_ptr<eTexture> fCarrotsUnit;
-    std::shared_ptr<eTexture> fOnionsUnit;
-    std::shared_ptr<eTexture> fWheatUnit;
-    std::shared_ptr<eTexture> fOrangesUnit;
-    std::shared_ptr<eTexture> fBlackMarbleUnit;
-    std::shared_ptr<eTexture> fOrichalcUnit;
+    std::shared_ptr<Texture> fUrchinUnit;
+    std::shared_ptr<Texture> fFishUnit;
+    std::shared_ptr<Texture> fMeatUnit;
+    std::shared_ptr<Texture> fCheeseUnit;
+    std::shared_ptr<Texture> fCarrotsUnit;
+    std::shared_ptr<Texture> fOnionsUnit;
+    std::shared_ptr<Texture> fWheatUnit;
+    std::shared_ptr<Texture> fOrangesUnit;
+    std::shared_ptr<Texture> fBlackMarbleUnit;
+    std::shared_ptr<Texture> fOrichalcUnit;
 
-    std::shared_ptr<eTexture> fWoodUnit;
-    std::shared_ptr<eTexture> fBronzeUnit;
-    std::shared_ptr<eTexture> fMarbleUnit;
-    std::shared_ptr<eTexture> fGrapesUnit;
-    std::shared_ptr<eTexture> fOlivesUnit;
-    std::shared_ptr<eTexture> fFleeceUnit;
-    std::shared_ptr<eTexture> fHorseUnit;
-    std::shared_ptr<eTexture> fChariotUnit;
-    std::shared_ptr<eTexture> fArmsUnit;
-    std::shared_ptr<eTexture> fSculptureUnit;
-    std::shared_ptr<eTexture> fOliveOilUnit;
-    std::shared_ptr<eTexture> fWineUnit;
-    std::shared_ptr<eTexture> fFoodUnit;
+    std::shared_ptr<Texture> fWoodUnit;
+    std::shared_ptr<Texture> fBronzeUnit;
+    std::shared_ptr<Texture> fMarbleUnit;
+    std::shared_ptr<Texture> fGrapesUnit;
+    std::shared_ptr<Texture> fOlivesUnit;
+    std::shared_ptr<Texture> fFleeceUnit;
+    std::shared_ptr<Texture> fHorseUnit;
+    std::shared_ptr<Texture> fChariotUnit;
+    std::shared_ptr<Texture> fArmsUnit;
+    std::shared_ptr<Texture> fSculptureUnit;
+    std::shared_ptr<Texture> fOliveOilUnit;
+    std::shared_ptr<Texture> fWineUnit;
+    std::shared_ptr<Texture> fFoodUnit;
 
-    std::shared_ptr<eTexture> fSuppliesBg;
-    std::shared_ptr<eTexture> fEliteSuppliesBg;
+    std::shared_ptr<Texture> fSuppliesBg;
+    std::shared_ptr<Texture> fEliteSuppliesBg;
 
-    std::shared_ptr<eTexture> fHasFood;
-    std::shared_ptr<eTexture> fHasFleece;
-    std::shared_ptr<eTexture> fHasOil;
-    std::shared_ptr<eTexture> fHasWine;
-    std::shared_ptr<eTexture> fHasArms;
-    std::shared_ptr<eTexture> fHasHorses;
+    std::shared_ptr<Texture> fHasFood;
+    std::shared_ptr<Texture> fHasFleece;
+    std::shared_ptr<Texture> fHasOil;
+    std::shared_ptr<Texture> fHasWine;
+    std::shared_ptr<Texture> fHasArms;
+    std::shared_ptr<Texture> fHasHorses;
 
-    std::shared_ptr<eTexture> fNHasFood;
-    std::shared_ptr<eTexture> fNHasFleece;
-    std::shared_ptr<eTexture> fNHasOil;
-    std::shared_ptr<eTexture> fNHasWine;
-    std::shared_ptr<eTexture> fNHasArms;
-    std::shared_ptr<eTexture> fNHasHorses;
+    std::shared_ptr<Texture> fNHasFood;
+    std::shared_ptr<Texture> fNHasFleece;
+    std::shared_ptr<Texture> fNHasOil;
+    std::shared_ptr<Texture> fNHasWine;
+    std::shared_ptr<Texture> fNHasArms;
+    std::shared_ptr<Texture> fNHasHorses;
 
     // normal, pressed
-    eTextureCollection fSmallUpButton;
-    eTextureCollection fSmallDownButton;
+    TextureCollection fSmallUpButton;
+    TextureCollection fSmallDownButton;
 
     // normal, hover, pressed
-    eTextureCollection fSpeakButton;
+    TextureCollection fSpeakButton;
 
     // normal, hover, pressed, disabled
-    eTextureCollection fUpButton;
-    eTextureCollection fDownButton;
-    eTextureCollection fLeftButton;
-    eTextureCollection fRightButton;
+    TextureCollection fUpButton;
+    TextureCollection fDownButton;
+    TextureCollection fLeftButton;
+    TextureCollection fRightButton;
 
-    eTextureCollection fBigUpButton;
-    eTextureCollection fBigDownButton;
+    TextureCollection fBigUpButton;
+    TextureCollection fBigDownButton;
 
-    eTextureCollection fExclamationButton;
-    eTextureCollection fProceedButton;
-    eTextureCollection fOkButton;
-    eTextureCollection fHelpButton;
+    TextureCollection fExclamationButton;
+    TextureCollection fProceedButton;
+    TextureCollection fOkButton;
+    TextureCollection fHelpButton;
 
-    eTextureCollection fAcceptButton;
-    eTextureCollection fCancelButton;
+    TextureCollection fAcceptButton;
+    TextureCollection fCancelButton;
 
-    eTextureCollection fButtonFrame;
-    eTextureCollection fButtonFrameHover;
+    TextureCollection fButtonFrame;
+    TextureCollection fButtonFrameHover;
 
-    eTextureCollection fDiamond;
+    TextureCollection fDiamond;
 
     // world
-    std::shared_ptr<eTexture> fZeusMainCity;
-    std::shared_ptr<eTexture> fZeusCollony;
-    std::shared_ptr<eTexture> fZeusDisabledCollony;
-    std::shared_ptr<eTexture> fZeusGreekCity;
-    std::shared_ptr<eTexture> fZeusTrojanCity;
-    std::shared_ptr<eTexture> fZeusPersianCity;
-    std::shared_ptr<eTexture> fZeusCentaurCity;
-    std::shared_ptr<eTexture> fZeusAmazonCity;
+    std::shared_ptr<Texture> fZeusMainCity;
+    std::shared_ptr<Texture> fZeusCollony;
+    std::shared_ptr<Texture> fZeusDisabledCollony;
+    std::shared_ptr<Texture> fZeusGreekCity;
+    std::shared_ptr<Texture> fZeusTrojanCity;
+    std::shared_ptr<Texture> fZeusPersianCity;
+    std::shared_ptr<Texture> fZeusCentaurCity;
+    std::shared_ptr<Texture> fZeusAmazonCity;
 
-    std::shared_ptr<eTexture> fZeusPlace;
-    std::shared_ptr<eTexture> fZeusRuins;
+    std::shared_ptr<Texture> fZeusPlace;
+    std::shared_ptr<Texture> fZeusRuins;
 
-    std::shared_ptr<eTexture> fZeusDistantCity;
-    std::shared_ptr<eTexture> fZeusDistantCityN;
-    std::shared_ptr<eTexture> fZeusDistantCityNE;
-    std::shared_ptr<eTexture> fZeusDistantCityE;
-    std::shared_ptr<eTexture> fZeusDistantCitySE;
-    std::shared_ptr<eTexture> fZeusDistantCityS;
-    std::shared_ptr<eTexture> fZeusDistantCitySW;
-    std::shared_ptr<eTexture> fZeusDistantCityW;
-    std::shared_ptr<eTexture> fZeusDistantCityNW;
+    std::shared_ptr<Texture> fZeusDistantCity;
+    std::shared_ptr<Texture> fZeusDistantCityN;
+    std::shared_ptr<Texture> fZeusDistantCityNE;
+    std::shared_ptr<Texture> fZeusDistantCityE;
+    std::shared_ptr<Texture> fZeusDistantCitySE;
+    std::shared_ptr<Texture> fZeusDistantCityS;
+    std::shared_ptr<Texture> fZeusDistantCitySW;
+    std::shared_ptr<Texture> fZeusDistantCityW;
+    std::shared_ptr<Texture> fZeusDistantCityNW;
 
-    std::shared_ptr<eTexture> fPoseidonMainCity;
-    std::shared_ptr<eTexture> fPoseidonCollony;
-    std::shared_ptr<eTexture> fPoseidonDisabledCollony;
-    std::shared_ptr<eTexture> fPoseidonEgyptianCity;
-    std::shared_ptr<eTexture> fPoseidonMayanCity;
-    std::shared_ptr<eTexture> fPoseidonPhoenicianCity;
-    std::shared_ptr<eTexture> fPoseidonOceanidCity;
-    std::shared_ptr<eTexture> fPoseidonAtlanteanCity;
+    std::shared_ptr<Texture> fPoseidonMainCity;
+    std::shared_ptr<Texture> fPoseidonCollony;
+    std::shared_ptr<Texture> fPoseidonDisabledCollony;
+    std::shared_ptr<Texture> fPoseidonEgyptianCity;
+    std::shared_ptr<Texture> fPoseidonMayanCity;
+    std::shared_ptr<Texture> fPoseidonPhoenicianCity;
+    std::shared_ptr<Texture> fPoseidonOceanidCity;
+    std::shared_ptr<Texture> fPoseidonAtlanteanCity;
 
-    std::shared_ptr<eTexture> fZeusAchilles;
-    std::shared_ptr<eTexture> fZeusHercules;
-    std::shared_ptr<eTexture> fZeusJason;
-    std::shared_ptr<eTexture> fZeusOdysseus;
-    std::shared_ptr<eTexture> fZeusPerseus;
-    std::shared_ptr<eTexture> fZeusTheseus;
+    std::shared_ptr<Texture> fZeusAchilles;
+    std::shared_ptr<Texture> fZeusHercules;
+    std::shared_ptr<Texture> fZeusJason;
+    std::shared_ptr<Texture> fZeusOdysseus;
+    std::shared_ptr<Texture> fZeusPerseus;
+    std::shared_ptr<Texture> fZeusTheseus;
 
-    std::shared_ptr<eTexture> fPoseidonAtalanta;
-    std::shared_ptr<eTexture> fPoseidonBellerophon;
+    std::shared_ptr<Texture> fPoseidonAtalanta;
+    std::shared_ptr<Texture> fPoseidonBellerophon;
 
-    eTextureCollection fZeusPlayerArmy;
-    eTextureCollection fZeusGreekArmy;
-    eTextureCollection fZeusTrojanArmy;
-    eTextureCollection fZeusPersianArmy;
-    eTextureCollection fZeusCentaurArmy;
-    eTextureCollection fZeusAmazonArmy;
+    TextureCollection fZeusPlayerArmy;
+    TextureCollection fZeusGreekArmy;
+    TextureCollection fZeusTrojanArmy;
+    TextureCollection fZeusPersianArmy;
+    TextureCollection fZeusCentaurArmy;
+    TextureCollection fZeusAmazonArmy;
 
-    eTextureCollection fPoseidonPlayerArmy;
-    eTextureCollection fPoseidonEgyptianArmy;
-    eTextureCollection fPoseidonMayanArmy;
-    eTextureCollection fPoseidonPhoenicianArmy;
-    eTextureCollection fPoseidonOceanidArmy;
-    eTextureCollection fPoseidonAtlanteanArmy;
+    TextureCollection fPoseidonPlayerArmy;
+    TextureCollection fPoseidonEgyptianArmy;
+    TextureCollection fPoseidonMayanArmy;
+    TextureCollection fPoseidonPhoenicianArmy;
+    TextureCollection fPoseidonOceanidArmy;
+    TextureCollection fPoseidonAtlanteanArmy;
 
-    std::shared_ptr<eTexture> fMainCityFlag;
-    std::shared_ptr<eTexture> fEmpireCityFlag;
-    eTextureCollection fAllyCityFlag;
+    std::shared_ptr<Texture> fMainCityFlag;
+    std::shared_ptr<Texture> fEmpireCityFlag;
+    TextureCollection fAllyCityFlag;
 
-    eTextureCollection fCityArmy;
-    eTextureCollection fCityWealth;
-    eTextureCollection fCityRebellion;
+    TextureCollection fCityArmy;
+    TextureCollection fCityWealth;
+    TextureCollection fCityRebellion;
 
-    std::shared_ptr<eTexture> fPoseidonMap1;
-    std::shared_ptr<eTexture> fPoseidonMap2;
-    std::shared_ptr<eTexture> fPoseidonMap3;
-    std::shared_ptr<eTexture> fPoseidonMap4;
+    std::shared_ptr<Texture> fPoseidonMap1;
+    std::shared_ptr<Texture> fPoseidonMap2;
+    std::shared_ptr<Texture> fPoseidonMap3;
+    std::shared_ptr<Texture> fPoseidonMap4;
 
-    std::shared_ptr<eTexture> fMapOfGreece1;
-    std::shared_ptr<eTexture> fMapOfGreece2;
-    std::shared_ptr<eTexture> fMapOfGreece3;
-    std::shared_ptr<eTexture> fMapOfGreece4;
-    std::shared_ptr<eTexture> fMapOfGreece5;
-    std::shared_ptr<eTexture> fMapOfGreece6;
-    std::shared_ptr<eTexture> fMapOfGreece7;
-    std::shared_ptr<eTexture> fMapOfGreece8;
+    std::shared_ptr<Texture> fMapOfGreece1;
+    std::shared_ptr<Texture> fMapOfGreece2;
+    std::shared_ptr<Texture> fMapOfGreece3;
+    std::shared_ptr<Texture> fMapOfGreece4;
+    std::shared_ptr<Texture> fMapOfGreece5;
+    std::shared_ptr<Texture> fMapOfGreece6;
+    std::shared_ptr<Texture> fMapOfGreece7;
+    std::shared_ptr<Texture> fMapOfGreece8;
 
-    eTextureCollection fInterfaceBanners;
-    eTextureCollection fInterfaceBannerTops;
-    eTextureCollection fPoseidonInterfaceBannerTops;
+    TextureCollection fInterfaceBanners;
+    TextureCollection fInterfaceBannerTops;
+    TextureCollection fPoseidonInterfaceBannerTops;
 
-    eTextureCollection fZeusPortraits;
-    eTextureCollection fZeusGodPortraits;
-    eTextureCollection fPoseidonPortraits;
+    TextureCollection fZeusPortraits;
+    TextureCollection fZeusGodPortraits;
+    TextureCollection fPoseidonPortraits;
 };
 
 #endif // INTERFACE_TEXTURES_H

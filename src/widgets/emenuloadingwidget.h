@@ -5,7 +5,7 @@
 
 class eMenuLoadingWidget : public eLoadingWidget {
 public:
-    eMenuLoadingWidget(eMainWindow* const window);
+    eMenuLoadingWidget(MainWindow* const window);
 };
 
 #endif // EMENULOADINGWIDGET_H

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <algorithm>
 
-#include "egamedir.h"
+#include "game-dir.h"
 
 eMusic* eMusic::sInstance = nullptr;
 int sGeneralVolume = 100;
@@ -188,7 +188,7 @@ bool eMusic::playCampaignVoiceImpl(const std::string &path) {
 void eMusic::loadImpl() {
     if(mLoaded) return;
     mLoaded = true;
-    const std::string dir{eGameDir::path("Audio/Music/")};
+    const std::string dir{GameDir::path("Audio/Music/")};
 
     mMusic.addPath(dir + "Afigisi.mp3");
     mMusic.addPath(dir + "Amolfi.mp3");
@@ -217,7 +217,7 @@ void eMusic::loadImpl() {
 void eMusic::loadMenuImpl() {
     if(mMenuLoaded) return;
     mMenuLoaded = true;
-    const std::string dir{eGameDir::path("Audio/Music/")};
+    const std::string dir{GameDir::path("Audio/Music/")};
     mSetupMusic.addPath(dir + "Setup.mp3");
     mMissionIntro.addPath(dir + "mission_intro.wav");
 }

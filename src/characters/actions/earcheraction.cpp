@@ -11,12 +11,12 @@
 #include "characters/actions/soldier-action.h"
 #include "characters/archer.h"
 
-#include "missiles/earrowmissile.h"
+#include "missiles/arrow-missile.h"
 
 #include "edieaction.h"
 #include "audio/sounds.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eArcherAction::eArcherAction(eCharacter* const c) :
     eComplexAction(c, eCharActionType::archerAction) {}
@@ -24,7 +24,7 @@ eArcherAction::eArcherAction(eCharacter* const c) :
 void eArcherAction::increment(const int by) {
     const int rangeAttackCheck = 500;
     const auto cc = character();
-    const int range = cc->range() > 0 ? cc->range() : eNumbers::sWallArcherRange;
+    const int range = cc->range() > 0 ? cc->range() : Numbers::sWallArcherRange;
     const int missileCheck = cc->missileFreq() > 0 ? cc->missileFreq() * 10 : 200;
 
     const auto c = character();
@@ -58,7 +58,7 @@ void eArcherAction::increment(const int by) {
                 const auto tt = mAttackTarget->tile();
                 const int ttx = tt->x();
                 const int tty = tt->y();
-                eMissile::sCreate<eArrowMissile>(brd, tx, ty, 0.5,
+                Missile::sCreate<ArrowMissile>(brd, tx, ty, 0.5,
                                                  ttx, tty, 0.5, 2);
                 auto& board = this->board();
                 board.ifVisible(c->tile(), [&]() {
@@ -142,7 +142,7 @@ bool eArcherAction::decide() {
     return true;
 }
 
-void eArcherAction::serializeFields(eSaveArchive& ar) {
+void eArcherAction::serializeFields(SaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     ar.field("missile", mMissile);
     ar.field("rangeAttack", mRangeAttack);

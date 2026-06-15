@@ -7,7 +7,7 @@
 
 class eOx;
 class eTrailer;
-class eSaveArchive;
+class SaveArchive;
 
 enum eCartActionTypeSupport {
     get = 1 << 0,
@@ -32,7 +32,7 @@ public:
     eCartTransporter(GameBoard& board);
     ~eCartTransporter();
 
-    eOverlay getSecondaryTexture(const eTileSize size) const override;
+    Overlay getSecondaryTexture(const eTileSize size) const override;
 
     bool isOx() const { return mIsOx; }
 
@@ -71,7 +71,7 @@ public:
     void catchUp();
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void updateTextures();
     void cleanupFollowers();

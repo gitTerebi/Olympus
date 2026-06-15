@@ -5,12 +5,12 @@
 
 #include "engine/etile.h"
 #include "engine/thread/ethreadtile.h"
-#include "ewalkablehelpers.h"
+#include "walkable-helpers.h"
 #include "engine/estaterelevance.h"
 #include "walkable/eobsticlehandler.h"
 
 class eThreadBoard;
-class eSaveArchive;
+class SaveArchive;
 class eBuilding;
 
 using eAction = std::function<void()>;
@@ -80,7 +80,7 @@ public:
 
     void setStateRelevance(const eStateRelevance rel) { mRelevance = rel; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     enum class eSavedGoal {

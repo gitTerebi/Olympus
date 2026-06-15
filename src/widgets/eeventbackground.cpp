@@ -8,7 +8,7 @@ void eEventBackground::initialize(eWidget* const parent,
     addWidget(child);
     parent->addWidget(this);
     resize(parent->width(), parent->height());
-    child->align(eAlignment::center);
+    child->align(Alignment::center);
     mClosable = closable;
     mCloseFunc = closeFunc;
 }

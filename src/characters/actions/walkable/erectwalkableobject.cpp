@@ -1,7 +1,7 @@
 ﻿#include "erectwalkableobject.h"
 
 #include "engine/etilebase.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eRectWalkableObject::eRectWalkableObject(
         const stdsptr<WalkableObject>& other,
@@ -29,7 +29,7 @@ eWalkableObjectType eRectWalkableObject::rootType() const {
     return mOther->rootType();
 }
 
-void eRectWalkableObject::serializeFields(eSaveArchive& ar) {
+void eRectWalkableObject::serializeFields(SaveArchive& ar) {
     ar.field("rect", mRect);
     ar.walkableField("other", mOther);
 }

@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 
-eSmallUpButton::eSmallUpButton(eMainWindow* const window) :
+eSmallUpButton::eSmallUpButton(MainWindow* const window) :
     eButton(window) {
     const auto& intrfc = GameTextures::interface();
     const auto res = resolution();

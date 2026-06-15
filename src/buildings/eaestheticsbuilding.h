@@ -8,22 +8,22 @@
 
 class eAestheticsBuilding : public eBuilding {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
+    using eBaseTex = std::shared_ptr<Texture> BuildingTextures::*;
     eAestheticsBuilding(GameBoard& board,
                         const eBaseTex baseTex,
                         const eBuildingType type,
                         const int sw, const int sh,
                         const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 private:
     const eBaseTex mTexture;
 };
 
 class eOverlayAesthBuilding : public eAestheticsBuilding {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
-    using eOverlays = eTextureCollection BuildingTextures::*;
+    using eBaseTex = std::shared_ptr<Texture> BuildingTextures::*;
+    using eOverlays = TextureCollection BuildingTextures::*;
     eOverlayAesthBuilding(GameBoard& board,
                           const eBaseTex baseTex,
                           const double overlayX,
@@ -33,7 +33,7 @@ public:
                           const int sw, const int sh,
                           const eCityId cid);
 
-    std::vector<eOverlay> getOverlays(const eTileSize size) const;
+    std::vector<Overlay> getOverlays(const eTileSize size) const;
 private:
     const eOverlays mOverlays;
 
@@ -128,11 +128,11 @@ public:
     int id() const { return mId; }
     void setId(const int i);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mId = 0;
 };
@@ -141,7 +141,7 @@ class eCommemorative : public eBuilding {
 public:
     eCommemorative(const int id, GameBoard& board, const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 
     int id() const { return mId; }
 private:
@@ -149,7 +149,7 @@ private:
 };
 
 class eGodMonumentTile;
-class eSaveArchive;
+class SaveArchive;
 
 class eGodMonument : public eBuilding {
 public:
@@ -159,14 +159,14 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
 
     GodType god() const { return mGod; }
     GodQuestId id() const { return mId; }
     void addTile(eGodMonumentTile* const tile);
     const std::vector<eGodMonumentTile*>& tiles() const { return mMonumentTilesCache; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     const GodType mGod;
     const GodQuestId mId;
@@ -179,12 +179,12 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
 
     void setMonument(eGodMonument* const mon);
     eGodMonument* monument() const { return mMonument; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eGodMonument* mMonument = nullptr;
 };

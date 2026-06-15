@@ -3,7 +3,7 @@
 
 #include "epyramidelement.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class ePyramidBuildingPart : public ePyramidElement {
 public:
@@ -16,7 +16,7 @@ public:
                          const int elevation,
                          const eCityId cid);
 
-    stdsptr<eTexture> getTexture(const eTileSize) const override {
+    stdsptr<Texture> getTexture(const eTileSize) const override {
         return nullptr;
     }
 
@@ -28,7 +28,7 @@ public:
                   const eWorldDirection dir);
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     ePyramidElement* mPaint = nullptr;
     eWorldDirection mPaintDir;

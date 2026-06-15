@@ -5,8 +5,8 @@
 #include "buildings/eresourcebuilding.h"
 #include "engine/game-board.h"
 #include "engine/etile.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eGrowerAction::eGrowerAction(const eGrowerType type,
                              eGrowersLodge* const lodge,
@@ -47,7 +47,7 @@ bool hasResource(eThreadTile* const tile, const eGrowerType gt,
                  const bool canHarvestOlives,
                  const bool canHarvestGrapes,
                  const bool canHarvestOranges) {
-    if(mode != eGrowerActionMode::oliveGroomer && eRand::rand() % 2) return false;
+    if(mode != eGrowerActionMode::oliveGroomer && Rand::rand() % 2) return false;
     const auto ub = tile->underBuildingType();
     bool r;
     switch(gt) {
@@ -153,7 +153,7 @@ bool eGrowerAction::decide() {
     const int olives = mGrower->olives();
     const int oranges = mGrower->oranges();
 
-    const bool inLodge = eWalkableHelpers::sTileUnderBuilding(t, mLodge);
+    const bool inLodge = WalkableHelpers::sTileUnderBuilding(t, mLodge);
     const auto curMonth = board().date().month();
     const bool canHarvestOlives = isOliveHarvestMonth(curMonth);
     const bool canHarvestGrapes = isGrapeHarvestMonth(curMonth);
@@ -226,7 +226,7 @@ bool eGrowerAction::decide() {
                 return true;
             }
             if(mMode != eGrowerActionMode::oliveGroomer &&
-               mGroomed > eNumbers::sGrowerMaxGroom) {
+               mGroomed > Numbers::sGrowerMaxGroom) {
                 mGroomed = 0;
                 goBackDecision();
             } else {
@@ -253,7 +253,7 @@ void eGrowerAction::increment(const int by) {
     eActionWithComeback::increment(by);
 }
 
-void eGrowerAction::serializeFields(eSaveArchive& ar) {
+void eGrowerAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.field("growerType", mType);
     ar.characterAsField("grower", &board(), mGrower);
@@ -339,7 +339,7 @@ bool eGrowerAction::findResourceDecision() {
         }
     };
     a->setFindFailAction(findFailFunc);
-    a->setMaxFindDistance(eNumbers::sGrowerMaxDistance);
+    a->setMaxFindDistance(Numbers::sGrowerMaxDistance);
     a->start(hha);
     setCurrentAction(a);
     return true;
@@ -360,7 +360,7 @@ void eGrowerAction::workOnDecision(eTile* const tile) {
     mTargetTile = tile;
     mTargetBuildingType = type;
     if(mWorkRemaining <= 0) {
-        mWorkRemaining = eNumbers::sGrowerWorkTime;
+        mWorkRemaining = Numbers::sGrowerWorkTime;
     }
     tile->setBusy(true);
     const auto b = tile->underBuilding();
@@ -447,7 +447,7 @@ void eGrowerAction::goBackDecision() {
 void eGrowerAction::waitDecision() {
     mStage = eGrowerActionStage::waiting;
     if(mWaitRemaining <= 0) {
-        mWaitRemaining = eNumbers::sGrowerSpawnWaitTime;
+        mWaitRemaining = Numbers::sGrowerSpawnWaitTime;
     }
     wait(mWaitRemaining);
 }

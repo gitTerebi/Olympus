@@ -5,13 +5,13 @@
 #include <vector>
 #include <cstdint>
 
-class eSaveArchive;
+class SaveArchive;
 
 class eRuins : public eBuilding {
 public:
     eRuins(GameBoard& board, const eCityId cid);
 
-    stdsptr<eTexture> getTexture(const eTileSize size) const override;
+    stdsptr<Texture> getTexture(const eTileSize size) const override;
 
     void setWasType(const eBuildingType type) { mWasType = type; }
     eBuildingType wasType() const { return mWasType; }
@@ -39,7 +39,7 @@ public:
     bool hasSavedPier() const { return !mSavedPier.empty(); }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eBuildingType mWasType = eBuildingType::none;
     int mOriginX = -1;

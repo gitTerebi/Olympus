@@ -17,7 +17,7 @@ class SendResourcesToCityEvent;
 class ReceiveTributeEvent;
 class SendTroopsEvent;
 enum class eResourceType;
-class eSaveArchive;
+class SaveArchive;
 
 class eBoardPlayer {
 public:
@@ -80,7 +80,7 @@ public:
 
     bool askFor(const eResourceType type, const eCityId cid);
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
     void giftAllies();
     bool askForDrachmas();

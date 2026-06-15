@@ -5,15 +5,15 @@
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
 #include "gameEvents/invasions/invasion-handler.h"
-#include "elanguage.h"
+#include "language.h"
 #include "gameEvents/invasions/invasion-warning.h"
 #include "audio/music.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "gameEvents/conquest/player-conquest-event.h"
 #include "engine/difficulty.h"
 #include "engine/epathfinder.h"
-#include "eiteratesquare.h"
-#include "fileIO/esavearchive.h"
+#include "iterate-square.h"
+#include "fileIO/save-archive.h"
 
 #include <cstdio>
 #include "characters/soldier-banner.h"
@@ -57,7 +57,7 @@ eInvasionEvent::eInvasionEvent(
     const eGameEventBranch branch,
     GameBoard &board) : eGameEvent(cid, eGameEventType::invasion,
                                     branch, board),
-                         ePointEventValue(eBannerTypeS::landInvasion,
+                         ePointEventValue(BannerTypeS::landInvasion,
                                           cid, board),
                          eCityEventValue(board, [this, cid](WorldCity &c)
                                          {
@@ -169,7 +169,7 @@ bool eInvasionEvent::tryCreateCityInvasion(WorldCity &attacker, GameBoard &board
             return false;
     }
 
-    if (eRand::rand() % 12 != 0)
+    if (Rand::rand() % 12 != 0)
         return false;
 
     const auto e = e::make_shared<eInvasionEvent>(
@@ -216,7 +216,7 @@ eTile *nearestDisembarkTile(eTile *const tile, GameBoard &board,
         const auto& bs = tt->banners();
         for(const auto& b : bs) {
             const auto type = b->type();
-            const bool r = type == eBannerTypeS::disembarkPoint;
+            const bool r = type == BannerTypeS::disembarkPoint;
             if(r) {
                 final = tt;
                 return true;
@@ -251,7 +251,7 @@ eTile *nearestShoreTile(eTile *const tile)
     };
     for (int i = 0; i < 9; i++)
     {
-        eIterateSquare::iterateSquare(i, prcs);
+        IterateSquare::iterateSquare(i, prcs);
         if (result)
             return result;
     }
@@ -289,7 +289,7 @@ eTile* nearestVisibleLandSpawnTile(eTile* const tile)
     };
     for(int i = 1; i < 16; i++)
     {
-        eIterateSquare::iterateSquare(i, prcs);
+        IterateSquare::iterateSquare(i, prcs);
         if(result)
         {
             printf("invasion land spawn nudged from edge band (%i,%i) to (%i,%i)\n",
@@ -571,10 +571,10 @@ void eInvasionEvent::sendInitialAnnouncement()
 
 std::string eInvasionEvent::longName() const
 {
-    return eLanguage::zeusText(156, 2);
+    return Language::zeusText(156, 2);
 }
 
-void eInvasionEvent::serializeFields(eSaveArchive &ar)
+void eInvasionEvent::serializeFields(SaveArchive &ar)
 {
     eGameEvent::serializeFields(ar);
     ePointEventValue::serialize(ar);
@@ -586,7 +586,7 @@ void eInvasionEvent::serializeFields(eSaveArchive &ar)
     ar.field("sentByPlayer", mSentByPlayer, ePlayerId::neutralFriendly);
 
     ar.gameEventField("conquestEvent", board, mConquestEvent);
-    ar.archiveField("forces", [this, board](eSaveArchive& childAr) {
+    ar.archiveField("forces", [this, board](SaveArchive& childAr) {
         mForces.serialize(childAr, board);
     });
 
@@ -659,7 +659,7 @@ void eInvasionEvent::addInvasionHandler(eInvasionHandler *const i)
 
 void eInvasionEvent::removeInvasionHandler(eInvasionHandler *const i)
 {
-    eVectorHelpers::remove(mHandlers, i);
+    VectorHelpers::remove(mHandlers, i);
     if (mHandlers.empty() && !mInvadersWon) {
         const auto board = gameBoard();
         if (board) {

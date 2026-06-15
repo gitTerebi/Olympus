@@ -1,7 +1,7 @@
 #include "wolf.h"
 
 #include "actions/ewolfaction.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "engine/etile.h"
 #include "textures/game-textures.h"
 
@@ -40,7 +40,7 @@ bool Wolf::takeDamage(const double a, eCharacter* const attacker) {
     }
     if(targets.empty()) targets.push_back(attacker);
 
-    const int range = eNumbers::sWolfHuntDistance;
+    const int range = Numbers::sWolfHuntDistance;
     int wolfIndex = 0;
     for(int x = -range; x <= range; x++) {
         for(int y = -range; y <= range; y++) {

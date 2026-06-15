@@ -1,20 +1,20 @@
 ﻿#include "esanctuaryinfowidget.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "widgets/framed-button.h"
 #include "characters/gods/god.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 #include "buildings/sanctuaries/sanctuary.h"
 #include "buildings/pyramids/epyramid.h"
 #include "engine/game-board.h"
 #include "widgets/echoosecitydialog.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "widgets/game-widget.h"
 #include "widgets/eprogressbar.h"
 #include "widgets/elayouthelpers.h"
 
 eSanctuaryInfoWidget::eSanctuaryInfoWidget(
-        eMainWindow* const window,
+        MainWindow* const window,
         eMainWidget* const mw) :
     eEmployingBuildingInfoWidget(window, mw, true, false) {}
 
@@ -70,9 +70,9 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         }
         // override with live priest state (sInfoText only knows employment level)
         if(s->priestOut()) {
-            employmentInfo = eLanguage::zeusText(132, 6); // "Our priests are out looking..."
+            employmentInfo = Language::zeusText(132, 6); // "Our priests are out looking..."
         } else if(s->sacrificing()) {
-            employmentInfo = eLanguage::zeusText(132, 7); // "We are conducting sacrifices..."
+            employmentInfo = Language::zeusText(132, 7); // "We are conducting sacrifices..."
         }
         const auto cw = addCentralWidget();
         addEmploymentWidget(m, employmentInfo);
@@ -90,19 +90,19 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                 const int days = s->sacrificeDaysLeft();
                 if(days > 0) {
                     // "This Sanctuary is active for another X days"
-                    const auto txt = eLanguage::zeusText(132, 8) +
+                    const auto txt = Language::zeusText(132, 8) +
                                      " " + std::to_string(days) + " days";
                     lines.push_back({makeLbl(txt)});
                 } else {
                     // "We are conducting sacrifices right now."
-                    lines.push_back({makeLbl(eLanguage::zeusText(132, 7))});
+                    lines.push_back({makeLbl(Language::zeusText(132, 7))});
                 }
             } else if(s->priestOut()) {
                 // "Sanctuary preparing for sacrifice"
-                lines.push_back({makeLbl(eLanguage::zeusText(59, 30))});
+                lines.push_back({makeLbl(Language::zeusText(59, 30))});
             } else {
                 // "Sanctuary working normally"
-                lines.push_back({makeLbl(eLanguage::zeusText(59, 26))});
+                lines.push_back({makeLbl(Language::zeusText(59, 26))});
             }
             const auto col = eLayoutHelpers::createFlexContainer(
                                  window(), widgetWidth(), 0,
@@ -122,9 +122,9 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         descLabel->setFontSizeS();
         descLabel->setWrapWidth(cww);
         std::string desc;
-        desc += eLanguage::zeusText(132, 66 + godId);
-        desc += " " + eLanguage::zeusText(132, 80 + godId);
-        desc += " " + eLanguage::zeusText(132, 94 + godId);
+        desc += Language::zeusText(132, 66 + godId);
+        desc += " " + Language::zeusText(132, 80 + godId);
+        desc += " " + Language::zeusText(132, 94 + godId);
         descLabel->setText(desc);
         descLabel->fitContent();
         descLabel->setWidth(cww);
@@ -142,16 +142,16 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             const bool aresGod = (gt == GodType::ares);
             if(aresGod && (s->aresBuffReady() || s->godAbroad())) {
                 reasonLabel->setLightFontColor();
-                reasonLabel->setText(eLanguage::zeusText(132, 38 + godId)); // "Ares has heard...next opportunity"
+                reasonLabel->setText(Language::zeusText(132, 38 + godId)); // "Ares has heard...next opportunity"
             } else if(s->prayerReady()) {
                 reasonLabel->setLightFontColor();
-                reasonLabel->setText(eLanguage::zeusText(132, 94 + godId));
+                reasonLabel->setText(Language::zeusText(132, 94 + godId));
             } else if(aresGod) {
                 reasonLabel->setYellowFontColor();
-                reasonLabel->setText(eLanguage::zeusText(132, 99)); // "Pray to Ares if you would like him to accompany..."
+                reasonLabel->setText(Language::zeusText(132, 99)); // "Pray to Ares if you would like him to accompany..."
             } else {
                 reasonLabel->setYellowFontColor();
-                reasonLabel->setText(eLanguage::zeusText(132, 52 + godId));
+                reasonLabel->setText(Language::zeusText(132, 52 + godId));
             }
             reasonLabel->fitContent();
         }
@@ -164,7 +164,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             const auto bw = new eWidget(window());
             bw->setNoPadding();
             buttonsW->addWidget(bw);
-            const auto pb = new FramedButton(eLanguage::zeusText(132, 10 + godId), window());
+            const auto pb = new FramedButton(Language::zeusText(132, 10 + godId), window());
             pb->setUnderline(false);
             pb->fitContent();
             if(gt == GodType::ares && (s->aresBuffReady() || s->godAbroad())) pb->setEnabled(false);
@@ -191,14 +191,14 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                         break;
                     }
                     reasonLabel->setYellowFontColor();
-                    reasonLabel->setText(eLanguage::zeusText(132, string));
+                    reasonLabel->setText(Language::zeusText(132, string));
                 } else if(gt == GodType::ares) {
                     reasonLabel->setLightFontColor();
-                    reasonLabel->setText(eLanguage::zeusText(132, 38 + godId));
+                    reasonLabel->setText(Language::zeusText(132, 38 + godId));
                     pb->setEnabled(false);
                 } else {
                     reasonLabel->setLightFontColor();
-                    reasonLabel->setText(eLanguage::zeusText(132, 24 + godId));
+                    reasonLabel->setText(Language::zeusText(132, 24 + godId));
                 }
                 reasonLabel->fitContent();
                 bar->setValue(std::clamp(int(std::floor(100*s->helpTimeFraction())), 0, 100));
@@ -219,7 +219,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             const auto bw = new eWidget(window());
             bw->setNoPadding();
             buttonsW->addWidget(bw);
-            const auto txt = eLanguage::zeusText(156, 27);
+            const auto txt = Language::zeusText(156, 27);
             const auto pb = new FramedButton(txt, window());
             pb->setUnderline(false);
             pb->fitContent();
@@ -253,7 +253,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                     }
                     const auto godType = s->godType();
                     const auto godName = God::sGodName(godType);
-                    const auto txt = godName + " " + eLanguage::zeusText(59, string);
+                    const auto txt = godName + " " + Language::zeusText(59, string);
                     reasonLabel->setText(txt);
                     reasonLabel->fitContent();
                     const double f = s->helpAttackTimeFraction();
@@ -265,7 +265,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
                     const auto choose = new eChooseCityDialog(window());
                     choose->setValidator([enemyCids](const stdsptr<WorldCity>& c) {
                         const auto cid = c->cityId();
-                        return eVectorHelpers::contains(enemyCids, cid);
+                        return VectorHelpers::contains(enemyCids, cid);
                     });
                     const auto act = [askForAttack](const stdsptr<WorldCity>& c) {
                         const auto cid = c->cityId();
@@ -289,7 +289,7 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         buttonsW->fitContent();
 
         buttonReasonW->addWidget(buttonsW);
-        buttonsW->align(eAlignment::hcenter);
+        buttonsW->align(Alignment::hcenter);
         buttonReasonW->stackVertically(p);
         buttonReasonW->fitHeight();
 
@@ -395,31 +395,31 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
             break;
         }
 
-        auto text = eLanguage::zeusText(132, string);
+        auto text = Language::zeusText(132, string);
         const auto god = ePyramid::sGod(type);
         const auto name = God::sGodName(god);
-        eStringHelpers::replace(text, "[god]", name);
-        eStringHelpers::replace(text, "[god]", name);
+        StringHelpers::replace(text, "[god]", name);
+        StringHelpers::replace(text, "[god]", name);
         addText(text);
     } else {
         const auto name = eBuilding::sNameForBuilding(m);
-        auto title = eLanguage::zeusText(178, 2);
-        eStringHelpers::replace(title, "[monument]", name);
+        auto title = Language::zeusText(178, 2);
+        StringHelpers::replace(title, "[monument]", name);
         eInfoWidget::initialize(title);
 
         const bool r = m->accessToRoad();
         if(!r) {
-            addText(eLanguage::zeusText(69, 4));
+            addText(Language::zeusText(69, 4));
         }
         const bool h = m->constructionHalted();
         if(h) {
-            addText(eLanguage::zeusText(132, 130));
+            addText(Language::zeusText(132, 130));
         }
         auto& board = m->getBoard();
         const auto cid = m->cityId();
         const int na = board.countBuildings(cid, eBuildingType::artisansGuild);
         if(na == 0) {
-            addText(eLanguage::zeusText(178, 0));
+            addText(Language::zeusText(178, 0));
         }
 
         const int p = m->progress();
@@ -427,13 +427,13 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         if(s) {
             const auto god = s->godType();
             const auto godStr = God::sGodName(god);
-            auto complete = eLanguage::zeusText(178, 23);
-            eStringHelpers::replace(complete, "[god]", godStr);
-            eStringHelpers::replace(complete, "[percent_complete]", pStr + "%");
+            auto complete = Language::zeusText(178, 23);
+            StringHelpers::replace(complete, "[god]", godStr);
+            StringHelpers::replace(complete, "[percent_complete]", pStr + "%");
             addText(complete);
         } else {
-            auto complete = name + " " + eLanguage::zeusText(178, 24);
-            eStringHelpers::replace(complete, "[percent_complete]", pStr + "%");
+            auto complete = name + " " + Language::zeusText(178, 24);
+            StringHelpers::replace(complete, "[percent_complete]", pStr + "%");
             addText(complete);
         }
 
@@ -452,74 +452,74 @@ void eSanctuaryInfoWidget::initialize(eMonument* const m) {
         const int nbm = needed.fBlackMarble;
         const auto nbmStr = std::to_string(nbm);
         if(nm > 0 || nw > 0 || ns > 0 || no > 0 || nbm > 0) {
-            auto rem = eLanguage::zeusText(178, 25);
+            auto rem = Language::zeusText(178, 25);
             if(nm == 1) {
-                auto remM = eLanguage::zeusText(178, 26);
-                eStringHelpers::replace(remM, "[amount]", nmStr);
+                auto remM = Language::zeusText(178, 26);
+                StringHelpers::replace(remM, "[amount]", nmStr);
                 rem += "\n" + remM;
             } else if(nm > 1) {
-                auto remM = eLanguage::zeusText(178, 27);
-                eStringHelpers::replace(remM, "[amount]", nmStr);
+                auto remM = Language::zeusText(178, 27);
+                StringHelpers::replace(remM, "[amount]", nmStr);
                 rem += "\n" + remM;
             }
             if(nw == 1) {
-                auto remW = eLanguage::zeusText(178, 30);
-                eStringHelpers::replace(remW, "[amount]", nwStr);
+                auto remW = Language::zeusText(178, 30);
+                StringHelpers::replace(remW, "[amount]", nwStr);
                 rem += "\n" + remW;
             } else if(nw > 1) {
-                auto remW = eLanguage::zeusText(178, 31);
-                eStringHelpers::replace(remW, "[amount]", nwStr);
+                auto remW = Language::zeusText(178, 31);
+                StringHelpers::replace(remW, "[amount]", nwStr);
                 rem += "\n" + remW;
             }
             if(ns == 1) {
-                auto remS = eLanguage::zeusText(178, 32);
-                eStringHelpers::replace(remS, "[amount]", nsStr);
+                auto remS = Language::zeusText(178, 32);
+                StringHelpers::replace(remS, "[amount]", nsStr);
                 rem += "\n" + remS;
             } else if(ns > 1) {
-                auto remS = eLanguage::zeusText(178, 33);
-                eStringHelpers::replace(remS, "[amount]", nsStr);
+                auto remS = Language::zeusText(178, 33);
+                StringHelpers::replace(remS, "[amount]", nsStr);
                 rem += "\n" + remS;
             }
             if(no == 1) {
-                auto remO = eLanguage::zeusText(178, 34);
-                eStringHelpers::replace(remO, "[amount]", noStr);
+                auto remO = Language::zeusText(178, 34);
+                StringHelpers::replace(remO, "[amount]", noStr);
                 rem += "\n" + remO;
             } else if(no > 1) {
-                auto remO = eLanguage::zeusText(178, 35);
-                eStringHelpers::replace(remO, "[amount]", noStr);
+                auto remO = Language::zeusText(178, 35);
+                StringHelpers::replace(remO, "[amount]", noStr);
                 rem += "\n" + remO;
             }
             if(nbm == 1) {
-                auto remNbm = eLanguage::zeusText(178, 28);
-                eStringHelpers::replace(remNbm, "[amount]", nbmStr);
+                auto remNbm = Language::zeusText(178, 28);
+                StringHelpers::replace(remNbm, "[amount]", nbmStr);
                 rem += "\n" + remNbm;
             } else if(nbm > 1) {
-                auto remNbm = eLanguage::zeusText(178, 29);
-                eStringHelpers::replace(remNbm, "[amount]", nbmStr);
+                auto remNbm = Language::zeusText(178, 29);
+                StringHelpers::replace(remNbm, "[amount]", nbmStr);
                 rem += "\n" + remNbm;
             }
             addText(rem);
         } else {
-            const auto all = eLanguage::zeusText(178, 36);
+            const auto all = Language::zeusText(178, 36);
             addText(all);
         }
 
         const auto cw = addCentralWidget();
         const auto haltB = new FramedButton(window());
         haltB->setUnderline(false);
-        haltB->setText(h ? eLanguage::zeusText(132, 113) :
-                           eLanguage::zeusText(132, 112));
+        haltB->setText(h ? Language::zeusText(132, 113) :
+                           Language::zeusText(132, 112));
         haltB->fitContent();
         haltB->setPressAction([m, haltB]() {
             bool h = m->constructionHalted();
             h = !h;
             m->setConstructionHalted(h);
-            haltB->setText(h ? eLanguage::zeusText(132, 113) :
-                               eLanguage::zeusText(132, 112));
+            haltB->setText(h ? Language::zeusText(132, 113) :
+                               Language::zeusText(132, 112));
             haltB->fitContent();
-            haltB->align(eAlignment::hcenter);
+            haltB->align(Alignment::hcenter);
         });
         cw->addWidget(haltB);
-        haltB->align(eAlignment::hcenter | eAlignment::bottom);
+        haltB->align(Alignment::hcenter | Alignment::bottom);
     }
 }

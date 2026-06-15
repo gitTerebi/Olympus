@@ -8,7 +8,7 @@
 #include "characters/ehunter.h"
 #include "widgets/elabel.h"
 #include "textures/game-textures.h"
-#include "elanguage.h"
+#include "language.h"
 #include "characters/gods/god.h"
 #include "characters/heroes/ehero.h"
 #include "characters/monsters/emonster.h"
@@ -21,14 +21,14 @@
 #include "engine/game-board.h"
 #include "audio/sounds.h"
 #include "audio/sound-vector.h"
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "characters/edomesticatedanimal.h"
 
 eCharacterInfoWidget::eCharacterInfoWidget(
-    eMainWindow *const window,
+    MainWindow *const window,
     eMainWidget *const mw) : eInfoWidget(window, mw, true, true) {}
 
-std::shared_ptr<eTexture> gCharPortrait(
+std::shared_ptr<Texture> gCharPortrait(
     const eResolution res, const eCharacter *const c)
 {
     if (!c)
@@ -347,7 +347,7 @@ std::string gCharName(const eCharacterType c, const int seedId)
     case eCharacterType::silverMiner:
     case eCharacterType::lumberjack:
     case eCharacterType::priest:
-        return eLanguage::zeusText(275, seedId % 16);
+        return Language::zeusText(275, seedId % 16);
     case eCharacterType::aphrodite:
     case eCharacterType::apollo:
     case eCharacterType::ares:
@@ -432,7 +432,7 @@ std::string gCharOccupation(
     case eCharacterType::hermes:
     case eCharacterType::poseidon:
     case eCharacterType::zeus:
-        return eLanguage::zeusText(64, 67);
+        return Language::zeusText(64, 67);
     case eCharacterType::achilles:
     case eCharacterType::atalanta:
     case eCharacterType::bellerophon:
@@ -441,7 +441,7 @@ std::string gCharOccupation(
     case eCharacterType::odysseus:
     case eCharacterType::perseus:
     case eCharacterType::theseus:
-        return eLanguage::zeusText(64, 69);
+        return Language::zeusText(64, 69);
     case eCharacterType::calydonianBoar:
     case eCharacterType::cerberus:
     case eCharacterType::chimera:
@@ -459,7 +459,7 @@ std::string gCharOccupation(
     case eCharacterType::sphinx:
     case eCharacterType::talos:
     case eCharacterType::satyr:
-        return eLanguage::zeusText(44, 163);
+        return Language::zeusText(44, 163);
 
     case eCharacterType::settler:
     {
@@ -467,25 +467,25 @@ std::string gCharOccupation(
         const bool emi = s->emigrant();
         if (emi)
         {
-            return eLanguage::zeusText(64, 2);
+            return Language::zeusText(64, 2);
         }
         else
         {
-            return eLanguage::zeusText(64, 1);
+            return Language::zeusText(64, 1);
         }
     }
     break;
 
     case eCharacterType::homeless:
-        return eLanguage::zeusText(64, 3);
+        return Language::zeusText(64, 3);
 
     case eCharacterType::grower:
-        return eLanguage::zeusText(64, 5);
+        return Language::zeusText(64, 5);
 
     case eCharacterType::taxCollector:
-        return eLanguage::zeusText(64, 7);
+        return Language::zeusText(64, 7);
     case eCharacterType::fireFighter:
-        return eLanguage::zeusText(64, 8);
+        return Language::zeusText(64, 8);
     case eCharacterType::cartTransporter:
     {
         const auto ct = static_cast<const eCartTransporter *>(c);
@@ -494,7 +494,7 @@ std::string gCharOccupation(
         {
         case eCartTransporterType::basic:
         case eCartTransporterType::ox:
-            return eLanguage::zeusText(64, 9);
+            return Language::zeusText(64, 9);
         case eCartTransporterType::food:
         case eCartTransporterType::arms:
         case eCartTransporterType::fleece:
@@ -502,58 +502,58 @@ std::string gCharOccupation(
         case eCartTransporterType::wine:
         case eCartTransporterType::horse:
         case eCartTransporterType::chariot:
-            return eLanguage::zeusText(64, 37);
+            return Language::zeusText(64, 37);
         default:
-            return eLanguage::zeusText(64, 9);
+            return Language::zeusText(64, 9);
         }
     }
     break;
 
     case eCharacterType::rockThrower:
-        return eLanguage::zeusText(64, 11);
+        return Language::zeusText(64, 11);
     case eCharacterType::hoplite:
-        return eLanguage::zeusText(64, 12);
+        return Language::zeusText(64, 12);
     case eCharacterType::horseman:
-        return eLanguage::zeusText(64, 13);
+        return Language::zeusText(64, 13);
 
     case eCharacterType::competitor:
-        return eLanguage::zeusText(64, 15);
+        return Language::zeusText(64, 15);
     case eCharacterType::philosopher:
-        return eLanguage::zeusText(64, 16);
+        return Language::zeusText(64, 16);
     case eCharacterType::gymnast:
-        return eLanguage::zeusText(64, 17);
+        return Language::zeusText(64, 17);
     case eCharacterType::actor:
-        return eLanguage::zeusText(64, 18);
+        return Language::zeusText(64, 18);
     case eCharacterType::trader:
     {
         const auto onCid = c->onCityId();
         const auto cid = onCid != static_cast<eCityId>(-1) ? onCid : c->cityId();
-        return eLanguage::zeusText(64, 19) + " " + board.cityName(cid);
+        return Language::zeusText(64, 19) + " " + board.cityName(cid);
     }
     case eCharacterType::tradeBoat:
-        return eLanguage::zeusText(64, 20) + " " + cname;
+        return Language::zeusText(64, 20) + " " + cname;
     case eCharacterType::donkey:
-        return eLanguage::zeusText(64, 21) + " " + cname;
+        return Language::zeusText(64, 21) + " " + cname;
 
     case eCharacterType::disgruntled:
-        return eLanguage::zeusText(64, 23);
+        return Language::zeusText(64, 23);
 
     case eCharacterType::fishingBoat:
-        return eLanguage::zeusText(64, 25);
+        return Language::zeusText(64, 25);
     case eCharacterType::peddler:
-        return eLanguage::zeusText(64, 26);
+        return Language::zeusText(64, 26);
 
     case eCharacterType::shepherd:
-        return eLanguage::zeusText(64, 30);
+        return Language::zeusText(64, 30);
     case eCharacterType::goatherd:
-        return eLanguage::zeusText(64, 31);
+        return Language::zeusText(64, 31);
     case eCharacterType::healer:
-        return eLanguage::zeusText(64, 32);
+        return Language::zeusText(64, 32);
 
     case eCharacterType::eliteCitizen:
-        return eLanguage::zeusText(64, 38);
+        return Language::zeusText(64, 38);
     case eCharacterType::archer:
-        return eLanguage::zeusText(64, 39);
+        return Language::zeusText(64, 39);
 
     case eCharacterType::trojanSpearthrower:
     case eCharacterType::centaurArcher:
@@ -564,7 +564,7 @@ std::string gCharOccupation(
     case eCharacterType::phoenicianArcher:
     case eCharacterType::mayanArcher:
     case eCharacterType::greekRockThrower:
-        return eLanguage::zeusText(64, 40);
+        return Language::zeusText(64, 40);
     case eCharacterType::trojanHoplite:
     case eCharacterType::persianHoplite:
     case eCharacterType::oceanidHoplite:
@@ -572,7 +572,7 @@ std::string gCharOccupation(
     case eCharacterType::atlanteanHoplite:
     case eCharacterType::mayanHoplite:
     case eCharacterType::greekHoplite:
-        return eLanguage::zeusText(64, 41);
+        return Language::zeusText(64, 41);
     case eCharacterType::trojanHorseman:
     case eCharacterType::centaurHorseman:
     case eCharacterType::persianHorseman:
@@ -580,68 +580,68 @@ std::string gCharOccupation(
     case eCharacterType::atlanteanChariot:
     case eCharacterType::phoenicianHorseman:
     case eCharacterType::greekHorseman:
-        return eLanguage::zeusText(64, 42);
+        return Language::zeusText(64, 42);
 
     case eCharacterType::horse:
-        return eLanguage::zeusText(64, 43);
+        return Language::zeusText(64, 43);
     case eCharacterType::urchinGatherer:
-        return eLanguage::zeusText(64, 44);
+        return Language::zeusText(64, 44);
 
     case eCharacterType::sheep:
-        return eLanguage::zeusText(64, 49);
+        return Language::zeusText(64, 49);
     case eCharacterType::goat:
-        return eLanguage::zeusText(64, 50);
+        return Language::zeusText(64, 50);
     case eCharacterType::boar:
-        return eLanguage::zeusText(64, 51);
+        return Language::zeusText(64, 51);
 
     case eCharacterType::hunter:
-        return eLanguage::zeusText(64, 53);
+        return Language::zeusText(64, 53);
 
     case eCharacterType::lumberjack:
-        return eLanguage::zeusText(64, 55);
+        return Language::zeusText(64, 55);
 
     case eCharacterType::trireme:
-        return eLanguage::zeusText(64, 57);
+        return Language::zeusText(64, 57);
     case eCharacterType::artisan:
-        return eLanguage::zeusText(64, 58);
+        return Language::zeusText(64, 58);
     case eCharacterType::wolf:
-        return eLanguage::zeusText(64, 59);
+        return Language::zeusText(64, 59);
     case eCharacterType::waterDistributor:
-        return eLanguage::zeusText(64, 60);
+        return Language::zeusText(64, 60);
     case eCharacterType::watchman:
-        return eLanguage::zeusText(64, 61);
+        return Language::zeusText(64, 61);
 
     case eCharacterType::sick:
-        return eLanguage::zeusText(64, 66);
+        return Language::zeusText(64, 66);
 
     case eCharacterType::silverMiner:
     case eCharacterType::marbleMiner:
     case eCharacterType::bronzeMiner:
     case eCharacterType::orichalcMiner:
-        return eLanguage::zeusText(64, 62);
+        return Language::zeusText(64, 62);
 
     case eCharacterType::priest:
-        return eLanguage::zeusText(64, 65);
+        return Language::zeusText(64, 65);
 
     case eCharacterType::scholar:
-        return eLanguage::zeusText(64, 72);
+        return Language::zeusText(64, 72);
     case eCharacterType::astronomer:
-        return eLanguage::zeusText(64, 73);
+        return Language::zeusText(64, 73);
     case eCharacterType::inventor:
-        return eLanguage::zeusText(64, 74);
+        return Language::zeusText(64, 74);
     case eCharacterType::curator:
-        return eLanguage::zeusText(64, 75);
+        return Language::zeusText(64, 75);
 
     case eCharacterType::cattle1:
     case eCharacterType::cattle2:
     case eCharacterType::cattle3:
-        return eLanguage::zeusText(64, 76);
+        return Language::zeusText(64, 76);
 
     case eCharacterType::butcher:
-        return eLanguage::zeusText(64, 77);
+        return Language::zeusText(64, 77);
 
     case eCharacterType::ox:
-        return eLanguage::zeusText(64, 79);
+        return Language::zeusText(64, 79);
     default:
         return "";
     }
@@ -775,7 +775,7 @@ eCharMessage gCharMessage(eCharacter *const c)
     bool enemyImmortal = false;
     for (int k = 0; k < 10; k++)
     {
-        eIterateSquare::iterateSquare(k, [&](const int dx, const int dy)
+        IterateSquare::iterateSquare(k, [&](const int dx, const int dy)
                                       {
             const auto t = tile->tileRel<eTile>(dx, dy);
             if(!t) return false;
@@ -837,7 +837,7 @@ eCharMessage gCharMessage(eCharacter *const c)
     case eCharacterType::cattle1:
     case eCharacterType::cattle2:
     case eCharacterType::cattle3:
-        stringId = eRand::rand() % 4;
+        stringId = Rand::rand() % 4;
         break;
     case eCharacterType::settler:
     {
@@ -893,7 +893,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             const auto ed = board.employmentData(cid);
             const auto hd = board.husbandryData(cid);
-            if (eRand::rand() % 2)
+            if (Rand::rand() % 2)
             {
                 if (enemyImmortal)
                 {
@@ -1028,11 +1028,11 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else if (!a || a->count(eResourceType::food) < 100)
         {
-            stringId = 1 + eRand::rand() % 3;
+            stringId = 1 + Rand::rand() % 3;
         }
         else
         {
-            stringId = 4 + eRand::rand() % 3;
+            stringId = 4 + Rand::rand() % 3;
         }
     }
     break;
@@ -1283,7 +1283,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 0;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
             const auto state = gGetMinerState(c);
             switch (state)
@@ -1311,7 +1311,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
             const auto state = gGetMinerState(c);
             switch (state)
@@ -1337,7 +1337,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
             const auto state = gGetMinerState(c);
             switch (state)
@@ -1373,12 +1373,12 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2 || c->fighting())
+        else if (Rand::rand() % 2 || c->fighting())
         {
             const int m = board.maintanance(cid);
             if (c->fighting())
             {
-                stringId = 8 + eRand::rand() % 3;
+                stringId = 8 + Rand::rand() % 3;
             }
             else if (m < 75)
             {
@@ -1425,12 +1425,12 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
             const auto a = c->actionType();
             if (a == eCharacterActionType::carry)
             {
-                stringId = 8 + eRand::rand() % 2;
+                stringId = 8 + Rand::rand() % 2;
             }
             else if (a == eCharacterActionType::collect)
             {
@@ -1552,7 +1552,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else if (c->fighting())
         {
-            stringId = 4 + eRand::rand() % 2;
+            stringId = 4 + Rand::rand() % 2;
         }
         else
         {
@@ -1580,9 +1580,9 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
-            stringId = 8 + eRand::rand() % 4;
+            stringId = 8 + Rand::rand() % 4;
         }
         groupId = 214;
     }
@@ -1647,16 +1647,16 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
-            stringId = 8 + eRand::rand() % 4;
+            stringId = 8 + Rand::rand() % 4;
         }
         groupId = 212;
     }
     break;
     case eCharacterType::priest:
     {
-        stringId = eRand::rand() % 7;
+        stringId = Rand::rand() % 7;
         groupId = 237;
     }
     break;
@@ -1667,9 +1667,9 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
-            stringId = 8 + eRand::rand() % 4;
+            stringId = 8 + Rand::rand() % 4;
         }
         groupId = 213;
     }
@@ -1681,9 +1681,9 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
-            stringId = 8 + eRand::rand() % 4;
+            stringId = 8 + Rand::rand() % 4;
         }
         groupId = 215;
     }
@@ -1695,9 +1695,9 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
-            stringId = 8 + eRand::rand() % 3;
+            stringId = 8 + Rand::rand() % 3;
         }
         groupId = 342;
     }
@@ -1710,7 +1710,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else
         {
-            stringId = 6 + eRand::rand() % 2;
+            stringId = 6 + Rand::rand() % 2;
         }
         groupId = 231;
     }
@@ -1723,7 +1723,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else
         {
-            stringId = 6 + eRand::rand() % 2;
+            stringId = 6 + Rand::rand() % 2;
         }
         groupId = 232;
     }
@@ -1736,7 +1736,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else if (enemyNearby)
         {
-            stringId = 3 + eRand::rand() % 2;
+            stringId = 3 + Rand::rand() % 2;
         }
         else if (activeInv)
         {
@@ -1756,7 +1756,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
             const int health = board.health(cid);
             if (health < 70)
@@ -1774,7 +1774,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         {
             stringId = 7;
         }
-        else if (eRand::rand() % 2)
+        else if (Rand::rand() % 2)
         {
             const auto state = gGetHunterState(c);
             switch (state)
@@ -1892,7 +1892,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else if (enemyNearby)
         {
-            stringId = 3 + eRand::rand() % 2;
+            stringId = 3 + Rand::rand() % 2;
         }
         else if (activeInv)
         {
@@ -1914,7 +1914,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else if (enemyNearby)
         {
-            stringId = 3 + eRand::rand() % 2;
+            stringId = 3 + Rand::rand() % 2;
         }
         else if (activeInv)
         {
@@ -1935,7 +1935,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else if (enemyNearby)
         {
-            stringId = 3 + eRand::rand() % 2;
+            stringId = 3 + Rand::rand() % 2;
         }
         else if (activeInv)
         {
@@ -1956,7 +1956,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else if (enemyNearby)
         {
-            stringId = 3 + eRand::rand() % 2;
+            stringId = 3 + Rand::rand() % 2;
         }
         else if (activeInv)
         {
@@ -1977,7 +1977,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         }
         else if (enemyNearby)
         {
-            stringId = 3 + eRand::rand() % 2;
+            stringId = 3 + Rand::rand() % 2;
         }
         else if (activeInv)
         {
@@ -1994,7 +1994,7 @@ eCharMessage gCharMessage(eCharacter *const c)
         break;
     }
 
-    result.fText = eLanguage::zeusText(groupId, stringId);
+    result.fText = Language::zeusText(groupId, stringId);
     result.fSoundId = stringId;
 
     if (type == eCharacterType::sheep || type == eCharacterType::goat)
@@ -2111,7 +2111,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
             iconLabel->fitContent();
             mLoadsWidget->addWidget(iconLabel);
             const auto loadsText = std::to_string(resCount) + " " +
-                                   eLanguage::zeusText(129, 20) + " " +
+                                   Language::zeusText(129, 20) + " " +
                                    eResourceTypeHelpers::typeName(resType);
             const auto loadsLabel = new eLabel(loadsText, window());
             loadsLabel->setFontSizeS();
@@ -2140,7 +2140,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
                                 {
         if(mSpeakAction) mSpeakAction(); });
     mTextWidget->addWidget(speakButton);
-    speakButton->align(eAlignment::left);
+    speakButton->align(Alignment::left);
 
     mTextWidget->stackVertically(p);
 
@@ -2227,9 +2227,9 @@ void eCharacterInfoWidget::setCharacter(eCharacter *const c)
             mTradeWidget->addWidget(row);
         };
         for (const auto& e : bought)
-            addRow(eLanguage::zeusText(129, 4), e.first, e.second);
+            addRow(Language::zeusText(129, 4), e.first, e.second);
         for (const auto& e : sold)
-            addRow(eLanguage::zeusText(129, 5), e.first, e.second);
+            addRow(Language::zeusText(129, 5), e.first, e.second);
         mTradeWidget->stackVertically(res.paddingXS());
         mTradeWidget->fitContent();
     }
@@ -2241,15 +2241,15 @@ void eCharacterInfoWidget::setCharacter(eCharacter *const c)
         {
             if (from)
             {
-                const auto returningTo = eLanguage::zeusText(129, 16);
+                const auto returningTo = Language::zeusText(129, 16);
                 const auto name = eBuilding::sNameForBuilding(from);
                 additionalTxt = returningTo + " " + name;
             }
         }
         else if (from && to)
         {
-            const auto goingTo = eLanguage::zeusText(129, 15);
-            const auto fromStr = eLanguage::zeusText(129, 14);
+            const auto goingTo = Language::zeusText(129, 15);
+            const auto fromStr = Language::zeusText(129, 14);
             const auto fromName = eBuilding::sNameForBuilding(from);
             const auto toName = eBuilding::sNameForBuilding(to);
             additionalTxt = goingTo + " " + toName + " " + fromStr + " " + fromName;

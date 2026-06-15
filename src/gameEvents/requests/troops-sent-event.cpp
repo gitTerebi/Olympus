@@ -1,7 +1,7 @@
 #include "troops-sent-event.h"
 
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 #include "engine/eeventdata.h"
 #include "engine/game-board.h"
 #include "send-troops-event.h"
@@ -48,5 +48,5 @@ void TroopsSentEvent::trigger() {
 }
 
 std::string TroopsSentEvent::longName() const {
-    return eLanguage::zeusText(290, 6);
+    return Language::zeusText(290, 6);
 }

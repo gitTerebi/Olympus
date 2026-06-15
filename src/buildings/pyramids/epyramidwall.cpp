@@ -25,7 +25,7 @@ ePyramidWall::ePyramidWall(ePyramid* const pyramid,
                     elevation, 1, cid),
     mO(o), mSpecial(special) {}
 
-stdsptr<eTexture> ePyramidWall::getTexture(const eTileSize size) const {
+stdsptr<Texture> ePyramidWall::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];
@@ -83,7 +83,7 @@ stdsptr<eTexture> ePyramidWall::getTexture(const eTileSize size) const {
 
     if(isDark) texId += 17;
 
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     if(e == 0) {
         if(texId > 9) texId--;
         if(texId > 26) texId--;

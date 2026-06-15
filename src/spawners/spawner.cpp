@@ -1,31 +1,31 @@
-#include "espawner.h"
-#include "fileIO/esavearchive.h"
+#include "spawner.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
 
-eSpawner::eSpawner(const eBannerTypeS type,
+Spawner::Spawner(const BannerTypeS type,
                    const int id, eTile* const tile,
                    const int maxCount,
                    const int spawnFreq,
                    GameBoard& board) :
-    eBanner(type, id, tile, board),
+    Banner(type, id, tile, board),
     mMaxCount(maxCount), mSpawnPeriod(spawnFreq) {
     board.registerSpawner(this);
 }
 
-eSpawner::~eSpawner() {
+Spawner::~Spawner() {
     board().unregisterSpawner(this);
 }
 
-void eSpawner::serialize(eSaveArchive& ar) {
-    eBanner::serialize(ar);
+void Spawner::serialize(SaveArchive& ar) {
+    Banner::serialize(ar);
     ar.field("count", mCount, 0);
     ar.field("time", mTime, 0);
     ar.field("spawningEnabled", mSpawningEnabled, true);
 }
 
-void eSpawner::incTime(const int by) {
+void Spawner::incTime(const int by) {
     if(!mSpawningEnabled) return;
     mTime += by;
     if(mTime >= mSpawnPeriod && mCount < mMaxCount) {
@@ -35,11 +35,11 @@ void eSpawner::incTime(const int by) {
     }
 }
 
-void eSpawner::decCount() {
+void Spawner::decCount() {
     mCount--;
 }
 
-void eSpawner::spawnMax() {
+void Spawner::spawnMax() {
     const auto center = tile();
     const int cx = center->x();
     const int cy = center->y();
@@ -47,8 +47,8 @@ void eSpawner::spawnMax() {
     const int iMax = mMaxCount - mCount;
     auto& board = this->board();
     for(int i = 0; i < iMax; i++) {
-        const int tx = cx + (eRand::rand() % dist);
-        const int ty = cy + (eRand::rand() % dist);
+        const int tx = cx + (Rand::rand() % dist);
+        const int ty = cy + (Rand::rand() % dist);
         const auto tile = board.tile(tx, ty);
         if(!tile) {
             i--;
@@ -59,10 +59,10 @@ void eSpawner::spawnMax() {
     }
 }
 
-void eSpawner::setSpawnPeriod(const int p) {
+void Spawner::setSpawnPeriod(const int p) {
     mSpawnPeriod = p;
 }
 
-void eSpawner::disableSpawning() {
+void Spawner::disableSpawning() {
     mSpawningEnabled = false;
 }

@@ -1,8 +1,8 @@
 #include "echariotfactory.h"
 
 #include "textures/game-textures.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eChariotFactory::eChariotFactory(
         GameBoard& board, const eCityId cid) :
@@ -15,24 +15,24 @@ eChariotFactory::~eChariotFactory() {
     if(mHorseCart) mHorseCart->kill();
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eChariotFactory::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     return blds[sizeId].fChariotFactory;
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eChariotFactory::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
 
-    std::vector<eOverlay> os;
+    std::vector<Overlay> os;
 
     const auto& hcoll = texs.fChariotFactoryHorses;
     if(mHorses > 0) {
-        eOverlay& o = os.emplace_back();
+        Overlay& o = os.emplace_back();
         const int collId = std::min(3, mHorses - 1);
         const auto& coll = hcoll[collId];
         const int texId = textureTime() % coll.size();
@@ -43,14 +43,14 @@ eChariotFactory::getOverlays(const eTileSize size) const {
 
     const auto& ccoll = texs.fChariotFactoryChariots;
     if(mChariots == 0) {
-        eOverlay& o = os.emplace_back();
+        Overlay& o = os.emplace_back();
         const auto& coll = texs.fChariotFactoryOverlay;
         const int texId = textureTime() % coll.size();
         o.fTex = coll.getTexture(texId);
         o.fX = -0.63;
         o.fY = -3.92;
     } else if(mChariots > 0) {
-        eOverlay& o = os.emplace_back();
+        Overlay& o = os.emplace_back();
         const int texId = std::min(3, mChariots - 1);
         o.fTex = ccoll.getTexture(texId);
         o.fX = -0.7;
@@ -61,7 +61,7 @@ eChariotFactory::getOverlays(const eTileSize size) const {
         {
             const auto& coll = texs.fChariotFactoryOverlay1;
             const int texId = textureTime() % coll.size();
-            eOverlay& o = os.emplace_back();
+            Overlay& o = os.emplace_back();
             o.fTex = coll.getTexture(texId);
             o.fX = -0.2;
             o.fY = -3.75;
@@ -71,7 +71,7 @@ eChariotFactory::getOverlays(const eTileSize size) const {
             const auto& coll = texs.fWaitingWood;
             const int resMax = coll.size() - 1;
             const int res = std::clamp(mWood - 1, 0, resMax);
-            eOverlay& o = os.emplace_back();
+            Overlay& o = os.emplace_back();
             o.fTex = coll.getTexture(res);
             o.fX = -1.5;
             o.fY = -2.85;
@@ -93,7 +93,7 @@ void eChariotFactory::timeChanged(const int by) {
             mHorseCart->setType(eCartTransporterType::horse);
         }
         if(mWood > 2 && mChariots < 4) {
-            const int chariotBuildingType = eNumbers::sChariotBuildingTime;
+            const int chariotBuildingType = Numbers::sChariotBuildingTime;
             mChariotBuildingTime += by;
             if(mChariotBuildingTime > chariotBuildingType) {
                 mChariotBuildingTime = 0;
@@ -161,7 +161,7 @@ std::vector<eCartTask> eChariotFactory::cartTasks() const {
     return tasks;
 }
 
-void eChariotFactory::serializeFields(eSaveArchive& ar) {
+void eChariotFactory::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("wood", mWood);
     ar.field("horses", mHorses);

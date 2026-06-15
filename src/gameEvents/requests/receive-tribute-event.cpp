@@ -6,10 +6,10 @@
 #include "engine/game-board.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
-#include "elanguage.h"
-#include "emessages.h"
-#include "estringhelpers.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "messages.h"
+#include "string-helpers.h"
+#include "fileIO/save-archive.h"
 
 #include <vector>
 
@@ -185,10 +185,10 @@ void ReceiveTributeEvent::respond(const int response, const eCityId city)
 
 std::string ReceiveTributeEvent::longName() const
 {
-    auto tmpl = eLanguage::text("pay_tribute");
-    const auto none = eLanguage::text("none");
+    auto tmpl = Language::text("pay_tribute");
+    const auto none = Language::text("none");
     const auto ctstr = mCity ? mCity->name() : none;
-    eStringHelpers::replace(tmpl, "%1", ctstr);
+    StringHelpers::replace(tmpl, "%1", ctstr);
     return tmpl;
 }
 
@@ -260,7 +260,7 @@ std::string ReceiveTributeEvent::overdueStatusText(
                                 currentDate);
 }
 
-void ReceiveTributeEvent::serializeFields(eSaveArchive &ar)
+void ReceiveTributeEvent::serializeFields(SaveArchive &ar)
 {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);

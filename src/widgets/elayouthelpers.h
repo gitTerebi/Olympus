@@ -5,7 +5,7 @@
 #include <vector>
 
 class eWidget;
-class eMainWindow;
+class MainWindow;
 
 namespace eLayoutHelpers {
 
@@ -30,14 +30,14 @@ struct eFlexParams {
     eAlign   align   = eAlign::start;
 };
 
-eWidget* createFlexContainer(eMainWindow* window,
+eWidget* createFlexContainer(MainWindow* window,
                              int containerW,
                              int containerH,
                              eFlexDirection direction,
                              std::initializer_list<eFlexItem> items,
                              eFlexParams params = {});
 
-eWidget* createFlexContainer(eMainWindow* window,
+eWidget* createFlexContainer(MainWindow* window,
                              int containerW,
                              int containerH,
                              eFlexDirection direction,

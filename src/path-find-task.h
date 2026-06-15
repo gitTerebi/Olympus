@@ -1,5 +1,5 @@
-﻿#ifndef EPATHFINDTASK_H
-#define EPATHFINDTASK_H
+﻿#ifndef PATH_FIND_TASK_H
+#define PATH_FIND_TASK_H
 
 #include "engine/etask.h"
 #include "engine/thread/ethreadtile.h"
@@ -8,7 +8,7 @@
 class ePathFinderBase;
 class WalkableObject;
 
-class ePathFindTask : public eTask {
+class PathFindTask : public eTask {
 public:
     using ePath = std::vector<eOrientation>;
     using eTileGetter = std::function<eThreadTile*(eThreadBoard&)>;
@@ -19,7 +19,7 @@ public:
     // (tileX, tileY, road distance) for every matched tile in findAll mode
     using eFoundTiles = std::vector<std::pair<std::pair<int, int>, int>>;
     using eFoundFunc = std::function<void(const eFoundTiles&)>;
-    ePathFindTask(const eCityId cid,
+    PathFindTask(const eCityId cid,
                   const SDL_Rect& tileBRect,
                   const eTileGetter& startTile,
                   const stdsptr<WalkableObject>& tileWalkable,
@@ -60,4 +60,4 @@ private:
     eFoundTiles mFound;
 };
 
-#endif // EPATHFINDTASK_H
+#endif // PATH_FIND_TASK_H

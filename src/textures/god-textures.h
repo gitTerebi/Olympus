@@ -1,15 +1,15 @@
 #ifndef GOD_TEXTURES_H
 #define GOD_TEXTURES_H
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 struct BasicGodTextures {
     BasicGodTextures(SDL_Renderer* const renderer) :
         fDisappear(renderer) {};
 
-    std::vector<eTextureCollection> fWalk;
-    eTextureCollection fDisappear;
-    std::vector<eTextureCollection> fFight;
+    std::vector<TextureCollection> fWalk;
+    TextureCollection fDisappear;
+    std::vector<TextureCollection> fFight;
 };
 
 struct DionysusTextures : public BasicGodTextures {
@@ -17,14 +17,14 @@ struct DionysusTextures : public BasicGodTextures {
         BasicGodTextures(renderer),
         fAppear(renderer) {};
 
-    eTextureCollection fAppear;
+    TextureCollection fAppear;
 };
 
 struct HermesTextures : public BasicGodTextures {
     HermesTextures(SDL_Renderer* const renderer) :
         BasicGodTextures(renderer) {};
 
-    std::vector<eTextureCollection> fRun;
+    std::vector<TextureCollection> fRun;
 };
 
 struct ExtendedGodTextures : public BasicGodTextures {
@@ -32,7 +32,7 @@ struct ExtendedGodTextures : public BasicGodTextures {
         BasicGodTextures(renderer) {};
 
 
-    std::vector<eTextureCollection> fBless;
+    std::vector<TextureCollection> fBless;
 };
 
 class GodTextures {

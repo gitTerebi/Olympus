@@ -2,8 +2,8 @@
 
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
-#include "elanguage.h"
-#include "enumbers.h"
+#include "language.h"
+#include "numbers.h"
 #include "../eleftbutton.h"
 #include "../erightbutton.h"
 #include "../ebuttonbase.h"
@@ -114,8 +114,8 @@ public:
             pw->setHeight(rowHeight);
             if(twoWay) pw->hide();
 
-            pi->align(eAlignment::vcenter);
-            p->align(eAlignment::vcenter);
+            pi->align(Alignment::vcenter);
+            p->align(Alignment::vcenter);
 
             const auto b = new eSwitchButton(window());
             b->setUnderline(false);
@@ -145,10 +145,10 @@ public:
                     changed();
                 });
                 cb->setFontSizeS();
-                cb->addValue(eLanguage::zeusText(130, 1)); // don't accept
-                cb->addValue(eLanguage::zeusText(130, 0)); // accept
-                cb->addValue(eLanguage::zeusText(130, 2)); // get
-                cb->addValue(eLanguage::zeusText(130, 3)); // empty
+                cb->addValue(Language::zeusText(130, 1)); // don't accept
+                cb->addValue(Language::zeusText(130, 0)); // accept
+                cb->addValue(Language::zeusText(130, 2)); // get
+                cb->addValue(Language::zeusText(130, 3)); // empty
                 cb->fitContent();
                 cb->setHeight(rowHeight);
                 if(static_cast<bool>(cartEmpty & type)) {
@@ -169,7 +169,7 @@ public:
                 }
                 (*cartOrderButtons)[type] = cb;
                 cartOrderW->addWidget(cb);
-                cb->align(eAlignment::hcenter);
+                cb->align(Alignment::hcenter);
             }
 
             const auto s = new eSpinBox(window());
@@ -193,7 +193,7 @@ public:
             const auto pid = stor->playerId();
             const int cc = trade.used(pid);
             const int ccc = trade.fMax;
-            t->setText(std::to_string(cc) + " " + eLanguage::zeusText(44, 148) + " " + std::to_string(ccc));
+            t->setText(std::to_string(cc) + " " + Language::zeusText(44, 148) + " " + std::to_string(ccc));
             t->fitContent();
             t->setHeight(rowHeight);
             t->setPressAction([s, ccc, changed]() {
@@ -205,14 +205,14 @@ public:
             iconsW->addWidget(icon);
             namesW->addWidget(n);
             priceW->addWidget(pw);
-            pw->align(eAlignment::hcenter);
+            pw->align(Alignment::hcenter);
             buttonsW->addWidget(b);
             spinsW->addWidget(s);
             tradedW->addWidget(t);
 
-            icon->align(eAlignment::left);
-            n->align(eAlignment::left);
-            b->align(eAlignment::hcenter);
+            icon->align(Alignment::left);
+            n->align(Alignment::left);
+            b->align(Alignment::hcenter);
 
             if(static_cast<bool>(imports & type)) {
                 b->setValue(1);
@@ -265,13 +265,13 @@ public:
 };
 
 TradePostInfoWidget::TradePostInfoWidget(
-        eMainWindow* const window, eMainWidget* const mw) :
+        MainWindow* const window, eMainWidget* const mw) :
     eEmployingBuildingInfoWidget(window, mw, false, false) {}
 
 void TradePostInfoWidget::initialize(TradePost* const stor,
                                       const ePrevNextAction& prevNext) {
     const auto& city = stor->city();
-    const auto title = eLanguage::zeusText(28, 62) + ": " + city.name();
+    const auto title = Language::zeusText(28, 62) + ": " + city.name();
 
     std::string sTitle;
     std::string sInfo;
@@ -314,7 +314,7 @@ void TradePostInfoWidget::initialize(TradePost* const stor,
 
     if(!twoWay) {
         const auto wrapper = new eWidget(window());
-        const auto importsLabel = new eLabel(eLanguage::zeusText(130, 17), window());
+        const auto importsLabel = new eLabel(Language::zeusText(130, 17), window());
         importsLabel->fitContent();
 
         const auto r = new eResourceStorageStack(window());
@@ -323,8 +323,8 @@ void TradePostInfoWidget::initialize(TradePost* const stor,
 
         r->initialize(stor, csells, imports,
                       mImportButtons, mSpinBoxes, maxCount,
-                      eLanguage::zeusText(130, 20),
-                      eLanguage::zeusText(130, 12),
+                      Language::zeusText(130, 20),
+                      Language::zeusText(130, 12),
                       changed, twoWay);
 
         wrapper->addWidget(importsLabel);
@@ -334,11 +334,11 @@ void TradePostInfoWidget::initialize(TradePost* const stor,
         wrapper->fitContent();
 
         stWid->addWidget(wrapper);
-        wrapper->align(eAlignment::hcenter);
+        wrapper->align(Alignment::hcenter);
     }
     {
         const auto wrapper = new eWidget(window());
-        const auto exportsLabel = new eLabel(eLanguage::zeusText(130, 18), window());
+        const auto exportsLabel = new eLabel(Language::zeusText(130, 18), window());
         exportsLabel->fitContent();
 
         const auto r = new eResourceStorageStack(window());
@@ -357,8 +357,8 @@ void TradePostInfoWidget::initialize(TradePost* const stor,
                 const bool ex = static_cast<bool>(exports & r);
                 if(count < 1 && !ex) continue;
                 const int e = thisC->exported(dstCid, r);
-                const int max = r == eResourceType::sculpture ? eNumbers::sTwoWayTradeMax :
-                                                               4*eNumbers::sTwoWayTradeMax;
+                const int max = r == eResourceType::sculpture ? Numbers::sTwoWayTradeMax :
+                                                               4*Numbers::sTwoWayTradeMax;
                 std::map<ePlayerId, int> em;
                 em[thisPid] = e;
                 cbuys.push_back(eResourceTrade{r, em, max});
@@ -369,8 +369,8 @@ void TradePostInfoWidget::initialize(TradePost* const stor,
 
         r->initialize(stor, cbuys, exports,
                       mExportButtons, mSpinBoxes, maxCount,
-                      eLanguage::zeusText(130, 21),
-                      eLanguage::zeusText(130, 13),
+                      Language::zeusText(130, 21),
+                      Language::zeusText(130, 13),
                       changed, twoWay,
                       &mCartOrderButtons, cartEmpty, cartGet,
                       cartAccept, cartDontAccept);
@@ -382,7 +382,7 @@ void TradePostInfoWidget::initialize(TradePost* const stor,
         wrapper->fitContent();
 
         stWid->addWidget(wrapper);
-        wrapper->align(eAlignment::hcenter);
+        wrapper->align(Alignment::hcenter);
     }
 
     stWid->layoutVertically();

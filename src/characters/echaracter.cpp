@@ -11,7 +11,7 @@
 #include "gods/god.h"
 #include "heroes/ehero.h"
 #include "audio/sounds.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "esoldier.h"
 #include "soldier-banner.h"
@@ -21,7 +21,7 @@
 eCharacter::eCharacter(GameBoard& board,
                        const eCharacterType type) :
     eObject(board), eCharacterBase(type),
-    mSeedId(eRand::rand()),
+    mSeedId(Rand::rand()),
     mProvide(eProvide::none) {
     getBoard().registerCharacter(this);
 }
@@ -60,11 +60,11 @@ bool eCharacter::canFight(eCharacter* const c) {
        at == eCharacterActionType::fight2) return false;
     if(t == eCharacterType::disgruntled) {
         if(ct == eCharacterType::watchman) return true;
-        else if(eRand::rand() % 10) return false;
+        else if(Rand::rand() % 10) return false;
     }
     if(isSoldier()) {
         if(ct == eCharacterType::watchman) return true;
-        else if(eRand::rand() % 10) return false;
+        else if(Rand::rand() % 10) return false;
     }
     if(ct == eCharacterType::boar ||
        ct == eCharacterType::deer) {
@@ -243,7 +243,7 @@ void eCharacter::incTime(const int by) {
             mSoundPlayTime -= soundPlayTime;
             const auto playFn = [&]() {
                 if(!eSounds::canPlayCombatSound(this)) return;
-                if(eRand::rand() % 2) {
+                if(Rand::rand() % 2) {
                     eSounds::playHitSound(this);
                 } else {
                     eSounds::playAttackSound(this);
@@ -377,8 +377,8 @@ eTeamId eCharacter::teamId() const {
     return board.playerIdToTeamId(pid);
 }
 
-std::shared_ptr<eTexture> eCharacter::getTexture(
-        const eTextureCollection* const coll,
+std::shared_ptr<Texture> eCharacter::getTexture(
+        const TextureCollection* const coll,
         const bool wrap, const bool reverse,
         const bool disappear) const {
     if(!coll) return nullptr;
@@ -392,13 +392,13 @@ std::shared_ptr<eTexture> eCharacter::getTexture(
     return coll->getTexture(texId);
 }
 
-void eCharacter::serializeFields(eSaveArchive& ar) {
+void eCharacter::serializeFields(SaveArchive& ar) {
     eCharacterBase::serializeFields(ar);
     ar.field("ioId", mIOID);
     ar.field("visible", mVisible);
     ar.field("provide", mProvide);
     ar.field("provideCount", mProvideCount);
-    ar.archiveField("tile", [this](eSaveArchive& it) {
+    ar.archiveField("tile", [this](SaveArchive& it) {
         it.tile(mTile, getBoard());
     });
     if(ar.reading() && mTile) {
@@ -412,7 +412,7 @@ void eCharacter::serializeFields(eSaveArchive& ar) {
     ar.field("soundPlayTime", mSoundPlayTime);
     ar.field("time", mTime);
     ar.field("hasSecondaryTexture", mHasSecondaryTexture);
-    ar.archiveField("action", [this](eSaveArchive& it) {
+    ar.archiveField("action", [this](SaveArchive& it) {
         it.characterAction<eCharacterAction>(mAction, [this](const eCharActionType type) {
             return eCharacterAction::sCreate(this, type);
         });
@@ -424,7 +424,7 @@ void eCharacter::serializeFields(eSaveArchive& ar) {
     }
     ar.field("actionStartTime", mActionStartTime);
 
-    ar.arrayField("pausedActions", mPausedActions, [this](eSaveArchive& itemAr, auto& a) {
+    ar.arrayField("pausedActions", mPausedActions, [this](SaveArchive& itemAr, auto& a) {
         itemAr.field("at", a.fAt);
         itemAr.characterAction<eCharacterAction>(a.fA, [this](const eCharActionType type) {
             return eCharacterAction::sCreate(this, type);

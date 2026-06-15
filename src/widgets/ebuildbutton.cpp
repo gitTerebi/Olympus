@@ -25,7 +25,7 @@ void eBuildButton::initialize(const std::string& name,
         const auto nameWidget = new eWidget(window());
 
         addWidget(nameWidget);
-        nameWidget->align(eAlignment::vcenter);
+        nameWidget->align(Alignment::vcenter);
 
         const auto nameLabel = new eLabel(name, window());
         nameLabel->setFontSizeS();
@@ -36,7 +36,7 @@ void eBuildButton::initialize(const std::string& name,
 
         nameWidget->setWidth(std::max(nameLabel->width() + 2*mult,
                                       width/2 + 10*mult));
-        nameLabel->align(eAlignment::vcenter | eAlignment::hcenter);
+        nameLabel->align(Alignment::vcenter | Alignment::hcenter);
     }
 
     if(marbleCost > 0) {
@@ -54,8 +54,8 @@ void eBuildButton::initialize(const std::string& name,
         addWidget(marbleIcon);
         addWidget(marbleText);
 
-        marbleIcon->align(eAlignment::vcenter);
-        marbleText->align(eAlignment::vcenter);
+        marbleIcon->align(Alignment::vcenter);
+        marbleText->align(Alignment::vcenter);
 
         marbleIcon->setX(width - 65*mult);
         marbleText->setX(marbleIcon->x() + marbleIcon->width());
@@ -77,8 +77,8 @@ void eBuildButton::initialize(const std::string& name,
         addWidget(drachmaIcon);
         addWidget(drachmaText);
 
-        drachmaIcon->align(eAlignment::vcenter);
-        drachmaText->align(eAlignment::vcenter);
+        drachmaIcon->align(Alignment::vcenter);
+        drachmaText->align(Alignment::vcenter);
 
         drachmaIcon->setX(width - 35*mult);
         drachmaText->setX(drachmaIcon->x() + drachmaIcon->width());

@@ -1,10 +1,10 @@
 #include "ebuildaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "audio/sounds.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eBuildAction::eBuildAction(eCharacter* const c) :
     eCharacterAction(c, eCharActionType::buildAction) {}
@@ -20,12 +20,12 @@ void eBuildAction::increment(const int by) {
             eSounds::playArtisanSound();
         });
     }
-    if(mTime > eNumbers::sArtisanBuildTime) {
+    if(mTime > Numbers::sArtisanBuildTime) {
         setState(eCharacterActionState::finished);
     }
 }
 
-void eBuildAction::serializeFields(eSaveArchive& ar) {
+void eBuildAction::serializeFields(SaveArchive& ar) {
     eCharacterAction::serializeFields(ar);
     ar.field("soundTime", mSoundTime);
     ar.field("time", mTime);

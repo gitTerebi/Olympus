@@ -2,9 +2,9 @@
 #define EEPISODE_H
 
 #include "game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eEpisodeType {
     parentCity,
@@ -13,7 +13,7 @@ enum class eEpisodeType {
 
 struct eEpisode {
     virtual ~eEpisode() = default;
-    virtual void serialize(eSaveArchive& ar);
+    virtual void serialize(SaveArchive& ar);
 
     bool availableBuilding(const eBuildingType type,
                            const int id = -1) const;
@@ -47,7 +47,7 @@ struct eEpisode {
 };
 
 struct eParentCityEpisode : public eEpisode {
-    void serialize(eSaveArchive& ar) override {
+    void serialize(SaveArchive& ar) override {
         eEpisode::serialize(ar);
         ar.field("nextEpisode", fNextEpisode, eEpisodeType::parentCity);
     }
@@ -56,7 +56,7 @@ struct eParentCityEpisode : public eEpisode {
 };
 
 struct eColonyEpisode : public eEpisode {
-    void serialize(eSaveArchive& ar) override {
+    void serialize(SaveArchive& ar) override {
         eEpisode::serialize(ar);
         ar.worldCityField("city", fWorldBoard, fCity);
     }

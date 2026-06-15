@@ -4,7 +4,7 @@
 #include "eresourcebuildingbase.h"
 #include <array>
 
-class eSaveArchive;
+class SaveArchive;
 
 class eResourceCollectBuildingBase : public eResourceBuildingBase {
 public:
@@ -20,7 +20,7 @@ public:
     bool noTarget() const { return mNoTarget; }
 protected:
     void trackProduced(const int c);
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 
 private:
     bool mNoTarget = true;

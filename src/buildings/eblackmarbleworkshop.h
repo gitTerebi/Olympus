@@ -7,7 +7,7 @@ class eBlackMarbleWorkshop : public eResourceCollectBuilding {
 public:
     eBlackMarbleWorkshop(GameBoard& board, const eCityId cid);
 
-    std::vector<eOverlay> getOverlays(const eTileSize size) const;
+    std::vector<Overlay> getOverlays(const eTileSize size) const;
 
     void timeChanged(const int by);
 private:

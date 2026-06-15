@@ -21,7 +21,7 @@ void SpriteLoader::buildSpriteAtlas() {
     maxSize = std::min(maxSize, 8192);
 
     struct Entry {
-        std::shared_ptr<eTexture> fTex;
+        std::shared_ptr<Texture> fTex;
         SDL_Rect fDst;
     };
     std::vector<Entry> entries;
@@ -55,7 +55,7 @@ void SpriteLoader::buildSpriteAtlas() {
     if(entries.size() < 2 || atlasW <= 0 || atlasH <= 0) return;
     if(area > 8192ll * 8192ll) return;
 
-    const auto atlas = std::make_shared<eTexture>();
+    const auto atlas = std::make_shared<Texture>();
     if(!atlas->create(mRenderer, atlasW, atlasH)) return;
 
     const auto prevTarget = SDL_GetRenderTarget(mRenderer);
@@ -79,7 +79,7 @@ void SpriteLoader::buildSpriteAtlas() {
 
 void SpriteLoader::loadTrailer(const int doff,
                                 const int min, const int max,
-                                eTextureCollection& coll, const int dy) {
+                                TextureCollection& coll, const int dy) {
     loadSkipFlipped(doff, min, max, coll);
     for(int i = 0; i < max - min; i++) {
         const auto& tex = coll.getTexture(i);
@@ -89,7 +89,7 @@ void SpriteLoader::loadTrailer(const int doff,
 
 void SpriteLoader::loadArrowSkipFlipped(const int doff,
                                          const int min, const int max,
-                                         eTextureCollection& coll) {
+                                         TextureCollection& coll) {
     for(int i = min; i < max; i++) {
         if(i - min > 15 && i - min < 31) {
             auto& tex = coll.addTexture();
@@ -107,7 +107,7 @@ void SpriteLoader::loadArrowSkipFlipped(const int doff,
 
 void SpriteLoader::loadSkipFlipped(const int doff,
                                     const int min, const int max,
-                                    eTextureCollection& coll) {
+                                    TextureCollection& coll) {
     for(int i = min; i < max;) {
         for(int j = 0; j < 8; j++, i++) {
             if(j > 3 && j < 7) {
@@ -127,7 +127,7 @@ void SpriteLoader::loadSkipFlipped(const int doff,
 
 void SpriteLoader::loadSkipFlipped(const int doff,
                                     const int min, const int max,
-                                    std::vector<eTextureCollection>& colls) {
+                                    std::vector<TextureCollection>& colls) {
     for(int j = 0; j < 8; j++) {
         colls.emplace_back(mRenderer);
     }
@@ -153,7 +153,7 @@ void SpriteLoader::loadSkipFlipped(const int doff,
 
 void SpriteLoader::loadHorseSkipFlipped(const int doff,
                                          const int min, const int max,
-                                         std::vector<eTextureCollection> &colls) {
+                                         std::vector<TextureCollection> &colls) {
     for(int j = 0; j < 16; j++) {
         colls.emplace_back(mRenderer);
     }
@@ -179,7 +179,7 @@ void SpriteLoader::loadHorseSkipFlipped(const int doff,
 
 void SpriteLoader::loadBoatSkipFlipped(const int doff,
                                         const int min, const int max,
-                                        std::vector<eTextureCollection>& colls) {
+                                        std::vector<TextureCollection>& colls) {
     for(int j = 0; j < 8; j++) {
         colls.emplace_back(mRenderer);
     }
@@ -203,8 +203,8 @@ void SpriteLoader::loadBoatSkipFlipped(const int doff,
     }
 }
 
-const std::shared_ptr<eTexture>& SpriteLoader::load(
-        const int doff, const int i, eTextureCollection& coll) {
+const std::shared_ptr<Texture>& SpriteLoader::load(
+        const int doff, const int i, TextureCollection& coll) {
     const auto& sd = mSds[i - doff];
     const int tid = sd.fTexId;
     const auto t = tid == -1 ? nullptr : getTex(tid);
@@ -218,17 +218,17 @@ const std::shared_ptr<eTexture>& SpriteLoader::load(
     return tex;
 }
 
-std::shared_ptr<eTexture> SpriteLoader::load(
+std::shared_ptr<Texture> SpriteLoader::load(
         const int doff, const int i) {
     const auto& sd = mSds[i - doff];
     const int tid = sd.fTexId;
     const auto t = getTex(tid);
-    std::shared_ptr<eTexture> tex;
+    std::shared_ptr<Texture> tex;
     if(mSds.size() == 1) {
         tex = t;
     } else {
         const SDL_Rect rect{sd.fX, sd.fY, sd.fW, sd.fH};
-        tex = std::make_shared<eTexture>();
+        tex = std::make_shared<Texture>();
         tex->setParentTexture(rect, t);
     }
     if(mOffs) {
@@ -240,7 +240,7 @@ std::shared_ptr<eTexture> SpriteLoader::load(
 
 void SpriteLoader::loadTex(const int i) {
     const bool binary = true;
-    std::shared_ptr<eTexture> tex;
+    std::shared_ptr<Texture> tex;
     if(binary) {
         const auto path = mSize + "/" + mName + "_" + std::to_string(i) + ".png";
         tex = BinaryImageLoader::load(mRenderer, path);
@@ -250,20 +250,20 @@ void SpriteLoader::loadTex(const int i) {
             const auto surf = SgReader::loadComposite(
                                   mName, atoi(mSize.c_str()), i, mSds);
             if(surf) {
-                tex = std::make_shared<eTexture>();
+                tex = std::make_shared<Texture>();
                 tex->load(mRenderer, surf); // takes ownership of surf
             }
         }
     } else {
-        tex = std::make_shared<eTexture>();
-        const std::string dir = eGameDir::texturesDir() + mSize + "/";
+        tex = std::make_shared<Texture>();
+        const std::string dir = GameDir::texturesDir() + mSize + "/";
         const auto path = dir + mName + "_" + std::to_string(i) + ".png";
         tex->load(mRenderer, path);
     }
     mTexs[i] = tex;
 }
 
-const std::shared_ptr<eTexture>& SpriteLoader::getTex(const int i) {
+const std::shared_ptr<Texture>& SpriteLoader::getTex(const int i) {
     if(mTexs.find(i) == mTexs.end()) {
         loadTex(i);
     }

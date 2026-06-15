@@ -63,7 +63,7 @@ void eFramedWidget::paintEvent(ePainter& p) {
             }
         }
     } else {
-        const std::vector<eTextureCollection>* colls = nullptr;
+        const std::vector<TextureCollection>* colls = nullptr;
         if(mType == eFrameType::message) {
             colls = &intrfc.fMessageBox;
         } else {

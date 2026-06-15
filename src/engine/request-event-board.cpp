@@ -3,7 +3,7 @@
 #include "e-board-player.h"
 #include "gameEvents/requests/send-resources-to-city-event.h"
 #include "gameEvents/requests/receive-tribute-event.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 GameBoard::eRequests GameBoard::cityRequests(const ePlayerId pid) const
 {
@@ -88,7 +88,7 @@ void GameBoard::processYearlyRequestEvents()
         for(const auto& p : mConqueredBy) {
             const auto parentCity = world().cityWithId(p.first);
             if(!parentCity || !parentCity->isRival()) continue;
-            if(!eVectorHelpers::contains(p.second, playerCity)) continue;
+            if(!VectorHelpers::contains(p.second, playerCity)) continue;
 
             const auto e = e::make_shared<ReceiveTributeEvent>(
                 playerCityId, eGameEventBranch::root, *this);

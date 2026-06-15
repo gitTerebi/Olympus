@@ -5,7 +5,7 @@
 
 class eLeftButton : public eBasicButton {
 public:
-    eLeftButton(eMainWindow* const window);
+    eLeftButton(MainWindow* const window);
 };
 
 #endif // ELEFTBUTTON_H

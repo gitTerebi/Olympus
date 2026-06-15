@@ -2,11 +2,11 @@
 #define EGODATTACKACTION_H
 
 #include "characters/gods/actions/god-action.h"
-#include "elanguage.h"
+#include "language.h"
 #include "characters/actions/walkable/eobsticlehandler.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class GodAttackStage {
     none, appear, goTo1, patrol1, goTo2, patrol2, disappear,
@@ -30,7 +30,7 @@ public:
     void finishAttacking();
     void finishBuildingAttack();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void initialize();
@@ -65,12 +65,12 @@ private:
 
     GodAttackStage mStage{GodAttackStage::none};
 
-    int mLookForCurse = eRand::rand() % 2000;
-    int mLookForTargetedCurse = eRand::rand() % 2000;
-    int mLookForAttack = eRand::rand() % 2000;
-    int mLookForTargetedAttack = eRand::rand() % 2000;
-    int mLookForGod = eRand::rand() % 2000;
-    int mLookForSpecial = eRand::rand() % 2000;
+    int mLookForCurse = Rand::rand() % 2000;
+    int mLookForTargetedCurse = Rand::rand() % 2000;
+    int mLookForAttack = Rand::rand() % 2000;
+    int mLookForTargetedAttack = Rand::rand() % 2000;
+    int mLookForGod = Rand::rand() % 2000;
+    int mLookForSpecial = Rand::rand() % 2000;
 
     stdptr<eSanctuary> mSanctuary;
 
@@ -101,7 +101,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("loser", &board(), mLoserPtr);
     }
 private:
@@ -132,7 +132,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.buildingField("building", &board(), mBptr);
     }
@@ -158,7 +158,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -177,12 +177,12 @@ public:
         if(!mTptr) return;
         const auto c = mTptr->character();
         auto& board = c->getBoard();
-        const auto r = eTileHelper::closestRoad(tile->x(), tile->y(), board);
+        const auto r = TileHelper::closestRoad(tile->x(), tile->y(), board);
         mTptr->teleport(r);
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -210,7 +210,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

@@ -3,14 +3,14 @@
 
 #include "engine/world-city.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eAttackingCityEventValue {
 public:
     void setAttackingCity(const stdsptr<WorldCity>& c) { mAttackingCity = c; }
     const stdsptr<WorldCity>& attackingCity() const { return mAttackingCity; }
 protected:
-    void serialize(eSaveArchive& ar, GameBoard* board);
+    void serialize(SaveArchive& ar, GameBoard* board);
 
     stdsptr<WorldCity> mAttackingCity;
 };

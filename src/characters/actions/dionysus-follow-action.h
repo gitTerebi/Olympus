@@ -4,7 +4,7 @@
 #include "efollowaction.h"
 
 enum class eCharacterType;
-class eSaveArchive;
+class SaveArchive;
 
 class DionysusFollowAction : public eFollowAction {
 public:
@@ -17,7 +17,7 @@ public:
 
     static bool sShouldFollow(const eCharacterType c);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void increment(const int by) override;

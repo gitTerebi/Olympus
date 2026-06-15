@@ -5,10 +5,10 @@
 
 #include "engine/eemploymentdistributor.h"
 #include "engine/game-board.h"
-#include "elanguage.h"
+#include "language.h"
 
 eWorkforceAllocationWidget::eWorkforceAllocationWidget(
-        eMainWindow* const window,
+        MainWindow* const window,
         eMainWidget* const mw) :
     eInfoWidget(window, mw, false, false) {}
 
@@ -17,7 +17,7 @@ void eWorkforceAllocationWidget::initialize(
     mBoard = &board;
     mCityId = cid;
 
-    const auto title = eLanguage::zeusText(50, 0);
+    const auto title = Language::zeusText(50, 0);
     eInfoWidget::initialize(title);
 
     const bool a = board.atlantean(cid);
@@ -161,7 +161,7 @@ void eWorkforceAllocationWidget::initialize(
     const auto priorityL = new eLabel(window());
     priorityL->setNoPadding();
     priorityL->setFontSizeXS();
-    priorityL->setText(eLanguage::zeusText(50, 18));
+    priorityL->setText(Language::zeusText(50, 18));
     priorityL->fitContent();
     priorityL->setWidth(c0w);
     colLabels->addWidget(priorityL);
@@ -169,7 +169,7 @@ void eWorkforceAllocationWidget::initialize(
     const auto sectorL = new eLabel(window());
     sectorL->setNoPadding();
     sectorL->setFontSizeXS();
-    sectorL->setText(eLanguage::zeusText(50, 19));
+    sectorL->setText(Language::zeusText(50, 19));
     sectorL->fitContent();
     sectorL->setWidth(c1w);
     colLabels->addWidget(sectorL);
@@ -177,7 +177,7 @@ void eWorkforceAllocationWidget::initialize(
     const auto needL = new eLabel(window());
     needL->setNoPadding();
     needL->setFontSizeXS();
-    needL->setText(eLanguage::zeusText(50, 10));
+    needL->setText(Language::zeusText(50, 10));
     needL->fitContent();
     needL->setWidth(c2w);
     colLabels->addWidget(needL);
@@ -185,7 +185,7 @@ void eWorkforceAllocationWidget::initialize(
     const auto haveL = new eLabel(window());
     haveL->setNoPadding();
     haveL->setFontSizeXS();
-    haveL->setText(eLanguage::zeusText(50, 11));
+    haveL->setText(Language::zeusText(50, 11));
     haveL->fitContent();
     haveL->setWidth(c3w);
     colLabels->addWidget(haveL);
@@ -210,13 +210,13 @@ void eWorkforceAllocationWidget::initialize(
 
     const auto industryStatusL = new eLabel(window());
     industryStatusL->setNoPadding();
-    industryStatusL->setText(eLanguage::zeusText(50, 22));
+    industryStatusL->setText(Language::zeusText(50, 22));
     industryStatusL->fitContent();
 
     const auto subtitle = new eLabel(window());
     subtitle->setNoPadding();
     subtitle->setFontSizeXS();
-    subtitle->setText(eLanguage::zeusText(50, 23)); // click on industry ...
+    subtitle->setText(Language::zeusText(50, 23)); // click on industry ...
     subtitle->fitContent();
 
     const auto titleW = addRegularWidget(industryStatusL->height() +
@@ -224,7 +224,7 @@ void eWorkforceAllocationWidget::initialize(
     titleW->addWidget(industryStatusL);
     titleW->addWidget(subtitle);
     titleW->stackVertically();
-    industryStatusL->align(eAlignment::hcenter);
+    industryStatusL->align(Alignment::hcenter);
 
     const auto industryW = new eWidget(window());
     industryW->setNoPadding();
@@ -302,7 +302,7 @@ void eWorkforceAllocationWidget::initialize(
 //        buttonW->setWidth(ccw2);
 
 //        const auto button = new eButtonBase(window());
-//        button->setText(eLanguage::zeusText(50, 30));
+//        button->setText(Language::zeusText(50, 30));
 //        button->setNoPadding();
 //        button->setFontSizeS();
 //        button->fitContent();
@@ -311,10 +311,10 @@ void eWorkforceAllocationWidget::initialize(
 //        w->addWidget(buttonW);
 //        button->setPressAction([button]() {
 //            if(true) {
-//                button->setText(eLanguage::zeusText(50, 30));
+//                button->setText(Language::zeusText(50, 30));
 //                button->setLightFontColor();
 //            } else {
-//                button->setText(eLanguage::zeusText(50, 31));
+//                button->setText(Language::zeusText(50, 31));
 //                button->setYellowFontColor();
 //            }
 //        });

@@ -9,7 +9,7 @@
 #include "characters/esettler.h"
 #include "engine/game-board.h"
 
-#include "egamedir.h"
+#include "game-dir.h"
 #include <filesystem>
 #include <algorithm>
 #include <unordered_map>
@@ -36,7 +36,7 @@ eSounds::eSounds() {
 }
 
 void eSounds::loadButtonSound() {
-    const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+    const std::string wavsDir{GameDir::path("Audio/Wavs/")};
     sInstance->mButton.addPath(wavsDir + "button.wav");
 }
 
@@ -1606,7 +1606,7 @@ void eSounds::loadImpl() {
     mSatyr.load();
 
     {
-        const std::string layer1Dir{eGameDir::path("Audio/Ambient/Layer1/")};
+        const std::string layer1Dir{GameDir::path("Audio/Ambient/Layer1/")};
         for(const auto& s : {"wind1.wav",
                              "wind2.wav",
                              "wind3.wav",
@@ -1636,7 +1636,7 @@ void eSounds::loadImpl() {
             mEnvironment.addPath(layer1Dir + s);
         }
     }
-    const std::string layer2Dir{eGameDir::path("Audio/Ambient/Layer2/")};
+    const std::string layer2Dir{GameDir::path("Audio/Ambient/Layer2/")};
 
     mEarthquake.addPath(layer2Dir + "rumble.wav");
 
@@ -2058,7 +2058,7 @@ void eSounds::loadImpl() {
         mFruitLodge.addPath(layer2Dir + s);
     }
 
-    const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+    const std::string wavsDir{GameDir::path("Audio/Wavs/")};
 
     mPlaceBuilding.addPath(wavsDir + "place_building.wav");
 
@@ -2326,7 +2326,7 @@ void eSounds::loadImpl() {
     mPersianMissileHit.addPath(wavsDir + "pers_missile_hit.wav");
 
 
-    const std::string walkerDir{eGameDir::path("Audio/Voice/Walker/")};
+    const std::string walkerDir{GameDir::path("Audio/Voice/Walker/")};
 
     const auto loadGodVoices = [&](const std::string& pref,
                                    eSoundVector& vec) {

@@ -2,19 +2,19 @@
 
 #include "textures/game-textures.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
 #include "buildings/epalace.h"
 #include "buildings/eroad.h"
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "engine/epathfinder.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "characters/actions/eheroaction.h"
 #include "engine/eevent.h"
 #include "engine/eeventdata.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eBuildingType eHerosHall::sHeroTypeToHallType(const eHeroType type) {
     switch(type) {
@@ -87,67 +87,67 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr,
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::armor);
     case eHeroRequirementType::hoplite:
         if(atlantean) {
-            return cstr + " " + eLanguage::zeusText(51, 87) + " " + eLanguage::zeusText(185, 17);
+            return cstr + " " + Language::zeusText(51, 87) + " " + Language::zeusText(185, 17);
         } else {
-            return cstr + " " + eLanguage::zeusText(64, 12) + " " + eLanguage::zeusText(185, 17);
+            return cstr + " " + Language::zeusText(64, 12) + " " + Language::zeusText(185, 17);
         }
     case eHeroRequirementType::sanctuaryAthenaOrHephaestus: {
         const auto god = athenaHephaestus(c);
-        return eLanguage::zeusText(185, 47) + " " + God::sGodName(god);
+        return Language::zeusText(185, 47) + " " + God::sGodName(god);
     } break;
     case eHeroRequirementType::noUnrest:
-        return eLanguage::zeusText(185, 48);;
+        return Language::zeusText(185, 48);;
     case eHeroRequirementType::wine:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::wine);
 
     case eHeroRequirementType::hallCultureAccess:
         if(atlantean) {
-            return eLanguage::zeusText(185, 116);
+            return Language::zeusText(185, 116);
         } else {
-            return eLanguage::zeusText(185, 49);
+            return Language::zeusText(185, 49);
         }
     case eHeroRequirementType::panHellenicGameWinHippodrome:
         if(atlantean) {
-            return eLanguage::zeusText(185, 117);
+            return Language::zeusText(185, 117);
         } else {
-            return eLanguage::zeusText(185, 50);
+            return Language::zeusText(185, 50);
         }
     case eHeroRequirementType::cityGymnasiumObservatoryAccess:
         if(atlantean) {
-            return eLanguage::zeusText(185, 120);
+            return Language::zeusText(185, 120);
         } else {
-            return eLanguage::zeusText(185, 51);
+            return Language::zeusText(185, 51);
         }
     case eHeroRequirementType::people:
-        return cstr + " " + eLanguage::zeusText(185, 52);;
+        return cstr + " " + Language::zeusText(185, 52);;
 
     case eHeroRequirementType::horsemen:
         if(atlantean) {
-            return cstr + " " + eLanguage::zeusText(51, 86) + " " + eLanguage::zeusText(185, 17);
+            return cstr + " " + Language::zeusText(51, 86) + " " + Language::zeusText(185, 17);
         } else {
-            return cstr + " " + eLanguage::zeusText(64, 13) + " " + eLanguage::zeusText(185, 17);
+            return cstr + " " + Language::zeusText(64, 13) + " " + Language::zeusText(185, 17);
         }
     case eHeroRequirementType::horses:
-        return cstr + " " + eResourceTypeHelpers::typeName(eResourceType::horse) + eLanguage::zeusText(185, 31);
+        return cstr + " " + eResourceTypeHelpers::typeName(eResourceType::horse) + Language::zeusText(185, 31);
     case eHeroRequirementType::food:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::food);
 
     case eHeroRequirementType::popularity:
-        return eLanguage::zeusText(185, 54);
+        return Language::zeusText(185, 54);
     case eHeroRequirementType::health:
-        return eLanguage::zeusText(185, 55);
+        return Language::zeusText(185, 55);
     case eHeroRequirementType::eliteHouses:
-        return cstr + " " + eLanguage::zeusText(185, 35);
+        return cstr + " " + Language::zeusText(185, 35);
     case eHeroRequirementType::oil:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::oliveOil);
 
     case eHeroRequirementType::sanctuaryAthenaHermesZeusHades1: {
         const auto types = athenaHermesZeusHades(c);
-        return eLanguage::zeusText(185, 47) + " " + God::sGodName(types.first);
+        return Language::zeusText(185, 47) + " " + God::sGodName(types.first);
     } break;
     case eHeroRequirementType::sanctuaryAthenaHermesZeusHades2: {
         const auto types = athenaHermesZeusHades(c);
-        return eLanguage::zeusText(185, 47) + " " + God::sGodName(types.second);
+        return Language::zeusText(185, 47) + " " + God::sGodName(types.second);
     } break;
     case eHeroRequirementType::drachmas:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::drachmas);
@@ -157,31 +157,31 @@ std::string eHerosHall::sHeroRequirementText(const eHeroRequirement& hr,
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::sculpture);
 
     case eHeroRequirementType::nearPalace:
-        return eLanguage::zeusText(185, 56);
+        return Language::zeusText(185, 56);
     case eHeroRequirementType::appeal:
-        return eLanguage::zeusText(185, 57);
+        return Language::zeusText(185, 57);
     case eHeroRequirementType::walls:
-        return eLanguage::zeusText(185, 58);
+        return Language::zeusText(185, 58);
     case eHeroRequirementType::marble:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::marble);
 
     case eHeroRequirementType::sanctuaryArtemis:
-        return eLanguage::zeusText(185, 47) + " " + God::sGodName(GodType::artemis);
+        return Language::zeusText(185, 47) + " " + God::sGodName(GodType::artemis);
     case eHeroRequirementType::stadiumMuseum:
         if(atlantean) {
-            return eLanguage::zeusText(185, 129);
+            return Language::zeusText(185, 129);
         } else {
-            return eLanguage::zeusText(185, 126);
+            return Language::zeusText(185, 126);
         }
     case eHeroRequirementType::meat:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::meat);
     case eHeroRequirementType::wood:
         return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::wood);
     case eHeroRequirementType::soldiers:
-        return cstr + " " + eLanguage::zeusText(138, 36) + " " + eLanguage::zeusText(185, 17);
+        return cstr + " " + Language::zeusText(138, 36) + " " + Language::zeusText(185, 17);
 
     case eHeroRequirementType::taxes:
-        return eLanguage::zeusText(185, 124);
+        return Language::zeusText(185, 124);
     case eHeroRequirementType::bronzeOrichalc:
         if(atlantean) {
             return cstr + " " + eResourceTypeHelpers::typeLongName(eResourceType::orichalc);
@@ -209,141 +209,141 @@ std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr,
     case eHeroRequirementType::wood:
     case eHeroRequirementType::bronzeOrichalc:
     case eHeroRequirementType::marble:
-        return cstr + " " + eLanguage::zeusText(185, 16); // in storage
+        return cstr + " " + Language::zeusText(185, 16); // in storage
     case eHeroRequirementType::hoplite:
-        return cstr + " " + eLanguage::zeusText(185, 17); // companies
+        return cstr + " " + Language::zeusText(185, 17); // companies
     case eHeroRequirementType::noUnrest: {
         if(id == 0) {
-            return eLanguage::zeusText(66, 46); // extremely high
+            return Language::zeusText(66, 46); // extremely high
         } else if(id == 1) {
-            return eLanguage::zeusText(66, 45); // somewhat high
+            return Language::zeusText(66, 45); // somewhat high
         } else if(id == 2) {
-            return eLanguage::zeusText(66, 44); // some
+            return Language::zeusText(66, 44); // some
         } else if(id == 3) {
-            return eLanguage::zeusText(66, 43); // low
+            return Language::zeusText(66, 43); // low
         } else if(id == 4) {
-            return eLanguage::zeusText(66, 42); // very low
+            return Language::zeusText(66, 42); // very low
         } else { // 5
-            return eLanguage::zeusText(66, 41); // no unrest
+            return Language::zeusText(66, 41); // no unrest
         }
     } break;
 
     case eHeroRequirementType::cityGymnasiumObservatoryAccess:
     case eHeroRequirementType::hallCultureAccess: {
         if(id == 0) {
-            return eLanguage::zeusText(185, 19); // no access
+            return Language::zeusText(185, 19); // no access
         } else if(id == 1) {
-            return eLanguage::zeusText(185, 20); // low access
+            return Language::zeusText(185, 20); // low access
         } else if(id == 2) {
-            return eLanguage::zeusText(185, 21); // some access
+            return Language::zeusText(185, 21); // some access
         } else if(id == 3) {
-            return eLanguage::zeusText(185, 22); // good access
+            return Language::zeusText(185, 22); // good access
         } else { // 4
-            return eLanguage::zeusText(185, 23); // excellent access
+            return Language::zeusText(185, 23); // excellent access
         }
     } break;
     case eHeroRequirementType::panHellenicGameWinHippodrome: {
         if(atlantean) {
             if(id == 0) {
-                return eLanguage::zeusText(185, 118); // no hippodrome
+                return Language::zeusText(185, 118); // no hippodrome
             } else { // 1
-                return eLanguage::zeusText(185, 119); // working hippodrome
+                return Language::zeusText(185, 119); // working hippodrome
             }
         } else {
             if(id == 0) {
-                return eLanguage::zeusText(185, 24); // no victories
+                return Language::zeusText(185, 24); // no victories
             } else { // 1
-                return eLanguage::zeusText(185, 25); // victorious
+                return Language::zeusText(185, 25); // victorious
             }
         }
     } break;
     case eHeroRequirementType::people:
-        return cstr + " " + eLanguage::zeusText(185, 52);
+        return cstr + " " + Language::zeusText(185, 52);
 
     case eHeroRequirementType::horsemen:
-        return cstr + " " + eLanguage::zeusText(185, 17);
+        return cstr + " " + Language::zeusText(185, 17);
     case eHeroRequirementType::horses:
         return cstr + " " + eResourceTypeHelpers::typeName(eResourceType::horse);
 
     case eHeroRequirementType::popularity: {
         if(id == 0) {
-            return eLanguage::zeusText(61, 27); // terrible
+            return Language::zeusText(61, 27); // terrible
         } else if(id == 1) {
-            return eLanguage::zeusText(61, 28); // awful
+            return Language::zeusText(61, 28); // awful
         } else if(id == 2) {
-            return eLanguage::zeusText(61, 30); // bad
+            return Language::zeusText(61, 30); // bad
         } else if(id == 3) {
-            return eLanguage::zeusText(61, 32); // poor
+            return Language::zeusText(61, 32); // poor
         } else if(id == 4) {
-            return eLanguage::zeusText(61, 33); // ok
+            return Language::zeusText(61, 33); // ok
         } else if(id == 5) {
-            return eLanguage::zeusText(61, 34); // good
+            return Language::zeusText(61, 34); // good
         } else if(id == 6) {
-            return eLanguage::zeusText(61, 36); // high
+            return Language::zeusText(61, 36); // high
         } else if(id == 7) {
-            return eLanguage::zeusText(61, 37); // great
+            return Language::zeusText(61, 37); // great
         } else { // 8
-            return eLanguage::zeusText(61, 38); // superb
+            return Language::zeusText(61, 38); // superb
         }
     } break;
     case eHeroRequirementType::health: {
         if(id == 0) {
-            return eLanguage::zeusText(56, 2); // appalling
+            return Language::zeusText(56, 2); // appalling
         } else if(id == 1) {
-            return eLanguage::zeusText(56, 3); // terrible
+            return Language::zeusText(56, 3); // terrible
         } else if(id == 2) {
-            return eLanguage::zeusText(56, 4); // bad
+            return Language::zeusText(56, 4); // bad
         } else if(id == 3) {
-            return eLanguage::zeusText(56, 5); // poor
+            return Language::zeusText(56, 5); // poor
         } else if(id == 4) {
-            return eLanguage::zeusText(56, 6); // not good
+            return Language::zeusText(56, 6); // not good
         } else if(id == 5) {
-            return eLanguage::zeusText(56, 7); // ok
+            return Language::zeusText(56, 7); // ok
         } else if(id == 6) {
-            return eLanguage::zeusText(56, 8); // good
+            return Language::zeusText(56, 8); // good
         } else if(id == 7) {
-            return eLanguage::zeusText(56, 9); // very good
+            return Language::zeusText(56, 9); // very good
         } else if(id == 8) {
-            return eLanguage::zeusText(56, 10); // excellent
+            return Language::zeusText(56, 10); // excellent
         } else if(id == 9) {
-            return eLanguage::zeusText(56, 11); // near perfect
+            return Language::zeusText(56, 11); // near perfect
         } else { // 10
-            return eLanguage::zeusText(56, 12); // perfect
+            return Language::zeusText(56, 12); // perfect
         }
     } break;
     case eHeroRequirementType::eliteHouses:
-        return cstr + " " + eLanguage::zeusText(185, 35);
+        return cstr + " " + Language::zeusText(185, 35);
 
     case eHeroRequirementType::drachmas:
         return cstr + " " + eResourceTypeHelpers::typeName(eResourceType::drachmas);
 
     case eHeroRequirementType::nearPalace: {
         if(id == 0) {
-            return eLanguage::zeusText(185, 37); // no palace
+            return Language::zeusText(185, 37); // no palace
         } else if(id == 1) {
-            return eLanguage::zeusText(185, 38); // too far
+            return Language::zeusText(185, 38); // too far
         } else {
-            return eLanguage::zeusText(185, 39); // near
+            return Language::zeusText(185, 39); // near
         }
     } break;
     case eHeroRequirementType::appeal: {
         if(id == 0) {
-            return eLanguage::zeusText(185, 40); // poor appeal
+            return Language::zeusText(185, 40); // poor appeal
         } else if(id == 1) {
-            return eLanguage::zeusText(185, 41); // low appeal
+            return Language::zeusText(185, 41); // low appeal
         } else if(id == 2) {
-            return eLanguage::zeusText(185, 42); // some appeal
+            return Language::zeusText(185, 42); // some appeal
         } else if(id == 3) {
-            return eLanguage::zeusText(185, 43); // good appeal
+            return Language::zeusText(185, 43); // good appeal
         } else { // 4
-            return eLanguage::zeusText(185, 44); // excellent appeal
+            return Language::zeusText(185, 44); // excellent appeal
         }
     } break;
     case eHeroRequirementType::walls: {
         if(id == 0) {
-            return eLanguage::zeusText(185, 45); // unprotected
+            return Language::zeusText(185, 45); // unprotected
         } else {
-            return eLanguage::zeusText(185, 46); // protected
+            return Language::zeusText(185, 46); // protected
         }
     } break;
 
@@ -351,37 +351,37 @@ std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr,
     case eHeroRequirementType::sanctuaryAthenaHermesZeusHades1:
     case eHeroRequirementType::sanctuaryAthenaHermesZeusHades2:
     case eHeroRequirementType::sanctuaryArtemis: {
-        return cstr + "% " + eLanguage::zeusText(185, 18);
+        return cstr + "% " + Language::zeusText(185, 18);
     } break;
     case eHeroRequirementType::stadiumMuseum: {
         if(atlantean) {
             if(id == 0) {
-                return eLanguage::zeusText(185, 130); // no museum
+                return Language::zeusText(185, 130); // no museum
             } else {
-                return eLanguage::zeusText(185, 129); // working museum
+                return Language::zeusText(185, 129); // working museum
             }
         } else {
             if(id == 0) {
-                return eLanguage::zeusText(185, 127); // no stadium
+                return Language::zeusText(185, 127); // no stadium
             } else {
-                return eLanguage::zeusText(185, 128); // working stadium
+                return Language::zeusText(185, 128); // working stadium
             }
         }
     } break;
     case eHeroRequirementType::soldiers:
-        return cstr + " " + eLanguage::zeusText(185, 17);
+        return cstr + " " + Language::zeusText(185, 17);
 
     case eHeroRequirementType::taxes: {
         if(id == 0) {
-            return eLanguage::zeusText(185, 26); // no coverage
+            return Language::zeusText(185, 26); // no coverage
         } else if(id == 1) {
-            return eLanguage::zeusText(185, 27); // low coverage
+            return Language::zeusText(185, 27); // low coverage
         } else if(id == 2) {
-            return eLanguage::zeusText(185, 28); // some coverage
+            return Language::zeusText(185, 28); // some coverage
         } else if(id == 3) {
-            return eLanguage::zeusText(185, 29); // good coverage
+            return Language::zeusText(185, 29); // good coverage
         } else { // 4
-            return eLanguage::zeusText(185, 30); // excellect coverage
+            return Language::zeusText(185, 30); // excellect coverage
         }
     } break;
     }
@@ -390,7 +390,7 @@ std::string eHerosHall::sHeroRequirementStatusText(const eHeroRequirement& hr,
 
 void eHerosHall::summon() {
     mStage = eHeroSummoningStage::summoned;
-    mArrivalCountdown = eNumbers::sHerosHallArrivalPeriod;
+    mArrivalCountdown = Numbers::sHerosHallArrivalPeriod;
 }
 
 void eHerosHall::arrive() {
@@ -417,11 +417,11 @@ eHero* eHerosHall::spawnHero() {
     const auto ct = centerTile();
     const int tx = ct->x();
     const int ty = ct->y();
-    const auto cr = eTileHelper::closestRoad(tx, ty, board);
+    const auto cr = TileHelper::closestRoad(tx, ty, board);
     mHero->changeTile(cr);
     const auto ha = e::make_shared<eHeroAction>(c.get());
     mHero->setAction(ha);
-    mSpawnWait = eNumbers::sHerosHallSpawnPeriod;
+    mSpawnWait = Numbers::sHerosHallSpawnPeriod;
     return mHero;
 }
 
@@ -441,7 +441,7 @@ void eHerosHall::sendHeroOnQuest() {
     }
 }
 
-void eHerosHall::serializeFields(eSaveArchive& ar) {
+void eHerosHall::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("arrivalCountdown", mArrivalCountdown);
@@ -497,8 +497,8 @@ void eHerosHall::updateRequirementsStatus() {
         }
         auto& board = getBoard();
         const auto cid = cityId();
-        board.showTip(cid, eLanguage::zeusText(19, string));
-        board.showTip(cid, eLanguage::zeusText(19, 242));
+        board.showTip(cid, Language::zeusText(19, string));
+        board.showTip(cid, Language::zeusText(19, 242));
     }
 }
 
@@ -636,7 +636,7 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
             };
 
             for(int k = 0; k < 10; k++) {
-                eIterateSquare::iterateSquare(k, prcsTile, 1);
+                IterateSquare::iterateSquare(k, prcsTile, 1);
                 if(found) break;
             }
             if(found) {
@@ -803,7 +803,7 @@ eHerosHall::~eHerosHall() {
     if(mHero) mHero->kill();
 }
 
-std::shared_ptr<eTexture> eHerosHall::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eHerosHall::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
     if(atlantean()) {
@@ -813,7 +813,7 @@ std::shared_ptr<eTexture> eHerosHall::getTexture(const eTileSize size) const {
     }
 }
 
-std::vector<eOverlay> eHerosHall::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eHerosHall::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
     const auto& statues = texs.fHeroStatues;
@@ -844,7 +844,7 @@ std::vector<eOverlay> eHerosHall::getOverlays(const eTileSize size) const {
         id = 7;
         break;
     }
-    eOverlay o;
+    Overlay o;
     o.fTex = statues.getTexture(id);
     o.fX = 0;
     o.fY = -1.5;
@@ -862,7 +862,7 @@ void eHerosHall::timeChanged(const int by) {
         }
     }
 
-    const int cupdate = eNumbers::sHouseCultureDecrementPeriod;
+    const int cupdate = Numbers::sHouseCultureDecrementPeriod;
     mUpdateCulture += by;
     if(mUpdateCulture > cupdate) {
         mUpdateCulture -= cupdate;

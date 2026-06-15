@@ -5,7 +5,7 @@
 
 #include "emodal.h"
 #include "elabel.h"
-#include "emessage.h"
+#include "message.h"
 #include "engine/eeventdata.h"
 
 class eScrollViewport;
@@ -17,12 +17,12 @@ class eMessageListWidget : public eModal {
 public:
     using eModal::eModal;
 
-    using eOpenMessage = std::function<void(eEventData, eMessage)>;
+    using eOpenMessage = std::function<void(eEventData, Message)>;
     void initialize(const eOpenMessage& openMsg, const eAction& closeAction = nullptr);
 
     void show();
-    void addMessage(const eEventData& ed, const eMessage& msg, const eDate& date);
-    void addSavedMessage(const eEventData& ed, const eMessage& msg,
+    void addMessage(const eEventData& ed, const Message& msg, const eDate& date);
+    void addSavedMessage(const eEventData& ed, const Message& msg,
                          const eDate& date, const bool read);
     void setBoard(GameBoard* board);
     using eReadChangedAction = std::function<void(int)>;
@@ -43,7 +43,7 @@ private:
 
     struct eLoggedMessage {
         eEventData fEd;
-        eMessage fMsg;
+        Message fMsg;
         bool fRead = false;
         eDate fDate;
         std::string fFormattedTitle;
@@ -55,7 +55,7 @@ private:
     eOpenMessage mOpenMsg;
     class eMessageListRow : public eWidget {
     public:
-        eMessageListRow(eMainWindow* window, eLabel* date, eLabel* title, std::function<void()> onClick)
+        eMessageListRow(MainWindow* window, eLabel* date, eLabel* title, std::function<void()> onClick)
             : eWidget(window), mDate(date), mTitle(title), mOnClick(onClick) {
             setNoPadding();
             addWidget(date);

@@ -1,9 +1,9 @@
 #include "egameevents.h"
 
 #include <algorithm>
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eGameEvents::eGameEvents(const eCityId cid, GameBoard& board) :
     mCid(cid), mBoard(board) {}
@@ -17,7 +17,7 @@ void eGameEvents::addEvent(const stdsptr<eGameEvent>& e) {
 }
 
 void eGameEvents::removeEvent(const stdsptr<eGameEvent>& e) {
-    eVectorHelpers::remove(mGameEvents, e);
+    VectorHelpers::remove(mGameEvents, e);
 }
 
 void eGameEvents::setupStartDate(const eDate& date) {
@@ -71,8 +71,8 @@ bool eGameEvents::handleEpisodeCompleteEvents() {
     return result;
 }
 
-void eGameEvents::serialize(eSaveArchive& ar) {
-    ar.arrayField("events", mGameEvents, [this](eSaveArchive& ar, stdsptr<eGameEvent>& e) {
+void eGameEvents::serialize(SaveArchive& ar) {
+    ar.arrayField("events", mGameEvents, [this](SaveArchive& ar, stdsptr<eGameEvent>& e) {
         eGameEventType type;
         eGameEventBranch branch = eGameEventBranch::root;
         if(ar.writing()) {
@@ -84,7 +84,7 @@ void eGameEvents::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             e = eGameEvent::sCreate(mCid, type, branch, mBoard);
         }
-        ar.archiveField("state", [&e](eSaveArchive& childAr) {
+        ar.archiveField("state", [&e](SaveArchive& childAr) {
             e->serialize(childAr);
         });
     });

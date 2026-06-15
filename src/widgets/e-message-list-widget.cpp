@@ -5,13 +5,13 @@
 #include "eflatbutton.h"
 #include "elabel.h"
 #include "eframedlabel.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 #include "engine/world-city.h"
 #include "characters/gods/god.h"
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"
 #include "eokbutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "message-action-refresh.h"
 
 #include <chrono>
@@ -104,7 +104,7 @@ void eMessageListWidget::notifyUnread()
         mUnreadChanged(unreadCount());
 }
 
-void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, const eDate &date)
+void eMessageListWidget::addMessage(const eEventData &ed, const Message &msg, const eDate &date)
 {
     eLoggedMessage lm;
     lm.fEd = ed;
@@ -121,15 +121,15 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
     // Format title
     std::string title = msg.fTitle;
     if (const auto &c = ed.fCity)
-        eStringHelpers::replaceAll(title, "[city_name]", c->name());
+        StringHelpers::replaceAll(title, "[city_name]", c->name());
     if (const auto &c = ed.fRivalCity)
-        eStringHelpers::replaceAll(title, "[rival_city_name]", c->name());
-    eStringHelpers::replaceAll(title, "[item]",
+        StringHelpers::replaceAll(title, "[rival_city_name]", c->name());
+    StringHelpers::replaceAll(title, "[item]",
                                eResourceTypeHelpers::typeLongName(ed.fResourceType));
-    eStringHelpers::replaceAll(title, "[itemshort]",
+    StringHelpers::replaceAll(title, "[itemshort]",
                                eResourceTypeHelpers::typeName(ed.fResourceType));
-    eStringHelpers::replaceAll(title, "[god]", God::sGodName(ed.fGod));
-    eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(ed.fMonster));
+    StringHelpers::replaceAll(title, "[god]", God::sGodName(ed.fGod));
+    StringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(ed.fMonster));
     lm.fFormattedTitle = title;
 
     // Format date
@@ -150,7 +150,7 @@ void eMessageListWidget::addMessage(const eEventData &ed, const eMessage &msg, c
 }
 
 void eMessageListWidget::addSavedMessage(const eEventData &ed,
-                                         const eMessage &msg,
+                                         const Message &msg,
                                          const eDate &date,
                                          const bool read)
 {
@@ -213,9 +213,9 @@ void eMessageListWidget::rebuildList()
         dateLabel->setFontSizeXS();
         dateLabel->setNoPadding();
         if (lm.fRead)
-            dateLabel->setFontColor(eFontColor::dark);
+            dateLabel->setFontColor(FontColor::dark);
         else
-            dateLabel->setFontColor(eFontColor::light);
+            dateLabel->setFontColor(FontColor::light);
         dateLabel->setWidth(w * 0.1 - 2 * pp);
         dateLabel->setHeight(20);
         dateLabel->setX(50);
@@ -224,12 +224,12 @@ void eMessageListWidget::rebuildList()
         // Title label
         const auto titleLabel = new eLabel(title, window());
         titleLabel->setFontSizeXS();
-        titleLabel->setTextAlignment(eAlignment::left);
+        titleLabel->setTextAlignment(Alignment::left);
         titleLabel->setNoPadding();
         if (lm.fRead)
-            titleLabel->setFontColor(eFontColor::dark);
+            titleLabel->setFontColor(FontColor::dark);
         else
-            titleLabel->setFontColor(eFontColor::light);
+            titleLabel->setFontColor(FontColor::light);
         titleLabel->setWidth(w * 0.9 - 2 * pp);
         titleLabel->setHeight(20);
         titleLabel->setX(dateLabel->width() * 3);

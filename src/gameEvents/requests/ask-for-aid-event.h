@@ -3,7 +3,7 @@
 
 #include "../egameevent.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class AskForAidEvent : public eGameEvent {
 public:
@@ -23,7 +23,7 @@ public:
     void setArrivalDate(const eDate& d) { mArrivalDate = d; }
     const eDate& arrivalDate() const { return mArrivalDate; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eDate mArrivalDate;
     bool mEnd = false;

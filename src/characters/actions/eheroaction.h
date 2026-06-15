@@ -10,7 +10,7 @@
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eHeroActionStage {
     none, patrol, hunt, fight, goBack, defend, quest, waitToHall, goBackToHall
@@ -28,7 +28,7 @@ public:
     void goBackToHall();
     void waitAndGoBackToHall(const int w);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void startPatrol();
@@ -69,7 +69,7 @@ public:
         t->goBack(WalkableObject::sCreateDefault());
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -89,7 +89,7 @@ public:
         mTptr->lookForMonster();
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -119,7 +119,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterAsField("monster", &board(), mMptr);
     }
 private:
@@ -139,7 +139,7 @@ public:
         mAptr->goBackToHall();
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mAptr);
     }
 private:

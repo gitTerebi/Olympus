@@ -11,7 +11,7 @@ public:
     eFightingPatroler(GameBoard& board, const eCharTexs charTexs,
                       const eCharacterType type);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 
     void setCharTexs(const eCharTexs& texs);
 private:

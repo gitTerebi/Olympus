@@ -1,18 +1,18 @@
-#include "edeerspawner.h"
+#include "deer-spawner.h"
 
 #include "characters/deer.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "characters/soldier-banner.h"
 
-eDeerSpawner::eDeerSpawner(const int id,
+DeerSpawner::DeerSpawner(const int id,
                            eTile* const tile,
                            GameBoard& board) :
-    eAnimalSpawner(eBannerTypeS::deer, id, tile,
-                   eNumbers::sDeerMaxCount,
-                   eNumbers::sDeerSpawnPeriod, board) {}
+    AnimalSpawner(BannerTypeS::deer, id, tile,
+                   Numbers::sDeerMaxCount,
+                   Numbers::sDeerSpawnPeriod, board) {}
 
 
-stdsptr<eWildAnimal> eDeerSpawner::create(GameBoard& board) {
+stdsptr<eWildAnimal> DeerSpawner::create(GameBoard& board) {
     const auto b = e::make_shared<Deer>(board);
     b->setOnCityId(cityId());
     return b;

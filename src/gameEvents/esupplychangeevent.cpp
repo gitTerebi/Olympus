@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 eSupplyChangeEvent::eSupplyChangeEvent(
         const eCityId cid,
@@ -37,7 +37,7 @@ void eSupplyChangeEvent::trigger() {
 }
 
 std::string eSupplyChangeEvent::longName() const {
-    auto tmpl = eLanguage::text("supply_change_long_name");
+    auto tmpl = Language::text("supply_change_long_name");
     longNameReplaceResource("%1", tmpl);
     longNameReplaceCity("%2", tmpl);
     return tmpl;

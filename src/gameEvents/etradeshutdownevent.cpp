@@ -1,10 +1,10 @@
 #include "etradeshutdownevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 eTradeShutDownEvent::eTradeShutDownEvent(
         const eCityId cid,
@@ -27,10 +27,10 @@ void eTradeShutDownEvent::trigger() {
 }
 
 std::string eTradeShutDownEvent::longName() const {
-    return eLanguage::zeusText(35, 2);
+    return Language::zeusText(35, 2);
 }
 
-void eTradeShutDownEvent::serializeFields(eSaveArchive& ar) {
+void eTradeShutDownEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCityEventValue::serialize(ar, *gameBoard());
 }

@@ -2,16 +2,16 @@
 
 #include "gameEvents/invasions/invasion-event.h"
 #include "characters/gods/actions/god-action.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eDefendCityAction::eDefendCityAction(eCharacter* const c) :
     eDefendAttackCityAction(c, eCharActionType::defendCityAction) {
     const auto ctype = c->type();
     if(ctype == eCharacterType::talos) {
-        setMaxKilled(eNumbers::sDefendCityTalosMaxKilled);
+        setMaxKilled(Numbers::sDefendCityTalosMaxKilled);
     } else {
-        setMaxKilled(eNumbers::sDefendCityMaxKilled);
+        setMaxKilled(Numbers::sDefendCityMaxKilled);
     }
 }
 
@@ -67,7 +67,7 @@ bool eDefendCityAction::decide() {
     return true;
 }
 
-void eDefendCityAction::serializeFields(eSaveArchive& ar) {
+void eDefendCityAction::serializeFields(SaveArchive& ar) {
     eDefendAttackCityAction::serializeFields(ar);
     ar.gameEventField("event", &board(), mEvent);
 }

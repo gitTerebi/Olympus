@@ -4,7 +4,7 @@
 #include "eplannedaction.h"
 
 class eTile;
-class eSaveArchive;
+class SaveArchive;
 
 class eRegrowForestAction : public ePlannedAction {
 public:
@@ -13,7 +13,7 @@ public:
 
     void trigger(GameBoard& board) override;
 protected:
-    void serializeFields(eSaveArchive& ar, GameBoard* board) override;
+    void serializeFields(SaveArchive& ar, GameBoard* board) override;
 private:
     eTile* mTile = nullptr;
 };

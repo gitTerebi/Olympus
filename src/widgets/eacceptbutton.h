@@ -5,7 +5,7 @@
 
 class eAcceptButton : public eBasicButton {
 public:
-    eAcceptButton(eMainWindow* const window);
+    eAcceptButton(MainWindow* const window);
 };
 
 #endif // EACCEPTBUTTON_H

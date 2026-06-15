@@ -8,11 +8,11 @@ ExtendedGod::ExtendedGod(GameBoard& board,
     God(board, gt),
     mGodTexs(godTexs) {}
 
-std::shared_ptr<eTexture> ExtendedGod::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> ExtendedGod::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& charTexs = GameTextures::gods()[id];
     const auto& atn = charTexs.*mGodTexs;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     bool reverse = false;
     bool wrap = true;
     bool disappear = false;

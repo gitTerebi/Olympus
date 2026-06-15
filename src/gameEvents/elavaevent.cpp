@@ -1,7 +1,7 @@
 #include "elavaevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
@@ -18,7 +18,7 @@ eLavaEvent::eLavaEvent(
     GameBoard& board) :
     eGameEvent(cid, eGameEventType::lavaFlow,
                branch, board),
-    ePointEventValue(eBannerTypeS::disasterPoint,
+    ePointEventValue(BannerTypeS::disasterPoint,
                      cid, board, validLavaEventTile) {}
 
 void eLavaEvent::trigger() {
@@ -36,16 +36,16 @@ void eLavaEvent::trigger() {
                                  eEvent::lavaFlow;
     board->event(e, ed);
 
-    const auto b = board->banner(cid, eBannerTypeS::disasterPoint, pt);
+    const auto b = board->banner(cid, BannerTypeS::disasterPoint, pt);
     const auto t = b ? b->tile() : nullptr;
     if(t) t->removeBanner(b);
 }
 
 std::string eLavaEvent::longName() const {
-    return eLanguage::zeusText(48, 68);
+    return Language::zeusText(48, 68);
 }
 
-void eLavaEvent::serializeFields(eSaveArchive& ar) {
+void eLavaEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ePointEventValue::serialize(ar);
     eGodEventValue::serialize(ar);

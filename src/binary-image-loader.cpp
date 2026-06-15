@@ -2,7 +2,7 @@
 
 #include "textures/sg-reader.h"
 
-std::shared_ptr<eTexture> BinaryImageLoader::load(SDL_Renderer* const r,
+std::shared_ptr<Texture> BinaryImageLoader::load(SDL_Renderer* const r,
                                                    const std::string& path) {
     // Sprites are decoded live from the player's own DATA/*.sg3 + *.555 - the old
     // loose textures/<zoom>/ PNG override is no longer used. SgReader prints the
@@ -10,7 +10,7 @@ std::shared_ptr<eTexture> BinaryImageLoader::load(SDL_Renderer* const r,
     const auto surf = SgReader::load(path);
     if(!surf) return nullptr;
 
-    const auto tex = std::make_shared<eTexture>();
+    const auto tex = std::make_shared<Texture>();
     tex->load(r, surf); // takes ownership of surf (frees it)
 
     return tex;

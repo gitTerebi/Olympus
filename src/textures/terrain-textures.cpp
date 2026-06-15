@@ -146,11 +146,11 @@ void TerrainTextures::loadAll() {
 }
 
 void loadWaterToX(SDL_Renderer* const renderer, int i0,
-                  std::vector<eTextureCollection>& result,
+                  std::vector<TextureCollection>& result,
                   SpriteLoader& loader) {
     int i = i0;
     for(; i < i0 + 32;) {
-        eTextureCollection coll(renderer);
+        TextureCollection coll(renderer);
         for(int j = 0; j < 4; j++, i++) {
             loader.load(1, i, coll);
         }
@@ -158,7 +158,7 @@ void loadWaterToX(SDL_Renderer* const renderer, int i0,
     }
 
     for(; i < i0 + 36;) {
-        eTextureCollection coll(renderer);
+        TextureCollection coll(renderer);
         for(int j = 0; j < 2; j++, i++) {
             loader.load(1, i, coll);
         }
@@ -166,15 +166,15 @@ void loadWaterToX(SDL_Renderer* const renderer, int i0,
     }
 
     for(; i < i0 + 72; i++) {
-        eTextureCollection coll(renderer);
+        TextureCollection coll(renderer);
         loader.load(1, i, coll);
         result.push_back(coll);
     }
 }
 
-void loadStones(int i0, eTextureCollection& result,
-                eTextureCollection& resultLarge,
-                eTextureCollection& resultHuge,
+void loadStones(int i0, TextureCollection& result,
+                TextureCollection& resultLarge,
+                TextureCollection& resultHuge,
                 SpriteLoader& loader,
                 const int doff = 1) {
     int i = i0;
@@ -202,7 +202,7 @@ void TerrainTextures::load() {
                              nullptr, fRenderer);
 
         for(int i = 2; i < 38;) {
-            eTextureCollection coll(fRenderer);
+            TextureCollection coll(fRenderer);
             for(int j = 0; j < 12; j++, i++) {
                 loader.load(1, i, coll);
             }
@@ -218,7 +218,7 @@ void TerrainTextures::load() {
         }
 
         {
-            eTextureCollection coll(fRenderer);
+            TextureCollection coll(fRenderer);
             for(int i = 74; i < 86; i++) {
                 loader.load(1, i, coll);
             }
@@ -420,7 +420,7 @@ void TerrainTextures::load() {
                              nullptr, fRenderer);
 
         {
-            eTextureCollection coll(fRenderer);
+            TextureCollection coll(fRenderer);
             for(int i = 1; i < 13; i++) {
                 loader.load(1, i, coll);
             }
@@ -448,7 +448,7 @@ void TerrainTextures::load() {
         }
 
         for(int i = 121; i < 157;) {
-            eTextureCollection coll(fRenderer);
+            TextureCollection coll(fRenderer);
             for(int j = 0; j < 12; j++, i++) {
                 loader.load(1, i, coll);
             }
@@ -517,7 +517,7 @@ void TerrainTextures::loadPoseidonTrees() {
                          nullptr, fRenderer);
 
     {
-        eTextureCollection coll(fRenderer);
+        TextureCollection coll(fRenderer);
         for(int i = 1; i < 13; i++) {
             loader.load(1, i, coll);
         }

@@ -2,10 +2,10 @@
 
 #include <algorithm>
 
-eLineEdit::eLineEdit(eMainWindow* const window) :
+eLineEdit::eLineEdit(MainWindow* const window) :
     eFramedLabel(window) {
     setType(eFrameType::inner);
-    setTextAlignment(eAlignment::left | eAlignment::vcenter);
+    setTextAlignment(Alignment::left | Alignment::vcenter);
     grabKeyboard();
 }
 
@@ -171,6 +171,6 @@ void eLineEdit::paintEvent(ePainter& p) {
     const int h = 2*lw;
     SDL_Color col1;
     SDL_Color col2;
-    eFontColorHelpers::colors(fontColor(), col1, col2);
+    FontColorHelpers::colors(fontColor(), col1, col2);
     p.fillRect({x, y, w, h}, col1);
 }

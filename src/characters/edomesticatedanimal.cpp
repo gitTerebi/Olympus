@@ -1,8 +1,8 @@
 #include "edomesticatedanimal.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "audio/sounds.h"
-#include "erand.h"
+#include "rand.h"
 
 eDomesticatedAnimal::eDomesticatedAnimal(
         GameBoard& board,
@@ -11,7 +11,7 @@ eDomesticatedAnimal::eDomesticatedAnimal(
         const int maxGroom) :
     Animal(board, charTexs, type),
     mMaxGroom(maxGroom) {
-    mMonthsGrown = eRand::rand() % 3;
+    mMonthsGrown = Rand::rand() % 3;
 }
 
 void eDomesticatedAnimal::groom() {
@@ -42,7 +42,7 @@ int eDomesticatedAnimal::collect() {
     return r;
 }
 
-void eDomesticatedAnimal::serializeFields(eSaveArchive& ar) {
+void eDomesticatedAnimal::serializeFields(SaveArchive& ar) {
     Animal::serializeFields(ar);
     ar.field("mGroomed", mGroomed);
     ar.field("mResource", mResource);

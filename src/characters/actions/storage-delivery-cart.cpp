@@ -2,7 +2,7 @@
 #include "buildings/estoragebuilding.h"
 #include "engine/game-board.h"
 #include "engine/thread/ethreadbuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 namespace {
 int storageTransportSize(const eResourceType type,
@@ -135,7 +135,7 @@ int eStorageDeliveryCartAction::cartCapacity(const eResourceType res) const {
     return storageTransportSize(res, board().doubleCartCapacity());
 }
 
-void eStorageDeliveryCartAction::serializeFields(eSaveArchive& ar) {
+void eStorageDeliveryCartAction::serializeFields(SaveArchive& ar) {
     CartTransporterAction::serializeFields(ar);
     ar.field("taskStoragePush", mTask.fStoragePush, false);
 }

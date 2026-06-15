@@ -23,9 +23,9 @@ public:
                       const eBuildingRendererType type =
                         eBuildingRendererType::basic);
 
-    virtual std::shared_ptr<eTexture>
+    virtual std::shared_ptr<Texture>
         getTexture(const eTileSize size) const;
-    virtual std::vector<eOverlay>
+    virtual std::vector<Overlay>
         getOverlays(const eTileSize size) const;
 
     virtual int spanW() const;

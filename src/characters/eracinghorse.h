@@ -1,21 +1,21 @@
 #ifndef ERACINGHORSE_H
 #define ERACINGHORSE_H
 
-#include "missiles/emissile.h"
+#include "missiles/missile.h"
 
-class eSaveArchive;
+class SaveArchive;
 
-class eRacingHorse : public eMissile {
+class eRacingHorse : public Missile {
 public:
     eRacingHorse(GameBoard& board, const int id,
-                 const std::vector<ePathPoint>& path = {});
+                 const std::vector<PathPoint>& path = {});
     eRacingHorse(GameBoard& board);
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize size) const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mId;
 };

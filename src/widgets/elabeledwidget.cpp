@@ -1,6 +1,6 @@
 #include "elabeledwidget.h"
 
-eLabeledWidget::eLabeledWidget(eMainWindow* const window) :
+eLabeledWidget::eLabeledWidget(MainWindow* const window) :
     eWidget(window) {
     setNoPadding();
 }
@@ -17,6 +17,6 @@ void eLabeledWidget::setup(const std::string& label, eWidget* const w) {
 
     fitContent();
 
-    l->align(eAlignment::vcenter);
-    w->align(eAlignment::vcenter);
+    l->align(Alignment::vcenter);
+    w->align(Alignment::vcenter);
 }

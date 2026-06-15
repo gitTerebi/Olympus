@@ -25,7 +25,7 @@ class eHerosHall;
 class eStorageBuilding;
 class eEmployingBuilding;
 class TradePost;
-class eSpawner;
+class Spawner;
 class eMonster;
 struct eMilitaryAid;
 class eInvasionEvent;
@@ -41,12 +41,12 @@ enum class eCharacterType;
 enum class eBuildingMode;
 enum struct eHeroType;
 enum class eBannerType;
-enum class eBannerTypeS;
+enum class BannerTypeS;
 enum class eMonsterType;
 class eMonsterInvasionEventBase;
 struct eEpisode;
 class eHippodrome;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eImmigrationLimitedBy {
     none = 0,
@@ -258,8 +258,8 @@ public:
     bool seaTradeShutdown() const { return mShutdownSeaTrade; }
     void setSeaTradeShutdown(const bool s) { mShutdownSeaTrade = s; }
 
-    void registerSpawner(eSpawner* const s);
-    bool unregisterSpawner(eSpawner* const s);
+    void registerSpawner(Spawner* const s);
+    bool unregisterSpawner(Spawner* const s);
 
     void registerStadium(eStadium* const s);
     void unregisterStadium();
@@ -344,13 +344,13 @@ public:
 
     const std::vector<stdsptr<SoldierBanner>>& banners() const
     { return mSoldierBanners; }
-    eBanner* banner(const eBannerTypeS type, const int id = 0) const;
+    Banner* banner(const BannerTypeS type, const int id = 0) const;
     eTile* entryPoint() const;
     eTile* exitPoint() const;
     eTile* riverEntryPoint() const;
     eTile* riverExitPoint() const;
-    void registerBanner(eBanner* const b);
-    void unregisterBanner(eBanner* const b);
+    void registerBanner(Banner* const b);
+    void unregisterBanner(Banner* const b);
 
     eTile* monsterTile(const int id) const;
     eTile* landInvasionTile(const int id) const;
@@ -448,7 +448,7 @@ public:
     void reinforcementsGoHome(const stdsptr<SoldierBanner>& b);
     void sendAllReinforcementsHome();
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
     int countAnimalCharacters(const eBuildingType t) const;
 
@@ -575,10 +575,10 @@ private:
     bool mForestTilesUpdate = true;
     std::vector<eBuilding*> mSanctBuildings;
     std::vector<TradePost*> mTradePosts;
-    std::vector<eSpawner*> mSpawners;
+    std::vector<Spawner*> mSpawners;
     std::map<eMonsterType, eMonsterInvasionEventBase*> mMonsterEvents;
     std::vector<eMonster*> mMonsters;
-    std::vector<eBanner*> mBanners;
+    std::vector<Banner*> mBanners;
 
     std::vector<stdsptr<SoldierBanner>> mSoldierBanners;
     std::vector<stdsptr<SoldierBanner>> mPalacSoldierBanners;

@@ -1,6 +1,6 @@
 ﻿#include "earmymenu.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "textures/game-textures.h"
 
 #include "eminimap.h"
@@ -66,7 +66,7 @@ void eArmyMenu::initialize(GameBoard &b)
     const auto cou = new eBasicButton(t1, window());
     wid->addWidget(cou);
     cou->setY(y);
-    cou->setTooltip(eLanguage::zeusText(51, 70)); // Go To Company
+    cou->setTooltip(Language::zeusText(51, 70)); // Go To Company
     cou->setPressAction([this]()
                        {
     if (!mBoard || !mGW) return;
@@ -85,7 +85,7 @@ void eArmyMenu::initialize(GameBoard &b)
     wid->addWidget(dt);
     dt->setY(y);
     dt->setX(xx);
-    dt->setTooltip(eLanguage::zeusText(51, 73)); // Defensive Tactics
+    dt->setTooltip(Language::zeusText(51, 73)); // Defensive Tactics
 
     const int ddy = dy + cou->height();
 
@@ -93,7 +93,7 @@ void eArmyMenu::initialize(GameBoard &b)
     const auto rc = new eBasicButton(t3, window());
     wid->addWidget(rc);
     rc->setY(y + ddy);
-    rc->setTooltip(eLanguage::zeusText(51, 76)); // Rotate Company
+    rc->setTooltip(Language::zeusText(51, 76)); // Rotate Company
     rc->setPressAction([this]()
                        {
         if (!mBoard || !mGW) return;
@@ -105,13 +105,13 @@ void eArmyMenu::initialize(GameBoard &b)
     wid->addWidget(ot);
     ot->setY(y + ddy);
     ot->setX(xx);
-    ot->setTooltip(eLanguage::zeusText(51, 74)); // Offensive Tactics
+    ot->setTooltip(Language::zeusText(51, 74)); // Offensive Tactics
 
     const auto t5 = &InterfaceTextures::fGoToBanner;
     mGoToBanner = new eBasicButton(t5, window());
     wid->addWidget(mGoToBanner);
     mGoToBanner->setY(y + 2 * ddy);
-    mGoToBanner->setTooltip(eLanguage::zeusText(51, 25)); // Go To Banner (Muster)
+    mGoToBanner->setTooltip(Language::zeusText(51, 25)); // Go To Banner (Muster)
     mGoToBanner->setPressAction([this]()
                                 {
         mBoard->bannersBackFromHome();
@@ -121,7 +121,7 @@ void eArmyMenu::initialize(GameBoard &b)
     mGoHome = new eBasicButton(t5_2, window());
     wid->addWidget(mGoHome);
     mGoHome->setY(y + 2 * ddy);
-    mGoHome->setTooltip(eLanguage::zeusText(51, 26)); // Go Home
+    mGoHome->setTooltip(Language::zeusText(51, 26)); // Go Home
     mGoHome->hide();
     mGoHome->setPressAction([this]()
                             {
@@ -133,7 +133,7 @@ void eArmyMenu::initialize(GameBoard &b)
     wid->addWidget(st);
     st->setY(y + 2 * ddy);
     st->setX(xx);
-    st->setTooltip(eLanguage::zeusText(51, 75)); // Special Tactics
+    st->setTooltip(Language::zeusText(51, 75)); // Special Tactics
 
     const auto ww = new eFramedWidget(window());
     wid->addWidget(ww);

@@ -4,12 +4,12 @@
 #include "eworldmapwidget.h"
 #include "erequestdialog.h"
 #include "egiftdialog.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "game-widget.h"
 #include "egiftsizedialog.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 #include "ecitysettingswidget.h"
 #include "efulfilldialog.h"
 #include "emessagewidget.h"
@@ -22,7 +22,7 @@
 
 #include "eacceptbutton.h"
 #include "ecancelbutton.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 #include "widgets/ecitybutton.h"
 #include "widgets/echoosecitydialog.h"
 
@@ -47,7 +47,7 @@ void eWorldWidget::initialize() {
                                mBoard->currentCityId(),
                                eGameEventBranch::root, *mBoard);
             const auto boardDate = mBoard->date();
-            const int period = eNumbers::sArmyTravelTime;
+            const int period = Numbers::sArmyTravelTime;
             const auto date = boardDate + period;
             e->initializeDate(date, period, 1);
             e->initialize(forces, mCity, r);
@@ -80,7 +80,7 @@ void eWorldWidget::initialize() {
                 const auto e = e::make_shared<eReinforcementsEvent>(
                     toCid, eGameEventBranch::root, *mBoard);
                 const auto boardDate = mBoard->date();
-                const int period = eNumbers::sReinforcementsTravelTime;
+                const int period = Numbers::sReinforcementsTravelTime;
                 const auto date = boardDate + period;
                 e->initializeDate(date, period, 1);
                 e->initialize(forces, mCity);
@@ -91,7 +91,7 @@ void eWorldWidget::initialize() {
                                    mBoard->currentCityId(),
                                    eGameEventBranch::root, *mBoard);
                 const auto boardDate = mBoard->date();
-                const int period = eNumbers::sArmyTravelTime;
+                const int period = Numbers::sArmyTravelTime;
                 const auto date = boardDate + period;
                 e->initializeDate(date, period, 1);
                 e->initialize(date, forces, mCity);
@@ -183,14 +183,14 @@ void eWorldWidget::initialize() {
     });
 
     addWidget(mWM);
-    mWM->align(eAlignment::right | eAlignment::top);
+    mWM->align(Alignment::right | Alignment::top);
 
     const int p = padding();
 
     mMapButton = new FramedButton(window());
     mMapButton->setUnderline(false);
     mMapButton->setRenderBg(true);
-    mMapButton->setText(eLanguage::text("map"));
+    mMapButton->setText(Language::text("map"));
     mMapButton->fitContent();
     addWidget(mMapButton);
     mMapButton->setPressAction([this]() {
@@ -211,7 +211,7 @@ void eWorldWidget::initialize() {
     mAddCityButton = new FramedButton(window());
     mAddCityButton->setUnderline(false);
     mAddCityButton->setRenderBg(true);
-    mAddCityButton->setText(eLanguage::text("add_city"));
+    mAddCityButton->setText(Language::text("add_city"));
     mAddCityButton->fitContent();
     addWidget(mAddCityButton);
     mAddCityButton->setPressAction([this]() {
@@ -234,7 +234,7 @@ void eWorldWidget::initialize() {
     mSettingsButton = new FramedButton(window());
     mSettingsButton->setUnderline(false);
     mSettingsButton->setRenderBg(true);
-    mSettingsButton->setText(eLanguage::text("settings"));
+    mSettingsButton->setText(Language::text("settings"));
     mSettingsButton->fitContent();
     mSettingsButton->hide();
     addWidget(mSettingsButton);
@@ -244,7 +244,7 @@ void eWorldWidget::initialize() {
         d->initialize(mCity, nullptr, mWorldBoard);
 
         window()->execDialog(d);
-        d->align(eAlignment::center);
+        d->align(Alignment::center);
     });
     const int xxx = width() - mWM->width() - p - mSettingsButton->width();
     mSettingsButton->move(xxx, mAddCityButton->y() + mAddCityButton->height() + p);
@@ -313,8 +313,8 @@ void eWorldWidget::openRequestDialog() {
             rivals.push_back(c);
         }
         if(rivals.empty()) {
-            const auto title = eLanguage::zeusText(5, 72); // Nobody to strike
-            const auto text = eLanguage::zeusText(5, 73); // There are no cities to strike
+            const auto title = Language::zeusText(5, 72); // Nobody to strike
+            const auto text = Language::zeusText(5, 73); // There are no cities to strike
 
             const auto qw = new eMessageWidget(window());
             qw->initialize(title, text);
@@ -331,15 +331,15 @@ void eWorldWidget::openRequestDialog() {
 
             const auto titleLabel = new eLabel(window());
             titleLabel->setFontSizeXL();
-            titleLabel->setText(eLanguage::zeusText(5, 74)); // Military strike
+            titleLabel->setText(Language::zeusText(5, 74)); // Military strike
             titleLabel->fitContent();
             cw->addWidget(titleLabel);
 
-            auto textBase = eLanguage::zeusText(5, 75);
-            eStringHelpers::replace(textBase, "[city_nameA]", mCity->name());
+            auto textBase = Language::zeusText(5, 75);
+            StringHelpers::replace(textBase, "[city_nameA]", mCity->name());
             const auto rival = rivals[0];
             auto text = textBase;
-            eStringHelpers::replace(text, "[city_nameB]", rival->name());
+            StringHelpers::replace(text, "[city_nameB]", rival->name());
 
             const auto textLabel = new eLabel(window());
             textLabel->setFontSizeS();
@@ -359,7 +359,7 @@ void eWorldWidget::openRequestDialog() {
                                    [textLabel, textBase](
                                    const stdsptr<WorldCity>& c) {
                 auto text = textBase;
-                eStringHelpers::replace(text, "[city_nameB]", c->name());
+                StringHelpers::replace(text, "[city_nameB]", c->name());
                 textLabel->setText(text);
                 textLabel->fitContent();
             });
@@ -402,9 +402,9 @@ void eWorldWidget::openRequestDialog() {
             w->addWidget(cw);
             cw->move(p, p);
             w->resize(cw->width() + 2*p, cw->height() + 2*p);
-            titleLabel->align(eAlignment::hcenter);
-            cityButton->align(eAlignment::hcenter);
-            buttons->align(eAlignment::hcenter);
+            titleLabel->align(Alignment::hcenter);
+            cityButton->align(Alignment::hcenter);
+            buttons->align(Alignment::hcenter);
 
             openDialog(w);
         }
@@ -447,13 +447,13 @@ void eWorldWidget::openGiftDialog() {
 
 void eWorldWidget::setMap(const eWorldMap map) {
     mWMW->setMap(map);
-    mWMW->align(eAlignment::center);
+    mWMW->align(Alignment::center);
     mWMW->setX((width() - mWM->width() - mWMW->width())/2);
 }
 
 void eWorldWidget::openDialog(eWidget* const d) {
     addWidget(d);
-    d->align(eAlignment::vcenter);
+    d->align(Alignment::vcenter);
     d->setX(mWMW->x() + (mWMW->width() - d->width())/2);
     window()->execDialog(d);
 }

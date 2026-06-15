@@ -3,7 +3,7 @@
 
 #include "character-action.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eComplexAction : public eCharacterAction {
 public:
@@ -19,7 +19,7 @@ public:
 protected:
     void wait(const int t);
     void wait();
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 
 private:

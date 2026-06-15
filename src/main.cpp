@@ -5,12 +5,12 @@
 
 #include <string>
 
-#include "emainwindow.h"
+#include "main-window.h"
 #include "textures/game-textures.h"
 
-#include "egamedir.h"
+#include "game-dir.h"
 #include "engine/model-data.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include "audio/music.h"
 #include "audio/sounds.h"
@@ -133,7 +133,7 @@ int main() {
     }
     installWindowsDumpHandler();
 
-    eGameDir::initialize();
+    GameDir::initialize();
     ModelData::instance().load();
 
 //    SDL_DisplayMode mode;
@@ -175,15 +175,15 @@ int main() {
     // and i15/i30/i45/i60.e files are no longer required at startup. The zoom
     // flags below still pick which tier loads; emainwindow defaults one on if
     // none are set.
-    eNumbers::sLoad();
-    eSettings settings;
+    Numbers::sLoad();
+    Settings settings;
     settings.read();
 
     int r = 0;
     {
         eMusic music;
         eSounds sounds;
-        eMainWindow w;
+        MainWindow w;
         const bool i = w.initialize(settings);
         if(!i) return 1;
         const bool e = GameTextures::initialize(w.renderer());

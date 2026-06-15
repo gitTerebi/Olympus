@@ -1,7 +1,7 @@
 #include "esinklandevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
@@ -28,10 +28,10 @@ void eSinkLandEvent::trigger() {
 }
 
 std::string eSinkLandEvent::longName() const {
-    return eLanguage::zeusText(156, 28);
+    return Language::zeusText(156, 28);
 }
 
-void eSinkLandEvent::serializeFields(eSaveArchive& ar) {
+void eSinkLandEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCountEventValue::serialize(ar);
     eGodEventValue::serialize(ar);

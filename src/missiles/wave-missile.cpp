@@ -1,14 +1,14 @@
-#include "ewavemissile.h"
+#include "wave-missile.h"
 
-eWaveMissile::eWaveMissile(GameBoard& board,
-                           const std::vector<ePathPoint>& path) :
-    eMissile(board, eMissileType::wave, path) {
+WaveMissile::WaveMissile(GameBoard& board,
+                           const std::vector<PathPoint>& path) :
+    Missile(board, MissileType::wave, path) {
     GameTextures::loadWave();
     setSpeed(0.1);
 }
 
-std::shared_ptr<eTexture>
-eWaveMissile::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture>
+WaveMissile::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& textures = GameTextures::destrution();
     const auto& coll = textures[id].fWave;

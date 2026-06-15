@@ -3,7 +3,7 @@
 
 #include "animal.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eDomesticatedAnimal : public Animal {
 public:
@@ -20,7 +20,7 @@ public:
     int monthsGrown() const { return mMonthsGrown; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     virtual void setNakedTexture() {}
     virtual void setFleecedTexture() {}

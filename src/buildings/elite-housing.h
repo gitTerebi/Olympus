@@ -3,33 +3,33 @@
 
 #include "ehousebase.h"
 
-class eTextureCollection;
+class TextureCollection;
 
-class eSaveArchive;
+class SaveArchive;
 
 class EliteHousing : public eHouseBase {
 public:
     EliteHousing(GameBoard& board, const eCityId cid);
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize) const override { return nullptr; }
 
     eTextureSpace
     getTextureSpace(const int tx, const int ty,
                     const eTileSize size) const override;
 
-    std::vector<eOverlay>
+    std::vector<Overlay>
     getOverlays(const eTileSize size) const override;
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getLeftTexture(const eTileSize size) const;
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getBottomTexture(const eTileSize size) const;
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getTopTexture(const eTileSize size) const;
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getRightTexture(const eTileSize size) const;
-    std::vector<eOverlay>
+    std::vector<Overlay>
         getHorseOverlays(const eTileSize size) const;
 
     int provide(const eProvide p, const int n) override;
@@ -57,9 +57,9 @@ public:
 
     static std::string sName(const int level);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
-    const eTextureCollection& getTextureCollection(
+    const TextureCollection& getTextureCollection(
             const eTileSize size) const;
 
     void updateLevel();

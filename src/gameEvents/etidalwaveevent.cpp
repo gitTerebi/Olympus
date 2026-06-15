@@ -1,7 +1,7 @@
 #include "etidalwaveevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
@@ -18,7 +18,7 @@ eTidalWaveEvent::eTidalWaveEvent(
         GameBoard& board) :
     eGameEvent(cid, eGameEventType::tidalWave,
                branch, board),
-    ePointEventValue(eBannerTypeS::disasterPoint,
+    ePointEventValue(BannerTypeS::disasterPoint,
                     cid, board, validWaveEventTile) {}
 
 void eTidalWaveEvent::trigger() {
@@ -37,17 +37,17 @@ void eTidalWaveEvent::trigger() {
                                  eEvent::tidalWave;
     board->event(e, ed);
     if(mPermanent) {
-        const auto b = board->banner(cid, eBannerTypeS::disasterPoint, pt);
+        const auto b = board->banner(cid, BannerTypeS::disasterPoint, pt);
         const auto t = b ? b->tile() : nullptr;
         if(t) t->removeBanner(b);
     }
 }
 
 std::string eTidalWaveEvent::longName() const {
-    return eLanguage::zeusText(48, 69);
+    return Language::zeusText(48, 69);
 }
 
-void eTidalWaveEvent::serializeFields(eSaveArchive& ar) {
+void eTidalWaveEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ePointEventValue::serialize(ar);
     eGodEventValue::serialize(ar);

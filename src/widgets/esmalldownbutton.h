@@ -5,7 +5,7 @@
 
 class eSmallDownButton : public eButton {
 public:
-    eSmallDownButton(eMainWindow* const window);
+    eSmallDownButton(MainWindow* const window);
 };
 
 #endif // ESMALLDOWNBUTTON_H

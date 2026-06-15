@@ -6,7 +6,7 @@
 #include "buildings/ebuilding.h"
 
 class ePatrolBuildingBase;
-class eSaveArchive;
+class SaveArchive;
 
 enum class ePatrolActionStage {
     idle, patrolling, goingBack
@@ -26,7 +26,7 @@ public:
 
     bool decide() override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
     void patrol();
     void goBackDecision(const stdsptr<WalkableObject>& w =
@@ -55,7 +55,7 @@ public:
         t->setState(eCharacterActionState::failed);
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -76,7 +76,7 @@ public:
         t->mDone = true;
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

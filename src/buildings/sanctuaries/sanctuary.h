@@ -3,14 +3,14 @@
 
 #include "../eemployingbuilding.h"
 #include "../emonument.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include "esanctuaryblueprint.h"
 #include "characters/gods/god.h"
 #include "engine/edate.h"
 
 class BuildingTextures;
-class eSaveArchive;
+class SaveArchive;
 class eMonster;
 
 enum class eHelpDenialReason {
@@ -69,7 +69,7 @@ public:
     bool priestOut() const;
     int sacrificeDaysLeft() const;
 
-    bool prayerReady() const { return mHelpTimer >= eNumbers::sGodHelpPeriod; }
+    bool prayerReady() const { return mHelpTimer >= Numbers::sGodHelpPeriod; }
     bool aresBuffReady() const { return mAresBuffReady; }
     void consumeAresBuff() { mAresBuffReady = false; }
     void sendAresAbroad();
@@ -77,7 +77,7 @@ public:
     void registerElement(const stdsptr<eSanctBuilding>& e) override;
     void boostHelpTimer();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdptr<God> mGod;
     stdptr<eMonster> mMinion;

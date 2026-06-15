@@ -9,7 +9,7 @@ class eCardingShed : public eShepherBuildingBase {
 public:
     eCardingShed(GameBoard& board, const eCityId cid);
 
-    std::vector<eOverlay> getOverlays(const eTileSize size) const;
+    std::vector<Overlay> getOverlays(const eTileSize size) const;
 private:
     const std::vector<BuildingTextures>& mTextures;
 };

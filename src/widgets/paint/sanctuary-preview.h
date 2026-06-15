@@ -10,7 +10,7 @@
 #include <vector>
 
 class eBuilding;
-class eTexture;
+class Texture;
 enum class eBuildingMode;
 enum class eBuildingType;
 class BuildingTextures;
@@ -77,9 +77,9 @@ double sanctuaryWomanTileDX(int rotateId, int dirIdx);
 double sanctuaryWomanTileDY(int rotateId, int dirIdx);
 
 struct SanctuaryTempleTextures {
-    std::shared_ptr<eTexture> fBase;
-    std::shared_ptr<eTexture> fFlip;
-    std::shared_ptr<eTexture> fWoman;
+    std::shared_ptr<Texture> fBase;
+    std::shared_ptr<Texture> fFlip;
+    std::shared_ptr<Texture> fWoman;
 };
 
 SanctuaryTempleTextures sanctuaryTempleGetTextures(
@@ -89,19 +89,19 @@ SanctuaryTempleTextures sanctuaryTempleGetTextures(
     int animFrame,
     int stage);
 
-std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
+std::shared_ptr<Texture> sanctuaryStatueGetTexture(
     const BuildingTextures& builTexs,
     GodType god,
     int rotateId,
     eWorldDirection dir);
 
-std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
+std::shared_ptr<Texture> sanctuaryMonumentGetTexture(
     const BuildingTextures& builTexs,
     GodType god,
     int rotateId,
     eWorldDirection dir);
 
-std::shared_ptr<eTexture> sanctuaryAltarGetTexture(
+std::shared_ptr<Texture> sanctuaryAltarGetTexture(
     const BuildingTextures& builTexs,
     int rotateId);
 

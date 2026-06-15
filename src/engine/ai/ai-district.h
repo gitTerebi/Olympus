@@ -6,7 +6,7 @@
 #include "engine/eresourcetype.h"
 #include "characters/gods/god.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 struct eDistrictReadyCondition {
     enum class eType {
@@ -22,7 +22,7 @@ struct eDistrictReadyCondition {
 
     std::string name() const;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
     eType fType;
     eResourceType fResource = eResourceType::drachmas;
     GodType fSanctuary = GodType::zeus;
@@ -48,7 +48,7 @@ public:
 
     void addBuilding(const AIBuilding& a);
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     std::vector<AIBuilding> fBuildings;
     std::vector<eDistrictReadyCondition> fReadyConditions;

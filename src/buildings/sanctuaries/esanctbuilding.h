@@ -2,7 +2,7 @@
 #define ESANCTBUILDING_H
 
 #include "../ebuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "engine/eworlddirection.h"
 
 enum eFigureFacing { kNE = 0, kSE = 1, kSW = 2, kNW = 3 };
@@ -47,7 +47,7 @@ struct eSanctCost {
         return c;
     }
 
-    void serialize(eSaveArchive& ar) {
+    void serialize(SaveArchive& ar) {
         ar.field("wood", fWood, 0);
         ar.field("marble", fMarble, 0);
         ar.field("sculpture", fSculpture, 0);
@@ -57,7 +57,7 @@ struct eSanctCost {
 };
 
 class eMonument;
-class eSaveArchive;
+class SaveArchive;
 
 class eSanctBuilding : public eBuilding {
 public:
@@ -91,7 +91,7 @@ public:
 
     const std::vector<eSanctCost>& costs() const { return mCost; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void scheduleTerrainUpdate();
     void updateNextCost();

@@ -10,20 +10,20 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize) const override { return nullptr; }
 
     eTextureSpace
     getTextureSpace(const int tx, const int ty,
                     const eTileSize size) const override;
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTextureSides(const eTileSize size) const;
-    eOverlay
+    Overlay
     getTextureEntrance(const eTileSize size) const;
-    eOverlay
+    Overlay
     getTextureEntranceBack(const eTileSize size) const;
-    eOverlay
+    Overlay
     getTextureEntranceOverlay(const eTileSize size) const;
 
     bool rotated() const { return mRotated; }

@@ -3,7 +3,7 @@
 
 #include "esoldier.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eAmazon : public eSoldier {
 public:
@@ -13,7 +13,7 @@ public:
     void setIsArcher(const bool a);
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool mIsArcher = false;
 };

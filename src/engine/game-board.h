@@ -2,7 +2,7 @@
 #define EGAMEBOARD_H
 
 #include <vector>
-#include "elimits.h"
+#include "game-limits.h"
 #include "etile.h"
 
 #include "boardData/epopulationdata.h"
@@ -33,11 +33,11 @@
 
 #include "engine/egodquest.h"
 #include "ecityrequest.h"
-#include "emessage.h"
+#include "message.h"
 #include "eeventdata.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-class eSaveArchive;
+class SaveArchive;
 #include "gameEvents/gods/egodquestevent.h"
 #include "eepisodegoal.h"
 #include "eemploymentdistributor.h"
@@ -48,17 +48,17 @@ class eSaveArchive;
 
 class eGameEvent;
 
-class eSpawner;
+class Spawner;
 class DestructionPuff;
 enum class eBannerType;
-enum class eBannerTypeS;
+enum class BannerTypeS;
 class eCharacter;
 class eBuilding;
 class TradePost;
 class eStorageBuilding;
 class SoldierBanner;
 class ePalace;
-class eLandInvasionPoint;
+class LandInvasionPoint;
 class SendResourcesToCityEvent;
 class ReceiveTributeEvent;
 class eInvasionEvent;
@@ -71,14 +71,14 @@ class eThreadPool;
 
 class eSoldier;
 class eInvasionHandler;
-class eMonsterPoint;
+class MonsterPoint;
 class PlayerConquestEventBase;
 class ArmyEventBase;
 class SendTroopsEvent;
 enum class eMessageEventType;
 class eMonsterInvasionEventBase;
 
-struct eMessageType;
+struct MessageType;
 struct eEventData;
 enum class eEvent;
 class ePlague;
@@ -188,8 +188,8 @@ public:
     bool unregisterTradePost(TradePost* const b);
     bool hasTradePost(const eCityId cid, const WorldCity& city);
 
-    void registerSpawner(eSpawner* const s);
-    bool unregisterSpawner(eSpawner* const s);
+    void registerSpawner(Spawner* const s);
+    bool unregisterSpawner(Spawner* const s);
 
     void registerStadium(eStadium* const s);
     void unregisterStadium(const eCityId cid);
@@ -209,8 +209,8 @@ public:
     void registerHeroHall(eHerosHall* const b);
     bool unregisterHeroHall(eHerosHall* const b);
 
-    void registerMissile(eMissile* const m);
-    bool unregisterMissile(eMissile* const m);
+    void registerMissile(Missile* const m);
+    bool unregisterMissile(Missile* const m);
 
     void registerDestructionPuff(DestructionPuff* const p);
     bool unregisterDestructionPuff(DestructionPuff* const p);
@@ -227,11 +227,11 @@ public:
     void registerMonster(const eCityId cid, eMonster* const m);
     void unregisterMonster(const eCityId cid, eMonster* const m);
 
-    eBanner* banner(const eCityId cid,
-                    const eBannerTypeS type,
+    Banner* banner(const eCityId cid,
+                    const BannerTypeS type,
                     const int id = 1) const;
-    void registerBanner(eBanner* const b);
-    void unregisterBanner(eBanner* const b);
+    void registerBanner(Banner* const b);
+    void unregisterBanner(Banner* const b);
 
     void registerAllSoldierBanner(SoldierBanner* const b);
     void unregisterAllSoldierBanner(SoldierBanner* const b);    
@@ -354,22 +354,22 @@ public:
     bool ifVisible(eTile* const tile, const eAction& func) const;
 
     using eMessageShower = std::function<void(
-                eEventData&, const eMessageType&)>;
+                eEventData&, const MessageType&)>;
     void setMessageShower(const eMessageShower& msg);
 
-    void showMessage(eEventData& ed, const eMessageType& msg);
+    void showMessage(eEventData& ed, const MessageType& msg);
     void respondToEvent(int runtimeId, int response,
                         eCityId city = eCityId::neutralAggresive);
 
     struct eLoggedMessage {
         eEventData fEd;
-        eMessage fMsg;
+        Message fMsg;
         eDate fDate;
         bool fRead = true;
     };
     const std::vector<eLoggedMessage>& messageLog() const
     { return mMessageLog; }
-    void addMessageLog(const eEventData& ed, const eMessage& msg,
+    void addMessageLog(const eEventData& ed, const Message& msg,
                        const eDate& date);
     void setMessageLogRead(const int index);
 
@@ -473,13 +473,13 @@ public:
     using eGoals = std::vector<stdsptr<eEpisodeGoal>>;
     const eGoals& goals() const { return mGoals; }
 
-    void serialize(eSaveArchive& ar);
-    void serializeMessageLog(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
+    void serializeMessageLog(SaveArchive& ar);
 
     eBuilding* buildingWithIOID(const int id) const;
     eCharacter* characterWithIOID(const int id) const;
     eCharacterAction* characterActionWithIOID(const int id) const;
-    eBanner* bannerWithIOID(const int id) const;
+    Banner* bannerWithIOID(const int id) const;
     SoldierBanner* soldierBannerWithIOID(const int id) const;
     eGameEvent* eventWithIOID(const int id) const;
     eInvasionHandler* invasionHandlerWithIOID(const int id) const;
@@ -820,7 +820,7 @@ public:
                             const int tx, const int ty,
                             const int sw, const int sh);
 private:
-    void serializeYearlyProduction(eSaveArchive& ar);
+    void serializeYearlyProduction(SaveArchive& ar);
 
     void updateNeighbours();
 
@@ -893,8 +893,8 @@ private:
     std::vector<eCharacterAction*> mCharacterActions;
     std::vector<eBuilding*> mTimedBuildings;
     std::vector<eBuilding*> mAllBuildings;
-    std::vector<eSpawner*> mSpawners;
-    std::vector<eBanner*> mBanners;
+    std::vector<Spawner*> mSpawners;
+    std::vector<Banner*> mBanners;
 
     std::vector<eInvasionEvent*> mInvasions;
     // end moved to BoardCity
@@ -902,7 +902,7 @@ private:
     std::vector<SoldierBanner*> mAllSoldierBanners;
     std::vector<eCharacter*> mCharacters;
     std::vector<eSoldier*> mSoldiers;
-    std::vector<eMissile*> mMissiles;
+    std::vector<Missile*> mMissiles;
     std::vector<DestructionPuff*> mDestructionPuffs;
 
     std::vector<SoldierBanner*> mSelectedBanners;
@@ -942,10 +942,10 @@ private:
         std::vector<eTile*> fTiles;
         int fLastDim = 0;
 
-        void serialize(eSaveArchive& ar, GameBoard& board) {
+        void serialize(SaveArchive& ar, GameBoard& board) {
             ar.tileField("startTile", board, fStartTile);
             ar.arrayField("tiles", fTiles,
-                [&board](eSaveArchive& itemAr, eTile*& t) {
+                [&board](SaveArchive& itemAr, eTile*& t) {
                     itemAr.tileField("tile", board, t);
                 });
             ar.field("lastDim", fLastDim);
@@ -967,11 +967,11 @@ private:
         bool fPermanent = false;
         bool fRegres = false;
 
-        void serialize(eSaveArchive& ar, GameBoard& board) {
+        void serialize(SaveArchive& ar, GameBoard& board) {
             ar.arrayField("tileGroups", fTiles,
-                [&board](eSaveArchive& groupAr, std::vector<eWaveDirection>& v) {
+                [&board](SaveArchive& groupAr, std::vector<eWaveDirection>& v) {
                     groupAr.arrayField("tiles", v,
-                        [&board](eSaveArchive& tAr, eWaveDirection& d) {
+                        [&board](SaveArchive& tAr, eWaveDirection& d) {
                             tAr.tileField("tile", board, d.fTile);
                             tAr.field("savedTerrain", d.fSaved);
                             tAr.field("orientation", d.fO);
@@ -992,11 +992,11 @@ private:
         std::vector<std::vector<eLavaDirection>> fTiles;
         int fLastId = 0;
 
-        void serialize(eSaveArchive& ar, GameBoard& board) {
+        void serialize(SaveArchive& ar, GameBoard& board) {
             ar.arrayField("tileGroups", fTiles,
-                [&board](eSaveArchive& groupAr, std::vector<eLavaDirection>& v) {
+                [&board](SaveArchive& groupAr, std::vector<eLavaDirection>& v) {
                     groupAr.arrayField("tiles", v,
-                        [&board](eSaveArchive& tAr, eLavaDirection& d) {
+                        [&board](SaveArchive& tAr, eLavaDirection& d) {
                             tAr.tileField("tile", board, d.fTile);
                             tAr.field("orientation", d.fO);
                         });
@@ -1015,11 +1015,11 @@ private:
         std::vector<std::vector<eLandSlideDirection>> fTiles;
         int fLastId = 0;
 
-        void serialize(eSaveArchive& ar, GameBoard& board) {
+        void serialize(SaveArchive& ar, GameBoard& board) {
             ar.arrayField("tileGroups", fTiles,
-                [&board](eSaveArchive& groupAr, std::vector<eLandSlideDirection>& v) {
+                [&board](SaveArchive& groupAr, std::vector<eLandSlideDirection>& v) {
                     groupAr.arrayField("tiles", v,
-                        [&board](eSaveArchive& tAr, eLandSlideDirection& d) {
+                        [&board](SaveArchive& tAr, eLandSlideDirection& d) {
                             tAr.tileField("tile", board, d.fTile);
                             tAr.field("newAltitude", d.fNewAltitude);
                             tAr.field("orientation", d.fO);

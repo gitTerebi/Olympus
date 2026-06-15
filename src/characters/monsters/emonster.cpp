@@ -8,7 +8,7 @@
 #include "engine/ecityid.h"
 #include "characters/actions/monster-action.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 eMonster::eMonster(GameBoard& board, const eMonsterType mt) :
     eCharacter(board, sMonsterToCharacterType(mt)) {
@@ -253,7 +253,7 @@ std::string eMonster::sMonsterName(const eMonsterType type) {
         string = 17;
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 void eMonster::sMonsterStrings(

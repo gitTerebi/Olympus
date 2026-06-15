@@ -4,9 +4,9 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "fileIO/esavearchive.h"
-#include "elanguage.h"
-#include "enumbers.h"
+#include "fileIO/save-archive.h"
+#include "language.h"
+#include "numbers.h"
 #include "characters/soldier-banner.h"
 
 AskForAidEvent::AskForAidEvent(
@@ -77,7 +77,7 @@ void AskForAidEvent::trigger() {
             b->setCityId(fromCid);
             b->setMilitaryAid(true);
             b->backFromHome();
-            for(int i = 0; i < eNumbers::sSoldiersPerBanner && i < remRabble; i++) {
+            for(int i = 0; i < Numbers::sSoldiersPerBanner && i < remRabble; i++) {
                 b->createSoldier(entryPoint);
                 b->incCount();
             }
@@ -93,7 +93,7 @@ void AskForAidEvent::trigger() {
             b->setCityId(fromCid);
             b->setMilitaryAid(true);
             b->backFromHome();
-            for(int i = 0; i < eNumbers::sSoldiersPerBanner && i < remHoplites; i++) {
+            for(int i = 0; i < Numbers::sSoldiersPerBanner && i < remHoplites; i++) {
                 b->createSoldier(entryPoint);
                 b->incCount();
             }
@@ -109,7 +109,7 @@ void AskForAidEvent::trigger() {
             b->setCityId(fromCid);
             b->setMilitaryAid(true);
             b->backFromHome();
-            for(int i = 0; i < eNumbers::sSoldiersPerBanner && i < remHorsemen; i++) {
+            for(int i = 0; i < Numbers::sSoldiersPerBanner && i < remHorsemen; i++) {
                 b->createSoldier(entryPoint);
                 b->incCount();
             }
@@ -139,10 +139,10 @@ void AskForAidEvent::trigger() {
 }
 
 std::string AskForAidEvent::longName() const {
-    return eLanguage::text("request_aid_long_name");
+    return Language::text("request_aid_long_name");
 }
 
-void AskForAidEvent::serializeFields(eSaveArchive& ar) {
+void AskForAidEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);
     ar.dateField("arrivalDate", mArrivalDate);

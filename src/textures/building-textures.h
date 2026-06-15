@@ -1,7 +1,7 @@
 #ifndef BUILDING_TEXTURES_H
 #define BUILDING_TEXTURES_H
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 struct eSpriteData;
 
@@ -254,469 +254,469 @@ public:
     bool fHippodromeFinishLoaded = false;
     void loadHippodromeFinish();
 
-    std::shared_ptr<eTexture> fHouseSpace;
-    std::vector<eTextureCollection> fCommonHouse;
-    std::vector<eTextureCollection> fPoseidonCommonHouse;
+    std::shared_ptr<Texture> fHouseSpace;
+    std::vector<TextureCollection> fCommonHouse;
+    std::vector<TextureCollection> fPoseidonCommonHouse;
 
-    std::vector<eTextureCollection> fEliteHouse;
-    std::vector<eTextureCollection> fPoseidonEliteHouse;
-    eTextureCollection fEliteHouseHorses;
+    std::vector<TextureCollection> fEliteHouse;
+    std::vector<TextureCollection> fPoseidonEliteHouse;
+    TextureCollection fEliteHouseHorses;
 
-    std::shared_ptr<eTexture> fGymnasium;
-    eTextureCollection fGymnasiumOverlay;
+    std::shared_ptr<Texture> fGymnasium;
+    TextureCollection fGymnasiumOverlay;
 
-    std::shared_ptr<eTexture> fCollege;
-    eTextureCollection fCollegeOverlay;
+    std::shared_ptr<Texture> fCollege;
+    TextureCollection fCollegeOverlay;
 
-    std::shared_ptr<eTexture> fDramaSchool;
-    eTextureCollection fDramaSchoolOverlay;
+    std::shared_ptr<Texture> fDramaSchool;
+    TextureCollection fDramaSchoolOverlay;
 
-    std::shared_ptr<eTexture> fPodium;
-    eTextureCollection fPodiumOverlay;
+    std::shared_ptr<Texture> fPodium;
+    TextureCollection fPodiumOverlay;
 
-    std::shared_ptr<eTexture> fTheater;
-    eTextureCollection fTheaterOverlay;
+    std::shared_ptr<Texture> fTheater;
+    TextureCollection fTheaterOverlay;
 
-    std::shared_ptr<eTexture> fStadium1H;
-    std::shared_ptr<eTexture> fStadium2H;
+    std::shared_ptr<Texture> fStadium1H;
+    std::shared_ptr<Texture> fStadium2H;
 
-    std::shared_ptr<eTexture> fStadium1W;
-    std::shared_ptr<eTexture> fStadium2W;
+    std::shared_ptr<Texture> fStadium1W;
+    std::shared_ptr<Texture> fStadium2W;
 
-    eTextureCollection fStadiumOverlay1;
-    eTextureCollection fStadiumOverlay2;
-    eTextureCollection fStadiumOverlay3;
-    eTextureCollection fStadiumOverlay4W;
-    eTextureCollection fStadiumOverlay4H;
-    eTextureCollection fStadiumOverlay5W;
-    eTextureCollection fStadiumOverlay5H;
+    TextureCollection fStadiumOverlay1;
+    TextureCollection fStadiumOverlay2;
+    TextureCollection fStadiumOverlay3;
+    TextureCollection fStadiumOverlay4W;
+    TextureCollection fStadiumOverlay4H;
+    TextureCollection fStadiumOverlay5W;
+    TextureCollection fStadiumOverlay5H;
 
-    eTextureCollection fStadiumAudiance1W;
-    eTextureCollection fStadiumAudiance2W;
+    TextureCollection fStadiumAudiance1W;
+    TextureCollection fStadiumAudiance2W;
 
-    eTextureCollection fStadiumAudiance1H;
-    eTextureCollection fStadiumAudiance2H;
+    TextureCollection fStadiumAudiance1H;
+    TextureCollection fStadiumAudiance2H;
 
-    std::shared_ptr<eTexture> fBibliotheke;
-    eTextureCollection fBibliothekeOverlay;
+    std::shared_ptr<Texture> fBibliotheke;
+    TextureCollection fBibliothekeOverlay;
 
-    std::shared_ptr<eTexture> fObservatory;
-    eTextureCollection fObservatoryOverlay;
+    std::shared_ptr<Texture> fObservatory;
+    TextureCollection fObservatoryOverlay;
 
-    std::shared_ptr<eTexture> fUniversity;
-    eTextureCollection fUniversityOverlay;
+    std::shared_ptr<Texture> fUniversity;
+    TextureCollection fUniversityOverlay;
 
-    std::shared_ptr<eTexture> fLaboratory;
-    eTextureCollection fLaboratoryOverlay;
+    std::shared_ptr<Texture> fLaboratory;
+    TextureCollection fLaboratoryOverlay;
 
-    std::shared_ptr<eTexture> fInventorsWorkshop;
-    eTextureCollection fInventorsWorkshopOverlay;
+    std::shared_ptr<Texture> fInventorsWorkshop;
+    TextureCollection fInventorsWorkshopOverlay;
 
-    std::shared_ptr<eTexture> fMuseum;
-    eTextureCollection fMuseumOverlay;
+    std::shared_ptr<Texture> fMuseum;
+    TextureCollection fMuseumOverlay;
 
-    std::shared_ptr<eTexture> fPalace1H;
-    std::shared_ptr<eTexture> fPalace2H;
+    std::shared_ptr<Texture> fPalace1H;
+    std::shared_ptr<Texture> fPalace2H;
 
-    std::shared_ptr<eTexture> fPalace1W;
-    std::shared_ptr<eTexture> fPalace2W;
+    std::shared_ptr<Texture> fPalace1W;
+    std::shared_ptr<Texture> fPalace2W;
 
-    eTextureCollection fPalaceHOverlay;
-    eTextureCollection fPalaceWOverlay;
+    TextureCollection fPalaceHOverlay;
+    TextureCollection fPalaceWOverlay;
 
-    eTextureCollection fPalaceTiles;
+    TextureCollection fPalaceTiles;
 
-    std::shared_ptr<eTexture> fFountain;
-    eTextureCollection fFountainOverlay;
+    std::shared_ptr<Texture> fFountain;
+    TextureCollection fFountainOverlay;
 
-    std::shared_ptr<eTexture> fHospital;
-    eTextureCollection fHospitalOverlay;
+    std::shared_ptr<Texture> fHospital;
+    TextureCollection fHospitalOverlay;
 
 
-    eTextureCollection fOliveTree;
-    eTextureCollection fVine;
-    eTextureCollection fOrangeTree;
+    TextureCollection fOliveTree;
+    TextureCollection fVine;
+    TextureCollection fOrangeTree;
 
-    std::shared_ptr<eTexture> fPlantation;
-    eTextureCollection fWheat;
-    eTextureCollection fCarrots;
-    eTextureCollection fOnions;
+    std::shared_ptr<Texture> fPlantation;
+    TextureCollection fWheat;
+    TextureCollection fCarrots;
+    TextureCollection fOnions;
 
-    std::shared_ptr<eTexture> fHuntingLodge;
-    eTextureCollection fHuntingLodgeOverlay;
+    std::shared_ptr<Texture> fHuntingLodge;
+    TextureCollection fHuntingLodgeOverlay;
 
-    eTextureCollection fFishery;
-    eTextureCollection fFisheryBoatBuildingW;
-    eTextureCollection fFisheryBoatBuildingH;
-    std::vector<eTextureCollection> fFisheryOverlay;
-    eTextureCollection fFisheryUnpackingOverlayTL;
-    eTextureCollection fFisheryUnpackingOverlayTR;
-    eTextureCollection fFisheryUnpackingOverlayBL;
-    eTextureCollection fFisheryUnpackingOverlayBR;
-    eTextureCollection fUrchinQuay;
-    eTextureCollection fUrchinQuayUnpackingOverlayTL;
-    eTextureCollection fUrchinQuayUnpackingOverlayTR;
-    eTextureCollection fUrchinQuayUnpackingOverlayBL;
-    eTextureCollection fUrchinQuayUnpackingOverlayBR;
-
-    std::shared_ptr<eTexture> fCardingShed;
-    eTextureCollection fCardingShedOverlay;
-
-    std::shared_ptr<eTexture> fDairy;
-    eTextureCollection fDairyOverlay;
-
-    std::shared_ptr<eTexture> fGrowersLodge;
-    eTextureCollection fGrowersLodgeOverlay;
-
-//    std::shared_ptr<eTexture> fCorral;
-//    eTextureCollection fCorralOverlay;
-
-    std::shared_ptr<eTexture> fOrangeTendersLodge;
-    eTextureCollection fOrangeTendersLodgeOverlay;
-
-    std::shared_ptr<eTexture> fTimberMill;
-    eTextureCollection fTimberMillOverlay;
-
-    std::shared_ptr<eTexture> fMasonryShop;
-    eTextureCollection fMasonryShopStones;
-    std::shared_ptr<eTexture> fBlackMarbleWorkshop;
-    eTextureCollection fBlackMarbleWorkshopStones;
-    std::vector<eTextureCollection> fWaitingOverlay0;
-    std::vector<eTextureCollection> fWaitingOverlay1;
-    std::vector<eTextureCollection> fMasonryShopOverlay1;
-    std::vector<eTextureCollection> fMasonryShopOverlay2;
-
-    std::shared_ptr<eTexture> fRefinery;
-    eTextureCollection fRefineryOverlay;
-
-    std::shared_ptr<eTexture> fOrichalcTowerOverlay;
-
-    std::shared_ptr<eTexture> fMint;
-    eTextureCollection fMintOverlay;
-
-    std::shared_ptr<eTexture> fFoundry;
-    eTextureCollection fFoundryOverlay;
-
-    std::shared_ptr<eTexture> fArtisansGuild;
-    eTextureCollection fArtisansGuildOverlay;
-
-    std::shared_ptr<eTexture> fOlivePress;
-    eTextureCollection fOlivePressOverlay;
-
-    std::shared_ptr<eTexture> fWinery;
-    eTextureCollection fWineryOverlay;
-
-    std::shared_ptr<eTexture> fSculptureStudio;
-    eTextureCollection fSculptureStudioOverlay;
-
-    eTextureCollection fTriremeWharf;
-    eTextureCollection fTriremeWharfOverlay1BL;
-    eTextureCollection fTriremeWharfOverlay1BR;
-    eTextureCollection fTriremeWharfOverlay1TL;
-    eTextureCollection fTriremeWharfOverlay1TR;
-    eTextureCollection fTriremeWharfOverlay2BL;
-    eTextureCollection fTriremeWharfOverlay2BR;
-    eTextureCollection fTriremeWharfOverlay2TL;
-    eTextureCollection fTriremeWharfOverlay2TR;
-
-    std::shared_ptr<eTexture> fHorseRanch;
-    eTextureCollection fHorseRanchOverlay;
-    std::shared_ptr<eTexture> fHorseRanchEnclosure;
-
-    std::shared_ptr<eTexture> fCorral;
-    eTextureCollection fCorralOverlay;
-    std::vector<eTextureCollection> fCorralCattleOverlay;
-    eTextureCollection fCorralProcessingOverlay;
-
-    std::shared_ptr<eTexture> fArmory;
-    eTextureCollection fArmoryOverlay;
-
-    eTextureCollection fGatehouseW;
-    eTextureCollection fGatehouseH;
-    std::shared_ptr<eTexture> fTower;
-    eTextureCollection fWall;
-
-    std::shared_ptr<eTexture> fMaintenanceOffice;
-    eTextureCollection fMaintenanceOfficeOverlay;
-
-    std::shared_ptr<eTexture> fTaxOffice;
-    eTextureCollection fTaxOfficeOverlay;
-
-    std::shared_ptr<eTexture> fWatchPost;
-    eTextureCollection fWatchPostOverlay;
-
-    eTextureCollection fWaitingMeat;
-    eTextureCollection fWaitingCheese;
-    eTextureCollection fWaitingWheat;
-    eTextureCollection fWaitingOranges;
-    eTextureCollection fWaitingWood;
-    eTextureCollection fWaitingBronze;
-    eTextureCollection fWaitingGrapes;
-    eTextureCollection fWaitingOlives;
-    eTextureCollection fWaitingArmor;
-    eTextureCollection fWaitingOrichalc;
-
-    eTextureCollection fAgoraRoad;
-    eTextureCollection fAgora;
-
-    std::shared_ptr<eTexture> fFoodVendor;
-    std::shared_ptr<eTexture> fFoodVendorOverlay;
-    eTextureCollection fFoodVendorOverlay2;
-
-    std::shared_ptr<eTexture> fFleeceVendor;
-    std::shared_ptr<eTexture> fFleeceVendorOverlay;
-    eTextureCollection fFleeceVendorOverlay2;
-
-    std::shared_ptr<eTexture> fOilVendor;
-    std::shared_ptr<eTexture> fOilVendorOverlay;
-    eTextureCollection fOilVendorOverlay2;
-
-    std::shared_ptr<eTexture> fArmsVendor;
-    std::shared_ptr<eTexture> fArmsVendorOverlay;
-    eTextureCollection fArmsVendorOverlay2;
-
-    std::shared_ptr<eTexture> fWineVendor;
-    std::shared_ptr<eTexture> fWineVendorOverlay;
-    eTextureCollection fWineVendorOverlay2;
-
-    std::shared_ptr<eTexture> fHorseTrainer;
-    std::shared_ptr<eTexture> fHorseTrainerOverlay;
-    eTextureCollection fHorseTrainerOverlay2;
-
-    std::shared_ptr<eTexture> fChariotVendor;
-    std::shared_ptr<eTexture> fChariotVendorOverlay;
-    eTextureCollection fChariotVendorOverlay2;
-
-    std::shared_ptr<eTexture> fChariotFactory;
-    eTextureCollection fChariotFactoryOverlay;
-    eTextureCollection fChariotFactoryOverlay1;
-    std::vector<eTextureCollection> fChariotFactoryHorses;
-    eTextureCollection fChariotFactoryChariots;
-
-    std::shared_ptr<eTexture> fWarehouseDoor;
-    eTextureCollection fWarehouseOverlay;
-
-    eTextureCollection fPier1;
-    std::shared_ptr<eTexture> fPier2;
-    eTextureCollection fPierOverlay;
-    eTextureCollection fPierLoadOverlay;
-
-    std::shared_ptr<eTexture> fTradingPost;
-    eTextureCollection fTradingPostOverlay;
-
-    std::shared_ptr<eTexture> fWarehouseEmpty;
-    eTextureCollection fWarehouseUrchin;
-    eTextureCollection fWarehouseFish;
-    eTextureCollection fWarehouseMeat;
-    eTextureCollection fWarehouseCheese;
-    eTextureCollection fWarehouseCarrots;
-    eTextureCollection fWarehouseOnions;
-    eTextureCollection fWarehouseWheat;
-    eTextureCollection fWarehouseOranges;
-    eTextureCollection fWarehouseBlackMarble;
-    eTextureCollection fWarehouseOrichalc;
-
-    eTextureCollection fWarehouseWood;
-    eTextureCollection fWarehouseBronze;
-    eTextureCollection fWarehouseMarble;
-    eTextureCollection fWarehouseGrapes;
-    eTextureCollection fWarehouseOlives;
-    eTextureCollection fWarehouseFleece;
-    eTextureCollection fWarehouseArmor;
-    std::shared_ptr<eTexture> fWarehouseSculpture;
-    eTextureCollection fWarehouseOliveOil;
-    eTextureCollection fWarehouseWine;
-
-    std::shared_ptr<eTexture> fGranary;
-    eTextureCollection fGranaryOverlay;
-
-    std::shared_ptr<eTexture> fGranaryUrchin;
-    std::shared_ptr<eTexture> fGranaryFish;
-    std::shared_ptr<eTexture> fGranaryMeat;
-    std::shared_ptr<eTexture> fGranaryCheese;
-    std::shared_ptr<eTexture> fGranaryCarrots;
-    std::shared_ptr<eTexture> fGranaryOnions;
-    std::shared_ptr<eTexture> fGranaryWheat;
-    std::shared_ptr<eTexture> fGranaryOranges;
-
-    eTextureCollection fPark;
-    eTextureCollection fLargePark;
-    eTextureCollection fHugePark;
-
-    std::shared_ptr<eTexture> fWaterPark1;
-    eTextureCollection fWaterPark1Overlay;
-
-    std::shared_ptr<eTexture> fWaterPark2;
-    eTextureCollection fWaterPark2Overlay;
-
-    std::shared_ptr<eTexture> fWaterPark3;
-    eTextureCollection fWaterPark3Overlay;
-
-    std::shared_ptr<eTexture> fWaterPark4;
-    eTextureCollection fWaterPark4Overlay;
-
-    std::shared_ptr<eTexture> fWaterPark5;
-    eTextureCollection fWaterPark5Overlay;
-
-    std::shared_ptr<eTexture> fWaterPark6;
-    eTextureCollection fWaterPark6Overlay;
-
-    std::shared_ptr<eTexture> fWaterPark7;
-    eTextureCollection fWaterPark7Overlay;
-
-    std::shared_ptr<eTexture> fWaterPark8;
-    eTextureCollection fWaterPark8Overlay;
-
-    std::shared_ptr<eTexture> fBench;
-    std::shared_ptr<eTexture> fFlowerGarden;
-    std::shared_ptr<eTexture> fGazebo;
-    std::shared_ptr<eTexture> fHedgeMaze;
-    std::shared_ptr<eTexture> fFishPond;
-    eTextureCollection fFishPondOverlay;
-
-    std::shared_ptr<eTexture> fDoricColumn;
-    std::shared_ptr<eTexture> fIonicColumn;
-    std::shared_ptr<eTexture> fCorinthianColumn;
-
-    std::vector<eTextureCollection> fAvenue;
-    eTextureCollection fAvenueRoad;
-
-    eTextureCollection fCommemorative;
-
-    std::shared_ptr<eTexture> fColumnConnectionH;
-    std::shared_ptr<eTexture> fColumnConnectionW;
-
-    std::shared_ptr<eTexture> fBirdBath;
-    eTextureCollection fBirdBathOverlay;
-
-    std::shared_ptr<eTexture> fShortObelisk;
-    std::shared_ptr<eTexture> fTallObelisk;
-    std::shared_ptr<eTexture> fShellGarden;
-    std::shared_ptr<eTexture> fOrrery;
-    std::shared_ptr<eTexture> fSundial;
-    std::shared_ptr<eTexture> fDolphinSculpture;
-
-    eTextureCollection fSpring;
-
-    std::shared_ptr<eTexture> fTopiary;
-
-    std::shared_ptr<eTexture> fBaths;
-    eTextureCollection fBathsOverlay;
-
-    std::shared_ptr<eTexture> fStoneCircle;
-    eTextureCollection fStoneCircleOverlay;
-
-    eTextureCollection fZeusStatues;
-    eTextureCollection fPoseidonStatues;
-    eTextureCollection fHadesStatues;
-    eTextureCollection fDemeterStatues;
-    eTextureCollection fAthenaStatues;
-    eTextureCollection fArtemisStatues;
-    eTextureCollection fApolloStatues;
-    eTextureCollection fAresStatues;
-    eTextureCollection fHephaestusStatues;
-    eTextureCollection fAphroditeStatues;
-    eTextureCollection fHermesStatues;
-    eTextureCollection fDionysusStatues;
-
-    eTextureCollection fHeraStatues;
-    eTextureCollection fAtlasStatues;
-
-    eTextureCollection fSanctuaryTiles;
-    eTextureCollection fSanctuarySpace;
-    std::shared_ptr<eTexture> fSanctuaryAltar;
-    std::shared_ptr<eTexture> fSanctuaryAltarFlipped;
-    eTextureCollection fAltarBullOverlay;
-    eTextureCollection fAltarSheepOverlay;
-    eTextureCollection fAltarGoodsOverlay;
-
-    std::shared_ptr<eTexture> fHeroHall;
-    std::shared_ptr<eTexture> fPoseidonHeroHall;
+    TextureCollection fFishery;
+    TextureCollection fFisheryBoatBuildingW;
+    TextureCollection fFisheryBoatBuildingH;
+    std::vector<TextureCollection> fFisheryOverlay;
+    TextureCollection fFisheryUnpackingOverlayTL;
+    TextureCollection fFisheryUnpackingOverlayTR;
+    TextureCollection fFisheryUnpackingOverlayBL;
+    TextureCollection fFisheryUnpackingOverlayBR;
+    TextureCollection fUrchinQuay;
+    TextureCollection fUrchinQuayUnpackingOverlayTL;
+    TextureCollection fUrchinQuayUnpackingOverlayTR;
+    TextureCollection fUrchinQuayUnpackingOverlayBL;
+    TextureCollection fUrchinQuayUnpackingOverlayBR;
+
+    std::shared_ptr<Texture> fCardingShed;
+    TextureCollection fCardingShedOverlay;
+
+    std::shared_ptr<Texture> fDairy;
+    TextureCollection fDairyOverlay;
+
+    std::shared_ptr<Texture> fGrowersLodge;
+    TextureCollection fGrowersLodgeOverlay;
+
+//    std::shared_ptr<Texture> fCorral;
+//    TextureCollection fCorralOverlay;
+
+    std::shared_ptr<Texture> fOrangeTendersLodge;
+    TextureCollection fOrangeTendersLodgeOverlay;
+
+    std::shared_ptr<Texture> fTimberMill;
+    TextureCollection fTimberMillOverlay;
+
+    std::shared_ptr<Texture> fMasonryShop;
+    TextureCollection fMasonryShopStones;
+    std::shared_ptr<Texture> fBlackMarbleWorkshop;
+    TextureCollection fBlackMarbleWorkshopStones;
+    std::vector<TextureCollection> fWaitingOverlay0;
+    std::vector<TextureCollection> fWaitingOverlay1;
+    std::vector<TextureCollection> fMasonryShopOverlay1;
+    std::vector<TextureCollection> fMasonryShopOverlay2;
+
+    std::shared_ptr<Texture> fRefinery;
+    TextureCollection fRefineryOverlay;
+
+    std::shared_ptr<Texture> fOrichalcTowerOverlay;
+
+    std::shared_ptr<Texture> fMint;
+    TextureCollection fMintOverlay;
+
+    std::shared_ptr<Texture> fFoundry;
+    TextureCollection fFoundryOverlay;
+
+    std::shared_ptr<Texture> fArtisansGuild;
+    TextureCollection fArtisansGuildOverlay;
+
+    std::shared_ptr<Texture> fOlivePress;
+    TextureCollection fOlivePressOverlay;
+
+    std::shared_ptr<Texture> fWinery;
+    TextureCollection fWineryOverlay;
+
+    std::shared_ptr<Texture> fSculptureStudio;
+    TextureCollection fSculptureStudioOverlay;
+
+    TextureCollection fTriremeWharf;
+    TextureCollection fTriremeWharfOverlay1BL;
+    TextureCollection fTriremeWharfOverlay1BR;
+    TextureCollection fTriremeWharfOverlay1TL;
+    TextureCollection fTriremeWharfOverlay1TR;
+    TextureCollection fTriremeWharfOverlay2BL;
+    TextureCollection fTriremeWharfOverlay2BR;
+    TextureCollection fTriremeWharfOverlay2TL;
+    TextureCollection fTriremeWharfOverlay2TR;
+
+    std::shared_ptr<Texture> fHorseRanch;
+    TextureCollection fHorseRanchOverlay;
+    std::shared_ptr<Texture> fHorseRanchEnclosure;
+
+    std::shared_ptr<Texture> fCorral;
+    TextureCollection fCorralOverlay;
+    std::vector<TextureCollection> fCorralCattleOverlay;
+    TextureCollection fCorralProcessingOverlay;
+
+    std::shared_ptr<Texture> fArmory;
+    TextureCollection fArmoryOverlay;
+
+    TextureCollection fGatehouseW;
+    TextureCollection fGatehouseH;
+    std::shared_ptr<Texture> fTower;
+    TextureCollection fWall;
+
+    std::shared_ptr<Texture> fMaintenanceOffice;
+    TextureCollection fMaintenanceOfficeOverlay;
+
+    std::shared_ptr<Texture> fTaxOffice;
+    TextureCollection fTaxOfficeOverlay;
+
+    std::shared_ptr<Texture> fWatchPost;
+    TextureCollection fWatchPostOverlay;
+
+    TextureCollection fWaitingMeat;
+    TextureCollection fWaitingCheese;
+    TextureCollection fWaitingWheat;
+    TextureCollection fWaitingOranges;
+    TextureCollection fWaitingWood;
+    TextureCollection fWaitingBronze;
+    TextureCollection fWaitingGrapes;
+    TextureCollection fWaitingOlives;
+    TextureCollection fWaitingArmor;
+    TextureCollection fWaitingOrichalc;
+
+    TextureCollection fAgoraRoad;
+    TextureCollection fAgora;
+
+    std::shared_ptr<Texture> fFoodVendor;
+    std::shared_ptr<Texture> fFoodVendorOverlay;
+    TextureCollection fFoodVendorOverlay2;
+
+    std::shared_ptr<Texture> fFleeceVendor;
+    std::shared_ptr<Texture> fFleeceVendorOverlay;
+    TextureCollection fFleeceVendorOverlay2;
+
+    std::shared_ptr<Texture> fOilVendor;
+    std::shared_ptr<Texture> fOilVendorOverlay;
+    TextureCollection fOilVendorOverlay2;
+
+    std::shared_ptr<Texture> fArmsVendor;
+    std::shared_ptr<Texture> fArmsVendorOverlay;
+    TextureCollection fArmsVendorOverlay2;
+
+    std::shared_ptr<Texture> fWineVendor;
+    std::shared_ptr<Texture> fWineVendorOverlay;
+    TextureCollection fWineVendorOverlay2;
+
+    std::shared_ptr<Texture> fHorseTrainer;
+    std::shared_ptr<Texture> fHorseTrainerOverlay;
+    TextureCollection fHorseTrainerOverlay2;
+
+    std::shared_ptr<Texture> fChariotVendor;
+    std::shared_ptr<Texture> fChariotVendorOverlay;
+    TextureCollection fChariotVendorOverlay2;
+
+    std::shared_ptr<Texture> fChariotFactory;
+    TextureCollection fChariotFactoryOverlay;
+    TextureCollection fChariotFactoryOverlay1;
+    std::vector<TextureCollection> fChariotFactoryHorses;
+    TextureCollection fChariotFactoryChariots;
+
+    std::shared_ptr<Texture> fWarehouseDoor;
+    TextureCollection fWarehouseOverlay;
+
+    TextureCollection fPier1;
+    std::shared_ptr<Texture> fPier2;
+    TextureCollection fPierOverlay;
+    TextureCollection fPierLoadOverlay;
+
+    std::shared_ptr<Texture> fTradingPost;
+    TextureCollection fTradingPostOverlay;
+
+    std::shared_ptr<Texture> fWarehouseEmpty;
+    TextureCollection fWarehouseUrchin;
+    TextureCollection fWarehouseFish;
+    TextureCollection fWarehouseMeat;
+    TextureCollection fWarehouseCheese;
+    TextureCollection fWarehouseCarrots;
+    TextureCollection fWarehouseOnions;
+    TextureCollection fWarehouseWheat;
+    TextureCollection fWarehouseOranges;
+    TextureCollection fWarehouseBlackMarble;
+    TextureCollection fWarehouseOrichalc;
+
+    TextureCollection fWarehouseWood;
+    TextureCollection fWarehouseBronze;
+    TextureCollection fWarehouseMarble;
+    TextureCollection fWarehouseGrapes;
+    TextureCollection fWarehouseOlives;
+    TextureCollection fWarehouseFleece;
+    TextureCollection fWarehouseArmor;
+    std::shared_ptr<Texture> fWarehouseSculpture;
+    TextureCollection fWarehouseOliveOil;
+    TextureCollection fWarehouseWine;
+
+    std::shared_ptr<Texture> fGranary;
+    TextureCollection fGranaryOverlay;
+
+    std::shared_ptr<Texture> fGranaryUrchin;
+    std::shared_ptr<Texture> fGranaryFish;
+    std::shared_ptr<Texture> fGranaryMeat;
+    std::shared_ptr<Texture> fGranaryCheese;
+    std::shared_ptr<Texture> fGranaryCarrots;
+    std::shared_ptr<Texture> fGranaryOnions;
+    std::shared_ptr<Texture> fGranaryWheat;
+    std::shared_ptr<Texture> fGranaryOranges;
+
+    TextureCollection fPark;
+    TextureCollection fLargePark;
+    TextureCollection fHugePark;
+
+    std::shared_ptr<Texture> fWaterPark1;
+    TextureCollection fWaterPark1Overlay;
+
+    std::shared_ptr<Texture> fWaterPark2;
+    TextureCollection fWaterPark2Overlay;
+
+    std::shared_ptr<Texture> fWaterPark3;
+    TextureCollection fWaterPark3Overlay;
+
+    std::shared_ptr<Texture> fWaterPark4;
+    TextureCollection fWaterPark4Overlay;
+
+    std::shared_ptr<Texture> fWaterPark5;
+    TextureCollection fWaterPark5Overlay;
+
+    std::shared_ptr<Texture> fWaterPark6;
+    TextureCollection fWaterPark6Overlay;
+
+    std::shared_ptr<Texture> fWaterPark7;
+    TextureCollection fWaterPark7Overlay;
+
+    std::shared_ptr<Texture> fWaterPark8;
+    TextureCollection fWaterPark8Overlay;
+
+    std::shared_ptr<Texture> fBench;
+    std::shared_ptr<Texture> fFlowerGarden;
+    std::shared_ptr<Texture> fGazebo;
+    std::shared_ptr<Texture> fHedgeMaze;
+    std::shared_ptr<Texture> fFishPond;
+    TextureCollection fFishPondOverlay;
+
+    std::shared_ptr<Texture> fDoricColumn;
+    std::shared_ptr<Texture> fIonicColumn;
+    std::shared_ptr<Texture> fCorinthianColumn;
+
+    std::vector<TextureCollection> fAvenue;
+    TextureCollection fAvenueRoad;
+
+    TextureCollection fCommemorative;
+
+    std::shared_ptr<Texture> fColumnConnectionH;
+    std::shared_ptr<Texture> fColumnConnectionW;
+
+    std::shared_ptr<Texture> fBirdBath;
+    TextureCollection fBirdBathOverlay;
+
+    std::shared_ptr<Texture> fShortObelisk;
+    std::shared_ptr<Texture> fTallObelisk;
+    std::shared_ptr<Texture> fShellGarden;
+    std::shared_ptr<Texture> fOrrery;
+    std::shared_ptr<Texture> fSundial;
+    std::shared_ptr<Texture> fDolphinSculpture;
+
+    TextureCollection fSpring;
+
+    std::shared_ptr<Texture> fTopiary;
+
+    std::shared_ptr<Texture> fBaths;
+    TextureCollection fBathsOverlay;
+
+    std::shared_ptr<Texture> fStoneCircle;
+    TextureCollection fStoneCircleOverlay;
+
+    TextureCollection fZeusStatues;
+    TextureCollection fPoseidonStatues;
+    TextureCollection fHadesStatues;
+    TextureCollection fDemeterStatues;
+    TextureCollection fAthenaStatues;
+    TextureCollection fArtemisStatues;
+    TextureCollection fApolloStatues;
+    TextureCollection fAresStatues;
+    TextureCollection fHephaestusStatues;
+    TextureCollection fAphroditeStatues;
+    TextureCollection fHermesStatues;
+    TextureCollection fDionysusStatues;
+
+    TextureCollection fHeraStatues;
+    TextureCollection fAtlasStatues;
+
+    TextureCollection fSanctuaryTiles;
+    TextureCollection fSanctuarySpace;
+    std::shared_ptr<Texture> fSanctuaryAltar;
+    std::shared_ptr<Texture> fSanctuaryAltarFlipped;
+    TextureCollection fAltarBullOverlay;
+    TextureCollection fAltarSheepOverlay;
+    TextureCollection fAltarGoodsOverlay;
+
+    std::shared_ptr<Texture> fHeroHall;
+    std::shared_ptr<Texture> fPoseidonHeroHall;
     // achilles, hercules, jason, odysseus,
     // perseus, theseus, bellerophon, atalanta
-    eTextureCollection fHeroStatues;
+    TextureCollection fHeroStatues;
 
-    std::shared_ptr<eTexture> fBlankMonument;
+    std::shared_ptr<Texture> fBlankMonument;
 
-    eTextureCollection fZeusMonuments;
-    eTextureCollection fPoseidonMonuments;
-    eTextureCollection fHadesMonuments;
-    eTextureCollection fDemeterMonuments;
-    eTextureCollection fAthenaMonuments;
-    eTextureCollection fArtemisMonuments;
-    eTextureCollection fApolloMonuments;
-    eTextureCollection fAresMonuments;
-    eTextureCollection fHephaestusMonuments;
-    eTextureCollection fAphroditeMonuments;
-    eTextureCollection fHermesMonuments;
-    eTextureCollection fDionysusMonuments;
+    TextureCollection fZeusMonuments;
+    TextureCollection fPoseidonMonuments;
+    TextureCollection fHadesMonuments;
+    TextureCollection fDemeterMonuments;
+    TextureCollection fAthenaMonuments;
+    TextureCollection fArtemisMonuments;
+    TextureCollection fApolloMonuments;
+    TextureCollection fAresMonuments;
+    TextureCollection fHephaestusMonuments;
+    TextureCollection fAphroditeMonuments;
+    TextureCollection fHermesMonuments;
+    TextureCollection fDionysusMonuments;
 
-    eTextureCollection fHeraMonuments;
-    eTextureCollection fAtlasMonuments;
+    TextureCollection fHeraMonuments;
+    TextureCollection fAtlasMonuments;
 
-    std::vector<eTextureCollection> fSanctuary;
-    eTextureCollection fSanctuaryFlippedSW;
-    eTextureCollection fSanctuaryFlippedNW;
-    eTextureCollection fPoseidonSanctuary;
-    eTextureCollection fPyramid;
-    eTextureCollection fPyramid2;
+    std::vector<TextureCollection> fSanctuary;
+    TextureCollection fSanctuaryFlippedSW;
+    TextureCollection fSanctuaryFlippedNW;
+    TextureCollection fPoseidonSanctuary;
+    TextureCollection fPyramid;
+    TextureCollection fPyramid2;
 
-    eTextureCollection fSanctuaryWOverlay;
-    eTextureCollection fSanctuaryHOverlay;
+    TextureCollection fSanctuaryWOverlay;
+    TextureCollection fSanctuaryHOverlay;
 
-    eTextureCollection fSanctuaryFire;
+    TextureCollection fSanctuaryFire;
 
-    eTextureCollection fFish;
-    eTextureCollection fUrchin;
+    TextureCollection fFish;
+    TextureCollection fUrchin;
 
-    std::shared_ptr<eTexture> fRoadblock;
-    eTextureCollection fBridge;
-    eTextureCollection fPoseidonBridge;
+    std::shared_ptr<Texture> fRoadblock;
+    TextureCollection fBridge;
+    TextureCollection fPoseidonBridge;
 
-    eTextureCollection fColumn1;
-    eTextureCollection fColumn2;
-    eTextureCollection fColumn3;
-    eTextureCollection fColumn4;
-    eTextureCollection fColumn5;
+    TextureCollection fColumn1;
+    TextureCollection fColumn2;
+    TextureCollection fColumn3;
+    TextureCollection fColumn4;
+    TextureCollection fColumn5;
 
-    eTextureCollection fSpawner;
-    std::shared_ptr<eTexture> fDisasterPoint;
-    std::shared_ptr<eTexture> fLandInvasionPoint;
-    std::shared_ptr<eTexture> fEntryPoint;
-    std::shared_ptr<eTexture> fExitPoint;
-    std::shared_ptr<eTexture> fRiverEntryPoint;
-    std::shared_ptr<eTexture> fRiverExitPoint;
-    std::shared_ptr<eTexture> fFishPoint;
-    std::shared_ptr<eTexture> fUrchinPoint;
-    std::shared_ptr<eTexture> fWolfPoint;
-    std::shared_ptr<eTexture> fBoarPoint;
-    std::shared_ptr<eTexture> fDeerPoint;
-    std::shared_ptr<eTexture> fMonsterPoint;
-    std::shared_ptr<eTexture> fDisembarkPoint;
+    TextureCollection fSpawner;
+    std::shared_ptr<Texture> fDisasterPoint;
+    std::shared_ptr<Texture> fLandInvasionPoint;
+    std::shared_ptr<Texture> fEntryPoint;
+    std::shared_ptr<Texture> fExitPoint;
+    std::shared_ptr<Texture> fRiverEntryPoint;
+    std::shared_ptr<Texture> fRiverExitPoint;
+    std::shared_ptr<Texture> fFishPoint;
+    std::shared_ptr<Texture> fUrchinPoint;
+    std::shared_ptr<Texture> fWolfPoint;
+    std::shared_ptr<Texture> fBoarPoint;
+    std::shared_ptr<Texture> fDeerPoint;
+    std::shared_ptr<Texture> fMonsterPoint;
+    std::shared_ptr<Texture> fDisembarkPoint;
 
-    std::shared_ptr<eTexture> fSuppliesBg;
-    std::shared_ptr<eTexture> fEliteSuppliesBg;
+    std::shared_ptr<Texture> fSuppliesBg;
+    std::shared_ptr<Texture> fEliteSuppliesBg;
 
-    std::shared_ptr<eTexture> fHasFood;
-    std::shared_ptr<eTexture> fHasFleece;
-    std::shared_ptr<eTexture> fHasOil;
-    std::shared_ptr<eTexture> fHasWine;
-    std::shared_ptr<eTexture> fHasArms;
-    std::shared_ptr<eTexture> fHasHorses;
+    std::shared_ptr<Texture> fHasFood;
+    std::shared_ptr<Texture> fHasFleece;
+    std::shared_ptr<Texture> fHasOil;
+    std::shared_ptr<Texture> fHasWine;
+    std::shared_ptr<Texture> fHasArms;
+    std::shared_ptr<Texture> fHasHorses;
 
-    std::shared_ptr<eTexture> fNHasFood;
-    std::shared_ptr<eTexture> fNHasFleece;
-    std::shared_ptr<eTexture> fNHasOil;
-    std::shared_ptr<eTexture> fNHasWine;
-    std::shared_ptr<eTexture> fNHasArms;
-    std::shared_ptr<eTexture> fNHasHorses;
+    std::shared_ptr<Texture> fNHasFood;
+    std::shared_ptr<Texture> fNHasFleece;
+    std::shared_ptr<Texture> fNHasOil;
+    std::shared_ptr<Texture> fNHasWine;
+    std::shared_ptr<Texture> fNHasArms;
+    std::shared_ptr<Texture> fNHasHorses;
 
-    eTextureCollection fHippodrome;
-    std::vector<eTextureCollection> fHippodromeSpectators;
-    std::vector<eTextureCollection> fHippodromeFeces;
-    std::vector<eTextureCollection> fHippodromeFecesStanding;
-    std::vector<eTextureCollection> fHippodromeFinishRacing;
-    std::vector<eTextureCollection> fHippodromeFinishNotRacing;
+    TextureCollection fHippodrome;
+    std::vector<TextureCollection> fHippodromeSpectators;
+    std::vector<TextureCollection> fHippodromeFeces;
+    std::vector<TextureCollection> fHippodromeFecesStanding;
+    std::vector<TextureCollection> fHippodromeFinishRacing;
+    std::vector<TextureCollection> fHippodromeFinishNotRacing;
 private:
     bool fFisheryOverlayLoaded = false;
     void loadFisheryOverlay();
@@ -726,9 +726,9 @@ private:
                           const std::vector<eSpriteData>& sd45,
                           const std::vector<eSpriteData>& sd60,
                           const std::string& name,
-                          eTextureCollection& coll);
-    void generateFlipped(const eTextureCollection& src,
-                         eTextureCollection& dst);
+                          TextureCollection& coll);
+    void generateFlipped(const TextureCollection& src,
+                         TextureCollection& dst);
 };
 
 #endif // BUILDING_TEXTURES_H

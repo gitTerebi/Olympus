@@ -5,7 +5,7 @@
 
 class eCheckBox : public eCheckableButton {
 public:
-    eCheckBox(eMainWindow* const window);
+    eCheckBox(MainWindow* const window);
 };
 
 #endif // ECHECKBOX_H

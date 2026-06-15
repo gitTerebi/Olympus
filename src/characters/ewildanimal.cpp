@@ -1,7 +1,7 @@
 #include "ewildanimal.h"
 
-#include "spawners/espawner.h"
-#include "fileIO/esavearchive.h"
+#include "spawners/spawner.h"
+#include "fileIO/save-archive.h"
 
 eWildAnimal::eWildAnimal(GameBoard& board,
                          const eCharTexs charTexs,
@@ -12,7 +12,7 @@ eWildAnimal::~eWildAnimal() {
     if(mSpawner) mSpawner->decCount();
 }
 
-void eWildAnimal::serializeFields(eSaveArchive& ar) {
+void eWildAnimal::serializeFields(SaveArchive& ar) {
     Animal::serializeFields(ar);
     ar.bannerField("spawner", &getBoard(), mSpawner);
 }

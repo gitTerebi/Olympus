@@ -1,5 +1,5 @@
 #include "ai-district.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 
@@ -89,8 +89,8 @@
 #include "buildings/ecolumn.h"
 #include "buildings/epark.h"
 
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 
 template <class T>
 bool gBuildVendor(GameBoard& brd,
@@ -1005,26 +1005,26 @@ void AIDistrict::addBuilding(const AIBuilding& a) {
     fBuildings.push_back(a);
 }
 
-void AIDistrict::serialize(eSaveArchive& ar) {
+void AIDistrict::serialize(SaveArchive& ar) {
     ar.arrayField("buildings", fBuildings,
-        [](eSaveArchive& itemAr, AIBuilding& b) { b.serialize(itemAr); });
+        [](SaveArchive& itemAr, AIBuilding& b) { b.serialize(itemAr); });
 
     ar.arrayField("readyConditions", fReadyConditions,
-        [](eSaveArchive& itemAr, eDistrictReadyCondition& c) { c.serialize(itemAr); });
+        [](SaveArchive& itemAr, eDistrictReadyCondition& c) { c.serialize(itemAr); });
 }
 
 std::string eDistrictReadyCondition::sName(const eType type) {
     switch(type) {
     case eType::districtResourceCount:
-        return eLanguage::text("district_resource_count_type");
+        return Language::text("district_resource_count_type");
     case eType::totalResourceCount:
-        return eLanguage::text("total_resource_count_type");
+        return Language::text("total_resource_count_type");
     case eType::districtPopulation:
-        return eLanguage::text("district_population_type");
+        return Language::text("district_population_type");
     case eType::totalPopulation:
-        return eLanguage::text("total_population_type");
+        return Language::text("total_population_type");
     case eType::sanctuaryReady:
-        return eLanguage::text("sanctuary_ready_type");
+        return Language::text("sanctuary_ready_type");
     case eType::count:
         return "";
     }
@@ -1035,19 +1035,19 @@ std::string eDistrictReadyCondition::name() const {
     std::string result;
     switch(fType) {
     case eType::districtResourceCount:
-        result = eLanguage::text("district_resource_count");
+        result = Language::text("district_resource_count");
         break;
     case eType::totalResourceCount:
-        result = eLanguage::text("total_resource_count");
+        result = Language::text("total_resource_count");
         break;
     case eType::districtPopulation:
-        result = eLanguage::text("district_population");
+        result = Language::text("district_population");
         break;
     case eType::totalPopulation:
-        result = eLanguage::text("total_population");
+        result = Language::text("total_population");
         break;
     case eType::sanctuaryReady:
-        result = eLanguage::text("sanctuary_ready");
+        result = Language::text("sanctuary_ready");
         break;
     case eType::count:
         return "";
@@ -1055,15 +1055,15 @@ std::string eDistrictReadyCondition::name() const {
     switch(fType) {
     case eType::districtResourceCount:
     case eType::totalResourceCount:
-        eStringHelpers::replace(result, "%1", eResourceTypeHelpers::typeName(fResource));
-        eStringHelpers::replace(result, "%2", std::to_string(fValue));
+        StringHelpers::replace(result, "%1", eResourceTypeHelpers::typeName(fResource));
+        StringHelpers::replace(result, "%2", std::to_string(fValue));
         break;
     case eType::districtPopulation:
     case eType::totalPopulation:
-        eStringHelpers::replace(result, "%1", std::to_string(fValue));
+        StringHelpers::replace(result, "%1", std::to_string(fValue));
         break;
     case eType::sanctuaryReady:
-        eStringHelpers::replace(result, "%1", God::sGodName(fSanctuary));
+        StringHelpers::replace(result, "%1", God::sGodName(fSanctuary));
         break;
     case eType::count:
         return "";
@@ -1071,7 +1071,7 @@ std::string eDistrictReadyCondition::name() const {
     return result;
 }
 
-void eDistrictReadyCondition::serialize(eSaveArchive& ar) {
+void eDistrictReadyCondition::serialize(SaveArchive& ar) {
     ar.field("fType", fType);
     ar.field("fResource", fResource);
     ar.field("fSanctuary", fSanctuary);

@@ -1,11 +1,11 @@
-#ifndef EVECTORHELPERS_H
-#define EVECTORHELPERS_H
+#ifndef VECTOR_HELPERS_H
+#define VECTOR_HELPERS_H
 
 #include <vector>
 #include <set>
 #include <algorithm>
 
-namespace eVectorHelpers {
+namespace VectorHelpers {
     template <typename T>
     bool contains(const std::set<T>& v, const T& t) {
         const auto it = std::find(v.begin(), v.end(), t);
@@ -61,4 +61,4 @@ namespace eVectorHelpers {
     }
 };
 
-#endif // EVECTORHELPERS_H
+#endif // VECTOR_HELPERS_H

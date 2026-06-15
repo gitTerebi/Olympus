@@ -7,10 +7,10 @@
 #include "../ecityeventvalue.h"
 #include "../gods/egodeventvalue.h"
 
-struct eReason;
+struct Reason;
 struct eCityRequest;
 struct eEventData;
-class eSaveArchive;
+class SaveArchive;
 
 enum class RequestedResourcesType {
     tribute,
@@ -63,7 +63,7 @@ public:
     int requestId() const { return mRequestId; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     enum class eResponse {
         dispatch,
@@ -81,7 +81,7 @@ private:
     void addPostponeButton(GameBoard& board, eEventData& ed);
     void addRefuseButton(GameBoard& board, eEventData& ed);
     void addRequestToSidePanel(GameBoard& board);
-    void finished(eEventTrigger& t, const eReason& r);
+    void finished(eEventTrigger& t, const Reason& r);
     void advanceToNextStep(GameBoard& board);
     eDate complyDate() const;
 

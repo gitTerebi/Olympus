@@ -6,7 +6,7 @@
 
 class SoldierAction;
 class SoldierBanner;
-class eSaveArchive;
+class SaveArchive;
 
 class eSoldier : public eFightingPatroler,
                  public eFightingCharacter {
@@ -24,7 +24,7 @@ public:
     SoldierBanner* banner() const;
     void setBanner(SoldierBanner* const b);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdptr<SoldierBanner> mBanner;
 };

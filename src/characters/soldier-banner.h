@@ -6,7 +6,7 @@
 
 #include "pointers/eobject.h"
 #include "pointers/estdpointer.h"
-#include "fileIO/estreams.h"
+#include "fileIO/streams.h"
 #include "engine/ecityid.h"
 
 class eSoldier;
@@ -15,7 +15,7 @@ class eBuilding;
 class GameBoard;
 class eTile;
 class ePalace;
-class eSaveArchive;
+class SaveArchive;
 enum class eCharacterType;
 enum class eOrientation;
 
@@ -150,7 +150,7 @@ public:
     const std::string& name() const { return mName; }
     void setName(const std::string& n) { mName = n; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     bool nearestSoldier(const int fromX, const int fromY,
                         int& toX, int& toY) const;
@@ -217,7 +217,7 @@ public:
     static std::vector<eTile*> sFixedPalaceBannerPathTiles(
             const ePalace& palace);
 protected:
-    void serializeFields(eSaveArchive& ar);
+    void serializeFields(SaveArchive& ar);
 private:
     GameBoard& board() const;
     void updatePlaces();

@@ -5,7 +5,7 @@
 
 class eLineEdit : public eFramedLabel {
 public:
-    eLineEdit(eMainWindow* const window);
+    eLineEdit(MainWindow* const window);
 
     void setChangeAction(const eAction a);
 

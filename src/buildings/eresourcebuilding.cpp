@@ -1,11 +1,11 @@
 #include "eresourcebuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "textures/game-textures.h"
 #include "textures/building-textures.h"
 #include "engine/game-board.h"
 #include "engine/edate.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include <algorithm>
 
@@ -24,13 +24,13 @@ eBuildingType resourceTypeToBuildingType(const eResourceBuildingType r) {
 int resourceTypeToRipePeriod(const eResourceBuildingType r) {
     switch(r) {
     case eResourceBuildingType::oliveTree:
-        return eNumbers::sOliveTreeRipePeriod;
+        return Numbers::sOliveTreeRipePeriod;
     case eResourceBuildingType::vine:
-        return eNumbers::sVineRipePeriod;
+        return Numbers::sVineRipePeriod;
     case eResourceBuildingType::orangeTree:
-        return eNumbers::sOrangeTreeRipePeriod;
+        return Numbers::sOrangeTreeRipePeriod;
     }
-    return eNumbers::sOliveTreeRipePeriod;
+    return Numbers::sOliveTreeRipePeriod;
 }
 
 static bool isOliveHarvestMonth(const eMonth m) {
@@ -69,7 +69,7 @@ eResourceBuilding::eResourceBuilding(
     }
 }
 
-std::shared_ptr<eTexture> eResourceBuilding::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eResourceBuilding::getTexture(const eTileSize size) const {
     const auto& texs = GameTextures::buildings();
     const int sizeId = static_cast<int>(size);
     const auto& colls = texs[sizeId];
@@ -81,7 +81,7 @@ std::shared_ptr<eTexture> eResourceBuilding::getTexture(const eTileSize size) co
     case eResourceBuildingType::orangeTree:
         return colls.fOrangeTree.getTexture(mRipe);
     }
-    return std::shared_ptr<eTexture>();
+    return std::shared_ptr<Texture>();
 }
 
 void eResourceBuilding::erase() {
@@ -138,19 +138,19 @@ void eResourceBuilding::timeChanged(const int by) {
     if(mType == eResourceBuildingType::oliveTree && mRipe >= 5) {
         return;
     }
-    const double mult = eNumbers::sTreeVineFullyRipePeriodMultiplier;
+    const double mult = Numbers::sTreeVineFullyRipePeriodMultiplier;
     int wait = mRipe >= 5 ? mult*mRipePeriod : mRipePeriod;
     if(mSanctuary || blessed()) {
         if(mRipe >= 5) {
-            wait *= eNumbers::sTreeVineBlessedFullyRipePeriodMultiplier;
+            wait *= Numbers::sTreeVineBlessedFullyRipePeriodMultiplier;
         } else {
-            wait *= eNumbers::sTreeVineBlessedRipePeriodMultiplier;
+            wait *= Numbers::sTreeVineBlessedRipePeriodMultiplier;
         }
     } else if(cursed()) {
         if(mRipe >= 5) {
-            wait *= eNumbers::sTreeVineCursedFullyRipePeriodMultiplier;
+            wait *= Numbers::sTreeVineCursedFullyRipePeriodMultiplier;
         } else {
-            wait *= eNumbers::sTreeVineCursedRipePeriodMultiplier;
+            wait *= Numbers::sTreeVineCursedRipePeriodMultiplier;
         }
     }
     if((mWorkedOn || mRipe >= 5) && mNextRipe > wait) {
@@ -191,7 +191,7 @@ void eResourceBuilding::nextMonth() {
     }
 }
 
-void eResourceBuilding::serializeFields(eSaveArchive& ar) {
+void eResourceBuilding::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.field("sanctuary", mSanctuary);
     ar.field("workedOn", mWorkedOn);

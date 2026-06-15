@@ -1,10 +1,10 @@
 #include "egodtraderesumesevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 eGodTradeResumesEvent::eGodTradeResumesEvent(
         const eCityId cid,
@@ -30,10 +30,10 @@ void eGodTradeResumesEvent::trigger() {
 }
 
 std::string eGodTradeResumesEvent::longName() const {
-    return eLanguage::text("god_trade_resumes_long_name");
+    return Language::text("god_trade_resumes_long_name");
 }
 
-void eGodTradeResumesEvent::serializeFields(eSaveArchive& ar) {
+void eGodTradeResumesEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.field("god", mGod, GodType::zeus);
 }

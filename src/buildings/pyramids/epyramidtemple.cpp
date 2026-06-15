@@ -23,7 +23,7 @@ ePyramidTemple::ePyramidTemple(ePyramid* const pyramid,
     GameTextures::loadSanctuary();
 }
 
-stdsptr<eTexture> ePyramidTemple::getTexture(const eTileSize size) const {
+stdsptr<Texture> ePyramidTemple::getTexture(const eTileSize size) const {
     const int p = 3 - maxProgress() + progress();
     if(p <= 0) return nullptr;
     const int sizeId = static_cast<int>(size);

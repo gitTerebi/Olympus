@@ -11,7 +11,7 @@ public:
                 GameBoard& board,
                 const eCityId cid);
 
-    stdsptr<eTexture> getTexture(const eTileSize size) const;
+    stdsptr<Texture> getTexture(const eTileSize size) const;
 
     eAgoraBase* agora() const { return mAgora.get(); }
 private:

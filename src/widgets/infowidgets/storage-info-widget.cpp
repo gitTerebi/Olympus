@@ -2,13 +2,13 @@
 
 #include "engine/game-board.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "../ebutton.h"
 
 #include "../equestionwidget.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include <algorithm>
 
@@ -133,10 +133,10 @@ public:
                 changed(); });
 
             b->setFontSizeS();
-            b->addValue(eLanguage::zeusText(130, 1)); // don't accept
-            b->addValue(eLanguage::zeusText(130, 0)); // accept
-            b->addValue(eLanguage::zeusText(130, 2)); // get
-            b->addValue(eLanguage::zeusText(130, 3)); // empty
+            b->addValue(Language::zeusText(130, 1)); // don't accept
+            b->addValue(Language::zeusText(130, 0)); // accept
+            b->addValue(Language::zeusText(130, 2)); // get
+            b->addValue(Language::zeusText(130, 3)); // empty
             b->fitContent();
             b->setHeight(rowHeight);
 
@@ -182,9 +182,9 @@ public:
                 std::string msg = "Delete all " + typeName + "?";
                 q->initialize("Confirm Delete", msg, acceptA, nullptr);
                 window()->execDialog(q);
-                q->align(eAlignment::center); });
+                q->align(Alignment::center); });
             deleteW->addWidget(del);
-            del->align(eAlignment::left);
+            del->align(Alignment::left);
 
             countW->addWidget(count);
             iconsW->addWidget(icon);
@@ -192,9 +192,9 @@ public:
             buttonsW->addWidget(b);
             spinsW->addWidget(s);
 
-            icon->align(eAlignment::left);
-            n->align(eAlignment::left);
-            b->align(eAlignment::hcenter);
+            icon->align(Alignment::left);
+            n->align(Alignment::left);
+            b->align(Alignment::hcenter);
 
             if (static_cast<bool>(get & type))
             {
@@ -226,7 +226,7 @@ public:
             const auto b = new FramedButton(window());
             b->setUnderline(false);
             b->setFontSizeS();
-            b->setText(eLanguage::zeusText(130, 1));
+            b->setText(Language::zeusText(130, 1));
             b->setDarkFontColor();
             b->resize(w, h);
             b->setPressAction([changed, buttons]()
@@ -241,7 +241,7 @@ public:
             spacerB->resize(1, mult * 8);
             buttonsW->addWidget(spacerB);
             buttonsW->addWidget(b);
-            b->align(eAlignment::hcenter);
+            b->align(Alignment::hcenter);
 
             const auto spacerS = new eWidget(window());
             spacerS->resize(1, mult * 8);
@@ -325,7 +325,7 @@ public:
 };
 
 eStorageInfoWidget::eStorageInfoWidget(
-    eMainWindow *const window, eMainWidget *const mw) : eEmployingBuildingInfoWidget(window, mw, true, false) {}
+    MainWindow *const window, eMainWidget *const mw) : eEmployingBuildingInfoWidget(window, mw, true, false) {}
 
 void eStorageInfoWidget::initialize(eStorageBuilding *const stor)
 {
@@ -359,7 +359,7 @@ void eStorageInfoWidget::initialize(eStorageBuilding *const stor)
     r->initialize(stor, types, get, empty, accept,
                   mButtons, mSpinBoxes, maxCount, changed);
     stWid->addWidget(r);
-    r->align(eAlignment::center);
+    r->align(Alignment::center);
 }
 
 void eStorageInfoWidget::get(eResourceType &get,

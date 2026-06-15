@@ -6,7 +6,7 @@
 #include "characters/eenlistedforces.h"
 #include "engine/world-city.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class ArmyEventBase : public eGameEvent {
 public:
@@ -24,7 +24,7 @@ protected:
 
     void removeArmyEvent();
 
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 
     eEnlistedForces mForces;
     stdsptr<WorldCity> mCity;

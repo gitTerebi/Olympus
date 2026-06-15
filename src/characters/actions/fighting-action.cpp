@@ -3,21 +3,21 @@
 #include <math.h>
 #include <cstdio>
 #include <algorithm>
-#include "erand.h"
+#include "rand.h"
 
 
 #include "characters/actions/ewaitaction.h"
 #include "characters/efightingcharacter.h"
 #include "emovetoaction.h"
 #include "buildings/ebuilding.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "audio/sounds.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "vec2.h"
 
-#include "missiles/erockmissile.h"
-#include "missiles/earrowmissile.h"
-#include "missiles/espearmissile.h"
+#include "missiles/rock-missile.h"
+#include "missiles/arrow-missile.h"
+#include "missiles/spear-missile.h"
 #include "combat-timing.h"
 #include "characters/soldier-banner.h"
 
@@ -211,7 +211,7 @@ double AttackTarget::absY() const {
     return 0.;
 }
 
-void AttackTarget::serialize(eSaveArchive& ar, GameBoard& board) {
+void AttackTarget::serialize(SaveArchive& ar, GameBoard& board) {
     ar.characterField("character", &board, mC);
     ar.buildingField("building", &board, mB);
 }
@@ -273,7 +273,7 @@ void FightingAction::sSignalBeingAttack(eCharacter * const attacked,
     const int attx = att->x();
     const int atty = att->y();
     const auto atid = attacked->teamId();
-    const int range = eNumbers::sSoldierBeingAttackedCallRange;
+    const int range = Numbers::sSoldierBeingAttackedCallRange;
     for(int ii = -range; ii <= range; ii++) {
         for(int jj = -range; jj <= range; jj++) {
             const auto tt = brd.tile(attx + ii, atty + jj);
@@ -338,14 +338,14 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                     ct == eCharacterType::phoenicianArcher ||
                     ct == eCharacterType::persianArcher ||
                     ct == eCharacterType::trireme) {
-                    eMissile::sCreate<eArrowMissile>(brd, tx, ty, 0.5,
+                    Missile::sCreate<ArrowMissile>(brd, tx, ty, 0.5,
                                                      ttx, tty, 0.5, 0.25*dist);
                 } else if(ct == eCharacterType::trojanSpearthrower ||
                           ct == eCharacterType::oceanidSpearthrower) {
-                    eMissile::sCreate<eSpearMissile>(brd, tx, ty, 0.5,
+                    Missile::sCreate<SpearMissile>(brd, tx, ty, 0.5,
                                                      ttx, tty, 0.5, 0.1*dist);
                 } else {
-                    eMissile::sCreate<eRockMissile>(brd, tx, ty, 0.5,
+                    Missile::sCreate<RockMissile>(brd, tx, ty, 0.5,
                                                     ttx, tty, 0.5, 0.5*dist);
                 }
                 if(!mAttackTarget.dead()) {
@@ -358,7 +358,7 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                         d = b->takeDamage(att);
                         if(!d && !b->isOnFire() &&
                            b->hp() <= eBuilding::sMaxHp(b->type()) * 0.5 &&
-                           eRand::rand() % 2 == 0) {
+                           Rand::rand() % 2 == 0) {
                             b->setOnFire(true);
                             d = true;
                         }
@@ -395,7 +395,7 @@ LookForEnemyState FightingAction::lookForEnemy(const int by) {
                     d = b->takeDamage(per);
                     if(!d && !b->isOnFire() &&
                        b->hp() <= eBuilding::sMaxHp(b->type()) * 0.5 &&
-                       eRand::rand() % 2 == 0) {
+                       Rand::rand() % 2 == 0) {
                         b->setOnFire(true);
                         d = true;
                     }
@@ -872,7 +872,7 @@ void FightingAction::beingAttacked(int ttx, int tty) {
     goTo(ttx, tty, 1);
 }
 
-void FightingAction::serializeFields(eSaveArchive& ar) {
+void FightingAction::serializeFields(SaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     ar.field("angle", mAngle);
     ar.field("missile", mMissile);
@@ -882,7 +882,7 @@ void FightingAction::serializeFields(eSaveArchive& ar) {
     ar.field("attackTime", mAttackTime);
     ar.field("attack", mAttack);
     ar.field("attackRanged", mAttackRanged, false);
-    ar.archiveField("attackTarget", [this](eSaveArchive& targetAr) {
+    ar.archiveField("attackTarget", [this](SaveArchive& targetAr) {
         mAttackTarget.serialize(targetAr, board());
     });
     ar.field("savedAction", mSavedAction);

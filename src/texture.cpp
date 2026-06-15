@@ -1,14 +1,14 @@
-#include "etexture.h"
+#include "texture.h"
 
 #include <algorithm>
 
-eTexture::eTexture() {}
+Texture::Texture() {}
 
-eTexture::~eTexture() {
+Texture::~Texture() {
     reset();
 }
 
-void eTexture::reset() {
+void Texture::reset() {
     if(mTex) SDL_DestroyTexture(mTex);
     mTex = nullptr;
     mWidth = 0;
@@ -19,7 +19,7 @@ void eTexture::reset() {
     mColorB = 255;
 }
 
-bool eTexture::create(SDL_Renderer* const r,
+bool Texture::create(SDL_Renderer* const r,
                       const int width, const int height) {
     reset();
     mTex = SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888,
@@ -31,11 +31,11 @@ bool eTexture::create(SDL_Renderer* const r,
     return true;
 }
 
-void eTexture::setAsRenderTarget(SDL_Renderer* const r) {
+void Texture::setAsRenderTarget(SDL_Renderer* const r) {
     SDL_SetRenderTarget(r, mTex);
 }
 
-bool eTexture::load(SDL_Renderer* const r, const std::string& path) {
+bool Texture::load(SDL_Renderer* const r, const std::string& path) {
     reset();
     const auto surf = IMG_Load(path.c_str());
     if(!surf) {
@@ -46,7 +46,7 @@ bool eTexture::load(SDL_Renderer* const r, const std::string& path) {
     return load(r, surf);
 }
 
-bool eTexture::load(SDL_Renderer* const r,
+bool Texture::load(SDL_Renderer* const r,
                     SDL_Surface* const surf) {
     reset();
     mTex = SDL_CreateTextureFromSurface(r, surf);
@@ -135,12 +135,12 @@ std::vector<std::string> textLines(const std::string& text,
     return result;
 }
 
-bool eTexture::loadText(SDL_Renderer* const r,
+bool Texture::loadText(SDL_Renderer* const r,
                         const std::string& text,
-                        const eFontColor color,
+                        const FontColor color,
                         TTF_Font& font,
                         const int width,
-                        const eAlignment align) {
+                        const Alignment align) {
     SDL_Texture* const prevTarget = SDL_GetRenderTarget(r);
     reset();
 
@@ -152,11 +152,11 @@ bool eTexture::loadText(SDL_Renderer* const r,
             const auto lines = textLines(text, font, width, true);
             mWidth = 0;
             mHeight = 0;
-            std::vector<std::shared_ptr<eTexture>> texs;
+            std::vector<std::shared_ptr<Texture>> texs;
             for(const auto& l : lines) {
                 auto& tex = texs.emplace_back();
                 if(!l.empty()) {
-                    tex = std::make_shared<eTexture>();
+                    tex = std::make_shared<Texture>();
                     tex->loadText(r, l, color, font);
                     mHeight += tex->height();
                     mWidth = std::max(mWidth, tex->width());
@@ -192,7 +192,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
                 for(const auto& tex : texs) {
                     if(tex) {
                         const int w = tex->width();
-                        const int x = align == eAlignment::hcenter ?
+                        const int x = align == Alignment::hcenter ?
                                           (mWidth - w)/2 : 0;
                         const SDL_Rect dstRect{x, y, w, tex->height()};
                         SDL_RenderCopy(r, tex->mTex, NULL, &dstRect);
@@ -211,7 +211,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
 
     SDL_Color col1;
     SDL_Color col2;
-    eFontColorHelpers::colors(color, col1, col2);
+    FontColorHelpers::colors(color, col1, col2);
 
     int w;
     int h;
@@ -268,18 +268,18 @@ bool eTexture::loadText(SDL_Renderer* const r,
     return true;
 }
 
-bool eTexture::loadText(SDL_Renderer* const r,
+bool Texture::loadText(SDL_Renderer* const r,
                         const std::string& text,
-                        const eFontColor color,
+                        const FontColor color,
                         const eFont& font,
                         const int width,
-                        const eAlignment align) {
+                        const Alignment align) {
     const auto ttf = eFonts::requestFont(font);
     if(!ttf) return false;
     return loadText(r, text, color, *ttf, width, align);
 }
 
-void eTexture::render(SDL_Renderer* const r,
+void Texture::render(SDL_Renderer* const r,
                       const SDL_Rect& srcRect,
                       const SDL_Rect& dstRect,
                       const bool flipped) const {
@@ -302,7 +302,7 @@ void eTexture::render(SDL_Renderer* const r,
     }
 }
 
-void eTexture::render(SDL_Renderer* const r,
+void Texture::render(SDL_Renderer* const r,
                       const int x, const int y,
                       const bool flipped) const {
     const int sx = mFlipTex ? mFlipTex->x() : mX;
@@ -314,7 +314,7 @@ void eTexture::render(SDL_Renderer* const r,
     render(r, srcRect, dstRect, flipped);
 }
 
-void eTexture::renderRelPortion(SDL_Renderer* const r,
+void Texture::renderRelPortion(SDL_Renderer* const r,
                                 const int dstX,
                                 const int dstY,
                                 const int srcX,
@@ -359,18 +359,18 @@ void eTexture::renderRelPortion(SDL_Renderer* const r,
     render(r, srcRect, dstRect, flipped);
 }
 
-void eTexture::setOffset(const int x, const int y) {
+void Texture::setOffset(const int x, const int y) {
     mOffsetX = x;
     mOffsetY = y;
 }
 
-bool eTexture::isNull() const {
+bool Texture::isNull() const {
     if(mFlipTex) return mFlipTex->isNull();
     else if(mParentTex) mParentTex->isNull();
     return mWidth <= 0 || mHeight <= 0;
 }
 
-void eTexture::setAlpha(const Uint8 alpha) {
+void Texture::setAlpha(const Uint8 alpha) {
     if(mFlipTex) mFlipTex->setAlpha(alpha);
     else if(mParentTex) mParentTex->setAlpha(alpha);
     else if(mTex && mAlpha != alpha) {
@@ -379,11 +379,11 @@ void eTexture::setAlpha(const Uint8 alpha) {
     }
 }
 
-void eTexture::clearAlphaMod() {
+void Texture::clearAlphaMod() {
     setAlpha(255);
 }
 
-void eTexture::setColorMod(const Uint8 r, const Uint8 g, const Uint8 b) {
+void Texture::setColorMod(const Uint8 r, const Uint8 g, const Uint8 b) {
     if(mFlipTex) mFlipTex->setColorMod(r, g, b);
     else if(mParentTex) mParentTex->setColorMod(r, g, b);
     else if(mTex && (mColorR != r || mColorG != g || mColorB != b)) {
@@ -394,11 +394,11 @@ void eTexture::setColorMod(const Uint8 r, const Uint8 g, const Uint8 b) {
     }
 }
 
-void eTexture::clearColorMod() {
+void Texture::clearColorMod() {
     setColorMod(255, 255, 255);
 }
 
-void eTexture::setFlipTex(const std::shared_ptr<eTexture>& tex) {
+void Texture::setFlipTex(const std::shared_ptr<Texture>& tex) {
     mFlipTex = tex;
     mX = mFlipTex->x();
     mY = mFlipTex->y();
@@ -406,8 +406,8 @@ void eTexture::setFlipTex(const std::shared_ptr<eTexture>& tex) {
     mHeight = mFlipTex->height();
 }
 
-void eTexture::setParentTexture(const SDL_Rect& rect,
-                                const std::shared_ptr<eTexture>& tex) {
+void Texture::setParentTexture(const SDL_Rect& rect,
+                                const std::shared_ptr<Texture>& tex) {
     mParentTex = tex;
     mX = rect.x;
     mY = rect.y;

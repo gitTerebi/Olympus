@@ -1,16 +1,16 @@
 #include "eattackcityaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eAttackCityAction::eAttackCityAction(eCharacter* const c) :
     eDefendAttackCityAction(c, eCharActionType::attackCityAction) {
     const auto ctype = c->type();
     if(ctype == eCharacterType::ares) {
-        setMaxKilled(eNumbers::sAttackCityAresMaxKilled);
+        setMaxKilled(Numbers::sAttackCityAresMaxKilled);
     } else {
-        setMaxKilled(eNumbers::sAttackCityMaxKilled);
+        setMaxKilled(Numbers::sAttackCityMaxKilled);
     }
 }
 
@@ -19,7 +19,7 @@ void eAttackCityAction::increment(const int by) {
     const auto at = c->actionType();
     if(at == eCharacterActionType::walk) {
         const int lookForGodCheck = 1000;
-        const int godFightRange = eNumbers::sGodAttackGodFightRange;
+        const int godFightRange = Numbers::sGodAttackGodFightRange;
         lookForGodAttack(by, mLookForGod, lookForGodCheck, godFightRange);
     }
 
@@ -73,7 +73,7 @@ bool eAttackCityAction::decide() {
     return true;
 }
 
-void eAttackCityAction::serializeFields(eSaveArchive& ar) {
+void eAttackCityAction::serializeFields(SaveArchive& ar) {
     eDefendAttackCityAction::serializeFields(ar);
     ar.field("lookForGod", mLookForGod);
 }

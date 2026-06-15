@@ -1,21 +1,21 @@
-﻿#include "epathfindtask.h"
+﻿#include "path-find-task.h"
 
 #include "engine/epathfinder.h"
 #include "engine/eknownendpathfinder.h"
 #include "characters/actions/walkable/walkable-object.h"
-#include "ewalkablehelpers.h"
+#include "walkable-helpers.h"
 
 using eTileDistance = std::function<int(eTileBase* const)>;
 eTileDistance tileDist(const stdsptr<WalkableObject>& w,
                        const eTileDistance& d) {
     if(!d && w && w->rootType() == eWalkableObjectType::roadAvenue) {
-        return eWalkableHelpers::sRoadAvenueTileDistance;
+        return WalkableHelpers::sRoadAvenueTileDistance;
     } else {
         return d;
     }
 }
 
-ePathFindTask::ePathFindTask(const eCityId cid,
+PathFindTask::PathFindTask(const eCityId cid,
                              const SDL_Rect& tileBRect,
                              const eTileGetter& startTile,
                              const stdsptr<WalkableObject>& tileWalkable,
@@ -40,7 +40,7 @@ ePathFindTask::ePathFindTask(const eCityId cid,
     mDistance(tileDist(tileWalkable, distance)),
     mFindAll(findAll) {}
 
-void ePathFindTask::run(eThreadBoard& data) {
+void PathFindTask::run(eThreadBoard& data) {
     if(mEndTile) {
         const auto endT = mEndTile(data);
         eKnownEndPathFinder pf0(
@@ -60,13 +60,13 @@ void ePathFindTask::run(eThreadBoard& data) {
     }
 }
 
-void ePathFindTask::finish() {
+void PathFindTask::finish() {
     if(mFoundFunc) mFoundFunc(mFound);
     if(mR) mFinish(mPath);
     else mFailFunc();
 }
 
-void ePathFindTask::runImpl(eThreadBoard& data, ePathFinderBase& pf0) {
+void PathFindTask::runImpl(eThreadBoard& data, ePathFinderBase& pf0) {
     if(mFindAll) pf0.setMode(ePathFinderMode::findAll);
     const auto startT = mStartTile(data);
     const bool r = pf0.findPath(mTileBRect,

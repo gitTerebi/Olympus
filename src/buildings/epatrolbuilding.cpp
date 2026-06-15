@@ -40,24 +40,24 @@ ePatrolBuilding::ePatrolBuilding(GameBoard& board,
 
 }
 
-std::shared_ptr<eTexture> ePatrolBuilding::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> ePatrolBuilding::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     return blds[sizeId].*mBaseTex;
 }
 
-std::vector<eOverlay> ePatrolBuilding::getOverlays(const eTileSize size) const {
+std::vector<Overlay> ePatrolBuilding::getOverlays(const eTileSize size) const {
     if(!mOverlays) return {};
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].*mOverlays;
     const int frame = std::round(mOverlaySpeed * textureTime());
     const int texId = frame % coll.size();
-    eOverlay o;
+    Overlay o;
     o.fTex = coll.getTexture(texId);
     o.fX = mOverlayX;
     o.fY = mOverlayY;
-    return std::vector<eOverlay>({o});
+    return std::vector<Overlay>({o});
 }
 
 void ePatrolBuilding::setOverlaySpeed(const double s) {

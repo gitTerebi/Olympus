@@ -5,7 +5,7 @@
 
 #include <functional>
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eSacrifice {
     none,
@@ -18,9 +18,9 @@ class eTempleAltarBuilding : public eSanctBuilding {
 public:
     eTempleAltarBuilding(GameBoard& board, const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize) const override { return nullptr; }
+    std::shared_ptr<Texture> getTexture(const eTileSize) const override { return nullptr; }
 
-    std::vector<eOverlay>
+    std::vector<Overlay>
     getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
@@ -35,7 +35,7 @@ public:
     int id() const { return mId; }
     void setId(const int i) { mId = i % 2; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eSacrifice mSacrifice = eSacrifice::none;
     int mId = 0;

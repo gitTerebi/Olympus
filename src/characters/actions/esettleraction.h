@@ -3,7 +3,7 @@
 
 #include "eactionwithcomeback.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eSettlerActionStage {
     idle, findingHouse, goingBack, leaving
@@ -21,7 +21,7 @@ public:
     void setInitialWait(const int w);
     int nPeople() const { return mNPeople; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
     void findHouse();
     void goBack2();
@@ -50,7 +50,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -76,7 +76,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

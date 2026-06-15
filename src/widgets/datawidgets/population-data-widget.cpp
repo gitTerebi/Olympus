@@ -6,11 +6,11 @@
 #include "widgets/elinewidget.h"
 #include "widgets/elayouthelpers.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 void PopulationDataWidget::initialize() {
     mSeeSupplies = new eViewModeButton(
-                     eLanguage::zeusText(14, 1),
+                     Language::zeusText(14, 1),
                      eViewMode::supplies,
                      window());
     addViewButton(mSeeSupplies);
@@ -29,7 +29,7 @@ void PopulationDataWidget::initialize() {
         const auto hfor1 = new eLabel(window());
         hfor1->setFontSizeXS();
         hfor1->setNoPadding();
-        hfor1->setText(eLanguage::zeusText(55, 8)); // housing for
+        hfor1->setText(Language::zeusText(55, 8)); // housing for
         hfor1->fitContent();
         cw1->addWidget(hfor1);
 
@@ -42,7 +42,7 @@ void PopulationDataWidget::initialize() {
         const auto hfor2 = new eLabel(window());
         hfor2->setFontSizeXS();
         hfor2->setNoPadding();
-        hfor2->setText(eLanguage::zeusText(55, 9)); // more people
+        hfor2->setText(Language::zeusText(55, 9)); // more people
         hfor2->fitContent();
         cw1->addWidget(hfor2);
 
@@ -50,9 +50,9 @@ void PopulationDataWidget::initialize() {
         cw1->fitContent();
         cw1->setWidth(iw);
 
-        hfor1->align(eAlignment::hcenter);
-        mVacLabel->align(eAlignment::hcenter);
-        hfor2->align(eAlignment::hcenter);
+        hfor1->align(Alignment::hcenter);
+        mVacLabel->align(Alignment::hcenter);
+        hfor2->align(Alignment::hcenter);
 
         inner->addWidget(cw1);
     }
@@ -67,14 +67,14 @@ void PopulationDataWidget::initialize() {
     {
         mPeopleDirection = new eLabel(window());
         mPeopleDirection->setWrapWidth(iw);
-        mPeopleDirection->setWrapAlignment(eAlignment::hcenter);
+        mPeopleDirection->setWrapAlignment(Alignment::hcenter);
         mPeopleDirection->setNoPadding();
         mPeopleDirection->setFontSizeXS();
-        mPeopleDirection->setText(eLanguage::zeusText(55, 20)); // people wish to come
+        mPeopleDirection->setText(Language::zeusText(55, 20)); // people wish to come
 
         inner->addWidget(mPeopleDirection);
         mPeopleDirection->fitContent();
-        mPeopleDirection->align(eAlignment::hcenter);
+        mPeopleDirection->align(Alignment::hcenter);
         mPeopleDirection->setY(l1->y() + l1->height() + pp);
     }
 
@@ -88,14 +88,14 @@ void PopulationDataWidget::initialize() {
 
     {
         const auto il1 = new eLabel(window());
-        il1->setWrapAlignment(eAlignment::hcenter);
+        il1->setWrapAlignment(Alignment::hcenter);
         il1->setFontSizeXS();
         il1->setNoPadding();
-        il1->setText(eLanguage::zeusText(55, 12)); // immigration limited by
+        il1->setText(Language::zeusText(55, 12)); // immigration limited by
 
         const auto makeReasonLabel = [&]() {
             const auto label = new eLabel(window());
-            label->setWrapAlignment(eAlignment::hcenter);
+            label->setWrapAlignment(Alignment::hcenter);
             label->setYellowFontColor();
             label->setFontSizeXS();
             label->setNoPadding();
@@ -143,10 +143,10 @@ void PopulationDataWidget::initialize() {
 
         const auto il1 = new eLabel(window());
         il1->setWrapWidth(iw);
-        il1->setWrapAlignment(eAlignment::hcenter);
+        il1->setWrapAlignment(Alignment::hcenter);
         il1->setFontSizeXS();
         il1->setNoPadding();
-        il1->setText(eLanguage::zeusText(55, 10)); // newcomers arrived this month
+        il1->setText(Language::zeusText(55, 10)); // newcomers arrived this month
         il1->fitContent();
         cw4->addWidget(il1);
 
@@ -154,8 +154,8 @@ void PopulationDataWidget::initialize() {
         cw4->fitContent();
         cw4->setWidth(iw - 2*pp);
 
-        il1->align(eAlignment::hcenter);
-        mNewcomersLabel->align(eAlignment::hcenter);
+        il1->align(Alignment::hcenter);
+        mNewcomersLabel->align(Alignment::hcenter);
 
         inner->addWidget(cw4);
         cw4->setY(l2->y() + l2->height() + pp);
@@ -177,7 +177,7 @@ void PopulationDataWidget::paintEvent(ePainter& p) {
             mNewcomersW->setVisible(a > 0);
             mNewcomersLabel->setText(std::to_string(a));
             mNewcomersLabel->fitContent();
-            mNewcomersLabel->align(eAlignment::hcenter);
+            mNewcomersLabel->align(Alignment::hcenter);
 
             const auto limit = mBoard.immigrationLimit(cid);
             const bool activeInvasion = mBoard.hasActiveInvasions(cid);
@@ -187,24 +187,24 @@ void PopulationDataWidget::paintEvent(ePainter& p) {
             const int l = popData->left();
             std::string pdtxt;
             if(war || limit != eImmigrationLimitedBy::none) {
-                pdtxt = eLanguage::zeusText(55, 24); // immigrants aren't coming
+                pdtxt = Language::zeusText(55, 24); // immigrants aren't coming
             } else if(l > a) {
-                pdtxt = eLanguage::zeusText(55, 21); // people are leaving the city
+                pdtxt = Language::zeusText(55, 21); // people are leaving the city
             } else if(a > l) {
-                pdtxt = eLanguage::zeusText(55, 20); // people wish to come to the city
+                pdtxt = Language::zeusText(55, 20); // people wish to come to the city
             } else {
-                pdtxt = eLanguage::zeusText(55, 22); // population migration is stable
+                pdtxt = Language::zeusText(55, 22); // population migration is stable
             }
             mPeopleDirection->setText(pdtxt);
             mPeopleDirection->fitContent();
-            mPeopleDirection->align(eAlignment::hcenter);
+            mPeopleDirection->align(Alignment::hcenter);
             mPeopleDirectionSeparator->setY(
                 mPeopleDirection->y() + mPeopleDirection->height() + pp);
 
             const int v = popData->vacancies();
             mVacLabel->setText(std::to_string(v));
             mVacLabel->fitContent();
-            mVacLabel->align(eAlignment::hcenter);
+            mVacLabel->align(Alignment::hcenter);
 
             std::string ilrtxt1;
             std::string ilrtxt2;
@@ -214,27 +214,27 @@ void PopulationDataWidget::paintEvent(ePainter& p) {
                 ilrtxt2 = "war scares";
                 ilrtxt3 = "immigrants";
             } else if(v <= 0) {
-                ilrtxt1 = eLanguage::zeusText(55, 13); // lack of housing vacancies
+                ilrtxt1 = Language::zeusText(55, 13); // lack of housing vacancies
             } else if(limit == eImmigrationLimitedBy::lowWages) {
-                ilrtxt1 = eLanguage::zeusText(55, 14);
+                ilrtxt1 = Language::zeusText(55, 14);
             } else if(limit == eImmigrationLimitedBy::unemployment) {
-                ilrtxt1 = eLanguage::zeusText(55, 15);
+                ilrtxt1 = Language::zeusText(55, 15);
             } else if(limit == eImmigrationLimitedBy::lackOfFood) {
-                ilrtxt1 = eLanguage::zeusText(55, 16);
+                ilrtxt1 = Language::zeusText(55, 16);
             } else if(limit == eImmigrationLimitedBy::highTaxes) {
-                ilrtxt1 = eLanguage::zeusText(55, 17);
+                ilrtxt1 = Language::zeusText(55, 17);
             } else if(limit == eImmigrationLimitedBy::prolongedDebt) {
-                ilrtxt1 = eLanguage::zeusText(55, 18);
+                ilrtxt1 = Language::zeusText(55, 18);
             } else if(limit == eImmigrationLimitedBy::excessiveMilitaryService) {
-                ilrtxt1 = eLanguage::zeusText(55, 19);
+                ilrtxt1 = Language::zeusText(55, 19);
             } else if(limit == eImmigrationLimitedBy::unpopularity) {
-                ilrtxt1 = eLanguage::zeusText(54, 58);
+                ilrtxt1 = Language::zeusText(54, 58);
             }
             const auto setupLine = [&](eWidget* const w, eLabel* const label,
                                        const std::string& text, const int y) {
                 label->setText(text);
                 label->fitContent();
-                label->align(eAlignment::hcenter);
+                label->align(Alignment::hcenter);
                 w->setHeight(label->height());
                 w->setVisible(!text.empty());
                 w->setY(y);

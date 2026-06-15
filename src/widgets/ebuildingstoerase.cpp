@@ -24,8 +24,8 @@
 
 #include <algorithm>
 
-#include "erand.h"
-#include "evectorhelpers.h"
+#include "rand.h"
+#include "vector-helpers.h"
 
 bool isImportant(eBuilding* const b) {
     const auto t = b->type();
@@ -141,7 +141,7 @@ void eBuildingsToErase::erase(eBuilding* const b) {
                 const int spawnCount = std::min(30, remainingPeople);
                 eHomeless::spawn(board, tile, tile->cityId(), spawnCount, waitTime);
                 remainingPeople -= spawnCount;
-                waitTime += 10 + eRand::rand() % 25;
+                waitTime += 10 + Rand::rand() % 25;
             }
         }
         b->erase();

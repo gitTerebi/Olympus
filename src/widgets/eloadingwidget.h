@@ -11,7 +11,7 @@ public:
     using eLoader = std::function<bool(std::string&)>;
     eLoadingWidget(const int size,
                    const eLoader& loader,
-                   eMainWindow* const window,
+                   MainWindow* const window,
                    const bool useTextures = true);
 
     void initialize();

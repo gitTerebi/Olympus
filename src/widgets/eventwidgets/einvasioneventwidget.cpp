@@ -2,7 +2,7 @@
 
 #include "engine/game-board.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "widgets/eswitchbutton.h"
 
 void eInvasionEventWidget::initialize(eInvasionEvent* const e) {
@@ -10,8 +10,8 @@ void eInvasionEventWidget::initialize(eInvasionEvent* const e) {
 
     const auto hardcodedButton = new eSwitchButton(window());
     hardcodedButton->setUnderline(false);
-    hardcodedButton->addValue(eLanguage::text("hardcoded"));
-    hardcodedButton->addValue(eLanguage::text("automatic"));
+    hardcodedButton->addValue(Language::text("hardcoded"));
+    hardcodedButton->addValue(Language::text("automatic"));
     hardcodedButton->fitContent();
     hardcodedButton->setSwitchAction([this, e](const int h) {
         mHardcoded = h == 0;

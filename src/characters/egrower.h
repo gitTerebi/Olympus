@@ -14,7 +14,7 @@ class eGrower : public eCharacter {
 public:
     eGrower(GameBoard& board);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
 
     void setGrowerType(const eGrowerType t) { mType = t; }
     eGrowerType growerType() const { return mType; }
@@ -28,11 +28,11 @@ public:
     void incOranges(const int i = 1);
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
-    std::shared_ptr<eTexture> getGrapesAndOlivesTex(
+    std::shared_ptr<Texture> getGrapesAndOlivesTex(
             const CharacterTextures& texs) const;
-    std::shared_ptr<eTexture> getOrangesTex(
+    std::shared_ptr<Texture> getOrangesTex(
             const CharacterTextures& texs) const;
 
     eGrowerType mType = eGrowerType::grapesAndOlives;

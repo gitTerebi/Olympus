@@ -3,13 +3,13 @@
 #include "textures/game-textures.h"
 #include "audio/music.h"
 #include "audio/sounds.h"
-#include "emessages.h"
+#include "messages.h"
 #include "buildings/sanctuaries/esanctuaryblueprint.h"
-#include "emainwindow.h"
-#include "elanguage.h"
-#include "egamedir.h"
+#include "main-window.h"
+#include "language.h"
+#include "game-dir.h"
 
-eGameLoadingWidget::eGameLoadingWidget(eMainWindow* const window) :
+eGameLoadingWidget::eGameLoadingWidget(MainWindow* const window) :
     eLoadingWidget(GameTextures::gameSize(window->settings()) + 4,
                    [window](std::string& text) {
         const auto sett = window->settings();
@@ -21,10 +21,10 @@ eGameLoadingWidget::eGameLoadingWidget(eMainWindow* const window) :
                 if(r) {
                     const bool r = eSanctBlueprints::loaded();
                     if(r) {
-                        const bool r = eMessages::loaded();
+                        const bool r = Messages::loaded();
                         if(r) return true;
                         text = "Loading messages...";
-                        eMessages::load();
+                        Messages::load();
                         return false;
                     }
                     text = "Loading blueprints...";

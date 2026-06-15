@@ -1,5 +1,5 @@
 #include "etemplebuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "esanctbuilding.h"
 
@@ -16,7 +16,7 @@ eTempleBuilding::eTempleBuilding(
     setEnabled(true);
 }
 
-void eTempleBuilding::serializeFields(eSaveArchive& ar) {
+void eTempleBuilding::serializeFields(SaveArchive& ar) {
     eSanctBuilding::serializeFields(ar);
     ar.field("id", mId);
 }

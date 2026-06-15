@@ -1,9 +1,9 @@
 ﻿#include "erequestdialog.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "elabel.h"
 #include "framed-button-with-icon.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 #include "textures/game-textures.h"
 #include "eboardcityswitchbutton.h"
 #include "engine/world-board.h"
@@ -38,8 +38,8 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
     const auto currentCid = std::make_shared<eCityId>(iniCid);
 
     const auto name = c->name();
-    auto rof = eLanguage::zeusText(41, 1); // request of
-    eStringHelpers::replace(rof, "[city_name]", name);
+    auto rof = Language::zeusText(41, 1); // request of
+    StringHelpers::replace(rof, "[city_name]", name);
     const auto rofLabel = new eLabel(window());
     rofLabel->setFontSizeXS();
     rofLabel->setPaddingS();
@@ -71,19 +71,19 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
     const int att = c->attitude(pid);
     sells.push_back(eResourceType::drachmas);
     if(att <= 50 && !c->isRival()) {
-        const auto notReg = eLanguage::zeusText(41, 11); // not regarded
+        const auto notReg = Language::zeusText(41, 11); // not regarded
         const int p = std::round(13*mult);
         const int h = 2*p;
         for(const auto s : sells) {
             const auto typeName = eResourceTypeHelpers::typeLongName(s);
             auto text = notReg;
-            eStringHelpers::replace(text, "[item]", typeName);
+            StringHelpers::replace(text, "[item]", typeName);
             const auto l = new eLabel(window());
             l->setFontSizeXS();
             l->setText(text);
             l->fitContent();
             l->setHeight(h);
-            l->setTextAlignment(eAlignment::vcenter);
+            l->setTextAlignment(Alignment::vcenter);
             innerWid->addWidget(l);
         }
     } else {
@@ -94,14 +94,14 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
             });
             std::string request;
             if(c->isVassal() || c->isColony()) {
-                request = eLanguage::zeusText(41, 5); // order
+                request = Language::zeusText(41, 5); // order
             } else if(c->isRival()) {
-                request = eLanguage::zeusText(41, 4); // demand
+                request = Language::zeusText(41, 4); // demand
             } else {
-                request = eLanguage::zeusText(41, 3); // request
+                request = Language::zeusText(41, 3); // request
             }
             const auto typeName = eResourceTypeHelpers::typeLongName(s);
-            eStringHelpers::replace(request, "[item]", typeName);
+            StringHelpers::replace(request, "[item]", typeName);
             b->initialize(s, request);
             innerWid->addWidget(b);
         }
@@ -113,24 +113,24 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
             const int h = 2*p;
 
             {
-                const auto text = eLanguage::zeusText(41, 9); // not regarded defensive aid
+                const auto text = Language::zeusText(41, 9); // not regarded defensive aid
                 const auto l = new eLabel(window());
                 l->setFontSizeXS();
                 l->setText(text);
                 l->fitContent();
                 l->setHeight(h);
-                l->setTextAlignment(eAlignment::vcenter);
+                l->setTextAlignment(Alignment::vcenter);
                 innerWid->addWidget(l);
             }
 
             {
-                const auto text = eLanguage::zeusText(41, 10); // not regarded strike
+                const auto text = Language::zeusText(41, 10); // not regarded strike
                 const auto l = new eLabel(window());
                 l->setFontSizeXS();
                 l->setText(text);
                 l->fitContent();
                 l->setHeight(h);
-                l->setTextAlignment(eAlignment::vcenter);
+                l->setTextAlignment(Alignment::vcenter);
                 innerWid->addWidget(l);
             }
         } else if(c->shields() < 2) {
@@ -138,24 +138,24 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
             const int h = 2*p;
 
             {
-                const auto text = eLanguage::zeusText(41, 17); // can't spare defensive aid
+                const auto text = Language::zeusText(41, 17); // can't spare defensive aid
                 const auto l = new eLabel(window());
                 l->setFontSizeXS();
                 l->setText(text);
                 l->fitContent();
                 l->setHeight(h);
-                l->setTextAlignment(eAlignment::vcenter);
+                l->setTextAlignment(Alignment::vcenter);
                 innerWid->addWidget(l);
             }
 
             {
-                const auto text = eLanguage::zeusText(41, 18); // can't spare strike
+                const auto text = Language::zeusText(41, 18); // can't spare strike
                 const auto l = new eLabel(window());
                 l->setFontSizeXS();
                 l->setText(text);
                 l->fitContent();
                 l->setHeight(h);
-                l->setTextAlignment(eAlignment::vcenter);
+                l->setTextAlignment(Alignment::vcenter);
                 innerWid->addWidget(l);
             }
         } else {
@@ -170,7 +170,7 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
                 b->setPressAction([requestDefensiveAid, currentCid]() {
                     requestDefensiveAid(*currentCid);
                 });
-                const auto request = eLanguage::zeusText(41, 7); // request defensive aid
+                const auto request = Language::zeusText(41, 7); // request defensive aid
                 b->initialize(coll.fTroopsRequestIcon, request);
                 innerWid->addWidget(b);
             }
@@ -178,7 +178,7 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
             {
                 const auto b = new FramedButtonWithIcon(window());
                 b->setPressAction(requestStrike);
-                const auto request = eLanguage::zeusText(41, 8); // request military strike
+                const auto request = Language::zeusText(41, 8); // request military strike
                 b->initialize(coll.fTroopsRequestIcon, request);
                 innerWid->addWidget(b);
             }
@@ -189,5 +189,5 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
     innerWid->fitContent();
 
     fitContent();
-    topWidget->align(eAlignment::hcenter);
+    topWidget->align(Alignment::hcenter);
 }

@@ -1,13 +1,13 @@
-#ifndef EMONSTERPOINT_H
-#define EMONSTERPOINT_H
+#ifndef MONSTER_POINT_H
+#define MONSTER_POINT_H
 
-#include "ebanner.h"
+#include "banner.h"
 
-class eMonsterPoint : public eBanner {
+class MonsterPoint : public Banner {
 public:
-    eMonsterPoint(const int id,
+    MonsterPoint(const int id,
                   eTile* const tile,
                   GameBoard& board);
 };
 
-#endif // EMONSTERPOINT_H
+#endif // MONSTER_POINT_H

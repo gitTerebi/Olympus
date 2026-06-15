@@ -1,6 +1,6 @@
 #include "esupplydemandchangeevent.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "engine/game-board.h"
 
 eSupplyDemandChangeEvent::eSupplyDemandChangeEvent(
@@ -9,7 +9,7 @@ eSupplyDemandChangeEvent::eSupplyDemandChangeEvent(
     eGameEvent(cid, type, branch, board),
     eCityEventValue(board) {}
 
-void eSupplyDemandChangeEvent::serializeFields(eSaveArchive& ar) {
+void eSupplyDemandChangeEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eResourceEventValue::serialize(ar);
     eCountEventValue::serialize(ar);

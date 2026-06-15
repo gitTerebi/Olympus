@@ -3,13 +3,13 @@
 
 #include "characters/gods/god.h"
 #include "characters/heroes/ehero.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 struct eGodQuest {
     static eHeroType sDefaultHero(
             const GodType gt, const GodQuestId gqi);
 
-    void serialize(eSaveArchive& ar) {
+    void serialize(SaveArchive& ar) {
         ar.field("god", fGod, GodType::zeus);
         ar.field("questId", fId, GodQuestId::godQuest1);
         ar.field("hero", fHero, eGodQuest::sDefaultHero(fGod, fId));

@@ -8,9 +8,9 @@ class eStadium1Renderer : public eBuildingRenderer {
 public:
     eStadium1Renderer(const stdsptr<eStadium>& b);
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getTexture(const eTileSize size) const;
-    std::vector<eOverlay>
+    std::vector<Overlay>
         getOverlays(const eTileSize size) const;
 
     int spanW() const { return 5; }
@@ -23,9 +23,9 @@ class eStadium2Renderer : public eBuildingRenderer {
 public:
     eStadium2Renderer(const stdsptr<eStadium>& b);
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getTexture(const eTileSize size) const;
-    std::vector<eOverlay>
+    std::vector<Overlay>
         getOverlays(const eTileSize size) const;
 
     int spanW() const { return 5; }

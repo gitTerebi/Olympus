@@ -8,14 +8,14 @@
 void eScrollWidget::initializeButtons() {
     const auto up = new eSmallUpButton(window());
     addWidget(up);
-    up->align(eAlignment::top | eAlignment::right);
+    up->align(Alignment::top | Alignment::right);
     up->setPressAction([this]() {
         scrollUp();
     });
     up->setRepeat(true);
     const auto down = new eSmallDownButton(window());
     addWidget(down);
-    down->align(eAlignment::bottom | eAlignment::right);
+    down->align(Alignment::bottom | Alignment::right);
     down->setPressAction([this]() {
         scrollDown();
     });

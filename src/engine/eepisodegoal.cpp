@@ -1,8 +1,8 @@
 ﻿#include "eepisodegoal.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 #include "characters/gods/god.h"
 #include "characters/soldier-banner.h"
 #include "engine/world-city.h"
@@ -10,7 +10,7 @@
 #include "buildings/elite-housing.h"
 #include "engine/game-board.h"
 #include "buildings/pyramids/epyramid.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 stdsptr<eEpisodeGoal> eEpisodeGoal::makeCopy() const {
     const auto result = std::make_shared<eEpisodeGoal>();
@@ -18,7 +18,7 @@ stdsptr<eEpisodeGoal> eEpisodeGoal::makeCopy() const {
     return result;
 }
 
-void eEpisodeGoal::serialize(eSaveArchive& ar) {
+void eEpisodeGoal::serialize(SaveArchive& ar) {
     ar.field("goalType", fType);
     ar.field("enumInt1", fEnumInt1);
     ar.field("enumInt2", fEnumInt2);
@@ -40,37 +40,37 @@ void eEpisodeGoal::skipByPlayer() {
 std::string eEpisodeGoal::sText(const eEpisodeGoalType type) {
     switch(type) {
     case eEpisodeGoalType::population:
-        return eLanguage::zeusText(194, 0);
+        return Language::zeusText(194, 0);
     case eEpisodeGoalType::treasury:
-        return eLanguage::zeusText(194, 1);
+        return Language::zeusText(194, 1);
     case eEpisodeGoalType::sanctuary:
-        return eLanguage::zeusText(194, 2);
+        return Language::zeusText(194, 2);
     case eEpisodeGoalType::support:
-        return eLanguage::zeusText(194, 3);
+        return Language::zeusText(194, 3);
     case eEpisodeGoalType::quest:
-        return eLanguage::zeusText(194, 4);
+        return Language::zeusText(194, 4);
     case eEpisodeGoalType::slay:
-        return eLanguage::zeusText(194, 5);
+        return Language::zeusText(194, 5);
     case eEpisodeGoalType::yearlyProduction:
-        return eLanguage::zeusText(194, 6);
+        return Language::zeusText(194, 6);
     case eEpisodeGoalType::rule:
-        return eLanguage::zeusText(194, 7);
+        return Language::zeusText(194, 7);
     case eEpisodeGoalType::yearlyProfit:
-        return eLanguage::zeusText(194, 8);
+        return Language::zeusText(194, 8);
     case eEpisodeGoalType::housing:
-        return eLanguage::zeusText(194, 9);
+        return Language::zeusText(194, 9);
     case eEpisodeGoalType::setAsideGoods:
-        return eLanguage::zeusText(194, 14);
+        return Language::zeusText(194, 14);
     case eEpisodeGoalType::surviveUntil:
-        return eLanguage::zeusText(194, 13);
+        return Language::zeusText(194, 13);
     case eEpisodeGoalType::completeBefore:
-        return eLanguage::zeusText(194, 12);
+        return Language::zeusText(194, 12);
     case eEpisodeGoalType::tradingPartners:
-        return eLanguage::zeusText(194, 10);
+        return Language::zeusText(194, 10);
     case eEpisodeGoalType::pyramid:
-        return eLanguage::zeusText(194, 15);
+        return Language::zeusText(194, 15);
     case eEpisodeGoalType::hippodrome:
-        return eLanguage::zeusText(194, 16);
+        return Language::zeusText(194, 16);
     }
     return "";
 }
@@ -80,26 +80,26 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
                                const GameBoard& b) const {
     switch(fType) {
     case eEpisodeGoalType::population: {
-        auto t = eLanguage::zeusText(194, 17);
-        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        auto t = Language::zeusText(194, 17);
+        StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         return t;
     } break;
     case eEpisodeGoalType::treasury: {
-        auto t = eLanguage::zeusText(194, 18);
-        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        auto t = Language::zeusText(194, 18);
+        StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         return t;
     } break;
     case eEpisodeGoalType::sanctuary: {
         if(fEnumInt1 != -1) {
-            auto t = eLanguage::zeusText(194, 19);
+            auto t = Language::zeusText(194, 19);
             const auto type = static_cast<GodType>(fEnumInt1);
-            eStringHelpers::replace(t, "[god]", God::sGodName(type));
+            StringHelpers::replace(t, "[god]", God::sGodName(type));
             return t;
         } else if(fRequiredCount == 1) {
-            return eLanguage::zeusText(194, 20);
+            return Language::zeusText(194, 20);
         } else {
-            auto t = eLanguage::zeusText(194, 22);
-            eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+            auto t = Language::zeusText(194, 22);
+            StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
             return t;
         }
     } break;
@@ -108,64 +108,64 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
             const auto type = static_cast<eBuildingType>(fEnumInt1);
             return eBuilding::sNameForBuilding(type);
         } else if(fRequiredCount == 1) {
-            return eLanguage::zeusText(194, 39);
+            return Language::zeusText(194, 39);
         } else {
-            auto t = eLanguage::zeusText(194, 40);
-            eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+            auto t = Language::zeusText(194, 40);
+            StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
             return t;
         }
     } break;
     case eEpisodeGoalType::hippodrome: {
-        auto t = eLanguage::zeusText(194, 41);
-        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        auto t = Language::zeusText(194, 41);
+        StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         return t;
     } break;
     case eEpisodeGoalType::support: {
-        auto t = eLanguage::zeusText(194, 24);
+        auto t = Language::zeusText(194, 24);
         const auto type = static_cast<eBannerType>(fEnumInt1);
-        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         const auto name = SoldierBanner::sName(type, atlantean);
-        eStringHelpers::replace(t, "[military_or_better]", name);
+        StringHelpers::replace(t, "[military_or_better]", name);
         return t;
     } break;
     case eEpisodeGoalType::quest: {
-        return eLanguage::zeusText(194, 26);
+        return Language::zeusText(194, 26);
     } break;
     case eEpisodeGoalType::slay: {
         if(fEnumInt1 == -1) {
-            return eLanguage::zeusText(194, 27);
+            return Language::zeusText(194, 27);
         } else {
-            auto t = eLanguage::zeusText(194, 28);
+            auto t = Language::zeusText(194, 28);
             const auto type = static_cast<eMonsterType>(fEnumInt1);
-            eStringHelpers::replace(t, "[monster]", eMonster::sMonsterName(type));
+            StringHelpers::replace(t, "[monster]", eMonster::sMonsterName(type));
             return t;
         }
     } break;
     case eEpisodeGoalType::yearlyProduction: {
-        auto t = eLanguage::zeusText(194, 30);
-        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        auto t = Language::zeusText(194, 30);
+        StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         const auto res = static_cast<eResourceType>(fEnumInt1);
         const auto resName = eResourceTypeHelpers::typeLongName(res);
-        eStringHelpers::replace(t, "[item]", resName);
+        StringHelpers::replace(t, "[item]", resName);
         return t;
     } break;
     case eEpisodeGoalType::rule: {
         const auto& world = b.world();
         const auto cid = static_cast<eCityId>(fEnumInt1);
         const auto city = world.cityWithId(cid);
-        auto t = eLanguage::zeusText(194, 31);
+        auto t = Language::zeusText(194, 31);
         const auto n = city ? city->name() : "";
-        eStringHelpers::replace(t, "[city]", n);
+        StringHelpers::replace(t, "[city]", n);
         return t;
     } break;
     case eEpisodeGoalType::yearlyProfit: {
-        auto t = eLanguage::zeusText(194, 32);
-        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        auto t = Language::zeusText(194, 32);
+        StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         return t;
     } break;
     case eEpisodeGoalType::housing: {
-        auto t = eLanguage::zeusText(194, 33);
-        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        auto t = Language::zeusText(194, 33);
+        StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         std::string level;
         const auto type = fEnumInt1 == 0 ? eBuildingType::commonHouse :
                                            eBuildingType::eliteHousing;
@@ -180,35 +180,35 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
             break;
         }
 
-        eStringHelpers::replace(t, "[house_level]", level);
+        StringHelpers::replace(t, "[house_level]", level);
         return t;
     } break;
     case eEpisodeGoalType::setAsideGoods: {
-        auto t = colonyEpisode ? eLanguage::zeusText(194, 35) :
-                                 eLanguage::zeusText(194, 36);
-        eStringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
+        auto t = colonyEpisode ? Language::zeusText(194, 35) :
+                                 Language::zeusText(194, 36);
+        StringHelpers::replace(t, "[amount]", std::to_string(fRequiredCount));
         const auto res = static_cast<eResourceType>(fEnumInt1);
         const auto resName = eResourceTypeHelpers::typeLongName(res);
-        eStringHelpers::replace(t, "[item]", resName);
+        StringHelpers::replace(t, "[item]", resName);
         return t;
     } break;
     case eEpisodeGoalType::surviveUntil: {
         const auto sdate = date();
-        auto text = eLanguage::zeusText(194, 37); // Survive until
-        eStringHelpers::replace(text, "[finish_date]", sdate.shortString());
+        auto text = Language::zeusText(194, 37); // Survive until
+        StringHelpers::replace(text, "[finish_date]", sdate.shortString());
         return text;
     } break;
     case eEpisodeGoalType::completeBefore: {
         const auto sdate = date();
-        auto text = eLanguage::zeusText(194, 38); // Complete before
-        eStringHelpers::replace(text, "[finish_date]", sdate.shortString());
+        auto text = Language::zeusText(194, 38); // Complete before
+        StringHelpers::replace(text, "[finish_date]", sdate.shortString());
         return text;
     } break;
     case eEpisodeGoalType::tradingPartners: {
         const int c = fRequiredCount;
         const auto cStr = std::to_string(c);
-        auto text = eLanguage::zeusText(194, 34); // trading partners
-        eStringHelpers::replace(text, "[amount]", cStr);
+        auto text = Language::zeusText(194, 34); // trading partners
+        StringHelpers::replace(text, "[amount]", cStr);
         return text;
     } break;
     }
@@ -219,97 +219,97 @@ std::string eEpisodeGoal::statusText(const GameBoard& b) const {
     const auto ppid = b.personPlayer();
     switch(fType) {
     case eEpisodeGoalType::population: {
-        auto text = eLanguage::zeusText(194, 43);
+        auto text = Language::zeusText(194, 43);
         const auto popStr = std::to_string(fStatusCount);
-        eStringHelpers::replace(text, "[amount]", popStr);
+        StringHelpers::replace(text, "[amount]", popStr);
         return text;
     } break;
     case eEpisodeGoalType::treasury: {
-        auto text = eLanguage::zeusText(194, 44);
+        auto text = Language::zeusText(194, 44);
         const auto treStr = std::to_string(fStatusCount);
-        eStringHelpers::replace(text, "[amount]", treStr);
+        StringHelpers::replace(text, "[amount]", treStr);
         return text;
     } break;
     case eEpisodeGoalType::sanctuary:
     case eEpisodeGoalType::pyramid: {
         if(fEnumInt1 == -1) {
-            auto text = eLanguage::zeusText(194, 48);
+            auto text = Language::zeusText(194, 48);
             const auto perStr = std::to_string(fStatusCount);
-            eStringHelpers::replace(text, "[amount]", perStr);
+            StringHelpers::replace(text, "[amount]", perStr);
             return text;
         } else {
-            auto text = eLanguage::zeusText(194, 45);
+            auto text = Language::zeusText(194, 45);
             const auto perStr = std::to_string(fStatusCount);
-            eStringHelpers::replace(text, "[percent]", perStr + "%");
+            StringHelpers::replace(text, "[percent]", perStr + "%");
             return text;
         }
     } break;
     case eEpisodeGoalType::hippodrome: {
         if(fStatusCount == 0) {
-            eLanguage::zeusText(194, 69);
+            Language::zeusText(194, 69);
         } else {
-            auto text = eLanguage::zeusText(194, 71);
+            auto text = Language::zeusText(194, 71);
             const auto countStr = std::to_string(fStatusCount);
-            eStringHelpers::replace(text, "[amount]", countStr);
+            StringHelpers::replace(text, "[amount]", countStr);
         }
     } break;
     case eEpisodeGoalType::support: {
-        auto text = eLanguage::zeusText(194, 50);
+        auto text = Language::zeusText(194, 50);
         const auto countStr = std::to_string(fStatusCount);
-        eStringHelpers::replace(text, "[amount]", countStr);
+        StringHelpers::replace(text, "[amount]", countStr);
         return text;
     } break;
     case eEpisodeGoalType::quest: {
         if(fStatusCount == 0) {
-            return eLanguage::zeusText(194, 52);
+            return Language::zeusText(194, 52);
         } else {
-            return eLanguage::zeusText(194, 51);
+            return Language::zeusText(194, 51);
         }
     } break;
     case eEpisodeGoalType::slay: {
         if(fStatusCount == 0) {
-            return eLanguage::zeusText(194, 54);
+            return Language::zeusText(194, 54);
         } else {
-            return eLanguage::zeusText(194, 53);
+            return Language::zeusText(194, 53);
         }
     } break;
     case eEpisodeGoalType::yearlyProduction: {
-        auto t = eLanguage::zeusText(194, 55);
+        auto t = Language::zeusText(194, 55);
         const auto countStr = std::to_string(fStatusCount);
-        eStringHelpers::replace(t, "[amount]", countStr);
+        StringHelpers::replace(t, "[amount]", countStr);
         return t;
     } break;
     case eEpisodeGoalType::rule: {
-        auto t = eLanguage::zeusText(194, 56);
+        auto t = Language::zeusText(194, 56);
         const auto& world = b.world();
         const auto cid = static_cast<eCityId>(fEnumInt1);
         const auto city = world.cityWithId(cid);
         const auto rel = city ? city->relationshipToPlayer(ppid) :
                                 eForeignCityRelationship::ally;
         const auto relStr = WorldCity::sRelationshipName(rel);
-        eStringHelpers::replace(t, "[diplomatic_status]", relStr);
+        StringHelpers::replace(t, "[diplomatic_status]", relStr);
         return t;
     } break;
     case eEpisodeGoalType::yearlyProfit: {
-        auto t = eLanguage::zeusText(194, 57);
+        auto t = Language::zeusText(194, 57);
         const auto countStr = std::to_string(fStatusCount);
-        eStringHelpers::replace(t, "[amount]", countStr);
+        StringHelpers::replace(t, "[amount]", countStr);
         return t;
     } break;
     case eEpisodeGoalType::housing: {
-        auto text = eLanguage::zeusText(194, 58);
+        auto text = Language::zeusText(194, 58);
         const auto qStr = std::to_string(fStatusCount);
-        eStringHelpers::replace(text, "[amount]", qStr);
+        StringHelpers::replace(text, "[amount]", qStr);
         return text;
     } break;
     case eEpisodeGoalType::setAsideGoods: {
-        auto text = eLanguage::zeusText(194, 60);
+        auto text = Language::zeusText(194, 60);
         const auto countStr = std::to_string(fPreviewCount);
-        eStringHelpers::replace(text, "[amount]", countStr);
+        StringHelpers::replace(text, "[amount]", countStr);
         return text;
     } break;
     case eEpisodeGoalType::surviveUntil: {
-        auto text = eLanguage::zeusText(194, 63); // months remaining
+        auto text = Language::zeusText(194, 63); // months remaining
         const auto cdate = b.date();
         const auto sdate = date();
         int rem;
@@ -319,11 +319,11 @@ std::string eEpisodeGoal::statusText(const GameBoard& b) const {
             rem = std::round((sdate - cdate)/30.5);
         }
         const auto countStr = std::to_string(rem);
-        eStringHelpers::replace(text, "[months_remaining]", countStr);
+        StringHelpers::replace(text, "[months_remaining]", countStr);
         return text;
     } break;
     case eEpisodeGoalType::completeBefore: {
-        auto text = eLanguage::zeusText(194, 63); // months remaining
+        auto text = Language::zeusText(194, 63); // months remaining
         const auto cdate = b.date();
         const auto sdate = date();
         int rem;
@@ -333,14 +333,14 @@ std::string eEpisodeGoal::statusText(const GameBoard& b) const {
             rem = std::round((sdate - cdate)/30.5);
         }
         const auto countStr = std::to_string(rem);
-        eStringHelpers::replace(text, "[months_remaining]", countStr);
+        StringHelpers::replace(text, "[months_remaining]", countStr);
         return text;
     } break;
     case eEpisodeGoalType::tradingPartners: {
         const int c = fStatusCount;
         const auto cStr = std::to_string(c);
-        auto text = eLanguage::zeusText(194, 59); // trading partners
-        eStringHelpers::replace(text, "[amount]", cStr);
+        auto text = Language::zeusText(194, 59); // trading partners
+        StringHelpers::replace(text, "[amount]", cStr);
         return text;
     } break;
     }
@@ -356,9 +356,9 @@ void eEpisodeGoal::update(const GameBoard& b) {
         fStatusCount = b.population(ppid);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 73));
+            b.showTip(ppid, Language::zeusText(194, 73));
         } else if(wasMet && !isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 74));
+            b.showTip(ppid, Language::zeusText(194, 74));
         }
     } break;
     case eEpisodeGoalType::treasury: {
@@ -366,9 +366,9 @@ void eEpisodeGoal::update(const GameBoard& b) {
         fStatusCount = b.drachmas(ppid);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 75));
+            b.showTip(ppid, Language::zeusText(194, 75));
         } else if(wasMet && !isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 76));
+            b.showTip(ppid, Language::zeusText(194, 76));
         }
     } break;
     case eEpisodeGoalType::sanctuary: {
@@ -392,9 +392,9 @@ void eEpisodeGoal::update(const GameBoard& b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 77));
+            b.showTip(ppid, Language::zeusText(194, 77));
         } else if(wasMet && !isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 78));
+            b.showTip(ppid, Language::zeusText(194, 78));
         }
     } break;
     case eEpisodeGoalType::pyramid: {
@@ -419,9 +419,9 @@ void eEpisodeGoal::update(const GameBoard& b) {
 
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 97));
+            b.showTip(ppid, Language::zeusText(194, 97));
         } else if(wasMet && !isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 98));
+            b.showTip(ppid, Language::zeusText(194, 98));
         }
     } break;
     case eEpisodeGoalType::hippodrome: {
@@ -436,9 +436,9 @@ void eEpisodeGoal::update(const GameBoard& b) {
         fStatusCount = result;
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 99));
+            b.showTip(ppid, Language::zeusText(194, 99));
         } else if(wasMet && !isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 100));
+            b.showTip(ppid, Language::zeusText(194, 100));
         }
     } break;
     case eEpisodeGoalType::support: {
@@ -473,7 +473,7 @@ void eEpisodeGoal::update(const GameBoard& b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 81));
+            b.showTip(ppid, Language::zeusText(194, 81));
         }
     } break;
     case eEpisodeGoalType::slay: {
@@ -483,12 +483,12 @@ void eEpisodeGoal::update(const GameBoard& b) {
             fStatusCount = slayed.size();
         } else {
             const auto type = static_cast<eMonsterType>(fEnumInt1);
-            const bool s = eVectorHelpers::contains(slayed, type);
+            const bool s = VectorHelpers::contains(slayed, type);
             fStatusCount = s ? 1 : 0;
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 83));
+            b.showTip(ppid, Language::zeusText(194, 83));
         }
     } break;
     case eEpisodeGoalType::yearlyProduction: {
@@ -497,7 +497,7 @@ void eEpisodeGoal::update(const GameBoard& b) {
         fStatusCount = b.bestYearlyProduction(type);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 85));
+            b.showTip(ppid, Language::zeusText(194, 85));
         }
     } break;
     case eEpisodeGoalType::rule: {
@@ -514,7 +514,7 @@ void eEpisodeGoal::update(const GameBoard& b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 87));
+            b.showTip(ppid, Language::zeusText(194, 87));
         }
     } break;
     case eEpisodeGoalType::yearlyProfit: {
@@ -522,7 +522,7 @@ void eEpisodeGoal::update(const GameBoard& b) {
         fStatusCount = b.bestYearlyProduction(eResourceType::drachmas);
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 89));
+            b.showTip(ppid, Language::zeusText(194, 89));
         }
     } break;
     case eEpisodeGoalType::housing: {
@@ -545,9 +545,9 @@ void eEpisodeGoal::update(const GameBoard& b) {
         }
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 91));
+            b.showTip(ppid, Language::zeusText(194, 91));
         } else if(wasMet && !isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 92));
+            b.showTip(ppid, Language::zeusText(194, 92));
         }
     } break;
     case eEpisodeGoalType::setAsideGoods: {
@@ -577,9 +577,9 @@ void eEpisodeGoal::update(const GameBoard& b) {
         fStatusCount = b.tradingPartners();
         const bool isMet = met();
         if(!wasMet && isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 93));
+            b.showTip(ppid, Language::zeusText(194, 93));
         } else if(wasMet && !isMet) {
-            b.showTip(ppid, eLanguage::zeusText(194, 94));
+            b.showTip(ppid, Language::zeusText(194, 94));
         }
     } break;
     }

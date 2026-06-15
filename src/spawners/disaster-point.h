@@ -1,13 +1,13 @@
-#ifndef EDISASTERPOINT_H
-#define EDISASTERPOINT_H
+#ifndef DISASTER_POINT_H
+#define DISASTER_POINT_H
 
-#include "ebanner.h"
+#include "banner.h"
 
-class eDisasterPoint : public eBanner {
+class DisasterPoint : public Banner {
 public:
-    eDisasterPoint(const int id,
+    DisasterPoint(const int id,
                    eTile* const tile,
                    GameBoard& board);
 };
 
-#endif // EDISASTERPOINT_H
+#endif // DISASTER_POINT_H

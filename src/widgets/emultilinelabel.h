@@ -20,7 +20,7 @@ public:
     void setLightFontColor();
     void setDarkFontColor();
     void setYellowFontColor();
-    void setFontColor(const eFontColor color);
+    void setFontColor(const FontColor color);
 
     void setText(const std::string& text);
 
@@ -29,7 +29,7 @@ private:
     const eResolution& res() const;
 
     int mFontSize = 0;
-    eFontColor mFontColor = eFontColor::light;
+    FontColor mFontColor = FontColor::light;
     std::vector<eLabel*> mLabels;
 };
 

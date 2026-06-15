@@ -6,7 +6,7 @@
 #include "engine/eresourcetype.h"
 #include "characters/ecarttransporter.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eCartActionType {
     get, deliver
@@ -72,7 +72,7 @@ protected:
 
     stdptr<eCartTransporter> spawnCart(const eCartActionTypeSupport s =
                                     eCartActionTypeSupport::both);
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eResourceType mStashable = eResourceType::none;
     std::vector<eStash> mStash;

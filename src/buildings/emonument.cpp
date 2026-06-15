@@ -1,7 +1,7 @@
 #include "emonument.h"
 
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eMonument::eMonument(GameBoard& board,
                        const eBuildingType type,
@@ -135,12 +135,12 @@ std::vector<eCartTask> eMonument::cartTasks() const {
     return tasks;
 }
 
-void eMonument::serializeFields(eSaveArchive& ar) {
+void eMonument::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("rotateId", mRotateId);
     ar.field("haltConstruction", mHaltConstruction);
-    ar.archiveField("stored", [this](eSaveArchive& childAr) { mStored.serialize(childAr); });
-    ar.archiveField("used", [this](eSaveArchive& childAr) { mUsed.serialize(childAr); });
+    ar.archiveField("stored", [this](SaveArchive& childAr) { mStored.serialize(childAr); });
+    ar.archiveField("used", [this](SaveArchive& childAr) { mUsed.serialize(childAr); });
     ar.field("altitude", mAltitude);
     ar.characterField("cart", &getBoard(), mCart);
 }

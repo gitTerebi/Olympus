@@ -5,7 +5,7 @@
 
 #include "characters/gods/god.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eGodTradeResumesEvent : public eGameEvent {
 public:
@@ -19,7 +19,7 @@ public:
     void setGod(const GodType god) { mGod = god; }
     GodType god() const { return mGod; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     GodType mGod = GodType::zeus;
 };

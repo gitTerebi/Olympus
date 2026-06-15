@@ -5,8 +5,8 @@
 #include <vector>
 
 class GameBoard;
-class eSaveArchive;
-class eTexture;
+class SaveArchive;
+class Texture;
 enum class eTileSize : int;
 
 class DestructionPuff {
@@ -19,13 +19,13 @@ public:
     ~DestructionPuff();
 
     void incTime(const int by);
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 
     double worldX() const { return mWorldX; }
     double worldY() const { return mWorldY; }
     bool dead() const { return mDead; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
 private:
     GameBoard& mBoard;

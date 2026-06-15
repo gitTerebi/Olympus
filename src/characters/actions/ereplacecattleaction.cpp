@@ -2,7 +2,7 @@
 
 #include "emovetoaction.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eReplaceCattleAction::eReplaceCattleAction(
         eCharacter* const c, eCharacter* const cc) :
@@ -16,7 +16,7 @@ bool eReplaceCattleAction::decide() {
     return true;
 }
 
-void eReplaceCattleAction::serializeFields(eSaveArchive& ar) {
+void eReplaceCattleAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.characterField("cattle", &board(), mCattle);
     ar.field("stage", mStage);

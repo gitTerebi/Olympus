@@ -5,7 +5,7 @@
 
 class eTabWidget : public eWidget {
 public:
-    eTabWidget(eMainWindow* const window);
+    eTabWidget(MainWindow* const window);
     void initialize();
 
     void addTab(const std::string& text,

@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "soldier-banner.h"
 #include "actions/soldier-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eSoldier::eSoldier(GameBoard& board,
                    const eCharTexs charTexs,
@@ -58,7 +58,7 @@ void eSoldier::beingKilled() {
     }
 }
 
-void eSoldier::serializeFields(eSaveArchive& ar) {
+void eSoldier::serializeFields(SaveArchive& ar) {
     eFightingPatroler::serializeFields(ar);
     eFightingCharacter::serializeFields(ar);
     ar.soldierBannerField("banner", &getBoard(), mBanner);

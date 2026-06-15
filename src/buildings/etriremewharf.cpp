@@ -5,8 +5,8 @@
 #include "engine/epathfinder.h"
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eTriremeWharf::eTriremeWharf(GameBoard& board,
                              const eDiagonalOrientation o,
@@ -23,7 +23,7 @@ eTriremeWharf::~eTriremeWharf() {
     if(mTrireme) mTrireme->kill();
 }
 
-std::shared_ptr<eTexture> eTriremeWharf::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eTriremeWharf::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].fTriremeWharf;
@@ -52,15 +52,15 @@ std::shared_ptr<eTexture> eTriremeWharf::getTexture(const eTileSize size) const 
     return coll.getTexture(id);
 }
 
-std::vector<eOverlay> eTriremeWharf::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eTriremeWharf::getOverlays(const eTileSize size) const {
     if(!enabled()) return {};
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto oo = sRotated(mO, dir);
-    eOverlay o;
-    const eTextureCollection* coll = nullptr;
+    Overlay o;
+    const TextureCollection* coll = nullptr;
     if(mTrireme) {
         switch(oo) {
         case eDiagonalOrientation::topRight:
@@ -127,16 +127,16 @@ void eTriremeWharf::timeChanged(const int by) {
         const auto eff = effectiveness();
         if(!mTakeCart) {
             mTakeCart = spawnCart(eCartActionTypeSupport::get);
-            mTakeCart->setMaxDistance(eNumbers::sTriremeWharfMaxResourceTakeDistance);
+            mTakeCart->setMaxDistance(Numbers::sTriremeWharfMaxResourceTakeDistance);
         }
         if(!mTrireme && mWoodCount > 1 && mArmorCount > 0) {
             mTriremeBuildingTime += by*eff;
-            if(mTriremeBuildingTime > eNumbers::sTriremeWharfBuildTime) {
+            if(mTriremeBuildingTime > Numbers::sTriremeWharfBuildTime) {
                 mTriremeBuildingTime = 0;
                 mTriremeBuildingStage++;
                 mWoodCount -= 2;
                 mArmorCount--;
-                if(mTriremeBuildingStage >= eNumbers::sTriremeWharfBuildStages) {
+                if(mTriremeBuildingStage >= Numbers::sTriremeWharfBuildStages) {
                     mTriremeBuildingStage = 0;
                     spawnTrireme();
                 }
@@ -202,7 +202,7 @@ std::vector<eCartTask> eTriremeWharf::cartTasks() const {
     return tasks;
 }
 
-void eTriremeWharf::serializeFields(eSaveArchive& ar) {
+void eTriremeWharf::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.characterAsField("takeCart", &getBoard(), mTakeCart);
     ar.characterAsField("trireme", &getBoard(), mTrireme);

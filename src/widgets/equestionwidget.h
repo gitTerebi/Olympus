@@ -4,7 +4,7 @@
 #include "eframedwidget.h"
 #include "pointers/estdselfref.h"
 
-class eTexture;
+class Texture;
 
 class eQuestionWidget : public eFramedWidget {
 public:
@@ -16,7 +16,7 @@ public:
                     const eAction& cancelA);
     void initialize(const std::string& title,
                     const std::string& text,
-                    const stdsptr<eTexture>& icon,
+                    const stdsptr<Texture>& icon,
                     const eAction& acceptA,
                     const eAction& cancelA);
 };

@@ -2,13 +2,13 @@
 
 #include "framed-button.h"
 #include "eframedwidget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "ewidget.h"
 
 FramedButton* addPlainButton(const std::string& text,
                               const eAction& a,
                               eWidget* const buttons,
-                              eMainWindow* const window) {
+                              MainWindow* const window) {
     const auto b = new FramedButton(window);
     b->setRenderBg(true);
     b->setUnderline(false);
@@ -16,14 +16,14 @@ FramedButton* addPlainButton(const std::string& text,
     b->setText(text);
     b->fitContent();
     buttons->addWidget(b);
-    b->align(eAlignment::hcenter);
+    b->align(Alignment::hcenter);
     return b;
 }
 
 FramedButton* addFramedButton(const std::string& text,
                                const eAction& a,
                                eWidget* const buttons,
-                               eMainWindow* const window) {
+                               MainWindow* const window) {
     const auto b = new FramedButton(window);
     b->setRenderBg(true);
     b->setUnderline(false);
@@ -38,6 +38,6 @@ FramedButton* addFramedButton(const std::string& text,
     b->move(p, p);
     frame->addWidget(b);
     buttons->addWidget(frame);
-    frame->align(eAlignment::hcenter);
+    frame->align(Alignment::hcenter);
     return b;
 }

@@ -1,13 +1,13 @@
 #include "esettler.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "textures/game-textures.h"
 
-#include "erand.h"
+#include "rand.h"
 
 eSettler::eSettler(GameBoard& board) :
     eBasicPatroler(board,
-                   eRand::rand() % 2 ? &CharacterTextures::fSettlers1 :
+                   Rand::rand() % 2 ? &CharacterTextures::fSettlers1 :
                                 &CharacterTextures::fSettlers2,
                    eCharacterType::settler) {
 
@@ -18,7 +18,7 @@ void eSettler::setEmigrant(const bool e) {
     mEmigrant = e;
 }
 
-void eSettler::serializeFields(eSaveArchive& ar) {
+void eSettler::serializeFields(SaveArchive& ar) {
     eBasicPatroler::serializeFields(ar);
     ar.field("mEmigrant", mEmigrant);
 }

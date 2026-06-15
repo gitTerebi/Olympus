@@ -3,13 +3,13 @@
 #include "textures/game-textures.h"
 
 #include "ebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "eworldgoodswidget.h"
 #include "eworldtributewidget.h"
 #include "game-widget.h"
 #include "engine/world-board.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 void eWorldMenu::initialize(const eAction& openRequest,
                             const eAction& openFulfill,
@@ -53,15 +53,15 @@ void eWorldMenu::initialize(const eAction& openRequest,
 
     {
         mRequestButton = eButton::sCreate(coll.fRequestButton, window(), this);
-        mRequestButton->setTooltip(eLanguage::zeusText(44, 308));
+        mRequestButton->setTooltip(Language::zeusText(44, 308));
         mFulfillButton = eButton::sCreate(coll.fFulfillButton, window(), this);
-        mFulfillButton->setTooltip(eLanguage::zeusText(44, 310));
+        mFulfillButton->setTooltip(Language::zeusText(44, 310));
         mGiftButton = eButton::sCreate(coll.fGiftButton, window(), this);
-        mGiftButton->setTooltip(eLanguage::zeusText(44, 311));
+        mGiftButton->setTooltip(Language::zeusText(44, 311));
         mRaidButton = eButton::sCreate(coll.fRaidButton, window(), this);
-        mRaidButton->setTooltip(eLanguage::zeusText(44, 312));
+        mRaidButton->setTooltip(Language::zeusText(44, 312));
         mConquerButton = eButton::sCreate(coll.fConquerButton, window(), this);
-        mConquerButton->setTooltip(eLanguage::zeusText(44, 313));
+        mConquerButton->setTooltip(Language::zeusText(44, 313));
 
         const int xwrb = std::round(6.5*mult);
         const int xwfb = 35*mult;
@@ -133,12 +133,12 @@ void eWorldMenu::initialize(const eAction& openRequest,
             const int wgwx = 20*mult;
             const int wgwy = 285*mult;
 
-            const auto backToCityStr = eLanguage::zeusText(47, 8);
+            const auto backToCityStr = Language::zeusText(47, 8);
             const auto wgwtxt = new eLabel(backToCityStr, window());
             wgwtxt->setFontSizeS();
             wgwtxt->fitContent();
             wgw->addWidget(wgwtxt);
-            wgwtxt->align(eAlignment::center);
+            wgwtxt->align(Alignment::center);
 
             wgw->setX(wgwx);
             wgw->setY(wgwy);
@@ -147,11 +147,11 @@ void eWorldMenu::initialize(const eAction& openRequest,
         const auto wat = eButton::sCreate(coll.fWorldBigButton, window(), this);
 
         mAttitudeLabel = new eLabel("unknown", window());
-        mAttitudeLabel->setTooltip(eLanguage::zeusText(44, 333));
+        mAttitudeLabel->setTooltip(Language::zeusText(44, 333));
         mAttitudeLabel->setFontSizeS();
         mAttitudeLabel->fitContent();
         wat->addWidget(mAttitudeLabel);
-        mAttitudeLabel->align(eAlignment::center);
+        mAttitudeLabel->align(Alignment::center);
 
         const int watx = 4*mult;
         const int waty = 66*mult;
@@ -166,7 +166,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
         mRelationshipLabel->setFontSizeS();
         mRelationshipLabel->fitContent();
         addWidget(mRelationshipLabel);
-        mRelationshipLabel->align(eAlignment::hcenter);
+        mRelationshipLabel->align(Alignment::hcenter);
         const int rly = 14*mult;
         mRelationshipLabel->setY(rly);
 
@@ -175,7 +175,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
         mNameLabel->setFontSizeS();
         mNameLabel->fitContent();
         addWidget(mNameLabel);
-        mNameLabel->align(eAlignment::hcenter);
+        mNameLabel->align(Alignment::hcenter);
         mNameLabel->setY(rly + mRelationshipLabel->height());
 
         mLeaderLabel = new eLabel("a", window());
@@ -183,7 +183,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
         mLeaderLabel->setFontSizeXS();
         mLeaderLabel->fitContent();
         addWidget(mLeaderLabel);
-        mLeaderLabel->align(eAlignment::hcenter);
+        mLeaderLabel->align(Alignment::hcenter);
         mLeaderLabel->setY(mNameLabel->y() + mNameLabel->height());
     }
 
@@ -195,7 +195,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
         mTextLabel->setY(mult*90);
         const int w = mult*75;
         mTextLabel->setWrapWidth(w);
-        mTextLabel->setWrapAlignment(eAlignment::hcenter);
+        mTextLabel->setWrapAlignment(Alignment::hcenter);
         mTextLabel->setWidth(w);
         mTextLabel->setHeight(mult*105);
         mTextLabel->setVisible(showText);
@@ -232,7 +232,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
 
 void eWorldMenu::setCity(const stdsptr<WorldCity>& c) {
     if(!c && mShowText) {
-        const auto text = eLanguage::zeusText(47, 5);
+        const auto text = Language::zeusText(47, 5);
         mTextLabel->setText(text);
         mTextLabel->show();
     } else {
@@ -287,7 +287,7 @@ void eWorldMenu::updateLabels() const {
     const bool onBoardNeutral = mCity->isOnBoardNeutral();
     const bool onBoardColony = mCity->isOnBoardColony();
     mNameLabel->setText(mCity->name());
-    const auto leader = eLanguage::zeusText(44, 328);
+    const auto leader = Language::zeusText(44, 328);
     if(onBoardNeutral) {
         mAttitudeLabel->setText("");
         mRelationshipLabel->setText("");
@@ -308,7 +308,7 @@ void eWorldMenu::updateLabels() const {
         atStr += " (" + std::to_string((int)att) + ")";
         mAttitudeLabel->setText(atStr);
         mAttitudeLabel->fitContent();
-        mAttitudeLabel->align(eAlignment::center);
+        mAttitudeLabel->align(Alignment::center);
     }
 
     {
@@ -358,14 +358,14 @@ void eWorldMenu::updateLabels() const {
                 break;
             }
         }
-        const auto relStr = eLanguage::zeusText(group, string);
+        const auto relStr = Language::zeusText(group, string);
         if(cc || onBoardNeutral || onBoardColony) {
             mRelationshipLabel->setText("");
         } else {
             mRelationshipLabel->setText(relStr);
         }
         mRelationshipLabel->fitContent();
-        mRelationshipLabel->align(eAlignment::hcenter);
+        mRelationshipLabel->align(Alignment::hcenter);
     }
 }
 
@@ -412,12 +412,12 @@ void eWorldMenu::updateButtonsEnabled() const {
         const bool sendReinforcements = nPlayerOnBoard > 1 && (ownedOnBoardColony || cc);
         if(sendReinforcements) {
             mConquerButton->setEnabled(true);
-            mConquerButton->setTooltip(eLanguage::zeusText(41, 7));
+            mConquerButton->setTooltip(Language::zeusText(41, 7));
         } else {
             mConquerButton->setEnabled((!vassalOrColony || mCity->conqueredByRival() || onBoardEnemyColony) &&
                                        !distant && !cc && !ownedOnBoardColony &&
                                        !onBoardNeutral);
-            mConquerButton->setTooltip(eLanguage::zeusText(44, 313));
+            mConquerButton->setTooltip(Language::zeusText(44, 313));
         }
     }
 }

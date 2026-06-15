@@ -11,11 +11,11 @@ eShepherdBase::eShepherdBase(
 
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eShepherdBase::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& charTexs = mTextures[id].*mCharTexs;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
     bool wrap = true;
     const auto a = actionType();

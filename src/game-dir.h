@@ -1,9 +1,9 @@
-#ifndef EGAMEDIR_H
-#define EGAMEDIR_H
+#ifndef GAME_DIR_H
+#define GAME_DIR_H
 
 #include <string>
 
-class eGameDir {
+class GameDir {
 public:
     static void initialize();
     static std::string path(const std::string& path);
@@ -25,4 +25,4 @@ private:
     static std::string sPath;
 };
 
-#endif // EGAMEDIR_H
+#endif // GAME_DIR_H

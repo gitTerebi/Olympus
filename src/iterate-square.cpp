@@ -1,8 +1,8 @@
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 
 #include <cmath>
 
-void eIterateSquare::iterateSquare(const int k, const eTileFunc& prcs,
+void IterateSquare::iterateSquare(const int k, const eTileFunc& prcs,
                                    const int inc) {
     if(k == 0) {
         prcs(0, 0);
@@ -41,7 +41,7 @@ void eIterateSquare::iterateSquare(const int k, const eTileFunc& prcs,
     if(r3) return;
 }
 
-void eIterateSquare::iterateDistance(const int k, const eTileFunc& prcs,
+void IterateSquare::iterateDistance(const int k, const eTileFunc& prcs,
                                      const int inc) {
 //    for(int dist = 0; dist < k; dist += inc) {
 //        for(int x = -dist; x <= dist; x++) {

@@ -1,6 +1,6 @@
 #include "ethreadboard.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 
 void eThreadBoard::initialize(const int w, const int h) {
     clear();
@@ -28,7 +28,7 @@ void eThreadBoard::clear() {
 eThreadTile* eThreadBoard::tile(const int x, const int y) {
     int dtx;
     int dty;
-    eTileHelper::tileIdToDTileId(x, y, dtx, dty);
+    TileHelper::tileIdToDTileId(x, y, dtx, dty);
     return dtile(dtx, dty);
 }
 

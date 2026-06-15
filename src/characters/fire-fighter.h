@@ -10,7 +10,7 @@ public:
     using eCharTexs = FireFighterTextures CharacterTextures::*;
     FireFighter(GameBoard& board);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
 
     void beingKilled() override;
 private:

@@ -1,7 +1,7 @@
 #include "ebasicbutton.h"
 
 eBasicButton::eBasicButton(const eTex tex,
-                           eMainWindow* const window) :
+                           MainWindow* const window) :
     eButton(window) {
 
     const auto& intrfc = GameTextures::interface();

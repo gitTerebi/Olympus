@@ -1,6 +1,6 @@
 #include "etaxrate.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 std::string eTaxRateHelpers::name(const eTaxRate tr) {
     const int group = 286;
@@ -28,7 +28,7 @@ std::string eTaxRateHelpers::name(const eTaxRate tr) {
         string = 6;
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 double eTaxRateHelpers::getRate(const eTaxRate tr) {

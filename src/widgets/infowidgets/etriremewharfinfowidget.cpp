@@ -3,7 +3,7 @@
 #include "buildings/etriremewharf.h"
 
 #include "engine/game-board.h"
-#include "elanguage.h"
+#include "language.h"
 #include "widgets/eswitchbutton.h"
 
 void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
@@ -18,11 +18,11 @@ void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
     const auto cid = b->cityId();
     const bool palace = board.hasPalace(cid);
     if(!palace) {
-        addText(eLanguage::zeusText(175, 18));
+        addText(Language::zeusText(175, 18));
     }
 
-    const auto storedWood = eLanguage::zeusText(175, 12);
-    const auto storedArmor = eLanguage::zeusText(175, 13);
+    const auto storedWood = Language::zeusText(175, 12);
+    const auto storedArmor = Language::zeusText(175, 13);
 
     const int cwood = b->count(eResourceType::wood);
     const int carmor = b->count(eResourceType::armor);
@@ -30,14 +30,14 @@ void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
     const auto cwoodStr = std::to_string(cwood);
     const auto carmorStr = std::to_string(carmor);
 
-    const auto loads = eLanguage::zeusText(8, 55);
+    const auto loads = Language::zeusText(8, 55);
 
     addText(storedWood + " " + cwoodStr + " " + loads + "  " +
             storedArmor + " " + carmorStr + " " + loads);
 
     const bool r = b->accessToRoad();
     if(!r) {
-        addText(eLanguage::zeusText(69, 4));
+        addText(Language::zeusText(69, 4));
     }
 
     addText(info);
@@ -48,8 +48,8 @@ void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
 
     const auto button = new eSwitchButton(window());
     button->setUnderline(false);
-    button->addValue(eLanguage::zeusText(175, 19));
-    button->addValue(eLanguage::zeusText(175, 20));
+    button->addValue(Language::zeusText(175, 19));
+    button->addValue(Language::zeusText(175, 20));
     button->fitValidContent();
     button->setValue(b->shutDown() ? 0 : 1);
     button->setSwitchAction([b](const int val) {
@@ -58,5 +58,5 @@ void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
     const int bheight = button->height();
     const auto w = addRegularWidget(bheight);
     w->addWidget(button);
-    button->align(eAlignment::hcenter);
+    button->align(Alignment::hcenter);
 }

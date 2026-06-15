@@ -2,10 +2,10 @@
 
 #include "eframedwidget.h"
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 #include "eworldwidget.h"
 #include "game-widget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "audio/music.h"
 #include "ebitmapwidget.h"
 #include "eepisodeswidget.h"
@@ -38,8 +38,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     const auto editParentMap = new FramedButton(window());
     editParentMap->setFontSizeS();
     editParentMap->setPaddingS();
-    editParentMap->setText(eLanguage::zeusText(195, 3));
-    editParentMap->setTooltip(eLanguage::zeusText(278, 4));
+    editParentMap->setText(Language::zeusText(195, 3));
+    editParentMap->setTooltip(Language::zeusText(278, 4));
     editParentMap->setUnderline(false);
     editParentMap->fitContent();
     editParentMap->setPressAction([this, campaign]() {
@@ -63,8 +63,8 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     const auto editWorldMap = new FramedButton(window());
     editWorldMap->setFontSizeS();
     editWorldMap->setPaddingS();
-    editWorldMap->setText(eLanguage::zeusText(195, 4));
-    editWorldMap->setTooltip(eLanguage::zeusText(278, 5));
+    editWorldMap->setText(Language::zeusText(195, 4));
+    editWorldMap->setTooltip(Language::zeusText(278, 5));
     editWorldMap->setUnderline(false);
     editWorldMap->fitContent();
     editWorldMap->setPressAction([this, campaign]() {
@@ -84,15 +84,15 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
 //    nationality->setPaddingS();
 //    nationality->setUnderline(false);
 //    const bool a = campaign->atlantean();
-//    nationality->setText(a ? eLanguage::zeusText(195, 60) : // atlantean
-//                             eLanguage::zeusText(195, 59)); // greek
+//    nationality->setText(a ? Language::zeusText(195, 60) : // atlantean
+//                             Language::zeusText(195, 59)); // greek
 //    nationality->fitContent();
-//    nationality->setTooltip(eLanguage::zeusText(278, 10));
+//    nationality->setTooltip(Language::zeusText(278, 10));
 //    nationality->setPressAction([campaign, nationality]() {
 //        const bool a = !campaign->atlantean();
 //        campaign->setAtlantean(a);
-//        nationality->setText(a ? eLanguage::zeusText(195, 60) : // atlantean
-//                                 eLanguage::zeusText(195, 59)); // greek
+//        nationality->setText(a ? Language::zeusText(195, 60) : // atlantean
+//                                 Language::zeusText(195, 59)); // greek
 //    });
 //    topButtons->addWidget(nationality);
 
@@ -100,9 +100,9 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     bitmap->setFontSizeS();
     bitmap->setPaddingS();
     bitmap->setUnderline(false);
-    bitmap->setText(eLanguage::zeusText(195, 47));
+    bitmap->setText(Language::zeusText(195, 47));
     bitmap->fitContent();
-    bitmap->setTooltip(eLanguage::zeusText(278, 9));
+    bitmap->setTooltip(Language::zeusText(278, 9));
     bitmap->setPressAction([this, campaign]() {
         const bool small = false;
         const int nRows = 3;
@@ -128,7 +128,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
             bitmap->fitContent();
             b->addWidget(bitmap);
             b->fitContent();
-            bitmap->align(eAlignment::center);
+            bitmap->align(Alignment::center);
             b->setPressAction([d, campaign, i]() {
                 campaign->setBitmap(i);
                 d->deleteLater();
@@ -164,7 +164,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
         d->fitContent();
 
         window()->execDialog(d);
-        d->align(eAlignment::center);
+        d->align(Alignment::center);
     });
     topButtons->addWidget(bitmap);
 
@@ -173,14 +173,14 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     advTextB->setPaddingS();
     advTextB->setFontSizeS();
     advTextB->setText("x");
-    advTextB->setTooltip(eLanguage::zeusText(278, 6));
+    advTextB->setTooltip(Language::zeusText(278, 6));
     advTextB->fitContent();
     topButtons->addWidget(advTextB);
 
     const auto advTextL = new eLabel(window());
     advTextL->setNoPadding();
     advTextL->setFontSizeXS();
-    advTextL->setText(eLanguage::zeusText(195, 5));
+    advTextL->setText(Language::zeusText(195, 5));
     advTextL->fitContent();
     topButtons->addWidget(advTextL);
 
@@ -188,7 +188,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     saveButton->setUnderline(false);
     saveButton->setFontSizeS();
     saveButton->setPaddingS();
-    saveButton->setText(eLanguage::zeusText(44, 74));
+    saveButton->setText(Language::zeusText(44, 74));
     saveButton->fitContent();
     topButtons->addWidget(saveButton);
     saveButton->setPressAction([campaign]() {
@@ -199,7 +199,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     quitButton->setUnderline(false);
     quitButton->setFontSizeS();
     quitButton->setPaddingS();
-    quitButton->setText(eLanguage::zeusText(5, 0));
+    quitButton->setText(Language::zeusText(5, 0));
     quitButton->fitContent();
     topButtons->addWidget(quitButton);
     quitButton->setPressAction([campaign, this]() {
@@ -211,17 +211,17 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
         const auto closeA = [this]() {
             window()->showMainMenu();
         };
-        q->initialize(eLanguage::zeusText(195, 23),
-                      eLanguage::zeusText(195, 25),
+        q->initialize(Language::zeusText(195, 23),
+                      Language::zeusText(195, 25),
                       saveA, closeA);
         window()->execDialog(q);
-        q->align(eAlignment::center);
+        q->align(Alignment::center);
     });
 
     topButtons->stackHorizontally(p);
     topButtons->fitContent();
     iw->addWidget(topButtons);
-    advTextL->align(eAlignment::vcenter);
+    advTextL->align(Alignment::vcenter);
 
     const auto hW = new eWidget(window());
     hW->setNoPadding();
@@ -238,10 +238,10 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     const auto titleTitle = new eLabel(window());
     titleTitle->setFontSizeXS();
     titleTitle->setNoPadding();
-    titleTitle->setText(eLanguage::zeusText(195, 6));
+    titleTitle->setText(Language::zeusText(195, 6));
     titleTitle->fitContent();
     textW->addWidget(titleTitle);
-    titleTitle->align(eAlignment::hcenter);
+    titleTitle->align(Alignment::hcenter);
 
     const auto titleText = new eFramedLabel(window());
     titleText->setFontSizeXS();
@@ -259,10 +259,10 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     const auto introTitle = new eLabel(window());
     introTitle->setFontSizeXS();
     introTitle->setNoPadding();
-    introTitle->setText(eLanguage::zeusText(195, 7));
+    introTitle->setText(Language::zeusText(195, 7));
     introTitle->fitContent();
     textW->addWidget(introTitle);
-    introTitle->align(eAlignment::hcenter);
+    introTitle->align(Alignment::hcenter);
 
     const auto introText = new eTextScroller(window());
     introText->setWidth(ewww);
@@ -275,10 +275,10 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     const auto completeTitle = new eLabel(window());
     completeTitle->setFontSizeXS();
     completeTitle->setNoPadding();
-    completeTitle->setText(eLanguage::zeusText(195, 8));
+    completeTitle->setText(Language::zeusText(195, 8));
     completeTitle->fitContent();
     textW->addWidget(completeTitle);
-    completeTitle->align(eAlignment::hcenter);
+    completeTitle->align(Alignment::hcenter);
 
     const auto completeText = new eTextScroller(window());
     completeText->setWidth(ewww);
@@ -291,10 +291,10 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     const auto selectionTitle = new eLabel(window());
     selectionTitle->setFontSizeXS();
     selectionTitle->setNoPadding();
-    selectionTitle->setText(eLanguage::zeusText(195, 58));
+    selectionTitle->setText(Language::zeusText(195, 58));
     selectionTitle->fitContent();
     textW->addWidget(selectionTitle);
-    selectionTitle->align(eAlignment::hcenter);
+    selectionTitle->align(Alignment::hcenter);
 
     const auto selectionText = new eTextScroller(window());
     selectionText->setWidth(ewww);
@@ -439,7 +439,7 @@ void eEditorMainMenu::initialize(const stdsptr<eCampaign>& campaign) {
     iw->addWidget(hW);
 
     iw->stackVertically();
-    frame->align(eAlignment::center);
+    frame->align(Alignment::center);
 
     pressE();
 }
@@ -454,11 +454,11 @@ bool eEditorMainMenu::keyPressEvent(const eKeyPressEvent& e) {
         const auto closeA = [this]() {
             window()->showMainMenu();
         };
-        q->initialize(eLanguage::zeusText(195, 23),
-                      eLanguage::zeusText(195, 25),
+        q->initialize(Language::zeusText(195, 23),
+                      Language::zeusText(195, 25),
                       saveA, closeA);
         window()->execDialog(q);
-        q->align(eAlignment::center);
+        q->align(Alignment::center);
         return true;
     }
     return eMainMenuBase::keyPressEvent(e);
@@ -474,11 +474,11 @@ bool eEditorMainMenu::mouseReleaseEvent(const eMouseEvent& e) {
         const auto closeA = [this]() {
             window()->showMainMenu();
         };
-        q->initialize(eLanguage::zeusText(195, 23),
-                      eLanguage::zeusText(195, 25),
+        q->initialize(Language::zeusText(195, 23),
+                      Language::zeusText(195, 25),
                       saveA, closeA);
         window()->execDialog(q);
-        q->align(eAlignment::center);
+        q->align(Alignment::center);
         return true;
     }
     return eMainMenuBase::mouseReleaseEvent(e);
@@ -487,7 +487,7 @@ bool eEditorMainMenu::mouseReleaseEvent(const eMouseEvent& e) {
 void eEditorMainMenu::addGoBackButton(eWidget* const to) {
     const auto b = new FramedButton(window());
     b->setUnderline(false);
-    b->setText(eLanguage::text("return"));
+    b->setText(Language::text("return"));
     b->fitContent();
     b->setRenderBg(true);
     const auto res = resolution();

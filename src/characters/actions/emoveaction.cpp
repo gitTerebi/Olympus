@@ -5,8 +5,8 @@
 #include "walkable/walkable-object.h"
 
 #include "vec2.h"
-#include "fileIO/esavearchive.h"
-#include "enumbers.h"
+#include "fileIO/save-archive.h"
+#include "numbers.h"
 
 eMoveAction::eMoveAction(eCharacter* const c,
                          const stdsptr<WalkableObject>& tileWalkable,
@@ -90,11 +90,11 @@ void eMoveAction::increment(const int by) {
     }
 
     const auto c = character();
-    const double monthMs = 30.0 * eNumbers::sDayLength;
+    const double monthMs = 30.0 * Numbers::sDayLength;
     moveBy(c->speed() * by / monthMs);
 }
 
-void eMoveAction::serializeFields(eSaveArchive& ar) {
+void eMoveAction::serializeFields(SaveArchive& ar) {
     eCharacterAction::serializeFields(ar);
     ar.walkableField("tileWalkable", mTileWalkable);
     ar.field("orientation", mOrientation);

@@ -18,7 +18,7 @@ public:
                  const int special,
                  const eCityId cid);
 
-    stdsptr<eTexture> getTexture(const eTileSize size) const override;
+    stdsptr<Texture> getTexture(const eTileSize size) const override;
 
     eOrientation orientation() const { return mO; }
     int special() const { return mSpecial; }

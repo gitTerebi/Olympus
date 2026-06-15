@@ -3,7 +3,7 @@
 
 #include "emoveaction.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eMovePathAction : public eMoveAction {
 public:
@@ -14,7 +14,7 @@ public:
 
     void setMaxDistance(const int dist) { mMaxDistance = dist; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eCharacterActionState nextTurn(eOrientation& turn) override;
 

@@ -5,16 +5,16 @@
 #include "escrollbar.h"
 #include "ebuttonbase.h"
 #include "ecancelbutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "eproceedbutton.h"
 #include "elineedit.h"
 #include "equestionwidget.h"
 #include "eeditormainmenu.h"
 #include "ebitmapwidget.h"
 #include "eepisodeintroductionwidget.h"
-#include "estringhelpers.h"
-#include "elanguage.h"
-#include "egamedir.h"
+#include "string-helpers.h"
+#include "language.h"
+#include "game-dir.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -26,7 +26,7 @@ bool readPakGlossary(const std::string& filename,
                      eCampaignGlossary& glossary,
                      bool& isPoseidon) {
     glossary.fIsPak = true;
-    const auto name = eStringHelpers::pathToName(filename);
+    const auto name = StringHelpers::pathToName(filename);
 //    const bool test = name.find("Test") != name.npos;
 //    if(test && name != "Test6.pak") return false;
     const auto ext = name.substr(name.size() - 3);
@@ -69,7 +69,7 @@ bool readPakGlossary(const std::string& filename,
         in.seek(35648);
         const auto briefId = in.readUShort();
 
-        const auto brief = eLanguage::zeusMM(briefId);
+        const auto brief = Language::zeusMM(briefId);
         glossary.fTitle = brief.fTitle;
         glossary.fIntroduction = brief.fContent;
     }
@@ -83,14 +83,14 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     std::vector<eCampaignGlossary> poseidonGlossaries;
     std::vector<eCampaignGlossary> otherGlossaries;
     {
-        const auto folder = eGameDir::adventuresDir();
+        const auto folder = GameDir::adventuresDir();
         std::filesystem::create_directories(folder);
         for(const auto& entry : fs::directory_iterator(folder)) {
             const bool dir = entry.is_directory();
             if(!dir) continue;
             const auto path = entry.path();
             const std::string pathStr = path.u8string();
-            const auto name = eStringHelpers::pathToName(pathStr);
+            const auto name = StringHelpers::pathToName(pathStr);
             eCampaignGlossary glossary;
             const bool r = eCampaign::sReadGlossary(name, glossary);
             if(r) otherGlossaries.push_back(glossary);
@@ -117,7 +117,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
                 else zeusGlossaries.push_back(glossary);
             }
         };
-        const auto folder = eGameDir::pakAdventuresDir();
+        const auto folder = GameDir::pakAdventuresDir();
         procesFolder(folder);
     }
 
@@ -143,19 +143,19 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     const auto title = new eLabel(window());
     title->setFontSizeXL();
     title->setNoPadding();
-    title->setText(editor ? eLanguage::zeusText(287, 3) : // "Adventure Editor" : "Adventures"
-                            eLanguage::zeusText(293, 9));
+    title->setText(editor ? Language::zeusText(287, 3) : // "Adventure Editor" : "Adventures"
+                            Language::zeusText(293, 9));
     title->fitContent();
     iw->addWidget(title);
-    title->align(eAlignment::hcenter);
+    title->align(Alignment::hcenter);
 
     const auto chooseLabel = new eLabel(window());
     chooseLabel->setFontSizeS();
     chooseLabel->setNoPadding();
-    chooseLabel->setText(eLanguage::zeusText(287, 5)); // "Choose an Adventure"
+    chooseLabel->setText(Language::zeusText(287, 5)); // "Choose an Adventure"
     chooseLabel->fitContent();
     iw->addWidget(chooseLabel);
-    chooseLabel->align(eAlignment::hcenter);
+    chooseLabel->align(Alignment::hcenter);
 
     const int scrollW = cw - 4*p;
 
@@ -193,7 +193,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         newB->setUnderline(false);
         newB->setFontSizeS();
         newB->setPaddingS();
-        newB->setText(eLanguage::zeusText(287, 0)); // "New Adventure"
+        newB->setText(Language::zeusText(287, 0)); // "New Adventure"
         newB->fitContent();
         buttonsW->addWidget(newB);
         newB->setPressAction([cw, p, this]() {
@@ -208,19 +208,19 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             const auto title = new eLabel(window());
             title->setFontSizeXL();
             title->setPaddingS();
-            title->setText(eLanguage::zeusText(287, 0)); // "New Adventure"
+            title->setText(Language::zeusText(287, 0)); // "New Adventure"
             title->fitContent();
             iw->addWidget(title);
-            title->align(eAlignment::hcenter);
+            title->align(Alignment::hcenter);
 
             const auto edit = new eLineEdit(window());
             edit->setRenderBg(true);
-            edit->setText(eLanguage::zeusText(287, 0)); // "New Adventure" (placeholder)
+            edit->setText(Language::zeusText(287, 0)); // "New Adventure" (placeholder)
             edit->fitContent();
             edit->setText("");
             edit->setWidth(cw - 6*p);
             iw->addWidget(edit);
-            edit->align(eAlignment::hcenter);
+            edit->align(Alignment::hcenter);
 
             const auto buttonsW = new eWidget(window());
             buttonsW->setNoPadding();
@@ -238,7 +238,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             const auto proceedLabel = new eLabel(window());
             proceedLabel->setFontSizeS();
             proceedLabel->setPaddingS();
-            proceedLabel->setText(eLanguage::zeusText(287, 2)); // "Proceed"
+            proceedLabel->setText(Language::zeusText(287, 2)); // "Proceed"
             proceedLabel->fitContent();
             proceedW->addWidget(proceedLabel);
 
@@ -262,8 +262,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
             proceedW->stackHorizontally(2*p);
             proceedW->fitContent();
-            proceedLabel->align(eAlignment::vcenter);
-            proceedB->align(eAlignment::vcenter);
+            proceedLabel->align(Alignment::vcenter);
+            proceedB->align(Alignment::vcenter);
             buttonsW->addWidget(proceedW);
 
             buttonsW->layoutHorizontallyWithoutSpaces();
@@ -278,7 +278,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             box->setHeight(iw->height() + 4*p);
 
             window()->execDialog(box);
-            box->align(eAlignment::center);
+            box->align(Alignment::center);
 
             edit->grabKeyboard();
         });
@@ -287,21 +287,21 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         deleteB->setUnderline(false);
         deleteB->setFontSizeS();
         deleteB->setPaddingS();
-        deleteB->setText(eLanguage::zeusText(287, 1)); // "Delete Adventure"
+        deleteB->setText(Language::zeusText(287, 1)); // "Delete Adventure"
         deleteB->fitContent();
         buttonsW->addWidget(deleteB);
         deleteB->setPressAction([this]() {
            const auto q = new eQuestionWidget(window());
            const auto acceptA = [this]() {
-               const auto dir = eGameDir::adventuresDir() + mSelected.fFolderName + "/";
+               const auto dir = GameDir::adventuresDir() + mSelected.fFolderName + "/";
                std::filesystem::remove_all(dir);
                window()->showChooseGameEditMenu();
            };
-           q->initialize(eLanguage::zeusText(5, 179), // "Delete Adventure?"
-                         eLanguage::zeusText(5, 180), // "This deletes the selected Adventure..."
+           q->initialize(Language::zeusText(5, 179), // "Delete Adventure?"
+                         Language::zeusText(5, 180), // "This deletes the selected Adventure..."
                          acceptA, nullptr);
            window()->execDialog(q);
-           q->align(eAlignment::center);
+           q->align(Alignment::center);
         });
 
         buttonsW->setWidth(iw->width());
@@ -325,8 +325,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     const auto proceedLabel = new eLabel(window());
     proceedLabel->setFontSizeS();
     proceedLabel->setPaddingS();
-    proceedLabel->setText(editor ? eLanguage::zeusText(287, 2) : // "Proceed"
-                                   eLanguage::zeusText(287, 6)); // "Begin Adventure"
+    proceedLabel->setText(editor ? Language::zeusText(287, 2) : // "Proceed"
+                                   Language::zeusText(287, 6)); // "Begin Adventure"
     proceedLabel->fitContent();
     proceedW->addWidget(proceedLabel);
 
@@ -358,8 +358,8 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
     proceedW->stackHorizontally(2*p);
     proceedW->fitContent();
-    proceedLabel->align(eAlignment::vcenter);
-    proceedB->align(eAlignment::vcenter);
+    proceedLabel->align(Alignment::vcenter);
+    proceedB->align(Alignment::vcenter);
     buttons2W->addWidget(proceedW);
 
     buttons2W->setWidth(iw->width());
@@ -381,7 +381,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         viewport->resize(vpW - 2*tp, scrollH - 2*tp);
         viewport->move(tp, tp);
     }
-    iw->layoutVertically(layoutGap, eAlignment::top);
+    iw->layoutVertically(layoutGap, Alignment::top);
 
     const auto sideW = new eWidget(window());
     sideW->setNoPadding();
@@ -418,7 +418,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     mTitle->fitContent();
     mTitle->setText("");
     mTitle->setYellowFontColor();
-    mTitle->align(eAlignment::hcenter);
+    mTitle->align(Alignment::hcenter);
 
     mDesc = new eLabel(window());
     mDesc->setWrapWidth(descIW->width());
@@ -438,7 +438,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     iww->stackHorizontally(p);
     iww->fitContent();
     addWidget(iww);
-    iww->align(eAlignment::center);
+    iww->align(Alignment::center);
 
     {
         const auto scrollArea = new eWidget(window());
@@ -529,9 +529,9 @@ void eChooseGameEditMenu::setGlossary(const eCampaignGlossary& g) {
     mBitmap->setBitmap(g.fBitmap);
     mTitle->setText(g.fTitle);
     mTitle->fitContent();
-    mTitle->align(eAlignment::hcenter);
+    mTitle->align(Alignment::hcenter);
     auto textPrep = g.fIntroduction;
-    eStringHelpers::replaceSpecial(textPrep);
+    StringHelpers::replaceSpecial(textPrep);
     mDesc->setText(textPrep);
     mDesc->fitContent();
 }

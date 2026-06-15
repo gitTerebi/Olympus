@@ -5,12 +5,12 @@
 #include "buildings/epatrolbuilding.h"
 #include "engine/etile.h"
 #include "engine/game-board.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "widgets/etilepainter.h"
 
 namespace {
 
-void modPreviewTexture(const std::shared_ptr<eTexture>& tex,
+void modPreviewTexture(const std::shared_ptr<Texture>& tex,
                        const bool canBuild)
 {
     if (canBuild) tex->setColorMod(0, 255, 0);
@@ -32,7 +32,7 @@ void drawXYPreview(int worldTileX,
     int viewTileY = worldTileY;
     if (dir != eWorldDirection::N)
     {
-        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+        TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                            viewTileX, viewTileY,
                                            dir, boardWidth, boardHeight);
     }
@@ -61,7 +61,7 @@ void drawPreviewTextureAndOverlays(eTilePainter& tp,
     if (tex)
     {
         modPreviewTexture(tex, canBuild);
-        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+        tp.drawTexture(drawX, drawY, tex, Alignment::top);
         tex->clearColorMod();
     }
 
@@ -78,7 +78,7 @@ void drawPreviewTextureAndOverlays(eTilePainter& tp,
         const auto& overlayTexture = o.fTex;
         modPreviewTexture(overlayTexture, canBuild);
         if (o.fAlignTop)
-            tp.drawTexture(drawX + o.fX, drawY + o.fY, overlayTexture, eAlignment::top);
+            tp.drawTexture(drawX + o.fX, drawY + o.fY, overlayTexture, Alignment::top);
         else
             tp.drawTexture(drawX + o.fX, drawY + o.fY, overlayTexture);
         overlayTexture->clearColorMod();

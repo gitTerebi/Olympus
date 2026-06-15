@@ -4,12 +4,12 @@
 #include "epatrolbuilding.h"
 
 class eAgoraBase;
-class eSaveArchive;
+class SaveArchive;
 
 class eVendor : public eEmployingBuilding {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
-    using eOverlays = eTextureCollection BuildingTextures::*;
+    using eBaseTex = std::shared_ptr<Texture> BuildingTextures::*;
+    using eOverlays = TextureCollection BuildingTextures::*;
     using eCharGenerator =  std::function<stdsptr<eCharacter>()>;
     eVendor(GameBoard& board,
             const eResourceType resType,
@@ -27,8 +27,8 @@ public:
             const eCityId cid);
     ~eVendor();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     bool spawnsCartWalkers() const override { return true; }
 
@@ -62,7 +62,7 @@ public:
     void setVendorEnabled(const bool e) { mVendorEnabled = e; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eCartTransporter* spawnVendorCart();
 

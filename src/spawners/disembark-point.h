@@ -1,13 +1,13 @@
-#ifndef EDISEMBARKPOINT_H
-#define EDISEMBARKPOINT_H
+#ifndef DISEMBARK_POINT_H
+#define DISEMBARK_POINT_H
 
-#include "ebanner.h"
+#include "banner.h"
 
-class eDisembarkPoint : public eBanner {
+class DisembarkPoint : public Banner {
 public:
-    eDisembarkPoint(const int id,
+    DisembarkPoint(const int id,
                     eTile* const tile,
                     GameBoard& board);
 };
 
-#endif // EDISEMBARKPOINT_H
+#endif // DISEMBARK_POINT_H

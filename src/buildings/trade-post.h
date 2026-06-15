@@ -4,9 +4,9 @@
 #include "warehouse-base.h"
 
 #include "engine/world-city.h"
-#include "ewalkablehelpers.h"
+#include "walkable-helpers.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eTradePostType {
     post, pier
@@ -19,10 +19,10 @@ public:
                const eTradePostType type = eTradePostType::post);
     ~TradePost();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
     eTextureSpace getTextureSpace(const int tx, const int ty,
                                   const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 
@@ -70,7 +70,7 @@ public:
     bool importsResource(const eResourceType res) const override
     { return static_cast<bool>((mImports | mExports) & res); }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     // trade post pushes out imported goods only, never exports it holds
     bool pushAllows(const eResourceType res) const override
     { return static_cast<bool>(mImports & res); }

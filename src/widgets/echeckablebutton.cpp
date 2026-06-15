@@ -1,6 +1,6 @@
 #include "echeckablebutton.h"
 
-eCheckableButton::eCheckableButton(eMainWindow* const window) :
+eCheckableButton::eCheckableButton(MainWindow* const window) :
     eButton(window) {
     setPressAction([this]() {
         mChecked = !mChecked;
@@ -25,17 +25,17 @@ void eCheckableButton::check() {
     if(mCheckAction) mCheckAction(true);
 }
 
-void eCheckableButton::setCheckedTexture(const std::shared_ptr<eTexture>& tex) {
+void eCheckableButton::setCheckedTexture(const std::shared_ptr<Texture>& tex) {
     mCheckedTexture = tex;
 }
 
-void eCheckableButton::setCheckedHoverTexture(const std::shared_ptr<eTexture>& tex) {
+void eCheckableButton::setCheckedHoverTexture(const std::shared_ptr<Texture>& tex) {
     mCheckedHoverTexture = tex;
 }
 
 eCheckableButton* eCheckableButton::sCreate(
-        const eTextureCollection& texs,
-        eMainWindow* const window,
+        const TextureCollection& texs,
+        MainWindow* const window,
         eWidget* const buttons) {
     const auto b = sCreateButtonBase<eCheckableButton>(texs, window, buttons);
     b->setCheckedTexture(texs.getTexture(2));
@@ -46,9 +46,9 @@ void eCheckableButton::paintEvent(ePainter& p) {
     if(mCheckedTexture) {
         if(mChecked) {
             if(mCheckedHoverTexture && hovered()) {
-                p.drawTexture(rect(), mCheckedHoverTexture, eAlignment::center);
+                p.drawTexture(rect(), mCheckedHoverTexture, Alignment::center);
             } else {
-                p.drawTexture(rect(), mCheckedTexture, eAlignment::center);
+                p.drawTexture(rect(), mCheckedTexture, Alignment::center);
             }
         } else eButton::paintEvent(p);
     } else {
@@ -56,7 +56,7 @@ void eCheckableButton::paintEvent(ePainter& p) {
         if(mChecked) {
             SDL_Color col1;
             SDL_Color col2;
-            eFontColorHelpers::colors(fontColor(), col1, col2);
+            FontColorHelpers::colors(fontColor(), col1, col2);
             const SDL_Rect rect2{rect()};
             const SDL_Rect rect1{rect2.x + 1, rect2.y + 1,
                                  rect2.w, rect2.h};

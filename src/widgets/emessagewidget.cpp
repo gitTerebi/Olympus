@@ -1,7 +1,7 @@
 #include "emessagewidget.h"
 
 #include "elabel.h"
-#include "elanguage.h"
+#include "language.h"
 
 void eMessageWidget::initialize(const std::string& title,
                                 const std::string& text) {
@@ -31,16 +31,16 @@ void eMessageWidget::initialize(const std::string& title,
     const auto rightClickL = new eLabel(window());
     rightClickL->setNoPadding();
     rightClickL->setFontSizeS();
-    rightClickL->setText(eLanguage::zeusText(13, 1));
+    rightClickL->setText(Language::zeusText(13, 1));
     rightClickL->fitContent();
     cw->addWidget(rightClickL);
-    rightClickL->align(eAlignment::hcenter);
+    rightClickL->align(Alignment::hcenter);
 
     cw->stackVertically(p);
     cw->fitContent();
     addWidget(cw);
     cw->move(p, p);
     resize(cw->width() + 2*p, cw->height() + 2*p);
-    titleLabel->align(eAlignment::hcenter);
-    rightClickL->align(eAlignment::hcenter);
+    titleLabel->align(Alignment::hcenter);
+    rightClickL->align(Alignment::hcenter);
 }

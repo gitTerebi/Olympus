@@ -4,8 +4,8 @@
 #include "characters/actions/ewaitaction.h"
 #include "characters/actions/ebuildaction.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
-#include "enumbers.h"
+#include "fileIO/save-archive.h"
+#include "numbers.h"
 
 eArtisanAction::eArtisanAction(eCharacter* const c,
                                eArtisansGuild* const guild) :
@@ -29,7 +29,7 @@ bool eArtisanAction::decide() {
     const auto c = character();
     const auto t = c->tile();
 
-    const bool inGuild = eWalkableHelpers::sTileUnderBuilding(t, mGuild);
+    const bool inGuild = WalkableHelpers::sTileUnderBuilding(t, mGuild);
 
     if(inGuild) {
         if(mNoTarget) {
@@ -89,7 +89,7 @@ void eArtisanAction::increment(const int by) {
     eActionWithComeback::increment(by);
 }
 
-void eArtisanAction::serializeFields(eSaveArchive& ar) {
+void eArtisanAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.buildingAsField("guild", &board(), mGuild);
     ar.field("noTarget", mNoTarget);
@@ -179,7 +179,7 @@ void eArtisanAction::workOnDecision(eTile* const tile) {
     mTargetTile = tile;
     mTargetBuilding = bb;
     if(mWorkRemaining <= 0) {
-        mWorkRemaining = eNumbers::sArtisanBuildTime;
+        mWorkRemaining = Numbers::sArtisanBuildTime;
     }
     const auto c = character();
     c->setActionType(eCharacterActionType::build);
@@ -204,7 +204,7 @@ void eArtisanAction::workOnDecision(eTile* const tile) {
     } else if(dx > 0 && dy < 0) {
         o = eOrientation::left;
     } else {
-        o = static_cast<eOrientation>(eRand::rand() % 8);
+        o = static_cast<eOrientation>(Rand::rand() % 8);
     }
     c->setOrientation(o);
     const auto w = e::make_shared<eBuildAction>(c);

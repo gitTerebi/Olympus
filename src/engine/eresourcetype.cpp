@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 bool extractResourceType(const eResourceType from,
                          const eResourceType t,
@@ -132,7 +132,7 @@ std::string eResourceTypeHelpers::typeName(const eResourceType type) {
     default:
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 std::string eResourceTypeHelpers::typeLongName(const eResourceType type) {
@@ -218,10 +218,10 @@ std::string eResourceTypeHelpers::typeLongName(const eResourceType type) {
     default:
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
-std::shared_ptr<eTexture> eResourceTypeHelpers::icon(
+std::shared_ptr<Texture> eResourceTypeHelpers::icon(
         const eUIScale scale, const eResourceType type) {
     const int icoll = static_cast<int>(scale);
     const auto& intrfc = GameTextures::interface();

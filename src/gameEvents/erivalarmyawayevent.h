@@ -4,7 +4,7 @@
 #include "egameevent.h"
 #include "ecityeventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eRivalArmyAwayEvent : public eGameEvent,
                             public eCityEventValue {
@@ -17,7 +17,7 @@ public:
     std::string longName() const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 };
 
 #endif // ERIVALARMYAWAYEVENT_H

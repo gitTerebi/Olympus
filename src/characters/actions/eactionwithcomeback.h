@@ -9,7 +9,7 @@
 #include <SDL2/SDL_rect.h>
 
 class eBuilding;
-class eSaveArchive;
+class SaveArchive;
 
 using eWalkable = std::function<bool(eTileBase*)>;
 
@@ -39,7 +39,7 @@ public:
     eTile* startTile() const { return mStartTile; }
     void setStartTile(eTile* const t) { mStartTile = t; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 
 private:
     void goBackInternal(stdsptr<WalkableObject> walkable);
@@ -71,7 +71,7 @@ public:
         t->goBackInternal(mWalkable);
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.walkableField("walkable", mWalkable);
     }
@@ -94,7 +94,7 @@ public:
         t->setState(eCharacterActionState::finished);
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

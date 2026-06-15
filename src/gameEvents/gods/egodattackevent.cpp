@@ -5,7 +5,7 @@
 #include "engine/eeventdata.h"
 #include "characters/gods/actions/god-attack-action.h"
 #include "gameEvents/gods/egodtraderesumesevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eGodAttackEvent::eGodAttackEvent(
         const eCityId cid,
@@ -41,7 +41,7 @@ void eGodAttackEvent::trigger() {
     int tid;
     const int nTypes = mTypes.size();
     if(mRandom) {
-        tid = eRand::rand() % mTypes.size();
+        tid = Rand::rand() % mTypes.size();
     } else {
         tid = mNextId;
         if(++mNextId >= nTypes) mNextId = 0;
@@ -94,12 +94,12 @@ void eGodAttackEvent::trigger() {
 }
 
 std::string eGodAttackEvent::longName() const {
-    return eLanguage::zeusText(156, 27);
+    return Language::zeusText(156, 27);
 }
 
-void eGodAttackEvent::serializeFields(eSaveArchive& ar) {
+void eGodAttackEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
-    ar.arrayField("types", mTypes, [](eSaveArchive& ar, GodType& t) {
+    ar.arrayField("types", mTypes, [](SaveArchive& ar, GodType& t) {
         ar.field("t", t);
     });
     ar.field("random", mRandom, false);

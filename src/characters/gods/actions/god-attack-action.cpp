@@ -7,8 +7,8 @@
 #include "characters/monsters/ecalydonianboar.h"
 #include "characters/actions/ewaitaction.h"
 #include "buildings/epalace.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 GodAttackAction::GodAttackAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::godAttackAction) {}
@@ -22,8 +22,8 @@ void GodAttackAction::increment(const int by) {
     const auto type = this->type();
     const auto at = c->actionType();
     if(at == eCharacterActionType::walk) {
-        const int cursePeriod = eNumbers::sGodAttackCursePeriod;
-        const int curseRange = eNumbers::sGodAttackCurseRange;
+        const int cursePeriod = Numbers::sGodAttackCursePeriod;
+        const int curseRange = Numbers::sGodAttackCurseRange;
         const int lookForGodCheck = 1000;
         int attackPeriod;
         switch(type) {
@@ -31,7 +31,7 @@ void GodAttackAction::increment(const int by) {
         case GodType::artemis:
         case GodType::athena:
         case GodType::zeus:
-            attackPeriod = eNumbers::sGodAttackAggressiveAttackPeriod;
+            attackPeriod = Numbers::sGodAttackAggressiveAttackPeriod;
             break;
         case GodType::aphrodite:
         case GodType::apollo:
@@ -44,16 +44,16 @@ void GodAttackAction::increment(const int by) {
         case GodType::hermes:
         case GodType::poseidon:
         default:
-            attackPeriod = eNumbers::sGodAttackAttackPeriod;
+            attackPeriod = Numbers::sGodAttackAttackPeriod;
             break;
         }
-        const int attackRange = eNumbers::sGodAttackAttackRange;
+        const int attackRange = Numbers::sGodAttackAttackRange;
 
-        const int targetedAttackPeriod = eNumbers::sGodAttackTargetedAttackPeriod;
-        const int targetedAttackRange = eNumbers::sGodAttackTargetedAttackRange;
-        const int targetedCursePeriod = eNumbers::sGodAttackTargetedCursePeriod;
-        const int targetedCurseRange = eNumbers::sGodAttackTargetedCurseRange;
-        const int godFightRange = eNumbers::sGodAttackGodFightRange;
+        const int targetedAttackPeriod = Numbers::sGodAttackTargetedAttackPeriod;
+        const int targetedAttackRange = Numbers::sGodAttackTargetedAttackRange;
+        const int targetedCursePeriod = Numbers::sGodAttackTargetedCursePeriod;
+        const int targetedCurseRange = Numbers::sGodAttackTargetedCurseRange;
+        const int godFightRange = Numbers::sGodAttackGodFightRange;
 
         bool r = lookForBlessCurse(by, mLookForCurse, cursePeriod, curseRange, -1);
         if(!r) r = lookForAttack(by, mLookForAttack, attackPeriod, attackRange);
@@ -71,8 +71,8 @@ void GodAttackAction::increment(const int by) {
                 const auto s = eGodSound::curse;
                 const auto c = character();
                 const auto chart = c->type();
-                const int plaguePeriod = eNumbers::sGodAttackApolloPlaguePeriod;
-                const int plagueRange = eNumbers::sGodAttackApolloPlagueRange;
+                const int plaguePeriod = Numbers::sGodAttackApolloPlaguePeriod;
+                const int plagueRange = Numbers::sGodAttackApolloPlagueRange;
                 lookForRangeAction(by, mLookForSpecial,
                                    plaguePeriod, plagueRange,
                                    at, act, chart, s);
@@ -84,8 +84,8 @@ void GodAttackAction::increment(const int by) {
                 const auto s = eGodSound::curse;
                 const auto c = character();
                 const auto chart = c->type();
-                const int evictPeriod = eNumbers::sGodAttackAphroditeEvictPeriod;
-                const int evictRange = eNumbers::sGodAttackAphroditeEvictRange;
+                const int evictPeriod = Numbers::sGodAttackAphroditeEvictPeriod;
+                const int evictRange = Numbers::sGodAttackAphroditeEvictRange;
                 lookForRangeAction(by, mLookForSpecial,
                                    evictPeriod, evictRange,
                                    at, act, chart, s);
@@ -409,7 +409,7 @@ void GodAttackAction::rebuildCurrentStage() {
     }
 }
 
-void GodAttackAction::serializeFields(eSaveArchive& ar) {
+void GodAttackAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("lookForCurse", mLookForCurse);

@@ -2,5 +2,5 @@
 
 #include "textures/interface-textures.h"
 
-eRightButton::eRightButton(eMainWindow* const window) :
+eRightButton::eRightButton(MainWindow* const window) :
     eBasicButton(&InterfaceTextures::fRightButton, window) {}

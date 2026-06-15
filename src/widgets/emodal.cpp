@@ -1,6 +1,6 @@
 #include "emodal.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 #include "epainter.h"
 
 #include <SDL2/SDL.h>
@@ -13,7 +13,7 @@ void eModal::initializeMask(const int w, const int h) {
     mFrame->setType(eFrameType::message);
     mFrame->resize(w, h);
     addWidget(mFrame);
-    mFrame->align(eAlignment::center);
+    mFrame->align(Alignment::center);
 }
 
 void eModal::resetModal() {

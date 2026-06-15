@@ -1,17 +1,17 @@
-#ifndef EFONTCOLOR_H
-#define EFONTCOLOR_H
+#ifndef FONT_COLOR_H
+#define FONT_COLOR_H
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
-enum class eFontColor {
+enum class FontColor {
     light, dark, yellow, region, red
 };
 
-namespace eFontColorHelpers {
-    void colors(const eFontColor c,
+namespace FontColorHelpers {
+    void colors(const FontColor c,
                 SDL_Color& col1,
                 SDL_Color& col2);
 };
 
-#endif // EFONTCOLOR_H
+#endif // FONT_COLOR_H

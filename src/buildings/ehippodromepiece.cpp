@@ -1,8 +1,8 @@
 #include "ehippodromepiece.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "engine/game-board.h"
 #include "buildings/eroad.h"
 #include "ehippodrome.h"
@@ -153,7 +153,7 @@ struct eBezier1D {
     }
 };
 
-void bezierTo(std::vector<ePathPoint>& path,
+void bezierTo(std::vector<PathPoint>& path,
               const double x, const double y,
               const bool clockwise) {
     if(path.empty()) return;
@@ -184,7 +184,7 @@ void bezierTo(std::vector<ePathPoint>& path,
     path.push_back({x, y, 0.});
 }
 
-void eHippodromePiece::progressPath(std::vector<ePathPoint>& path) const {
+void eHippodromePiece::progressPath(std::vector<PathPoint>& path) const {
     if(path.empty()) return;
     const auto last = path.back();
     const auto& r = tileRect();
@@ -340,7 +340,7 @@ eTextureSpace eHippodromePiece::getTextureSpace(
     return {nullptr};
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eHippodromePiece::getTexture(const eTileSize size) const {
     const auto& board = getBoard();
     const auto dir = board.direction();
@@ -358,7 +358,7 @@ eHippodromePiece::getTexture(const eTileSize size) const {
 }
 
 void eHippodromePiece::crossTile(eTile* const t,
-                                 std::vector<eOverlay>& result,
+                                 std::vector<Overlay>& result,
                                  const eWorldDirection dir,
                                  const eTileSize size,
                                  const SDL_Rect& rr,
@@ -400,14 +400,14 @@ void eHippodromePiece::crossTile(eTile* const t,
 }
 
 void eHippodromePiece::horseTile(eTile* const t,
-                                 std::vector<eOverlay>& result,
+                                 std::vector<Overlay>& result,
                                  const eWorldDirection dir,
                                  const eTileSize size,
                                  const SDL_Rect& rr) const {
     const auto& ms = t->missiles();
     for(const auto& m : ms) {
         const auto type = m->type();
-        if(type != eMissileType::racingHorse) continue;
+        if(type != MissileType::racingHorse) continue;
         const auto tex = m->getTexture(size);
         auto& o = result.emplace_back();
         o.fTex = tex;
@@ -486,11 +486,11 @@ void iterateRenderOrder(const SDL_Rect& rr, const GameBoard& board,
     }
 }
 
-std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eHippodromePiece::getOverlays(const eTileSize size) const {
     const auto& board = getBoard();
     const auto dir = board.direction();
     const auto& rr = tileRect();
-    std::vector<eOverlay> result;
+    std::vector<Overlay> result;
 
     const int sizeId = static_cast<int>(size);
     const auto& builTexs = GameTextures::buildings()[sizeId];
@@ -634,7 +634,7 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
     return result;
 }
 
-void eHippodromePiece::serializeFields(eSaveArchive& ar) {
+void eHippodromePiece::serializeFields(SaveArchive& ar) {
     eBuildingWithResource::serializeFields(ar);
     ar.field("hippodromeId", mId);
     ar.characterField("cart", &getBoard(), mCart);

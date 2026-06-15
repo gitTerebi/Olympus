@@ -10,12 +10,12 @@
 #include "widgets/elabel.h"
 #include "widgets/elayouthelpers.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include <algorithm>
 
 CommonHouseInfoWidget::CommonHouseInfoWidget(
-        eMainWindow* const window,
+        MainWindow* const window,
         eMainWidget* const mw) :
     eInfoWidget(window, mw, true, true) {}
 
@@ -57,7 +57,7 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
             titleString = 12;
         }
     }
-    const auto title = eLanguage::zeusText(titleGroup, titleString);
+    const auto title = Language::zeusText(titleGroup, titleString);
     eInfoWidget::initialize(title);
     addCentralWidget();
 
@@ -138,7 +138,7 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
             break;
         }
     } else {
-        msg = eLanguage::zeusText(127, needString);
+        msg = Language::zeusText(127, needString);
     }
 
     const auto cw = centralWidget();
@@ -173,8 +173,8 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
 
         w->stackHorizontally();
         w->fitContent();
-        iconLabel->align(eAlignment::vcenter);
-        countLabel->align(eAlignment::vcenter);
+        iconLabel->align(Alignment::vcenter);
+        countLabel->align(Alignment::vcenter);
 
         return w;
     };
@@ -221,31 +221,31 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         lbl->setWrapWidth(fw->width());
         lbl->fitContent();
         lbl->setWidth(fw->width());
-        lbl->setTextAlignment(eAlignment::hcenter);
+        lbl->setTextAlignment(Alignment::hcenter);
         return lbl;
     };
 
     auto occstr = std::to_string(house->people()) + " " +
-                  eLanguage::zeusText(127, 15);
+                  Language::zeusText(127, 15);
     const int vacs = house->vacancies();
     if(vacs > 0) {
-        occstr += "  " + eLanguage::zeusText(127, 17) + " " +
+        occstr += "  " + Language::zeusText(127, 17) + " " +
                   std::to_string(vacs);
     } else if(vacs < 0) {
         occstr += "  " + std::to_string(-vacs) + " " +
-                  eLanguage::zeusText(127, 16);
+                  Language::zeusText(127, 16);
     }
 
     std::string taxStr;
     {
         const int paid = house->paidTaxes();
         if(paid) {
-            taxStr = eLanguage::zeusText(127, 19);
+            taxStr = Language::zeusText(127, 19);
             taxStr += " " + std::to_string(paid) + " ";
-            taxStr += eLanguage::zeusText(8, 1) + " ";
-            taxStr += eLanguage::zeusText(127, 20);
+            taxStr += Language::zeusText(8, 1) + " ";
+            taxStr += Language::zeusText(127, 20);
         } else {
-            taxStr = eLanguage::zeusText(127, 18);
+            taxStr = Language::zeusText(127, 18);
         }
     }
 
@@ -254,9 +254,9 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         const auto ch = static_cast<SmallHouse*>(house);
         const int sat = ch->satisfaction();
         int n = std::clamp(int(std::floor((100 - sat)/(100./7))), 0, 6);
-        satstr = eLanguage::zeusText(127, 21 + n);
+        satstr = Language::zeusText(127, 21 + n);
     } else {
-        satstr = eLanguage::zeusText(127, 21);
+        satstr = Language::zeusText(127, 21);
     }
 
     std::vector<eLayoutHelpers::eFlexItem> topItems;
@@ -264,7 +264,7 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
     topItems.push_back({makeFwLbl(taxStr)});
     topItems.push_back({makeFwLbl(satstr)});
     if(!house->food())
-        topItems.push_back({makeFwLbl(eLanguage::zeusText(127, 28))});
+        topItems.push_back({makeFwLbl(Language::zeusText(127, 28))});
 
     const auto topCol = eLayoutHelpers::createFlexContainer(
                             window(), fw->width(), 0,
@@ -310,7 +310,7 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         l->fitContent();
         fw->addWidget(l);
         l->setY(fw->height() - l->height() - p);
-        l->align(eAlignment::hcenter);
+        l->align(Alignment::hcenter);
 
         const double appeal = house->appeal();
         const bool isElite = type == eBuildingType::eliteHousing;
@@ -333,6 +333,6 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
         dl->fitContent();
         fw->addWidget(dl);
         dl->setY(l->y() - dl->height());
-        dl->align(eAlignment::hcenter);
+        dl->align(Alignment::hcenter);
     }
 }
