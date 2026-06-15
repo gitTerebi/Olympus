@@ -5,8 +5,6 @@
 
 #include <string>
 
-#include <filesystem>
-
 #include "emainwindow.h"
 #include "textures/egametextures.h"
 
@@ -173,38 +171,13 @@ int main() {
         }
     }
 
-    if(!std::filesystem::exists(eGameDir::iBinaryPath())) {
-        printf("Could not find interface textures!\n"
-               "Make sure you have interface.e file in eZeus directory.\n");
-        close();
-        return 1;
-    }
-
+    // Sprites decode live from DATA/*.sg3 + *.555, so the legacy interface.e
+    // and i15/i30/i45/i60.e files are no longer required at startup. The zoom
+    // flags below still pick which tier loads; emainwindow defaults one on if
+    // none are set.
     eNumbers::sLoad();
     eSettings settings;
     settings.read();
-    bool found = false;
-    const auto checkTextureSize = [&found](const std::string& path,
-                                           bool& setting) {
-        if(!setting) return;
-        setting = std::filesystem::exists(path);
-        if(setting) found = true;
-    };
-    checkTextureSize(eGameDir::i15BinaryPath(), settings.fTinyTextures);
-    checkTextureSize(eGameDir::i30BinaryPath(), settings.fSmallTextures);
-    checkTextureSize(eGameDir::i45BinaryPath(), settings.fMediumTextures);
-    checkTextureSize(eGameDir::i60BinaryPath(), settings.fLargeTextures);
-    if(!found) {
-        settings.fSmallTextures = std::filesystem::exists(eGameDir::i30BinaryPath());
-        if(settings.fSmallTextures) {
-            found = true;
-        } else {
-            printf("Could not find any textures!\n"
-                   "Make sure you have i15.e, i30.e, i45.e, or i60.e file in eZeus directory.\n");
-            close();
-            return 1;
-        }
-    }
 
     int r = 0;
     {
