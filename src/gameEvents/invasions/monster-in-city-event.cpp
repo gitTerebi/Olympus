@@ -1,10 +1,10 @@
 #include "monster-in-city-event.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "emessages.h"
+#include "messages.h"
 
 eMonsterInCityEvent::eMonsterInCityEvent(
         const eCityId cid,
@@ -27,7 +27,7 @@ void eMonsterInCityEvent::trigger() {
     ed.fMonster = mMonster;
     board->event(eEvent::monsterInCity, ed);
 
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.monsterMessages(mMonster);
     const auto& m = gm->fInCityReason;
     const auto heroType = eMonster::sSlayer(mMonster);
@@ -35,5 +35,5 @@ void eMonsterInCityEvent::trigger() {
 }
 
 std::string eMonsterInCityEvent::longName() const {
-    return eLanguage::zeusText(182, 0);
+    return Language::zeusText(182, 0);
 }

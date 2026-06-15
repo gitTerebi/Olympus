@@ -1,6 +1,6 @@
 #include "eaestheticsbuilding.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "textures/game-textures.h"
 
 #include "sanctuaries/sanctuary.h"
@@ -16,7 +16,7 @@ eAestheticsBuilding::eAestheticsBuilding(
     setEnabled(true);
 }
 
-std::shared_ptr<eTexture> eAestheticsBuilding::getTexture(
+std::shared_ptr<Texture> eAestheticsBuilding::getTexture(
         const eTileSize size) const {
     if(!mTexture) return nullptr;
     const int sizeId = static_cast<int>(size);
@@ -71,17 +71,17 @@ eOverlayAesthBuilding::eOverlayAesthBuilding(GameBoard& board,
     setEnabled(true);
 }
 
-std::vector<eOverlay> eOverlayAesthBuilding::getOverlays(
+std::vector<Overlay> eOverlayAesthBuilding::getOverlays(
         const eTileSize size) const {
     if(!mOverlays) return {};
     const int sizeId = static_cast<int>(size);
     const auto& coll = GameTextures::buildings()[sizeId].*mOverlays;
     const int texId = textureTime() % coll.size();
-    eOverlay o;
+    Overlay o;
     o.fTex = coll.getTexture(texId);
     o.fX = mOverlayX;
     o.fY = mOverlayY;
-    return std::vector<eOverlay>({o});
+    return std::vector<Overlay>({o});
 }
 
 eBirdBath::eBirdBath(GameBoard& board, const eCityId cid) :
@@ -170,12 +170,12 @@ void eWaterPark::setId(const int i) {
     mId = i % 8;
 }
 
-void eWaterPark::serializeFields(eSaveArchive& ar) {
+void eWaterPark::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.field("id", mId, 0);
 }
 
-std::shared_ptr<eTexture> eWaterPark::getTexture(
+std::shared_ptr<Texture> eWaterPark::getTexture(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& colls = GameTextures::buildings();
@@ -191,7 +191,7 @@ std::shared_ptr<eTexture> eWaterPark::getTexture(
     else         return texs.fWaterPark8;
 }
 
-const eOverlay waterParkOverlays[] = {{-1.27, -2.08, nullptr},
+const Overlay waterParkOverlays[] = {{-1.27, -2.08, nullptr},
                                       {-1.20, -2.15, nullptr},
                                       {-1.28, -2.13, nullptr},
                                       {-1.27, -2.08, nullptr},
@@ -200,11 +200,11 @@ const eOverlay waterParkOverlays[] = {{-1.27, -2.08, nullptr},
                                       {-1.25, -2.1, nullptr},
                                       {-1.07, -1.86, nullptr}};
 
-std::vector<eOverlay> eWaterPark::getOverlays(
+std::vector<Overlay> eWaterPark::getOverlays(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     if(mId == 0)      coll = &texs.fWaterPark1Overlay;
     else if(mId == 1) coll = &texs.fWaterPark2Overlay;
     else if(mId == 2) coll = &texs.fWaterPark3Overlay;
@@ -214,9 +214,9 @@ std::vector<eOverlay> eWaterPark::getOverlays(
     else if(mId == 6) coll = &texs.fWaterPark7Overlay;
     else              coll = &texs.fWaterPark8Overlay;
     const int texId = textureTime() % coll->size();
-    eOverlay o = waterParkOverlays[mId];
+    Overlay o = waterParkOverlays[mId];
     o.fTex = coll->getTexture(texId);
-    return std::vector<eOverlay>({o});
+    return std::vector<Overlay>({o});
 }
 
 eCommemorative::eCommemorative(const int id, GameBoard& board, const eCityId cid) :
@@ -225,7 +225,7 @@ eCommemorative::eCommemorative(const int id, GameBoard& board, const eCityId cid
     GameTextures::loadCommemorative();
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eCommemorative::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
@@ -249,7 +249,7 @@ void eGodMonument::erase() {
 
 #include "buildings/sanctuaries/etemplemonumentbuilding.h"
 
-std::shared_ptr<eTexture> eGodMonument::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eGodMonument::getTexture(const eTileSize size) const {
     const auto coll = eTempleMonumentBuilding::sGodMonumentTextureCollection(size, mGod);
     return coll->getTexture(1);
 }
@@ -261,7 +261,7 @@ void eGodMonument::addTile(eGodMonumentTile* const tile) {
     mMonumentTilesCache.push_back(tile);
 }
 
-void eGodMonument::serializeFields(eSaveArchive& ar) {
+void eGodMonument::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     if(ar.reading()) {
         mMonumentTilesCache.clear();
@@ -277,7 +277,7 @@ void eGodMonumentTile::erase() {
     mMonument->erase();
 }
 
-std::shared_ptr<eTexture> eGodMonumentTile::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eGodMonumentTile::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings();
     const auto& coll = texs[sizeId].fPalaceTiles;
@@ -288,7 +288,7 @@ void eGodMonumentTile::setMonument(eGodMonument *const mon) {
     mMonument = mon;
 }
 
-void eGodMonumentTile::serializeFields(eSaveArchive& ar) {
+void eGodMonumentTile::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.buildingAsField("monument", &getBoard(), mMonument);
     if(ar.reading()) {

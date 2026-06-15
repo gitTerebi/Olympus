@@ -1,18 +1,18 @@
 ﻿#include "eworldtributewidget.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "engine/game-board.h"
 #include "engine/tribute.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 void eWorldTributeWidget::initialize() {
-    const auto titleStr = eLanguage::zeusText(44, 320);
+    const auto titleStr = Language::zeusText(44, 320);
     mTitleLabel = new eLabel(titleStr, window());
     mTitleLabel->setFontSizeXS();
     mTitleLabel->setNoPadding();
     mTitleLabel->fitContent();
     addWidget(mTitleLabel);
-    mTitleLabel->align(eAlignment::hcenter);
+    mTitleLabel->align(Alignment::hcenter);
 
     mTypeIcon = new eLabel(window());
     mTypeIcon->setNoPadding();
@@ -29,10 +29,10 @@ void eWorldTributeWidget::initialize() {
     mAlliesLabel->setFontSizeXS();
     mAlliesLabel->setNoPadding();
     addWidget(mAlliesLabel);
-    const auto alliesText = eLanguage::zeusText(44, 323);
+    const auto alliesText = Language::zeusText(44, 323);
     mAlliesLabel->resize(width(), height());
     mAlliesLabel->setWrapWidth(width());
-    mAlliesLabel->setWrapAlignment(eAlignment::hcenter);
+    mAlliesLabel->setWrapAlignment(Alignment::hcenter);
     mAlliesLabel->setText(alliesText);
     mAlliesLabel->hide();
 }
@@ -44,7 +44,7 @@ bool eWorldTributeWidget::hasClaimToTribute(
     const auto defs = mBoard->conqueredBy(c->cityId());
     for(const auto cid : cids) {
         const auto playerCity = mBoard->world().cityWithId(cid);
-        if(eVectorHelpers::contains(defs, playerCity)) return true;
+        if(VectorHelpers::contains(defs, playerCity)) return true;
     }
     return false;
 }
@@ -58,7 +58,7 @@ void eWorldTributeWidget::setCity(const stdsptr<WorldCity>& c) {
         if(c->isOnBoardColony()) return;
         const bool isDist = c->isDistant();
         if(isDist) {
-            mAlliesLabel->setText(eLanguage::zeusText(44, 325));
+            mAlliesLabel->setText(Language::zeusText(44, 325));
             mAlliesLabel->show();
             return;
         }
@@ -67,10 +67,10 @@ void eWorldTributeWidget::setCity(const stdsptr<WorldCity>& c) {
         const bool tributeCity = cityOwesTribute || playerPaysTribute;
         if(!tributeCity) {
             if(c->isAlly()) {
-                mAlliesLabel->setText(eLanguage::zeusText(44, 323));
+                mAlliesLabel->setText(Language::zeusText(44, 323));
                 mAlliesLabel->show();
             } else if(c->isRival()) {
-                mAlliesLabel->setText(eLanguage::zeusText(44, 324));
+                mAlliesLabel->setText(Language::zeusText(44, 324));
                 mAlliesLabel->show();
             }
             return;
@@ -95,7 +95,7 @@ void eWorldTributeWidget::setCity(const stdsptr<WorldCity>& c) {
         mTypeIcon->setTexture(icon);
         mTypeIcon->fitContent();
         const auto name = eResourceTypeHelpers::typeName(ttype);
-        const auto yearly = eLanguage::zeusText(44, 322);
+        const auto yearly = Language::zeusText(44, 322);
         const auto text = std::to_string(count) + " " + name + " " + yearly;
         mTextLabel->setText(text);
         mTextLabel->fitContent();

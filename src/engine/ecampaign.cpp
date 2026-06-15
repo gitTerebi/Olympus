@@ -4,11 +4,11 @@
 
 #include <filesystem>
 
-#include "evectorhelpers.h"
-#include "egamedir.h"
-#include "elanguage.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "vector-helpers.h"
+#include "game-dir.h"
+#include "language.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 namespace {
 const int currentSaveVersion = 1;
@@ -75,7 +75,7 @@ std::string eCampaign::audioFilesBasePath() const {
     {
         auto name = mPakFilename;
         if(name.size() > 4) {
-            const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
+            const auto baseDir = GameDir::path("Audio/Voice/Campaign/");
             name = name.substr(0, name.length() - 4);
             const auto basePath = baseDir + name + "_";
             std::ifstream file(basePath + "A_v.mp3");
@@ -83,8 +83,8 @@ std::string eCampaign::audioFilesBasePath() const {
         }
     }
     {
-        const auto baseDir = mIsPak ? eGameDir::pakAdventuresDir() :
-                                      eGameDir::adventuresDir();
+        const auto baseDir = mIsPak ? GameDir::pakAdventuresDir() :
+                                      GameDir::adventuresDir();
         const auto aDir = baseDir + mName + "/";
         const auto basePath = aDir + mName + "_";
         std::ifstream file(basePath + "A_v.mp3");
@@ -96,7 +96,7 @@ std::string eCampaign::audioFilesBasePath() const {
 std::string eCampaign::currentEpisodeAudioFilePath(const bool intro) const {
     const int id = audioFilesId();
     if(id) {
-        const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
+        const auto baseDir = GameDir::path("Audio/Voice/Campaign/");
         int subId;
         if(mCurrentEpisodeType == eEpisodeType::colony) {
             subId = 11;
@@ -127,7 +127,7 @@ std::string eCampaign::currentEpisodeAudioFilePath(const bool intro) const {
 std::string eCampaign::adventureVictoryAudioFilePath() const {
     const int id = audioFilesId();
     if(id) {
-        const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
+        const auto baseDir = GameDir::path("Audio/Voice/Campaign/");
         const auto path = baseDir + "C" + std::to_string(id) + "_v.mp3";
         return path;
     } else {
@@ -183,8 +183,8 @@ bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
 }
 
 bool eCampaign::loadStrings() {
-    const auto baseDir = mIsPak ? eGameDir::pakAdventuresDir() :
-                                  eGameDir::adventuresDir();
+    const auto baseDir = mIsPak ? GameDir::pakAdventuresDir() :
+                                  GameDir::adventuresDir();
     const auto aDir = baseDir + mName + "/";
     const auto txtFile = aDir + mName + ".txt";
     std::map<std::string, std::string> map;
@@ -266,22 +266,22 @@ bool eCampaign::writeStrings(const std::string& path) const {
 }
 
 void eCampaign::loadNumbers() {
-    const auto baseDir = mIsPak ? eGameDir::pakAdventuresDir() :
-                                  eGameDir::adventuresDir();
+    const auto baseDir = mIsPak ? GameDir::pakAdventuresDir() :
+                                  GameDir::adventuresDir();
     const auto aDir = baseDir + mName + "/";
     const auto numFile = aDir + "numbers.txt";
     std::ifstream file(numFile);
     if(file.good()) {
-        eNumbers::sLoad(numFile);
+        Numbers::sLoad(numFile);
     } else {
-        eNumbers::sLoad();
+        Numbers::sLoad();
     }
 }
 
 bool eCampaign::sReadGlossary(const std::string& name,
                               eCampaignGlossary& glossary) {
     glossary.fIsPak = false;
-    const auto baseDir = eGameDir::adventuresDir();
+    const auto baseDir = GameDir::adventuresDir();
     const auto aDir = baseDir + name + "/";
     const auto txtFile = aDir + name + ".txt";
     std::map<std::string, std::string> map;
@@ -295,17 +295,17 @@ bool eCampaign::sReadGlossary(const std::string& name,
     const auto pakFile = aDir + name + ".epak";
     std::ifstream file(pakFile, std::ios::in | std::ios::binary);
     if(file) {
-        eReadSource source(&file);
-        eReadStream src(source);
+        ReadSource source(&file);
+        ReadStream src(source);
         src.readFormat();
-        eSaveArchive ar(src);
+        SaveArchive ar(src);
         ar.field("bitmap", glossary.fBitmap);
         file.close();
     }
     return true;
 }
 
-void eCampaign::serialize(eSaveArchive& ar) {
+void eCampaign::serialize(SaveArchive& ar) {
     ar.field("bitmap", mBitmap);
     ar.field("isPak", mIsPak);
     if(mIsPak) ar.field("pakFilename", mPakFilename);
@@ -331,7 +331,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
                 ePlayerId pid;
                 int val = 0;
                 ar.archiveField(("drachmas." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&](SaveArchive& itemAr) {
                         itemAr.field("playerId", pid);
                         itemAr.field("drachmas", val);
                     });
@@ -343,7 +343,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
                 ePlayerId pid = d.first;
                 int val = d.second;
                 ar.archiveField(("drachmas." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&](SaveArchive& itemAr) {
                         itemAr.field("playerId", pid);
                         itemAr.field("drachmas", val);
                     });
@@ -361,16 +361,16 @@ void eCampaign::serialize(eSaveArchive& ar) {
     ar.field("difficulty", mDifficulty);
 
     ar.archiveField("worldBoard",
-        [this](eSaveArchive& itemAr) { mWorldBoard.serialize(itemAr); });
+        [this](SaveArchive& itemAr) { mWorldBoard.serialize(itemAr); });
 
     if(ar.reading()) {
         mParentBoard = e::make_shared<GameBoard>(mWorldBoard);
     }
     ar.archiveField("parentBoard",
-        [this](eSaveArchive& itemAr) { mParentBoard->serialize(itemAr); });
+        [this](SaveArchive& itemAr) { mParentBoard->serialize(itemAr); });
 
     ar.arrayField("playedColonyEpisodes", mPlayedColonyEpisodes,
-        [](eSaveArchive& itemAr, int& v) { itemAr.field("episode", v); });
+        [](SaveArchive& itemAr, int& v) { itemAr.field("episode", v); });
 
     // colony boards — finished ones not written, placeholder kept
     {
@@ -384,12 +384,12 @@ void eCampaign::serialize(eSaveArchive& ar) {
             }
             if(finished) continue;
             ar.archiveField(("colonyBoard." + std::to_string(i)).c_str(),
-                [this, i](eSaveArchive& itemAr) { mColonyBoards[i]->serialize(itemAr); });
+                [this, i](SaveArchive& itemAr) { mColonyBoards[i]->serialize(itemAr); });
         }
     }
 
     ar.arrayField("parentCityEpisodes", mParentCityEpisodes,
-        [this](eSaveArchive& itemAr, stdsptr<eParentCityEpisode>& e) {
+        [this](SaveArchive& itemAr, stdsptr<eParentCityEpisode>& e) {
             if(itemAr.reading() && !e) {
                 e = std::make_shared<eParentCityEpisode>();
                 e->fBoard = mParentBoard.get();
@@ -410,20 +410,20 @@ void eCampaign::serialize(eSaveArchive& ar) {
                 mColonyEpisodes[i]->fWorldBoard = &mWorldBoard;
             }
             ar.archiveField(("colonyEpisode." + std::to_string(i)).c_str(),
-                [this, i](eSaveArchive& itemAr) {
+                [this, i](SaveArchive& itemAr) {
                     mColonyEpisodes[i]->serialize(itemAr);
                 });
         }
     }
 
     ar.arrayField("forColony", mForColony,
-        [this](eSaveArchive& itemAr, stdsptr<eSetAside>& s) {
+        [this](SaveArchive& itemAr, stdsptr<eSetAside>& s) {
             if(itemAr.reading() && !s) s = std::make_shared<eSetAside>();
             s->serialize(itemAr, &mWorldBoard);
         });
 
     ar.arrayField("forParent", mForParent,
-        [this](eSaveArchive& itemAr, stdsptr<eSetAside>& s) {
+        [this](SaveArchive& itemAr, stdsptr<eSetAside>& s) {
             if(itemAr.reading() && !s) s = std::make_shared<eSetAside>();
             s->serialize(itemAr, &mWorldBoard);
         });
@@ -435,7 +435,7 @@ void eCampaign::serialize(eSaveArchive& ar) {
 
 bool eCampaign::load(const std::string& name) {
     mName = name;
-    const auto baseDir = eGameDir::adventuresDir();
+    const auto baseDir = GameDir::adventuresDir();
     const auto aDir = baseDir + mName + "/";
 
     const auto pakFile = aDir + mName + ".epak";
@@ -447,8 +447,8 @@ bool eCampaign::load(const std::string& name) {
         return true;
     }
 
-    eReadSource source(&file);
-    eReadStream src(source);
+    ReadSource source(&file);
+    ReadStream src(source);
     src.readFormat();
     const auto& format = src.format();
     if(format != "eZeus.epak") {
@@ -456,7 +456,7 @@ bool eCampaign::load(const std::string& name) {
                pakFile.c_str(), format.c_str());
         return false;
     }
-    eSaveArchive ar(src);
+    SaveArchive ar(src);
     serialize(ar);
     src.handlePostFuncs();
     file.close();
@@ -467,7 +467,7 @@ bool eCampaign::load(const std::string& name) {
 }
 
 bool eCampaign::save() const {
-    const auto baseDir = eGameDir::adventuresDir();
+    const auto baseDir = GameDir::adventuresDir();
     const auto aDir = baseDir + mName + "/";
     std::filesystem::create_directories(aDir);
     const auto txtFile = aDir + mName + ".txt";
@@ -477,10 +477,10 @@ bool eCampaign::save() const {
     std::ofstream file(pakFile, std::ios::out | std::ios::binary |
                        std::ios::trunc);
     if(!file) return false;
-    eWriteTarget target(&file);
-    eWriteStream dst(target);
+    WriteTarget target(&file);
+    WriteStream dst(target);
     dst.writeFormat("eZeus.epak");
-    eSaveArchive ar(dst);
+    SaveArchive ar(dst);
     const_cast<eCampaign*>(this)->serialize(ar);
     file.close();
     return true;
@@ -607,7 +607,7 @@ bool eCampaign::finished() const {
 std::vector<eColonyEpisode*> eCampaign::remainingColonies() const {
     std::vector<eColonyEpisode*> result;
     for(int i = 0; i < 4; i++) {
-        const bool p = eVectorHelpers::contains(mPlayedColonyEpisodes, i);
+        const bool p = VectorHelpers::contains(mPlayedColonyEpisodes, i);
         if(p) continue;
         const auto& ep = mColonyEpisodes[i];
         if(!ep->fCity) continue;
@@ -620,7 +620,7 @@ std::vector<int> eCampaign::colonyEpisodesLeft() const {
     std::vector<int> result;
     const int iMax = mColonyEpisodes.size();
     for(int i = 0; i < iMax; i++) {
-        const bool p = eVectorHelpers::contains(mPlayedColonyEpisodes, i);
+        const bool p = VectorHelpers::contains(mPlayedColonyEpisodes, i);
         if(p) continue;
         result.push_back(i);
     }
@@ -663,17 +663,17 @@ void eCampaign::copyEpisodeSettings(eEpisode* const from,
     std::vector<char> mem;
     {
         mWorldBoard.setIOIDs();
-        eWriteTarget target(&mem);
-        eWriteStream dst(target);
+        WriteTarget target(&mem);
+        WriteStream dst(target);
         dst.writeFormat("eZeus");
-        eSaveArchive ar(dst);
+        SaveArchive ar(dst);
         from->serialize(ar);
     }
     {
-        eReadSource source(mem.data());
-        eReadStream src(source);
+        ReadSource source(mem.data());
+        ReadStream src(source);
         src.readFormat();
-        eSaveArchive ar(src);
+        SaveArchive ar(src);
         to->serialize(ar);
         src.handlePostFuncs();
     }
@@ -718,7 +718,7 @@ bool eCampaign::colonyEpisodeFinished(const int id) const {
     const bool current = mCurrentColonyEpisode == id &&
                          mCurrentEpisodeType == eEpisodeType::colony;
     if(current) return false;
-    const bool finished = eVectorHelpers::contains(
+    const bool finished = VectorHelpers::contains(
                               mPlayedColonyEpisodes, id);
     return finished;
 }

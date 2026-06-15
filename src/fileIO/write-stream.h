@@ -1,5 +1,5 @@
-﻿#ifndef EWRITESTREAM_H
-#define EWRITESTREAM_H
+﻿#ifndef WRITE_STREAM_H
+#define WRITE_STREAM_H
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -18,20 +18,20 @@ class eCharacterAction;
 class eCharacterActionFunction;
 class eGodAct;
 class WorldCity;
-class eBanner;
+class Banner;
 class SoldierBanner;
 class eGameEvent;
 class eInvasionHandler;
 
 #include "engine/edirectionlastusetime.h"
 
-class eWriteTarget {
+class WriteTarget {
 public:
-    eWriteTarget(std::ofstream* const file) :
+    WriteTarget(std::ofstream* const file) :
         fFile(file) {}
-    eWriteTarget(void* mem) :
+    WriteTarget(void* mem) :
         fMem(mem) {}
-    eWriteTarget(std::vector<char>* const vec) :
+    WriteTarget(std::vector<char>* const vec) :
         fVec(vec) {}
 
     inline size_t write(const void* const data, const size_t len) {
@@ -61,9 +61,9 @@ private:
     size_t fMemPos = 0;
 };
 
-class eWriteStream {
+class WriteStream {
 public:
-    eWriteStream(const eWriteTarget& dst);
+    WriteStream(const WriteTarget& dst);
 
     void writeFormat(const std::string& format);
     void setFormat(const std::string& format) { mFormat = format; }
@@ -73,45 +73,45 @@ public:
         return mDst.write(data, len);
     }
 
-    inline eWriteStream& operator<<(const bool val) {
+    inline WriteStream& operator<<(const bool val) {
         write(&val, sizeof(bool));
         return *this;
     }
 
-    inline eWriteStream& operator<<(const unsigned char val) {
+    inline WriteStream& operator<<(const unsigned char val) {
         write(&val, sizeof(unsigned char));
         return *this;
     }
 
-    inline eWriteStream& operator<<(const char val) {
+    inline WriteStream& operator<<(const char val) {
         write(&val, sizeof(char));
         return *this;
     }
 
-    inline eWriteStream& operator<<(const float val) {
+    inline WriteStream& operator<<(const float val) {
         write(&val, sizeof(float));
         return *this;
     }
 
-    inline eWriteStream& operator<<(const double val) {
+    inline WriteStream& operator<<(const double val) {
         write(&val, sizeof(double));
         return *this;
     }
 
-    inline eWriteStream& operator<<(const int32_t val) {
+    inline WriteStream& operator<<(const int32_t val) {
         write(&val, sizeof(int32_t));
         return *this;
     }
 
     template <typename T>
-    inline eWriteStream& operator<<(const T val) {
+    inline WriteStream& operator<<(const T val) {
         const int32_t val32_t = static_cast<int32_t>(val);
         write(&val32_t, sizeof(int32_t));
         return *this;
     }
 
     template <typename T>
-    inline eWriteStream& operator<<(const std::vector<T>& val) {
+    inline WriteStream& operator<<(const std::vector<T>& val) {
         *this << val.size();
         for(const auto& t : val) {
             *this << t;
@@ -119,7 +119,7 @@ public:
         return *this;
     }
 
-    inline eWriteStream& operator<<(const SDL_Rect& val) {
+    inline WriteStream& operator<<(const SDL_Rect& val) {
         *this << val.x;
         *this << val.y;
         *this << val.w;
@@ -127,7 +127,7 @@ public:
         return *this;
     }
 
-    inline eWriteStream& operator<<(const std::string& val) {
+    inline WriteStream& operator<<(const std::string& val) {
         const int32_t size = val.size();
         *this << size;
         write(&val[0], size);
@@ -142,15 +142,15 @@ public:
     void writeGodAct(eGodAct* const ga);
     void writeDirectionTimes(eDirectionTimes* const d);
     void writeCity(WorldCity* const c);
-    void writeBanner(eBanner* const b);
+    void writeBanner(Banner* const b);
     void writSoldierBanner(SoldierBanner* const b);
     void writeGameEvent(eGameEvent* const e);
     void writeInvasionHandler(eInvasionHandler* const i);
 
     size_t memPos() const { return mDst.memPos(); }
 private:
-    eWriteTarget mDst;
+    WriteTarget mDst;
     std::string mFormat;
 };
 
-#endif // EWRITESTREAM_H
+#endif // WRITE_STREAM_H

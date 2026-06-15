@@ -7,7 +7,7 @@ eChariot::eChariot(GameBoard& board) :
     GameTextures::loadChariot();
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eChariot::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& gTexs = GameTextures::characters();

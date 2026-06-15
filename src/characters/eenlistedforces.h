@@ -4,7 +4,7 @@
 #include "characters/heroes/ehero.h"
 #include "engine/world-city.h"
 
-class eSaveArchive;
+class SaveArchive;
 class SoldierBanner;
 
 struct eEnlistedForces {
@@ -16,7 +16,7 @@ struct eEnlistedForces {
 
     std::map<eCityId, eEnlistedForces> splitIntoCities() const;
 
-    void serialize(eSaveArchive& ar, GameBoard* board);
+    void serialize(SaveArchive& ar, GameBoard* board);
 
     void clear();
 

@@ -8,10 +8,10 @@
 #include <cmath>
 
 #include "buildings/ebuilding.h"
-#include "elanguage.h"
+#include "language.h"
 #include "boardData/eemploymentdata.h"
 #include "eresourcetype.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eEmploymentDistributor::eEmploymentDistributor(eEmploymentData& empl) :
     mEmplData(empl) {
@@ -57,7 +57,7 @@ int eEmploymentDistributor::employees(const eSector s) {
     return mEmployees[s];
 }
 
-void eEmploymentDistributor::serialize(eSaveArchive& ar) {
+void eEmploymentDistributor::serialize(SaveArchive& ar) {
     for(auto& entry : mPriorities) {
         const int sectorId = static_cast<int>(entry.first);
         const auto defaultPriority = entry.second;
@@ -136,12 +136,12 @@ std::string eSectorHelpers::sName(const eSector s, const bool atlantean) {
     } else {
         string = static_cast<int>(s) + 1;
     }
-    return eLanguage::zeusText(50, string);
+    return Language::zeusText(50, string);
 }
 
 std::string ePriorityHelpers::sName(const ePriority p) {
     const int string = static_cast<int>(p) + 24;
-    return eLanguage::zeusText(50, string);
+    return Language::zeusText(50, string);
 }
 
 bool eSectorHelpers::sBuildingSector(const eBuildingType type,

@@ -5,7 +5,7 @@
 #include "ebuildingmode.h"
 
 class eCheckableButton;
-class eTextureCollection;
+class TextureCollection;
 class InterfaceTextures;
 class eButton;
 class GameBoard;

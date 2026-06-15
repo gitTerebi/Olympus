@@ -8,7 +8,7 @@ class WorldCity;
 
 class eFulfillDialog : public eInfoWidget {
 public:
-    eFulfillDialog(eMainWindow* const window,
+    eFulfillDialog(MainWindow* const window,
                    eMainWidget* const mw);
 
     using eCity = std::shared_ptr<WorldCity>;

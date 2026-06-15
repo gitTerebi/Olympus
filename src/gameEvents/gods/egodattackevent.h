@@ -4,7 +4,7 @@
 #include "gameEvents/egameevent.h"
 
 class eSanctuary;
-class eSaveArchive;
+class SaveArchive;
 enum class GodType;
 
 class eGodAttackEvent : public eGameEvent {
@@ -26,7 +26,7 @@ public:
     void trigger() override;
     std::string longName() const override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdptr<eSanctuary> mSanctuary;
     std::vector<GodType> mTypes;

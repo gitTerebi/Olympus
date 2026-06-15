@@ -4,7 +4,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eColonyMonumentAction::eColonyMonumentAction(
         const stdsptr<WorldCity>& city) :
@@ -23,7 +23,7 @@ void eColonyMonumentAction::trigger(GameBoard& board) {
     board.allow(cid, eBuildingType::commemorative, 2);
 }
 
-void eColonyMonumentAction::serializeFields(eSaveArchive& ar, GameBoard* board) {
+void eColonyMonumentAction::serializeFields(SaveArchive& ar, GameBoard* board) {
     ePlannedAction::serializeFields(ar, board);
     ar.city(board, mCity);
 }

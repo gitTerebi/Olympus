@@ -5,7 +5,7 @@
 
 class eRightButton : public eBasicButton {
 public:
-    eRightButton(eMainWindow* const window);
+    eRightButton(MainWindow* const window);
 };
 
 #endif // ERIGHTBUTTON_H

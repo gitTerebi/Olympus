@@ -3,8 +3,8 @@
 #include "engine/world-city.h"
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
-#include "estringhelpers.h"
-#include "elanguage.h"
+#include "string-helpers.h"
+#include "language.h"
 #include "gameEvents/requests/send-resources-to-city-event.h"
 #include "gameEvents/requests/send-troops-event.h"
 #include "buildings/eheroshall.h"
@@ -13,17 +13,17 @@
 #include "widgets/emessagewidget.h"
 #include "widgets/eworldwidget.h"
 #include "widgets/elabel.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "echoosebutton.h"
 
-eFulfillDialog::eFulfillDialog(eMainWindow* const window,
+eFulfillDialog::eFulfillDialog(MainWindow* const window,
                                eMainWidget* const mw) :
     eInfoWidget(window, mw, true, true) {}
 
 void eFulfillDialog::initialize(GameBoard* const board,
                                 const eCity& city) {
-    auto title = eLanguage::zeusText(41, 2);
-    eStringHelpers::replace(title, "[city_name]", city->name());
+    auto title = Language::zeusText(41, 2);
+    StringHelpers::replace(title, "[city_name]", city->name());
     eInfoWidget::initialize(title);
 
     const auto res = resolution();
@@ -74,15 +74,15 @@ void eFulfillDialog::initialize(GameBoard* const board,
                     const auto acceptA = [q, cid]() {
                         q->dispatch(cid);
                     };
-                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto title = Language::zeusText(5, 6); // Request
                     const auto text = q->dispatchText(bcount, board->date());
 
                     const auto qw = new eQuestionWidget(window());
                     qw->initialize(title, text, acceptA, nullptr);
                     ww->openDialog(qw);
                 } else {
-                    const auto title = eLanguage::zeusText(5, 6); // Request
-                    const auto text = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
+                    const auto title = Language::zeusText(5, 6); // Request
+                    const auto text = Language::zeusText(5, 9); // You do not have enough to fulfill the request
 
                     const auto qw = new eMessageWidget(window());
                     qw->initialize(title, text);
@@ -92,7 +92,7 @@ void eFulfillDialog::initialize(GameBoard* const board,
             choose->initialize(8, cityNames, act);
 
             window()->execDialog(choose);
-            choose->align(eAlignment::center);
+            choose->align(Alignment::center);
         });
 
         const auto iww = new eWidget(window());
@@ -203,7 +203,7 @@ void eFulfillDialog::initialize(GameBoard* const board,
         iconLabel->fitContent();
         iww->addWidget(iconLabel);
 
-        const auto resName = eLanguage::zeusText(61, 187); // troops requested
+        const auto resName = Language::zeusText(61, 187); // troops requested
         const auto textLabel = new eLabel(window());
         textLabel->setFontSizeS();
         textLabel->setNoPadding();
@@ -221,13 +221,13 @@ void eFulfillDialog::initialize(GameBoard* const board,
     }
 
     if(iw->children().empty()) {
-        const auto noRequests = eLanguage::zeusText(41, 21);
+        const auto noRequests = Language::zeusText(41, 21);
         const auto noRequestsL = new eLabel(window());
         noRequestsL->setNoPadding();
         noRequestsL->setText(noRequests);
         noRequestsL->fitContent();
         iw->addWidget(noRequestsL);
-        noRequestsL->align(eAlignment::center);
+        noRequestsL->align(Alignment::center);
     }
 
     setCloseAction([this]() {

@@ -2,13 +2,13 @@
 
 #include "eframedwidget.h"
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 #include "escrollwidgetcomplete.h"
-#include "estringhelpers.h"
-#include "emainwindow.h"
+#include "string-helpers.h"
+#include "main-window.h"
 #include "enamewidget.h"
 #include "engine/world-city.h"
-#include "egamedir.h"
+#include "game-dir.h"
 
 #include <string>
 #include <iostream>
@@ -29,7 +29,7 @@ void eRosterOfLeaders::initialize() {
     const int cwh = res.centralWidgetSmallHeight();
     frame->resize(cww, cwh);
 
-    frame->align(eAlignment::center);
+    frame->align(Alignment::center);
 
     const auto inner = new eWidget(window());
     inner->setNoPadding();
@@ -39,10 +39,10 @@ void eRosterOfLeaders::initialize() {
 
     const auto title = new eLabel(window());
     title->setFontSizeXL();
-    title->setText(eLanguage::zeusText(292, 3)); // roster of leaders
+    title->setText(Language::zeusText(292, 3)); // roster of leaders
     title->fitContent();
     inner->addWidget(title);
-    title->align(eAlignment::hcenter);
+    title->align(Alignment::hcenter);
 
     const auto buttons = new eWidget(window());
     buttons->setNoPadding();
@@ -57,7 +57,7 @@ void eRosterOfLeaders::initialize() {
     createB->setFontSizeS();
     createB->setPaddingS();
     createB->setUnderline(false);
-    createB->setText(eLanguage::zeusText(292, 0)); // create leader
+    createB->setText(Language::zeusText(292, 0)); // create leader
     createB->fitContent();
     createB->setWidth(bw);
     buttons1->addWidget(createB);
@@ -67,14 +67,14 @@ void eRosterOfLeaders::initialize() {
         d->initialize("", WorldCity::sLeaders(),
                       [this](const std::string& name) {
             if(name.empty()) return;
-            const auto dir = eGameDir::saveDir() + name + "/";
+            const auto dir = GameDir::saveDir() + name + "/";
             std::filesystem::create_directories(dir);
             const auto w = window();
             w->showRosterOfLeaders();
-        }, eLanguage::zeusText(44, 374), true);
+        }, Language::zeusText(44, 374), true);
 
         w->execDialog(d);
-        d->align(eAlignment::center);
+        d->align(Alignment::center);
     });
 
 
@@ -84,13 +84,13 @@ void eRosterOfLeaders::initialize() {
     deleteB->setFontSizeS();
     deleteB->setPaddingS();
     deleteB->setUnderline(false);
-    deleteB->setText(eLanguage::zeusText(292, 1)); // delete leader
+    deleteB->setText(Language::zeusText(292, 1)); // delete leader
     deleteB->fitContent();
     deleteB->setWidth(bw);
     buttons1->addWidget(deleteB);
     deleteB->setPressAction([this, selected]() {
         if(selected->empty()) return;
-        const auto dir = eGameDir::saveDir() + *selected + "/";
+        const auto dir = GameDir::saveDir() + *selected + "/";
         std::filesystem::remove_all(dir);
         const auto w = window();
         if(*selected == w->leader()) {
@@ -103,7 +103,7 @@ void eRosterOfLeaders::initialize() {
     proceedB->setFontSizeS();
     proceedB->setPaddingS();
     proceedB->setUnderline(false);
-    proceedB->setText(eLanguage::zeusText(292, 2)); // proceed
+    proceedB->setText(Language::zeusText(292, 2)); // proceed
     proceedB->fitContent();
     proceedB->setWidth(bw);
     buttons1->addWidget(proceedB);
@@ -125,10 +125,10 @@ void eRosterOfLeaders::initialize() {
         returnB->setFontSizeS();
         returnB->setPaddingS();
         returnB->setUnderline(false);
-        returnB->setText(eLanguage::zeusText(292, 4)); // return
+        returnB->setText(Language::zeusText(292, 4)); // return
         returnB->fitContent();
         buttons->addWidget(returnB);
-        returnB->align(eAlignment::hcenter);
+        returnB->align(Alignment::hcenter);
         returnB->setPressAction([this]() {
             const auto w = window();
             w->showMainMenu();
@@ -168,7 +168,7 @@ void eRosterOfLeaders::initialize() {
                     b->setDarkFontColor();
                 }
             });
-            b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
+            b->setTextAlignment(Alignment::left | Alignment::vcenter);
             b->setNoPadding();
             b->fitContent();
             b->setWidth(swwidth);
@@ -197,7 +197,7 @@ void eRosterOfLeaders::initialize() {
 
 std::vector<std::string> eRosterOfLeaders::sLeaders() {
     std::vector<std::string> leaders;
-    const auto folder = eGameDir::saveDir();
+    const auto folder = GameDir::saveDir();
     if(std::filesystem::exists(folder)) {
         for(const auto& entry : fs::directory_iterator(folder)) {
             const bool id = entry.is_directory();

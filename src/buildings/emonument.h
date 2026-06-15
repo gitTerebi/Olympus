@@ -5,7 +5,7 @@
 
 #include "sanctuaries/esanctbuilding.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eMonument : public eEmployingBuilding {
 public:
@@ -18,7 +18,7 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize) const override
     { return nullptr; }
 
@@ -58,7 +58,7 @@ public:
     void setConstructionHalted(const bool h);
     bool constructionHalted() const { return mHaltConstruction; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 
     stdptr<eCartTransporter> mCart;
     eTile* mWomanTile = nullptr;

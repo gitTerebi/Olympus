@@ -3,7 +3,7 @@
 
 #include "player-conquest-event-base.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class PlayerRaidEvent : public PlayerConquestEventBase {
 public:
@@ -21,7 +21,7 @@ public:
     std::string longName() const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eResourceType mResource = eResourceType::none;
 };

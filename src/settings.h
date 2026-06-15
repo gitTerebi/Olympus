@@ -1,5 +1,5 @@
-#ifndef ESETTINGS_H
-#define ESETTINGS_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
 #include "widgets/eresolution.h"
 #include "engine/etile.h"
@@ -9,7 +9,7 @@
 
 // Whole-frame upscale filters (DisciplesGL parity). Two stages: an optional pixel-art
 // upscale into an Nx intermediate, then an interpolation resample to the window.
-enum class eInterpolation {
+enum class Interpolation {
     nearest = 0,
     linear  = 1,
     hermite = 2,
@@ -18,7 +18,7 @@ enum class eInterpolation {
     count
 };
 
-enum class eUpscale {
+enum class Upscale {
     none    = 0,
     xbrz    = 1,
     scalehq = 2,
@@ -28,14 +28,14 @@ enum class eUpscale {
     count
 };
 
-enum class eDisplayMode {
+enum class DisplayMode {
     window = 0,
     borderless = 1,
     fullscreen = 2,
     count
 };
 
-enum class eHotkeyId {
+enum class HotkeyId {
     gameMenu,
     speedUp,
     speedDown,
@@ -74,7 +74,7 @@ enum class eHotkeyId {
     menuTab11
 };
 
-struct eSettings {
+struct Settings {
     static constexpr int sMinKeyScrollSpeed = 1;
     static constexpr int sMaxKeyScrollSpeed = 20;
     static constexpr int sMinVolume = 0;
@@ -87,7 +87,7 @@ struct eSettings {
     bool fSmallTextures = true;
     bool fMediumTextures = true;
     bool fLargeTextures = true;
-    eDisplayMode fDisplayMode = eDisplayMode::window;
+    DisplayMode fDisplayMode = DisplayMode::window;
     bool fWarehouseDefaultAcceptNone = false;
     bool fDoubleCartCapacity = false;
     bool fAgorasTakeFromTradingPosts = false;
@@ -106,10 +106,11 @@ struct eSettings {
     int fEventVolume = 100;
     int fAmbientVolume = 100;
     eResolution fRes = eResolution(1280, 720);
+    eUIScale fUiScale = eUIScale::small;
 
     // Whole-frame upscale (window-level D3D11 pass).
-    eInterpolation fInterpolation = eInterpolation::cubic;
-    eUpscale fUpscale = eUpscale::none;
+    Interpolation fInterpolation = Interpolation::cubic;
+    Upscale fUpscale = Upscale::none;
     int fUpscaleFactor = 2; // 2..6, clamped per upscale filter
 
     SDL_Scancode fHotkeyGameMenu = SDL_SCANCODE_ESCAPE;
@@ -153,12 +154,12 @@ struct eSettings {
     static int clampKeyScrollSpeed(const int speed);
     static int clampVolume(const int volume);
     static int clampGameSpeed(const int speed);
-    SDL_Scancode hotkey(const eHotkeyId id) const;
-    void setHotkey(const eHotkeyId id, const SDL_Scancode key);
-    eHotkeyId hotkeyIdForScancode(const SDL_Scancode scancode) const;
+    SDL_Scancode hotkey(const HotkeyId id) const;
+    void setHotkey(const HotkeyId id, const SDL_Scancode key);
+    HotkeyId hotkeyIdForScancode(const SDL_Scancode scancode) const;
 
     void write() const;
     void read();
 };
 
-#endif // ESETTINGS_H
+#endif // SETTINGS_H

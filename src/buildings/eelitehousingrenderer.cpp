@@ -11,7 +11,7 @@ eEliteHousingRenderer::eEliteHousingRenderer(
 
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eEliteHousingRenderer::getTexture(const eTileSize size) const {
     switch(mType) {
     case eEliteRendererType::left:
@@ -25,7 +25,7 @@ eEliteHousingRenderer::getTexture(const eTileSize size) const {
     }
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eEliteHousingRenderer::getOverlays(const eTileSize size) const {
     switch(mType) {
     case eEliteRendererType::left:

@@ -1,7 +1,7 @@
 #include "epyramidselectionwidget.h"
 
 #include "widgets/echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "engine/eepisodegoal.h"
 #include "epyramidwidget.h"
 
@@ -26,7 +26,7 @@ void ePyramidSelectionWidget::initialize(
         settings->initialize(e, updater);
 
         window()->execDialog(settings);
-        settings->align(eAlignment::center);
+        settings->align(Alignment::center);
     };
 
     setButtonPressEvent([get, editPyramid](const int id) {
@@ -79,7 +79,7 @@ void ePyramidSelectionWidget::initialize(
         echoose->initialize(8, labels, act);
 
         window()->execDialog(echoose);
-        echoose->align(eAlignment::center);
+        echoose->align(Alignment::center);
     });
 
     setButtonRemoveEvent([get, remove](const int id) {

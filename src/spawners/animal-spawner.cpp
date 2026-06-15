@@ -1,17 +1,17 @@
-﻿#include "eanimalspawner.h"
+﻿#include "animal-spawner.h"
 
 #include "characters/ewildanimal.h"
 #include "characters/actions/animal-action.h"
 #include "characters/actions/ewolfaction.h"
 #include "engine/etile.h"
-#include "erand.h"
+#include "rand.h"
 
-void eAnimalSpawner::spawn(eTile* const tile) {
+void AnimalSpawner::spawn(eTile* const tile) {
     const auto b = create(board());
     b->setActionType(eCharacterActionType::stand);
     b->setSpawner(this);
     b->changeTile(tile);
-    const int oi = eRand::rand() % 8;
+    const int oi = Rand::rand() % 8;
     const auto o = static_cast<eOrientation>(oi);
     b->setOrientation(o);
     const auto t = this->tile();

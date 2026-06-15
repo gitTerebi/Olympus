@@ -13,7 +13,7 @@ class eScrollThumb : public eWidget {
 public:
     using eScrollAction = std::function<void(int dy)>;
 
-    eScrollThumb(eMainWindow* const window) : eWidget(window) {}
+    eScrollThumb(MainWindow* const window) : eWidget(window) {}
 
     void setScrollAction(const eScrollAction& a) { mScrollAction = a; }
 
@@ -73,7 +73,7 @@ class eScrollTrack : public eWidget {
 public:
     using eClickAction = std::function<void(int clickY, int trackH)>;
 
-    eScrollTrack(eMainWindow* const window) : eWidget(window) {}
+    eScrollTrack(MainWindow* const window) : eWidget(window) {}
 
     void setClickAction(const eClickAction& a) { mClickAction = a; }
 
@@ -108,12 +108,12 @@ public:
     }
 
     void scrollUp() {
-        mDy -= 35 * resolution().multiplier();
+        mDy -= scalePx(35);
         clampDY();
     }
 
     void scrollDown() {
-        mDy += 35 * resolution().multiplier();
+        mDy += scalePx(35);
         clampDY();
     }
 
@@ -152,7 +152,7 @@ protected:
     }
 
     bool mouseWheelEvent(const eMouseWheelEvent& e) override {
-        mDy -= 35 * resolution().multiplier() * e.dy();
+        mDy -= scalePx(35) * e.dy();
         clampDY();
         return true;
     }

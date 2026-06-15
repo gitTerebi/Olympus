@@ -14,14 +14,14 @@
 #include "buildings/allbuildings.h"
 #include "characters/etradeboat.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "audio/sounds.h"
 
 #include "fileIO/building-writer.h"
-#include "fileIO/esavearchive.h"
-#include "fileIO/ewritestream.h"
+#include "fileIO/save-archive.h"
+#include "fileIO/write-stream.h"
 
 #include <algorithm>
 #include <limits>
@@ -31,7 +31,7 @@ eBuilding::eBuilding(GameBoard& board,
                      const int sw, const int sh,
                      const eCityId cid) :
     eObject(board),
-    mSeed(eRand::rand()), mFrameShift(eRand::rand() % 100), mType(type),
+    mSeed(Rand::rand()), mFrameShift(Rand::rand() % 100), mType(type),
     mAtlantean(board.atlantean(cid)),
     mSpanW(sw), mSpanH(sh),
     mCityId(cid) {
@@ -308,7 +308,7 @@ std::string eBuilding::sNameForBuilding(eBuilding* const b) {
         } else if(id == 8) {
             string = 9;
         }
-        return eLanguage::zeusText(group, string);
+        return Language::zeusText(group, string);
     } break;
     default:
         break;
@@ -607,7 +607,7 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::minorShrinePoseidon:
     case eBuildingType::minorShrineZeus: { // 3x3
         string = 107;
-        const auto text = eLanguage::zeusText(group, string);
+        const auto text = Language::zeusText(group, string);
         return God::sGodName(ePyramid::sGod(type)) + " " + text;
     } break;
     case eBuildingType::shrineAphrodite:
@@ -625,7 +625,7 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::shrinePoseidon:
     case eBuildingType::shrineZeus: { // 6x6
         string = 108;
-        const auto text = eLanguage::zeusText(group, string);
+        const auto text = Language::zeusText(group, string);
         return God::sGodName(ePyramid::sGod(type)) + " " + text;
     } break;
     case eBuildingType::majorShrineAphrodite:
@@ -643,7 +643,7 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::majorShrinePoseidon:
     case eBuildingType::majorShrineZeus: { // 8x8
         string = 109;
-        const auto text = eLanguage::zeusText(group, string);
+        const auto text = Language::zeusText(group, string);
         return God::sGodName(ePyramid::sGod(type)) + " " + text;
     } break;
 
@@ -828,7 +828,7 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
     case eBuildingType::pyramidMuseum:
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 void eBuilding::sInfoText(eBuilding* const b,
@@ -959,9 +959,9 @@ void eBuilding::sInfoText(eBuilding* const b,
         } else {
             employmentInfoString = 3;
             const int eventId = 7 + (b->seed() % 5);
-            additionalInfo = eLanguage::zeusText(80, 6) + " " +
+            additionalInfo = Language::zeusText(80, 6) + " " +
                              std::to_string(s->showDays()) + " days.\n" +
-                             eLanguage::zeusText(80, eventId);
+                             Language::zeusText(80, eventId);
         }
     } break;
     case eBuildingType::podium: {
@@ -981,9 +981,9 @@ void eBuilding::sInfoText(eBuilding* const b,
         } else {
             employmentInfoString = 3;
             const int eventId = 7 + (b->seed() % 5);
-            additionalInfo = eLanguage::zeusText(81, 6) + " " +
+            additionalInfo = Language::zeusText(81, 6) + " " +
                              std::to_string(p->showDays()) + " days.\n" +
-                             eLanguage::zeusText(81, eventId);
+                             Language::zeusText(81, eventId);
         }
     } break;
     case eBuildingType::theater: {
@@ -1003,9 +1003,9 @@ void eBuilding::sInfoText(eBuilding* const b,
         } else {
             employmentInfoString = 3;
             const int eventId = 7 + (b->seed() % 5);
-            additionalInfo = eLanguage::zeusText(82, 6) + " " +
+            additionalInfo = Language::zeusText(82, 6) + " " +
                              std::to_string(t->showDays()) + " days.\n" +
-                             eLanguage::zeusText(82, eventId);
+                             Language::zeusText(82, eventId);
         }
     } break;
     case eBuildingType::bibliotheke: {
@@ -2345,13 +2345,13 @@ void eBuilding::sInfoText(eBuilding* const b,
     default:
         break;
     }
-    title = eLanguage::zeusText(group, titleString);
-    info = eLanguage::zeusText(group, infoString);
+    title = Language::zeusText(group, titleString);
+    info = Language::zeusText(group, infoString);
     const int g = employmentInfoGroup == -1 ? group : employmentInfoGroup;
-    employmentInfo = eLanguage::zeusText(g, employmentInfoString);
+    employmentInfo = Language::zeusText(g, employmentInfoString);
     if(additionalInfo.empty()) {
         const int ag = additionalInfoGroup == -1 ? group : additionalInfoGroup;
-        additionalInfo = eLanguage::zeusText(ag, additionalInfoString);
+        additionalInfo = Language::zeusText(ag, additionalInfoString);
     }
 }
 
@@ -2433,40 +2433,40 @@ void eBuilding::incTime(const int by) {
         }
     }
     if(isOnFire()) {
-        if(eRand::rand() % 100 == 0) {
+        if(Rand::rand() % 100 == 0) {
             b.ifVisible(centerTile(), []() {
                 eSounds::playFireSound();
             });
         }
-        if(eRand::rand() % (eNumbers::sSpreadFirePeriod/by) == 0) {
+        if(Rand::rand() % (Numbers::sSpreadFirePeriod/by) == 0) {
             spreadFire();
             eSounds::playFireSound();
-        } else if(eRand::rand() % (eNumbers::sFireCollapsePeriod/by) == 0) {
+        } else if(Rand::rand() % (Numbers::sFireCollapsePeriod/by) == 0) {
             eEventData ed(cityId());
             ed.fTile = centerTile();
             b.event(eEvent::collapse, ed);
             collapse();
             return;
         } else if(mType == eBuildingType::ruins) {
-            if(eRand::rand() % (eNumbers::sRuinsFireEndPeriod/by) == 0) {
+            if(Rand::rand() % (Numbers::sRuinsFireEndPeriod/by) == 0) {
                 setOnFire(false);
             }
         }
-    } else if(eRand::rand() % (eNumbers::sMaintenanceDecrementPeriod/by) == 0) {
+    } else if(Rand::rand() % (Numbers::sMaintenanceDecrementPeriod/by) == 0) {
         if(!isEmptyHome()) {
             mMaintance = std::max(0, mMaintance - 1);
         }
     } else if(!isEmptyHome()) {
         mFireRiskUpdate += by;
-        if(mFireRiskUpdate > eNumbers::sDayLength) {
+        if(mFireRiskUpdate > Numbers::sDayLength) {
             mFireRiskUpdate = 0;
             const auto pid = playerId();
             const auto diff = b.difficulty(pid);
             const int fireRisk = DifficultyHelpers::fireRisk(diff, mType);
             if(fireRisk && sFlammable(type())) {
-                const int m4 = eNumbers::sFireRiskPeriodTable[mMaintance];
-                const int firePeriod = m4/(eNumbers::sDayLength*fireRisk);
-                if(firePeriod && eRand::rand() % firePeriod == 0) {
+                const int m4 = Numbers::sFireRiskPeriodTable[mMaintance];
+                const int firePeriod = m4/(Numbers::sDayLength*fireRisk);
+                if(firePeriod && Rand::rand() % firePeriod == 0) {
                     setOnFire(true);
                     eEventData ed(cityId());
                     ed.fTile = centerTile();
@@ -2475,9 +2475,9 @@ void eBuilding::incTime(const int by) {
             }
             const int damageRisk = DifficultyHelpers::damageRisk(diff, mType);
             if(damageRisk) {
-                const int m4 = eNumbers::sCollapseRiskPeriodTable[mMaintance];
-                const int damagePeriod = m4/(eNumbers::sDayLength*damageRisk);
-                if(damagePeriod && eRand::rand() % damagePeriod == 0) {
+                const int m4 = Numbers::sCollapseRiskPeriodTable[mMaintance];
+                const int damagePeriod = m4/(Numbers::sDayLength*damageRisk);
+                if(damagePeriod && Rand::rand() % damagePeriod == 0) {
                     eEventData ed(cityId());
                     ed.fTile = centerTile();
                     b.event(eEvent::collapse, ed);
@@ -2509,11 +2509,11 @@ void eBuilding::erase() {
 
 static std::vector<uint8_t> sBuildingSnapshot(const eBuilding* b) {
     std::vector<char> mem;
-    eWriteTarget target(&mem);
-    eWriteStream dst(target);
+    WriteTarget target(&mem);
+    WriteStream dst(target);
     dst.writeFormat("eZeus.ez2");
     {
-        eSaveArchive ar(dst);
+        SaveArchive ar(dst);
         auto btype = b->type();
         ar.field("buildingType", btype);
         BuildingArchive::save(b, ar);
@@ -2525,14 +2525,14 @@ struct sByteVecRef {
     std::vector<uint8_t>& fVec;
 };
 
-static eWriteStream& operator<<(eWriteStream& dst, const sByteVecRef& ref) {
+static WriteStream& operator<<(WriteStream& dst, const sByteVecRef& ref) {
     const int32_t sz = static_cast<int32_t>(ref.fVec.size());
     dst.write(&sz, sizeof(sz));
     if(sz > 0) dst.write(ref.fVec.data(), sz);
     return dst;
 }
 
-static eReadStream& operator>>(eReadStream& src, sByteVecRef& ref) {
+static ReadStream& operator>>(ReadStream& src, sByteVecRef& ref) {
     int32_t sz;
     src.read(&sz, sizeof(sz));
     ref.fVec.clear();
@@ -2544,7 +2544,7 @@ static eReadStream& operator>>(eReadStream& src, sByteVecRef& ref) {
     return src;
 }
 
-static void byteVecField(eSaveArchive& ar, const char* const name,
+static void byteVecField(SaveArchive& ar, const char* const name,
                          std::vector<uint8_t>& v) {
     sByteVecRef ref{v};
     ar.field(name, ref);
@@ -2554,8 +2554,8 @@ static std::vector<uint8_t> sBuildingRestoreBundle(
         const std::vector<eBuilding*>& buildings,
         GameBoard& board) {
     std::vector<char> mem;
-    eWriteTarget target(&mem);
-    eWriteStream dst(target);
+    WriteTarget target(&mem);
+    WriteStream dst(target);
 
     std::vector<std::pair<eBuilding*, int>> oldBuildingIds;
     int id = 0;
@@ -2573,7 +2573,7 @@ static std::vector<uint8_t> sBuildingRestoreBundle(
 
     dst.writeFormat("eZeus.ez2");
     {
-        eSaveArchive ar(dst);
+        SaveArchive ar(dst);
         int marker = -1;
         ar.field("bundleMarker", marker);
         ar.field("buildingCount", id);
@@ -2687,7 +2687,7 @@ void eBuilding::collapse() {
         const auto ruins = e::make_shared<eRuins>(b, cid);
         ruins->setWasType(tp);
         ruins->setOrigin(ox, oy, ow, oh);
-        ruins->setOnFire(eRand::rand() % 2 ? onFire : false);
+        ruins->setOnFire(Rand::rand() % 2 ? onFire : false);
         ruins->setCenterTile(t);
         t->setUnderBuilding(ruins);
         ruins->addUnderBuilding(t);
@@ -2862,7 +2862,7 @@ eTeamId eBuilding::teamId() const {
     return board.playerIdToTeamId(pid);
 }
 
-void eBuilding::serializeFields(eSaveArchive& ar) {
+void eBuilding::serializeFields(SaveArchive& ar) {
     ar.field("ioId", mIOID);
     ar.field("tileRect", mTileRect);
     ar.field("districtId", mDistrictId);
@@ -2876,7 +2876,7 @@ void eBuilding::serializeFields(eSaveArchive& ar) {
             eTile* tile = nullptr;
             bool setUnder = false;
             ar.archiveField(("underTile." + std::to_string(i)).c_str(),
-                [&](eSaveArchive& it) {
+                [&](SaveArchive& it) {
                     it.tile(tile, board);
                     it.field("setUnder", setUnder);
                 });
@@ -2889,14 +2889,14 @@ void eBuilding::serializeFields(eSaveArchive& ar) {
             eTile* tile = t;
             bool setUnder = t->underBuilding() == this;
             ar.archiveField(("underTile." + std::to_string(i++)).c_str(),
-                [&](eSaveArchive& it) {
+                [&](SaveArchive& it) {
                     it.tile(tile, board);
                     it.field("setUnder", setUnder);
                 });
         }
     }
 
-    ar.archiveField("centerTile", [&](eSaveArchive& it) {
+    ar.archiveField("centerTile", [&](SaveArchive& it) {
         it.tile(mCenterTile, board);
     });
 
@@ -2910,7 +2910,7 @@ void eBuilding::serializeFields(eSaveArchive& ar) {
     ar.field("onFire", mOnFire);
 }
 
-void eBuilding::serialize(eSaveArchive& ar) {
+void eBuilding::serialize(SaveArchive& ar) {
     serializeFields(ar);
 }
 

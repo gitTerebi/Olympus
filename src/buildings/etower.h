@@ -5,7 +5,7 @@
 
 #include "characters/archer.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eTowerEmploymentState {
     shutdown,
@@ -19,9 +19,9 @@ public:
     eTower(GameBoard& board, const eCityId cid);
     ~eTower();
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize size) const override;
-    std::vector<eOverlay>
+    std::vector<Overlay>
     getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
@@ -35,7 +35,7 @@ public:
 
     eTowerEmploymentState employmentState(const bool mManTowers, const bool hasPalace) const;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
 
     bool mDeleteArchers = true;

@@ -1,7 +1,7 @@
 ﻿#include "district-conditions-widget.h"
 
 #include "widgets/echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "engine/board-city.h"
 #include "ecitysettingswidget.h"
 #include "engine/game-board.h"
@@ -35,7 +35,7 @@ void DistrictConditionsWidget::initialize(
         settings->initialize(ini, setter);
 
         window()->execDialog(settings);
-        settings->align(eAlignment::center);
+        settings->align(Alignment::center);
     };
 
     setButtonPressEvent([get, editCond](const int id) {

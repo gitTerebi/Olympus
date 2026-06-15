@@ -3,9 +3,9 @@
 
 #include "character-action.h"
 
-#include "elimits.h"
+#include "game-limits.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eWaitAction : public eCharacterAction {
 public:
@@ -15,7 +15,7 @@ public:
 
     void setTime(const int t);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mRemTime{__INT_MAX__};
 };

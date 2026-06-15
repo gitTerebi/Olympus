@@ -5,7 +5,7 @@
 
 class eHelpButton : public eBasicButton {
 public:
-    eHelpButton(eMainWindow* const window);
+    eHelpButton(MainWindow* const window);
 };
 
 #endif // EHELPBUTTON_H

@@ -1,8 +1,8 @@
 #ifndef CHARACTER_ACTION_FUNCTION_H
 #define CHARACTER_ACTION_FUNCTION_H
 
-#include "fileIO/estreams.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/streams.h"
+#include "fileIO/save-archive.h"
 
 enum class eCharacterActionFunctionType {
     AWC_goBackFail,
@@ -116,7 +116,7 @@ public:
     eCharActFuncType type() const { return mType; }
     GameBoard& board() { return mBoard; }
 
-    void serialize(eSaveArchive& ar) { serializeFields(ar); }
+    void serialize(SaveArchive& ar) { serializeFields(ar); }
 
     virtual void call() = 0;
 
@@ -124,7 +124,7 @@ public:
             GameBoard& board,
             const eCharActFuncType type);
 protected:
-    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
+    virtual void serializeFields(SaveArchive& ar) { (void)ar; }
 private:
     GameBoard& mBoard;
     const eCharActFuncType mType;

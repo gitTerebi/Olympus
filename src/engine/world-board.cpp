@@ -1,7 +1,7 @@
 ﻿#include "world-board.h"
 
-#include "evectorhelpers.h"
-#include "fileIO/esavearchive.h"
+#include "vector-helpers.h"
+#include "fileIO/save-archive.h"
 
 #include <iterator>
 
@@ -79,7 +79,7 @@ eCityId WorldBoard::firstFreeCityId() const
     for (int i = 0;; i++)
     {
         const auto cid = static_cast<eCityId>(i);
-        const bool r = eVectorHelpers::contains(used, cid);
+        const bool r = VectorHelpers::contains(used, cid);
         if (!r)
             return cid;
     }
@@ -97,7 +97,7 @@ ePlayerId WorldBoard::firstFreePlayerId() const
     for (int i = 0;; i++)
     {
         const auto pid = static_cast<ePlayerId>(i);
-        const bool r = eVectorHelpers::contains(used, pid);
+        const bool r = VectorHelpers::contains(used, pid);
         if (!r)
             return pid;
     }
@@ -143,14 +143,14 @@ void WorldBoard::setIOIDs() const
     }
 }
 
-void WorldBoard::serialize(eSaveArchive &ar)
+void WorldBoard::serialize(SaveArchive &ar)
 {
     if (ar.writing()) setIOIDs();
 
     ar.field("map", mMap);
 
     ar.arrayField("regions", mRegions,
-        [](eSaveArchive& itemAr, eWorldRegion& r) {
+        [](SaveArchive& itemAr, eWorldRegion& r) {
             r.serialize(itemAr);
         });
 
@@ -163,11 +163,11 @@ void WorldBoard::serialize(eSaveArchive &ar)
             if (ar.reading()) {
                 const auto c = std::make_shared<WorldCity>();
                 ar.archiveField(("city." + std::to_string(i)).c_str(),
-                    [this, &c](eSaveArchive& cAr) { c->serialize(cAr, this); });
+                    [this, &c](SaveArchive& cAr) { c->serialize(cAr, this); });
                 addCity(c);
             } else {
                 ar.archiveField(("city." + std::to_string(i)).c_str(),
-                    [this, i](eSaveArchive& cAr) { mCities[i]->serialize(cAr, this); });
+                    [this, i](SaveArchive& cAr) { mCities[i]->serialize(cAr, this); });
             }
         }
         if (ar.reading()) setIOIDs();
@@ -182,7 +182,7 @@ void WorldBoard::serialize(eSaveArchive &ar)
             for (int i = 0; i < nc; i++) {
                 eCityId cid; ePlayerId pid;
                 ar.archiveField(("cityToPlayer." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&](SaveArchive& itemAr) {
                         itemAr.field("cityId", cid);
                         itemAr.field("playerId", pid);
                     });
@@ -194,7 +194,7 @@ void WorldBoard::serialize(eSaveArchive &ar)
                 eCityId cid = kv.first;
                 ePlayerId pid = kv.second;
                 ar.archiveField(("cityToPlayer." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&](SaveArchive& itemAr) {
                         itemAr.field("cityId", cid);
                         itemAr.field("playerId", pid);
                     });
@@ -213,7 +213,7 @@ void WorldBoard::serialize(eSaveArchive &ar)
             for (int i = 0; i < np; i++) {
                 ePlayerId pid; eTeamId tid;
                 ar.archiveField(("playerToTeam." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&](SaveArchive& itemAr) {
                         itemAr.field("playerId", pid);
                         itemAr.field("teamId", tid);
                     });
@@ -225,7 +225,7 @@ void WorldBoard::serialize(eSaveArchive &ar)
                 ePlayerId pid = kv.first;
                 eTeamId tid = kv.second;
                 ar.archiveField(("playerToTeam." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& itemAr) {
+                    [&](SaveArchive& itemAr) {
                         itemAr.field("playerId", pid);
                         itemAr.field("teamId", tid);
                     });
@@ -261,7 +261,7 @@ void WorldBoard::setCitiesOnBoard(const std::vector<eCityId> &cids)
     for (const auto &c : mCities)
     {
         const auto cid = c->cityId();
-        const bool is = eVectorHelpers::contains(cids, cid);
+        const bool is = VectorHelpers::contains(cids, cid);
         c->setIsOnBoard(is);
     }
 }

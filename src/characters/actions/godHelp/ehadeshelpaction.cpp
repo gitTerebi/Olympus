@@ -1,8 +1,8 @@
 #include "ehadeshelpaction.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "buildings/epalace.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eHadesHelpAction::eHadesHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::hadesHelpAction) {}
@@ -40,7 +40,7 @@ bool eHadesHelpAction::decide() {
     return true;
 }
 
-void eHadesHelpAction::serializeFields(eSaveArchive& ar) {
+void eHadesHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.buildingField("target", &board(), mTarget);
@@ -100,7 +100,7 @@ void eHadesHelpAction::goToTarget() {
         const auto ct = mTarget->centerTile();
         const int tx = ct->x();
         const int ty = ct->y();
-        const auto tile = eTileHelper::closestRoad(tx, ty, board);
+        const auto tile = TileHelper::closestRoad(tx, ty, board);
         goToTile(tile, tele);
     } else {
         disappear();

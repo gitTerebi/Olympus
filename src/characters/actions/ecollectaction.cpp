@@ -6,8 +6,8 @@
 #include "textures/marble-tile.h"
 
 #include "engine/eregrowforestaction.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eCollectAction::eCollectAction(eCharacter* const c,
                                const eTranformFunc tf) :
@@ -59,17 +59,17 @@ void eCollectAction::increment(const int by) {
     }
     int period = 10000;
     if(cType == eCharacterType::marbleMiner) {
-        period = eNumbers::sMarbleCollectTime;
+        period = Numbers::sMarbleCollectTime;
     } else if(cType == eCharacterType::bronzeMiner) {
-        period = eNumbers::sBronzeCollectTime;
+        period = Numbers::sBronzeCollectTime;
     } else if(cType == eCharacterType::silverMiner) {
-        period = eNumbers::sSilverCollectTime;
+        period = Numbers::sSilverCollectTime;
     } else if(cType == eCharacterType::lumberjack) {
-        period = eNumbers::sWoodCollectTime;
+        period = Numbers::sWoodCollectTime;
     } else if(cType == eCharacterType::fishingBoat) {
-        period = eNumbers::sFishCollectTime;
+        period = Numbers::sFishCollectTime;
     } else if(cType == eCharacterType::urchinGatherer) {
-        period = eNumbers::sUrchinCollectTime;
+        period = Numbers::sUrchinCollectTime;
     }
     if(mTime > period) {
         mTile->decResource(1);
@@ -98,7 +98,7 @@ void eCollectAction::increment(const int by) {
     }
 }
 
-void eCollectAction::serializeFields(eSaveArchive& ar) {
+void eCollectAction::serializeFields(SaveArchive& ar) {
     eCharacterAction::serializeFields(ar);
     ar.field("soundTime", mSoundTime);
     ar.field("time", mTime);

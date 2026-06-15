@@ -14,7 +14,7 @@ enum class eGameEventBranch;
 class eEventSelectionWidget : public eScrollButtonsList {
 public:
     eEventSelectionWidget(const eGameEventBranch branch,
-                          eMainWindow* const window);
+                          MainWindow* const window);
 
     using eEventsGetter = std::function<std::vector<stdsptr<eGameEvent>>()>;
     using eEventAdder = std::function<void(const stdsptr<eGameEvent>&)>;

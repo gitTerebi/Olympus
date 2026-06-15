@@ -2,5 +2,5 @@
 
 #include "textures/game-textures.h"
 
-eDownButton::eDownButton(eMainWindow* const window) :
+eDownButton::eDownButton(MainWindow* const window) :
     eBasicButton(&InterfaceTextures::fDownButton, window) {}

@@ -1,6 +1,6 @@
 #include "widgets/game-widget.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "engine/game-board.h"
 
 void GameWidget::drawXY(int worldTileX, int worldTileY,
@@ -17,7 +17,7 @@ void GameWidget::drawXY(int worldTileX, int worldTileY,
         {
             const int boardWidth = mBoard->width();
             const int boardHeight = mBoard->height();
-            eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+            TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                                viewTileX, viewTileY,
                                                dir, boardWidth, boardHeight);
         }

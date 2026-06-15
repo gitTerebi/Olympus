@@ -1,7 +1,7 @@
 #include "hero-sounds.h"
 
 #include "audio/sounds.h"
-#include "egamedir.h"
+#include "game-dir.h"
 
 eHeroSounds::eHeroSounds(const std::string& shortName,
                          const std::string& longName) :
@@ -10,8 +10,8 @@ eHeroSounds::eHeroSounds(const std::string& shortName,
 void eHeroSounds::load() {
     if(mLoaded) return;
     mLoaded = true;
-    const std::string voiceDir{eGameDir::path("Audio/Voice/Walker/")};
-    const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+    const std::string voiceDir{GameDir::path("Audio/Voice/Walker/")};
+    const std::string wavsDir{GameDir::path("Audio/Wavs/")};
 
     fArrival->addPath(voiceDir + fShortName + "_ev_1.mp3");
     for(const auto& s : {"H_" + fLongName + "_atk1.wav",

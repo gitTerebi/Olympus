@@ -3,7 +3,7 @@
 #include "buildings/eagorabase.h"
 #include "textures/character-textures.h"
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "engine/game-board.h"
 
 ePeddler::ePeddler(GameBoard& board) :
@@ -26,7 +26,7 @@ eAgoraBase *ePeddler::agora() const {
     return mAgora.get();
 }
 
-void ePeddler::serializeFields(eSaveArchive& ar) {
+void ePeddler::serializeFields(SaveArchive& ar) {
     eBasicPatroler::serializeFields(ar);
     ar.buildingAsField("agora", &getBoard(), mAgora);
 }

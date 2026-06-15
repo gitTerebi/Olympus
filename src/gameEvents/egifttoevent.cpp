@@ -1,9 +1,9 @@
 ﻿#include "egifttoevent.h"
 
 #include "engine/game-board.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "string-helpers.h"
+#include "fileIO/save-archive.h"
 
 eGiftToEvent::eGiftToEvent(
         const eCityId cid,
@@ -27,17 +27,17 @@ void eGiftToEvent::trigger() {
 }
 
 std::string eGiftToEvent::longName() const {
-    auto tmpl = eLanguage::text("gift_of_to");
+    auto tmpl = Language::text("gift_of_to");
     const auto resName = eResourceTypeHelpers::typeName(mResource);
     const auto cStr = std::to_string(mCount);
-    eStringHelpers::replace(tmpl, "%1", cStr + " " + resName);
-    const auto none = eLanguage::text("none");
+    StringHelpers::replace(tmpl, "%1", cStr + " " + resName);
+    const auto none = Language::text("none");
     const auto ctstr = mCity ? mCity->name() : none;
-    eStringHelpers::replace(tmpl, "%2", ctstr);
+    StringHelpers::replace(tmpl, "%2", ctstr);
     return tmpl;
 }
 
-void eGiftToEvent::serializeFields(eSaveArchive& ar) {
+void eGiftToEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.field("count", mCount, 0);
     ar.field("resource", mResource, eResourceType{});

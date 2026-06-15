@@ -8,7 +8,7 @@ namespace {
     void centerLabel(eLabel* const label,
                      const int width) {
         label->setWidth(width);
-        label->align(eAlignment::hcenter);
+        label->align(Alignment::hcenter);
     }
 }
 
@@ -21,7 +21,7 @@ void eQuestionWidget::initialize(const std::string& title,
 
 void eQuestionWidget::initialize(const std::string& title,
                                  const std::string& text,
-                                 const stdsptr<eTexture>& icon,
+                                 const stdsptr<Texture>& icon,
                                  const eAction& acceptA,
                                  const eAction& cancelA) {
     setType(eFrameType::message);
@@ -50,7 +50,7 @@ void eQuestionWidget::initialize(const std::string& title,
     const auto textLabel = new eLabel(window());
     textLabel->setFontSizeS();
     textLabel->setWrapWidth(width - 2*hpad);
-    textLabel->setWrapAlignment(eAlignment::hcenter);
+    textLabel->setWrapAlignment(Alignment::hcenter);
     textLabel->setText(text);
     textLabel->fitContent();
     textLabel->setWidth(width);
@@ -58,7 +58,7 @@ void eQuestionWidget::initialize(const std::string& title,
     int tly = titleLabel->y() + titleLabel->height();
     if(iconLabel) {
         iconLabel->setY(tly + p/2);
-        iconLabel->align(eAlignment::hcenter);
+        iconLabel->align(Alignment::hcenter);
         tly = iconLabel->y() + iconLabel->height() + p/2;
     }
     textLabel->setY(tly);
@@ -94,6 +94,6 @@ void eQuestionWidget::initialize(const std::string& title,
     resize(cw->width() + 2*p, cw->height() + 2*p);
     centerLabel(titleLabel, cw->width());
     centerLabel(textLabel, cw->width());
-    if(iconLabel) iconLabel->align(eAlignment::hcenter);
-    buttons->align(eAlignment::hcenter);
+    if(iconLabel) iconLabel->align(Alignment::hcenter);
+    buttons->align(Alignment::hcenter);
 }

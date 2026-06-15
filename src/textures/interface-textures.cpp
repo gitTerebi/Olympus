@@ -117,7 +117,7 @@
 
 #include "sprite-loader.h"
 
-#include "egamedir.h"
+#include "game-dir.h"
 
 InterfaceTextures::InterfaceTextures(const int tileW, const int tileH,
                                        SDL_Renderer* const renderer) :
@@ -1198,52 +1198,52 @@ void InterfaceTextures::load() {
             fIntroductionImage = BinaryImageLoader::load(fRenderer, dir + "Zeus_FE_MissionIntroduction.jpg");
             fDefeatImage = BinaryImageLoader::load(fRenderer, dir + "Zeus_Defeat.jpg");
         } else {
-            const std::string basedir{eGameDir::texturesDir() + std::to_string(fTileH) + "/"};
+            const std::string basedir{GameDir::texturesDir() + std::to_string(fTileH) + "/"};
             const auto dir = basedir + "/Zeus_Data_Images/";
 
-            fLoadImage1 = std::make_shared<eTexture>();
+            fLoadImage1 = std::make_shared<Texture>();
             fLoadImage1->load(fRenderer, dir + "Zeus_Load1.jpg");
 
-            fLoadImage2 = std::make_shared<eTexture>();
+            fLoadImage2 = std::make_shared<Texture>();
             fLoadImage2->load(fRenderer, dir + "Zeus_Load2.jpg");
 
-            fLoadImage3 = std::make_shared<eTexture>();
+            fLoadImage3 = std::make_shared<Texture>();
             fLoadImage3->load(fRenderer, dir + "Zeus_Load3.jpg");
 
-            fLoadImage4 = std::make_shared<eTexture>();
+            fLoadImage4 = std::make_shared<Texture>();
             fLoadImage4->load(fRenderer, dir + "Zeus_Load4.jpg");
 
-            fLoadImage5 = std::make_shared<eTexture>();
+            fLoadImage5 = std::make_shared<Texture>();
             fLoadImage5->load(fRenderer, dir + "Poseidon_Load1.jpg");
 
-            fLoadImage6 = std::make_shared<eTexture>();
+            fLoadImage6 = std::make_shared<Texture>();
             fLoadImage6->load(fRenderer, dir + "Poseidon_Load2.jpg");
 
-            fLoadImage7 = std::make_shared<eTexture>();
+            fLoadImage7 = std::make_shared<Texture>();
             fLoadImage7->load(fRenderer, dir + "Poseidon_Load3.jpg");
 
-            fLoadImage8 = std::make_shared<eTexture>();
+            fLoadImage8 = std::make_shared<Texture>();
             fLoadImage8->load(fRenderer, dir + "Poseidon_Load4.jpg");
 
-            fLoadImage9 = std::make_shared<eTexture>();
+            fLoadImage9 = std::make_shared<Texture>();
             fLoadImage9->load(fRenderer, dir + "Poseidon_Load5.jpg");
 
-            fLoadImage10 = std::make_shared<eTexture>();
+            fLoadImage10 = std::make_shared<Texture>();
             fLoadImage10->load(fRenderer, dir + "Poseidon_Load6.jpg");
 
-            fLoadImage11 = std::make_shared<eTexture>();
+            fLoadImage11 = std::make_shared<Texture>();
             fLoadImage11->load(fRenderer, dir + "Poseidon_Load7.jpg");
 
-            fLoadImage12 = std::make_shared<eTexture>();
+            fLoadImage12 = std::make_shared<Texture>();
             fLoadImage12->load(fRenderer, dir + "Poseidon_Load8.jpg");
 
-            fMainMenuImage = std::make_shared<eTexture>();
+            fMainMenuImage = std::make_shared<Texture>();
             fMainMenuImage->load(fRenderer, dir + "Zeus_FE_Registry.jpg");
 
-            fIntroductionImage = std::make_shared<eTexture>();
+            fIntroductionImage = std::make_shared<Texture>();
             fIntroductionImage->load(fRenderer, dir + "Zeus_FE_MissionIntroduction.jpg");
 
-            fDefeatImage = std::make_shared<eTexture>();
+            fDefeatImage = std::make_shared<Texture>();
             fDefeatImage->load(fRenderer, dir + "Zeus_Defeat.jpg");
         }
     }
@@ -1385,7 +1385,7 @@ void InterfaceTextures::load() {
 void InterfaceTextures::loadMapBinary(
         bool& loaded,
         const std::string& name,
-        std::shared_ptr<eTexture>& tex) const {
+        std::shared_ptr<Texture>& tex) const {
     if(loaded) return;
     loaded = true;
     const auto dir = std::to_string(fTileH) + "/Zeus_Data_Images/";
@@ -1393,7 +1393,7 @@ void InterfaceTextures::loadMapBinary(
 }
 
 std::string InterfaceTextures::loadMapDirPath() const {
-    const std::string basedir{eGameDir::texturesDir() + std::to_string(fTileH) + "/"};
+    const std::string basedir{GameDir::texturesDir() + std::to_string(fTileH) + "/"};
     const auto dir = basedir + "/Zeus_Data_Images/";
     return dir;
 }
@@ -1407,7 +1407,7 @@ void InterfaceTextures::loadMapOfGreece1() {
         if(fMapOfGreece1Loaded) return;
         fMapOfGreece1Loaded = true;
         const auto dir = loadMapDirPath();
-        fMapOfGreece1 = std::make_shared<eTexture>();
+        fMapOfGreece1 = std::make_shared<Texture>();
         fMapOfGreece1->load(fRenderer, dir + "Zeus_MapOfGreece01.JPG");
     }
 }
@@ -1419,7 +1419,7 @@ void InterfaceTextures::loadMapOfGreece2() {
         if(fMapOfGreece2Loaded) return;
         fMapOfGreece2Loaded = true;
         const auto dir = loadMapDirPath();
-        fMapOfGreece2 = std::make_shared<eTexture>();
+        fMapOfGreece2 = std::make_shared<Texture>();
         fMapOfGreece2->load(fRenderer, dir + "Zeus_MapOfGreece02.JPG");
     }
 }
@@ -1431,7 +1431,7 @@ void InterfaceTextures::loadMapOfGreece3() {
         if(fMapOfGreece3Loaded) return;
         fMapOfGreece3Loaded = true;
         const auto dir = loadMapDirPath();
-        fMapOfGreece3 = std::make_shared<eTexture>();
+        fMapOfGreece3 = std::make_shared<Texture>();
         fMapOfGreece3->load(fRenderer, dir + "Zeus_MapOfGreece03.JPG");
     }
 }
@@ -1443,7 +1443,7 @@ void InterfaceTextures::loadMapOfGreece4() {
     if(fMapOfGreece4Loaded) return;
         fMapOfGreece4Loaded = true;
         const auto dir = loadMapDirPath();
-        fMapOfGreece4 = std::make_shared<eTexture>();
+        fMapOfGreece4 = std::make_shared<Texture>();
         fMapOfGreece4->load(fRenderer, dir + "Zeus_MapOfGreece04.JPG");
     }
 }
@@ -1455,7 +1455,7 @@ void InterfaceTextures::loadMapOfGreece5() {
         if(fMapOfGreece5Loaded) return;
         fMapOfGreece5Loaded = true;
         const auto dir = loadMapDirPath();
-        fMapOfGreece5 = std::make_shared<eTexture>();
+        fMapOfGreece5 = std::make_shared<Texture>();
         fMapOfGreece5->load(fRenderer, dir + "Zeus_MapOfGreece05.JPG");
     }
 }
@@ -1467,7 +1467,7 @@ void InterfaceTextures::loadMapOfGreece6() {
         if(fMapOfGreece6Loaded) return;
         fMapOfGreece6Loaded = true;
         const auto dir = loadMapDirPath();
-        fMapOfGreece6 = std::make_shared<eTexture>();
+        fMapOfGreece6 = std::make_shared<Texture>();
         fMapOfGreece6->load(fRenderer, dir + "Zeus_MapOfGreece06.JPG");
     }
 }
@@ -1479,7 +1479,7 @@ void InterfaceTextures::loadMapOfGreece7() {
         if(fMapOfGreece7Loaded) return;
         fMapOfGreece7Loaded = true;
         const auto dir = loadMapDirPath();
-        fMapOfGreece7 = std::make_shared<eTexture>();
+        fMapOfGreece7 = std::make_shared<Texture>();
         fMapOfGreece7->load(fRenderer, dir + "Zeus_MapOfGreece07.JPG");
     }
 }
@@ -1491,7 +1491,7 @@ void InterfaceTextures::loadMapOfGreece8() {
         if(fMapOfGreece8Loaded) return;
         fMapOfGreece8Loaded = true;
         const auto dir = loadMapDirPath();
-        fMapOfGreece8 = std::make_shared<eTexture>();
+        fMapOfGreece8 = std::make_shared<Texture>();
         fMapOfGreece8->load(fRenderer, dir + "Zeus_MapOfGreece08.JPG");
     }
 }
@@ -1503,7 +1503,7 @@ void InterfaceTextures::loadPoseidonMap1() {
         if(fPoseidonMap1Loaded) return;
         fPoseidonMap1Loaded = true;
         const auto dir = loadMapDirPath();
-        fPoseidonMap1 = std::make_shared<eTexture>();
+        fPoseidonMap1 = std::make_shared<Texture>();
         fPoseidonMap1->load(fRenderer, dir + "Poseidon_map01.jpg");
     }
 }
@@ -1515,7 +1515,7 @@ void InterfaceTextures::loadPoseidonMap2() {
         if(fPoseidonMap2Loaded) return;
         fPoseidonMap2Loaded = true;
         const auto dir = loadMapDirPath();
-        fPoseidonMap2 = std::make_shared<eTexture>();
+        fPoseidonMap2 = std::make_shared<Texture>();
         fPoseidonMap2->load(fRenderer, dir + "Poseidon_map02.jpg");
     }
 }
@@ -1527,7 +1527,7 @@ void InterfaceTextures::loadPoseidonMap3() {
         if(fPoseidonMap3Loaded) return;
         fPoseidonMap3Loaded = true;
         const auto dir = loadMapDirPath();
-        fPoseidonMap3 = std::make_shared<eTexture>();
+        fPoseidonMap3 = std::make_shared<Texture>();
         fPoseidonMap3->load(fRenderer, dir + "Poseidon_map03.jpg");
     }
 }
@@ -1539,7 +1539,7 @@ void InterfaceTextures::loadPoseidonMap4() {
         if(fPoseidonMap4Loaded) return;
         fPoseidonMap4Loaded = true;
         const auto dir = loadMapDirPath();
-        fPoseidonMap4 = std::make_shared<eTexture>();
+        fPoseidonMap4 = std::make_shared<Texture>();
         fPoseidonMap4->load(fRenderer, dir + "Poseidon_map04.jpg");
     }
 }

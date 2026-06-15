@@ -3,7 +3,7 @@
 #include "character-finish-actions.h"
 #include "characters/echaracter.h"
 #include "engine/etile.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 DionysusFollowAction::DionysusFollowAction(
         eCharacter* const f, eCharacter* const c) :
@@ -17,7 +17,7 @@ void DionysusFollowAction::setFollower(eCharacter* const f) {
     mFollower = f;
 }
 
-void DionysusFollowAction::serializeFields(eSaveArchive& ar) {
+void DionysusFollowAction::serializeFields(SaveArchive& ar) {
     eFollowAction::serializeFields(ar);
     ar.characterField("follower", &board(), mFollower);
     ar.field("killOnFinish", mKillOnFinish);

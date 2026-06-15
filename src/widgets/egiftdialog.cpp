@@ -1,11 +1,11 @@
 ﻿#include "egiftdialog.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "elabel.h"
 #include "framed-button-with-icon.h"
 #include "engine/game-board.h"
 #include "engine/egifthelpers.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 
 #include "eboardcityswitchbutton.h"
 
@@ -24,8 +24,8 @@ void eGiftDialog::initialize(const stdsptr<WorldCity>& c,
     innerWid->move(p, p/2);
 
     const auto name = c->name();
-    auto rof = eLanguage::zeusText(41, 0); // give to
-    eStringHelpers::replace(rof, "[city_name]", name);
+    auto rof = Language::zeusText(41, 0); // give to
+    StringHelpers::replace(rof, "[city_name]", name);
     const auto rofLabel = new eLabel(window());
     rofLabel->setFontSizeXS();
     rofLabel->setPaddingS();
@@ -51,7 +51,7 @@ void eGiftDialog::initialize(const stdsptr<WorldCity>& c,
 
         eWidget* ng = nullptr;
         if(gifts.empty()) {
-            const auto rof = eLanguage::zeusText(41, 20); // no gifts possible
+            const auto rof = Language::zeusText(41, 20); // no gifts possible
             const auto label = new eLabel(window());
             label->setFontSizeXS();
             label->setPaddingS();
@@ -74,7 +74,7 @@ void eGiftDialog::initialize(const stdsptr<WorldCity>& c,
         }
         w->stackVertically();
         w->fitContent();
-        if(ng) ng->align(eAlignment::hcenter);
+        if(ng) ng->align(Alignment::hcenter);
         return w;
     };
 
@@ -115,7 +115,7 @@ void eGiftDialog::initialize(const stdsptr<WorldCity>& c,
 
     bw->fitContent();
     for(const auto w : cws) {
-        w.second->align(eAlignment::hcenter);
+        w.second->align(Alignment::hcenter);
     }
     innerWid->addWidget(bw);
 
@@ -123,7 +123,7 @@ void eGiftDialog::initialize(const stdsptr<WorldCity>& c,
     innerWid->fitContent();
 
     fitContent();
-    rofLabel->align(eAlignment::hcenter);
-    bw->align(eAlignment::hcenter);
-    if(cityButtonW) cityButtonW->align(eAlignment::hcenter);
+    rofLabel->align(Alignment::hcenter);
+    bw->align(Alignment::hcenter);
+    if(cityButtonW) cityButtonW->align(Alignment::hcenter);
 }

@@ -1,7 +1,7 @@
 #include "eboardcityswitchbutton.h"
 
 #include "engine/game-board.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 void eBoardCitySwitchButton::initialize(
         const GameBoard& board, const eValidator& v,
@@ -36,7 +36,7 @@ eCityId eBoardCitySwitchButton::currentCity() const {
 }
 
 bool eBoardCitySwitchButton::setCurrentCity(const eCityId cid) {
-    const int v = eVectorHelpers::index(mCities, cid);
+    const int v = VectorHelpers::index(mCities, cid);
     if(v == -1) return false;
     setValue(v);
     return true;

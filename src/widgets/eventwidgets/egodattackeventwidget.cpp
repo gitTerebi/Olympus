@@ -1,17 +1,17 @@
 #include "egodattackeventwidget.h"
 
 #include "widgets/eswitchbutton.h"
-#include "elanguage.h"
+#include "language.h"
 
 #include "widgets/gods/egodselectionwidget.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 void eGodAttackEventWidget::initialize(eWidget* const parent,
                                        eGodAttackEvent* const e) {
     const auto randomButton = new eSwitchButton(window());
-    randomButton->addValue(eLanguage::text("iterative"));
-    randomButton->addValue(eLanguage::text("random"));
+    randomButton->addValue(Language::text("iterative"));
+    randomButton->addValue(Language::text("random"));
     randomButton->setSwitchAction([e](const int v) {
         e->setRandom(v);
     });
@@ -20,7 +20,7 @@ void eGodAttackEventWidget::initialize(eWidget* const parent,
     randomButton->setValue(e->random() ? 1 : 0);
     addWidget(randomButton);
 
-    const auto godsStr = eLanguage::zeusText(44, 360);
+    const auto godsStr = Language::zeusText(44, 360);
     const auto godsButton = new FramedButton(godsStr, window());
     godsButton->fitContent();
     godsButton->setUnderline(false);
@@ -34,7 +34,7 @@ void eGodAttackEventWidget::initialize(eWidget* const parent,
         choose->initialize(act, e->types());
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     addWidget(godsButton);
 

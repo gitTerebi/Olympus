@@ -6,8 +6,8 @@
 #include "widgets/etypebutton.h"
 #include "engine/game-board.h"
 #include "widgets/elabeledwidget.h"
-#include "elanguage.h"
-#include "emainwindow.h"
+#include "language.h"
+#include "main-window.h"
 #include "widgets/etriggerselectionwidget.h"
 #include "widgets/eeventselectionwidget.h"
 
@@ -34,7 +34,7 @@
 #include "egodquesteventwidget.h"
 #include "egoddisastereventwidget.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     setType(eFrameType::message);
@@ -63,18 +63,18 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
 
                                                   eCityBecomesType::rebellionOver,
                                                   eCityBecomesType::conquered};
-        const std::vector<std::string> typeNames{eLanguage::zeusText(253, 0),
-                                                 eLanguage::zeusText(253, 1),
-                                                 eLanguage::zeusText(253, 2),
+        const std::vector<std::string> typeNames{Language::zeusText(253, 0),
+                                                 Language::zeusText(253, 1),
+                                                 Language::zeusText(253, 2),
 
-                                                 eLanguage::zeusText(44, 248),
-                                                 eLanguage::zeusText(44, 249),
+                                                 Language::zeusText(44, 248),
+                                                 Language::zeusText(44, 249),
 
-                                                 eLanguage::zeusText(44, 307),
-                                                 eLanguage::zeusText(44, 306),
+                                                 Language::zeusText(44, 307),
+                                                 Language::zeusText(44, 306),
 
-                                                 eLanguage::zeusText(35, 23),
-                                                 eLanguage::zeusText(35, 24)};
+                                                 Language::zeusText(35, 23),
+                                                 Language::zeusText(35, 24)};
 
         const auto typeButton = new eTypeButton(window());
         const auto type = ee->type();
@@ -84,7 +84,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             ee->setType(t);
         });
 
-        typeButtonL->setup(eLanguage::zeusText(44, 358), typeButton);
+        typeButtonL->setup(Language::zeusText(44, 358), typeButton);
         leftW->addWidget(typeButtonL);
     }
 
@@ -98,21 +98,21 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             RequestedResourcesType::financialWoes
         };
         const std::vector<std::string> typeNames {
-            eLanguage::zeusText(290, 1),
-            eLanguage::zeusText(290, 2),
-            eLanguage::zeusText(290, 3),
-            eLanguage::zeusText(290, 4),
-            eLanguage::zeusText(290, 5)
+            Language::zeusText(290, 1),
+            Language::zeusText(290, 2),
+            Language::zeusText(290, 3),
+            Language::zeusText(290, 4),
+            Language::zeusText(290, 5)
         };
         const auto typeButton = new eTypeButton(window());
         const auto type = ee->requestType();
-        const int itype = eVectorHelpers::index(types, type);
+        const int itype = VectorHelpers::index(types, type);
         typeButton->initialize(itype, typeNames, [ee, types](const int val) {
             const auto type = types[val];
             ee->setRequestType(type);
         });
 
-        typeButtonL->setup(eLanguage::zeusText(44, 358), typeButton);
+        typeButtonL->setup(Language::zeusText(44, 358), typeButton);
         leftW->addWidget(typeButtonL);
     }
 
@@ -124,27 +124,27 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             SendTroopsEventType::greekCityTerrorized
         };
         const std::vector<std::string> typeNames {
-            eLanguage::zeusText(290, 7),
-            eLanguage::zeusText(290, 8),
-            eLanguage::zeusText(290, 9)
+            Language::zeusText(290, 7),
+            Language::zeusText(290, 8),
+            Language::zeusText(290, 9)
         };
         const auto typeButton = new eTypeButton(window());
         const auto type = ee->type();
-        const int itype = eVectorHelpers::index(types, type);
+        const int itype = VectorHelpers::index(types, type);
         typeButton->initialize(itype, typeNames, [ee, types](const int val) {
             const auto type = types[val];
             ee->setType(type);
         });
 
-        typeButtonL->setup(eLanguage::zeusText(44, 358), typeButton);
+        typeButtonL->setup(Language::zeusText(44, 358), typeButton);
         leftW->addWidget(typeButtonL);
 
         const auto effectButtonL = new eLabeledWidget(window());
         const auto effectButton = new eSwitchButton(window());
         effectButton->setUnderline(false);
-        effectButton->addValue(eLanguage::zeusText(44, 287));
-        effectButton->addValue(eLanguage::zeusText(44, 288));
-        effectButton->addValue(eLanguage::zeusText(44, 289));
+        effectButton->addValue(Language::zeusText(44, 287));
+        effectButton->addValue(Language::zeusText(44, 288));
+        effectButton->addValue(Language::zeusText(44, 289));
         effectButton->fitValidContent();
         const auto eff = ee->effect();
         const int ieff = static_cast<int>(eff);
@@ -155,7 +155,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             ee->setEffect(effect);
         });
 
-        effectButtonL->setup(eLanguage::zeusText(44, 286), effectButton);
+        effectButtonL->setup(Language::zeusText(44, 286), effectButton);
         leftW->addWidget(effectButtonL);
     }
 
@@ -187,7 +187,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
 
         countW->stackHorizontally(p);
         countW->fitContent();
-        countL->setup(eLanguage::zeusText(44, 362), countW);
+        countL->setup(Language::zeusText(44, 362), countW);
         leftW->addWidget(countL);
     }
 
@@ -218,7 +218,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
 
         countW->stackHorizontally(p);
         countW->fitContent();
-        countL->setup(eLanguage::zeusText(44, 361), countW);
+        countL->setup(Language::zeusText(44, 361), countW);
         leftW->addWidget(countL);
     }
 
@@ -237,7 +237,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         }
         widget->stackVertically(p);
         widget->fitContent();
-        buttonsL->setup(eLanguage::zeusText(44, 360), widget);
+        buttonsL->setup(Language::zeusText(44, 360), widget);
         leftW->addWidget(buttonsL);
     }
 
@@ -260,7 +260,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         }
         widget->stackVertically(p);
         widget->fitContent();
-        buttonsL->setup(eLanguage::zeusText(44, 360), widget);
+        buttonsL->setup(Language::zeusText(44, 360), widget);
         leftW->addWidget(buttonsL);
     }
 
@@ -268,10 +268,10 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         const auto buttonL = new eLabeledWidget(window());
         const auto aggressivnessButton = new eSwitchButton(window());
         aggressivnessButton->setUnderline(false);
-        aggressivnessButton->addValue(eLanguage::zeusText(94, 0));
-        aggressivnessButton->addValue(eLanguage::zeusText(94, 1));
-        aggressivnessButton->addValue(eLanguage::zeusText(94, 2));
-        aggressivnessButton->addValue(eLanguage::zeusText(94, 3));
+        aggressivnessButton->addValue(Language::zeusText(94, 0));
+        aggressivnessButton->addValue(Language::zeusText(94, 1));
+        aggressivnessButton->addValue(Language::zeusText(94, 2));
+        aggressivnessButton->addValue(Language::zeusText(94, 3));
         aggressivnessButton->fitValidContent();
         const auto a = ee->aggressivness();
         const int v = static_cast<int>(a);
@@ -280,7 +280,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
             const auto a = static_cast<eMonsterAggressivness>(v);
             ee->setAggressivness(a);
         });
-        buttonL->setup(eLanguage::zeusText(44, 177), aggressivnessButton);
+        buttonL->setup(Language::zeusText(44, 177), aggressivnessButton);
         leftW->addWidget(buttonL);
     }
 
@@ -288,15 +288,15 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         const auto buttonL = new eLabeledWidget(window());
         const auto permanentButton = new eSwitchButton(window());
         permanentButton->setUnderline(false);
-        permanentButton->addValue(eLanguage::zeusText(18, 0));
-        permanentButton->addValue(eLanguage::zeusText(18, 1));
+        permanentButton->addValue(Language::zeusText(18, 0));
+        permanentButton->addValue(Language::zeusText(18, 1));
         permanentButton->fitValidContent();
         const bool p = ee->permanent();
         permanentButton->setValue(p ? 1 : 0);
         permanentButton->setSwitchAction([ee](const int v) {
             ee->setPermanent(v);
         });
-        buttonL->setup(eLanguage::zeusText(44, 394), permanentButton);
+        buttonL->setup(Language::zeusText(44, 394), permanentButton);
         leftW->addWidget(buttonL);
     }
 
@@ -330,7 +330,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         widget->stackVertically(p);
         widget->fitContent();
 
-        cityButtonL->setup(eLanguage::zeusText(44, 359), widget);
+        cityButtonL->setup(Language::zeusText(44, 359), widget);
         leftW->addWidget(cityButtonL);
     }
 
@@ -343,7 +343,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         });
         const auto cc = ee->attackingCity();
         cityButton->setCity(cc);
-        cityButtonL->setup(eLanguage::zeusText(44, 271), cityButton);
+        cityButtonL->setup(Language::zeusText(44, 271), cityButton);
         leftW->addWidget(cityButtonL);
     }
 
@@ -354,12 +354,12 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         godButton->setSwitchAction([ee](const int v) {
             ee->setGodReason(v);
         });
-        godButton->addValue(eLanguage::zeusText(18, 0));
-        godButton->addValue(eLanguage::zeusText(18, 1));
+        godButton->addValue(Language::zeusText(18, 0));
+        godButton->addValue(Language::zeusText(18, 1));
         godButton->fitValidContent();
         const auto iniT = ee->godReason() ? 1 : 0;
         godButton->setValue(iniT);
-        godButtonL->setup(eLanguage::zeusText(44, 215), godButton);
+        godButtonL->setup(Language::zeusText(44, 215), godButton);
         leftW->addWidget(godButtonL);
     }
 
@@ -372,7 +372,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         godButton->initialize(act);
         const auto iniT = ee->god();
         godButton->setType(iniT);
-        godButtonL->setup(eLanguage::zeusText(44, 215), godButton);
+        godButtonL->setup(Language::zeusText(44, 215), godButton);
         leftW->addWidget(godButtonL);
     }
 
@@ -385,7 +385,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         monsterButton->initialize(act);
         const auto iniT = ee->monster();
         monsterButton->setType(iniT);
-        monsterButtonL->setup(eLanguage::zeusText(44, 175), monsterButton);
+        monsterButtonL->setup(Language::zeusText(44, 175), monsterButton);
         leftW->addWidget(monsterButtonL);
     }
 
@@ -442,7 +442,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
 
     yearsWidget->stackHorizontally(p);
     yearsWidget->fitContent();
-    yearsButtonL->setup(eLanguage::zeusText(8, 9), yearsWidget);
+    yearsButtonL->setup(Language::zeusText(8, 9), yearsWidget);
     dateW->addWidget(yearsButtonL);
 
     const auto monthssButtonL = new eLabeledWidget(window());
@@ -454,7 +454,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     monthsButton->initialize(0, 99999);
     monthsButton->setValue(e->datePlusMonths());
     monthsButton->setText("+" + monthsButton->text());
-    monthssButtonL->setup(eLanguage::zeusText(8, 5), monthsButton);
+    monthssButtonL->setup(Language::zeusText(8, 5), monthsButton);
     dateW->addWidget(monthssButtonL);
 
     const auto daysButtonL = new eLabeledWidget(window());
@@ -466,7 +466,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     daysButton->initialize(0, 99999);
     daysButton->setValue(e->datePlusDays());
     daysButton->setText("+" + daysButton->text());
-    daysButtonL->setup(eLanguage::zeusText(8, 45), daysButton);
+    daysButtonL->setup(Language::zeusText(8, 45), daysButton);
     dateW->addWidget(daysButtonL);
 
     const auto periodButtonL = new eLabeledWidget(window());
@@ -488,7 +488,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     periodW->addWidget(periodMaxButton);
     periodW->stackHorizontally(p);
     periodW->fitContent();
-    periodButtonL->setup(eLanguage::text("period:"), periodW);
+    periodButtonL->setup(Language::text("period:"), periodW);
     dateW->addWidget(periodButtonL);
 
     const auto repeatButtonL = new eLabeledWidget(window());
@@ -498,7 +498,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     });
     repeatButton->initialize(0, 99999);
     repeatButton->setValue(e->repeat());
-    repeatButtonL->setup(eLanguage::text("repeat:"), repeatButton);
+    repeatButtonL->setup(Language::text("repeat:"), repeatButton);
     dateW->addWidget(repeatButtonL);
 
     const auto completeButton = new eSwitchButton(window());
@@ -506,10 +506,10 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     completeButton->setSwitchAction([e](const int v) {
         e->setEpisodeCompleteEvent(v == 3);
     });
-    completeButton->addValue(eLanguage::zeusText(44, 157)); // one time
-    completeButton->addValue(eLanguage::zeusText(44, 158)); // recurring
-    completeButton->addValue(eLanguage::zeusText(44, 159)); // triggered
-    completeButton->addValue(eLanguage::zeusText(44, 160)); // episode complete
+    completeButton->addValue(Language::zeusText(44, 157)); // one time
+    completeButton->addValue(Language::zeusText(44, 158)); // recurring
+    completeButton->addValue(Language::zeusText(44, 159)); // triggered
+    completeButton->addValue(Language::zeusText(44, 160)); // episode complete
     completeButton->fitValidContent();
     completeButton->setValue(e->episodeCompleteEvent() ? 3 : 0);
     dateW->addWidget(completeButton);
@@ -524,7 +524,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
         });
         warningButton->initialize(0, 99999);
         warningButton->setValue(e->warningMonths());
-        warningButtonL->setup(eLanguage::zeusText(44, 368), warningButton);
+        warningButtonL->setup(Language::zeusText(44, 368), warningButton);
         dateW->addWidget(warningButtonL);
     }
 
@@ -532,7 +532,7 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
     if(!ts.empty()) {
         const int ec = e->triggerEventsCount();
         const auto ecStr = std::to_string(ec);
-        const auto str = eLanguage::text("triggers") + " (" + ecStr + ")";
+        const auto str = Language::text("triggers") + " (" + ecStr + ")";
         const auto triggersButt = new FramedButton(str, window());
         triggersButt->setUnderline(false);
         triggersButt->fitContent();
@@ -569,12 +569,12 @@ void eEventWidgetBase::initialize(const stdsptr<eGameEvent>& e) {
                 choose->initialize(e->cityId(), get, add, remove, board);
 
                 window()->execDialog(choose);
-                choose->align(eAlignment::center);
+                choose->align(Alignment::center);
             };
             choose->initialize(labels, act);
 
             window()->execDialog(choose);
-            choose->align(eAlignment::center);
+            choose->align(Alignment::center);
         });
         dateW->addWidget(triggersButt);
     }

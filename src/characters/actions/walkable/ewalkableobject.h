@@ -1,12 +1,12 @@
 #ifndef EWALKABLEOBJECT_H
 #define EWALKABLEOBJECT_H
 
-#include "fileIO/estreams.h"
+#include "fileIO/streams.h"
 #include "pointers/estdpointer.h"
 #include "engine/eorientation.h"
 
 class eTileBase;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eWalkableObjectType {
     ddefault,
@@ -38,7 +38,7 @@ public:
 
     virtual bool walkable(eTileBase* const t) const;
 
-    void serialize(eSaveArchive& ar) { serializeFields(ar); }
+    void serialize(SaveArchive& ar) { serializeFields(ar); }
 
     virtual eWalkableObjectType rootType() const {
         return mType;
@@ -74,7 +74,7 @@ public:
             const stdsptr<eHasResourceObject>& hr,
             const stdsptr<eWalkableObject>& w);
 protected:
-    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
+    virtual void serializeFields(SaveArchive& ar) { (void)ar; }
 private:
     const eWalkableObjectType mType;
 };

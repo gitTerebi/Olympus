@@ -1,7 +1,7 @@
 #include "ehasnonbusyresourceobject.h"
 
 #include "engine/etilebase.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eHasNonBusyResourceObject::eHasNonBusyResourceObject(
         const stdsptr<eHasResourceObject>& other) :
@@ -15,6 +15,6 @@ bool eHasNonBusyResourceObject::has(eTileBase* const t) const {
     return !t->busy() && mOther->has(t);
 }
 
-void eHasNonBusyResourceObject::serializeFields(eSaveArchive& ar) {
+void eHasNonBusyResourceObject::serializeFields(SaveArchive& ar) {
     ar.hasResourceField("other", mOther);
 }

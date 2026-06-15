@@ -1,14 +1,14 @@
-#ifndef EDEERSPAWNER_H
-#define EDEERSPAWNER_H
+#ifndef DEER_SPAWNER_H
+#define DEER_SPAWNER_H
 
-#include "eanimalspawner.h"
+#include "animal-spawner.h"
 
-class eDeerSpawner : public eAnimalSpawner {
+class DeerSpawner : public AnimalSpawner {
 public:
-    eDeerSpawner(const int id, eTile* const tile,
+    DeerSpawner(const int id, eTile* const tile,
                  GameBoard& board);
 
     stdsptr<eWildAnimal> create(GameBoard& board) override;
 };
 
-#endif // EDEERSPAWNER_H
+#endif // DEER_SPAWNER_H

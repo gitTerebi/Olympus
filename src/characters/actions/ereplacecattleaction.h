@@ -6,7 +6,7 @@
 #include "characters/echaracter.h"
 #include "characters/actions/animal-action.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eReplaceCattleActionStage {
     idle, goingToCattle, goingBack
@@ -20,7 +20,7 @@ public:
     bool decide() override;
     void finishReplacing();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void goCattle();
@@ -46,7 +46,7 @@ public:
     void call() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("butcherAction", &board(), mButcherA);
         ar.characterField("butcher", &board(), mButcher);
         ar.characterField("cattle", &board(), mCattle);
@@ -69,7 +69,7 @@ public:
     void call() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("cattle", &board(), mCattle);
     }
 private:

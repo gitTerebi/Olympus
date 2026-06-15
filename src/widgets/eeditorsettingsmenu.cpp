@@ -1,14 +1,14 @@
 #include "eeditorsettingsmenu.h"
 
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 
 #include "characters/gods/god.h"
 #include "widgets/gods/egodselectionwidget.h"
 #include "emonsterselectionwidget.h"
 #include "buildings/pyramids/epyramid.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include "widgets/eeventselectionwidget.h"
 #include "widgets/eepisodegoalselectionwidget.h"
@@ -19,7 +19,7 @@
 #include "widgets/evaluebutton.h"
 
 #include "engine/ecampaign.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 void eEditorSettingsMenu::initialize(const bool first,
                                      eCampaign* const c,
@@ -37,10 +37,10 @@ void eEditorSettingsMenu::initialize(const bool first,
             c->setDate(date);
         });
         addWidget(dateButt);
-        dateButt->align(eAlignment::hcenter);
+        dateButt->align(Alignment::hcenter);
 
         const auto fundsButt = new FramedButton(window());
-        fundsButt->setText(eLanguage::zeusText(44, 39));
+        fundsButt->setText(Language::zeusText(44, 39));
         fundsButt->fitContent();
         fundsButt->setUnderline(false);
 
@@ -69,15 +69,15 @@ void eEditorSettingsMenu::initialize(const bool first,
                     c->setInitialFunds(pid, funds);
                 });
                 fundsMenu->addWidget(fundsButt);
-                fundsButt->align(eAlignment::hcenter);
+                fundsButt->align(Alignment::hcenter);
             }
 
             window()->execDialog(fundsMenu);
-            fundsMenu->align(eAlignment::center);
+            fundsMenu->align(Alignment::center);
             fundsMenu->layoutVertically();
         });
         addWidget(fundsButt);
-        fundsButt->align(eAlignment::hcenter);
+        fundsButt->align(Alignment::hcenter);
 
         const auto pricesAct = [this, c]() {
             const auto priceMenu = new eFramedWidget(window());
@@ -91,7 +91,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                     if(column) {
                         column->stackVertically();
                         column->fitContent();
-                        column->align(eAlignment::vcenter);
+                        column->align(Alignment::vcenter);
                     }
                     column = new eWidget(window());
                     priceMenu->addWidget(column);
@@ -140,7 +140,7 @@ void eEditorSettingsMenu::initialize(const bool first,
             if(column) {
                 const auto resetButt = new FramedButton(window());
                 resetButt->setUnderline(false);
-                resetButt->setText(eLanguage::zeusText(44, 214));
+                resetButt->setText(Language::zeusText(44, 214));
                 resetButt->fitContent();
                 resetButt->setPressAction([c, buttons]() {
                     auto& prices = c->prices();
@@ -158,21 +158,21 @@ void eEditorSettingsMenu::initialize(const bool first,
 
                 column->stackVertically();
                 column->fitContent();
-                column->align(eAlignment::vcenter);
+                column->align(Alignment::vcenter);
             }
 
             window()->execDialog(priceMenu);
-            priceMenu->align(eAlignment::center);
+            priceMenu->align(Alignment::center);
             priceMenu->layoutHorizontally();
         };
 
         const auto pricesButt = new FramedButton(window());
         pricesButt->setUnderline(false);
-        pricesButt->setText(eLanguage::zeusText(54, 9));
+        pricesButt->setText(Language::zeusText(54, 9));
         pricesButt->fitContent();
         pricesButt->setPressAction(pricesAct);
         addWidget(pricesButt);
-        pricesButt->align(eAlignment::hcenter);
+        pricesButt->align(Alignment::hcenter);
     }
 
     const auto mythologyAct = [this, ep, board]() {
@@ -193,7 +193,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                 choose->initialize(act, iniG);
 
                 window()->execDialog(choose);
-                choose->align(eAlignment::center);
+                choose->align(Alignment::center);
             };
 
             const auto friendGodsButt = new FramedButton(window());
@@ -203,21 +203,21 @@ void eEditorSettingsMenu::initialize(const bool first,
             friendGodsButt->fitContent();
             friendGodsButt->setPressAction(friendGodsAct);
             mythMenu->addWidget(friendGodsButt);
-            friendGodsButt->align(eAlignment::hcenter);
+            friendGodsButt->align(Alignment::hcenter);
         }
 
         window()->execDialog(mythMenu);
-        mythMenu->align(eAlignment::center);
+        mythMenu->align(Alignment::center);
         mythMenu->layoutVertically();
     };
 
     const auto mythButt = new FramedButton(window());
     mythButt->setUnderline(false);
-    mythButt->setText(eLanguage::zeusText(44, 162));
+    mythButt->setText(Language::zeusText(44, 162));
     mythButt->fitContent();
     mythButt->setPressAction(mythologyAct);
     addWidget(mythButt);
-    mythButt->align(eAlignment::hcenter);
+    mythButt->align(Alignment::hcenter);
 
     const auto eventsAct = [this, ep, board]() {
         const auto mythMenu = new eFramedWidget(window());
@@ -227,7 +227,7 @@ void eEditorSettingsMenu::initialize(const bool first,
         auto cids = ep->fBoard->citiesOnBoard();
         for(const auto& e : ep->fEvents) {
             const auto cid = e.first;
-            if(!eVectorHelpers::contains(cids, cid)) {
+            if(!VectorHelpers::contains(cids, cid)) {
                 cids.push_back(cid);
             }
         }
@@ -245,13 +245,13 @@ void eEditorSettingsMenu::initialize(const bool first,
                     ep->fEvents[cid].push_back(e);
                 };
                 const auto remove = [ep, cid](const stdsptr<eGameEvent>& e) {
-                    eVectorHelpers::remove(ep->fEvents[cid], e);
+                    VectorHelpers::remove(ep->fEvents[cid], e);
                 };
                 auto& board = *ep->fBoard;
                 choose->initialize(cid, get, add, remove, board);
 
                 window()->execDialog(choose);
-                choose->align(eAlignment::center);
+                choose->align(Alignment::center);
             };
 
             const auto friendGodsButt = new FramedButton(window());
@@ -261,21 +261,21 @@ void eEditorSettingsMenu::initialize(const bool first,
             friendGodsButt->fitContent();
             friendGodsButt->setPressAction(eventsAct);
             mythMenu->addWidget(friendGodsButt);
-            friendGodsButt->align(eAlignment::hcenter);
+            friendGodsButt->align(Alignment::hcenter);
         }
 
         window()->execDialog(mythMenu);
-        mythMenu->align(eAlignment::center);
+        mythMenu->align(Alignment::center);
         mythMenu->layoutVertically();
     };
 
     const auto eventsButt = new FramedButton(window());
     eventsButt->setUnderline(false);
-    eventsButt->setText(eLanguage::zeusText(44, 94));
+    eventsButt->setText(Language::zeusText(44, 94));
     eventsButt->fitContent();
     eventsButt->setPressAction(eventsAct);
     addWidget(eventsButt);
-    eventsButt->align(eAlignment::hcenter);
+    eventsButt->align(Alignment::hcenter);
 
     const auto goalsAct = [this, ep]() {
         const auto choose = new eEpisodeGoalSelectionWidget(
@@ -289,21 +289,21 @@ void eEditorSettingsMenu::initialize(const bool first,
             ep->fGoals.push_back(e);
         };
         const auto remove = [ep](const stdsptr<eEpisodeGoal>& e) {
-            eVectorHelpers::remove(ep->fGoals, e);
+            VectorHelpers::remove(ep->fGoals, e);
         };
         choose->initialize(get, add, remove, ep->fBoard);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     };
 
     const auto goalsButt = new FramedButton(window());
     goalsButt->setUnderline(false);
-    goalsButt->setText(eLanguage::zeusText(44, 45));
+    goalsButt->setText(Language::zeusText(44, 45));
     goalsButt->fitContent();
     goalsButt->setPressAction(goalsAct);
     addWidget(goalsButt);
-    goalsButt->align(eAlignment::hcenter);
+    goalsButt->align(Alignment::hcenter);
 
     const auto buildingsAct = [this, ep]() {
         const auto buildMenu = new eFramedWidget(window());
@@ -396,7 +396,7 @@ void eEditorSettingsMenu::initialize(const bool first,
                 }
 
                 window()->execDialog(buildMenu);
-                buildMenu->align(eAlignment::center);
+                buildMenu->align(Alignment::center);
             };
             const auto cButt = new FramedButton(window());
             cButt->setUnderline(false);
@@ -404,20 +404,20 @@ void eEditorSettingsMenu::initialize(const bool first,
             cButt->fitContent();
             cButt->setPressAction(cbuildingsAct);
             buildMenu->addWidget(cButt);
-            cButt->align(eAlignment::hcenter);
+            cButt->align(Alignment::hcenter);
         }
         window()->execDialog(buildMenu);
-        buildMenu->align(eAlignment::center);
+        buildMenu->align(Alignment::center);
         buildMenu->layoutVertically();
     };
 
     const auto buildingsButt = new FramedButton(window());
     buildingsButt->setUnderline(false);
-    buildingsButt->setText(eLanguage::zeusText(44, 44));
+    buildingsButt->setText(Language::zeusText(44, 44));
     buildingsButt->fitContent();
     buildingsButt->setPressAction(buildingsAct);
     addWidget(buildingsButt);
-    buildingsButt->align(eAlignment::hcenter);
+    buildingsButt->align(Alignment::hcenter);
 
     const auto pyramidsAct = [this, ep]() {
         const auto buildMenu = new eFramedWidget(window());
@@ -462,13 +462,13 @@ void eEditorSettingsMenu::initialize(const bool first,
                     updater();
                 };
                 const auto remove = [settings, updater](const ePSptr& p) {
-                    eVectorHelpers::remove(*settings, p);
+                    VectorHelpers::remove(*settings, p);
                     updater();
                 };
                 choose->initialize(get, add, remove, updater);
 
                 window()->execDialog(choose);
-                choose->align(eAlignment::center);
+                choose->align(Alignment::center);
             };
             const auto cButt = new FramedButton(window());
             cButt->setUnderline(false);
@@ -476,20 +476,20 @@ void eEditorSettingsMenu::initialize(const bool first,
             cButt->fitContent();
             cButt->setPressAction(cpyramidsAct);
             buildMenu->addWidget(cButt);
-            cButt->align(eAlignment::hcenter);
+            cButt->align(Alignment::hcenter);
         }
         window()->execDialog(buildMenu);
-        buildMenu->align(eAlignment::center);
+        buildMenu->align(Alignment::center);
         buildMenu->layoutVertically();
     };
 
     const auto pyramidsButt = new FramedButton(window());
     pyramidsButt->setUnderline(false);
-    pyramidsButt->setText(eLanguage::zeusText(44, 378));
+    pyramidsButt->setText(Language::zeusText(44, 378));
     pyramidsButt->fitContent();
     pyramidsButt->setPressAction(pyramidsAct);
     addWidget(pyramidsButt);
-    pyramidsButt->align(eAlignment::hcenter);
+    pyramidsButt->align(Alignment::hcenter);
 
 
     const auto maxSanctAct = [this, ep]() {
@@ -524,10 +524,10 @@ void eEditorSettingsMenu::initialize(const bool first,
                     bb->setValue(it->second);
                 }
                 maxMenu->addWidget(bb);
-                bb->align(eAlignment::center);
+                bb->align(Alignment::center);
 
                 window()->execDialog(maxMenu);
-                maxMenu->align(eAlignment::center);
+                maxMenu->align(Alignment::center);
             };
             const auto cButt = new FramedButton(window());
             cButt->setUnderline(false);
@@ -535,20 +535,20 @@ void eEditorSettingsMenu::initialize(const bool first,
             cButt->fitContent();
             cButt->setPressAction(cbuildingsAct);
             buildMenu->addWidget(cButt);
-            cButt->align(eAlignment::hcenter);
+            cButt->align(Alignment::hcenter);
         }
         window()->execDialog(buildMenu);
-        buildMenu->align(eAlignment::center);
+        buildMenu->align(Alignment::center);
         buildMenu->layoutVertically();
     };
 
     const auto maxSanctButt = new FramedButton(window());
     maxSanctButt->setUnderline(false);
-    maxSanctButt->setText(eLanguage::zeusText(44, 291));
+    maxSanctButt->setText(Language::zeusText(44, 291));
     maxSanctButt->fitContent();
     maxSanctButt->setPressAction(maxSanctAct);
     addWidget(maxSanctButt);
-    maxSanctButt->align(eAlignment::hcenter);
+    maxSanctButt->align(Alignment::hcenter);
 
     layoutVertically();
 }

@@ -14,7 +14,7 @@ public:
                    const int elevation,
                    const eCityId cid);
 
-    stdsptr<eTexture> getTexture(const eTileSize size) const override;
+    stdsptr<Texture> getTexture(const eTileSize size) const override;
 };
 
 #endif // EPYRAMIDMUSEUM_H

@@ -5,7 +5,7 @@
 #include <algorithm>
 
 void WarehouseBase::getSpaceOverlay(const eTileSize size,
-                                     std::vector<eOverlay>& os,
+                                     std::vector<Overlay>& os,
                                      const std::pair<double, double>& xy,
                                      const int id) const {
     const int sizeId = static_cast<int>(size);
@@ -13,7 +13,7 @@ void WarehouseBase::getSpaceOverlay(const eTileSize size,
     const auto& texs = blds[sizeId];
     const int count = resourceCount(id);
     const auto type = resourceType(id);
-    eOverlay& o = os.emplace_back();
+    Overlay& o = os.emplace_back();
     o.fX = xy.first;
     o.fY = xy.second;
     o.fAlignTop = true;
@@ -94,7 +94,7 @@ void WarehouseBase::getSpaceOverlay(const eTileSize size,
 }
 
 void WarehouseBase::getSpaceOverlays(const eTileSize size,
-                                      std::vector<eOverlay>& os,
+                                      std::vector<Overlay>& os,
                                       const eXY& xy) const {
     const int iMax = xy.size();
     for(int i = 0; i < iMax; i++) {

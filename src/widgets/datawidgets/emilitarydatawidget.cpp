@@ -3,8 +3,8 @@
 #include "eviewmodebutton.h"
 
 #include "engine/game-board.h"
-#include "elanguage.h"
-#include "evectorhelpers.h"
+#include "language.h"
+#include "vector-helpers.h"
 #include "widgets/emicrobutton.h"
 #include "widgets/ebasicbutton.h"
 #include "widgets/emilitarymoreinfowidget.h"
@@ -19,7 +19,7 @@ void eForcesWidget::initialize(const std::string& title) {
     titleLabel->setText(title);
     titleLabel->fitContent();
     addWidget(titleLabel);
-    titleLabel->align(eAlignment::hcenter);
+    titleLabel->align(Alignment::hcenter);
 
     mWidget = new eWidget(window());
     mWidget->setNoPadding();
@@ -31,7 +31,7 @@ void eForcesWidget::initialize(const std::string& title) {
 
 void eForcesWidget::setBanners(const SoldierBanners& ss,
                                const SoldierBannerAction& act) {
-    const bool changed = !eVectorHelpers::same(mBanners, ss);
+    const bool changed = !VectorHelpers::same(mBanners, ss);
     if(!changed) return;
     mBanners = ss;
     int iRes;
@@ -129,7 +129,7 @@ void eForcesWidget::setBanners(const SoldierBanners& ss,
 void eMilitaryDataWidget::initialize() {
     {
         mSeeSecurity = new eViewModeButton(
-                        eLanguage::zeusText(14, 16),
+                        Language::zeusText(14, 16),
                         eViewMode::security,
                         window());
         addViewButton(mSeeSecurity);
@@ -153,19 +153,19 @@ void eMilitaryDataWidget::initialize() {
 
     mAbroad = new eForcesWidget(window());
     mAbroad->setWidth(iw);
-    mAbroad->initialize(eLanguage::zeusText(51, 1)); // forces abroad
+    mAbroad->initialize(Language::zeusText(51, 1)); // forces abroad
     mForcesWidget->addWidget(mAbroad);
     mAbroad->hide();
 
     mInCity = new eForcesWidget(window());
     mInCity->setWidth(iw);
-    mInCity->initialize(eLanguage::zeusText(51, 0)); // forces in city
+    mInCity->initialize(Language::zeusText(51, 0)); // forces in city
     mForcesWidget->addWidget(mInCity);
     mInCity->hide();
 
     mStandingDown = new eForcesWidget(window());
     mStandingDown->setWidth(iw);
-    mStandingDown->initialize(eLanguage::zeusText(51, 2)); // standing down
+    mStandingDown->initialize(Language::zeusText(51, 2)); // standing down
     mForcesWidget->addWidget(mStandingDown);
     mStandingDown->hide();
 
@@ -187,8 +187,8 @@ void eMilitaryDataWidget::initialize() {
     mAtPalace = new eMicroButton(window());
     mAtPalace->setNoPadding();
     mAtPalace->setFontSizeXS();
-    mAtPalace->setText(eLanguage::zeusText(51, 82));
-    mAtPalace->setTooltip(eLanguage::zeusText(68, 37));
+    mAtPalace->setText(Language::zeusText(51, 82));
+    mAtPalace->setTooltip(Language::zeusText(68, 37));
     mAtPalace->setWidth(microW);
     mAtPalace->fitHeight();
     microButtonsW->addWidget(mAtPalace);
@@ -199,13 +199,13 @@ void eMilitaryDataWidget::initialize() {
     soldiersIcon->fitContent();
     mAtPalace->addWidget(soldiersIcon);
     soldiersIcon->setX(iconX - soldiersIcon->width()/2);
-    soldiersIcon->align(eAlignment::vcenter);
+    soldiersIcon->align(Alignment::vcenter);
 
     mNoShips = new eMicroButton(window());
     mNoShips->setNoPadding();
     mNoShips->setFontSizeXS();
-    mNoShips->setText(eLanguage::zeusText(51, 83));
-    mNoShips->setTooltip(eLanguage::zeusText(68, 38));
+    mNoShips->setText(Language::zeusText(51, 83));
+    mNoShips->setTooltip(Language::zeusText(68, 38));
     mNoShips->setWidth(microW);
     mNoShips->fitHeight();
     microButtonsW->addWidget(mNoShips);
@@ -215,13 +215,13 @@ void eMilitaryDataWidget::initialize() {
     shipsIcon->fitContent();
     mNoShips->addWidget(shipsIcon);
     shipsIcon->setX(iconX - shipsIcon->width()/2);
-    shipsIcon->align(eAlignment::vcenter);
+    shipsIcon->align(Alignment::vcenter);
 
     mNoTowers = new eMicroButton(window());
     mNoTowers->setNoPadding();
     mNoTowers->setFontSizeXS();
-    mNoTowers->setText(eLanguage::zeusText(51, 84));
-    mNoTowers->setTooltip(eLanguage::zeusText(68, 39));
+    mNoTowers->setText(Language::zeusText(51, 84));
+    mNoTowers->setTooltip(Language::zeusText(68, 39));
     mNoTowers->setWidth(microW);
     mNoTowers->fitHeight();
     microButtonsW->addWidget(mNoTowers);
@@ -231,7 +231,7 @@ void eMilitaryDataWidget::initialize() {
     towersIcon->fitContent();
     mNoTowers->addWidget(towersIcon);
     towersIcon->setX(iconX - towersIcon->width()/2);
-    towersIcon->align(eAlignment::vcenter);
+    towersIcon->align(Alignment::vcenter);
 
     const int microP = std::round(4*mult);
     microButtonsW->stackVertically(microP);
@@ -246,7 +246,7 @@ void eMilitaryDataWidget::initialize() {
 
     buttonsW->fitHeight();
     inner->addWidget(buttonsW);
-    buttonsW->align(eAlignment::bottom);
+    buttonsW->align(Alignment::bottom);
 
     const int bh = buttonsW->height();
     mForcesScroll->resize(iw, ih - bh);
@@ -320,38 +320,38 @@ void eMilitaryDataWidget::updateWidgets() {
     const auto towers = mBoard.buildings(cid, eBuildingType::tower);
 
     if(inCity.empty() && standingDown.empty()) {
-        mAtPalace->setText(eLanguage::zeusText(51, 82)); // no soldiers
-        mAtPalace->setTooltip(eLanguage::zeusText(68, 37)); // no soldiers to command
+        mAtPalace->setText(Language::zeusText(51, 82)); // no soldiers
+        mAtPalace->setTooltip(Language::zeusText(68, 37)); // no soldiers to command
         mAtPalace->setPressAction(nullptr);
     } else if(!inCity.empty()) {
-        mAtPalace->setText(eLanguage::zeusText(51, 6)); // all called
-        mAtPalace->setTooltip(eLanguage::zeusText(68, 170)); // click to send all soldiers home
+        mAtPalace->setText(Language::zeusText(51, 6)); // all called
+        mAtPalace->setTooltip(Language::zeusText(68, 170)); // click to send all soldiers home
         mAtPalace->setPressAction([this, cid]() {
             mBoard.sendAllSoldiersHome(cid);
             updateWidgets();
         });
     } else {
-        mAtPalace->setText(eLanguage::zeusText(51, 8)); // at palace
-        mAtPalace->setTooltip(eLanguage::zeusText(68, 171)); // click to muster all
+        mAtPalace->setText(Language::zeusText(51, 8)); // at palace
+        mAtPalace->setTooltip(Language::zeusText(68, 171)); // click to muster all
         mAtPalace->setPressAction([this, cid]() {
             mBoard.musterAllSoldiers(cid);
             updateWidgets();
         });
     }
     if(towers.empty()) {
-        mNoTowers->setText(eLanguage::zeusText(51, 84)); // no towers
-        mNoTowers->setTooltip(eLanguage::zeusText(68, 39)); // no towers to man
+        mNoTowers->setText(Language::zeusText(51, 84)); // no towers
+        mNoTowers->setTooltip(Language::zeusText(68, 39)); // no towers to man
         mNoTowers->setPressAction(nullptr);
     } else if(mBoard.manTowers(cid)) {
-        mNoTowers->setText(eLanguage::zeusText(51, 11)); // manning
-        mNoTowers->setTooltip(eLanguage::zeusText(68, 174)); // click to send home
+        mNoTowers->setText(Language::zeusText(51, 11)); // manning
+        mNoTowers->setTooltip(Language::zeusText(68, 174)); // click to send home
         mNoTowers->setPressAction([this, cid]() {
             mBoard.setManTowers(cid, false);
             updateWidgets();
         });
     } else {
-        mNoTowers->setText(eLanguage::zeusText(51, 12)); // not manning
-        mNoTowers->setTooltip(eLanguage::zeusText(68, 175)); // click to man
+        mNoTowers->setText(Language::zeusText(51, 12)); // not manning
+        mNoTowers->setTooltip(Language::zeusText(68, 175)); // click to man
         mNoTowers->setPressAction([this, cid]() {
             mBoard.setManTowers(cid, true);
             updateWidgets();

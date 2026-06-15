@@ -6,7 +6,7 @@
 #include "characters/echaracter.h"
 #include "walkable/eobsticlehandler.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class AttackTarget {
 public:
@@ -31,7 +31,7 @@ public:
     double absX() const;
     double absY() const;
 
-    void serialize(eSaveArchive& ar, GameBoard& board);
+    void serialize(SaveArchive& ar, GameBoard& board);
 private:
     stdptr<eCharacter> mC;
     stdptr<eBuilding> mB;
@@ -105,7 +105,7 @@ protected:
     // when nothing is claimed.
     void claimTarget(eCharacter* const c);
     void releaseClaim();
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 
     // Anchor tile a ranged unit fires from. It steps at most a couple tiles
@@ -162,7 +162,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);
     }
 private:
@@ -183,7 +183,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mAptr);
     }
 private:

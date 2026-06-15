@@ -8,7 +8,7 @@
 #include "interface-textures.h"
 #include "destruction-textures.h"
 
-#include "esettings.h"
+#include "settings.h"
 
 class GameTextures {
 public:
@@ -350,16 +350,16 @@ public:
     static void loadEliteCitizen();
 
     static bool initialize(SDL_Renderer* const r);
-    static bool loadNextMenu(const eSettings& settings,
+    static bool loadNextMenu(const Settings& settings,
                              std::string& text);
-    static bool loadNextGame(const eSettings& settings,
+    static bool loadNextGame(const Settings& settings,
                              std::string& text);
-    static int gameSize(const eSettings& settings);
+    static int gameSize(const Settings& settings);
     static int menuSize();
 
-    static void setSettings(const eSettings& s);
+    static void setSettings(const Settings& s);
 private:
-    static eSettings sSettings;
+    static Settings sSettings;
     static bool sInitialized;
     static std::vector<TerrainTextures> sTerrainTextures;
     static std::vector<GodTextures> sGodTextures;

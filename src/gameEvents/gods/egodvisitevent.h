@@ -4,7 +4,7 @@
 #include "gameEvents/egameevent.h"
 #include "characters/gods/god.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eGodVisitEvent : public eGameEvent {
 public:
@@ -23,7 +23,7 @@ public:
     std::string longName() const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     std::vector<GodType> mTypes;
     int mNextId = 0;

@@ -9,7 +9,7 @@
 #include "buildings/epatrolsourcebuilding.h"
 #include "buildings/epatroltarget.h"
 #include "characters/actions/walkable/walkable-object.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 using ePatrolWaypoints = std::vector<ePatrolWaypoint>;
 
@@ -76,7 +76,7 @@ void GameWidget::updateWaypointPath()
                 const int w = mBoard->width();
                 const int h = mBoard->height();
                 const bool r = p.findPath({0, 0, w, h}, to, 100, true, w, h,
-                                          eWalkableHelpers::sRoadAvenueTileDistance);
+                                          WalkableHelpers::sRoadAvenueTileDistance);
                 if(!r) return false;
                 std::vector<eTile*> path;
                 p.extractPath(path, *mBoard);
@@ -152,7 +152,7 @@ void GameWidget::updateDestinationPath()
             };
             ePathFinder p(valid, final);
             const bool r = p.findPath({0, 0, w, h}, seedTile, 200, true, w, h,
-                                      eWalkableHelpers::sRoadAvenueTileDistance);
+                                      WalkableHelpers::sRoadAvenueTileDistance);
             if(!r) continue;
             std::vector<eTile*> path;
             p.extractPath(path, *mBoard);
@@ -191,7 +191,7 @@ void GameWidget::setDestinationBuilding(ePatrolSourceBuilding* const sb)
 
 void GameWidget::tickDestinationPath(const int time)
 {
-    const int dayLen = eNumbers::sDayLength;
+    const int dayLen = Numbers::sDayLength;
     const int curDay = dayLen > 0 ? time / dayLen : time;
     if(curDay == mDestPathLastDay) return;
     mDestPathLastDay = curDay;

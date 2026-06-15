@@ -7,7 +7,7 @@
 
 class eTileBase;
 class eTile;
-class eSaveArchive;
+class SaveArchive;
 
 class eMoveAction : public eCharacterAction {
 public:
@@ -24,7 +24,7 @@ public:
 protected:
     bool nextTurn();
     void setWait(const bool w) { mWait = w; }
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 
 private:

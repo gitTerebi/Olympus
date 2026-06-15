@@ -1,11 +1,11 @@
 #include "epatroltarget.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "characters/actions/epatrolaction.h"
 #include "textures/game-textures.h"
 #include "characters/actions/emovepathaction.h"
 #include "engine/epathfinder.h"
-#include "epathfindtask.h"
+#include "path-find-task.h"
 #include "engine/ethreadpool.h"
 #include "characters/actions/ewaitaction.h"
 #include "characters/echaracter.h"
@@ -35,21 +35,21 @@ ePatrolTarget::ePatrolTarget(GameBoard& board,
 
 void ePatrolTarget::arrived() {
     const bool wasIdle = !isActive();
-    mShowDays = eNumbers::sCultureShowDays;
+    mShowDays = Numbers::sCultureShowDays;
     mDayAccum = 0;
     if(wasIdle) resetSpawnTimer();
     setSpawnPatrolers(true);
 }
 
 int ePatrolTarget::spawnCooldown() const {
-    return eNumbers::sCulturePatrolSpawnCooldownDays * eNumbers::sDayLength;
+    return Numbers::sCulturePatrolSpawnCooldownDays * Numbers::sDayLength;
 }
 
 void ePatrolTarget::timeChanged(const int by) {
     ePatrolBuilding::timeChanged(by);
     if(mShowDays > 0) {
         mDayAccum += by;
-        const int dayLen = eNumbers::sDayLength;
+        const int dayLen = Numbers::sDayLength;
         if(dayLen > 0) {
             const int days = mDayAccum / dayLen;
             if(days > 0) {
@@ -62,7 +62,7 @@ void ePatrolTarget::timeChanged(const int by) {
     }
 }
 
-void ePatrolTarget::serializeFields(eSaveArchive& ar) {
+void ePatrolTarget::serializeFields(SaveArchive& ar) {
     ePatrolBuildingBase::serializeFields(ar);
     ar.field("showDays", mShowDays);
     // mDayAccum is a transient sub-day remainder; not serialized.

@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 
-#include "elimits.h"
+#include "game-limits.h"
 
 TaxCollector::TaxCollector(GameBoard& board) :
     eBasicPatroler(board, &CharacterTextures::fTaxCollector,

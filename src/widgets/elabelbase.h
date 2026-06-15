@@ -6,7 +6,7 @@
 
 class eLabelBase {
 public:
-    eLabelBase(eMainWindow* const window);
+    eLabelBase(MainWindow* const window);
 
     bool setFontSizeXXS();
     bool setFontSizeXS();
@@ -19,11 +19,11 @@ public:
     bool setFontSize(const int s);
     std::string text() const { return mText; }
     bool setText(const std::string& text);
-    bool setTexture(const std::shared_ptr<eTexture>& tex);
-    bool setFontColor(const eFontColor color);
+    bool setTexture(const std::shared_ptr<Texture>& tex);
+    bool setFontColor(const FontColor color);
     void setTextureColorMod(const Uint8 r, const Uint8 g, const Uint8 b);
 
-    eFontColor fontColor() const
+    FontColor fontColor() const
     { return mFontColor; }
     void setLightFontColor();
     void setDarkFontColor();
@@ -33,16 +33,16 @@ public:
 
     void setWrapWidth(const int w);
 
-    eAlignment textAlignment() { return mTextAlign; }
-    void setTextAlignment(const eAlignment a) { mTextAlign = a; }
+    Alignment textAlignment() { return mTextAlign; }
+    void setTextAlignment(const Alignment a) { mTextAlign = a; }
 
-    void setWrapAlignment(const eAlignment a) { mWrapAlign = a; }
+    void setWrapAlignment(const Alignment a) { mWrapAlign = a; }
 
     int lineWidth() const;
 
     void textureSize(int& w, int& h) const;
 protected:
-    const std::shared_ptr<eTexture>& texture();
+    const std::shared_ptr<Texture>& texture();
     bool setFont(TTF_Font* const font);
     bool updateTexture();
 private:
@@ -50,14 +50,14 @@ private:
     bool updateTextTexture();
 
     int mWidth = 0;
-    eMainWindow* const mWindow;
+    MainWindow* const mWindow;
     TTF_Font* mFont = nullptr;
     std::string mText;
-    std::shared_ptr<eTexture> mTexture;
+    std::shared_ptr<Texture> mTexture;
     bool mUpdateTextTextureFailed = false;
-    eFontColor mFontColor = eFontColor::light;
-    eAlignment mTextAlign = eAlignment::center;
-    eAlignment mWrapAlign = eAlignment::left;
+    FontColor mFontColor = FontColor::light;
+    Alignment mTextAlign = Alignment::center;
+    Alignment mWrapAlign = Alignment::left;
 protected:
     Uint8 mR = 255;
     Uint8 mG = 255;

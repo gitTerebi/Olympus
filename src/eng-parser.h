@@ -1,10 +1,10 @@
 #ifndef ENG_PARSER_H
 #define ENG_PARSER_H
 
-#include "exmlparser.h"
+#include "xml-parser.h"
 
 // Reads Zeus native binary text files (.eng) directly, without the
-// external engconverter XML step. Mirrors eXmlParser's public shape so
+// external engconverter XML step. Mirrors XmlParser's public shape so
 // elanguage can try .eng first and fall back to .xml.
 namespace EngParser {
     bool sParse(eTextStrings& strings,

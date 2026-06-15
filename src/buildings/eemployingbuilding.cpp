@@ -1,8 +1,8 @@
 #include "eemployingbuilding.h"
 
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
-#include "enumbers.h"
+#include "fileIO/save-archive.h"
+#include "numbers.h"
 
 eEmployingBuilding::eEmployingBuilding(
         GameBoard& board,
@@ -12,7 +12,7 @@ eEmployingBuilding::eEmployingBuilding(
         const eCityId cid) :
     eBuildingWithResource(board, type, sw, sh, cid),
     mMaxEmployees(maxEmployees),
-    mEmploymentWait(eNumbers::sNewBuildingEmployWaitDays * eNumbers::sDayLength) {
+    mEmploymentWait(Numbers::sNewBuildingEmployWaitDays * Numbers::sDayLength) {
     board.registerEmplBuilding(this);
 }
 
@@ -59,7 +59,7 @@ void eEmployingBuilding::setShutDown(const bool sd) {
     if(sd) setEmployed(0);
 }
 
-void eEmployingBuilding::serializeFields(eSaveArchive& ar) {
+void eEmployingBuilding::serializeFields(SaveArchive& ar) {
     eBuildingWithResource::serializeFields(ar);
     ar.field("shutDown", mShutDown);
     ar.field("maxEmployees", mMaxEmployees);

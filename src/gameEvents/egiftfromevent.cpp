@@ -1,7 +1,7 @@
 #include "egiftfromevent.h"
 
 #include "engine/game-board.h"
-#include "elanguage.h"
+#include "language.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 
@@ -22,7 +22,7 @@ eGiftFromEvent::eGiftFromEvent(const eCityId cid,
         eGameEventType::giftFrom, branch, board) {}
 
 std::string eGiftFromEvent::longName() const {
-    auto tmpl = eLanguage::text("gift_of_from_long_name");
+    auto tmpl = Language::text("gift_of_from_long_name");
     longNameReplaceResource("%1", tmpl);
     return tmpl;
 }

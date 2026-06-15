@@ -3,13 +3,13 @@
 
 #include "characters/monsters/emonstertype.h"
 
-class eWriteStream;
-class eReadStream;
+class WriteStream;
+class ReadStream;
 
-class eSaveArchive;
+class SaveArchive;
 class eMonsterEventValue {
 public:
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void setMonster(const eMonsterType m) { mMonster = m; }
     eMonsterType monster() const { return mMonster; }

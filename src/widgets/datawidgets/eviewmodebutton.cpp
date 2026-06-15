@@ -4,7 +4,7 @@
 
 eViewModeButton::eViewModeButton(const std::string& text,
                                  const eViewMode vm,
-                                 eMainWindow* const window) :
+                                 MainWindow* const window) :
     eCheckableButton(window), mVM(vm) {
     setCheckAction([this](const bool) {
         if(!mGW) return;
@@ -32,7 +32,7 @@ eViewModeButton::eViewModeButton(const std::string& text,
     label->setNoPadding();
     label->fitContent();
     addWidget(label);
-    label->align(eAlignment::center);
+    label->align(Alignment::center);
 }
 
 void eViewModeButton::setGameWidget(GameWidget* const gw) {

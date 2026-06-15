@@ -1,15 +1,15 @@
-#include "edustmissile.h"
+#include "dust-missile.h"
 
-eDustMissile::eDustMissile(GameBoard& board,
-                           const std::vector<ePathPoint>& path) :
-    eMissile(board, eMissileType::dust, path),
-    mCollId(eRand::rand()) {
+DustMissile::DustMissile(GameBoard& board,
+                           const std::vector<PathPoint>& path) :
+    Missile(board, MissileType::dust, path),
+    mCollId(Rand::rand()) {
     GameTextures::loadDust();
     setSpeed(0.02);
 }
 
-std::shared_ptr<eTexture>
-eDustMissile::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture>
+DustMissile::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& textures = GameTextures::destrution();
     const auto& colls = textures[id].fDust;

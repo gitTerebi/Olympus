@@ -1,10 +1,10 @@
 #include "elabelbase.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include <algorithm>
 
-eLabelBase::eLabelBase(eMainWindow* const window) :
+eLabelBase::eLabelBase(MainWindow* const window) :
     mWindow(window) {
 
 }
@@ -69,26 +69,26 @@ bool eLabelBase::setText(const std::string& text) {
     return updateTextTexture();
 }
 
-bool eLabelBase::setTexture(const std::shared_ptr<eTexture>& tex) {
+bool eLabelBase::setTexture(const std::shared_ptr<Texture>& tex) {
     mTexture = tex;
     return true;
 }
 
-bool eLabelBase::setFontColor(const eFontColor color) {
+bool eLabelBase::setFontColor(const FontColor color) {
     mFontColor = color;
     return updateTextTexture();
 }
 
 void eLabelBase::setLightFontColor() {
-    setFontColor(eFontColor::light);
+    setFontColor(FontColor::light);
 }
 
 void eLabelBase::setDarkFontColor() {
-    setFontColor(eFontColor::dark);
+    setFontColor(FontColor::dark);
 }
 
 void eLabelBase::setYellowFontColor() {
-    setFontColor(eFontColor::yellow);
+    setFontColor(FontColor::yellow);
 }
 
 void eLabelBase::setTextureColorMod(const Uint8 r, const Uint8 g, const Uint8 b) {
@@ -113,7 +113,7 @@ bool eLabelBase::updateTextTexture() {
         return true;
     }
     if(!mFont) return false;
-    mTexture = std::make_shared<eTexture>();
+    mTexture = std::make_shared<Texture>();
     const auto r = mWindow->renderer();
     const bool v = mTexture->loadText(r, mText, mFontColor, *mFont,
                                       mWidth, mWrapAlign);
@@ -142,7 +142,7 @@ void eLabelBase::textureSize(int& w, int& h) const {
     }
 }
 
-const std::shared_ptr<eTexture>& eLabelBase::texture() {
+const std::shared_ptr<Texture>& eLabelBase::texture() {
     if(mUpdateTextTextureFailed) {
         mUpdateTextTextureFailed = false;
         updateTextTexture();

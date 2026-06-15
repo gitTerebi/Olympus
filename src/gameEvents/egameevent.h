@@ -8,9 +8,9 @@
 #include "engine/ecityid.h"
 #include "ewarning.h"
 
-class eWriteStream;
-class eReadStream;
-class eSaveArchive;
+class WriteStream;
+class ReadStream;
+class SaveArchive;
 class WorldBoard;
 struct eEventData;
 
@@ -204,11 +204,11 @@ public:
 
     eEventTrigger& baseTrigger() { return *mBaseTrigger; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 protected:
     void addTrigger(const stdsptr<eEventTrigger>& et);
     void callBaseTrigger();
-    virtual void serializeFields(eSaveArchive& ar);
+    virtual void serializeFields(SaveArchive& ar);
 
     int mDatePlusDays = 0;
     int mDatePlusMonths = 0;

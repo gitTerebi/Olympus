@@ -1,11 +1,11 @@
-#ifndef EWOLFSPAWNER_H
-#define EWOLFSPAWNER_H
+#ifndef WOLF_SPAWNER_H
+#define WOLF_SPAWNER_H
 
-#include "eanimalspawner.h"
+#include "animal-spawner.h"
 
-class eWolfSpawner : public eAnimalSpawner {
+class WolfSpawner : public AnimalSpawner {
 public:
-    eWolfSpawner(const int id, eTile* const tile,
+    WolfSpawner(const int id, eTile* const tile,
                  GameBoard& board);
 
     stdsptr<eWildAnimal> create(GameBoard& board) override;
@@ -13,4 +13,4 @@ public:
     void spawnMax() override;
 };
 
-#endif // EWOLFSPAWNER_H
+#endif // WOLF_SPAWNER_H

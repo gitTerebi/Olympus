@@ -1,9 +1,9 @@
 ﻿#include "ecitybutton.h"
 
 #include "echoosecitydialog.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "engine/game-board.h"
-#include "elanguage.h"
+#include "language.h"
 
 void eCityButton::initialize(WorldBoard* const board,
                              const eCityAction& cact,
@@ -20,7 +20,7 @@ void eCityButton::initialize(WorldBoard* const board,
         choose->initialize(board, act, mShowId);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     setCity(nullptr);
 
@@ -43,7 +43,7 @@ void eCityButton::setValidator(const eCityValidator& v) {
 }
 
 void eCityButton::setCity(const stdsptr<WorldCity>& c) {
-    const auto lcity = eLanguage::text("none");
+    const auto lcity = Language::text("none");
     const auto ccname = c ? (mShowId ? c->nameWithId() : c->name()) :
                             lcity;
     setText(ccname);

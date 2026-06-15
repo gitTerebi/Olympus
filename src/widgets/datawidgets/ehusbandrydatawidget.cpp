@@ -4,14 +4,14 @@
 
 #include "eviewmodebutton.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "widgets/elinewidget.h"
 #include "widgets/emultilinelabel.h"
 
 void eHusbandryDataWidget::initialize() {
     {
         mSeeHusbandry = new eViewModeButton(
-                        eLanguage::zeusText(14, 2),
+                        Language::zeusText(14, 2),
                         eViewMode::husbandry,
                         window());
         addViewButton(mSeeHusbandry);
@@ -24,39 +24,39 @@ void eHusbandryDataWidget::initialize() {
 
     const auto canSupport1 = new eLabel(window());
     canSupport1->setWrapWidth(iww);
-    canSupport1->setWrapAlignment(eAlignment::hcenter);
+    canSupport1->setWrapAlignment(Alignment::hcenter);
     canSupport1->setFontSizeXS();
     canSupport1->setNoPadding();
-    canSupport1->setText(eLanguage::zeusText(57, 1)); // current food productioin can support
+    canSupport1->setText(Language::zeusText(57, 1)); // current food productioin can support
     canSupport1->fitContent();
     iw->addWidget(canSupport1);
-    canSupport1->align(eAlignment::hcenter);
+    canSupport1->align(Alignment::hcenter);
 
     mCanSupportLabel = new eLabel("0", window());
     mCanSupportLabel->setNoPadding();
     mCanSupportLabel->setYellowFontColor();
     mCanSupportLabel->fitContent();
     iw->addWidget(mCanSupportLabel);
-    mCanSupportLabel->align(eAlignment::hcenter);
+    mCanSupportLabel->align(Alignment::hcenter);
 
     const auto canSupport2 = new eLabel(window());
     canSupport2->setWrapWidth(iww);
-    canSupport2->setWrapAlignment(eAlignment::hcenter);
+    canSupport2->setWrapAlignment(Alignment::hcenter);
     canSupport2->setFontSizeXS();
     canSupport2->setNoPadding();
-    canSupport2->setText(eLanguage::zeusText(57, 2)); // people
+    canSupport2->setText(Language::zeusText(57, 2)); // people
     canSupport2->fitContent();
     iw->addWidget(canSupport2);
-    canSupport2->align(eAlignment::hcenter);
+    canSupport2->align(Alignment::hcenter);
 
     mOpinionLabel = new eLabel(window());
     mOpinionLabel->setNoPadding();
     mOpinionLabel->setYellowFontColor();
     mOpinionLabel->setFontSizeXS();
-    mOpinionLabel->setText(eLanguage::zeusText(57, 3)); // far too little
+    mOpinionLabel->setText(Language::zeusText(57, 3)); // far too little
     mOpinionLabel->fitContent();
     iw->addWidget(mOpinionLabel);
-    mOpinionLabel->align(eAlignment::hcenter);
+    mOpinionLabel->align(Alignment::hcenter);
 
     const auto spacer1 = new eWidget(window());
     spacer1->setHeight(spacing());
@@ -74,30 +74,30 @@ void eHusbandryDataWidget::initialize() {
 
     const auto storedFood1 = new eLabel(window());
     storedFood1->setWrapWidth(iww);
-    storedFood1->setWrapAlignment(eAlignment::hcenter);
+    storedFood1->setWrapAlignment(Alignment::hcenter);
     storedFood1->setFontSizeXS();
     storedFood1->setNoPadding();
-    storedFood1->setText(eLanguage::zeusText(57, 27)); // stored food for
+    storedFood1->setText(Language::zeusText(57, 27)); // stored food for
     storedFood1->fitContent();
     iw->addWidget(storedFood1);
-    storedFood1->align(eAlignment::hcenter);
+    storedFood1->align(Alignment::hcenter);
 
     mStoredFoodLabel = new eLabel("0", window());
     mStoredFoodLabel->setNoPadding();
     mStoredFoodLabel->setYellowFontColor();
     mStoredFoodLabel->fitContent();
     iw->addWidget(mStoredFoodLabel);
-    mStoredFoodLabel->align(eAlignment::hcenter);
+    mStoredFoodLabel->align(Alignment::hcenter);
 
     const auto storedFood2 = new eLabel(window());
     storedFood2->setWrapWidth(iww);
-    storedFood2->setWrapAlignment(eAlignment::hcenter);
+    storedFood2->setWrapAlignment(Alignment::hcenter);
     storedFood2->setFontSizeXS();
     storedFood2->setNoPadding();
-    storedFood2->setText(eLanguage::zeusText(57, 28)); // months
+    storedFood2->setText(Language::zeusText(57, 28)); // months
     storedFood2->fitContent();
     iw->addWidget(storedFood2);
-    storedFood2->align(eAlignment::hcenter);
+    storedFood2->align(Alignment::hcenter);
 
     iw->stackVertically();
 }
@@ -113,31 +113,31 @@ void eHusbandryDataWidget::paintEvent(ePainter& p) {
             const int a = husbData->canSupport();
             mCanSupportLabel->setText(std::to_string(a));
             mCanSupportLabel->fitContent();
-            mCanSupportLabel->align(eAlignment::hcenter);
+            mCanSupportLabel->align(Alignment::hcenter);
 
             std::string txt;
             const int pop = mBoard.population(cid);
             if(pop == 0 || a < 0.75*pop) {
-                txt = eLanguage::zeusText(57, 3); // far too litte
+                txt = Language::zeusText(57, 3); // far too litte
             } else if(a < 0.85*pop) {
-                txt = eLanguage::zeusText(57, 4);  // much too little
+                txt = Language::zeusText(57, 4);  // much too little
             } else if(a < 0.95*pop) {
-                txt = eLanguage::zeusText(57, 5); // too little
+                txt = Language::zeusText(57, 5); // too little
             } else if(a < 1.10*pop) {
-                txt = eLanguage::zeusText(57, 6); // just enough
+                txt = Language::zeusText(57, 6); // just enough
             } else if(a < 1.35*pop) {
-                txt = eLanguage::zeusText(57, 7); // plenty
+                txt = Language::zeusText(57, 7); // plenty
             } else {
-                txt = eLanguage::zeusText(57, 8); // surplus
+                txt = Language::zeusText(57, 8); // surplus
             }
             mOpinionLabel->setText(txt);
             mOpinionLabel->fitContent();
-            mOpinionLabel->align(eAlignment::hcenter);
+            mOpinionLabel->align(Alignment::hcenter);
 
             const int v = husbData->storedFood();
             mStoredFoodLabel->setText(std::to_string(v));
             mStoredFoodLabel->fitContent();
-            mStoredFoodLabel->align(eAlignment::hcenter);
+            mStoredFoodLabel->align(Alignment::hcenter);
         }
     }
     eWidget::paintEvent(p);

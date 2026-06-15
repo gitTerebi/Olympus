@@ -1,16 +1,16 @@
 #ifndef EGODREASONEVENTVALUE_H
 #define EGODREASONEVENTVALUE_H
 
-class eWriteStream;
-class eReadStream;
+class WriteStream;
+class ReadStream;
 
-class eSaveArchive;
+class SaveArchive;
 class eGodReasonEventValue {
 public:
     bool godReason() const { return mGodReason; }
     void setGodReason(const bool r) { mGodReason = r; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 protected:
     bool mGodReason = false;
 };

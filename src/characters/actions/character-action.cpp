@@ -2,7 +2,7 @@
 
 #include "engine/game-board.h"
 #include "characters/echaracter.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eCharacterAction::eCharacterAction(
         eCharacter* const c, const eCharActionType type) :
@@ -64,7 +64,7 @@ void eCharacterAction::setDeleteFailAction(const stdsptr<eCharActFunc>& d) {
     mDeleteFailAction = d;
 }
 
-void eCharacterAction::serializeFields(eSaveArchive& ar) {
+void eCharacterAction::serializeFields(SaveArchive& ar) {
     ar.field("ioID", mIOID);
     ar.field("state", mState);
     auto& brd = board();
@@ -73,7 +73,7 @@ void eCharacterAction::serializeFields(eSaveArchive& ar) {
     ar.charActFuncField("deleteFailAction", brd, mDeleteFailAction);
 }
 
-void eCharacterAction::serialize(eSaveArchive& ar) {
+void eCharacterAction::serialize(SaveArchive& ar) {
     serializeFields(ar);
     if(ar.reading()) {
         const stdptr<eCharacterAction> tptr(this);

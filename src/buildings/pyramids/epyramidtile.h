@@ -16,7 +16,7 @@ public:
                  const int type,
                  const eCityId cid);
 
-    stdsptr<eTexture> getTexture(const eTileSize size) const override;
+    stdsptr<Texture> getTexture(const eTileSize size) const override;
 
     int type() const { return mType; }
 private:

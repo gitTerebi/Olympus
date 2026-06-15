@@ -1,4 +1,4 @@
-#include "exmlparser.h"
+#include "xml-parser.h"
 
 #include <fstream>
 #include <cctype>
@@ -65,7 +65,7 @@ bool readId(const std::string& line,
     return true;
 }
 
-bool eXmlParser::sParse(eTextStrings& strings,
+bool XmlParser::sParse(eTextStrings& strings,
                         const std::string& filePath) {
     std::ifstream file(filePath);
     if(!file.good()) {
@@ -120,14 +120,14 @@ bool eXmlParser::sParse(eTextStrings& strings,
     return true;
 }
 
-bool eXmlParser::sParse(eMMStrings& strings,
+bool XmlParser::sParse(eMMStrings& strings,
                         const std::string& filePath) {
     std::ifstream file(filePath);
     if(!file.good()) {
         printf("File missing %s\n", filePath.c_str());
         return false;
     }
-    eMM* group = nullptr;
+    MM* group = nullptr;
     std::string line;
     while(std::getline(file, line)) {
         if(line.empty()) continue;

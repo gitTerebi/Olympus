@@ -8,10 +8,10 @@
 #include "audio/sounds.h"
 #include "buildings/small-house.h"
 #include "buildings/eresourcebuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 class DestructionTextures;
-class eSaveArchive;
+class SaveArchive;
 enum class eGodSound;
 
 enum class eGodActType {
@@ -46,11 +46,11 @@ public:
     eGodActType type() const { return mType; }
     GameBoard& board() { return mBoard; }
 
-    void serialize(eSaveArchive& ar) { serializeFields(ar); }
+    void serialize(SaveArchive& ar) { serializeFields(ar); }
 
     static stdsptr<eGodAct> sCreate(GameBoard& board, const eGodActType t);
 protected:
-    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
+    virtual void serializeFields(SaveArchive& ar) { (void)ar; }
 private:
     const eGodActType mType;
     GameBoard& mBoard;
@@ -80,7 +80,7 @@ public:
         });
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingField("building", &board(), mBuilding);
     }
 private:
@@ -108,7 +108,7 @@ public:
         });
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterAsField("god", &board(), mG);
     }
 private:
@@ -148,7 +148,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:
@@ -181,7 +181,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:
@@ -221,7 +221,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingField("targetBuilding", &board(), mTarget);
         ar.field("blessAmount", mBless);
     }
@@ -264,7 +264,7 @@ public:
         return b->centerTile();
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         eLookForBlessGodActBase::serializeFields(ar);
         ar.field("godType", mType);
     }
@@ -322,7 +322,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.field("godTeam", mGodTeam);
         ar.characterField("targetCharacter", &board(), mTarget);
     }
@@ -358,7 +358,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.field("godType", mType);
         ar.buildingField("targetBuilding", &board(), mBTarget);
     }
@@ -422,7 +422,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("sourceCharacter", &board(), mCptr);
         ar.characterField("targetCharacter", &board(), mCTarget);
         ar.buildingField("targetBuilding", &board(), mBTarget);
@@ -437,7 +437,7 @@ class eGodAction : public GodMonsterAction {
 public:
     eGodAction(eCharacter* const c, const eCharActionType type);
 
-    using eTexPtr = eTextureCollection DestructionTextures::*;
+    using eTexPtr = TextureCollection DestructionTextures::*;
     virtual bool lookForRangeAction(const int dtime,
                             int& time, const int freq,
                             const int range,
@@ -489,7 +489,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.tileField("tile", board(), mTile);
     }
@@ -512,7 +512,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -537,7 +537,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.tileField("tile", board(), mTile);
     }
@@ -566,7 +566,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.characterField("character", &board(), mCptr);
         ar.field("appear", mAppear);
@@ -597,7 +597,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);
         ar.field("sound", mSound);
     }
@@ -620,7 +620,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -642,7 +642,7 @@ public:
     void act() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.field("impactX", mImpactX);
         ar.field("impactY", mImpactY);
         ar.godActField("wrappedAct", board(), mWrappedAct);

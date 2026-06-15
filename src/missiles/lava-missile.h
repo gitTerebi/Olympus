@@ -1,18 +1,18 @@
-#ifndef ELAVAMISSILE_H
-#define ELAVAMISSILE_H
+#ifndef LAVA_MISSILE_H
+#define LAVA_MISSILE_H
 
-#include "emissile.h"
+#include "missile.h"
 
-class eLavaMissile : public eMissile {
+class LavaMissile : public Missile {
 public:
-    eLavaMissile(GameBoard& board,
-                 const std::vector<ePathPoint>& path = {});
+    LavaMissile(GameBoard& board,
+                 const std::vector<PathPoint>& path = {});
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize size) const override;
 private:
     mutable int mCollId;
     mutable int mTexTimeShift = 0;
 };
 
-#endif // ELAVAMISSILE_H
+#endif // LAVA_MISSILE_H

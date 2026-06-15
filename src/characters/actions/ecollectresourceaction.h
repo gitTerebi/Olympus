@@ -6,7 +6,7 @@
 #include "emovepathaction.h"
 #include "engine/emovedirection.h"
 #include "ecollectaction.h"
-#include "ewalkablehelpers.h"
+#include "walkable-helpers.h"
 #include "walkable/ehasresourceobject.h"
 #include "buildings/eresourcecollectbuildingbase.h"
 
@@ -14,7 +14,7 @@ class eMovePathAction;
 
 class eResourceCollectorBase;
 class eResourceCollectBuildingBase;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eTileActionType {
     none,
@@ -48,7 +48,7 @@ public:
     void setDisabled(const bool d) { mDisabled = d; }
     void finishCollecting(eTile* const tile);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     bool findResourceDecision();
@@ -97,7 +97,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.tileField("tile", board(), mTile);
         ar.characterActionAsField("target", &board(), mPtr);
     }
@@ -120,7 +120,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.tileField("tile", board(), mTile);
     }
 private:
@@ -142,7 +142,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("collectBuilding", &board(), mBptr);
     }
 private:

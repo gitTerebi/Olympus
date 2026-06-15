@@ -8,7 +8,7 @@
 
 #include "engine/game-board.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 class eAgoraButton : public FramedButton {
 public:
@@ -24,15 +24,15 @@ public:
         bool dark = true;
         if(const auto v = a->vendor(res)) {
             if(!v->vendorEnabled()) {
-                text = eLanguage::zeusText(97, 11); // not buying
+                text = Language::zeusText(97, 11); // not buying
             } else if(c == 0) {
-                text = eLanguage::zeusText(97, 12); // no goods
+                text = Language::zeusText(97, 12); // no goods
             } else {
-                text = eLanguage::zeusText(97, 17); // distributing
+                text = Language::zeusText(97, 17); // distributing
                 dark = false;
             }
         } else {
-            text = eLanguage::zeusText(97, 10); // no vendor
+            text = Language::zeusText(97, 10); // no vendor
         }
         if(dark) mStateLabel->setDarkFontColor();
         else mStateLabel->setLightFontColor();
@@ -99,7 +99,7 @@ void eAgoraButton::initialize(eAgoraBase* const a,
 }
 
 eAgoraInfoWidget::eAgoraInfoWidget(
-        eMainWindow* const window, eMainWidget* const mw) :
+        MainWindow* const window, eMainWidget* const mw) :
     eEmployingBuildingInfoWidget(window, mw, true, true) {}
 
 void eAgoraInfoWidget::initialize(eAgoraBase* const a) {

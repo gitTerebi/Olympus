@@ -1,15 +1,15 @@
-#ifndef EWAVEMISSILE_H
-#define EWAVEMISSILE_H
+#ifndef WAVE_MISSILE_H
+#define WAVE_MISSILE_H
 
-#include "emissile.h"
+#include "missile.h"
 
-class eWaveMissile : public eMissile {
+class WaveMissile : public Missile {
 public:
-    eWaveMissile(GameBoard& board,
-                 const std::vector<ePathPoint>& path = {});
+    WaveMissile(GameBoard& board,
+                 const std::vector<PathPoint>& path = {});
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize size) const override;
 };
 
-#endif // EWAVEMISSILE_H
+#endif // WAVE_MISSILE_H

@@ -9,7 +9,7 @@
 #include "characters/deer.h"
 
 #include "buildings/ehuntinglodge.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eHuntAction::eHuntAction(eHuntingLodge* const b, eCharacter* const c) :
     eActionWithComeback(c, eCharActionType::huntAction),
@@ -117,7 +117,7 @@ bool eHuntAction::decide() {
     return true;
 }
 
-void eHuntAction::serializeFields(eSaveArchive& ar) {
+void eHuntAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.buildingAsField("lodge", &board(), mLodge);
     ar.characterAsField("hunter", &board(), mHunter);

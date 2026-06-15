@@ -1,9 +1,9 @@
 #include "erotatebutton.h"
 
 #include "audio/sounds.h"
-#include "elanguage.h"
+#include "language.h"
 
-eRotateButton::eRotateButton(eMainWindow* const window) :
+eRotateButton::eRotateButton(MainWindow* const window) :
     eLabel(window) {
     setNoPadding();
     updateTexture();
@@ -88,13 +88,13 @@ bool eRotateButton::mouseMoveEvent(const eMouseEvent& e) {
     const int w = width()/3;
     if(x < w) {
         mHovered = eButtonHoverPortion::left;
-        setTooltip(eLanguage::zeusText(68, 45));
+        setTooltip(Language::zeusText(68, 45));
     } else if(x < 2*w) {
         mHovered = eButtonHoverPortion::center;
-        setTooltip(eLanguage::zeusText(68, 44));
+        setTooltip(Language::zeusText(68, 44));
     } else {
         mHovered = eButtonHoverPortion::right;
-        setTooltip(eLanguage::zeusText(68, 46));
+        setTooltip(Language::zeusText(68, 46));
     }
     updateTexture();
     return true;

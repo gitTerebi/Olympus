@@ -1,9 +1,9 @@
 ﻿#include "ewatertradewidget.h"
 
 #include "widgets/echoosecitydialog.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "engine/world-board.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 void eWaterTradeWidget::initialize(const eCitiesGetter& get,
                                    const eCityRemover& add,
@@ -22,7 +22,7 @@ void eWaterTradeWidget::initialize(const eCitiesGetter& get,
         const auto cids = get();
         choose->setValidator([cids](const stdsptr<WorldCity>& c) {
             const auto cid = c->cityId();
-            return !eVectorHelpers::contains(cids, cid);
+            return !VectorHelpers::contains(cids, cid);
         });
         const auto act = [this, add](const stdsptr<WorldCity>& wc) {
             const auto cid = wc->cityId();
@@ -32,7 +32,7 @@ void eWaterTradeWidget::initialize(const eCitiesGetter& get,
         choose->initialize(wboard, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
 
     setButtonRemoveEvent([get, remove](const int id) {

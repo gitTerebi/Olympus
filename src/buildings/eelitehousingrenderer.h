@@ -14,9 +14,9 @@ public:
     eEliteHousingRenderer(const eEliteRendererType type,
                           const stdsptr<EliteHousing>& b);
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getTexture(const eTileSize size) const;
-    std::vector<eOverlay>
+    std::vector<Overlay>
         getOverlays(const eTileSize size) const;
 
     int spanW() const { return 2; }

@@ -1,10 +1,10 @@
 #include "widgets/game-widget.h"
 
-#include "etilehelper.h"
-#include "etexturecollection.h"
+#include "tile-helper.h"
+#include "texture-collection.h"
 #include "buildings/ebuilding.h"
 
-stdsptr<eTexture> GameWidget::getBasementTexture(
+stdsptr<Texture> GameWidget::getBasementTexture(
     const int viewTileX, const int viewTileY,
     eBuilding *const building,
     const TerrainTextures &trrTexs,
@@ -13,7 +13,7 @@ stdsptr<eTexture> GameWidget::getBasementTexture(
     const int boardHeight)
 {
     auto tileRect = building->tileRect();
-    tileRect = eTileHelper::toRotatedRect(tileRect, dir, boardWidth, boardHeight);
+    tileRect = TileHelper::toRotatedRect(tileRect, dir, boardWidth, boardHeight);
     const int right = tileRect.x + tileRect.w - 1;
     const int bottom = tileRect.y + tileRect.h - 1;
     int id = 0;
@@ -63,7 +63,7 @@ stdsptr<eTexture> GameWidget::getBasementTexture(
     {
         id = 1;
     }
-    const eTextureCollection *coll = nullptr;
+    const TextureCollection *coll = nullptr;
     const auto type = building->type();
     if (type == eBuildingType::commonHouse ||
         type == eBuildingType::eliteHousing)

@@ -365,15 +365,15 @@ SOURCES += \
         characters/monsters/ewatermonster.cpp \
         binary-image-loader.cpp \
         buildable-helpers.cpp \
-        efontcolor.cpp \
-        egamedir.cpp \
+        font-color.cpp \
+        game-dir.cpp \
         e-invasion-handler.cpp \
-        eiteratesquare.cpp \
-        elanguage.cpp \
-        eloadtexthelper.cpp \
-        emainwindow.cpp \
-        emessage.cpp \
-        emessages.cpp \
+        iterate-square.cpp \
+        language.cpp \
+        load-text-helper.cpp \
+        main-window.cpp \
+        message.cpp \
+        messages.cpp \
         engine/ai/ai-building.cpp \
         engine/ai/ai-city-plan.cpp \
         engine/ai/ai-district.cpp \
@@ -437,22 +437,22 @@ SOURCES += \
         engine/thread/ethreadcharacter.cpp \
         engine/thread/ethreaddata.cpp \
         engine/thread/ethreadtile.cpp \
-        enumbers.cpp \
-        epathfindtask.cpp \
-        erand.cpp \
-        esettings.cpp \
-        estringhelpers.cpp \
-        etexture.cpp \
-        etexturecollection.cpp \
-        etilehelper.cpp \
-        evectorhelpers.cpp \
-        ewalkablehelpers.cpp \
-        exmlparser.cpp \
+        numbers.cpp \
+        path-find-task.cpp \
+        rand.cpp \
+        settings.cpp \
+        string-helpers.cpp \
+        texture.cpp \
+        texture-collection.cpp \
+        tile-helper.cpp \
+        vector-helpers.cpp \
+        walkable-helpers.cpp \
+        xml-parser.cpp \
         eng-parser.cpp \
         fileIO/building-reader.cpp \
         fileIO/building-writer.cpp \
-        fileIO/ereadstream.cpp \
-        fileIO/ewritestream.cpp \
+        fileIO/read-stream.cpp \
+        fileIO/write-stream.cpp \
         gameEvents/earmyeventbase.cpp \
         gameEvents/earmyreturnevent.cpp \
         gameEvents/eattackingcityeventvalue.cpp \
@@ -516,15 +516,15 @@ SOURCES += \
         gameEvents/ewagechangeevent.cpp \
         gameEvents/ewarning.cpp \
         main.cpp \
-        missiles/earrowmissile.cpp \
-        missiles/earrowspearbase.cpp \
-        missiles/edustmissile.cpp \
-        missiles/egodmissile.cpp \
-        missiles/elavamissile.cpp \
-        missiles/emissile.cpp \
-        missiles/erockmissile.cpp \
-        missiles/espearmissile.cpp \
-        missiles/ewavemissile.cpp \
+        missiles/arrow-missile.cpp \
+        missiles/arrow-spear-base.cpp \
+        missiles/dust-missile.cpp \
+        missiles/god-missile.cpp \
+        missiles/lava-missile.cpp \
+        missiles/missile.cpp \
+        missiles/rock-missile.cpp \
+        missiles/spear-missile.cpp \
+        missiles/wave-missile.cpp \
         pak/epakhelpers.cpp \
         pak/gamefile.cpp \
         pak/pkwareinputstream.cpp \
@@ -532,20 +532,20 @@ SOURCES += \
         pak/zeus-file.cpp \
         pointers/eobject.cpp \
         pointers/estdselfref.cpp \
-        spawners/eanimalspawner.cpp \
-        spawners/ebanner.cpp \
-        spawners/eboarspawner.cpp \
-        spawners/edeerspawner.cpp \
-        spawners/edisasterpoint.cpp \
-        spawners/edisembarkpoint.cpp \
+        spawners/animal-spawner.cpp \
+        spawners/banner.cpp \
+        spawners/boar-spawner.cpp \
+        spawners/deer-spawner.cpp \
+        spawners/disaster-point.cpp \
+        spawners/disembark-point.cpp \
         spawners/entry-point.cpp \
-        spawners/eexitpoint.cpp \
-        spawners/elandinvasionpoint.cpp \
-        spawners/elandslidepoint.cpp \
-        spawners/emonsterpoint.cpp \
-        spawners/eseainvasionpoint.cpp \
-        spawners/espawner.cpp \
-        spawners/ewolfspawner.cpp \
+        spawners/exit-point.cpp \
+        spawners/land-invasion-point.cpp \
+        spawners/landslide-point.cpp \
+        spawners/monster-point.cpp \
+        spawners/sea-invasion-point.cpp \
+        spawners/spawner.cpp \
+        spawners/wolf-spawner.cpp \
         textures/beach-to-dry.cpp \
         textures/building-textures.cpp \
         textures/building-textures1.cpp \
@@ -709,7 +709,6 @@ SOURCES += \
         widgets/escrollwidget.cpp \
         widgets/escrollwidgetcomplete.cpp \
         widgets/eselectcolonywidget.cpp \
-        widgets/egraphicsmenu.cpp \
         widgets/esmalldownbutton.cpp \
         widgets/esmallupbutton.cpp \
         widgets/espinbox.cpp \
@@ -1081,16 +1080,16 @@ HEADERS += \
     characters/monsters/ewatermonster.h \
     binary-image-loader.h \
     buildable-helpers.h \
-    efontcolor.h \
-    egamedir.h \
+    font-color.h \
+    game-dir.h \
     e-invasion-handler.h \
-    eiteratesquare.h \
-    elanguage.h \
-    elimits.h \
-    eloadtexthelper.h \
-    emainwindow.h \
-    emessage.h \
-    emessages.h \
+    iterate-square.h \
+    language.h \
+   game-limits.h \
+    load-text-helper.h \
+    main-window.h \
+    message.h \
+    messages.h \
     engine/ai/ai-building.h \
     engine/ai/ai-city-plan.h \
     engine/ai/ai-district.h \
@@ -1159,25 +1158,25 @@ HEADERS += \
     engine/thread/ethreadcharacter.h \
     engine/thread/ethreaddata.h \
     engine/thread/ethreadtile.h \
-    enumbers.h \
-    eoverlay.h \
-    epathfindtask.h \
-    erand.h \
-    esettings.h \
-    esplitbinary.h \
-    estringhelpers.h \
-    etexture.h \
-    etexturecollection.h \
-    etilehelper.h \
-    evectorhelpers.h \
-    ewalkablehelpers.h \
-    exmlparser.h \
+    numbers.h \
+    overlay.h \
+    path-find-task.h \
+    rand.h \
+    settings.h \
+    split-binary.h \
+    string-helpers.h \
+    texture.h \
+    texture-collection.h \
+    tile-helper.h \
+    vector-helpers.h \
+    walkable-helpers.h \
+    xml-parser.h \
     eng-parser.h \
     fileIO/building-reader.h \
     fileIO/building-writer.h \
-    fileIO/ereadstream.h \
-    fileIO/estreams.h \
-    fileIO/ewritestream.h \
+    fileIO/read-stream.h \
+    fileIO/streams.h \
+    fileIO/write-stream.h \
     gameEvents/earmyeventbase.h \
     gameEvents/earmyreturnevent.h \
     gameEvents/eattackingcityeventvalue.h \
@@ -1239,15 +1238,15 @@ HEADERS += \
     gameEvents/etroopsrequestfulfilledevent.h \
     gameEvents/ewagechangeevent.h \
     gameEvents/ewarning.h \
-    missiles/earrowmissile.h \
-    missiles/earrowspearbase.h \
-    missiles/edustmissile.h \
-    missiles/egodmissile.h \
-    missiles/elavamissile.h \
-    missiles/emissile.h \
-    missiles/erockmissile.h \
-    missiles/espearmissile.h \
-    missiles/ewavemissile.h \
+    missiles/arrow-missile.h \
+    missiles/arrow-spear-base.h \
+    missiles/dust-missile.h \
+    missiles/god-missile.h \
+    missiles/lava-missile.h \
+    missiles/missile.h \
+    missiles/rock-missile.h \
+    missiles/spear-missile.h \
+    missiles/wave-missile.h \
     offsets/PoseidonImps.h \
     offsets/PoseidonImps2.h \
     offsets/Poseidon_Atalanta.h \
@@ -1313,20 +1312,20 @@ HEADERS += \
     pointers/eobject.h \
     pointers/estdpointer.h \
     pointers/estdselfref.h \
-    spawners/eanimalspawner.h \
-    spawners/ebanner.h \
-    spawners/eboarspawner.h \
-    spawners/edeerspawner.h \
-    spawners/edisasterpoint.h \
-    spawners/edisembarkpoint.h \
+    spawners/animal-spawner.h \
+    spawners/banner.h \
+    spawners/boar-spawner.h \
+    spawners/deer-spawner.h \
+    spawners/disaster-point.h \
+    spawners/disembark-point.h \
     spawners/entry-point.h \
-    spawners/eexitpoint.h \
-    spawners/elandinvasionpoint.h \
-    spawners/elandslidepoint.h \
-    spawners/emonsterpoint.h \
-    spawners/eseainvasionpoint.h \
-    spawners/espawner.h \
-    spawners/ewolfspawner.h \
+    spawners/exit-point.h \
+    spawners/land-invasion-point.h \
+    spawners/landslide-point.h \
+    spawners/monster-point.h \
+    spawners/sea-invasion-point.h \
+    spawners/spawner.h \
+    spawners/wolf-spawner.h \
     spriteData/achilles15.h \
     spriteData/achilles30.h \
     spriteData/achilles45.h \
@@ -2932,7 +2931,6 @@ HEADERS += \
     widgets/escrollwidget.h \
     widgets/escrollwidgetcomplete.h \
     widgets/eselectcolonywidget.h \
-    widgets/egraphicsmenu.h \
     widgets/esmalldownbutton.h \
     widgets/esmallupbutton.h \
     widgets/espinbox.h \

@@ -1,7 +1,7 @@
 #include "eresourcecollectbuildingbase.h"
 
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 void eResourceCollectBuildingBase::nextMonth() {
     mRingIdx = (mRingIdx + 1) % 12;
@@ -15,7 +15,7 @@ void eResourceCollectBuildingBase::trackProduced(const int c) {
     mMonthlyProduced[mRingIdx] += c;
 }
 
-void eResourceCollectBuildingBase::serializeFields(eSaveArchive& ar) {
+void eResourceCollectBuildingBase::serializeFields(SaveArchive& ar) {
     eResourceBuildingBase::serializeFields(ar);
     ar.field("noTarget", mNoTarget);
     ar.field("producedThisYear", mProducedThisYear);

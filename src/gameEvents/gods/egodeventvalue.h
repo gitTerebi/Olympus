@@ -5,13 +5,13 @@
 
 #include "characters/gods/god-type.h"
 
-class eWriteStream;
-class eReadStream;
+class WriteStream;
+class ReadStream;
 
-class eSaveArchive;
+class SaveArchive;
 class eGodEventValue {
 public:
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void setGod(const GodType god) { mGod = god; }
     GodType god() const { return mGod; }

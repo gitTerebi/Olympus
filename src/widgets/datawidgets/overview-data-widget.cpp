@@ -6,10 +6,10 @@
 #include "widgets/framed-button.h"
 #include "widgets/escrollwidget.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 #include "buildings/eheroshall.h"
 #include "gameEvents/requests/receive-tribute-event.h"
 #include "gameEvents/requests/send-resources-to-city-event.h"
@@ -54,7 +54,7 @@ public:
     void setText(const std::string& txt) {
         mValueLabel->setText(txt);
         mValueLabel->fitContent();
-        mValueLabel->align(eAlignment::right);
+        mValueLabel->align(Alignment::right);
     }
 private:
     eLabel* mTitleLabel = nullptr;
@@ -63,13 +63,13 @@ private:
 
 void OverviewDataWidget::initialize() {
     mSeeProblems = new eViewModeButton(
-                     eLanguage::zeusText(14, 18),
+                     Language::zeusText(14, 18),
                      eViewMode::problems,
                      window());
     addViewButton(mSeeProblems);
 
     mSeeRoads = new eViewModeButton(
-                     eLanguage::zeusText(14, 19),
+                     Language::zeusText(14, 19),
                      eViewMode::roads,
                      window());
     addViewButton(mSeeRoads);
@@ -81,32 +81,32 @@ void OverviewDataWidget::initialize() {
 
     mPopularity = new eOverviewEntry(window());
     mPopularity->setWidth(innerW);
-    mPopularity->initialize(eLanguage::zeusText(61, 1)); // popularity
+    mPopularity->initialize(Language::zeusText(61, 1)); // popularity
     inner->addWidget(mPopularity);
 
     mFoodLevel = new eOverviewEntry(window());
     mFoodLevel->setWidth(innerW);
-    mFoodLevel->initialize(eLanguage::zeusText(61, 4)); // food level
+    mFoodLevel->initialize(Language::zeusText(61, 4)); // food level
     inner->addWidget(mFoodLevel);
 
     mUnemployment = new eOverviewEntry(window());
     mUnemployment->setWidth(innerW);
-    mUnemployment->initialize(eLanguage::zeusText(61, 107)); // unemployment
+    mUnemployment->initialize(Language::zeusText(61, 107)); // unemployment
     inner->addWidget(mUnemployment);
 
     mHygiene = new eOverviewEntry(window());
     mHygiene->setWidth(innerW);
-    mHygiene->initialize(eLanguage::zeusText(61, 6)); // hygiene
+    mHygiene->initialize(Language::zeusText(61, 6)); // hygiene
     inner->addWidget(mHygiene);
 
     mUnrest = new eOverviewEntry(window());
     mUnrest->setWidth(innerW);
-    mUnrest->initialize(eLanguage::zeusText(61, 7)); // unrest
+    mUnrest->initialize(Language::zeusText(61, 7)); // unrest
     inner->addWidget(mUnrest);
 
     mFinances = new eOverviewEntry(window());
     mFinances->setWidth(innerW);
-    mFinances->initialize(eLanguage::zeusText(61, 8)); // finances
+    mFinances->initialize(Language::zeusText(61, 8)); // finances
     inner->addWidget(mFinances);
 
     const auto spacer1 = new eWidget(window());
@@ -126,10 +126,10 @@ void OverviewDataWidget::initialize() {
     const auto requestsLabel = new eLabel(window());
     requestsLabel->setFontSizeXS();
     requestsLabel->setNoPadding();
-    requestsLabel->setText(eLanguage::zeusText(61, 195)); // requests
+    requestsLabel->setText(Language::zeusText(61, 195)); // requests
     requestsLabel->fitContent();
     inner->addWidget(requestsLabel);
-    requestsLabel->align(eAlignment::hcenter);
+    requestsLabel->align(Alignment::hcenter);
 
     mQuestButtons = new eScrollWidget(window());
     mQuestButtons->setWidth(innerW);
@@ -147,7 +147,7 @@ void OverviewDataWidget::shown() {
     if(mMap) mMap->scheduleUpdate();
 }
 
-stdsptr<eTexture> sGodIcon(const eUIScale scale,
+stdsptr<Texture> sGodIcon(const eUIScale scale,
                            const GodType god) {
     const auto& intrfc = GameTextures::interface();
     const int iRes = static_cast<int>(scale);
@@ -193,7 +193,7 @@ protected:
     using eViableChecker = std::function<bool()>;
     using eStatusProvider = std::function<std::string()>;
     using eStatusWarningProvider = std::function<bool()>;
-    void initialize(const stdsptr<eTexture>& icon,
+    void initialize(const stdsptr<Texture>& icon,
                     const std::string& txt,
                     const eViableChecker& checker,
                     const eStatusProvider& statusProvider = nullptr,
@@ -241,9 +241,9 @@ protected:
 
         stackHorizontally();
         fitHeight();
-        mStateLabel->align(eAlignment::vcenter);
-        iconLabel->align(eAlignment::vcenter);
-        textLabel->align(eAlignment::vcenter);
+        mStateLabel->align(Alignment::vcenter);
+        iconLabel->align(Alignment::vcenter);
+        textLabel->align(Alignment::vcenter);
         layoutStatus();
     }
 protected:
@@ -283,7 +283,7 @@ private:
 
     void layoutStatus() {
         if(!mStatusLabel) return;
-        mStatusLabel->align(eAlignment::right | eAlignment::vcenter);
+        mStatusLabel->align(Alignment::right | Alignment::vcenter);
         if(mTextLabel) {
             const int maxW = mStatusLabel->x() - mTextLabel->x();
             if(maxW > 0 && mTextLabel->width() > maxW) {
@@ -392,7 +392,7 @@ void OverviewDataWidget::paintEvent(ePainter& p) {
             }else {
                 string = 27; // terrible
             }
-            mPopularity->setText(eLanguage::zeusText(61, string));
+            mPopularity->setText(Language::zeusText(61, string));
         }
         {
             const auto husbData = mBoard.husbandryData(cid);
@@ -407,7 +407,7 @@ void OverviewDataWidget::paintEvent(ePainter& p) {
                 } else {
                     string = 97; // good
                 }
-                mFoodLevel->setText(eLanguage::zeusText(61, string));
+                mFoodLevel->setText(Language::zeusText(61, string));
             }
         }
         {
@@ -417,13 +417,13 @@ void OverviewDataWidget::paintEvent(ePainter& p) {
                 const int w = emplData->employable();
                 const int u = emplData->unemployed();
                 if(u == 0) {
-                    mUnemployment->setTitle(eLanguage::zeusText(61, 115)); // employment good
+                    mUnemployment->setTitle(Language::zeusText(61, 115)); // employment good
                     mUnemployment->setText("");
                 } else if(f > 0) {
-                    mUnemployment->setTitle(eLanguage::zeusText(61, 111)); // workers needed
+                    mUnemployment->setTitle(Language::zeusText(61, 111)); // workers needed
                     mUnemployment->setText(std::to_string(f));
                 } else {
-                    mUnemployment->setTitle(eLanguage::zeusText(61, 107)); // unemployment
+                    mUnemployment->setTitle(Language::zeusText(61, 107)); // unemployment
                     int per = w == 0 ? 0 : std::round(100.*u/w);
                     per = std::clamp(per, 0, 100);
                     mUnemployment->setText(std::to_string(per) + "%");
@@ -456,7 +456,7 @@ void OverviewDataWidget::paintEvent(ePainter& p) {
             } else {
                 string = 127; // appalling
             }
-            mHygiene->setText(eLanguage::zeusText(61, string));
+            mHygiene->setText(Language::zeusText(61, string));
         }
         {
             const int unrest = mBoard.unrest(cid);
@@ -470,7 +470,7 @@ void OverviewDataWidget::paintEvent(ePainter& p) {
             } else {
                 string = 148; // low
             }
-            mUnrest->setText(eLanguage::zeusText(61, string));
+            mUnrest->setText(Language::zeusText(61, string));
         }
         {
             const auto finances = mBoard.finances(cid);
@@ -484,7 +484,7 @@ void OverviewDataWidget::paintEvent(ePainter& p) {
                 string = 154; // ok
             }
 
-            mFinances->setText(eLanguage::zeusText(61, string));
+            mFinances->setText(Language::zeusText(61, string));
         }
     }
     eWidget::paintEvent(p);
@@ -523,18 +523,18 @@ void OverviewDataWidget::addGodQuests(eWidget* const w) {
             const auto heroName = eHero::sHeroName(q.fHero);
             const auto gw = gameWidget();
             std::string heroNeededTmpl;
-            eStringHelpers::replace(heroNeededTmpl, "[hero_name]", heroName);
+            StringHelpers::replace(heroNeededTmpl, "[hero_name]", heroName);
             if(hh) {
                 const auto s = hh->stage();
                 if(s == eHeroSummoningStage::arrived) {
                     const auto acceptA = [qq]() {
                         qq->fulfill();
                     };
-                    const auto title = eLanguage::zeusText(185, 121);
-                    auto text = eLanguage::zeusText(185, 122);
-                    eStringHelpers::replace(text, "[hero_name]", heroName);
+                    const auto title = Language::zeusText(185, 121);
+                    auto text = Language::zeusText(185, 122);
+                    StringHelpers::replace(text, "[hero_name]", heroName);
                     const auto questName = q.name();
-                    eStringHelpers::replace(text, "[god_quest]", questName);
+                    StringHelpers::replace(text, "[god_quest]", questName);
                     gw->showQuestion(title, text, acceptA);
                 } else {
                     gw->showTip(pid, heroNeededTmpl);
@@ -576,11 +576,11 @@ void OverviewDataWidget::addCityRequests(eWidget* const w) {
                     const auto acceptA = [qq, cid]() {
                         qq->dispatch(cid);
                     };
-                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto title = Language::zeusText(5, 6); // Request
                     const auto text = qq->dispatchText(count, mBoard.date());
                     gw->showQuestion(title, text, q.fType, acceptA);
                 } else {
-                    const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
+                    const auto tip = Language::zeusText(5, 9); // You do not have enough to fulfill the request
                     gw->showTip(pid, tip);
                 }
             }
@@ -616,11 +616,11 @@ void OverviewDataWidget::addCityRequests(eWidget* const w) {
                     const auto acceptA = [qq, cid]() {
                         qq->dispatch(cid);
                     };
-                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto title = Language::zeusText(5, 6); // Request
                     const auto text = qq->dispatchText(count, mBoard.date());
                     gw->showQuestion(title, text, q.fType, acceptA);
                 } else {
-                    const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
+                    const auto tip = Language::zeusText(5, 9); // You do not have enough to fulfill the request
                     gw->showTip(pid, tip);
                 }
                 return;
@@ -631,11 +631,11 @@ void OverviewDataWidget::addCityRequests(eWidget* const w) {
                     const auto acceptA = [qq, cid]() {
                         qq->dispatch(cid);
                     };
-                    const auto title = eLanguage::zeusText(5, 6); // Request
+                    const auto title = Language::zeusText(5, 6); // Request
                     const auto text = qq->dispatchText(count, mBoard.date());
                     gw->showQuestion(title, text, q.fType, acceptA);
                 } else {
-                    const auto tip = eLanguage::zeusText(5, 9); // You do not have enough to fulfill the request
+                    const auto tip = Language::zeusText(5, 9); // You do not have enough to fulfill the request
                     gw->showTip(pid, tip);
                 }
             }

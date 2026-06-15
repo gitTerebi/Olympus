@@ -1,24 +1,24 @@
 #ifndef TILE_TO_TEXTURE_H
 #define TILE_TO_TEXTURE_H
 
-#include "etexture.h"
+#include "texture.h"
 
 class eTile;
 class TerrainTextures;
 class BuildingTextures;
-class eTextureCollection;
+class TextureCollection;
 enum class eWorldDirection;
 
 enum class eTileSize : int;
 
 namespace TileToTexture {
-    std::shared_ptr<eTexture> get(eTile* const tile,
+    std::shared_ptr<Texture> get(eTile* const tile,
                  const TerrainTextures& textures,
                  const BuildingTextures& blds,
                  const eTileSize tileSize,
                  const bool drawElev,
                  int& drawDim,
-                 const eTextureCollection** coll,
+                 const TextureCollection** coll,
                  const eWorldDirection dir);
 };
 

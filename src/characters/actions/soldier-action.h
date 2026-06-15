@@ -9,7 +9,7 @@
 class eBuilding;
 class eSoldier;
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class SoldierActionStage {
     idle, banner, home, abroad, chase
@@ -45,7 +45,7 @@ public:
         character()->setActionType(eCharacterActionType::stand);
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
     eTile* repositionAnchor() const override;
 private:
@@ -80,7 +80,7 @@ public:
     bool handle(eTile* const tile) override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -100,7 +100,7 @@ public:
         mCptr->kill();
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);
     }
 private:

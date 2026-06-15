@@ -1,11 +1,11 @@
 #include "draw-column.h"
 
 #include "widgets/etilepainter.h"
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 void drawColumn(eTilePainter& tp, const int n,
                 const double drawX, const double drawY,
-                const eTextureCollection& coll)
+                const TextureCollection& coll)
 {
     double y = 0;
     const auto top = coll.getTexture(0);
@@ -13,14 +13,14 @@ void drawColumn(eTilePainter& tp, const int n,
     const auto btm = coll.getTexture(2);
 
     tp.drawTexture(drawX + 1 - y, drawY - y, btm,
-                   eAlignment::hcenter | eAlignment::top);
+                   Alignment::hcenter | Alignment::top);
     y += 0.75;
     for (int i = 0; i < n; i++)
     {
         tp.drawTexture(drawX + 1 - y, drawY - y, mid,
-                       eAlignment::hcenter | eAlignment::top);
+                       Alignment::hcenter | Alignment::top);
         y += 0.33;
     }
     tp.drawTexture(drawX + 1 - y, drawY - y, top,
-                   eAlignment::hcenter | eAlignment::top);
+                   Alignment::hcenter | Alignment::top);
 }

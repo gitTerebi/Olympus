@@ -14,7 +14,7 @@ public:
     void trigger() override;
     std::string longName() const override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 };
 
 #endif // ETRADEOPENUPEVENT_H

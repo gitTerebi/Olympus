@@ -2,8 +2,8 @@
 #define EOBSTICLEHANDLER_H
 
 #include "pointers/estdpointer.h"
-#include "fileIO/estreams.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/streams.h"
+#include "fileIO/save-archive.h"
 
 class eTile;
 
@@ -22,7 +22,7 @@ public:
 
     virtual bool handle(eTile* const tile) = 0;
 
-    void serialize(eSaveArchive& ar) { serializeFields(ar); }
+    void serialize(SaveArchive& ar) { serializeFields(ar); }
 
     GameBoard& board() const { return mBoard; }
     eObsticleHandlerType type() const { return mType; }
@@ -31,13 +31,13 @@ public:
             GameBoard& board,
             const eObsticleHandlerType type);
 protected:
-    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
+    virtual void serializeFields(SaveArchive& ar) { (void)ar; }
 private:
     GameBoard& mBoard;
     const eObsticleHandlerType mType;
 };
 
-inline bool obsticleHandlerField(eSaveArchive& ar, const char* name,
+inline bool obsticleHandlerField(SaveArchive& ar, const char* name,
                                  GameBoard& board,
                                  stdsptr<eObsticleHandler>& val) {
     bool hasValue = val != nullptr;
@@ -56,7 +56,7 @@ inline bool obsticleHandlerField(eSaveArchive& ar, const char* name,
                name, static_cast<int>(type));
         return false;
     }
-    const bool ok = ar.archiveField(name, [&](eSaveArchive& childAr) {
+    const bool ok = ar.archiveField(name, [&](SaveArchive& childAr) {
         val->serialize(childAr);
     });
     if(!ok) printf("[saveLoad] obsticleHandlerField '%s' missing data.\n", name);

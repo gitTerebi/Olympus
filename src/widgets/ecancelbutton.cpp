@@ -2,5 +2,5 @@
 
 #include "textures/interface-textures.h"
 
-eCancelButton::eCancelButton(eMainWindow* const window) :
+eCancelButton::eCancelButton(MainWindow* const window) :
     eBasicButton(&InterfaceTextures::fCancelButton, window) {}

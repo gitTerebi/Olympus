@@ -5,7 +5,7 @@
 
 class Horse;
 class eHorseRanch;
-class eSaveArchive;
+class SaveArchive;
 
 class HorseRanchEnclosure : public eBuildingWithResource {
 public:
@@ -16,7 +16,7 @@ public:
 
     int provide(const eProvide p, const int n) override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
     std::vector<BuildingContainedActorDraw>
     getActorsDrawnAfterBuildingTexture(const eTileSize size) const override;
 
@@ -34,7 +34,7 @@ public:
     eHorseRanch* ranch() const { return mRanch; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     std::vector<stdsptr<Horse>> mHorses;
 

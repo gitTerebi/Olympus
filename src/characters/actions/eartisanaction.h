@@ -7,7 +7,7 @@
 #include "buildings/eartisansguild.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eArtisanActionStage {
     idle, findingTarget, working, goingBack, waiting
@@ -21,7 +21,7 @@ public:
     bool decide() override;
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void rebuildCurrentStage();
@@ -59,7 +59,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("sanctuary", &board(), mBptr);
     }
 private:
@@ -81,7 +81,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("sanctuary", &board(), mBptr);
     }
 private:

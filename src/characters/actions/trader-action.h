@@ -5,9 +5,9 @@
 
 #include "eactionwithcomeback.h"
 #include "buildings/trade-post.h"
-#include "ewalkablehelpers.h"
+#include "walkable-helpers.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class TraderAction : public eActionWithComeback {
     friend class eTA_tradeFail;
@@ -26,7 +26,7 @@ public:
     const std::map<eResourceType, int>& bought() const { return mBought; }
     const std::map<eResourceType, int>& sold() const { return mSold; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void goToTradePost();
     void trade();
@@ -63,7 +63,7 @@ public:
         t->goBack(t->mWalkable);
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -84,7 +84,7 @@ public:
         t->tradeIncrement();
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -125,7 +125,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

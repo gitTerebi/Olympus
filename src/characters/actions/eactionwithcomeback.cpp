@@ -4,7 +4,7 @@
 #include "emovetoaction.h"
 
 #include "engine/etask.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eActionWithComeback::eActionWithComeback(
         eCharacter* const c,
@@ -26,7 +26,7 @@ bool eActionWithComeback::decide() {
     return false;
 }
 
-void eActionWithComeback::serializeFields(eSaveArchive& ar) {
+void eActionWithComeback::serializeFields(SaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     ar.tileField("startTile", board(), mStartTile);
     ar.field("goBackRect", mGoBackRect);

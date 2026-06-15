@@ -5,7 +5,7 @@
 
 #include "buildings/eagorabase.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eHeraHelpStage {
     none, appear, goTo, give, giving, disappear
@@ -20,7 +20,7 @@ public:
     static bool sHelpNeeded(const eCityId cid,
                             const GameBoard& board);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void goToTarget();
     void give();
@@ -56,7 +56,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -88,7 +88,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("targetAgora", &board(), mTarget);
     }
 private:

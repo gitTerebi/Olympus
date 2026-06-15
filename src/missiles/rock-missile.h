@@ -1,14 +1,14 @@
-#ifndef EROCKMISSILE_H
-#define EROCKMISSILE_H
+#ifndef ROCK_MISSILE_H
+#define ROCK_MISSILE_H
 
-#include "emissile.h"
+#include "missile.h"
 
-class eRockMissile : public eMissile {
+class RockMissile : public Missile {
 public:
-    eRockMissile(GameBoard& board,
-                 const std::vector<ePathPoint>& path = {});
+    RockMissile(GameBoard& board,
+                 const std::vector<PathPoint>& path = {});
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 };
 
-#endif // EROCKMISSILE_H
+#endif // ROCK_MISSILE_H

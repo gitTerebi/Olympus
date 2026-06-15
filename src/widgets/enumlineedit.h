@@ -3,11 +3,11 @@
 
 #include "elineedit.h"
 
-#include "elimits.h"
+#include "game-limits.h"
 
 class eNumLineEdit : public eLineEdit {
 public:
-    eNumLineEdit(eMainWindow* const window);
+    eNumLineEdit(MainWindow* const window);
 
     int value() const;
     int clampedValue() const;

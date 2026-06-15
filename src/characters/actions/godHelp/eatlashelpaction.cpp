@@ -1,7 +1,7 @@
 #include "eatlashelpaction.h"
 
-#include "etilehelper.h"
-#include "fileIO/esavearchive.h"
+#include "tile-helper.h"
+#include "fileIO/save-archive.h"
 
 eAtlasHelpAction::eAtlasHelpAction(
         eCharacter* const c) :
@@ -40,7 +40,7 @@ bool eAtlasHelpAction::decide() {
     return true;
 }
 
-void eAtlasHelpAction::serializeFields(eSaveArchive& ar) {
+void eAtlasHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.buildingAsField("target", &board(), mTarget);
@@ -104,7 +104,7 @@ void eAtlasHelpAction::goToTarget() {
         const auto ct = mTarget->centerTile();
         const int tx = ct->x();
         const int ty = ct->y();
-        const auto tile = eTileHelper::closestRoad(tx, ty, board);
+        const auto tile = TileHelper::closestRoad(tx, ty, board);
         goToTile(tile, tele);
     } else {
         disappear();

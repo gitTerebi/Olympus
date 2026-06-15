@@ -32,7 +32,7 @@ void eMicroButton::paintEvent(ePainter& p) {
 
     for(int i = 0; i < iMax; i++) {
         const int x = i == iMax - 1 ? lastX : wdim*i;
-        const eTextureCollection* coll;
+        const TextureCollection* coll;
         if(i == 0) {
             coll = &intrfc.fMicroButton[0];
         } else if(i == iMax - 1) {

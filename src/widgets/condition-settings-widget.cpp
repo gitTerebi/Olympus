@@ -5,7 +5,7 @@
 #include "evaluebutton.h"
 
 #include "echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 class eConditionTypeButton : public FramedButton {
 public:
@@ -42,7 +42,7 @@ void eConditionTypeButton::initialize(const eCondAction& gact) {
         choose->initialize(7, names, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     setType(eType::districtResourceCount);
     fitContent();

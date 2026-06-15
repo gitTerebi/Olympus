@@ -7,7 +7,7 @@
 #include "gods/egodeventvalue.h"
 #include "gods/egodreasoneventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eEarthquakeEvent : public eGameEvent,
                          public ePointEventValue,
@@ -23,7 +23,7 @@ public:
     std::string longName() const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 };
 
 #endif // EEARTHQUAKEEVENT_H

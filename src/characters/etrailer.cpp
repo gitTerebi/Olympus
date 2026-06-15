@@ -1,19 +1,19 @@
 #include "etrailer.h"
 
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eTrailer::eTrailer(GameBoard& board) :
     eCharacter(board, eCharacterType::trailer) {
     GameTextures::loadTrailer();
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eTrailer::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& charTexs = GameTextures::characters()[id];
     const int oid = static_cast<int>(rotatedOrientation());
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int resCount = mFollow ? mFollow->resCount() : mResCount;
     const auto resType = mFollow ? mFollow->resType() : mResType;
     mResCount = resCount;
@@ -71,7 +71,7 @@ eTrailer::getTexture(const eTileSize size) const {
     return coll->getTexture(oid);
 }
 
-void eTrailer::serializeFields(eSaveArchive& ar) {
+void eTrailer::serializeFields(SaveArchive& ar) {
     eCharacter::serializeFields(ar);
     ar.characterAsField("follow", &getBoard(), mFollow);
     ar.field("mIsBig", mIsBig);

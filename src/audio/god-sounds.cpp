@@ -1,7 +1,7 @@
 #include "god-sounds.h"
 
 #include "audio/sounds.h"
-#include "egamedir.h"
+#include "game-dir.h"
 
 eGodSounds::eGodSounds(const std::string& shortName,
                        const std::string& longName) :
@@ -11,8 +11,8 @@ eGodSounds::eGodSounds(const std::string& shortName,
 void eGodSounds::load() {
     if(mLoaded) return;
     mLoaded = true;
-    const std::string voiceDir{eGameDir::path("Audio/Voice/Walker/")};
-    const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+    const std::string voiceDir{GameDir::path("Audio/Voice/Walker/")};
+    const std::string wavsDir{GameDir::path("Audio/Wavs/")};
 
     fWooing0->addPath(voiceDir + fShortName + "_ev_3.mp3");
     fJealousy1->addPath(voiceDir + fShortName + "_ev_2.mp3");

@@ -1,7 +1,7 @@
 ﻿#include "game-widget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "engine/game-board.h"
 
 #include "eterraineditmenu.h"
@@ -14,23 +14,23 @@
 #include "characters/ecattle.h"
 #include "characters/actions/animal-action.h"
 
-#include "evectorhelpers.h"
-#include "spawners/eboarspawner.h"
+#include "vector-helpers.h"
+#include "spawners/boar-spawner.h"
 
-#include "spawners/edeerspawner.h"
+#include "spawners/deer-spawner.h"
 #include "spawners/entry-point.h"
-#include "spawners/eexitpoint.h"
-#include "spawners/emonsterpoint.h"
-#include "spawners/elandinvasionpoint.h"
-#include "spawners/eseainvasionpoint.h"
-#include "spawners/edisembarkpoint.h"
-#include "spawners/edisasterpoint.h"
-#include "spawners/elandslidepoint.h"
+#include "spawners/exit-point.h"
+#include "spawners/monster-point.h"
+#include "spawners/land-invasion-point.h"
+#include "spawners/sea-invasion-point.h"
+#include "spawners/disembark-point.h"
+#include "spawners/disaster-point.h"
+#include "spawners/landslide-point.h"
 
 #include "ebuildingstoerase.h"
 
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 #include "audio/sounds.h"
 
 #include "repair.h"
@@ -100,9 +100,9 @@ GameWidget::eApply GameWidget::editFunc() {
         return [this](eTile* const tile) {
             int dist = 100;
             for(int k = 1; k < 100; k++) {
-                eIterateSquare::iterateDistance(k, [&dist, k, this, tile](const int dx, const int dy) {
+                IterateSquare::iterateDistance(k, [&dist, k, this, tile](const int dx, const int dy) {
                     const auto t = tile->tileRel<eTile>(dx, dy);
-                    const bool r = eVectorHelpers::contains(mInflTiles, t);
+                    const bool r = VectorHelpers::contains(mInflTiles, t);
                     if(!r) {
                         dist = k;
                         return true;
@@ -200,7 +200,7 @@ GameWidget::eApply GameWidget::editFunc() {
         };
     } else if(mode == eTerrainEditMode::boar) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eBoarSpawner>(
+            const auto b = std::make_shared<BoarSpawner>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
@@ -214,7 +214,7 @@ GameWidget::eApply GameWidget::editFunc() {
         };
     } else if(mode == eTerrainEditMode::deer) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eDeerSpawner>(
+            const auto b = std::make_shared<DeerSpawner>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
@@ -236,55 +236,55 @@ GameWidget::eApply GameWidget::editFunc() {
         };
     } else if(mode == eTerrainEditMode::exitPoint) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eExitPoint>(
+            const auto b = std::make_shared<ExitPoint>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::riverEntryPoint) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eRiverEntryPoint>(
+            const auto b = std::make_shared<RiverEntryPoint>(
                 modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::riverExitPoint) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eRiverExitPoint>(
+            const auto b = std::make_shared<RiverExitPoint>(
                 modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::landInvasion) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eLandInvasionPoint>(
+            const auto b = std::make_shared<LandInvasionPoint>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::seaInvasion) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eSeaInvasionPoint>(
+            const auto b = std::make_shared<SeaInvasionPoint>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::disembarkPoint) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eDisembarkPoint>(
+            const auto b = std::make_shared<DisembarkPoint>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::monsterPoint) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eMonsterPoint>(
+            const auto b = std::make_shared<MonsterPoint>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::disasterPoint) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eDisasterPoint>(
+            const auto b = std::make_shared<DisasterPoint>(
                                modeId, tile, *mBoard);
             tile->addBanner(b);
         };
     } else if(mode == eTerrainEditMode::landSlidePoint) {
         return [this, modeId](eTile* const tile) {
-            const auto b = std::make_shared<eLandSlidePoint>(
+            const auto b = std::make_shared<LandSlidePoint>(
                 modeId, tile, *mBoard);
             tile->addBanner(b);
         };
@@ -349,7 +349,7 @@ bool GameWidget::buildStampAgora(const std::vector<eTile*>& tiles,
         mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
     }
 
-    showTip(cid, eLanguage::zeusText(19, 228));
+    showTip(cid, Language::zeusText(19, 228));
     return true;
 }
 
@@ -378,7 +378,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
     } else {
         const int d = mBoard->drachmas(ppid);
         if(mode != eBuildingMode::none && d < -1000) {
-            showTip(pid, eLanguage::zeusText(19, 19)); // out of credit
+            showTip(pid, Language::zeusText(19, 19)); // out of credit
             return false;
         }
         switch(mode) {
@@ -454,11 +454,11 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             std::string title;
             std::string text;
             if(eraser.hasImportantBuildings()) {
-                title = eLanguage::zeusText(5, 104);
-                text = eLanguage::zeusText(5, 105);
+                title = Language::zeusText(5, 104);
+                text = Language::zeusText(5, 105);
             } else if(eraser.hasNonEmptyAgoras()) {
-                title = eLanguage::zeusText(5, 16);
-                text = eLanguage::zeusText(5, 17);
+                title = Language::zeusText(5, 16);
+                text = Language::zeusText(5, 17);
             } else {
                 return false;
             }
@@ -528,7 +528,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
             }
 
-            showTip(cid, eLanguage::zeusText(19, 228)); // add vendors
+            showTip(cid, Language::zeusText(19, 228)); // add vendors
         } break;
         case eBuildingMode::grandAgora: {
             const auto t = mBoard->tile(hoverTX, hoverTY);
@@ -579,7 +579,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 const int cost = DifficultyHelpers::buildingCost(diff, b->type());
                 mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
             }
-            showTip(cid, eLanguage::zeusText(19, 228)); // add vendors
+            showTip(cid, Language::zeusText(19, 228)); // add vendors
         } break;
         case eBuildingMode::road: {
             std::vector<eTile*> path;
@@ -662,7 +662,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<ePodium>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::college)) {
-                showTip(cid, eLanguage::zeusText(19, 223)); // build college
+                showTip(cid, Language::zeusText(19, 223)); // build college
             }
         } break;
 
@@ -676,7 +676,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eObservatory>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::university)) {
-                showTip(cid, eLanguage::zeusText(19, 244)); // build university
+                showTip(cid, Language::zeusText(19, 244)); // build university
             }
         } break;
         case eBuildingMode::university: {
@@ -684,7 +684,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eUniversity>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::observatory)) {
-                showTip(cid, eLanguage::zeusText(19, 243)); // build observatory
+                showTip(cid, Language::zeusText(19, 243)); // build observatory
             }
         } break;
         case eBuildingMode::laboratory: {
@@ -692,7 +692,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eLaboratory>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::inventorsWorkshop)) {
-                showTip(cid, eLanguage::zeusText(19, 247)); // build inventors' workshop
+                showTip(cid, Language::zeusText(19, 247)); // build inventors' workshop
             }
         } break;
         case eBuildingMode::inventorsWorkshop: {
@@ -700,7 +700,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eInventorsWorkshop>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::laboratory)) {
-                showTip(cid, eLanguage::zeusText(19, 246)); // build laboratory
+                showTip(cid, Language::zeusText(19, 246)); // build laboratory
             }
         } break;
         case eBuildingMode::museum: {
@@ -708,7 +708,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eMuseum>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::university)) {
-                showTip(cid, eLanguage::zeusText(19, 248)); // build universities
+                showTip(cid, Language::zeusText(19, 248)); // build universities
             }
         } break;
 
@@ -729,7 +729,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eCollege>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::podium)) {
-                showTip(cid, eLanguage::zeusText(19, 222)); // build podiums
+                showTip(cid, Language::zeusText(19, 222)); // build podiums
             }
         } break;
         case eBuildingMode::dramaSchool: {
@@ -737,7 +737,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eDramaSchool>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::theater)) {
-                showTip(cid, eLanguage::zeusText(19, 225)); // build theater
+                showTip(cid, Language::zeusText(19, 225)); // build theater
             }
         } break;
         case eBuildingMode::theater: {
@@ -745,7 +745,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eTheater>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::dramaSchool)) {
-                showTip(cid, eLanguage::zeusText(19, 226)); // build a drama school
+                showTip(cid, Language::zeusText(19, 226)); // build a drama school
             }
         } break;
         case eBuildingMode::hospital: {
@@ -782,13 +782,13 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::gymnasium)) {
-                showTip(cid, eLanguage::zeusText(19, 227)); // build gymnsaium
+                showTip(cid, Language::zeusText(19, 227)); // build gymnsaium
             }
         } break;
         case eBuildingMode::palace: {
             if(mBoard->hasPalace(mViewedCityId)) return true;
             if(mBoard->hasActiveInvasions(mViewedCityId)) {
-                showTip(cid, eLanguage::zeusText(19, 33)); // too close to enemy
+                showTip(cid, Language::zeusText(19, 33)); // too close to enemy
                 return true;
             }
             const int tx = hoverTX;
@@ -875,7 +875,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             r = mBoard->build(hoverTX, hoverTY, 2, 2, cid, pid, mEditorMode,
                   [this]() { return e::make_shared<eTaxOffice>(*mBoard, mViewedCityId); });
             if(!mBoard->hasPalace(mViewedCityId)) {
-                showTip(cid, eLanguage::zeusText(19, 221));
+                showTip(cid, Language::zeusText(19, 221));
             }
         } break;
         case eBuildingMode::mint: {
@@ -939,8 +939,8 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eCorral>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::cattle)) {
-                showTip(cid, eLanguage::zeusText(19, 255));
-                showTip(cid, eLanguage::zeusText(19, 256));
+                showTip(cid, Language::zeusText(19, 255));
+                showTip(cid, Language::zeusText(19, 256));
             }
         } break;
 
@@ -1047,7 +1047,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                         mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
                     }
                 } else {
-                    showTip(cid, eLanguage::zeusText(19, 25));
+                    showTip(cid, Language::zeusText(19, 25));
                 }
             }
         } break;
@@ -1117,7 +1117,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                     mBoard->build(tx, ty, 4, 4, cid, pid, mEditorMode, [&]() { return tp; });
                     b->setTradePost(tp.get());
                 } else {
-                    showTip(cid, eLanguage::zeusText(19, 25));
+                    showTip(cid, Language::zeusText(19, 25));
                 }
             }
         } break;
@@ -1128,8 +1128,8 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eDairy>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::goat)) {
-                showTip(cid, eLanguage::zeusText(19, 219));
-                showTip(cid, eLanguage::zeusText(19, 220));
+                showTip(cid, Language::zeusText(19, 219));
+                showTip(cid, Language::zeusText(19, 220));
             }
         } break;
         case eBuildingMode::cardingShed: {
@@ -1137,8 +1137,8 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [this]() { return e::make_shared<eCardingShed>(*mBoard, mViewedCityId); });
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::sheep)) {
-                showTip(cid, eLanguage::zeusText(19, 217));
-                showTip(cid, eLanguage::zeusText(19, 218));
+                showTip(cid, Language::zeusText(19, 217));
+                showTip(cid, Language::zeusText(19, 218));
             }
         } break;
 
@@ -1148,8 +1148,8 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 if(*skip) return;
                 const int allowed = mBoard->countAllowed(mViewedCityId, eBuildingType::sheep);
                 if(allowed <= 0) {
-                    showTip(cid, eLanguage::zeusText(19, 211));
-                    showTip(cid, eLanguage::zeusText(19, 212));
+                    showTip(cid, Language::zeusText(19, 211));
+                    showTip(cid, Language::zeusText(19, 212));
                     *skip = true;
                     return;
                 }
@@ -1165,8 +1165,8 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 if(*skip) return;
                 const int allowed = mBoard->countAllowed(mViewedCityId, eBuildingType::goat);
                 if(allowed <= 0) {
-                    showTip(cid, eLanguage::zeusText(19, 215));
-                    showTip(cid, eLanguage::zeusText(19, 216));
+                    showTip(cid, Language::zeusText(19, 215));
+                    showTip(cid, Language::zeusText(19, 216));
                     *skip = true;
                     return;
                 }
@@ -1182,8 +1182,8 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                 if(*skip) return;
                 const int allowed = mBoard->countAllowed(mViewedCityId, eBuildingType::cattle);
                 if(allowed <= 0) {
-                    showTip(cid, eLanguage::zeusText(19, 252));
-                    showTip(cid, eLanguage::zeusText(19, 253));
+                    showTip(cid, Language::zeusText(19, 252));
+                    showTip(cid, Language::zeusText(19, 253));
                     *skip = true;
                     return;
                 }
@@ -1216,12 +1216,12 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                             *mBoard, eGrowerType::grapesAndOlives, mViewedCityId); });
             if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::oliveTree) &&
                !mBoard->hasBuilding(mViewedCityId, eBuildingType::oliveTree)) {
-                showTip(cid, eLanguage::zeusText(19, 200));
+                showTip(cid, Language::zeusText(19, 200));
             }
 
             if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::vine) &&
                !mBoard->hasBuilding(mViewedCityId, eBuildingType::vine)) {
-                showTip(cid, eLanguage::zeusText(19, 198));
+                showTip(cid, Language::zeusText(19, 198));
             }
         } break;
         case eBuildingMode::orangeTendersLodge: {
@@ -1377,10 +1377,10 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
         case eBuildingMode::armory: {
             r = mBoard->build(hoverTX, hoverTY, 2, 2, cid, pid, mEditorMode,
                   [this]() { return e::make_shared<eArmory>(*mBoard, mViewedCityId); });
-            showTip(cid, eLanguage::zeusText(19, 194));
+            showTip(cid, Language::zeusText(19, 194));
             if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::foundry) &&
                !mBoard->hasBuilding(mViewedCityId, eBuildingType::foundry)) {
-                showTip(cid, eLanguage::zeusText(19, 195));
+                showTip(cid, Language::zeusText(19, 195));
             }
         } break;
         case eBuildingMode::horseRanch: {
@@ -1412,10 +1412,10 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
                   [hr]() { return hr; });
             mBoard->build(tx + dx, ty + dy, 4, 4, cid, pid, mEditorMode,
                   [hre]() { return hre; });
-            showTip(cid, eLanguage::zeusText(19, 187));
+            showTip(cid, Language::zeusText(19, 187));
             if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::wheatFarm) &&
                !mBoard->hasBuilding(mViewedCityId, eBuildingType::wheatFarm)) {
-                showTip(cid, eLanguage::zeusText(19, 188));
+                showTip(cid, Language::zeusText(19, 188));
             }
         } break;
         case eBuildingMode::chariotFactory: {
@@ -1425,28 +1425,28 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
         case eBuildingMode::olivePress: {
             r = mBoard->build(hoverTX, hoverTY, 2, 2, cid, pid, mEditorMode,
                   [this]() { return e::make_shared<eOlivePress>(*mBoard, mViewedCityId); });
-            showTip(cid, eLanguage::zeusText(19, 199));
+            showTip(cid, Language::zeusText(19, 199));
             if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::oliveTree) &&
                !mBoard->hasBuilding(mViewedCityId, eBuildingType::oliveTree)) {
-                showTip(cid, eLanguage::zeusText(19, 200));
+                showTip(cid, Language::zeusText(19, 200));
             }
         } break;
         case eBuildingMode::winery: {
             r = mBoard->build(hoverTX, hoverTY, 2, 2, cid, pid, mEditorMode,
                   [this]() { return e::make_shared<eWinery>(*mBoard, mViewedCityId); });
-            showTip(cid, eLanguage::zeusText(19, 197));
+            showTip(cid, Language::zeusText(19, 197));
             if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::vine) &&
                !mBoard->hasBuilding(mViewedCityId, eBuildingType::vine)) {
-                showTip(cid, eLanguage::zeusText(19, 198));
+                showTip(cid, Language::zeusText(19, 198));
             }
         } break;
         case eBuildingMode::sculptureStudio: {
             r = mBoard->build(hoverTX, hoverTY, 2, 2, cid, pid, mEditorMode,
                   [this]() { return e::make_shared<eSculptureStudio>(*mBoard, mViewedCityId); });
-            showTip(cid, eLanguage::zeusText(19, 196));
+            showTip(cid, Language::zeusText(19, 196));
             if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::foundry) &&
                !mBoard->hasBuilding(mViewedCityId, eBuildingType::foundry)) {
-                showTip(cid, eLanguage::zeusText(19, 195));
+                showTip(cid, Language::zeusText(19, 195));
             }
         } break;
 
@@ -1681,7 +1681,7 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             updateHippodromeIds();
             const int hid = hippodromeId();
             if(hid == -1) {
-                showTip(cid, eLanguage::zeusText(19, 257));
+                showTip(cid, Language::zeusText(19, 257));
             } else {
                 r = mBoard->build(hoverTX, hoverTY, 4, 4, cid, pid, mEditorMode, [this, hid]() {
                     const auto b = e::make_shared<eHippodromePiece>(*mBoard, mViewedCityId);
@@ -1863,10 +1863,10 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             const auto sancts = mBoard->sanctuaries(cid);
             const int nBuilt = sancts.size();
             if(!mEditorMode && nBuilt >= maxSancts) {
-                if(maxSancts < 2) showTip(cid, eLanguage::zeusText(19, 230));
-                if(maxSancts == 2) showTip(cid, eLanguage::zeusText(19, 231));
-                if(maxSancts == 3) showTip(cid, eLanguage::zeusText(19, 232));
-                if(maxSancts == 4) showTip(cid, eLanguage::zeusText(19, 233));
+                if(maxSancts < 2) showTip(cid, Language::zeusText(19, 230));
+                if(maxSancts == 2) showTip(cid, Language::zeusText(19, 231));
+                if(maxSancts == 3) showTip(cid, Language::zeusText(19, 232));
+                if(maxSancts == 4) showTip(cid, Language::zeusText(19, 233));
                 return false;
             }
 
@@ -1874,12 +1874,12 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             const int m = eBuilding::sInitialMarbleCost(buildingType);
             const int hasM = mBoard->resourceCount(mViewedCityId, eResourceType::marble);
             if(!mEditorMode && hasM < m) {
-                auto text = eLanguage::zeusText(19, 201);
+                auto text = Language::zeusText(19, 201);
                 const auto mStr = std::to_string(m);
-                eStringHelpers::replace(text, "[warning_amount]", mStr);
+                StringHelpers::replace(text, "[warning_amount]", mStr);
                 showTip(cid, text);
                 if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::masonryShop)) {
-                    showTip(cid, eLanguage::zeusText(19, 202));
+                    showTip(cid, Language::zeusText(19, 202));
                 }
                 return false;
             }
@@ -1961,12 +1961,12 @@ bool GameWidget::buildModeAt(const eBuildingMode mode,
             const int m = eBuilding::sInitialMarbleCost(type);
             const int hasM = mBoard->resourceCount(mViewedCityId, eResourceType::marble);
             if(!mEditorMode && hasM < m) {
-                auto text = eLanguage::zeusText(19, 201);
+                auto text = Language::zeusText(19, 201);
                 const auto mStr = std::to_string(m);
-                eStringHelpers::replace(text, "[warning_amount]", mStr);
+                StringHelpers::replace(text, "[warning_amount]", mStr);
                 showTip(cid, text);
                 if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::masonryShop)) {
-                    showTip(cid, eLanguage::zeusText(19, 202));
+                    showTip(cid, Language::zeusText(19, 202));
                 }
                 return false;
             }

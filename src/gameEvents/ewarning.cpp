@@ -1,6 +1,6 @@
 #include "ewarning.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eWarning::eWarning(const int warningMonths,
                    const bool initialWarning,
@@ -26,7 +26,7 @@ void eWarning::handleNewDate(const eDate &date) {
     }
 }
 
-void eWarning::serialize(eSaveArchive& ar) {
+void eWarning::serialize(SaveArchive& ar) {
     ar.dateField("nextDate", mNextDate);
     ar.field("finished", mFinished, true);
     ar.field("warningMonths", mWarningMonths, 2);

@@ -13,7 +13,7 @@ class eTopWidget : public eWidget
 public:
     using eWidget::eWidget;
 
-    void initialize(const std::shared_ptr<eTexture> &icon,
+    void initialize(const std::shared_ptr<Texture> &icon,
                     const std::string &text)
     {
         setPadding(0);
@@ -34,8 +34,8 @@ public:
 
         setText(text);
 
-        mIcon->align(eAlignment::vcenter);
-        mText->align(eAlignment::vcenter);
+        mIcon->align(Alignment::vcenter);
+        mText->align(Alignment::vcenter);
     }
 
     void setText(const std::string &text)

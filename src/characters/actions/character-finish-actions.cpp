@@ -2,7 +2,7 @@
 
 #include "characters/echaracter.h"
 #include "edieaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eChar_fightFinish::eChar_fightFinish(GameBoard& board) :
     eCharActFunc(board, eCharActFuncType::Char_fightFinish) {}
@@ -22,7 +22,7 @@ void eChar_fightFinish::call() {
     }
 }
 
-void eChar_fightFinish::serializeFields(eSaveArchive& ar) {
+void eChar_fightFinish::serializeFields(SaveArchive& ar) {
     ar.characterField("character", &board(), mTptr);
 }
 
@@ -42,7 +42,7 @@ void eChar_killWithCorpseFinish::call() {
     else t->kill();
 }
 
-void eChar_killWithCorpseFinish::serializeFields(eSaveArchive& ar) {
+void eChar_killWithCorpseFinish::serializeFields(SaveArchive& ar) {
     ar.field("withCorpse", mWithCorpse);
     ar.characterField("character", &board(), mTptr);
 }

@@ -1,15 +1,15 @@
 #include "edifficultywidget.h"
 
 #include "elabel.h"
-#include "elanguage.h"
-#include "emainwindow.h"
+#include "language.h"
+#include "main-window.h"
 #include "eupbutton.h"
 #include "edownbutton.h"
 
 namespace {
 class eDifficultyTooltipWidget : public eWidget {
 public:
-    eDifficultyTooltipWidget(eMainWindow* const window) :
+    eDifficultyTooltipWidget(MainWindow* const window) :
         eWidget(window) {}
     bool mouseMoveEvent(const eMouseEvent&) override { return true; }
 };
@@ -21,7 +21,7 @@ void eDifficultyWidget::initialize(const Difficulty diff,
 
     const auto w = window();
 
-    const auto diffText = eLanguage::zeusText(44, 219);
+    const auto diffText = Language::zeusText(44, 219);
     const auto value = std::make_shared<Difficulty>(diff);
 
     const auto label = new eLabel(w);
@@ -59,5 +59,5 @@ void eDifficultyWidget::initialize(const Difficulty diff,
 
     stackHorizontally();
     fitContent();
-    label->align(eAlignment::vcenter);
+    label->align(Alignment::vcenter);
 }

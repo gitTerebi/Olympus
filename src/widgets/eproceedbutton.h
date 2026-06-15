@@ -5,7 +5,7 @@
 
 class eProceedButton : public eBasicButton {
 public:
-    eProceedButton(eMainWindow* const window);
+    eProceedButton(MainWindow* const window);
 };
 
 #endif // EPROCEEDBUTTON_H

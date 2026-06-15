@@ -1,5 +1,5 @@
 #include "edieaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "characters/echaracter.h"
 
@@ -16,7 +16,7 @@ void eDieAction::increment(const int by) {
     if(mTime > 2048) setState(eCharacterActionState::finished);
 }
 
-void eDieAction::serializeFields(eSaveArchive& ar) {
+void eDieAction::serializeFields(SaveArchive& ar) {
     eCharacterAction::serializeFields(ar);
     ar.field("time", mTime);
 }

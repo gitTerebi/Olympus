@@ -1,11 +1,11 @@
 #include "send-troops-event.h"
 
 #include "engine/game-board.h"
-#include "elanguage.h"
+#include "language.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "emessages.h"
-#include "fileIO/esavearchive.h"
+#include "messages.h"
+#include "fileIO/save-archive.h"
 
 #include "troops-sent-event.h"
 
@@ -48,15 +48,15 @@ SendTroopsEvent::SendTroopsEvent(
         }
         return false;
     }) {
-    const auto e1 = eLanguage::text("early");
+    const auto e1 = Language::text("early");
     mEarlyTrigger = e::make_shared<eEventTrigger>(cid, e1, board);
-    const auto e2 = eLanguage::text("comply");
+    const auto e2 = Language::text("comply");
     mComplyTrigger = e::make_shared<eEventTrigger>(cid, e2, board);
-    const auto e3 = eLanguage::text("too_late");
+    const auto e3 = Language::text("too_late");
     mTooLateTrigger = e::make_shared<eEventTrigger>(cid, e3, board);
-    const auto e4 = eLanguage::text("refuse");
+    const auto e4 = Language::text("refuse");
     mRefuseTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
-    const auto e5 = eLanguage::text("lost_battle");
+    const auto e5 = Language::text("lost_battle");
     mLostBattleTrigger = e::make_shared<eEventTrigger>(cid, e5, board);
 
     addTrigger(mEarlyTrigger);
@@ -86,10 +86,10 @@ void SendTroopsEvent::set(
 }
 
 std::string SendTroopsEvent::longName() const {
-    return eLanguage::zeusText(290, 6);
+    return Language::zeusText(290, 6);
 }
 
-void SendTroopsEvent::serializeFields(eSaveArchive& ar) {
+void SendTroopsEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCityEventValue::serialize(ar, *gameBoard());
     eMonsterEventValue::serialize(ar);
@@ -301,8 +301,8 @@ void SendTroopsEvent::won() {
     ed.fRivalCity = mAttackingCity;
     ed.fType = eMessageEventType::common;
 
-    auto& msgs = eMessages::instance;
-    eTroopsRequestedMessages* rrmsgs = nullptr;
+    auto& msgs = Messages::instance;
+    TroopsRequestedMessages* rrmsgs = nullptr;
 
     switch(mType) {
     case SendTroopsEventType::cityUnderAttack: {
@@ -371,9 +371,9 @@ void SendTroopsEvent::lost() {
     ed.fRivalCity = mAttackingCity;
     ed.fType = eMessageEventType::common;
 
-    auto& msgs = eMessages::instance;
+    auto& msgs = Messages::instance;
     eEvent event;
-    eTroopsRequestedMessages* rrmsgs = nullptr;
+    TroopsRequestedMessages* rrmsgs = nullptr;
     switch(mType) {
     case SendTroopsEventType::cityUnderAttack: {
         if(mCity->isVassal()) {
@@ -448,7 +448,7 @@ void SendTroopsEvent::lost() {
     me->finished(*me->mLostBattleTrigger, reason);
 }
 
-void SendTroopsEvent::finished(eEventTrigger& t, const eReason& r) {
+void SendTroopsEvent::finished(eEventTrigger& t, const Reason& r) {
     const auto board = gameBoard();
     if(!board) return;
     const auto date = board->date();

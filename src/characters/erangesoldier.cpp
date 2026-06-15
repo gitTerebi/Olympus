@@ -11,11 +11,11 @@ eRangeSoldier::eRangeSoldier(GameBoard& board,
     setRange(range);
 }
 
-std::shared_ptr<eTexture> eRangeSoldier::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eRangeSoldier::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& textures = GameTextures::characters();
     const auto& charTexs = textures[id].*mCharTexs;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
     bool wrap = true;
     const auto a = actionType();

@@ -3,7 +3,7 @@
 
 #include "ehasresourceobject.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eHasNonBusyResourceObject : public eHasResourceObject {
 public:
@@ -13,7 +13,7 @@ public:
     bool has(eTileBase* const t) const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdsptr<eHasResourceObject> mOther;
 };

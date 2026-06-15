@@ -1,10 +1,10 @@
-#include "espearmissile.h"
+#include "spear-missile.h"
 
 #include "textures/game-textures.h"
 
-eSpearMissile::eSpearMissile(GameBoard& board,
-                             const std::vector<ePathPoint>& path) :
-    eArrowSpearBase(board, &DestructionTextures::fSpear,
-                    eMissileType::spear, path) {
+SpearMissile::SpearMissile(GameBoard& board,
+                             const std::vector<PathPoint>& path) :
+    ArrowSpearBase(board, &DestructionTextures::fSpear,
+                    MissileType::spear, path) {
     GameTextures::loadSpear();
 }

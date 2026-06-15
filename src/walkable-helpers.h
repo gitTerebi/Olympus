@@ -1,5 +1,5 @@
-﻿#ifndef EWALKABLEHELPERS_H
-#define EWALKABLEHELPERS_H
+﻿#ifndef WALKABLE_HELPERS_H
+#define WALKABLE_HELPERS_H
 
 #include "engine/etile.h"
 #include <SDL2/SDL_rect.h>
@@ -7,7 +7,7 @@
 #include "characters/actions/walkable/walkable-object.h"
 
 using eWalkable = std::function<bool(eTileBase*)>;
-namespace eWalkableHelpers {
+namespace WalkableHelpers {
     bool sTileUnderBuilding(eTileBase* const t,
                             eBuilding* const b);
     bool sTileUnderBuilding(eTileBase* const t,
@@ -26,4 +26,4 @@ namespace eWalkableHelpers {
             const SDL_Rect& rect, const eWalkable& w);
 };
 
-#endif // EWALKABLEHELPERS_H
+#endif // WALKABLE_HELPERS_H

@@ -22,23 +22,23 @@
 #include "epakhelpers.h"
 
 #include "buildings/eroad.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 
 #include "spawners/entry-point.h"
-#include "spawners/eexitpoint.h"
-#include "spawners/elandinvasionpoint.h"
-#include "spawners/eseainvasionpoint.h"
-#include "spawners/edisembarkpoint.h"
-#include "spawners/emonsterpoint.h"
-#include "spawners/eboarspawner.h"
-#include "spawners/edeerspawner.h"
-#include "spawners/ewolfspawner.h"
-#include "spawners/edisasterpoint.h"
-#include "spawners/elandslidepoint.h"
+#include "spawners/exit-point.h"
+#include "spawners/land-invasion-point.h"
+#include "spawners/sea-invasion-point.h"
+#include "spawners/disembark-point.h"
+#include "spawners/monster-point.h"
+#include "spawners/boar-spawner.h"
+#include "spawners/deer-spawner.h"
+#include "spawners/wolf-spawner.h"
+#include "spawners/disaster-point.h"
+#include "spawners/landslide-point.h"
 
 #include "engine/ecampaign.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 ZeusFile::ZeusFile(const std::string &filename)
 	: GameFile(filename) {
@@ -450,7 +450,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
                         name += std::string(1, letter);
                     }
                 } else {
-                    name = eLanguage::zeusText(196, nameId);
+                    name = Language::zeusText(196, nameId);
                 }
                 world.addRegion(eWorldRegion{name, nameId, cityXF, cityYF});
                 continue;
@@ -539,7 +539,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
                     name += std::string(1, letter);
                 }
             } else {
-                name = eLanguage::zeusText(21, cityNameId);
+                name = Language::zeusText(21, cityNameId);
             }
             std::string leaderName;
             if(leaderNameId == 0xFF) {
@@ -550,7 +550,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
                     leaderName += std::string(1, letter);
                 }
             } else {
-                leaderName = eLanguage::zeusText(139, leaderNameId);
+                leaderName = Language::zeusText(139, leaderNameId);
             }
             const auto c = std::make_shared<WorldCity>(
                                cityType, cid, name, cityXF, cityYF);
@@ -711,7 +711,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const int dy = tile->dy();
         int x;
         int y;
-        eTileHelper::dtileIdToTileId(dx, dy, x, y);
+        TileHelper::dtileIdToTileId(dx, dy, x, y);
         road->setTileRect({x, y, 1, 1});
     };
 
@@ -838,20 +838,20 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
     }
     const auto exitTile = tileMap[exitPtY][exitPtX].fTile;
     if(exitTile) {
-        const auto b = std::make_shared<eExitPoint>(
+        const auto b = std::make_shared<ExitPoint>(
                            1, exitTile, board);
         exitTile->addBanner(b);
     }
 
     const auto riverEntryTile = tileMap[riverEntryPtY][riverEntryPtX].fTile;
     if(riverEntryTile) {
-        const auto b = std::make_shared<eRiverEntryPoint>(
+        const auto b = std::make_shared<RiverEntryPoint>(
             1, riverEntryTile, board);
         riverEntryTile->addBanner(b);
     }
     const auto riverExitTile = tileMap[riverExitPtY][riverExitPtX].fTile;
     if(riverExitTile) {
-        const auto b = std::make_shared<eRiverExitPoint>(
+        const auto b = std::make_shared<RiverExitPoint>(
             1, riverExitTile, board);
         riverExitTile->addBanner(b);
     }
@@ -860,7 +860,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = disasterPts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eDisasterPoint>(
+        const auto b = std::make_shared<DisasterPoint>(
                            i + 1, tile, board);
         tile->addBanner(b);
     }
@@ -869,7 +869,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = landInvPts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eLandInvasionPoint>(
+        const auto b = std::make_shared<LandInvasionPoint>(
                            i + 1, tile, board);
         tile->addBanner(b);
     }
@@ -878,7 +878,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = seaInvPts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eSeaInvasionPoint>(
+        const auto b = std::make_shared<SeaInvasionPoint>(
                            i + 9, tile, board);
         tile->addBanner(b);
     }
@@ -887,7 +887,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = wolfPts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eWolfSpawner>(
+        const auto b = std::make_shared<WolfSpawner>(
                            i + 1, tile, board);
         tile->addBanner(b);
     }
@@ -896,7 +896,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = deerPts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eDeerSpawner>(
+        const auto b = std::make_shared<DeerSpawner>(
                            i + 1, tile, board);
         tile->addBanner(b);
     }
@@ -905,7 +905,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = boarPts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eBoarSpawner>(
+        const auto b = std::make_shared<BoarSpawner>(
                            i + 1, tile, board);
         tile->addBanner(b);
     }
@@ -914,7 +914,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = monsterInvPts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eMonsterPoint>(
+        const auto b = std::make_shared<MonsterPoint>(
                            i + 1, tile, board);
         tile->addBanner(b);
     }
@@ -923,7 +923,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = disembarkPts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eDisembarkPoint>(
+        const auto b = std::make_shared<DisembarkPoint>(
                            i + 1, tile, board);
         tile->addBanner(b);
     }
@@ -932,7 +932,7 @@ bool ZeusFile::loadBoard(GameBoard& board, eCampaign& campaign,
         const auto& pt = landSlidePts[i];
         const auto tile = tileMap[pt.fY][pt.fX].fTile;
         if(!tile) continue;
-        const auto b = std::make_shared<eLandSlidePoint>(
+        const auto b = std::make_shared<LandSlidePoint>(
             i + 1, tile, board);
         tile->addBanner(b);
     }

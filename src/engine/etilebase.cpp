@@ -1,9 +1,9 @@
 #include "etilebase.h"
-#include "erand.h"
+#include "rand.h"
 
 #include "buildings/ebuilding.h"
-#include "spawners/ebanner.h"
-#include "fileIO/esavearchive.h"
+#include "spawners/banner.h"
+#include "fileIO/save-archive.h"
 
 #include <algorithm>
 
@@ -143,7 +143,7 @@ std::vector<eTileBase::eTO> eTileBase::neighbours(const eTileVerifier& v) const 
 eTileBase::eTO eTileBase::randomNeighbour(const eTileVerifier& v) const {
     const auto ts = neighbours(v);
     if(ts.empty()) return {eOrientation::top, nullptr};
-    return ts[eRand::rand() % ts.size()];
+    return ts[Rand::rand() % ts.size()];
 }
 
 std::vector<eTileBase::eTO> eTileBase::diagonalNeighbours(const eTileVerifier& v) const {
@@ -160,7 +160,7 @@ std::vector<eTileBase::eTO> eTileBase::diagonalNeighbours(const eTileVerifier& v
 eTileBase::eTO eTileBase::randomDiagonalNeighbour(const eTileVerifier& v) const {
     const auto ts = diagonalNeighbours(v);
     if(ts.empty()) return {eOrientation::top, nullptr};
-    return ts[eRand::rand() % ts.size()];
+    return ts[Rand::rand() % ts.size()];
 }
 
 void eTileBase::setTerrain(const eTerrain terr) {
@@ -183,7 +183,7 @@ void eTileBase::setBottomLeft(eTileBase* const bl) {
     mBottomLeft = bl;
 }
 
-void eTileBase::serialize(eSaveArchive& ar) {
+void eTileBase::serialize(SaveArchive& ar) {
     ar.field("seed", mSeed);
     ar.field("terr", mTerr);
     ar.field("marbleLevel", mMarbleLevel);

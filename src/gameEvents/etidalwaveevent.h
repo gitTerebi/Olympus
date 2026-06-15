@@ -6,7 +6,7 @@
 #include "gods/egodeventvalue.h"
 #include "gods/egodreasoneventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eTidalWaveEvent : public eGameEvent,
                         public ePointEventValue,
@@ -25,7 +25,7 @@ public:
     bool permanent() const { return mPermanent; }
     void setPermanent(const bool p) { mPermanent = p; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool mPermanent = false;
 };

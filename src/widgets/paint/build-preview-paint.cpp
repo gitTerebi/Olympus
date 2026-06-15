@@ -118,7 +118,7 @@ void GameWidget::paintAppealBuildPreview(eTilePainter& tp,
         double drawY;
         const int tileAltitude = mDrawElevation ? tile->altitude() : 0;
         drawXY(tile->x(), tile->y(), drawX, drawY, 1, 1, tileAltitude);
-        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+        tp.drawTexture(drawX, drawY, tex, Alignment::top);
         tex->clearAlphaMod();
         tex->clearColorMod();
     };

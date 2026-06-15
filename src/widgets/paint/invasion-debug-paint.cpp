@@ -2,7 +2,7 @@
 
 #include "engine/game-board.h"
 #include "engine/etile.h"
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "gameEvents/invasions/invasion-handler.h"
 #include "widgets/epainter.h"
 
@@ -33,7 +33,7 @@ SDL_Point tilePoint(GameBoard& board,
 {
     int viewTileX;
     int viewTileY;
-    eTileHelper::tileIdToRotatedTileId(tile->x(), tile->y(), viewTileX, viewTileY,
+    TileHelper::tileIdToRotatedTileId(tile->x(), tile->y(), viewTileX, viewTileY,
                                        board.direction(),
                                        board.width(), board.height());
     const int altitude = tile->altitude();
@@ -98,8 +98,8 @@ void drawLabel(ePainter& p,
 {
     (void)bg;
     const SDL_Rect rect{c.x - 26, c.y - 38, 52, 18};
-    p.drawText(rect, text, eFontColor::light,
-               eAlignment::hcenter | eAlignment::vcenter);
+    p.drawText(rect, text, FontColor::light,
+               Alignment::hcenter | Alignment::vcenter);
 }
 
 }

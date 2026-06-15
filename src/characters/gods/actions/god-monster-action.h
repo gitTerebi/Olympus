@@ -7,7 +7,7 @@
 #include "buildings/eheatgetters.h"
 #include "characters/actions/walkable/walkable-object.h"
 #include "characters/actions/walkable/eobsticlehandler.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "textures/destruction-textures.h"
 
@@ -40,7 +40,7 @@ public:
 
     eCharacter* character() const { return mChar.get(); }
 
-    void serialize(eSaveArchive& ar, GameBoard& board) {
+    void serialize(SaveArchive& ar, GameBoard& board) {
         ar.tileField("tile", board, mTile);
         ar.characterField("character", &board, mChar);
     }
@@ -49,9 +49,9 @@ private:
     stdptr<eCharacter> mChar;
 };
 
-inline bool missileTargetField(eSaveArchive& ar, const char* name,
+inline bool missileTargetField(SaveArchive& ar, const char* name,
                                GameBoard& board, eMissileTarget& val) {
-    const bool ok = ar.archiveField(name, [&](eSaveArchive& childAr) {
+    const bool ok = ar.archiveField(name, [&](SaveArchive& childAr) {
         val.serialize(childAr, board);
     });
     if(!ok) printf("[saveLoad] missileTargetField '%s' missing data.\n", name);
@@ -70,18 +70,18 @@ public:
 
     GameBoard& board() { return mBoard; }
 
-    void serialize(eSaveArchive& ar) { serializeFields(ar); }
+    void serialize(SaveArchive& ar) { serializeFields(ar); }
 
     static stdsptr<eFindFailFunc> sCreate(GameBoard& board,
                                           const eFindFailFuncType type);
 protected:
-    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
+    virtual void serializeFields(SaveArchive& ar) { (void)ar; }
 private:
     GameBoard& mBoard;
     const eFindFailFuncType mType;
 };
 
-inline bool findFailFuncField(eSaveArchive& ar, const char* name,
+inline bool findFailFuncField(SaveArchive& ar, const char* name,
                               GameBoard& board, stdsptr<eFindFailFunc>& val) {
     bool hasValue = val != nullptr;
     const std::string hasName = std::string(name) + ".has";
@@ -99,7 +99,7 @@ inline bool findFailFuncField(eSaveArchive& ar, const char* name,
                name, static_cast<int>(type));
         return false;
     }
-    const bool ok = ar.archiveField(name, [&](eSaveArchive& childAr) {
+    const bool ok = ar.archiveField(name, [&](SaveArchive& childAr) {
         val->serialize(childAr);
     });
     if(!ok) printf("[saveLoad] findFailFuncField '%s' missing data.\n", name);
@@ -131,7 +131,7 @@ public:
                   const stdsptr<WalkableObject>& moveWalkable = nullptr);
 
 
-    using eTexPtr = eTextureCollection DestructionTextures::*;
+    using eTexPtr = TextureCollection DestructionTextures::*;
     using eFunc = std::function<void()>;
     void spawnMissile(const eCharacterActionType at,
                       const eCharacterType chart,
@@ -195,7 +195,7 @@ public:
     void playAppearSound();
     void playDisappearSound();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void hermesRun(const bool appear);
 
@@ -216,7 +216,7 @@ public:
     void call() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("winner", &board(), mWinnerPtr);
         ar.characterActionAsField("loser", &board(), mLoserPtr);
         ar.field("winnerGodType", mWt);
@@ -245,7 +245,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.charActFuncField("finishAction", board(), mFinishAct);
     }
@@ -271,7 +271,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.charActFuncField("finishAction", board(), mFinishAct);
         ar.field("distance", mDist);
@@ -299,7 +299,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.charActFuncField("finishAction", board(), mFinishAct);
         ar.field("distance", mDist);
@@ -330,7 +330,7 @@ public:
     void call() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);
         ar.field("actionType", mAt);
         ar.field("characterType", mChart);
@@ -375,7 +375,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.field("actionType", mAt);
         ar.field("characterType", mChart);
@@ -412,7 +412,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.tileField("tile", board(), mTile);
         findFailFuncField(ar, "findFailFunc", board(), mFunc);
     }

@@ -32,6 +32,12 @@ eResolution::eResolution(const int width, const int height) :
     mName = std::to_string(mWidth) + "x" + std::to_string(mHeight);
 }
 
+eResolution::eResolution(const int width, const int height,
+                         const eUIScale uiScale) :
+    mWidth(width), mHeight(height), mUIScale(uiScale) {
+    mName = std::to_string(mWidth) + "x" + std::to_string(mHeight);
+}
+
 int eResolution::paddingXL() const {
     return 3*paddingL()/2;
 }
@@ -63,7 +69,7 @@ int eResolution::margin() const {
 double eResolution::multiplier() const {
     switch(mUIScale) {
     case eUIScale::tiny:
-        return 0.5;
+        return 0.75;
     case eUIScale::small:
         return 1.0;
     case eUIScale::medium:

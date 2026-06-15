@@ -4,8 +4,8 @@
 #include "widgets/emicrobutton.h"
 #include "widgets/escrollbar.h"
 #include "widgets/elayouthelpers.h"
-#include "elanguage.h"
-#include "emainwindow.h"
+#include "language.h"
+#include "main-window.h"
 #include "engine/game-board.h"
 
 namespace
@@ -13,7 +13,7 @@ namespace
     class eClickWidget : public eWidget
     {
     public:
-        eClickWidget(eMainWindow *w, std::function<void()> onClick)
+        eClickWidget(MainWindow *w, std::function<void()> onClick)
             : eWidget(w), mOnClick(std::move(onClick)) { setNoPadding(); }
 
     protected:
@@ -30,7 +30,7 @@ namespace
 }
 
 StorageDistributionWidget::StorageDistributionWidget(
-    eMainWindow *const window,
+    MainWindow *const window,
     eMainWidget *const mw) : eInfoWidget(window, mw, false, false) {}
 
 void StorageDistributionWidget::initialize(
@@ -41,7 +41,7 @@ void StorageDistributionWidget::initialize(
     resize(panelW, height());
 
     eInfoWidget::initialize("");
-    align(eAlignment::center);
+    align(Alignment::center);
 
     const int p = padding();
     const int ww = widgetWidth();

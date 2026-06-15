@@ -6,7 +6,7 @@
 
 class eTempleAltarBuilding;
 class eDomesticatedAnimal;
-class eSaveArchive;
+class SaveArchive;
 
 enum class ePriestSacrificeStage {
     idle,
@@ -26,7 +26,7 @@ public:
 
     bool decide() override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     eDomesticatedAnimal* findAnimal() const;
@@ -58,7 +58,7 @@ public:
         mAptr->toReturning();
     }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("action", &board(), mAptr);
     }
 private:

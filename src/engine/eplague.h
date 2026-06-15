@@ -8,7 +8,7 @@
 class GameBoard;
 class SmallHouse;
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eCityId;
 
@@ -28,7 +28,7 @@ public:
     using eHouses = std::vector<SmallHouse*>;
     const eHouses& houses() const { return mHouses; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
 
     GameBoard& mBoard;

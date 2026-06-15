@@ -1,5 +1,5 @@
 #include "etemplealtarbuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "textures/game-textures.h"
 
@@ -7,7 +7,7 @@
 #include "engine/game-board.h"
 #include "characters/priest.h"
 #include "characters/actions/priest-sacrifice-action.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eTempleAltarBuilding::eTempleAltarBuilding(GameBoard& board,
                                            const eCityId cid) :
@@ -19,10 +19,10 @@ eTempleAltarBuilding::eTempleAltarBuilding(GameBoard& board,
     });
 }
 
-std::vector<eOverlay> eTempleAltarBuilding::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eTempleAltarBuilding::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     if(mSacrifice == eSacrifice::sheep) {
         GameTextures::loadAltarSheepOverlay();
         coll = &blds.fAltarSheepOverlay;
@@ -35,15 +35,15 @@ std::vector<eOverlay> eTempleAltarBuilding::getOverlays(const eTileSize size) co
     } else {
         return {};
     }
-    std::vector<eOverlay> result;
+    std::vector<Overlay> result;
     const int frame = textureTime();
     const auto& tex = coll->getTexture(frame % coll->size());
-    result.emplace_back(eOverlay{-1.7, -3.4, tex, false});
+    result.emplace_back(Overlay{-1.7, -3.4, tex, false});
     return result;
 }
 
 void eTempleAltarBuilding::timeChanged(const int by) {
-    const int sacrificeTicks = eNumbers::sSacrificeDurationDays * eNumbers::sDayLength;
+    const int sacrificeTicks = Numbers::sSacrificeDurationDays * Numbers::sDayLength;
     if(mSacrifice != eSacrifice::none) {
         mSacrificeTime += by;
         if(mSacrificeTime >= sacrificeTicks) {
@@ -55,7 +55,7 @@ void eTempleAltarBuilding::timeChanged(const int by) {
     }
 
     mSpawnTimer += by;
-    const int spawnTicks = eNumbers::sPriestSacrificeRecurringSpawnDays * eNumbers::sDayLength;
+    const int spawnTicks = Numbers::sPriestSacrificeRecurringSpawnDays * Numbers::sDayLength;
     if(mSpawnTimer < spawnTicks) return;
     if(mPriestOut) return;
 
@@ -74,7 +74,7 @@ void eTempleAltarBuilding::timeChanged(const int by) {
     c->setAction(a);
 }
 
-void eTempleAltarBuilding::serializeFields(eSaveArchive& ar) {
+void eTempleAltarBuilding::serializeFields(SaveArchive& ar) {
     eSanctBuilding::serializeFields(ar);
     ar.field("id", mId);
     ar.field("sacrifice", mSacrifice);
@@ -85,9 +85,9 @@ void eTempleAltarBuilding::serializeFields(eSaveArchive& ar) {
 
 int eTempleAltarBuilding::sacrificeDaysLeft() const {
     if(mSacrifice == eSacrifice::none) return 0;
-    const int total = eNumbers::sSacrificeDurationDays * eNumbers::sDayLength;
+    const int total = Numbers::sSacrificeDurationDays * Numbers::sDayLength;
     const int left = total - mSacrificeTime;
-    return std::max(0, left / eNumbers::sDayLength);
+    return std::max(0, left / Numbers::sDayLength);
 }
 
 void eTempleAltarBuilding::startSacrifice(const eSacrifice s) {

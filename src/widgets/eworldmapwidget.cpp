@@ -10,13 +10,13 @@
 #include "gameEvents/conquest/player-conquest-event.h"
 #include "gameEvents/ereinforcementsevent.h"
 #include "gameEvents/conquest/player-raid-event.h"
-#include "elanguage.h"
+#include "language.h"
 #include "audio/sounds.h"
-#include "estringhelpers.h"
-#include "evectorhelpers.h"
-#include "enumbers.h"
+#include "string-helpers.h"
+#include "vector-helpers.h"
+#include "numbers.h"
 
-eWorldMapWidget::eWorldMapWidget(eMainWindow* const window) :
+eWorldMapWidget::eWorldMapWidget(MainWindow* const window) :
     eLabel(window) {}
 
 void eWorldMapWidget::setSelectColonyMode(
@@ -76,8 +76,8 @@ std::vector<eMapArmy> getArmies(GameBoard& board) {
         const auto cDate = c->nextDate();
         const int days = cDate - date;
         const int totDays = dynamic_cast<eReinforcementsEvent*>(c) ?
-                            eNumbers::sReinforcementsTravelTime :
-                            eNumbers::sArmyTravelTime;
+                            Numbers::sReinforcementsTravelTime :
+                            Numbers::sArmyTravelTime;
         const double frac = std::clamp(1. - (1.*days)/totDays, 0., 1.);
         bool reverse = false;
         if(dynamic_cast<ArmyReturnEvent*>(c)) {
@@ -183,13 +183,13 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
     for(const auto& r : regions) {
         const auto name = r.getName();
         const auto nameFind = mNames.find(name);
-        stdsptr<eTexture> nameTex;
+        stdsptr<Texture> nameTex;
         if(nameFind == mNames.end()) {
-            nameTex = std::make_shared<eTexture>();
+            nameTex = std::make_shared<Texture>();
             const auto res = resolution();
             const int fontSize = res.fontSizeS();
             const auto font = eFonts::defaultFont(fontSize);
-            nameTex->loadText(renderer(), name, eFontColor::region, *font);
+            nameTex->loadText(renderer(), name, FontColor::region, *font);
             mNames[name] = nameTex;
         } else {
             nameTex = nameFind->second;
@@ -206,7 +206,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         if(!v) return;
         const bool atlantean = ct->nationality() == eNationality::atlantean;
         const auto t = ct->type();
-        stdsptr<eTexture> tex;
+        stdsptr<Texture> tex;
         switch(t) {
         case eCityType::parentCity: {
             if(atlantean) tex = texs.fPoseidonMainCity;
@@ -303,9 +303,9 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
 
         const int x = ct->x()*width();
         const int y = ct->y()*height();
-        p.drawTexture(x, y, tex, eAlignment::center);
+        p.drawTexture(x, y, tex, Alignment::center);
 
-        const auto flagAl = eAlignment::hcenter | eAlignment::top;
+        const auto flagAl = Alignment::hcenter | Alignment::top;
         const int flagX = x + tex->width()/2;
         const int flagY = y + tex->height()/2;
         if(ct->isParentCity()) {
@@ -336,10 +336,10 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             int xx = x - hp;
             const int yy = y - hp;
             const auto& aTex = aColl.getTexture(a - 1);
-            p.drawTexture(xx, yy, aTex, eAlignment::top);
+            p.drawTexture(xx, yy, aTex, Alignment::top);
             xx += lp + aTex->width()/2;
             const auto& wTex = wColl.getTexture(w - 1);
-            p.drawTexture(xx, yy, wTex, eAlignment::top);
+            p.drawTexture(xx, yy, wTex, Alignment::top);
         }
 
         if(ct->rebellion() || ct->conqueredByRival()) {
@@ -352,13 +352,13 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         {
             const auto& name = ct->name();
             const auto nameFind = mNames.find(name);
-            stdsptr<eTexture> nameTex;
+            stdsptr<Texture> nameTex;
             if(nameFind == mNames.end()) {
-                nameTex = std::make_shared<eTexture>();
+                nameTex = std::make_shared<Texture>();
                 const auto res = resolution();
                 const int fontSize = res.fontSizeS();
                 const auto font = eFonts::defaultFont(fontSize);
-                nameTex->loadText(renderer(), name, eFontColor::light, *font);
+                nameTex->loadText(renderer(), name, FontColor::light, *font);
                 mNames[name] = nameTex;
             } else {
                 nameTex = nameFind->second;
@@ -419,9 +419,9 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         case eNationality::atlantean:
             return &texs.fPoseidonAtlanteanArmy;
         default:
-            return static_cast<const eTextureCollection*>(nullptr);
+            return static_cast<const TextureCollection*>(nullptr);
         }
-        return static_cast<const eTextureCollection*>(nullptr);
+        return static_cast<const TextureCollection*>(nullptr);
     };
 
     if(mGameBoard) {
@@ -433,7 +433,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             const int dx = res.paddingL();
             if(army.fArmySize != 0) {
                 const int n = std::clamp(army.fArmySize - 1, 0, 2);
-                const eTextureCollection* coll = nullptr;
+                const TextureCollection* coll = nullptr;
                 const auto& origin = army.fOrigin;
                 const auto nat = origin->nationality();
                 const auto ppid = mGameBoard->personPlayer();
@@ -446,12 +446,12 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
                     coll = cityFigures(nat);
                 }
                 const auto& tex = coll->getTexture(n);
-                p.drawTexture(x, y, tex, eAlignment::center);
+                p.drawTexture(x, y, tex, Alignment::center);
                 x += dx;
             }
 
             for(const auto h : army.fHeroes) {
-                stdsptr<eTexture> tex;
+                stdsptr<Texture> tex;
                 switch(h) {
                 case eHeroType::achilles:
                     tex = texs.fZeusAchilles;
@@ -479,7 +479,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
                     break;
                 }
 
-                p.drawTexture(x, y, tex, eAlignment::center);
+                p.drawTexture(x, y, tex, Alignment::center);
                 x += dx;
             }
         }
@@ -595,7 +595,7 @@ void eWorldMapWidget::updateWidgets() {
 
     const int group = 44;
     const int string = 334;
-    const auto clickForInfo = eLanguage::zeusText(group, string);
+    const auto clickForInfo = Language::zeusText(group, string);
 
     const bool editor = mWorldBoard->editorMode();
 
@@ -648,10 +648,10 @@ void eWorldMapWidget::updateWidgets() {
                                 break;
                             }
                         }
-                        auto text = eLanguage::zeusText(47, string);
+                        auto text = Language::zeusText(47, string);
                         const auto targetName = army.fTravelTo->name();
-                        eStringHelpers::replace(text, "[city_name]", targetName);
-                        eStringHelpers::replace(text, "[rival_city_name]", targetName);
+                        StringHelpers::replace(text, "[city_name]", targetName);
+                        StringHelpers::replace(text, "[rival_city_name]", targetName);
                         mSetTextAction(text);
                     }
                 });
@@ -710,7 +710,7 @@ bool eWorldMapWidget::cityVisible(const stdsptr<WorldCity>& c,
     if(!mSelectColonyMode && !editor &&
        !c->active() && !c->isOnBoard()) return false;
     if(mSelectColonyMode) {
-        const bool cc = eVectorHelpers::contains(mColonySelection, c);
+        const bool cc = VectorHelpers::contains(mColonySelection, c);
         if(!cc) return false;
     }
     return true;
@@ -722,7 +722,7 @@ void eWorldMapWidget::setMap(const eWorldMap map) {
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes];
 
-    stdsptr<eTexture> tex;
+    stdsptr<Texture> tex;
     switch(map) {
     case eWorldMap::greece1:
         GameTextures::loadMapOfGreece1();

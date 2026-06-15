@@ -15,12 +15,12 @@ eGatehouseRenderer::eGatehouseRenderer(
 
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eGatehouseRenderer::getTexture(const eTileSize size) const {
     return mBuilding->getTextureSides(size);
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eGatehouseRenderer::getOverlays(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -63,7 +63,7 @@ eGatehouseRenderer::getOverlays(const eTileSize size) const {
         return {ebo, eo};
     } break;
     case eGatehouseRendererType::grt2: {
-        eOverlay so;
+        Overlay so;
         so.fTex = mBuilding->getTextureSides(size);
         so.fX = 0.0;
         so.fY = 0.0;

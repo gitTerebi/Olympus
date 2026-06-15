@@ -7,7 +7,7 @@ class eOlivePress : public eProcessingBuilding {
 public:
     eOlivePress(GameBoard& board, const eCityId cid);
 
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 };
 
 #endif // EOLIVEPRESS_H

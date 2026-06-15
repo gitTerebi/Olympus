@@ -7,12 +7,12 @@ eUrchinGatherer::eUrchinGatherer(GameBoard& board) :
     GameTextures::loadUrchinGatherer();
 }
 
-std::shared_ptr<eTexture> eUrchinGatherer::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eUrchinGatherer::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto& charTexs = colls.fUrchinGatherer;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
     bool wrap = true;
     const auto a = actionType();

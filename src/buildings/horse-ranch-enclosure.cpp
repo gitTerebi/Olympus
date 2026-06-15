@@ -9,8 +9,8 @@
 
 #include "ehorseranch.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
-#include "etilehelper.h"
+#include "fileIO/save-archive.h"
+#include "tile-helper.h"
 
 namespace {
 
@@ -20,7 +20,7 @@ void horseDrawPosition(const eTile& tile, const double horseTileX,
                        double& drawX, double& drawY) {
     int viewTileX;
     int viewTileY;
-    eTileHelper::tileIdToRotatedTileId(tile.x(), tile.y(), viewTileX, viewTileY,
+    TileHelper::tileIdToRotatedTileId(tile.x(), tile.y(), viewTileX, viewTileY,
                                        dir, boardWidth, boardHeight);
     if(dir == eWorldDirection::N) {
         drawX = viewTileX + horseTileX + 0.5;
@@ -79,7 +79,7 @@ int HorseRanchEnclosure::provide(const eProvide p, const int n) {
     return eBuildingWithResource::provide(p, n);
 }
 
-std::shared_ptr<eTexture> HorseRanchEnclosure::getTexture(
+std::shared_ptr<Texture> HorseRanchEnclosure::getTexture(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     auto& blds = GameTextures::buildings();
@@ -160,14 +160,14 @@ void HorseRanchEnclosure::setRanch(eHorseRanch* const ranch) {
     mRanch = ranch;
 }
 
-void HorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
+void HorseRanchEnclosure::serializeFields(SaveArchive& ar) {
     eBuildingWithResource::serializeFields(ar);
     if(ar.reading()) {
         const stdptr<HorseRanchEnclosure> tptr(this);
         auto horses = std::make_shared<std::vector<std::shared_ptr<Horse*>>>();
         mHorses.clear();
         ar.countedArrayField("horses", 0,
-            [this, horses](eSaveArchive& itemAr, const int i) {
+            [this, horses](SaveArchive& itemAr, const int i) {
                 if(i >= static_cast<int>(horses->size())) horses->resize(i + 1);
                 if(!(*horses)[i]) (*horses)[i] = std::make_shared<Horse*>(nullptr);
                 itemAr.characterField("horse", &getBoard(), *(*horses)[i]);
@@ -183,7 +183,7 @@ void HorseRanchEnclosure::serializeFields(eSaveArchive& ar) {
     } else {
         const int nh = static_cast<int>(mHorses.size());
         ar.countedArrayField("horses", nh,
-            [this](eSaveArchive& itemAr, const int i) {
+            [this](SaveArchive& itemAr, const int i) {
                 Horse* raw = mHorses[i].get();
                 itemAr.characterField("horse", &getBoard(), raw);
             });

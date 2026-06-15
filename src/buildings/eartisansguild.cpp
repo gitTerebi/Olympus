@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 #include "characters/actions/eartisanaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eArtisansGuild::eArtisansGuild(GameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::artisansGuild, 2, 2, 25, cid) {
@@ -13,20 +13,20 @@ eArtisansGuild::~eArtisansGuild() {
     if(mArtisan) mArtisan->kill();
 }
 
-std::shared_ptr<eTexture> eArtisansGuild::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eArtisansGuild::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
     return texs.fArtisansGuild;
 }
 
-std::vector<eOverlay> eArtisansGuild::
+std::vector<Overlay> eArtisansGuild::
     getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = GameTextures::buildings()[sizeId];
 
     const auto& coll = texs.fArtisansGuildOverlay;
     const int texId = textureTime() % coll.size();
-    eOverlay o;
+    Overlay o;
     o.fTex = coll.getTexture(texId);
     o.fX = -1.45;
     o.fY = -3.0;
@@ -58,7 +58,7 @@ bool eArtisansGuild::spawnArtisan(const eArtisanPtr artisan) {
     return true;
 }
 
-void eArtisansGuild::serializeFields(eSaveArchive& ar) {
+void eArtisansGuild::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("spawnTime", mSpawnTime);
     ar.characterField("artisan", &getBoard(), mArtisan);

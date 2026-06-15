@@ -7,7 +7,7 @@
 #include "characters/egrower.h"
 
 class eCartTransporter;
-class eSaveArchive;
+class SaveArchive;
 
 class eGrowersLodge : public eEmployingBuilding {
 public:
@@ -16,8 +16,8 @@ public:
     ~eGrowersLodge();
     void erase() override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     bool spawnsCartWalkers() const override { return true; }
 
@@ -52,7 +52,7 @@ public:
 
     static constexpr int sUnitsPerLoad = 100;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void killWalkers();
     int readyOliveCount() const;

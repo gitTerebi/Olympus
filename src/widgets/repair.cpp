@@ -4,17 +4,17 @@
 
 #include "buildings/allbuildings.h"
 #include "buildings/eruins.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 #include "audio/sounds.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "ebuildingstoerase.h"
 #include "engine/difficulty.h"
 
 #include "fileIO/building-reader.h"
-#include "fileIO/ereadstream.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/read-stream.h"
+#include "fileIO/save-archive.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -201,7 +201,7 @@ struct sRepairByteVecRef
     std::vector<uint8_t> &fVec;
 };
 
-static eWriteStream &operator<<(eWriteStream &dst,
+static WriteStream &operator<<(WriteStream &dst,
                                 const sRepairByteVecRef &ref)
 {
     const int32_t sz = static_cast<int32_t>(ref.fVec.size());
@@ -211,7 +211,7 @@ static eWriteStream &operator<<(eWriteStream &dst,
     return dst;
 }
 
-static eReadStream &operator>>(eReadStream &src, sRepairByteVecRef &ref)
+static ReadStream &operator>>(ReadStream &src, sRepairByteVecRef &ref)
 {
     int32_t sz;
     src.read(&sz, sizeof(sz));
@@ -226,7 +226,7 @@ static eReadStream &operator>>(eReadStream &src, sRepairByteVecRef &ref)
     return src;
 }
 
-static bool byteVecField(eSaveArchive &ar, const char *const name,
+static bool byteVecField(SaveArchive &ar, const char *const name,
                          std::vector<uint8_t> &v)
 {
     sRepairByteVecRef ref{v};
@@ -240,8 +240,8 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
     if (data.empty())
         return buildings;
 
-    eReadSource source(const_cast<void *>(static_cast<const void *>(data.data())), data.size());
-    eReadStream src(source);
+    ReadSource source(const_cast<void *>(static_cast<const void *>(data.data())), data.size());
+    ReadStream src(source);
     src.readFormat();
     std::vector<std::pair<eBuilding *, int>> oldBuildingIds;
     for (const auto b : board.buildings())
@@ -260,7 +260,7 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
         c->setIOID(-1);
     }
     {
-        eSaveArchive ar(src);
+        SaveArchive ar(src);
         int marker;
         ar.field("bundleMarker", marker);
         if (marker == -1)
@@ -276,14 +276,14 @@ static std::vector<stdsptr<eBuilding>> restoreFromBundle(
                 {
                     continue;
                 }
-                eReadSource bs(const_cast<void *>(
+                ReadSource bs(const_cast<void *>(
                     static_cast<const void *>(snapshot.data())), snapshot.size());
-                eReadStream bsrc(bs);
+                ReadStream bsrc(bs);
                 bsrc.readFormat();
                 eBuildingType type;
                 stdsptr<eBuilding> b;
                 {
-                    eSaveArchive bar(bsrc);
+                    SaveArchive bar(bsrc);
                     bar.field("buildingType", type);
                     b = BuildingArchive::load(board, type, bar);
                 }

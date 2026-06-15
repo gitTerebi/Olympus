@@ -1,13 +1,13 @@
-#include "esettings.h"
+#include "settings.h"
 
 #include <fstream>
 #include <iostream>
 #include <algorithm>
 
-#include "egamedir.h"
-#include "eloadtexthelper.h"
+#include "game-dir.h"
+#include "load-text-helper.h"
 
-std::vector<eTileSize> eSettings::availableSizes() const {
+std::vector<eTileSize> Settings::availableSizes() const {
     std::vector<eTileSize> sizes;
     if(fTinyTextures) {
         sizes.push_back(eTileSize::s15);
@@ -24,115 +24,115 @@ std::vector<eTileSize> eSettings::availableSizes() const {
     return sizes;
 }
 
-int eSettings::clampKeyScrollSpeed(const int speed) {
+int Settings::clampKeyScrollSpeed(const int speed) {
     return std::clamp(speed, sMinKeyScrollSpeed, sMaxKeyScrollSpeed);
 }
 
-int eSettings::clampVolume(const int volume) {
+int Settings::clampVolume(const int volume) {
     return std::clamp(volume, sMinVolume, sMaxVolume);
 }
 
-int eSettings::clampGameSpeed(const int speed) {
+int Settings::clampGameSpeed(const int speed) {
     const int clamped = std::clamp(speed, sMinGameSpeed, sMaxGameSpeed);
     const int mid = (sMinGameSpeed + sMaxGameSpeed)/2;
     return clamped < mid ? sMinGameSpeed : sMaxGameSpeed;
 }
 
-SDL_Scancode eSettings::hotkey(const eHotkeyId id) const {
+SDL_Scancode Settings::hotkey(const HotkeyId id) const {
     switch(id) {
-    case eHotkeyId::gameMenu: return fHotkeyGameMenu;
-    case eHotkeyId::speedUp: return fHotkeySpeedUp;
-    case eHotkeyId::speedDown: return fHotkeySpeedDown;
-    case eHotkeyId::pause: return fHotkeyPause;
-    case eHotkeyId::rotatePreview: return fHotkeyRotatePreview;
-    case eHotkeyId::copyBuilding: return fHotkeyCopyBuilding;
-    case eHotkeyId::deleteTool: return fHotkeyDeleteTool;
-    case eHotkeyId::repairTool: return fHotkeyRepairTool;
-    case eHotkeyId::undo: return fHotkeyUndo;
-    case eHotkeyId::showRoadsOverlay: return fHotkeyShowRoadsOverlay;
-    case eHotkeyId::buildRoad: return fHotkeyBuildRoad;
-    case eHotkeyId::buildRoadblock: return fHotkeyBuildRoadblock;
-    case eHotkeyId::buildMaintenanceOffice: return fHotkeyBuildMaintenanceOffice;
-    case eHotkeyId::buildCommonHousing: return fHotkeyBuildCommonHousing;
-    case eHotkeyId::buildWatchpost: return fHotkeyBuildWatchpost;
-    case eHotkeyId::buildStamp: return fHotkeyBuildStamp;
-    case eHotkeyId::stampManager: return fHotkeyStampManager;
-    case eHotkeyId::scrollLeft: return fHotkeyScrollLeft;
-    case eHotkeyId::scrollRight: return fHotkeyScrollRight;
-    case eHotkeyId::scrollUp: return fHotkeyScrollUp;
-    case eHotkeyId::scrollDown: return fHotkeyScrollDown;
-    case eHotkeyId::bookmark1: return fHotkeyBookmark1;
-    case eHotkeyId::bookmark2: return fHotkeyBookmark2;
-    case eHotkeyId::bookmark3: return fHotkeyBookmark3;
-    case eHotkeyId::bookmark4: return fHotkeyBookmark4;
-    case eHotkeyId::menuTab1: return fHotkeyMenuTab1;
-    case eHotkeyId::menuTab2: return fHotkeyMenuTab2;
-    case eHotkeyId::menuTab3: return fHotkeyMenuTab3;
-    case eHotkeyId::menuTab4: return fHotkeyMenuTab4;
-    case eHotkeyId::menuTab5: return fHotkeyMenuTab5;
-    case eHotkeyId::menuTab6: return fHotkeyMenuTab6;
-    case eHotkeyId::menuTab7: return fHotkeyMenuTab7;
-    case eHotkeyId::menuTab8: return fHotkeyMenuTab8;
-    case eHotkeyId::menuTab9: return fHotkeyMenuTab9;
-    case eHotkeyId::menuTab10: return fHotkeyMenuTab10;
-    case eHotkeyId::menuTab11: return fHotkeyMenuTab11;
+    case HotkeyId::gameMenu: return fHotkeyGameMenu;
+    case HotkeyId::speedUp: return fHotkeySpeedUp;
+    case HotkeyId::speedDown: return fHotkeySpeedDown;
+    case HotkeyId::pause: return fHotkeyPause;
+    case HotkeyId::rotatePreview: return fHotkeyRotatePreview;
+    case HotkeyId::copyBuilding: return fHotkeyCopyBuilding;
+    case HotkeyId::deleteTool: return fHotkeyDeleteTool;
+    case HotkeyId::repairTool: return fHotkeyRepairTool;
+    case HotkeyId::undo: return fHotkeyUndo;
+    case HotkeyId::showRoadsOverlay: return fHotkeyShowRoadsOverlay;
+    case HotkeyId::buildRoad: return fHotkeyBuildRoad;
+    case HotkeyId::buildRoadblock: return fHotkeyBuildRoadblock;
+    case HotkeyId::buildMaintenanceOffice: return fHotkeyBuildMaintenanceOffice;
+    case HotkeyId::buildCommonHousing: return fHotkeyBuildCommonHousing;
+    case HotkeyId::buildWatchpost: return fHotkeyBuildWatchpost;
+    case HotkeyId::buildStamp: return fHotkeyBuildStamp;
+    case HotkeyId::stampManager: return fHotkeyStampManager;
+    case HotkeyId::scrollLeft: return fHotkeyScrollLeft;
+    case HotkeyId::scrollRight: return fHotkeyScrollRight;
+    case HotkeyId::scrollUp: return fHotkeyScrollUp;
+    case HotkeyId::scrollDown: return fHotkeyScrollDown;
+    case HotkeyId::bookmark1: return fHotkeyBookmark1;
+    case HotkeyId::bookmark2: return fHotkeyBookmark2;
+    case HotkeyId::bookmark3: return fHotkeyBookmark3;
+    case HotkeyId::bookmark4: return fHotkeyBookmark4;
+    case HotkeyId::menuTab1: return fHotkeyMenuTab1;
+    case HotkeyId::menuTab2: return fHotkeyMenuTab2;
+    case HotkeyId::menuTab3: return fHotkeyMenuTab3;
+    case HotkeyId::menuTab4: return fHotkeyMenuTab4;
+    case HotkeyId::menuTab5: return fHotkeyMenuTab5;
+    case HotkeyId::menuTab6: return fHotkeyMenuTab6;
+    case HotkeyId::menuTab7: return fHotkeyMenuTab7;
+    case HotkeyId::menuTab8: return fHotkeyMenuTab8;
+    case HotkeyId::menuTab9: return fHotkeyMenuTab9;
+    case HotkeyId::menuTab10: return fHotkeyMenuTab10;
+    case HotkeyId::menuTab11: return fHotkeyMenuTab11;
     }
     return SDL_SCANCODE_UNKNOWN;
 }
 
-eHotkeyId eSettings::hotkeyIdForScancode(const SDL_Scancode scancode) const {
-    if(scancode == SDL_SCANCODE_UNKNOWN) return eHotkeyId::gameMenu; // invalid
-    for(int i = static_cast<int>(eHotkeyId::gameMenu);
-        i <= static_cast<int>(eHotkeyId::menuTab11); i++) {
-        const auto id = static_cast<eHotkeyId>(i);
+HotkeyId Settings::hotkeyIdForScancode(const SDL_Scancode scancode) const {
+    if(scancode == SDL_SCANCODE_UNKNOWN) return HotkeyId::gameMenu; // invalid
+    for(int i = static_cast<int>(HotkeyId::gameMenu);
+        i <= static_cast<int>(HotkeyId::menuTab11); i++) {
+        const auto id = static_cast<HotkeyId>(i);
         if(hotkey(id) == scancode) return id;
     }
-    return eHotkeyId::gameMenu; // not found, return invalid
+    return HotkeyId::gameMenu; // not found, return invalid
 }
 
-void eSettings::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
+void Settings::setHotkey(const HotkeyId id, const SDL_Scancode key) {
     switch(id) {
-    case eHotkeyId::gameMenu: fHotkeyGameMenu = key; break;
-    case eHotkeyId::speedUp: fHotkeySpeedUp = key; break;
-    case eHotkeyId::speedDown: fHotkeySpeedDown = key; break;
-    case eHotkeyId::pause: fHotkeyPause = key; break;
-    case eHotkeyId::rotatePreview: fHotkeyRotatePreview = key; break;
-    case eHotkeyId::copyBuilding: fHotkeyCopyBuilding = key; break;
-    case eHotkeyId::deleteTool: fHotkeyDeleteTool = key; break;
-    case eHotkeyId::repairTool: fHotkeyRepairTool = key; break;
-    case eHotkeyId::undo: fHotkeyUndo = key; break;
-    case eHotkeyId::showRoadsOverlay: fHotkeyShowRoadsOverlay = key; break;
-    case eHotkeyId::buildRoad: fHotkeyBuildRoad = key; break;
-    case eHotkeyId::buildRoadblock: fHotkeyBuildRoadblock = key; break;
-    case eHotkeyId::buildMaintenanceOffice: fHotkeyBuildMaintenanceOffice = key; break;
-    case eHotkeyId::buildCommonHousing: fHotkeyBuildCommonHousing = key; break;
-    case eHotkeyId::buildWatchpost: fHotkeyBuildWatchpost = key; break;
-    case eHotkeyId::buildStamp: fHotkeyBuildStamp = key; break;
-    case eHotkeyId::stampManager: fHotkeyStampManager = key; break;
-    case eHotkeyId::scrollLeft: fHotkeyScrollLeft = key; break;
-    case eHotkeyId::scrollRight: fHotkeyScrollRight = key; break;
-    case eHotkeyId::scrollUp: fHotkeyScrollUp = key; break;
-    case eHotkeyId::scrollDown: fHotkeyScrollDown = key; break;
-    case eHotkeyId::bookmark1: fHotkeyBookmark1 = key; break;
-    case eHotkeyId::bookmark2: fHotkeyBookmark2 = key; break;
-    case eHotkeyId::bookmark3: fHotkeyBookmark3 = key; break;
-    case eHotkeyId::bookmark4: fHotkeyBookmark4 = key; break;
-    case eHotkeyId::menuTab1: fHotkeyMenuTab1 = key; break;
-    case eHotkeyId::menuTab2: fHotkeyMenuTab2 = key; break;
-    case eHotkeyId::menuTab3: fHotkeyMenuTab3 = key; break;
-    case eHotkeyId::menuTab4: fHotkeyMenuTab4 = key; break;
-    case eHotkeyId::menuTab5: fHotkeyMenuTab5 = key; break;
-    case eHotkeyId::menuTab6: fHotkeyMenuTab6 = key; break;
-    case eHotkeyId::menuTab7: fHotkeyMenuTab7 = key; break;
-    case eHotkeyId::menuTab8: fHotkeyMenuTab8 = key; break;
-    case eHotkeyId::menuTab9: fHotkeyMenuTab9 = key; break;
-    case eHotkeyId::menuTab10: fHotkeyMenuTab10 = key; break;
-    case eHotkeyId::menuTab11: fHotkeyMenuTab11 = key; break;
+    case HotkeyId::gameMenu: fHotkeyGameMenu = key; break;
+    case HotkeyId::speedUp: fHotkeySpeedUp = key; break;
+    case HotkeyId::speedDown: fHotkeySpeedDown = key; break;
+    case HotkeyId::pause: fHotkeyPause = key; break;
+    case HotkeyId::rotatePreview: fHotkeyRotatePreview = key; break;
+    case HotkeyId::copyBuilding: fHotkeyCopyBuilding = key; break;
+    case HotkeyId::deleteTool: fHotkeyDeleteTool = key; break;
+    case HotkeyId::repairTool: fHotkeyRepairTool = key; break;
+    case HotkeyId::undo: fHotkeyUndo = key; break;
+    case HotkeyId::showRoadsOverlay: fHotkeyShowRoadsOverlay = key; break;
+    case HotkeyId::buildRoad: fHotkeyBuildRoad = key; break;
+    case HotkeyId::buildRoadblock: fHotkeyBuildRoadblock = key; break;
+    case HotkeyId::buildMaintenanceOffice: fHotkeyBuildMaintenanceOffice = key; break;
+    case HotkeyId::buildCommonHousing: fHotkeyBuildCommonHousing = key; break;
+    case HotkeyId::buildWatchpost: fHotkeyBuildWatchpost = key; break;
+    case HotkeyId::buildStamp: fHotkeyBuildStamp = key; break;
+    case HotkeyId::stampManager: fHotkeyStampManager = key; break;
+    case HotkeyId::scrollLeft: fHotkeyScrollLeft = key; break;
+    case HotkeyId::scrollRight: fHotkeyScrollRight = key; break;
+    case HotkeyId::scrollUp: fHotkeyScrollUp = key; break;
+    case HotkeyId::scrollDown: fHotkeyScrollDown = key; break;
+    case HotkeyId::bookmark1: fHotkeyBookmark1 = key; break;
+    case HotkeyId::bookmark2: fHotkeyBookmark2 = key; break;
+    case HotkeyId::bookmark3: fHotkeyBookmark3 = key; break;
+    case HotkeyId::bookmark4: fHotkeyBookmark4 = key; break;
+    case HotkeyId::menuTab1: fHotkeyMenuTab1 = key; break;
+    case HotkeyId::menuTab2: fHotkeyMenuTab2 = key; break;
+    case HotkeyId::menuTab3: fHotkeyMenuTab3 = key; break;
+    case HotkeyId::menuTab4: fHotkeyMenuTab4 = key; break;
+    case HotkeyId::menuTab5: fHotkeyMenuTab5 = key; break;
+    case HotkeyId::menuTab6: fHotkeyMenuTab6 = key; break;
+    case HotkeyId::menuTab7: fHotkeyMenuTab7 = key; break;
+    case HotkeyId::menuTab8: fHotkeyMenuTab8 = key; break;
+    case HotkeyId::menuTab9: fHotkeyMenuTab9 = key; break;
+    case HotkeyId::menuTab10: fHotkeyMenuTab10 = key; break;
+    case HotkeyId::menuTab11: fHotkeyMenuTab11 = key; break;
     }
 }
 
-void eSettings::write() const {
-    const auto path = eGameDir::settingsPath();
+void Settings::write() const {
+    const auto path = GameDir::settingsPath();
     std::ofstream file;
     file.open(path);
     file << "tiny_textures" << " " <<
@@ -169,6 +169,8 @@ void eSettings::write() const {
             std::to_string(fKeyScrollSpeed) << "\"" << "\n";
     file << "game_speed" << " " << "\"" <<
             std::to_string(fGameSpeed) << "\"" << "\n";
+    file << "ui_scale" << " " << "\"" <<
+            std::to_string(static_cast<int>(fUiScale)) << "\"" << "\n";
     file << "interpolation" << " " << "\"" <<
             std::to_string(static_cast<int>(fInterpolation)) << "\"" << "\n";
     file << "upscale" << " " << "\"" <<
@@ -264,10 +266,10 @@ void eSettings::write() const {
     file.close();
 }
 
-void eSettings::read() {
-    const auto path = eGameDir::settingsPath();
+void Settings::read() {
+    const auto path = GameDir::settingsPath();
     std::map<std::string, std::string> settings;
-    const bool r = eLoadTextHelper::load(path, settings);
+    const bool r = LoadTextHelper::load(path, settings);
     if(!r) return;
     fTinyTextures = settings["tiny_textures"] == "true";
     fSmallTextures = settings["small_textures"] == "true";
@@ -276,11 +278,11 @@ void eSettings::read() {
     const auto displayModeStr = settings["display_mode"];
     if(!displayModeStr.empty()) {
         const int v = std::stoi(displayModeStr);
-        if(v >= 0 && v < static_cast<int>(eDisplayMode::count)) {
-            fDisplayMode = static_cast<eDisplayMode>(v);
+        if(v >= 0 && v < static_cast<int>(DisplayMode::count)) {
+            fDisplayMode = static_cast<DisplayMode>(v);
         }
     } else if(settings["fullscreen"] == "true") {
-        fDisplayMode = eDisplayMode::fullscreen;
+        fDisplayMode = DisplayMode::fullscreen;
     }
     fWarehouseDefaultAcceptNone = settings["warehouse_default_accept_none"] == "true";
     fDoubleCartCapacity = settings["double_cart_capacity"] == "true";
@@ -310,18 +312,26 @@ void eSettings::read() {
     if(!gameSpeedStr.empty()) {
         fGameSpeed = clampGameSpeed(std::stoi(gameSpeedStr));
     }
+    const auto uiScaleStr = settings["ui_scale"];
+    if(!uiScaleStr.empty()) {
+        const int v = std::stoi(uiScaleStr);
+        if(v >= static_cast<int>(eUIScale::tiny) &&
+           v <= static_cast<int>(eUIScale::large)) {
+            fUiScale = static_cast<eUIScale>(v);
+        }
+    }
     const auto interpolationStr = settings["interpolation"];
     if(!interpolationStr.empty()) {
         const int v = std::stoi(interpolationStr);
-        if(v >= 0 && v < static_cast<int>(eInterpolation::count)) {
-            fInterpolation = static_cast<eInterpolation>(v);
+        if(v >= 0 && v < static_cast<int>(Interpolation::count)) {
+            fInterpolation = static_cast<Interpolation>(v);
         }
     }
     const auto upscaleStr = settings["upscale"];
     if(!upscaleStr.empty()) {
         const int v = std::stoi(upscaleStr);
-        if(v >= 0 && v < static_cast<int>(eUpscale::count)) {
-            fUpscale = static_cast<eUpscale>(v);
+        if(v >= 0 && v < static_cast<int>(Upscale::count)) {
+            fUpscale = static_cast<Upscale>(v);
         }
     }
     const auto upscaleFactorStr = settings["upscale_factor"];
@@ -412,5 +422,9 @@ void eSettings::read() {
         const int height = std::stoi(heightStr);
         fRes = eResolution(width, height);
     }
+    if(uiScaleStr.empty()) {
+        fUiScale = fRes.uiScale();
+    } else {
+        fRes = eResolution(fRes.width(), fRes.height(), fUiScale);
+    }
 }
-

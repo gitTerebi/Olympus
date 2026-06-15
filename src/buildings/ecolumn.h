@@ -7,7 +7,7 @@ class eColumn : public eAestheticsBuilding {
 public:
     using eAestheticsBuilding::eAestheticsBuilding;
 
-    std::vector<eOverlay> getOverlays(const eTileSize size) const;
+    std::vector<Overlay> getOverlays(const eTileSize size) const;
 };
 
 class eDoricColumn : public eColumn {

@@ -7,15 +7,15 @@
 
 #include "eorientation.h"
 
-#include "fileIO/estreams.h"
+#include "fileIO/streams.h"
 
 #include "engine/ecityid.h"
 
 class eCharacterBase;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eBuildingType;
-enum class eBannerTypeS;
+enum class BannerTypeS;
 
 class eTileBase {
 public:
@@ -155,7 +155,7 @@ public:
     eCityId cityId() const { return mCityId; }
     void setCityId(const eCityId id) { mCityId = id; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
 
     unsigned char mSeed;

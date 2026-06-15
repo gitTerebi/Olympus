@@ -1,11 +1,11 @@
 ﻿#include "ecattle.h"
 
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "engine/game-board.h"
 #include "textures/game-textures.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "actions/animal-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 int eCattle::sId = 0;
 
@@ -14,7 +14,7 @@ eCattle::eCattle(GameBoard& board, const eCharacterType type) :
     GameTextures::loadCattle();
 }
 
-std::shared_ptr<eTexture> eCattle::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eCattle::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& texs = GameTextures::characters();
     using eCTexs = CattleTextures CharacterTextures::*;
@@ -29,7 +29,7 @@ std::shared_ptr<eTexture> eCattle::getTexture(const eTileSize size) const {
     } else {
         GameTextures::loadBull();
         const auto& charTexs = texs[id].fBull;
-        const eTextureCollection* coll = nullptr;
+        const TextureCollection* coll = nullptr;
         const int oid = static_cast<int>(rotatedOrientation());
         bool wrap = true;
         const auto a = actionType();
@@ -58,7 +58,7 @@ std::shared_ptr<eTexture> eCattle::getTexture(const eTileSize size) const {
         return eCharacter::getTexture(coll, wrap, false);
     }
     const auto& charTexs = texs[id].*cTexs;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
     bool wrap = true;
     const auto a = actionType();
@@ -87,14 +87,14 @@ std::shared_ptr<eTexture> eCattle::getTexture(const eTileSize size) const {
 void eCattle::incTime(const int by) {
     eCharacter::incTime(by);
     mMatureWait += by;
-    const int matureWait = eNumbers::sCattleMaturePeriod;
+    const int matureWait = Numbers::sCattleMaturePeriod;
     if(mMatureWait > matureWait) {
         mMatureWait = 0;
         mature();
     }
 }
 
-void eCattle::serializeFields(eSaveArchive& ar) {
+void eCattle::serializeFields(SaveArchive& ar) {
     eCharacter::serializeFields(ar);
     ar.field("mId", mId);
     ar.field("mMatureWait", mMatureWait);
@@ -112,7 +112,7 @@ bool eCattle::shouldBecomeBull() const {
     int nCattle = 0;
     bool hasBull = false;
     for(int k = 0; k < 10; k++) {
-        eIterateSquare::iterateSquare(k, [&](const int dx, const int dy) {
+        IterateSquare::iterateSquare(k, [&](const int dx, const int dy) {
             const auto tt = t->tileRel<eTile>(dx, dy);
             if(tt) {
                 for(const auto c : getBoard().characters()) {

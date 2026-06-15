@@ -4,7 +4,7 @@
 #include "eresourcecollectbuildingbase.h"
 
 class eFishingBoat;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eFisheryState {
     none,
@@ -22,8 +22,8 @@ public:
 
     void timeChanged(const int by) override;
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void addRaw() override;
 
@@ -33,7 +33,7 @@ public:
 
     eFisheryState state() const { return mState; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void spawnBoat();
     void updateDisabled();

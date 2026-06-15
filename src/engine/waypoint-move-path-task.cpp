@@ -33,7 +33,7 @@ eWaypointMovePathTask::eWaypointMovePathTask(ePatrolBuildingBase * const b,
 }
 
 void eWaypointMovePathTask::run(eThreadBoard &data) {
-    const int maxDistance = eNumbers::sPatrolerMaxDistance;
+    const int maxDistance = Numbers::sPatrolerMaxDistance;
 
     for(int j = 0; j < (mBothDirections ? 2 : 1); j++) {
         int distance = 0;
@@ -81,7 +81,7 @@ bool eWaypointMovePathTask::runImpl(eThreadBoard& data,
     const bool r = pf0.findPath(mTileBRect,
                                 startT, 2*maxDistance,
                                 onlyDiagonal, data.width(), data.height(),
-                                eWalkableHelpers::sRoadAvenueTileDistance);
+                                WalkableHelpers::sRoadAvenueTileDistance);
     if(r) {
         ePath tpath;
         const bool r = pf0.extractPath(tpath);

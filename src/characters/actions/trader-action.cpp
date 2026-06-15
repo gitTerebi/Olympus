@@ -2,7 +2,7 @@
 
 #include "emovetoaction.h"
 #include "ewaitaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "buildings/epier.h"
 
 #include <vector>
@@ -27,7 +27,7 @@ bool TraderAction::decide() {
     return true;
 }
 
-void TraderAction::serializeFields(eSaveArchive& ar) {
+void TraderAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.walkableField("walkable", mWalkable);
     ar.field("cash", mCash);
@@ -49,7 +49,7 @@ void TraderAction::serializeFields(eSaveArchive& ar) {
                 entries.push_back({v.first, v.second});
             }
         }
-        ar.arrayField(name, entries, [](eSaveArchive& itemAr,
+        ar.arrayField(name, entries, [](SaveArchive& itemAr,
                                         TradeEntry& entry) {
             itemAr.field("resource", entry.resource);
             itemAr.field("count", entry.count, 0);

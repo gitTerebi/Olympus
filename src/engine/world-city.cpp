@@ -1,13 +1,13 @@
 #include "world-city.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "egifthelpers.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "engine/game-board.h"
 #include "engine/difficulty.h"
 #include "gameEvents/invasions/invasion-event.h"
-#include "fileIO/esavearchive.h"
-#include "erand.h"
+#include "fileIO/save-archive.h"
+#include "rand.h"
 
 #include <iterator>
 
@@ -41,7 +41,7 @@ std::string WorldCity::sTypeName(const eCityType type)
         string = 6;
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 bool WorldCity::isDistant() const
@@ -141,7 +141,7 @@ std::string WorldCity::sRelationshipName(const eForeignCityRelationship r)
         string = 1;
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 eForeignCityRelationship WorldCity::relationshipToPlayer(
@@ -171,7 +171,7 @@ std::string WorldCity::sStateName(const eCityState s)
         string = 249;
         break;
     }
-    return eLanguage::zeusText(44, string);
+    return Language::zeusText(44, string);
 }
 
 std::string WorldCity::sAttitudeName(const eCityAttitude at)
@@ -247,7 +247,7 @@ std::string WorldCity::sAttitudeName(const eCityAttitude at)
         string = 19;
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 eCityAttitude WorldCity::attitudeClass(const ePlayerId pid) const
@@ -322,7 +322,7 @@ std::vector<std::string> WorldCity::sNames()
     std::vector<std::string> cityNames;
     for (int i = 0; i < 82; i++)
     {
-        cityNames.push_back(eLanguage::zeusText(21, i));
+        cityNames.push_back(Language::zeusText(21, i));
     }
     return cityNames;
 }
@@ -331,7 +331,7 @@ void WorldCity::setName(const std::string &name)
 {
     mName = name;
     const auto names = sNames();
-    mNameString = eVectorHelpers::index(names, name);
+    mNameString = VectorHelpers::index(names, name);
 }
 
 std::string WorldCity::nameWithId() const
@@ -347,7 +347,7 @@ std::vector<std::string> WorldCity::sLeaders()
     std::vector<std::string> leaders;
     for (int i = 0; i < 84; i++)
     {
-        leaders.push_back(eLanguage::zeusText(139, i));
+        leaders.push_back(Language::zeusText(139, i));
     }
     return leaders;
 }
@@ -356,7 +356,7 @@ void WorldCity::setLeader(const std::string &name)
 {
     mLeader = name;
     const auto names = sLeaders();
-    mLeaderString = eVectorHelpers::index(names, name);
+    mLeaderString = VectorHelpers::index(names, name);
 }
 
 std::string WorldCity::sNationalityName(const eNationality type)
@@ -399,7 +399,7 @@ std::string WorldCity::sNationalityName(const eNationality type)
     default:
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 std::string WorldCity::anArmy() const
@@ -442,7 +442,7 @@ std::string WorldCity::anArmy() const
     default:
         break;
     }
-    return eLanguage::zeusText(group, 22 + string);
+    return Language::zeusText(group, 22 + string);
 }
 
 void WorldCity::nextMonth(GameBoard *const board)
@@ -677,7 +677,7 @@ void WorldCity::addSells(const eResourceTrade &s)
     mSells.push_back(s);
 }
 
-void serializeResourceTrades(eSaveArchive &ar,
+void serializeResourceTrades(SaveArchive &ar,
                              const char *const name,
                              std::vector<eResourceTrade> &trades)
 {
@@ -689,13 +689,13 @@ void serializeResourceTrades(eSaveArchive &ar,
     }
     for (int i = 0; i < tradeCount; i++) {
         ar.archiveField((std::string(name) + "." + std::to_string(i)).c_str(),
-            [&](eSaveArchive& itemAr) {
+            [&](SaveArchive& itemAr) {
                 trades[i].serialize(itemAr);
             });
     }
 }
 
-void WorldCity::serialize(eSaveArchive &ar, WorldBoard *board)
+void WorldCity::serialize(SaveArchive &ar, WorldBoard *board)
 {
     ar.field("ioId", mIOID);
     ar.field("cityId", mCityId);
@@ -730,7 +730,7 @@ void WorldCity::serialize(eSaveArchive &ar, WorldBoard *board)
             for (int i = 0; i < n; i++) {
                 eResourceType type; int count;
                 ar.archiveField(("received." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("type", type);
                         it.field("count", count);
                     });
@@ -741,7 +741,7 @@ void WorldCity::serialize(eSaveArchive &ar, WorldBoard *board)
             for (auto& kv : mReceived) {
                 eResourceType type = kv.first; int count = kv.second;
                 ar.archiveField(("received." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("type", type);
                         it.field("count", count);
                     });
@@ -758,7 +758,7 @@ void WorldCity::serialize(eSaveArchive &ar, WorldBoard *board)
             for (int i = 0; i < n; i++) {
                 ePlayerId pid; double att;
                 ar.archiveField(("attitude." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("playerId", pid);
                         it.field("attitude", att);
                     });
@@ -769,7 +769,7 @@ void WorldCity::serialize(eSaveArchive &ar, WorldBoard *board)
             for (auto& kv : mAtt) {
                 ePlayerId pid = kv.first; double att = kv.second;
                 ar.archiveField(("attitude." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("playerId", pid);
                         it.field("attitude", att);
                     });
@@ -792,7 +792,7 @@ void WorldCity::serialize(eSaveArchive &ar, WorldBoard *board)
             for (int i = 0; i < n; i++) {
                 eCityId cid;
                 ar.archiveField(("waterTrade." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) { it.field("cityId", cid); });
+                    [&](SaveArchive& it) { it.field("cityId", cid); });
                 mWaterTrade.insert(cid);
             }
         } else {
@@ -800,7 +800,7 @@ void WorldCity::serialize(eSaveArchive &ar, WorldBoard *board)
             for (auto cid : mWaterTrade) {
                 eCityId v = cid;
                 ar.archiveField(("waterTrade." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) { it.field("cityId", v); });
+                    [&](SaveArchive& it) { it.field("cityId", v); });
             }
         }
     }
@@ -817,10 +817,10 @@ void WorldCity::serialize(eSaveArchive &ar, WorldBoard *board)
 
     if (ar.reading()) {
         if (mNameString > -1 && mNameString < 82) {
-            mName = eLanguage::zeusText(21, mNameString);
+            mName = Language::zeusText(21, mNameString);
         }
         if (mLeaderString > -1 && mLeaderString < 84) {
-            mLeader = eLanguage::zeusText(139, mLeaderString);
+            mLeader = Language::zeusText(139, mLeaderString);
         }
     }
 }

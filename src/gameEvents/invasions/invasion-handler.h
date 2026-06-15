@@ -14,12 +14,12 @@ class GameBoard;
 class eInvasionEvent;
 class eTile;
 class eCharacter;
-class eReadStream;
-class eWriteStream;
+class ReadStream;
+class WriteStream;
 class WorldCity;
 class SoldierBanner;
 class PlayerConquestEvent;
-class eSaveArchive;
+class SaveArchive;
 enum class eCityId;
 enum class eNationality;
 
@@ -74,7 +74,7 @@ public:
 
     void incTime(const int by);
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void killAllWithCorpse();
 
@@ -190,7 +190,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);
         ar.invasionHandlerField("invasion", &board(), mInvasion);
     }

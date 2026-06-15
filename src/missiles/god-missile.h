@@ -1,25 +1,25 @@
-#ifndef EGODMISSILE_H
-#define EGODMISSILE_H
+#ifndef GOD_MISSILE_H
+#define GOD_MISSILE_H
 
-#include "emissile.h"
+#include "missile.h"
 
-class eSaveArchive;
+class SaveArchive;
 
-class eGodMissile : public eMissile {
+class GodMissile : public Missile {
 public:
-    eGodMissile(GameBoard& board,
-                const std::vector<ePathPoint>& path = {});
+    GodMissile(GameBoard& board,
+                const std::vector<PathPoint>& path = {});
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
 
     void setTexture(const eCharacterType ct,
                     const eCharacterActionType cat);
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eCharacterType mCharType;
     eCharacterActionType mActionType;
 };
 
-#endif // EGODMISSILE_H
+#endif // GOD_MISSILE_H

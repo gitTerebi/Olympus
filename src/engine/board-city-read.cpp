@@ -8,19 +8,19 @@
 #include "gameEvents/egameevent.h"
 #include "engine/game-board.h"
 #include "buildings/ehippodrome.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "characters/soldier-banner.h"
 
-void BoardCity::serialize(eSaveArchive& ar) {
+void BoardCity::serialize(SaveArchive& ar) {
     ar.field("id", mId);
     ar.field("atlantean", mAtlantean);
 
     ar.archiveField("availableBuildings",
-        [this](eSaveArchive& itemAr) { mAvailableBuildings.serialize(itemAr); });
+        [this](SaveArchive& itemAr) { mAvailableBuildings.serialize(itemAr); });
 
     // mCityEvents/mCityPlan/etc dump fields into parent scope; wrap each in own archive
-    ar.archiveField("cityEvents", [this](eSaveArchive& itemAr) { mCityEvents.serialize(itemAr); });
-    ar.archiveField("cityPlan", [this](eSaveArchive& itemAr) { mCityPlan.serialize(itemAr); });
+    ar.archiveField("cityEvents", [this](SaveArchive& itemAr) { mCityEvents.serialize(itemAr); });
+    ar.archiveField("cityPlan", [this](SaveArchive& itemAr) { mCityPlan.serialize(itemAr); });
     if(ar.reading()) {
         for(int i = 0; i < mCityPlan.districtCount(); i++) {
             const auto& d = mCityPlan.district(i);
@@ -38,17 +38,17 @@ void BoardCity::serialize(eSaveArchive& ar) {
     ar.field("immigrationLimit", mImmigrationLimit);
     ar.field("noFood", mNoFood);
 
-    ar.archiveField("noFoodSince", [this](eSaveArchive& itemAr) { mNoFoodSince.serialize(itemAr); });
-    ar.archiveField("emplDistributor", [this](eSaveArchive& itemAr) { mEmplDistributor.serialize(itemAr); });
+    ar.archiveField("noFoodSince", [this](SaveArchive& itemAr) { mNoFoodSince.serialize(itemAr); });
+    ar.archiveField("emplDistributor", [this](SaveArchive& itemAr) { mEmplDistributor.serialize(itemAr); });
 
     ar.arrayField("shutdownResources", mShutDown,
-        [](eSaveArchive& itemAr, eResourceType& r) { itemAr.field("resource", r); });
+        [](SaveArchive& itemAr, eResourceType& r) { itemAr.field("resource", r); });
 
     ar.arrayField("stockpiledResources", mStockpiled,
-        [](eSaveArchive& itemAr, eResourceType& r) { itemAr.field("resource", r); });
+        [](SaveArchive& itemAr, eResourceType& r) { itemAr.field("resource", r); });
 
     ar.arrayField("noTradingResources", mNoTrading,
-        [](eSaveArchive& itemAr, eResourceType& r) { itemAr.field("resource", r); });
+        [](SaveArchive& itemAr, eResourceType& r) { itemAr.field("resource", r); });
 
     ar.field("manTowers", mManTowers);
     ar.field("shutdownLandTrade", mShutdownLandTrade);
@@ -70,25 +70,25 @@ void BoardCity::serialize(eSaveArchive& ar) {
 
     // invasionHandlers
     if(ar.reading()) {
-        ar.countedArrayField("invasionHandlers", 0, [this](eSaveArchive& itemAr, const int) {
+        ar.countedArrayField("invasionHandlers", 0, [this](SaveArchive& itemAr, const int) {
             const auto handler = new eInvasionHandler(mBoard, mId, nullptr, nullptr);
             handler->serialize(itemAr);
         });
     } else {
         ar.countedArrayField("invasionHandlers",
                              static_cast<int>(mInvasionHandlers.size()),
-                             [this](eSaveArchive& itemAr, const int i) {
+                             [this](SaveArchive& itemAr, const int i) {
             mInvasionHandlers[i]->serialize(itemAr);
         });
     }
 
     ar.arrayField("attackingGods", mAttackingGods,
-        [this](eSaveArchive& itemAr, eCharacter*& c) {
+        [this](SaveArchive& itemAr, eCharacter*& c) {
             itemAr.characterField("character", &mBoard, c);
         });
 
     ar.arrayField("monsters", mMonsters,
-        [this](eSaveArchive& itemAr, eMonster*& m) {
+        [this](SaveArchive& itemAr, eMonster*& m) {
             itemAr.characterField("character", &mBoard, m);
         });
 
@@ -100,13 +100,13 @@ void BoardCity::serialize(eSaveArchive& ar) {
             for(int i = 0; i < plagueCount; i++) {
                 const auto p = std::make_shared<ePlague>(mId, mBoard);
                 ar.archiveField(("plague." + std::to_string(i)).c_str(),
-                    [p](eSaveArchive& itemAr) { p->serialize(itemAr); });
+                    [p](SaveArchive& itemAr) { p->serialize(itemAr); });
                 mPlagues.push_back(p);
             }
         } else {
             for(int i = 0; i < plagueCount; i++) {
                 ar.archiveField(("plague." + std::to_string(i)).c_str(),
-                    [this, i](eSaveArchive& itemAr) { mPlagues[i]->serialize(itemAr); });
+                    [this, i](SaveArchive& itemAr) { mPlagues[i]->serialize(itemAr); });
             }
         }
     }
@@ -130,23 +130,23 @@ void BoardCity::serialize(eSaveArchive& ar) {
             for(int i = 0; i < militaryAidCount; i++) {
                 const auto ma = std::make_shared<eMilitaryAid>();
                 ar.archiveField(("militaryAid." + std::to_string(i)).c_str(),
-                    [this, ma](eSaveArchive& itemAr) { ma->serialize(itemAr, &mBoard); });
+                    [this, ma](SaveArchive& itemAr) { ma->serialize(itemAr, &mBoard); });
                 addMilitaryAid(ma);
             }
         } else {
             int i = 0;
             for(const auto& a : mMilitaryAid) {
                 ar.archiveField(("militaryAid." + std::to_string(i++)).c_str(),
-                    [&a](eSaveArchive& itemAr) { a->serialize(itemAr, nullptr); });
+                    [&a](SaveArchive& itemAr) { a->serialize(itemAr, nullptr); });
             }
         }
     }
 
     ar.arrayField("summonedHeroes", mSummonedHeroes,
-        [](eSaveArchive& itemAr, eHeroType& h) { itemAr.field("heroType", h); });
+        [](SaveArchive& itemAr, eHeroType& h) { itemAr.field("heroType", h); });
 
     ar.field("nextAttackPlanned", mNextAttackPlanned);
-    ar.archiveField("nextAttackDate", [this](eSaveArchive& itemAr) { mNextAttackDate.serialize(itemAr); });
+    ar.archiveField("nextAttackDate", [this](SaveArchive& itemAr) { mNextAttackDate.serialize(itemAr); });
 
     {
         int monsterEventCount = ar.writing() ? static_cast<int>(mMonsterEvents.size()) : 0;
@@ -154,7 +154,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             for(int i = 0; i < monsterEventCount; i++) {
                 ar.archiveField(("monsterEvent." + std::to_string(i)).c_str(),
-                    [this](eSaveArchive& itemAr) {
+                    [this](SaveArchive& itemAr) {
                         eMonsterType type;
                         itemAr.field("monsterType", type);
                         auto& slot = mMonsterEvents[type];
@@ -166,7 +166,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
             int i = 0;
             for(auto& kv : mMonsterEvents) {
                 ar.archiveField(("monsterEvent." + std::to_string(i++)).c_str(),
-                    [&kv, this](eSaveArchive& itemAr) {
+                    [&kv, this](SaveArchive& itemAr) {
                         eMonsterType type = kv.first;
                         itemAr.field("monsterType", type);
                         itemAr.gameEventField("event", &mBoard, kv.second);
@@ -182,7 +182,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             for(int i = 0; i < bannerCount; i++) {
                 ar.archiveField(("soldierBanner." + std::to_string(i)).c_str(),
-                    [this](eSaveArchive& itemAr) {
+                    [this](SaveArchive& itemAr) {
                         eBannerType type;
                         itemAr.field("bannerType", type);
                         const auto b = e::make_shared<SoldierBanner>(type, mBoard);
@@ -194,7 +194,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
             int i = 0;
             for(const auto& s : mSoldierBanners) {
                 ar.archiveField(("soldierBanner." + std::to_string(i++)).c_str(),
-                    [&s](eSaveArchive& itemAr) {
+                    [&s](SaveArchive& itemAr) {
                         eBannerType type = s->type();
                         itemAr.field("bannerType", type);
                         s->serialize(itemAr);
@@ -211,14 +211,14 @@ void BoardCity::serialize(eSaveArchive& ar) {
             for(int i = 0; i < hippodromeCount; i++) {
                 const auto h = std::make_shared<eHippodrome>(mId, mBoard);
                 ar.archiveField(("hippodrome." + std::to_string(i)).c_str(),
-                    [h](eSaveArchive& itemAr) { h->serialize(itemAr); });
+                    [h](SaveArchive& itemAr) { h->serialize(itemAr); });
                 mHippodromes.push_back(h);
             }
         } else {
             int i = 0;
             for(const auto& h : mHippodromes) {
                 ar.archiveField(("hippodrome." + std::to_string(i++)).c_str(),
-                    [&h](eSaveArchive& itemAr) { h->serialize(itemAr); });
+                    [&h](SaveArchive& itemAr) { h->serialize(itemAr); });
             }
         }
     }
@@ -231,13 +231,13 @@ void BoardCity::serialize(eSaveArchive& ar) {
             for(int i = 0; i < reinforcementCount; i++) {
                 auto& r = mReinforcements.emplace_back();
                 ar.archiveField(("reinforcement." + std::to_string(i)).c_str(),
-                    [this, &r](eSaveArchive& itemAr) { r.serialize(itemAr, &mBoard); });
+                    [this, &r](SaveArchive& itemAr) { r.serialize(itemAr, &mBoard); });
             }
         } else {
             int i = 0;
             for(auto& r : mReinforcements) {
                 ar.archiveField(("reinforcement." + std::to_string(i++)).c_str(),
-                    [&r](eSaveArchive& itemAr) { r.serialize(itemAr, nullptr); });
+                    [&r](SaveArchive& itemAr) { r.serialize(itemAr, nullptr); });
             }
         }
     }
@@ -252,7 +252,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
             for(int i = 0; i < exportedCityCount; i++) {
                 eCityId cid;
                 ar.archiveField(("exportedCity." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& cityAr) {
+                    [&](SaveArchive& cityAr) {
                         cityAr.field("cityId", cid);
                         auto& map = mExported[cid];
                         int resourceCount = 0;
@@ -260,7 +260,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
                         for(int j = 0; j < resourceCount; j++) {
                             eResourceType r; int n;
                             cityAr.archiveField(("resource." + std::to_string(j)).c_str(),
-                                [&](eSaveArchive& it) {
+                                [&](SaveArchive& it) {
                                     it.field("resource", r);
                                     it.field("amount", n);
                                 });
@@ -273,7 +273,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
             for(auto& outer : mExported) {
                 eCityId cid = outer.first;
                 ar.archiveField(("exportedCity." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& cityAr) {
+                    [&](SaveArchive& cityAr) {
                         cityAr.field("cityId", cid);
                         int resourceCount = static_cast<int>(outer.second.size());
                         cityAr.field("resources.count", resourceCount);
@@ -282,7 +282,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
                             eResourceType r = inner.first;
                             int n = inner.second;
                             cityAr.archiveField(("resource." + std::to_string(j++)).c_str(),
-                                [&](eSaveArchive& it) {
+                                [&](SaveArchive& it) {
                                     it.field("resource", r);
                                     it.field("amount", n);
                                 });
@@ -300,7 +300,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
             for(int i = 0; i < importedCityCount; i++) {
                 eCityId cid;
                 ar.archiveField(("importedCity." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& cityAr) {
+                    [&](SaveArchive& cityAr) {
                         cityAr.field("cityId", cid);
                         auto& map = mImported[cid];
                         int resourceCount = 0;
@@ -308,7 +308,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
                         for(int j = 0; j < resourceCount; j++) {
                             eResourceType r; int n;
                             cityAr.archiveField(("resource." + std::to_string(j)).c_str(),
-                                [&](eSaveArchive& it) {
+                                [&](SaveArchive& it) {
                                     it.field("resource", r);
                                     it.field("amount", n);
                                 });
@@ -321,7 +321,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
             for(auto& outer : mImported) {
                 eCityId cid = outer.first;
                 ar.archiveField(("importedCity." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& cityAr) {
+                    [&](SaveArchive& cityAr) {
                         cityAr.field("cityId", cid);
                         int resourceCount = static_cast<int>(outer.second.size());
                         cityAr.field("resources.count", resourceCount);
@@ -330,7 +330,7 @@ void BoardCity::serialize(eSaveArchive& ar) {
                             eResourceType r = inner.first;
                             int n = inner.second;
                             cityAr.archiveField(("resource." + std::to_string(j++)).c_str(),
-                                [&](eSaveArchive& it) {
+                                [&](SaveArchive& it) {
                                     it.field("resource", r);
                                     it.field("amount", n);
                                 });

@@ -36,7 +36,7 @@ void eMainMenuBase::updateBackgroundCache(ePainter& p) {
     textureSize(tw, th);
     if(tw <= 0 || th <= 0) return;
 
-    auto cache = std::make_shared<eTexture>();
+    auto cache = std::make_shared<Texture>();
     const auto r = p.renderer();
     if(!cache->create(r, ww, wh)) return;
     SDL_SetTextureBlendMode(cache->tex(), SDL_BLENDMODE_NONE);

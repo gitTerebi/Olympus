@@ -1,7 +1,7 @@
 #include "music-vector.h"
 
 #include "audio-device.h"
-#include "erand.h"
+#include "rand.h"
 
 Mix_Music* loadMusic(const std::string& path) {
     if(!ensureAudioDeviceOpen()) return nullptr;
@@ -37,6 +37,6 @@ void eMusicVector::play(const int id, const bool loop) {
 void eMusicVector::playRandomSound(const bool loop) {
     const int sc = soundCount();
     if(sc <= 0) return;
-    const int id = eRand::rand() % sc;
+    const int id = Rand::rand() % sc;
     play(id, loop);
 }

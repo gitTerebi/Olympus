@@ -1,9 +1,9 @@
-#ifndef ENUMBERS_H
-#define ENUMBERS_H
+#ifndef NUMBERS_H
+#define NUMBERS_H
 
 #include <string>
 
-struct eNumbers {
+struct Numbers {
     static void sLoad();
     static void sLoad(const std::string& path);
 
@@ -264,4 +264,4 @@ struct eNumbers {
     static int sPriestSacrificeRecurringSpawnDays;
 };
 
-#endif // ENUMBERS_H
+#endif // NUMBERS_H

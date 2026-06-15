@@ -1,11 +1,11 @@
 #include "eresourceeventvalue.h"
 
-#include "erand.h"
-#include "estringhelpers.h"
+#include "rand.h"
+#include "string-helpers.h"
 
-#include "fileIO/ewritestream.h"
-#include "fileIO/ereadstream.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/write-stream.h"
+#include "fileIO/read-stream.h"
+#include "fileIO/save-archive.h"
 
 void eResourceEventValue::chooseType() {
     std::vector<eResourceType> types;
@@ -17,7 +17,7 @@ void eResourceEventValue::chooseType() {
         printf("No resource types to choose from\n");
         return;
     }
-    const int typeId = eRand::rand() % types.size();
+    const int typeId = Rand::rand() % types.size();
     mResource = types[typeId];
 }
 
@@ -35,10 +35,10 @@ void eResourceEventValue::longNameReplaceResource(
         if(!resName.empty()) resName += "/";
         resName += eResourceTypeHelpers::typeName(mResources[2]);
     }
-    eStringHelpers::replace(tmpl, id, resName);
+    StringHelpers::replace(tmpl, id, resName);
 }
 
-void eResourceEventValue::serialize(eSaveArchive& ar) {
+void eResourceEventValue::serialize(SaveArchive& ar) {
     ar.field("resource", mResource, eResourceType::fleece);
     const char* const names[] = {"resource0", "resource1", "resource2"};
     const eResourceType defaults[] = {eResourceType::fleece,

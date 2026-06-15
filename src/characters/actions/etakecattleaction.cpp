@@ -6,7 +6,7 @@
 #include "characters/ecattle.h"
 #include "efollowaction.h"
 #include "emovetoaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eTakeCattleAction::eTakeCattleAction(
         eCharacter* const c, eCorral* const cc) :
@@ -46,7 +46,7 @@ void eTakeCattleAction::increment(const int by) {
     eActionWithComeback::increment(by);
 }
 
-void eTakeCattleAction::serializeFields(eSaveArchive& ar) {
+void eTakeCattleAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.field("stage", mStage);
     ar.buildingAsField("corral", &board(), mCorral);

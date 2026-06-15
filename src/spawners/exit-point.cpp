@@ -1,10 +1,10 @@
-#include "eexitpoint.h"
+#include "exit-point.h"
 #include "characters/soldier-banner.h"
 
-eExitPoint::eExitPoint(const int id, eTile* const tile,
+ExitPoint::ExitPoint(const int id, eTile* const tile,
                        GameBoard& board) :
-    eBanner(eBannerTypeS::exitPoint, id, tile, board) {}
+    Banner(BannerTypeS::exitPoint, id, tile, board) {}
 
-eRiverExitPoint::eRiverExitPoint(const int id, eTile * const tile,
+RiverExitPoint::RiverExitPoint(const int id, eTile * const tile,
                                  GameBoard &board) :
-    eBanner(eBannerTypeS::riverExitPoint, id, tile, board) {}
+    Banner(BannerTypeS::riverExitPoint, id, tile, board) {}

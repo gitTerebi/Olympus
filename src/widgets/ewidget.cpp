@@ -1,11 +1,12 @@
 #include "ewidget.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 eWidget* eWidget::sWidgetUnderMouse = nullptr;
 eWidget* eWidget::sLastPressed = nullptr;
@@ -14,7 +15,7 @@ eWidget* eWidget::sKeyboardGrabber = nullptr;
 
 #define ReverseFor(i, cont) for(i = cont.begin(); i < cont.end(); i++)
 
-eWidget::eWidget(eMainWindow* const window) :
+eWidget::eWidget(MainWindow* const window) :
     mWindow(window) {
     mPadding = resolution().paddingL();
 }
@@ -22,6 +23,14 @@ eWidget::eWidget(eMainWindow* const window) :
 void eWidget::renderTargetsReset() {
     for(const auto w : mChildren) {
         w->renderTargetsReset();
+    }
+}
+
+void eWidget::windowSizeChanged(const int w, const int h) {
+    (void)w;
+    (void)h;
+    for(const auto child : mChildren) {
+        child->windowSizeChanged(w, h);
     }
 }
 
@@ -39,12 +48,18 @@ void eWidget::iResAndMult(int& iRes, int& mult) const {
     mult = iRes + 1;
 }
 
+int eWidget::scalePx(const double base) const {
+    const double value = base * resolution().multiplier();
+    return std::max(1, static_cast<int>(std::round(value)));
+}
+
 SDL_Renderer* eWidget::renderer() const {
     return mWindow->renderer();
 }
 
 eResolution eWidget::resolution() const {
-    return mWindow->resolution();
+    return eResolution(mWindow->width(), mWindow->height(),
+                       mWindow->settings().fUiScale);
 }
 
 void eWidget::move(const int x, const int y) {
@@ -143,21 +158,21 @@ void eWidget::setNoPadding() {
     mPadding = 0;
 }
 
-void eWidget::align(const eAlignment a) {
+void eWidget::align(const Alignment a) {
     if(!mParent) return;
-    if(static_cast<bool>(a & eAlignment::left)) {
+    if(static_cast<bool>(a & Alignment::left)) {
         setX(0);
-    } else if(static_cast<bool>(a & eAlignment::right)) {
+    } else if(static_cast<bool>(a & Alignment::right)) {
         setX(mParent->width() - width());
-    } else if(static_cast<bool>(a & eAlignment::hcenter)) {
+    } else if(static_cast<bool>(a & Alignment::hcenter)) {
         setX((mParent->width() - width())/2);
     }
 
-    if(static_cast<bool>(a & eAlignment::top)) {
+    if(static_cast<bool>(a & Alignment::top)) {
         setY(0);
-    } else if(static_cast<bool>(a & eAlignment::bottom)) {
+    } else if(static_cast<bool>(a & Alignment::bottom)) {
         setY(mParent->height() - height());
-    } else if(static_cast<bool>(a & eAlignment::vcenter)) {
+    } else if(static_cast<bool>(a & Alignment::vcenter)) {
         setY((mParent->height() - height())/2);
     }
 }
@@ -454,7 +469,7 @@ void eWidget::addWidget(eWidget* const w) {
 }
 
 void eWidget::removeWidget(eWidget* const w) {
-    const bool r = eVectorHelpers::remove(mChildren, w);
+    const bool r = VectorHelpers::remove(mChildren, w);
     if(r) w->mParent = nullptr;
 }
 
@@ -514,14 +529,14 @@ void eWidget::stackHorizontally(const int p) {
     }
 }
 
-void eWidget::layoutVertically(const int gap, const eAlignment align) {
+void eWidget::layoutVertically(const int gap, const Alignment align) {
     int totalH = 0;
     for(const auto w : mChildren) totalH += w->height();
     totalH += gap * (static_cast<int>(mChildren.size()) - 1);
 
     int startY = 0;
-    if(align == eAlignment::vcenter) startY = (height() - totalH) / 2;
-    else if(align == eAlignment::bottom) startY = height() - totalH;
+    if(align == Alignment::vcenter) startY = (height() - totalH) / 2;
+    else if(align == Alignment::bottom) startY = height() - totalH;
 
     int y = startY;
     for(const auto w : mChildren) {

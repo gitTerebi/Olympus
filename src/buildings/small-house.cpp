@@ -1,7 +1,7 @@
 #include "small-house.h"
 
 #include <algorithm>
-#include "erand.h"
+#include "rand.h"
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "engine/difficulty.h"
@@ -17,9 +17,9 @@
 
 #include "buildings/epalace.h"
 
-#include "elanguage.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 static std::vector<int> sCommonCapacity(GameBoard& board, const eCityId cid) {
     const auto pid = board.cityIdToPlayerId(cid);
@@ -53,7 +53,7 @@ SmallHouse::~SmallHouse()
     board.unregisterCommonHouse(this);
 }
 
-std::shared_ptr<eTexture> SmallHouse::getTexture(const eTileSize size) const
+std::shared_ptr<Texture> SmallHouse::getTexture(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
     const auto &blds = GameTextures::buildings();
@@ -61,7 +61,7 @@ std::shared_ptr<eTexture> SmallHouse::getTexture(const eTileSize size) const
 
     if (mPeople == 0)
         return blds[sizeId].fHouseSpace;
-    const eTextureCollection *coll = nullptr;
+    const TextureCollection *coll = nullptr;
     if (atlantean())
     {
         const int id = mLevel - 2;
@@ -134,7 +134,7 @@ int SmallHouse::provide(const eProvide p, const int n)
         const auto diff = b.difficulty(pid);
         const int taxMult = DifficultyHelpers::taxMultiplier(
             diff, type(), mLevel);
-        const double tax = eNumbers::sCommonHousingTaxMulitplier *
+        const double tax = Numbers::sCommonHousingTaxMulitplier *
                            mPeople * taxMult * b.taxRateF(cid);
         const int iTax = std::round(tax);
         b.payTaxes(cid, iTax, mPeople);
@@ -147,7 +147,7 @@ int SmallHouse::provide(const eProvide p, const int n)
         if (mSatisfactionProvidedThisMonth)
             return 0;
         mSatisfactionProvidedThisMonth = true;
-        const int p = eNumbers::sWatchmanSatisfactionProvide;
+        const int p = Numbers::sWatchmanSatisfactionProvide;
         mSatisfaction = std::clamp(mSatisfaction + p, 0, 100);
         return 0;
     }
@@ -185,13 +185,13 @@ void SmallHouse::timeChanged(const int by)
         return;
     }
     mUpdateCulture += by;
-    if (mUpdateWater > eNumbers::sHouseWaterDecrementPeriod)
+    if (mUpdateWater > Numbers::sHouseWaterDecrementPeriod)
     {
         mUpdateWater = 0;
         mWater = std::max(0, mWater - 1);
     }
     mUpdateHygiene += by;
-    if (mUpdateHygiene > eNumbers::sHouseHygieneDecrementPeriod)
+    if (mUpdateHygiene > Numbers::sHouseHygieneDecrementPeriod)
     {
         mUpdateHygiene = 0;
         const int subWater = (100 - mWaterSatisfaction) / 20;
@@ -205,14 +205,14 @@ void SmallHouse::timeChanged(const int by)
     {
         if (mHygiene > 25)
         {
-            const double pm = eNumbers::sHouseHealPlaguePeriodMultiplier;
-            const double pbm = eNumbers::sHouseHealPlaguePeriodBaseMultiplier;
-            const double pe = eNumbers::sHouseHealPlaguePeriodExponent;
+            const double pm = Numbers::sHouseHealPlaguePeriodMultiplier;
+            const double pbm = Numbers::sHouseHealPlaguePeriodBaseMultiplier;
+            const double pe = Numbers::sHouseHealPlaguePeriodExponent;
             const int m4 = pm * pow(pbm / mHygiene, pe);
             if (by)
             {
                 const int healPeriod = m4 / by;
-                if (healPeriod && eRand::rand() % healPeriod == 0)
+                if (healPeriod && Rand::rand() % healPeriod == 0)
                 {
                     b.healHouse(this);
                 }
@@ -221,9 +221,9 @@ void SmallHouse::timeChanged(const int by)
     }
     else
     {
-        const double pm = eNumbers::sHousePlagueRiskPeriodMultiplier;
-        const double pbi = eNumbers::sHousePlagueRiskPeriodBaseIncrement;
-        const double pe = eNumbers::sHousePlagueRiskPeriodExponent;
+        const double pm = Numbers::sHousePlagueRiskPeriodMultiplier;
+        const double pbi = Numbers::sHousePlagueRiskPeriodBaseIncrement;
+        const double pe = Numbers::sHousePlagueRiskPeriodExponent;
         const int m4 = pm * pow(pbi + mHygiene, pe);
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
@@ -231,7 +231,7 @@ void SmallHouse::timeChanged(const int by)
         if (plagueRisk > 0 && by)
         {
             const int plaguePeriod = m4 / (by * plagueRisk);
-            if (plaguePeriod && eRand::rand() % plaguePeriod == 0)
+            if (plaguePeriod && Rand::rand() % plaguePeriod == 0)
             {
                 const auto center = centerTile();
                 const int tx = center->x();
@@ -256,8 +256,8 @@ void SmallHouse::timeChanged(const int by)
         }
         else if (mSatisfaction > 30 && by > 0)
         {
-            const int p = eNumbers::sHouseDisgruntledRemovePeriod;
-            if (eRand::rand() % (p / (mSatisfaction * by)) == 0)
+            const int p = Numbers::sHouseDisgruntledRemovePeriod;
+            if (Rand::rand() % (p / (mSatisfaction * by)) == 0)
             {
                 setDisgruntled(false);
             }
@@ -265,9 +265,9 @@ void SmallHouse::timeChanged(const int by)
     }
     else if (!dion)
     {
-        const double pm = eNumbers::sHouseDisgruntledRiskPeriodMultiplier;
-        const double pbi = eNumbers::sHouseDisgruntledRiskPeriodBaseIncrement;
-        const double pe = eNumbers::sHouseDisgruntledRiskPeriodExponent;
+        const double pm = Numbers::sHouseDisgruntledRiskPeriodMultiplier;
+        const double pbi = Numbers::sHouseDisgruntledRiskPeriodBaseIncrement;
+        const double pe = Numbers::sHouseDisgruntledRiskPeriodExponent;
         const int m4 = pm * pow(pbi + mSatisfaction, pe);
         const auto pid = playerId();
         const auto diff = b.difficulty(pid);
@@ -275,7 +275,7 @@ void SmallHouse::timeChanged(const int by)
         if (crimeRisk > 0 && by)
         {
             const int crimePeriod = m4 / (by * crimeRisk);
-            if (crimePeriod && eRand::rand() % crimePeriod == 0)
+            if (crimePeriod && Rand::rand() % crimePeriod == 0)
             {
                 setDisgruntled(true);
             }
@@ -287,15 +287,15 @@ void SmallHouse::timeChanged(const int by)
         const bool aphr = s && s->finished();
         if (!aphr)
         {
-            const double pm = eNumbers::sHouseLeaveRiskPeriodMultiplier;
-            const double pbi = eNumbers::sHouseLeaveRiskPeriodBaseIncrement;
-            const double pe = eNumbers::sHouseLeaveRiskPeriodExponent;
+            const double pm = Numbers::sHouseLeaveRiskPeriodMultiplier;
+            const double pbi = Numbers::sHouseLeaveRiskPeriodBaseIncrement;
+            const double pe = Numbers::sHouseLeaveRiskPeriodExponent;
             const int m4 = pm * pow(pbi + mSatisfaction, pe);
             // Vanilla: leaving is driven by unmet needs/appeal, not crime.
             if (by)
             {
                 const int leavePeriod = m4 / by;
-                if (leavePeriod && eRand::rand() % leavePeriod == 0)
+                if (leavePeriod && Rand::rand() % leavePeriod == 0)
                 {
                     leave();
                 }
@@ -303,7 +303,7 @@ void SmallHouse::timeChanged(const int by)
         }
     }
     mUpdateSatisfaction += by;
-    const int supdate = eNumbers::sHouseSatisfactionUpdatePeriod;
+    const int supdate = Numbers::sHouseSatisfactionUpdatePeriod;
     if (mUpdateSatisfaction > supdate)
     {
         mUpdateSatisfaction = 0;
@@ -313,7 +313,7 @@ void SmallHouse::timeChanged(const int by)
     if (mDisgruntled && !mDisg)
     {
         mSpawnDisg += by;
-        const int d = eNumbers::sHouseDisgruntledSpawnPeriod;
+        const int d = Numbers::sHouseDisgruntledSpawnPeriod;
         if (mSpawnDisg > d)
         {
             mSpawnDisg = 0;
@@ -323,7 +323,7 @@ void SmallHouse::timeChanged(const int by)
     if (mPlague && !mSick)
     {
         mSpawnSick += by;
-        const int s = eNumbers::sHouseSickSpawnPeriod;
+        const int s = Numbers::sHouseSickSpawnPeriod;
         if (mSpawnSick > s)
         {
             mSpawnSick = 0;
@@ -350,7 +350,7 @@ void SmallHouse::nextMonth()
 void SmallHouse::setPlague(const bool p)
 {
     mPlague = p;
-    mSpawnSick = eRand::rand() % 10000;
+    mSpawnSick = Rand::rand() % 10000;
 }
 
 void SmallHouse::setDisgruntled(const bool d)
@@ -409,7 +409,7 @@ eHouseMissing SmallHouse::missing() const
     return eHouseMissing::nothing;
 }
 
-void SmallHouse::serializeFields(eSaveArchive& ar)
+void SmallHouse::serializeFields(SaveArchive& ar)
 {
     eHouseBase::serializeFields(ar);
     ar.field("satisfactionProvidedThisMonth", mSatisfactionProvidedThisMonth);
@@ -436,7 +436,7 @@ void SmallHouse::serializeFields(eSaveArchive& ar)
 
 std::string SmallHouse::sName(const int level)
 {
-    return eLanguage::zeusText(28, 2 + level);
+    return Language::zeusText(28, 2 + level);
 }
 
 bool SmallHouse::hasRequiredForLevel(const int level) const
@@ -484,7 +484,7 @@ bool SmallHouse::hasRequiredForLevelImpl(const int level, const bool evolve) con
 void SmallHouse::updateLevel(const int by)
 {
     // 3 in-game days below requirement before a single level drops.
-    const int devolveTicks = 3 * eNumbers::sDayLength;
+    const int devolveTicks = 3 * Numbers::sDayLength;
     if (hasRequiredForLevel(mLevel + 1) && canStayAtLevel(mLevel + 1))
     {
         setLevel(mLevel + 1);
@@ -512,7 +512,7 @@ void SmallHouse::updateLevel(const int by)
                     const int spawnCount = std::min(8, mPendingEvict);
                     eHomeless::spawn(*board, centerTile(), cid, spawnCount, waitTime);
                     mPendingEvict -= spawnCount;
-                    waitTime += 10 + eRand::rand() % 25;
+                    waitTime += 10 + Rand::rand() % 25;
                 }
             }
 
@@ -569,7 +569,7 @@ void SmallHouse::spawnCharacter(const stdsptr<eCharacter> &c)
     }
     else
     {
-        tile = ts[eRand::rand() % ts.size()];
+        tile = ts[Rand::rand() % ts.size()];
     }
     c->changeTile(tile);
     if (!tile)

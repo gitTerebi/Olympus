@@ -3,7 +3,7 @@
 
 #include "characters/eenlistedforces.h"
 
-class eSaveArchive;
+class SaveArchive;
 class SoldierBanner;
 
 class eReinforcements {
@@ -18,7 +18,7 @@ public:
     bool remove(const stdsptr<SoldierBanner>& b);
     bool checkEmpty() const;
 
-    void serialize(eSaveArchive& ar, GameBoard* board);
+    void serialize(SaveArchive& ar, GameBoard* board);
 private:
 
     eEnlistedForces mForces;

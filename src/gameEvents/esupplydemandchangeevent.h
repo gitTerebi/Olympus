@@ -6,7 +6,7 @@
 #include "ecounteventvalue.h"
 #include "ecityeventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eSupplyDemandChangeEvent : public eGameEvent,
                                  public eResourceEventValue,
@@ -19,7 +19,7 @@ public:
         const eGameEventBranch branch,
         GameBoard& board);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 };
 
 #endif // ESUPPLYDEMANDCHANGEEVENT_H

@@ -3,13 +3,13 @@
 #include "request-state.h"
 
 #include "engine/game-board.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "emessages.h"
+#include "messages.h"
 #include "engine/ecityrequest.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <cstdio>
 
@@ -61,13 +61,13 @@ SendResourcesToCityEvent::SendResourcesToCityEvent(
     GameBoard &board) : eGameEvent(cid, eGameEventType::sendResourcesToCity, branch, board),
                          eCityEventValue(board)
 {
-    const auto e1 = eLanguage::text("early");
+    const auto e1 = Language::text("early");
     mEarlyTrigger = e::make_shared<eEventTrigger>(cid, e1, board);
-    const auto e2 = eLanguage::text("comply");
+    const auto e2 = Language::text("comply");
     mComplyTrigger = e::make_shared<eEventTrigger>(cid, e2, board);
-    const auto e3 = eLanguage::text("too_late");
+    const auto e3 = Language::text("too_late");
     mTooLateTrigger = e::make_shared<eEventTrigger>(cid, e3, board);
-    const auto e4 = eLanguage::text("refuse");
+    const auto e4 = Language::text("refuse");
     mRefuseTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
 
     addTrigger(mEarlyTrigger);
@@ -321,13 +321,13 @@ int SendResourcesToCityEvent::complyMonths() const
 
 std::string SendResourcesToCityEvent::longName() const
 {
-    auto tmpl = eLanguage::text("receive_request_long_name");
+    auto tmpl = Language::text("receive_request_long_name");
     eCountEventValue::longNameReplaceCount("%1", tmpl);
     eResourceEventValue::longNameReplaceResource("%2", tmpl);
     return tmpl;
 }
 
-void SendResourcesToCityEvent::serializeFields(eSaveArchive &ar)
+void SendResourcesToCityEvent::serializeFields(SaveArchive &ar)
 {
     eGameEvent::serializeFields(ar);
     eResourceEventValue::serialize(ar);
@@ -401,7 +401,7 @@ void SendResourcesToCityEvent::finish(const RequestedResourcesResult result)
     showRequestFinished(*board, ed);
 }
 
-void SendResourcesToCityEvent::finished(eEventTrigger &t, const eReason &r)
+void SendResourcesToCityEvent::finished(eEventTrigger &t, const Reason &r)
 {
     const auto board = gameBoard();
     if (!board)
@@ -409,9 +409,9 @@ void SendResourcesToCityEvent::finished(eEventTrigger &t, const eReason &r)
     const auto date = board->date();
     auto rFull = r.fFull;
     const auto amount = std::to_string(mCount);
-    eStringHelpers::replaceAll(rFull, "[amount]", amount);
+    StringHelpers::replaceAll(rFull, "[amount]", amount);
     const auto item = eResourceTypeHelpers::typeLongName(mResource);
-    eStringHelpers::replaceAll(rFull, "[item]", item);
+    StringHelpers::replaceAll(rFull, "[item]", item);
     t.trigger(*this, date, rFull);
 }
 

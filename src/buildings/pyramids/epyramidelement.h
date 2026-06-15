@@ -5,7 +5,7 @@
 
 class ePyramid;
 
-class eSaveArchive;
+class SaveArchive;
 class ePyramidElement : public eSanctBuilding {
 public:
     ePyramidElement(const std::vector<eSanctCost>& cost,
@@ -37,7 +37,7 @@ public:
     bool renderBuilding() const;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     const int mElevation = 0;
     const int mDim = 1;

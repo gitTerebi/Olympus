@@ -18,7 +18,7 @@ public:
 
     eTriremeAction* triremeAction() const;
 
-    eOverlay getSecondaryTexture(const eTileSize size) const override;
+    Overlay getSecondaryTexture(const eTileSize size) const override;
 
     void setSelected(const bool s) { mSelected = s; }
     bool selected() const { return mSelected; }

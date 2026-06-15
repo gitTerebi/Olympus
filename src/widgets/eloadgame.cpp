@@ -1,7 +1,7 @@
 #include "eloadgame.h"
 
 #include "eframedwidget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include "eacceptbutton.h"
 #include "ecancelbutton.h"
@@ -43,17 +43,17 @@ void eLoadGame::intialize(const std::string& title,
     mTitleLabel = new eLabel(title, window());
     mTitleLabel->fitContent();
     f->addWidget(mTitleLabel);
-    mTitleLabel->align(eAlignment::top | eAlignment::hcenter);
+    mTitleLabel->align(Alignment::top | Alignment::hcenter);
     mTitleLabel->setY(mTitleLabel->y() + p);
 
     mOk = new eAcceptButton(window());
     f->addWidget(mOk);
-    mOk->align(eAlignment::bottom | eAlignment::right);
+    mOk->align(Alignment::bottom | Alignment::right);
     mOk->move(mOk->x() - 2*p, mOk->y() - 2*p);
 
     mCancel = new eCancelButton(window());
     f->addWidget(mCancel);
-    mCancel->align(eAlignment::bottom | eAlignment::right);
+    mCancel->align(Alignment::bottom | Alignment::right);
     mCancel->move(mCancel->x() - 2*p - mOk->width() - p, mCancel->y() - 2*p);
     mCancel->setPressAction([this]() { close(); });
     mOk->setPressAction([this, func, closeAction] {
@@ -72,11 +72,11 @@ void eLoadGame::intialize(const std::string& title,
     deleteB->setFontSizeXS();
     deleteB->setLightFontColor();
     deleteB->setText("Delete");
-    deleteB->setTextAlignment(eAlignment::center);
+    deleteB->setTextAlignment(Alignment::center);
     deleteB->fitContent();
     deleteB->setWidth(8*p);
     f->addWidget(deleteB);
-    deleteB->align(eAlignment::bottom | eAlignment::left);
+    deleteB->align(Alignment::bottom | Alignment::left);
     deleteB->move(deleteB->x() + 2*p, deleteB->y() - 2*p);
     deleteB->setPressAction([this]() {
         const auto name = mLineEdit->text();
@@ -92,7 +92,7 @@ void eLoadGame::intialize(const std::string& title,
         std::string msg = "Delete '" + name + "'?";
         q->initialize("Confirm Delete", msg, acceptA, nullptr);
         window()->execDialog(q);
-        q->align(eAlignment::center);
+        q->align(Alignment::center);
     });
 
     const auto lineW = new eFramedWidget(window());
@@ -170,7 +170,7 @@ void eLoadGame::intialize(const std::string& title,
             if(name == mLineEdit->text()) b->setYellowFontColor();
             else b->setLightFontColor();
         });
-        b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
+        b->setTextAlignment(Alignment::left | Alignment::vcenter);
         b->setNoPadding();
         b->fitContent();
         b->setWidth(swwidth);
@@ -238,7 +238,7 @@ void eLoadGame::rebuildFileList() {
             if(name == mLineEdit->text()) b->setYellowFontColor();
             else b->setLightFontColor();
         });
-        b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
+        b->setTextAlignment(Alignment::left | Alignment::vcenter);
         b->setNoPadding();
         b->fitContent();
         b->setWidth(swwidth);

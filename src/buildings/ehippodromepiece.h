@@ -2,10 +2,10 @@
 #define EHIPPODROMEPIECE_H
 
 #include "ebuilding.h"
-#include "missiles/emissile.h"
+#include "missiles/missile.h"
 
 class eHippodrome;
-class eSaveArchive;
+class SaveArchive;
 
 class eHippodromePiece : public eBuildingWithResource {
 public:
@@ -35,15 +35,15 @@ public:
     eHippodrome* hippodrome() const { return mHippodrome; }
     void setHippodrome(eHippodrome* const h);
 
-    void progressPath(std::vector<ePathPoint>& path) const;
+    void progressPath(std::vector<PathPoint>& path) const;
 
     eTextureSpace
     getTextureSpace(const int tx, const int ty,
                     const eTileSize size) const override;
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize size) const override;
-    std::vector<eOverlay>
+    std::vector<Overlay>
     getOverlays(const eTileSize size) const override;
 
     int id() const { return mId; }
@@ -52,16 +52,16 @@ public:
     void setPartId(const int i) { mPartId = i; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void crossTile(eTile* const t,
-                   std::vector<eOverlay>& result,
+                   std::vector<Overlay>& result,
                    const eWorldDirection dir,
                    const eTileSize size,
                    const SDL_Rect& rr,
                    const bool back) const;
     void horseTile(eTile* const t,
-                   std::vector<eOverlay>& result,
+                   std::vector<Overlay>& result,
                    const eWorldDirection dir,
                    const eTileSize size,
                    const SDL_Rect& rr) const;

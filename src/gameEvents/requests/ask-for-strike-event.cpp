@@ -4,8 +4,8 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "fileIO/esavearchive.h"
-#include "elanguage.h"
+#include "fileIO/save-archive.h"
+#include "language.h"
 #include "gameEvents/invasions/invasion-event.h"
 
 AskForStrikeEvent::AskForStrikeEvent(
@@ -70,10 +70,10 @@ void AskForStrikeEvent::trigger() {
 }
 
 std::string AskForStrikeEvent::longName() const {
-    return eLanguage::text("request_strike_long_name");
+    return Language::text("request_strike_long_name");
 }
 
-void AskForStrikeEvent::serializeFields(eSaveArchive& ar) {
+void AskForStrikeEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ar.worldCityField("city", worldBoard(), mCity);
     ar.worldCityField("rivalCity", worldBoard(), mRivalCity);

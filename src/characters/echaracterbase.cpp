@@ -1,6 +1,6 @@
 #include "echaracterbase.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "actions/edieaction.h"
 
@@ -87,7 +87,7 @@ void eCharacterBase::setActionType(const eCharacterActionType t) {
     mActionType = t;
 }
 
-void eCharacterBase::serializeFields(eSaveArchive& ar) {
+void eCharacterBase::serializeFields(SaveArchive& ar) {
     ar.field("actionType", mActionType);
     ar.field("cityId", mCityId);
     ar.field("onCityId", mOnCityId);
@@ -105,6 +105,6 @@ void eCharacterBase::serializeFields(eSaveArchive& ar) {
     ar.field("range", mRange);
 }
 
-void eCharacterBase::serialize(eSaveArchive& ar) {
+void eCharacterBase::serialize(SaveArchive& ar) {
     serializeFields(ar);
 }

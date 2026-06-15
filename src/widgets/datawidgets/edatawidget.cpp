@@ -2,17 +2,17 @@
 
 #include "eviewmodebutton.h"
 #include "widgets/ebasicbutton.h"
-#include "elanguage.h"
+#include "language.h"
 #include "engine/game-board.h"
 
-eDataWidget::eDataWidget(GameBoard& b, eMainWindow* const w) :
+eDataWidget::eDataWidget(GameBoard& b, MainWindow* const w) :
     eWidget(w), mBoard(b) {}
 
 void eDataWidget::initialize() {
     int h = 0;
     for(const auto b : mButtons) {
         addWidget(b);
-        b->align(eAlignment::hcenter);
+        b->align(Alignment::hcenter);
         h += b->height();
     }
 
@@ -41,12 +41,12 @@ void eDataWidget::initialize() {
     const auto coll = &InterfaceTextures::fMoreInfo;
     mMoreInfo = new eBasicButton(coll, window());
     frame->addWidget(mMoreInfo);
-    mMoreInfo->align(eAlignment::right | eAlignment::bottom);
+    mMoreInfo->align(Alignment::right | Alignment::bottom);
     mMoreInfo->move(mMoreInfo->x() - pp, mMoreInfo->y() - pp);
     mMoreInfo->setPressAction([this]() {
         openMoreInfoWiget();
     });
-    mMoreInfo->setTooltip(eLanguage::zeusText(51, 79));
+    mMoreInfo->setTooltip(Language::zeusText(51, 79));
     mMoreInfo->hide();
 
     stackVertically();

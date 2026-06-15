@@ -11,7 +11,7 @@ ePark::ePark(GameBoard& board,
     GameTextures::loadPark();
 }
 
-std::shared_ptr<eTexture> ePark::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> ePark::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& sizeColl = mTextures[sizeId];
     return sizeColl.fPark.getTexture(0);

@@ -4,7 +4,7 @@
 #include "buildings/small-house.h"
 #include "epatrolmoveaction.h"
 #include "move-around-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eSickDisgruntledAction::eSickDisgruntledAction(eCharacter* const c,
                                                SmallHouse* const ch) :
@@ -26,7 +26,7 @@ bool eSickDisgruntledAction::decide() {
     return true;
 }
 
-void eSickDisgruntledAction::serializeFields(eSaveArchive& ar) {
+void eSickDisgruntledAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.buildingAsField("building", &board(), mBuilding);
     ar.field("goBackNext", mGoBackNext);

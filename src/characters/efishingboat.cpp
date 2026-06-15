@@ -7,12 +7,12 @@ eFishingBoat::eFishingBoat(GameBoard& board) :
     GameTextures::loadFishingBoat();
 }
 
-std::shared_ptr<eTexture> eFishingBoat::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eFishingBoat::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto& charTexs = colls.fFishingBoat;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
     bool wrap = true;
     const auto a = actionType();

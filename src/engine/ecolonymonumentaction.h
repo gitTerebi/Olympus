@@ -6,7 +6,7 @@
 #include "pointers/estdselfref.h"
 
 class WorldCity;
-class eSaveArchive;
+class SaveArchive;
 
 class eColonyMonumentAction : public ePlannedAction {
 public:
@@ -15,7 +15,7 @@ public:
 
     void trigger(GameBoard& board) override;
 protected:
-    void serializeFields(eSaveArchive& ar, GameBoard* board) override;
+    void serializeFields(SaveArchive& ar, GameBoard* board) override;
 private:
     stdsptr<WorldCity> mCity;
 };

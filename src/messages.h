@@ -1,7 +1,7 @@
-#ifndef EMESSAGES_H
-#define EMESSAGES_H
+#ifndef MESSAGES_H
+#define MESSAGES_H
 
-#include "emessage.h"
+#include "message.h"
 
 #include <map>
 
@@ -9,225 +9,225 @@ enum class GodType;
 enum class eHeroType;
 enum class eMonsterType;
 
-struct eQuestMessages {
-    eEventMessageType fQuest;
-    eEventMessageType fFulfilled;
+struct QuestMessages {
+    EventMessageType fQuest;
+    EventMessageType fFulfilled;
 };
 
-struct eGodMessages {
+struct GodMessages {
     mutable int fLastMessage = -1;
 
-    eMessageType fWooing0;
-    eMessageType fJealousy1;
-    eMessageType fJealousy2;
-    eMessageType fInvades;
-    eEventMessageType fHelps;
+    MessageType fWooing0;
+    MessageType fJealousy1;
+    MessageType fJealousy2;
+    MessageType fInvades;
+    EventMessageType fHelps;
 
-    eEventMessageType fMonster;
+    EventMessageType fMonster;
 
-    eQuestMessages fQuest1;
-    eQuestMessages fQuest2;
+    QuestMessages fQuest1;
+    QuestMessages fQuest2;
 
-    eMessageType fSanctuaryComplete;
+    MessageType fSanctuaryComplete;
 
-    eMessageType fDisaster;
-    eMessageType fDisasterEnds;
+    MessageType fDisaster;
+    MessageType fDisasterEnds;
 };
 
-struct eMonsterMessages {
-    eMessageType fInCity;
+struct MonsterMessages {
+    MessageType fInCity;
     std::string fInCityReason;
-    eMessageType fPrediction;
-    eMessageType fInvasion36;
-    eMessageType fInvasion24;
-    eMessageType fInvasion12;
-    eMessageType fInvasion6;
-    eMessageType fInvasion1;
-    eMessageType fInvasion;
-    eMessageType fSlain;
+    MessageType fPrediction;
+    MessageType fInvasion36;
+    MessageType fInvasion24;
+    MessageType fInvasion12;
+    MessageType fInvasion6;
+    MessageType fInvasion1;
+    MessageType fInvasion;
+    MessageType fSlain;
     std::string fToSlainReason;
     std::string fSlainReason;
     std::string fMonsterAttackReason;
 };
 
-struct eHeroMessages {
-    eEventMessageType fArrival;
-    eConsequenceMessageType fHallAvailable;
+struct HeroMessages {
+    EventMessageType fArrival;
+    ConsequenceMessageType fHallAvailable;
 };
 
 struct RequestedResourcesMessages {
-    eMessageType fInitial;
-    eMessageType fReminder;
-    eMessageType fOverdue;
-    eMessageType fWarning;
-    eMessageType fComply;
-    eMessageType fTooLate;
-    eMessageType fRefuse;
-    eReason fEarlyReason;
-    eReason fComplyReason;
-    eReason fTooLateReason;
-    eReason fRefuseReason;
+    MessageType fInitial;
+    MessageType fReminder;
+    MessageType fOverdue;
+    MessageType fWarning;
+    MessageType fComply;
+    MessageType fTooLate;
+    MessageType fRefuse;
+    Reason fEarlyReason;
+    Reason fComplyReason;
+    Reason fTooLateReason;
+    Reason fRefuseReason;
 };
 
-struct eResourceGrantedMessages {
-    eMessageType fGranted;
-    eMessageType fCashGranted;
-    eMessageType fPartialSpace;
-    eMessageType fInsufficientSpace;
-    eMessageType fLastChance;
-    eMessageType fForfeited;
-    eMessageType fAccepted;
-    eMessageType fCashAccepted;
-    eMessageType fPostponed;
-    eMessageType fRefused;
+struct ResourceGrantedMessages {
+    MessageType fGranted;
+    MessageType fCashGranted;
+    MessageType fPartialSpace;
+    MessageType fInsufficientSpace;
+    MessageType fLastChance;
+    MessageType fForfeited;
+    MessageType fAccepted;
+    MessageType fCashAccepted;
+    MessageType fPostponed;
+    MessageType fRefused;
 };
 
-struct eTroopsRequestedMessages {
-    eMessageType fInitialAnnouncement;
-    eMessageType fFirstReminder;
-    eMessageType fLastReminder;
-    eReason fEarlyReason;
-    eReason fComplyReason;
-    eReason fTooLateReason;
-    eReason fRefuseReason;
-    eReason fLostBattleReason;
+struct TroopsRequestedMessages {
+    MessageType fInitialAnnouncement;
+    MessageType fFirstReminder;
+    MessageType fLastReminder;
+    Reason fEarlyReason;
+    Reason fComplyReason;
+    Reason fTooLateReason;
+    Reason fRefuseReason;
+    Reason fLostBattleReason;
 
-    eMessageType fConquered;
+    MessageType fConquered;
 };
 
-struct eTroopsRequestedMonsterMessages : public eTroopsRequestedMessages {
+struct TroopsRequestedMonsterMessages : public TroopsRequestedMessages {
 };
 
-struct eTroopsRequestedAttackMessages : public eTroopsRequestedMessages {
+struct TroopsRequestedAttackMessages : public TroopsRequestedMessages {
 };
 
-class eMessages {
+class Messages {
 public:
-    eMessages() {}
+    Messages() {}
 
-    static eMessages instance;
+    static Messages instance;
 
     static bool load();
     static bool loaded();
 
     static std::string message(const std::string& key);
-    static eMessageType favorMessage(const eMessageType& reason);
-    static eMessageType dfavorMessage(const eMessageType& reason);
-    static eMessageType invasionMessage(const eMessageType& baseMsg,
+    static MessageType favorMessage(const MessageType& reason);
+    static MessageType dfavorMessage(const MessageType& reason);
+    static MessageType invasionMessage(const MessageType& baseMsg,
                                         const std::string& reason,
                                         const int months);
 
     std::map<std::string, std::string> fMessages;
 
-    eMessageType fPop100;
-    eMessageType fPop500;
-    eMessageType fPop1000; // comm
-    eMessageType fPop2000; // comm
-    eMessageType fPop3000;
-    eMessageType fPop5000; // comm
-    eMessageType fPop10000; // comm
-    eMessageType fPop15000; // comm
-    eMessageType fPop20000; // comm
-    eMessageType fPop25000; // comm
+    MessageType fPop100;
+    MessageType fPop500;
+    MessageType fPop1000; // comm
+    MessageType fPop2000; // comm
+    MessageType fPop3000;
+    MessageType fPop5000; // comm
+    MessageType fPop10000; // comm
+    MessageType fPop15000; // comm
+    MessageType fPop20000; // comm
+    MessageType fPop25000; // comm
 
-    eMessageType fHappinessMonument;
+    MessageType fHappinessMonument;
 
-    eMessageType fFire;
-    eMessageType fCollapse;
-    eMessageType fPlagueStrikes;
+    MessageType fFire;
+    MessageType fCollapse;
+    MessageType fPlagueStrikes;
 
-    const eGodMessages* godMessages(const GodType godType) const;
+    const GodMessages* godMessages(const GodType godType) const;
 
-    eGodMessages fAphrodite;
-    eGodMessages fApollo;
-    eGodMessages fAres;
-    eGodMessages fArtemis;
-    eGodMessages fAthena;
-    eGodMessages fAtlas;
-    eGodMessages fDemeter;
-    eGodMessages fDionysus;
-    eGodMessages fHades;
-    eGodMessages fHephaestus;
-    eGodMessages fHera;
-    eGodMessages fHermes;
-    eGodMessages fPoseidon;
-    eGodMessages fZeus;
+    GodMessages fAphrodite;
+    GodMessages fApollo;
+    GodMessages fAres;
+    GodMessages fArtemis;
+    GodMessages fAthena;
+    GodMessages fAtlas;
+    GodMessages fDemeter;
+    GodMessages fDionysus;
+    GodMessages fHades;
+    GodMessages fHephaestus;
+    GodMessages fHera;
+    GodMessages fHermes;
+    GodMessages fPoseidon;
+    GodMessages fZeus;
 
-    eMessageType fZeusTradeResumes;
-    eMessageType fPoseidonTradeResumes;
-    eMessageType fHermesTradeResumes;
+    MessageType fZeusTradeResumes;
+    MessageType fPoseidonTradeResumes;
+    MessageType fHermesTradeResumes;
 
-    const eHeroMessages* heroMessages(const eHeroType heroType) const;
+    const HeroMessages* heroMessages(const eHeroType heroType) const;
 
-    eHeroMessages fAchilles;
-    eHeroMessages fAtalanta;
-    eHeroMessages fBellerophon;
-    eHeroMessages fHercules;
-    eHeroMessages fJason;
-    eHeroMessages fOdysseus;
-    eHeroMessages fPerseus;
-    eHeroMessages fTheseus;
+    HeroMessages fAchilles;
+    HeroMessages fAtalanta;
+    HeroMessages fBellerophon;
+    HeroMessages fHercules;
+    HeroMessages fJason;
+    HeroMessages fOdysseus;
+    HeroMessages fPerseus;
+    HeroMessages fTheseus;
 
-    const eMonsterMessages* monsterMessages(const eMonsterType monsterType) const;
+    const MonsterMessages* monsterMessages(const eMonsterType monsterType) const;
 
-    eMonsterMessages fCalydonianBoar;
-    eMonsterMessages fCerberus;
-    eMonsterMessages fChimera;
-    eMonsterMessages fCyclops;
-    eMonsterMessages fDragon;
-    eMonsterMessages fEchidna;
-    eMonsterMessages fHarpies;
-    eMonsterMessages fHector;
-    eMonsterMessages fHydra;
-    eMonsterMessages fKraken;
-    eMonsterMessages fMaenads;
-    eMonsterMessages fMedusa;
-    eMonsterMessages fMinotaur;
-    eMonsterMessages fScylla;
-    eMonsterMessages fSphinx;
-    eMonsterMessages fTalos;
+    MonsterMessages fCalydonianBoar;
+    MonsterMessages fCerberus;
+    MonsterMessages fChimera;
+    MonsterMessages fCyclops;
+    MonsterMessages fDragon;
+    MonsterMessages fEchidna;
+    MonsterMessages fHarpies;
+    MonsterMessages fHector;
+    MonsterMessages fHydra;
+    MonsterMessages fKraken;
+    MonsterMessages fMaenads;
+    MonsterMessages fMedusa;
+    MonsterMessages fMinotaur;
+    MonsterMessages fScylla;
+    MonsterMessages fSphinx;
+    MonsterMessages fTalos;
 
-    eGameMessages fHomeGames;
-    eGameMessages fIsthmianGames;
-    eGameMessages fNemeanGames;
-    eGameMessages fPythianGames;
-    eGameMessages fOlympianGames;
+    GameMessages fHomeGames;
+    GameMessages fIsthmianGames;
+    GameMessages fNemeanGames;
+    GameMessages fPythianGames;
+    GameMessages fOlympianGames;
 
-    eMessageType fInvasionInitial;
-    eMessageType fInvasion24;
-    eMessageType fInvasion12;
-    eMessageType fInvasion6;
-    eMessageType fInvasion1;
-    eMessageType fInvasion;
+    MessageType fInvasionInitial;
+    MessageType fInvasion24;
+    MessageType fInvasion12;
+    MessageType fInvasion6;
+    MessageType fInvasion1;
+    MessageType fInvasion;
     std::string fInvasionNoReason;
-    eMessageType fInvasionBribed;
-    eMessageType fInvasionRaidOver;
-    eMessageType fInvasionDefeat;
-    eMessageType fInvasionVictory;
-    eMessageType fInvasionVictoryMonument;
-    eMessageType fInvasionBribedMonument;
+    MessageType fInvasionBribed;
+    MessageType fInvasionRaidOver;
+    MessageType fInvasionDefeat;
+    MessageType fInvasionVictory;
+    MessageType fInvasionVictoryMonument;
+    MessageType fInvasionBribedMonument;
 
-    eMessageType fTributePaidGranted;
-    eMessageType fTributePaidAccepted;
-    eMessageType fTributePaidRefused;
-    eMessageType fTributePostponed;
+    MessageType fTributePaidGranted;
+    MessageType fTributePaidAccepted;
+    MessageType fTributePaidRefused;
+    MessageType fTributePostponed;
 
-    eMessageType fRequestGranted;
-    eMessageType fRequestPartialSpace;
-    eMessageType fRequestInsufficientSpace;
-    eMessageType fRequestLastChance;
-    eMessageType fRequestAccepted;
-    eMessageType fRequestPostponed;
-    eMessageType fRequestRefused;
-    eMessageType fRequestForfeited;
+    MessageType fRequestGranted;
+    MessageType fRequestPartialSpace;
+    MessageType fRequestInsufficientSpace;
+    MessageType fRequestLastChance;
+    MessageType fRequestAccepted;
+    MessageType fRequestPostponed;
+    MessageType fRequestRefused;
+    MessageType fRequestForfeited;
 
-    eMessageType fDemandRefused;
+    MessageType fDemandRefused;
 
-    eMessageType fGiftReceivedDrachmas;
-    eMessageType fGiftReceivedNeeded;
-    eMessageType fGiftReceivedSells;
-    eMessageType fGiftReceivedNotNeeded;
-    eMessageType fGiftReceivedRefuse;
+    MessageType fGiftReceivedDrachmas;
+    MessageType fGiftReceivedNeeded;
+    MessageType fGiftReceivedSells;
+    MessageType fGiftReceivedNotNeeded;
+    MessageType fGiftReceivedRefuse;
 
     RequestedResourcesMessages fGeneralRequestAllyS;
     RequestedResourcesMessages fGeneralRequestRivalD;
@@ -256,175 +256,175 @@ public:
 
     RequestedResourcesMessages fTributeRequest;
 
-    eResourceGrantedMessages fGiftGranted;
+    ResourceGrantedMessages fGiftGranted;
 
-    eMessageType fSupportTroopsArrive;
-    eMessageType fSupportTroopsDepart;
-    eMessageType fSupportTroopsDefeated;
+    MessageType fSupportTroopsArrive;
+    MessageType fSupportTroopsDepart;
+    MessageType fSupportTroopsDefeated;
 
-    eMessageType fStrikeDepart;
-    eMessageType fStrikeSuccessful;
-    eMessageType fStrikeUnsuccessul;
+    MessageType fStrikeDepart;
+    MessageType fStrikeSuccessful;
+    MessageType fStrikeUnsuccessul;
 
-    eMessageType fRivalArmyAway;
+    MessageType fRivalArmyAway;
 
-    eMessageType fIncreasedFavor;
-    eMessageType fDecreasedFavor;
+    MessageType fIncreasedFavor;
+    MessageType fDecreasedFavor;
 
-    eMessageType fUnemployment;
-    eMessageType fEmployees;
+    MessageType fUnemployment;
+    MessageType fEmployees;
 
-    eMessageType fPlague;
+    MessageType fPlague;
 
-    eMessageType fCityConqueredByPlayer;
-    eMessageType fCityConquerFailedByPlayer;
+    MessageType fCityConqueredByPlayer;
+    MessageType fCityConquerFailedByPlayer;
 
-    eResourceGrantedMessages fRaidGranted;
-    eMessageType fCityRaidFailedByPlayer;
+    ResourceGrantedMessages fRaidGranted;
+    MessageType fCityRaidFailedByPlayer;
 
-    eMessageType fAllyAttackedByPlayer;
+    MessageType fAllyAttackedByPlayer;
 
-    eMessageType fArmyReturns;
+    MessageType fArmyReturns;
 
-    eMessageType fMilitaryBuildup;
-    eMessageType fMilitaryDecline;
+    MessageType fMilitaryBuildup;
+    MessageType fMilitaryDecline;
 
-    eMessageType fEconomicProsperity;
-    eMessageType fEconomicDecline;
+    MessageType fEconomicProsperity;
+    MessageType fEconomicDecline;
 
-    eTroopsRequestedMessages fAllyTroopsRequest;
-    eTroopsRequestedMessages fVassalTroopsRequest;
-    eTroopsRequestedMessages fColonyTroopsRequest;
-    eTroopsRequestedMessages fParentCityTroopsRequest;
+    TroopsRequestedMessages fAllyTroopsRequest;
+    TroopsRequestedMessages fVassalTroopsRequest;
+    TroopsRequestedMessages fColonyTroopsRequest;
+    TroopsRequestedMessages fParentCityTroopsRequest;
 
-    eMessageType fTroopsRequestAttackAverted;
+    MessageType fTroopsRequestAttackAverted;
 
-    eTroopsRequestedMonsterMessages fAllyTroopsMonsterRequest;
-    eTroopsRequestedMonsterMessages fVassalTroopsMonsterRequest;
-    eTroopsRequestedMonsterMessages fColonyTroopsMonsterRequest;
-    eTroopsRequestedMonsterMessages fParentCityTroopsMonsterRequest;
+    TroopsRequestedMonsterMessages fAllyTroopsMonsterRequest;
+    TroopsRequestedMonsterMessages fVassalTroopsMonsterRequest;
+    TroopsRequestedMonsterMessages fColonyTroopsMonsterRequest;
+    TroopsRequestedMonsterMessages fParentCityTroopsMonsterRequest;
 
-    eMessageType fTroopsMonsterRequestAttackAverted;
+    MessageType fTroopsMonsterRequestAttackAverted;
 
-    eTroopsRequestedAttackMessages fAllyTroopsAttackRequest;
-    eTroopsRequestedAttackMessages fVassalTroopsAttackRequest;
+    TroopsRequestedAttackMessages fAllyTroopsAttackRequest;
+    TroopsRequestedAttackMessages fVassalTroopsAttackRequest;
 
-    eMessageType fEarthqaukeNoReason;
-    eMessageType fEarthqaukeGod;
-    eMessageType fTidalWaveNoReason;
-    eMessageType fTidalWaveGod;
-    eMessageType fLavaFlowNoReason;
-    eMessageType fLavaFlowGod;
-    eMessageType fSinkLandNoReason;
-    eMessageType fSinkLandGod;
-    eMessageType fLandSlide;
+    MessageType fEarthqaukeNoReason;
+    MessageType fEarthqaukeGod;
+    MessageType fTidalWaveNoReason;
+    MessageType fTidalWaveGod;
+    MessageType fLavaFlowNoReason;
+    MessageType fLavaFlowGod;
+    MessageType fSinkLandNoReason;
+    MessageType fSinkLandGod;
+    MessageType fLandSlide;
 
-    eMessageType fModestPyramidComplete1;
-    eMessageType fPyramidComplete2;
-    eMessageType fGreatPyramidComplete3;
-    eMessageType fMajesticPyramidComplete4;
+    MessageType fModestPyramidComplete1;
+    MessageType fPyramidComplete2;
+    MessageType fGreatPyramidComplete3;
+    MessageType fMajesticPyramidComplete4;
 
-    eMessageType fSmallMonumentToTheSkyComplete5;
-    eMessageType fMonumentToTheSkyComplete6;
-    eMessageType fGrandMonumentToTheSkyComplete7;
+    MessageType fSmallMonumentToTheSkyComplete5;
+    MessageType fMonumentToTheSkyComplete6;
+    MessageType fGrandMonumentToTheSkyComplete7;
 
-    eMessageType fMinorShrineComplete8;
-    eMessageType fShrineComplete9;
-    eMessageType fMajorShrineComplete10;
+    MessageType fMinorShrineComplete8;
+    MessageType fShrineComplete9;
+    MessageType fMajorShrineComplete10;
 
-    eMessageType fPyramidOfThePantheonComplete11;
-    eMessageType fAltarOfOlympusComplete12;
-    eMessageType fTempleOfOlympusComplete13;
-    eMessageType fObservatoryKosmikaComplete14;
-    eMessageType fMuseumAtlantikaComplete15;
+    MessageType fPyramidOfThePantheonComplete11;
+    MessageType fAltarOfOlympusComplete12;
+    MessageType fTempleOfOlympusComplete13;
+    MessageType fObservatoryKosmikaComplete14;
+    MessageType fMuseumAtlantikaComplete15;
 
-    eMessageType fCityBecomesAlly;
-    eMessageType fCityBecomesRival;
-    eMessageType fCityBecomesVassal;
+    MessageType fCityBecomesAlly;
+    MessageType fCityBecomesRival;
+    MessageType fCityBecomesVassal;
 
-    eMessageType fCityBecomesActive;
-    eMessageType fCityBecomesInactive;
+    MessageType fCityBecomesActive;
+    MessageType fCityBecomesInactive;
 
-    eMessageType fCityBecomesVisible;
-    eMessageType fCityBecomesInvisible;
+    MessageType fCityBecomesVisible;
+    MessageType fCityBecomesInvisible;
 
-    eMessageType fTributeSuspended;
-    eMessageType fTributeResumed;
+    MessageType fTributeSuspended;
+    MessageType fTributeResumed;
 
-    eMessageType fCityRebellion;
-    eMessageType fCityRebellionQuelled;
-    eMessageType fCityRebellionOver;
-    eMessageType fAllyResentful;
-    eMessageType fRivalHostile;
-    eMessageType fVassalRebellious;
-    eMessageType fColonyRebellious;
-    eMessageType fParentResentful;
-    eMessageType fAllyLovesYou;
-    eMessageType fRivalPleased;
-    eMessageType fVassalLovesYou;
-    eMessageType fColonyLovesYou;
-    eMessageType fParentLovesYou;
+    MessageType fCityRebellion;
+    MessageType fCityRebellionQuelled;
+    MessageType fCityRebellionOver;
+    MessageType fAllyResentful;
+    MessageType fRivalHostile;
+    MessageType fVassalRebellious;
+    MessageType fColonyRebellious;
+    MessageType fParentResentful;
+    MessageType fAllyLovesYou;
+    MessageType fRivalPleased;
+    MessageType fVassalLovesYou;
+    MessageType fColonyLovesYou;
+    MessageType fParentLovesYou;
 
-    eMessageType fRivalConqueredByAlly;
-    eMessageType fRivalConqueredByVassal;
+    MessageType fRivalConqueredByAlly;
+    MessageType fRivalConqueredByVassal;
 
-    eMessageType fAllyConqueredByRival;
-    eMessageType fVassalConqueredByRival;
-    eMessageType fColonyConqueredByRival;
-    eMessageType fParentConqueredByRival;
+    MessageType fAllyConqueredByRival;
+    MessageType fVassalConqueredByRival;
+    MessageType fColonyConqueredByRival;
+    MessageType fParentConqueredByRival;
 
-    eMessageType fColonyRestored;
+    MessageType fColonyRestored;
 
-    eMessageType fDebtAnniversary;
+    MessageType fDebtAnniversary;
 
-    eMessageType fColonyMonument;
+    MessageType fColonyMonument;
 
-    eMessageType fPriceIncrease;
-    eMessageType fPriceDecrease;
+    MessageType fPriceIncrease;
+    MessageType fPriceDecrease;
 
-    eMessageType fDemandIncrease;
-    eMessageType fDemandDecrease;
+    MessageType fDemandIncrease;
+    MessageType fDemandDecrease;
 
-    eMessageType fSupplyIncrease;
-    eMessageType fSupplyDecrease;
+    MessageType fSupplyIncrease;
+    MessageType fSupplyDecrease;
 
-    eMessageType fTradeShutsDown;
-    eMessageType fTradeOpensUp;
+    MessageType fTradeShutsDown;
+    MessageType fTradeOpensUp;
 
-    eMessageType fWageIncrease;
-    eMessageType fWageDecrease;
+    MessageType fWageIncrease;
+    MessageType fWageDecrease;
 
-    eMessageType fAreaCutOff;
+    MessageType fAreaCutOff;
 private:
     bool loadImpl();
 
     std::string loadMessage(const std::string& key) const;
-    void loadMessage(eMessageType& m,
+    void loadMessage(MessageType& m,
                      const std::string& titleKey,
                      const std::string& textKey);
-    void loadReason(eReason& r, const std::string& key);
+    void loadReason(Reason& r, const std::string& key);
 
-    void load(eGodMessages& god, const std::string& godName);
-    void load(eHeroMessages& hero, const std::string& heroName);
-    void load(eMonsterMessages& monster,
+    void load(GodMessages& god, const std::string& godName);
+    void load(HeroMessages& hero, const std::string& heroName);
+    void load(MonsterMessages& monster,
               const std::string& monsterName1,
               const std::string& monsterName2);
 
     void loadGeneralRequest(RequestedResourcesMessages& request,
                             const std::string& letter,
                             const std::string& mid = "general_request");
-    void loadResourceGranted(eResourceGrantedMessages& granted,
+    void loadResourceGranted(ResourceGrantedMessages& granted,
                              const std::string& name);
-    void load(eTroopsRequestedMessages& troops,
+    void load(TroopsRequestedMessages& troops,
               const std::string& name,
               const std::string& letter);
-    void load(eTroopsRequestedMonsterMessages& troops,
+    void load(TroopsRequestedMonsterMessages& troops,
               const std::string& name);
-    void load(eTroopsRequestedAttackMessages& troops,
+    void load(TroopsRequestedAttackMessages& troops,
               const std::string& name,
               std::string letter);
 
     bool mLoaded = false;
 };
 
-#endif // EMESSAGES_H
+#endif // MESSAGES_H

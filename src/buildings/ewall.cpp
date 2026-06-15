@@ -4,12 +4,12 @@
 
 #include "characters/echaracter.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eWall::eWall(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::wall, 1, 1, cid) {
     GameTextures::loadWall();
-    setHP(eNumbers::sWallHP);
+    setHP(Numbers::sWallHP);
 }
 
 eWall::~eWall() {
@@ -23,7 +23,7 @@ eWall::~eWall() {
     }
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eWall::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];

@@ -1,6 +1,6 @@
 #include "vendor-cart-action.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "buildings/ebuildingwithresource.h"
 #include "characters/ecarttransporter.h"
 #include "engine/game-board.h"
@@ -100,7 +100,7 @@ void eVendorCartAction::onFindTargetFail() {
 
 // ── serialize ─────────────────────────────────────────────────────────────────
 
-void eVendorCartAction::serializeFields(eSaveArchive& ar) {
+void eVendorCartAction::serializeFields(SaveArchive& ar) {
     CartTransporterAction::serializeFields(ar);
     ar.field("vendorState", mState);
 }

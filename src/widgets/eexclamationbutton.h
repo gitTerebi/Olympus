@@ -5,7 +5,7 @@
 
 class eExclamationButton : public eBasicButton {
 public:
-    eExclamationButton(eMainWindow* const window);
+    eExclamationButton(MainWindow* const window);
 };
 
 #endif // EEXCLAMATIONBUTTON_H

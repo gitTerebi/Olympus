@@ -3,7 +3,7 @@
 
 #include "character-action.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eDieAction : public eCharacterAction {
 public:
@@ -11,7 +11,7 @@ public:
 
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     int mTime = 0;

@@ -3,10 +3,10 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "characters/actions/monster-action.h"
-#include "eiteratesquare.h"
-#include "evectorhelpers.h"
-#include "emessages.h"
-#include "fileIO/esavearchive.h"
+#include "iterate-square.h"
+#include "vector-helpers.h"
+#include "messages.h"
+#include "fileIO/save-archive.h"
 #include "characters/soldier-banner.h"
 
 eMonsterInvasionEventBase::eMonsterInvasionEventBase(
@@ -15,9 +15,9 @@ eMonsterInvasionEventBase::eMonsterInvasionEventBase(
         const eGameEventBranch branch,
         GameBoard& board) :
     eGameEvent(cid, type, branch, board),
-    ePointEventValue(eBannerTypeS::monsterPoint,
+    ePointEventValue(BannerTypeS::monsterPoint,
                     cid, board) {
-    const auto e4 = eLanguage::text("killed_trigger");
+    const auto e4 = Language::text("killed_trigger");
     mKilledTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
     addTrigger(mKilledTrigger);
 }
@@ -33,7 +33,7 @@ void eMonsterInvasionEventBase::chooseMonster() {
     mValid = eMonstersEventValue::chooseMonster(mSpawned);
 }
 
-void eMonsterInvasionEventBase::serializeFields(eSaveArchive& ar) {
+void eMonsterInvasionEventBase::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     ePointEventValue::serialize(ar);
     eMonstersEventValue::serialize(ar);
@@ -42,18 +42,18 @@ void eMonsterInvasionEventBase::serializeFields(eSaveArchive& ar) {
     ar.field("aggressivness", mAggressivness, eMonsterAggressivness::passive);
     ar.field("valid", mValid, false);
 
-    ar.arrayField("spawned", mSpawned, [](eSaveArchive& ar, eMonsterType& s) {
+    ar.arrayField("spawned", mSpawned, [](SaveArchive& ar, eMonsterType& s) {
         ar.field("s", s);
     });
 
-    ar.arrayField("killed", mKilled, [](eSaveArchive& ar, eMonsterType& k) {
+    ar.arrayField("killed", mKilled, [](SaveArchive& ar, eMonsterType& k) {
         ar.field("k", k);
     });
 }
 
 bool eMonsterInvasionEventBase::finished() const {
     for(const auto s : mSpawned) {
-        const bool c = eVectorHelpers::contains(mKilled, s);
+        const bool c = VectorHelpers::contains(mKilled, s);
         if(!c) return false;
     }
     return eGameEvent::finished();
@@ -64,7 +64,7 @@ void eMonsterInvasionEventBase::killed(const eMonsterType monster) {
     if(!board) return;
     mKilled.push_back(monster);
     const auto date = board->date();
-    const auto& msgs = eMessages::instance;
+    const auto& msgs = Messages::instance;
     const auto monsterMsgs = msgs.monsterMessages(monster);
     const auto rFull = monsterMsgs->fSlainReason;
     mKilledTrigger->trigger(*this, date, rFull);
@@ -118,7 +118,7 @@ eMonster* eMonsterInvasionEventBase::triggerBase() {
         };
         int k = 0;
         while(!monster->tile()) {
-            eIterateSquare::iterateSquare(k++, placeMonster);
+            IterateSquare::iterateSquare(k++, placeMonster);
         }
     }
     a->increment(1);

@@ -5,11 +5,11 @@
 #include "framed-button.h"
 #include "eframedwidget.h"
 #include "elabel.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "equestionwidget.h"
 #include "escrollbar.h"
 
-#include "egamedir.h"
+#include "game-dir.h"
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/estampblueprint.h"
 #include "engine/difficulty.h"
@@ -57,12 +57,12 @@ void eStampManager::initialize(eStampTool *const stampTool, const Difficulty dif
     const auto title = new eLabel("Stamp Manager", window());
     title->fitContent();
     f->addWidget(title);
-    title->align(eAlignment::top | eAlignment::hcenter);
+    title->align(Alignment::top | Alignment::hcenter);
     title->setY(title->y() + p);
 
     const auto closeB = new eCancelButton(window());
     f->addWidget(closeB);
-    closeB->align(eAlignment::bottom | eAlignment::right);
+    closeB->align(Alignment::bottom | Alignment::right);
     closeB->move(closeB->x() - 2 * p, closeB->y() - 2 * p);
     closeB->setPressAction([this]()
                            { close(); });
@@ -74,7 +74,7 @@ void eStampManager::initialize(eStampTool *const stampTool, const Difficulty dif
     createB->setText("Create");
     createB->fitContent();
     f->addWidget(createB);
-    createB->align(eAlignment::bottom | eAlignment::left);
+    createB->align(Alignment::bottom | Alignment::left);
     createB->move(createB->x() + 2 * p, createB->y() - 2 * p);
     createB->setPressAction([this]()
                             {
@@ -130,7 +130,7 @@ void eStampManager::rebuildList()
     if(mFilesWidget) mFilesWidget->removeAllWidgets();
 
     std::vector<fs::path> paths;
-    const auto folder = eGameDir::stampsDir();
+    const auto folder = GameDir::stampsDir();
     if (fs::exists(folder))
     {
         for (const auto &entry : fs::directory_iterator(folder))
@@ -272,11 +272,11 @@ void eStampManager::rebuildList()
         row.popL->setX(popColX + popColW - row.popL->width());
         row.costL->setX(drColX + costColW - row.costL->width());
 
-        row.nameL->align(eAlignment::vcenter);
-        row.popIconL->align(eAlignment::vcenter);
-        row.popL->align(eAlignment::vcenter);
-        row.drIconL->align(eAlignment::vcenter);
-        row.costL->align(eAlignment::vcenter);
+        row.nameL->align(Alignment::vcenter);
+        row.popIconL->align(Alignment::vcenter);
+        row.popL->align(Alignment::vcenter);
+        row.drIconL->align(Alignment::vcenter);
+        row.costL->align(Alignment::vcenter);
 
         mFilesWidget->addWidget(row.b);
         row.b->setY(y);
@@ -295,7 +295,7 @@ void eStampManager::rebuildList()
         const auto b = new eButtonBase("No stamp templates found", window());
         b->setFontSizeS();
         b->setLightFontColor();
-        b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
+        b->setTextAlignment(Alignment::left | Alignment::vcenter);
         b->setNoPadding();
         b->fitContent();
         b->setWidth(mListWidth);
@@ -344,7 +344,7 @@ void eStampManager::deleteSelectedTemplate()
         std::string msg = "Delete '" + name + "'?";
         q->initialize("Confirm Delete", msg, acceptA, nullptr);
         window()->execDialog(q);
-        q->align(eAlignment::center);
+        q->align(Alignment::center);
         return;
     }
 }

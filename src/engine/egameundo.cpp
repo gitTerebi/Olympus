@@ -3,7 +3,7 @@
 #include "game-board.h"
 #include "buildings/ebuilding.h"
 #include "engine/boardData/ecityfinances.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eGameUndo::eGameUndo(GameBoard& board) :
     mBoard(board) {}
@@ -17,7 +17,7 @@ void eGameUndo::startBuild(eBuildingType type) {
 
 void eGameUndo::finishBuild() {
     mState.valid = mState.placed.size() > 0;
-    if(mState.valid) mState.timeoutTicks = 10 * eNumbers::sDayLength;
+    if(mState.valid) mState.timeoutTicks = 10 * Numbers::sDayLength;
 }
 
 void eGameUndo::incTime(const int by) {

@@ -5,7 +5,7 @@
 
 class eOkButton : public eBasicButton {
 public:
-    eOkButton(eMainWindow* const window);
+    eOkButton(MainWindow* const window);
 };
 
 #endif // EOKBUTTON_H

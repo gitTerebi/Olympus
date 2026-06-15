@@ -1,6 +1,6 @@
 #include "requested-resources-type.h"
 
-#include "emessages.h"
+#include "messages.h"
 
 struct eReceiveRequestEntry {
     eEvent fInitial;
@@ -22,7 +22,7 @@ struct eReceiveRequestEntry {
         eEvent::enumPrefix##relation##TooLate, \
         eEvent::enumPrefix##relation##Comply, \
         eEvent::enumPrefix##relation##Refuse, \
-        &eMessages::instance.f##fieldPrefix##msgsSuffix \
+        &Messages::instance.f##fieldPrefix##msgsSuffix \
     }
 
 DEFINE_ENTRY(generalRequest, GeneralRequest, Ally, AllyS);
@@ -97,7 +97,7 @@ static const eReceiveRequestEntry& getEntry(
         eEvent::generalRequestTributeTooLate,
         eEvent::generalRequestTributeComply,
         eEvent::generalRequestTributeRefuse,
-        &eMessages::instance.fTributeRequest
+        &Messages::instance.fTributeRequest
     };
     return tributeEntry;
 }

@@ -1,10 +1,10 @@
 #include "eapollohelpaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "engine/eplague.h"
 #include "buildings/small-house.h"
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 
 eApolloHelpAction::eApolloHelpAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::apolloHelpAction) {}
@@ -40,7 +40,7 @@ bool eApolloHelpAction::decide() {
     return true;
 }
 
-void eApolloHelpAction::serializeFields(eSaveArchive& ar) {
+void eApolloHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("preHealingStage", mPreHealingStage);
@@ -111,7 +111,7 @@ void eApolloHelpAction::goToTarget() {
             const auto ct = h->centerTile();
             const int tx = ct->x();
             const int ty = ct->y();
-            const auto tile = eTileHelper::closestRoad(tx, ty, board);
+            const auto tile = TileHelper::closestRoad(tx, ty, board);
             using eGTTT = eGoToTargetTeleport;
             const auto tele = std::make_shared<eGTTT>(board, this);
             goToTile(tile, tele);
@@ -141,7 +141,7 @@ SmallHouse* sClosestPlagueHouseTile(
     };
 
     for(int k = 0; k < 1000; k++) {
-        eIterateSquare::iterateSquare(k, prcsTile, 1);
+        IterateSquare::iterateSquare(k, prcsTile, 1);
         if(result) break;
     }
     return result;

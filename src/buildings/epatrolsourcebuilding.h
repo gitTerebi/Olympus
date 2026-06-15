@@ -13,12 +13,12 @@ struct eTargetData {
     stdptr<eCharacter> fWalker;
 };
 
-class eSaveArchive;
+class SaveArchive;
 
 class ePatrolSourceBuilding : public ePatrolBuilding {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
-    using eOverlays = eTextureCollection BuildingTextures::*;
+    using eBaseTex = std::shared_ptr<Texture> BuildingTextures::*;
+    using eOverlays = TextureCollection BuildingTextures::*;
     using eTarget = std::pair<eCharacterType, eBuildingType>;
     using eTargets = std::vector<eTarget>;
     ePatrolSourceBuilding(GameBoard& board,
@@ -48,7 +48,7 @@ public:
     static constexpr int sLoadBias = 2;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool targetWalkerInFlight(const int id) const;
 

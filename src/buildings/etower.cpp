@@ -4,19 +4,19 @@
 
 #include "characters/actions/earcheraction.h"
 #include "vec2.h"
-#include "missiles/earrowmissile.h"
+#include "missiles/arrow-missile.h"
 #include "characters/efightingcharacter.h"
 #include "characters/actions/fighting-action.h"
 #include "audio/sounds.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 #include "engine/game-board.h"
 #include "engine/model-data.h"
 
 eTower::eTower(GameBoard &board, const eCityId cid) : eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid)
 {
     GameTextures::loadGatehouseAndTower();
-    setHP(eNumbers::sTowerHP);
+    setHP(Numbers::sTowerHP);
     if (atlantean())
     {
         GameTextures::loadPoseidonTowerArcher();
@@ -59,7 +59,7 @@ eTowerEmploymentState eTower::employmentState(const bool mManTowers, const bool 
     return eTowerEmploymentState::available;
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eTower::getTexture(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
@@ -67,7 +67,7 @@ eTower::getTexture(const eTileSize size) const
     return texs[sizeId].fTower;
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eTower::getOverlays(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
@@ -87,7 +87,7 @@ eTower::getOverlays(const eTileSize size) const
         const auto &coll = &aTexs->fFight[oid];
         const int t = time() / 20;
         const int texId = t % coll->size();
-        eOverlay o;
+        Overlay o;
         o.fTex = coll->getTexture(texId);
         o.fX = -3.5;
         o.fY = -5.5;
@@ -101,7 +101,7 @@ eTower::getOverlays(const eTileSize size) const
         const int ids[8] = {5, 0, 3, 7, 4, 2, 6, 1};
         const int id = ids[idid];
         const auto &coll = colls[id];
-        eOverlay o;
+        Overlay o;
         o.fTex = coll.getTexture(tt % coll.size());
         o.fX = -3.5;
         o.fY = -5.5;
@@ -119,7 +119,7 @@ void eTower::timeChanged(const int by)
             if (!mArcher)
             {
                 mSpawnTime += by;
-                if (mSpawnTime > eNumbers::sTowerSpawnPeriod)
+                if (mSpawnTime > Numbers::sTowerSpawnPeriod)
                 {
                     spawn();
                     mSpawnTime = 0;
@@ -134,8 +134,8 @@ void eTower::timeChanged(const int by)
 
         const int rangeAttackCheck = 500;
         int missileCheck = 200;
-        int range = eNumbers::sTowerRange;
-        double attack = eNumbers::sTowerAttack;
+        int range = Numbers::sTowerRange;
+        double attack = Numbers::sTowerAttack;
         {
             auto& brd = getBoard();
             const auto pid = brd.cityIdToPlayerId(cityId());
@@ -167,7 +167,7 @@ void eTower::timeChanged(const int by)
                     const auto tt = mAttackTarget->tile();
                     const int ttx = tt->x();
                     const int tty = tt->y();
-                    eMissile::sCreate<eArrowMissile>(brd, tx, ty, 3.5,
+                    Missile::sCreate<ArrowMissile>(brd, tx, ty, 3.5,
                                                      ttx, tty, 0.5, 2);
                     auto &board = getBoard();
                     board.ifVisible(centerTile(), [&]()
@@ -273,7 +273,7 @@ void eTower::setEmployed(const int e)
     }
 }
 
-void eTower::serializeFields(eSaveArchive &ar)
+void eTower::serializeFields(SaveArchive &ar)
 {
     eEmployingBuilding::serializeFields(ar);
     ar.field("missile", mMissile);

@@ -4,13 +4,13 @@
 #include "echaracter.h"
 #include "ecarttransporter.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eTrailer : public eCharacter {
 public:
     eTrailer(GameBoard& board);
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getTexture(const eTileSize size) const override;
 
     void setFollow(eCartTransporter* const c) { mFollow = c; }
@@ -18,7 +18,7 @@ public:
     void setBig(const bool b) { mIsBig = b; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdptr<eCartTransporter> mFollow;
 

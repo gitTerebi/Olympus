@@ -12,7 +12,7 @@
 class eInvasionHandler;
 class PlayerConquestEvent;
 class eInvasionWarning;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eInvasionResult {
     invaderWonOrPlayerSurrendered,
@@ -74,7 +74,7 @@ public:
     void invadersWon();
     void invadersDefeated();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     enum class eResponse {
         surrender,

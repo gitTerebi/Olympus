@@ -7,9 +7,9 @@
 
 class eBasicButton : public eButton {
 public:
-    using eTex = eTextureCollection InterfaceTextures::*;
+    using eTex = TextureCollection InterfaceTextures::*;
     eBasicButton(const eTex tex,
-                 eMainWindow* const window);
+                 MainWindow* const window);
 };
 
 #endif // EBASICBUTTON_H

@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 
-eCheckBox::eCheckBox(eMainWindow* const window) :
+eCheckBox::eCheckBox(MainWindow* const window) :
     eCheckableButton(window) {
     const auto res = resolution();
     const auto uiScale = res.uiScale();

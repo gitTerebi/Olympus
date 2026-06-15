@@ -7,7 +7,7 @@
 
 #include "textures/destruction-textures.h"
 
-class eSaveArchive;
+class SaveArchive;
 enum class eBuildingType;
 
 enum class GodQuestId {
@@ -30,7 +30,7 @@ public:
     static eCharacterType sGodToCharacterType(const GodType type);
     static stdsptr<God> sCreateGod(const GodType type, GameBoard& board);
 
-    using eTexPtr = std::vector<eTextureCollection> DestructionTextures::*;
+    using eTexPtr = std::vector<TextureCollection> DestructionTextures::*;
     static eTexPtr sGodMissile(const GodType gt);
 
     static GodType sFightWinner(const GodType g1, const GodType g2);
@@ -55,7 +55,7 @@ public:
     void setAttitude(const GodAttitude attitude) { mAttitude = attitude; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     const GodType mType;
     GodAttitude mAttitude = GodAttitude::friendly;

@@ -4,7 +4,7 @@
 #include "characters/soldier-banner.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 #include "buildings/eheroshall.h"
 #include "characters/actions/eheroaction.h"
 #include "characters/gods/actions/god-worshipped-action.h"
@@ -80,5 +80,5 @@ void ArmyReturnEvent::trigger() {
 }
 
 std::string ArmyReturnEvent::longName() const {
-    return eLanguage::text("army_returns_event_long_name");
+    return Language::text("army_returns_event_long_name");
 }

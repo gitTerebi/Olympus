@@ -1,7 +1,6 @@
-﻿#include "emainwindow.h"
+﻿#include "main-window.h"
 
 #include "widgets/emainmenu.h"
-#include "widgets/egraphicsmenu.h"
 #include "widgets/eoptionsmenu.h"
 #include "widgets/game-widget.h"
 #include "widgets/egameloadingwidget.h"
@@ -18,10 +17,10 @@
 
 #include "engine/ethreadpool.h"
 
-#include "egamedir.h"
+#include "game-dir.h"
 
-#include "fileIO/ereadstream.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/read-stream.h"
+#include "fileIO/save-archive.h"
 
 #include <chrono>
 #include <thread>
@@ -30,9 +29,9 @@
 #include <algorithm>
 
 #include "widgets/eloadgame.h"
-#include "elanguage.h"
+#include "language.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 #include "widgets/eeventbackground.h"
 
@@ -49,21 +48,21 @@ bool writeGameSaveFile(const std::string& path,
     std::ofstream file(path, std::ios::out | std::ios::binary |
                        std::ios::trunc);
     if(!file) return false;
-    eWriteTarget target(&file);
-    eWriteStream dst(target);
+    WriteTarget target(&file);
+    WriteStream dst(target);
     dst.writeFormat(format);
     if(gameWidget) {
         auto s = gameWidget->settings();
-        eSaveArchive settingsAr(dst);
+        SaveArchive settingsAr(dst);
         s.serialize(settingsAr);
     } else {
         GameWidgetSettings s;
         s.fPaused = true;
-        eSaveArchive settingsAr(dst);
+        SaveArchive settingsAr(dst);
         s.serialize(settingsAr);
     }
     {
-        eSaveArchive campaignAr(dst);
+        SaveArchive campaignAr(dst);
         campaign->serialize(campaignAr);
     }
     file.close();
@@ -74,9 +73,9 @@ bool writeGameSaveFile(const std::string& path,
 #include "widgets/eepisodelostwidget.h"
 #include "widgets/erosterofleaders.h"
 
-eMainWindow::eMainWindow() {}
+MainWindow::MainWindow() {}
 
-eMainWindow::~eMainWindow() {
+MainWindow::~MainWindow() {
     if(mFrameTex) SDL_DestroyTexture(mFrameTex);
     if(mFrameTexAlt) SDL_DestroyTexture(mFrameTexAlt);
     if(mSdlWindow) SDL_DestroyWindow(mSdlWindow);
@@ -84,7 +83,7 @@ eMainWindow::~eMainWindow() {
     setWidget(nullptr);
 }
 
-bool eMainWindow::initialize(const eSettings& settings) {
+bool MainWindow::initialize(const Settings& settings) {
     const auto& res = settings.fRes;
     const int w = res.width();
     const int h = res.height();
@@ -125,7 +124,7 @@ bool eMainWindow::initialize(const eSettings& settings) {
     applyPostprocessFilters();
     SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
-    const std::string icoPath = eGameDir::path("zeus.ico");
+    const std::string icoPath = GameDir::path("zeus.ico");
     const auto icon = IMG_Load(icoPath.c_str());
     SDL_SetWindowIcon(window, icon);
     GameTextures::setSettings(mSettings);
@@ -139,7 +138,31 @@ bool eMainWindow::initialize(const eSettings& settings) {
     return true;
 }
 
-void eMainWindow::setWidget(eWidget* const w) {
+int MainWindow::width() const {
+    int w = 0;
+    int h = 0;
+    if(mSdlWindow) {
+        SDL_GetWindowSize(mSdlWindow, &w, &h);
+    }
+    if(w > 0) {
+        return w;
+    }
+    return resolution().width();
+}
+
+int MainWindow::height() const {
+    int w = 0;
+    int h = 0;
+    if(mSdlWindow) {
+        SDL_GetWindowSize(mSdlWindow, &w, &h);
+    }
+    if(h > 0) {
+        return h;
+    }
+    return resolution().height();
+}
+
+void MainWindow::setWidget(eWidget* const w) {
     if(mWidget) {
         if(mWidget != mGW && mWidget != mWW) {
             mWidget->deleteLater();
@@ -148,17 +171,17 @@ void eMainWindow::setWidget(eWidget* const w) {
     mWidget = w;
 }
 
-eWidget* eMainWindow::takeWidget() {
+eWidget* MainWindow::takeWidget() {
     const auto w = mWidget;
     mWidget = nullptr;
     return w;
 }
 
-void eMainWindow::addSlot(const eSlot& slot) {
+void MainWindow::addSlot(const eSlot& slot) {
     mSlots.push_back(slot);
 }
 
-void eMainWindow::mapWindowToFrame(int& x, int& y) const {
+void MainWindow::mapWindowToFrame(int& x, int& y) const {
     // The frame (configured resolution) is bicubic-upscaled into a letterboxed
     // viewport that fits the frame's aspect inside the current output size. Invert
     // that: window coords -> viewport-relative -> frame-resolution coords.
@@ -189,7 +212,7 @@ void eMainWindow::mapWindowToFrame(int& x, int& y) const {
     y = int(fy);
 }
 
-void eMainWindow::setResolution(const eResolution& res) {
+void MainWindow::setResolution(const eResolution& res) {
     if(mSettings.fRes == res && !mFirstResolutionSetting) return;
     mFirstResolutionSetting = false;
     mSettings.fRes = res;
@@ -206,159 +229,174 @@ void eMainWindow::setResolution(const eResolution& res) {
     }
 }
 
-void eMainWindow::setResolution(const int resolution) {
+void MainWindow::setResolution(const int resolution) {
     if(resolution < 0 ||
        resolution >= static_cast<int>(eResolution::sResolutions.size())) {
         return;
     }
     auto settings = mSettings;
-    settings.fRes = eResolution::sResolutions[resolution];
+    const auto& r = eResolution::sResolutions[resolution];
+    settings.fRes = eResolution(r.width(), r.height(), mSettings.fUiScale);
     applyGraphicsSettings(settings);
 }
 
-void eMainWindow::setDisplayMode(const eDisplayMode mode) {
+void MainWindow::setDisplayMode(const DisplayMode mode) {
     if(mSettings.fDisplayMode == mode && !mFirstDisplayModeSetting) return;
     mFirstDisplayModeSetting = false;
     mSettings.fDisplayMode = mode;
     Uint32 flags = 0;
-    if(mode == eDisplayMode::fullscreen) {
+    if(mode == DisplayMode::fullscreen) {
         flags = SDL_WINDOW_FULLSCREEN;
-    } else if(mode == eDisplayMode::borderless) {
+    } else if(mode == DisplayMode::borderless) {
         flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
     SDL_SetWindowFullscreen(mSdlWindow, flags);
 }
 
-void eMainWindow::applyPostprocessFilters() {
+void MainWindow::applyPostprocessFilters() {
     setPostprocessFilters(static_cast<int>(mSettings.fInterpolation),
                           static_cast<int>(mSettings.fUpscale),
                           mSettings.fUpscaleFactor);
 }
 
-void eMainWindow::setInterpolation(const int interpolation) {
-    mSettings.fInterpolation = static_cast<eInterpolation>(interpolation);
+void MainWindow::setInterpolation(const int interpolation) {
+    mSettings.fInterpolation = static_cast<Interpolation>(interpolation);
     applyPostprocessFilters();
     mSettings.write();
 }
 
-void eMainWindow::setUpscale(const int upscale) {
-    mSettings.fUpscale = static_cast<eUpscale>(upscale);
+void MainWindow::setUpscale(const int upscale) {
+    mSettings.fUpscale = static_cast<Upscale>(upscale);
     applyPostprocessFilters();
     mSettings.write();
 }
 
-void eMainWindow::setUpscaleFactor(const int factor) {
+void MainWindow::setUpscaleFactor(const int factor) {
     mSettings.fUpscaleFactor = factor < 2 ? 2 : (factor > 6 ? 6 : factor);
     applyPostprocessFilters();
     mSettings.write();
 }
 
-void eMainWindow::setDisplayMode(const int mode) {
-    if(mode < 0 || mode >= static_cast<int>(eDisplayMode::count)) return;
-    setDisplayMode(static_cast<eDisplayMode>(mode));
+void MainWindow::setUiScale(const int scale) {
+    const int clamped = scale < 0 ? 0 :
+        (scale > static_cast<int>(eUIScale::large) ?
+             static_cast<int>(eUIScale::large) : scale);
+    mSettings.fUiScale = static_cast<eUIScale>(clamped);
+    mSettings.fRes = eResolution(mSettings.fRes.width(),
+                                 mSettings.fRes.height(),
+                                 mSettings.fUiScale);
+    mSettings.write();
+    // New-scale interface textures load only via the menu-loading screen,
+    // and widgets must be rebuilt at the new scale. Both are driven by the
+    // caller through showMenuLoading() + setAfterMenuLoadingAction().
+}
+
+void MainWindow::setDisplayMode(const int mode) {
+    if(mode < 0 || mode >= static_cast<int>(DisplayMode::count)) return;
+    setDisplayMode(static_cast<DisplayMode>(mode));
     mSettings.write();
 }
 
-void eMainWindow::setKeyScrollSpeed(const int speed) {
-    mSettings.fKeyScrollSpeed = eSettings::clampKeyScrollSpeed(speed);
+void MainWindow::setKeyScrollSpeed(const int speed) {
+    mSettings.fKeyScrollSpeed = Settings::clampKeyScrollSpeed(speed);
     mSettings.write();
     if(mGW) mGW->updateKeyScrollSpeed(mSettings.fKeyScrollSpeed);
 }
 
-void eMainWindow::setDisableEdgeScroll(const bool b) {
+void MainWindow::setDisableEdgeScroll(const bool b) {
     mSettings.fDisableEdgeScroll = b;
     mSettings.write();
 }
 
-void eMainWindow::setGameSpeed(const int speed) {
-    mSettings.fGameSpeed = eSettings::clampGameSpeed(speed);
+void MainWindow::setGameSpeed(const int speed) {
+    mSettings.fGameSpeed = Settings::clampGameSpeed(speed);
     mSettings.write();
 }
 
-void eMainWindow::setHotkey(const eHotkeyId id, const SDL_Scancode key) {
+void MainWindow::setHotkey(const HotkeyId id, const SDL_Scancode key) {
     mSettings.setHotkey(id, key);
     mSettings.write();
 }
 
-void eMainWindow::setGeneralVolume(const int volume) {
-    mSettings.fGeneralVolume = eSettings::clampVolume(volume);
+void MainWindow::setGeneralVolume(const int volume) {
+    mSettings.fGeneralVolume = Settings::clampVolume(volume);
     eMusic::setGeneralVolume(mSettings.fGeneralVolume);
     eSounds::setGeneralVolume(mSettings.fGeneralVolume);
     mSettings.write();
 }
 
-void eMainWindow::setMusicVolume(const int volume) {
-    mSettings.fMusicVolume = eSettings::clampVolume(volume);
+void MainWindow::setMusicVolume(const int volume) {
+    mSettings.fMusicVolume = Settings::clampVolume(volume);
     eMusic::setVolume(mSettings.fMusicVolume);
     mSettings.write();
 }
 
-void eMainWindow::setVoiceVolume(const int volume) {
-    mSettings.fVoiceVolume = eSettings::clampVolume(volume);
+void MainWindow::setVoiceVolume(const int volume) {
+    mSettings.fVoiceVolume = Settings::clampVolume(volume);
     eMusic::setVoiceVolume(mSettings.fVoiceVolume);
     eSounds::setVoiceVolume(mSettings.fVoiceVolume);
     mSettings.write();
 }
 
-void eMainWindow::setEventVolume(const int volume) {
-    mSettings.fEventVolume = eSettings::clampVolume(volume);
+void MainWindow::setEventVolume(const int volume) {
+    mSettings.fEventVolume = Settings::clampVolume(volume);
     eSounds::setEventVolume(mSettings.fEventVolume);
     mSettings.write();
 }
 
-void eMainWindow::setAmbientVolume(const int volume) {
-    mSettings.fAmbientVolume = eSettings::clampVolume(volume);
+void MainWindow::setAmbientVolume(const int volume) {
+    mSettings.fAmbientVolume = Settings::clampVolume(volume);
     eSounds::setAmbientVolume(mSettings.fAmbientVolume);
     mSettings.write();
 }
 
-void eMainWindow::setWarehouseDefaultAcceptNone(const bool b) {
+void MainWindow::setWarehouseDefaultAcceptNone(const bool b) {
     mSettings.fWarehouseDefaultAcceptNone = b;
     mSettings.write();
 }
 
-void eMainWindow::setDoubleCartCapacity(const bool b) {
+void MainWindow::setDoubleCartCapacity(const bool b) {
     mSettings.fDoubleCartCapacity = b;
     mSettings.write();
 }
 
-void eMainWindow::setAgorasTakeFromTradingPosts(const bool b) {
+void MainWindow::setAgorasTakeFromTradingPosts(const bool b) {
     mSettings.fAgorasTakeFromTradingPosts = b;
     mSettings.write();
     if (mBoard) mBoard->setAgorasTakeFromTradingPosts(b);
 }
 
-void eMainWindow::setEnableYearlyAutosaves(const bool b) {
+void MainWindow::setEnableYearlyAutosaves(const bool b) {
     mSettings.fEnableYearlyAutosaves = b;
     mSettings.write();
 }
 
-void eMainWindow::setPopupForInvasion(const bool b) {
+void MainWindow::setPopupForInvasion(const bool b) {
     mSettings.fPopupForInvasion = b;
     mSettings.write();
 }
 
-void eMainWindow::setPopupForRequests(const bool b) {
+void MainWindow::setPopupForRequests(const bool b) {
     mSettings.fPopupForRequests = b;
     mSettings.write();
 }
 
-void eMainWindow::setPopupForTributes(const bool b) {
+void MainWindow::setPopupForTributes(const bool b) {
     mSettings.fPopupForTributes = b;
     mSettings.write();
 }
 
-void eMainWindow::setPopupForTroops(const bool b) {
+void MainWindow::setPopupForTroops(const bool b) {
     mSettings.fPopupForTroops = b;
     mSettings.write();
 }
 
-void eMainWindow::setLastDifficulty(const Difficulty d) {
+void MainWindow::setLastDifficulty(const Difficulty d) {
     mSettings.fLastDifficulty = d;
     mSettings.write();
 }
 
-void eMainWindow::startGameAction(GameBoard* const board,
+void MainWindow::startGameAction(GameBoard* const board,
                                   const GameWidgetSettings& settings) {
     const auto show = [this, board, settings]() {
         showGame(board, settings);
@@ -366,7 +404,7 @@ void eMainWindow::startGameAction(GameBoard* const board,
     startGameAction(show);
 }
 
-void eMainWindow::startGameAction(const stdsptr<eCampaign>& c,
+void MainWindow::startGameAction(const stdsptr<eCampaign>& c,
                                   const GameWidgetSettings& settings) {
     const auto show = [this, c, settings]() {
         showGame(c, settings);
@@ -374,7 +412,7 @@ void eMainWindow::startGameAction(const stdsptr<eCampaign>& c,
     startGameAction(show);
 }
 
-void eMainWindow::startGameAction(const eAction& a) {
+void MainWindow::startGameAction(const eAction& a) {
     clearWidgets();
     const auto l = new eGameLoadingWidget(this);
     l->resize(width(), height());
@@ -383,7 +421,7 @@ void eMainWindow::startGameAction(const eAction& a) {
     l->initialize();
 }
 
-void eMainWindow::showEpisodeIntroduction(
+void MainWindow::showEpisodeIntroduction(
         const stdsptr<eCampaign>& c) {
     clearWidgets();
     if(c) mCampaign = c;
@@ -414,11 +452,11 @@ void eMainWindow::showEpisodeIntroduction(
     setWidget(e);
 }
 
-std::string eMainWindow::leaderSaveDir() const {
-    return eGameDir::saveDir() + mLeader + "/";
+std::string MainWindow::leaderSaveDir() const {
+    return GameDir::saveDir() + mLeader + "/";
 }
 
-std::string eMainWindow::mostRecentSavePath() const {
+std::string MainWindow::mostRecentSavePath() const {
     const auto folder = leaderSaveDir();
     if(!std::filesystem::exists(folder)) return "";
 
@@ -439,7 +477,7 @@ std::string eMainWindow::mostRecentSavePath() const {
     return bestPath.string();
 }
 
-void eMainWindow::clearWidgets() {
+void MainWindow::clearWidgets() {
     if(mGW && mWidget != mGW) {
         mGW->setBoard(nullptr);
         mGW->deleteLater();
@@ -451,7 +489,24 @@ void eMainWindow::clearWidgets() {
     }
 }
 
-void eMainWindow::episodeFinished() {
+void MainWindow::emitWindowSizeChanged() {
+    const int w = width();
+    const int h = height();
+    if(w <= 0 || h <= 0) return;
+    if(w == mLastWindowEventW && h == mLastWindowEventH) return;
+    mLastWindowEventW = w;
+    mLastWindowEventH = h;
+    if(!mWidget) return;
+    mWidget->resize(w, h);
+    mWidget->windowSizeChanged(w, h);
+    if(mWidget == mGW && mGW) {
+        mGW->reloadUi();
+    } else if(mWidget == mWW && mWW) {
+        mWW->update();
+    }
+}
+
+void MainWindow::episodeFinished() {
     clearWidgets();
     if(!mCampaign) return;
     mCampaign->episodeFinished();
@@ -479,7 +534,7 @@ void eMainWindow::episodeFinished() {
     }
 }
 
-void eMainWindow::adventureComplete() {
+void MainWindow::adventureComplete() {
     clearWidgets();
     if(!mCampaign) return;
     const auto e = new eEpisodeIntroductionWidget(this);
@@ -493,7 +548,7 @@ void eMainWindow::adventureComplete() {
     if(!played) eMusic::playCampaignVictoryMusic();
 
     e->initialize(mCampaign,
-                  eLanguage::zeusText(62, 0),
+                  Language::zeusText(62, 0),
                   mCampaign->completeText(),
                   {},
                   proceedA,
@@ -501,7 +556,7 @@ void eMainWindow::adventureComplete() {
     setWidget(e);
 }
 
-void eMainWindow::episodeLost() {
+void MainWindow::episodeLost() {
     clearWidgets();
     const auto e = new eEpisodeLostWidget(this);
     const auto proceedA = [this]() {
@@ -512,17 +567,17 @@ void eMainWindow::episodeLost() {
     setWidget(e);
 }
 
-bool eMainWindow::saveGame(const std::string& path) {
+bool MainWindow::saveGame(const std::string& path) {
     auto ez2Path = std::filesystem::path(path);
     ez2Path.replace_extension(".ez2");
     return writeGameSaveFile(ez2Path.string(), "eZeus.ez2", mGW, mCampaign);
 }
 
-bool eMainWindow::loadGame(const std::string& path) {
+bool MainWindow::loadGame(const std::string& path) {
     std::ifstream file(path, std::ios::in | std::ios::binary);
     if(!file) return false;
-    eReadSource source(&file);
-    eReadStream src(source);
+    ReadSource source(&file);
+    ReadStream src(source);
     src.readFormat();
     const auto& format = src.format();
     if(format != "eZeus.ez2") {
@@ -532,12 +587,12 @@ bool eMainWindow::loadGame(const std::string& path) {
     }
     GameWidgetSettings s;
     {
-        eSaveArchive settingsAr(src);
+        SaveArchive settingsAr(src);
         s.serialize(settingsAr);
     }
     const auto c = std::make_shared<eCampaign>();
     {
-        eSaveArchive campaignAr(src);
+        SaveArchive campaignAr(src);
         c->serialize(campaignAr);
     }
     c->loadStrings();
@@ -555,7 +610,7 @@ bool eMainWindow::loadGame(const std::string& path) {
     return true;
 }
 
-void eMainWindow::closeGame() {
+void MainWindow::closeGame() {
     if(!mGW) return;
     if(mGW) {
         mGW->setBoard(nullptr);
@@ -569,7 +624,7 @@ void eMainWindow::closeGame() {
     showMainMenu();
 }
 
-void eMainWindow::showRosterOfLeaders() {
+void MainWindow::showRosterOfLeaders() {
     clearWidgets();
     eMusic::playMenuMusic();
     const auto rol = new eRosterOfLeaders(this);
@@ -578,7 +633,7 @@ void eMainWindow::showRosterOfLeaders() {
     setWidget(rol);
 }
 
-void eMainWindow::showMenuLoading() {
+void MainWindow::showMenuLoading() {
     const auto mlw = new eMenuLoadingWidget(this);
     mlw->setDoneAction([this]() {
         if(mAfterMenuLoadingAction) {
@@ -601,11 +656,11 @@ void eMainWindow::showMenuLoading() {
     setWidget(mlw);
 }
 
-void eMainWindow::setAfterMenuLoadingAction(const eAction& action) {
+void MainWindow::setAfterMenuLoadingAction(const eAction& action) {
     mAfterMenuLoadingAction = action;
 }
 
-void eMainWindow::showMainMenu() {
+void MainWindow::showMainMenu() {
     mCampaign = nullptr;
     clearWidgets();
     eMusic::playMenuMusic();
@@ -634,17 +689,13 @@ void eMainWindow::showMainMenu() {
             fw->deleteLater();
         };
         const auto dir = leaderSaveDir();
-        fw->intialize(eLanguage::zeusText(1, 3),
+        fw->intialize(Language::zeusText(1, 3),
                       dir, func, closeAct);
         execDialog(fw, true, closeAct);
     };
 
     const auto editGameAction = [this]() {
         showChooseGameEditMenu();
-    };
-
-    const auto settingsAction = [this]() {
-        showSettingsMenu();
     };
 
     const auto optionsAction = [this]() {
@@ -664,14 +715,13 @@ void eMainWindow::showMainMenu() {
                    newGameAction,
                    loadGameAction,
                    editGameAction,
-                   settingsAction,
                    optionsAction,
                    quitAction,
                    leaderAction);
 }
 
-void eMainWindow::applyGraphicsSettings(const eSettings& settings) {
-    const bool loadNeeded = settings.fRes.uiScale() != mSettings.fRes.uiScale();
+void MainWindow::applyGraphicsSettings(const Settings& settings) {
+    const bool loadNeeded = settings.fUiScale != mSettings.fUiScale;
     setResolution(settings.fRes);
     setDisplayMode(settings.fDisplayMode);
     mSettings = settings;
@@ -691,27 +741,11 @@ void eMainWindow::applyGraphicsSettings(const eSettings& settings) {
     }
 }
 
-void eMainWindow::showSettingsMenu() {
-    const auto esm = new eGraphicsMenu(mSettings, this);
-    esm->resize(width(), height());
-
-    const auto applyA = [this](const eSettings& settings) {
-        const bool loadNeeded = settings.fRes.uiScale() != mSettings.fRes.uiScale();
-        applyGraphicsSettings(settings);
-        if(!loadNeeded) showMainMenu();
-    };
-    const auto displayModeA = [this](const eDisplayMode mode) {
-        setDisplayMode(mode);
-    };
-    esm->initialize(applyA, displayModeA);
-    execDialog(esm, true, [this]() { showMainMenu(); });
-}
-
-void eMainWindow::showOptionsMenu() {
+void MainWindow::showOptionsMenu() {
     showOptionsMenu(0);
 }
 
-void eMainWindow::showOptionsMenu(const int initialPage) {
+void MainWindow::showOptionsMenu(const int initialPage) {
     const auto reopenPage = [this](const int page) {
         showMainMenu();
         showOptionsMenu(page);
@@ -721,21 +755,21 @@ void eMainWindow::showOptionsMenu(const int initialPage) {
     execDialog(d, true, [this]() { showMainMenu(); });
 }
 
-void eMainWindow::showChooseGameMenu() {
+void MainWindow::showChooseGameMenu() {
     const auto gem = new eChooseGameEditMenu(this);
     gem->resize(width(), height());
     gem->initialize(false);
     setWidget(gem);
 }
 
-void eMainWindow::showChooseGameEditMenu() {
+void MainWindow::showChooseGameEditMenu() {
     const auto gem = new eChooseGameEditMenu(this);
     gem->resize(width(), height());
     gem->initialize(true);
     setWidget(gem);
 }
 
-void eMainWindow::showGame(const stdsptr<eCampaign>& c,
+void MainWindow::showGame(const stdsptr<eCampaign>& c,
                            const GameWidgetSettings& settings) {
     mCampaign = c;
     const auto e = c->currentEpisode();
@@ -743,7 +777,7 @@ void eMainWindow::showGame(const stdsptr<eCampaign>& c,
     showGame(e->fBoard, settings);
 }
 
-void eMainWindow::showGame(GameBoard* b,
+void MainWindow::showGame(GameBoard* b,
                            const GameWidgetSettings& settings) {
     if(!b) b = mBoard;
 
@@ -770,7 +804,7 @@ void eMainWindow::showGame(GameBoard* b,
     setWidget(mGW);
 }
 
-void eMainWindow::showWorld() {
+void MainWindow::showWorld() {
     if(mWidget == mWW) return;
     if(!mCampaign) return;
     if(!mWW) {
@@ -784,7 +818,7 @@ void eMainWindow::showWorld() {
     setWidget(mWW);
 }
 
-void eMainWindow::execDialog(
+void MainWindow::execDialog(
         eWidget* const d, const bool closable,
         const eAction &closeFunc,
         eWidget* const parent) {
@@ -800,7 +834,7 @@ void eMainWindow::execDialog(
     }
 }
 
-int eMainWindow::exec() {
+int MainWindow::exec() {
     using namespace std::chrono;
     using namespace std::chrono_literals;
 
@@ -843,6 +877,11 @@ int eMainWindow::exec() {
                     }
                 } else if(we == SDL_WINDOWEVENT_EXPOSED) {
                     resetRenderTargets = true;
+                } else if(we == SDL_WINDOWEVENT_RESIZED ||
+                          we == SDL_WINDOWEVENT_SIZE_CHANGED ||
+                          we == SDL_WINDOWEVENT_MAXIMIZED) {
+                    resetRenderTargets = true;
+                    emitWindowSizeChanged();
                 }
             } else if(e.type == SDL_RENDER_TARGETS_RESET ||
                       e.type == SDL_RENDER_DEVICE_RESET) {
@@ -930,9 +969,9 @@ int eMainWindow::exec() {
             mGW->updateBeforePaint();
         }
 
-        // Render the whole frame at the configured resolution into mFrameTex, then
-        // a D3D11 bicubic pass upscales it to the current window size. Recreate the
-        // target when the configured resolution changes.
+        // Render the frame at the configured resolution into mFrameTex, then a
+        // D3D11 pass scales it to the current window size. In-game screens skip
+        // the optional pixel-art upscale here so text-heavy panels stay readable.
         const int frameW = width();
         const int frameH = height();
         if(!mFrameTex || !mFrameTexAlt || mFrameTexW != frameW || mFrameTexH != frameH) {
@@ -994,7 +1033,7 @@ int eMainWindow::exec() {
 
         if(showFPS) {
             p.setFont(eFonts::defaultFont(resolution()));
-            p.drawText(0, 0, std::to_string(fpsVal), eFontColor::dark);
+            p.drawText(0, 0, std::to_string(fpsVal), FontColor::dark);
         }
 
         if(renderToFrame) {
@@ -1013,7 +1052,8 @@ int eMainWindow::exec() {
                                           mFramePixels.data(),
                                           frameW * int(sizeof(Uint32)),
                                           frameW,
-                                          frameH)) {
+                                          frameH,
+                                          true)) {
                 SDL_SetRenderDrawColor(mSdlRenderer, 0, 0, 0, 255);
                 SDL_RenderClear(mSdlRenderer);
                 SDL_RenderCopy(mSdlRenderer, frameTex, nullptr, nullptr);

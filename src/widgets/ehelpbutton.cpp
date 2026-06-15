@@ -2,5 +2,5 @@
 
 #include "textures/game-textures.h"
 
-eHelpButton::eHelpButton(eMainWindow* const window) :
+eHelpButton::eHelpButton(MainWindow* const window) :
     eBasicButton(&InterfaceTextures::fHelpButton, window) {}

@@ -8,7 +8,7 @@
 #include "buildings/eagorabase.h"
 #include "buildings/epatrolbuildingbase.h"
 #include "buildings/eroad.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "widgets/etilepainter.h"
 #include "textures/terrain-textures.h"
 
@@ -53,7 +53,7 @@ void GameWidget::drawRoadFootprint(eTile* const tile, const SDL_Color color,
     const auto& tex = trrTexs.fBuildingBase;
     tex->setColorMod(color.r, color.g, color.b);
     tex->setAlpha(color.a);
-    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+    tp.drawTexture(drawX, drawY, tex, Alignment::top);
     tex->clearAlphaMod();
     tex->clearColorMod();
 }
@@ -123,7 +123,7 @@ void GameWidget::addPatrolWalkerPreview(eTile* const start,
         auto tile = start;
         auto o = static_cast<eOrientation>(2*(sample % 4));
         std::vector<eTile*> outbound;
-        for(int time = 0; time <= eNumbers::sPatrolerMaxDistance && tile;
+        for(int time = 0; time <= Numbers::sPatrolerMaxDistance && tile;
             time++) {
             addPreviewTile(tile, path, includeAgoraRoads);
             outbound.push_back(tile);
@@ -138,7 +138,7 @@ void GameWidget::addPatrolWalkerPreview(eTile* const start,
                 const int id = seed % options.size();
                 return options[id];
             };
-            const int simTime = sample*(eNumbers::sPatrolerMaxDistance + 1) +
+            const int simTime = sample*(Numbers::sPatrolerMaxDistance + 1) +
                                 time + 1;
             const auto state = ePatrolMoveAction::sNextTurn(
                 tile, true, *walkable, useTimes, o, simTime, picker);

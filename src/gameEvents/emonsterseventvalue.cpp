@@ -1,12 +1,12 @@
 #include "emonsterseventvalue.h"
 
-#include "erand.h"
+#include "rand.h"
 
-#include "fileIO/ewritestream.h"
-#include "fileIO/ereadstream.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/write-stream.h"
+#include "fileIO/read-stream.h"
+#include "fileIO/save-archive.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 eMonstersEventValue::eMonstersEventValue() {}
 
@@ -29,7 +29,7 @@ void eMonstersEventValue::setMonsterTypes(const std::vector<eMonsterType> &types
     }
 }
 
-void eMonstersEventValue::serialize(eSaveArchive& ar) {
+void eMonstersEventValue::serialize(SaveArchive& ar) {
     ar.field("monster", mMonster, eMonsterType::calydonianBoar);
     const char* const typeNames[] = {
         "monster0Type", "monster1Type", "monster2Type"
@@ -48,7 +48,7 @@ bool eMonstersEventValue::chooseMonster(const std::vector<eMonsterType> &skip) {
     std::vector<eMonsterType> types;
     for(const auto& v : mMonsters) {
         if(!v.fValid) continue;
-        const bool c = eVectorHelpers::contains(skip, v.fType);
+        const bool c = VectorHelpers::contains(skip, v.fType);
         if(c) continue;
         types.push_back(v.fType);
     }
@@ -56,7 +56,7 @@ bool eMonstersEventValue::chooseMonster(const std::vector<eMonsterType> &skip) {
         printf("No monster types to choose from\n");
         return false;
     }
-    const int typeId = eRand::rand() % types.size();
+    const int typeId = Rand::rand() % types.size();
     mMonster = types[typeId];
     return true;
 }

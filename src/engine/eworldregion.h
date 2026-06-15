@@ -3,10 +3,10 @@
 
 #include <string>
 
-#include "fileIO/estreams.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/streams.h"
+#include "fileIO/save-archive.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 struct eWorldRegion {
     std::string fName;
@@ -16,10 +16,10 @@ struct eWorldRegion {
 
     std::string getName() const {
         if(fNameId < 0 || fNameId > 20) return fName;
-        return eLanguage::zeusText(196, fNameId);
+        return Language::zeusText(196, fNameId);
     }
 
-    void serialize(eSaveArchive& ar) {
+    void serialize(SaveArchive& ar) {
         ar.field("name", fName);
         ar.field("nameId", fNameId);
         ar.field("x", fX);

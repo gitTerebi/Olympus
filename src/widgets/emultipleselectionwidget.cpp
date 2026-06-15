@@ -2,7 +2,7 @@
 
 #include "echoosebutton.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include "ebuttonslistwidget.h"
 
@@ -29,7 +29,7 @@ void eMultipleSelectionWidget::initialize(
         choose->initialize(8, labels, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
 
     blw->setButtonCreateEvent([this, blw, labels, setAct]() {
@@ -42,7 +42,7 @@ void eMultipleSelectionWidget::initialize(
         choose->initialize(8, labels, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
 
     blw->setButtonRemoveEvent([this, setAct](const int id) {

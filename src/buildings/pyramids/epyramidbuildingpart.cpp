@@ -1,7 +1,7 @@
 #include "epyramidbuildingpart.h"
 
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 ePyramidBuildingPart::ePyramidBuildingPart(
         const std::vector<eSanctCost>& cost,
@@ -50,7 +50,7 @@ void ePyramidBuildingPart::setPaint(ePyramidElement* const paint,
     mPaintDir = dir;
 }
 
-void ePyramidBuildingPart::serializeFields(eSaveArchive& ar) {
+void ePyramidBuildingPart::serializeFields(SaveArchive& ar) {
     ePyramidElement::serializeFields(ar);
     ar.buildingAsField("paint", &getBoard(), mPaint);
     ar.field("mPaintDir", mPaintDir);

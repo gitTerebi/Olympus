@@ -3,7 +3,7 @@
 
 #include "characters/gods/actions/god-action.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class GodVisitStage {
     none, appear, patrol, disappear
@@ -16,7 +16,7 @@ public:
     void increment(const int by) override;
     bool decide() override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void rebuildCurrentStage();

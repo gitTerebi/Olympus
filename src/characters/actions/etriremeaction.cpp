@@ -6,7 +6,7 @@
 #include "buildings/etriremewharf.h"
 #include "characters/etrireme.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eTriremeAction::eTriremeAction(eTriremeWharf* const home,
                                eCharacter* const trireme) :
@@ -23,7 +23,7 @@ void eTriremeAction::increment(const int by) {
     eComplexAction::increment(by);
 }
 
-void eTriremeAction::serializeFields(eSaveArchive& ar) {
+void eTriremeAction::serializeFields(SaveArchive& ar) {
     FightingAction::serializeFields(ar);
     ar.buildingAsField("home", &board(), mHome);
     ar.field("stage", mStage);

@@ -4,7 +4,7 @@
 #include "ebuilding.h"
 #include "characters/echaracter.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eAnimalBuilding : public eBuilding {
 public:
@@ -14,7 +14,7 @@ public:
                     const eCityId cid);
     ~eAnimalBuilding();
 
-    std::shared_ptr<eTexture> getTexture(
+    std::shared_ptr<Texture> getTexture(
             const eTileSize) const override { return nullptr; };
 
     void nextMonth() override;
@@ -22,7 +22,7 @@ public:
     eCharacter* animal() const { return mA; }
     void setAnimal(eCharacter* const a);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdptr<eCharacter> mA;
 };

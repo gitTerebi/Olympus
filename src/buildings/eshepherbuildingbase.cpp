@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 #include "characters/actions/shepherd-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eShepherBuildingBase::eShepherBuildingBase(
         GameBoard& board,
@@ -31,28 +31,28 @@ eShepherBuildingBase::~eShepherBuildingBase() {
     if(mShepherd) mShepherd->kill();
 }
 
-std::shared_ptr<eTexture> eShepherBuildingBase::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eShepherBuildingBase::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     return mTextures[sizeId].*mBaseTex;
 }
 
-std::vector<eOverlay> eShepherBuildingBase::getOverlays(
+std::vector<Overlay> eShepherBuildingBase::getOverlays(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& coll = mTextures[sizeId].*mOverlays;
     const int texId = textureTime() % coll.size();
-    eOverlay o;
+    Overlay o;
     o.fTex = coll.getTexture(texId);
     o.fX = mOverlayX;
     o.fY = mOverlayY;
-    return std::vector<eOverlay>({o});
+    return std::vector<Overlay>({o});
 }
 
 void eShepherBuildingBase::timeChanged(const int by) {
     eResourceBuildingBase::timeChanged(by);
     if(!mShepherd) {
         mSpawnTime += by*effectiveness();
-        const int period = eNumbers::sShepherdGoatherdWaitTime;
+        const int period = Numbers::sShepherdGoatherdWaitTime;
         if(mSpawnTime > period) {
             mSpawnTime = 0;
             spawn();
@@ -73,7 +73,7 @@ void eShepherBuildingBase::shepherdDelivered(const eResourceType type, const int
     mMonthlyProduced[mRingIdx] += c;
 }
 
-void eShepherBuildingBase::serializeFields(eSaveArchive& ar) {
+void eShepherBuildingBase::serializeFields(SaveArchive& ar) {
     eResourceBuildingBase::serializeFields(ar);
     ar.characterField("shepherd", &getBoard(), mShepherd);
     ar.field("spawnTime", mSpawnTime);

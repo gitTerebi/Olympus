@@ -1,9 +1,9 @@
 #include "enamewidget.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 #include "elineedit.h"
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 #include "echoosebutton.h"
 #include "eproceedbutton.h"
 
@@ -29,7 +29,7 @@ void eNameWidget::initialize(const std::string& ini,
 
     const auto le = new eLineEdit(window());
     le->setRenderBg(true);
-    le->setText(eLanguage::zeusText(21, 76));
+    le->setText(Language::zeusText(21, 76));
     le->fitContent();
     le->setWidth(3*le->width()/2);
     le->setText(ini);
@@ -49,7 +49,7 @@ void eNameWidget::initialize(const std::string& ini,
     chooseButton->setUnderline(false);
     chooseButton->setFontSizeS();
     chooseButton->setPaddingS();
-    chooseButton->setText(eLanguage::zeusText(13, 8)); // choose name:
+    chooseButton->setText(Language::zeusText(13, 8)); // choose name:
     chooseButton->fitContent();
     buttonsW->addWidget(chooseButton);
     chooseButton->setPressAction([this, names, le, nca]() {
@@ -62,7 +62,7 @@ void eNameWidget::initialize(const std::string& ini,
         choose->initialize(16, names, act, true);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     if(proceed) {
         const auto pW = new eWidget(window());
@@ -70,7 +70,7 @@ void eNameWidget::initialize(const std::string& ini,
         const auto continueL = new eLabel(window());
         continueL->setFontSizeS();
         continueL->setPaddingS();
-        continueL->setText(eLanguage::zeusText(13, 5));
+        continueL->setText(Language::zeusText(13, 5));
         continueL->fitContent();
         pW->addWidget(continueL);
         const auto pb = new eProceedButton(window());
@@ -81,7 +81,7 @@ void eNameWidget::initialize(const std::string& ini,
         pW->addWidget(pb);
         pW->stackHorizontally();
         pW->fitContent();
-        continueL->align(eAlignment::vcenter);
+        continueL->align(Alignment::vcenter);
         buttonsW->addWidget(pW);
         buttonsW->stackHorizontally(2*p);
     }

@@ -5,7 +5,7 @@
 #include "ecounteventvalue.h"
 #include "ecityeventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eEconomicMilitaryChangeEventBase : public eGameEvent,
                                          public eCountEventValue,
@@ -17,7 +17,7 @@ public:
         const eGameEventBranch branch,
         GameBoard& board);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 };
 
 #endif // EECONOMICMILITARYCHANGEEVENTBASE_H

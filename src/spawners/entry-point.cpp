@@ -8,7 +8,7 @@
 EntryPoint::EntryPoint(const int id,
                          eTile* const tile,
                          GameBoard& board) :
-    eSpawner(eBannerTypeS::entryPoint, id, tile,
+    Spawner(BannerTypeS::entryPoint, id, tile,
              __INT_MAX__, 500, board) {}
 
 // Augustus-style sentiment curve: popularity (avg house satisfaction)
@@ -35,7 +35,7 @@ void EntryPoint::incTime(const int by) {
         period = base*2;           // frozen (spawn() returns early)
     }
     setSpawnPeriod(period);
-    eSpawner::incTime(by);
+    Spawner::incTime(by);
 }
 
 void EntryPoint::spawn(eTile* const tile) {
@@ -67,6 +67,6 @@ void EntryPoint::spawn(eTile* const tile) {
 
 void eSS_spawnFinish::call() {}
 
-eRiverEntryPoint::eRiverEntryPoint(const int id, eTile * const tile,
+RiverEntryPoint::RiverEntryPoint(const int id, eTile * const tile,
                                    GameBoard &board) :
-    eBanner(eBannerTypeS::riverEntryPoint, id, tile, board) {}
+    Banner(BannerTypeS::riverEntryPoint, id, tile, board) {}

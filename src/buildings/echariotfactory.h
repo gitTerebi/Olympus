@@ -5,15 +5,15 @@
 
 #include <algorithm>
 
-class eSaveArchive;
+class SaveArchive;
 
 class eChariotFactory : public eEmployingBuilding {
 public:
     eChariotFactory(GameBoard& board, const eCityId cid);
     ~eChariotFactory();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 
@@ -29,7 +29,7 @@ public:
     int horses() const { return mHorses; }
     int chariotCount() const { return std::min(mHorses, mChariots); }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mWood = 0;
     int mChariotBuildingTime = 0;

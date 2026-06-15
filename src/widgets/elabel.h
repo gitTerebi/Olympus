@@ -8,9 +8,9 @@
 
 class eLabel : public eWidget, public eLabelBase {
 public:
-    eLabel(eMainWindow* const window);
+    eLabel(MainWindow* const window);
     eLabel(const std::string& text,
-           eMainWindow* const window);
+           MainWindow* const window);
 
     void fitOptions(const std::vector<std::string>& options);
     void renderTargetsReset() override;

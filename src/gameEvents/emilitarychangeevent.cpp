@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 eMilitaryChangeEvent::eMilitaryChangeEvent(
         const eCityId cid,
@@ -30,5 +30,5 @@ void eMilitaryChangeEvent::trigger() {
 }
 
 std::string eMilitaryChangeEvent::longName() const {
-    return eLanguage::text("military_change_long_name");
+    return Language::text("military_change_long_name");
 }

@@ -1,19 +1,19 @@
-#ifndef EANIMALSPAWNER_H
-#define EANIMALSPAWNER_H
+#ifndef ANIMAL_SPAWNER_H
+#define ANIMAL_SPAWNER_H
 
-#include "espawner.h"
+#include "spawner.h"
 
 #include "pointers/estdselfref.h"
 
 class eWildAnimal;
 
-class eAnimalSpawner : public eSpawner {
+class AnimalSpawner : public Spawner {
 public:
-    using eSpawner::eSpawner;
+    using Spawner::Spawner;
 
     virtual stdsptr<eWildAnimal> create(GameBoard& board) = 0;
 
     void spawn(eTile* const tile) override;
 };
 
-#endif // EANIMALSPAWNER_H
+#endif // ANIMAL_SPAWNER_H

@@ -1,21 +1,21 @@
-#include "etilehelper.h"
+#include "tile-helper.h"
 
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "engine/game-board.h"
 
-void eTileHelper::dtileIdToTileId(const int dTileX, const int dTileY,
+void TileHelper::dtileIdToTileId(const int dTileX, const int dTileY,
                                   int& worldTileX, int& worldTileY) {
     worldTileX = dTileX + (dTileY + 1)/2;
     worldTileY = dTileY/2 - dTileX;
 }
 
-void eTileHelper::tileIdToDTileId(const int worldTileX, const int worldTileY,
+void TileHelper::tileIdToDTileId(const int worldTileX, const int worldTileY,
                                   int& dTileX, int& dTileY) {
     dTileY = worldTileX + worldTileY;
     dTileX = (worldTileX + worldTileY)/2 - worldTileY;
 }
 
-eTile* eTileHelper::closestRoad(const int roadWorldTileX,
+eTile* TileHelper::closestRoad(const int roadWorldTileX,
                                 const int roadWorldTileY,
                                 GameBoard& board, const int minLen) {
     const auto init = board.tile(roadWorldTileX, roadWorldTileY);
@@ -37,7 +37,7 @@ eTile* eTileHelper::closestRoad(const int roadWorldTileX,
     };
 
     for(int k = 0; k < 1000; k++) {
-        eIterateSquare::iterateSquare(k, prcsTile, 1);
+        IterateSquare::iterateSquare(k, prcsTile, 1);
         if(roadTile) break;
     }
 
@@ -45,7 +45,7 @@ eTile* eTileHelper::closestRoad(const int roadWorldTileX,
     return tile;
 }
 
-void eTileHelper::rotatedDTileIdToDTileId(const int viewDTileX,
+void TileHelper::rotatedDTileIdToDTileId(const int viewDTileX,
                                           const int viewDTileY,
                                           int& dTileX, int& dTileY,
                                           const eWorldDirection dir,
@@ -66,7 +66,7 @@ void eTileHelper::rotatedDTileIdToDTileId(const int viewDTileX,
     }
 }
 
-void eTileHelper::dTileIdToRotatedDTileId(const int dTileX, const int dTileY,
+void TileHelper::dTileIdToRotatedDTileId(const int dTileX, const int dTileY,
                                           int& viewDTileX, int& viewDTileY,
                                           const eWorldDirection dir,
                                           const int boardWidth,
@@ -86,7 +86,7 @@ void eTileHelper::dTileIdToRotatedDTileId(const int dTileX, const int dTileY,
     }
 }
 
-void eTileHelper::tileIdToRotatedTileId(const int worldTileX,
+void TileHelper::tileIdToRotatedTileId(const int worldTileX,
                                         const int worldTileY,
                                         int& viewTileX, int& viewTileY,
                                         const eWorldDirection dir,
@@ -107,7 +107,7 @@ void eTileHelper::tileIdToRotatedTileId(const int worldTileX,
     dtileIdToTileId(viewDTileX, viewDTileY, viewTileX, viewTileY);
 }
 
-void eTileHelper::rotatedTileIdToTileId(const int viewTileX,
+void TileHelper::rotatedTileIdToTileId(const int viewTileX,
                                         const int viewTileY,
                                         int& worldTileX, int& worldTileY,
                                         const eWorldDirection dir,
@@ -128,7 +128,7 @@ void eTileHelper::rotatedTileIdToTileId(const int viewTileX,
     dtileIdToTileId(dTileX, dTileY, worldTileX, worldTileY);
 }
 
-SDL_Rect eTileHelper::toRotatedRect(const SDL_Rect& rect,
+SDL_Rect TileHelper::toRotatedRect(const SDL_Rect& rect,
                                     const eWorldDirection dir,
                                     const int boardWidth,
                                     const int boardHeight) {

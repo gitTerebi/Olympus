@@ -5,7 +5,7 @@
 
 #include "characters/eartisan.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eBuildAction : public eCharacterAction {
 public:
@@ -13,7 +13,7 @@ public:
 
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mSoundTime = 0;
     int mTime = 0;

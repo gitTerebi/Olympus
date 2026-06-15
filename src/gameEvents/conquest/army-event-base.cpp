@@ -3,8 +3,8 @@
 #include "engine/game-board.h"
 
 #include "army-return-event.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 ArmyEventBase::ArmyEventBase(const eCityId cid,
                              const eGameEventType type,
@@ -24,17 +24,17 @@ void ArmyEventBase::removeArmyEvent() {
     board->removeArmyEvent(this);
 }
 
-void ArmyEventBase::serializeFields(eSaveArchive& ar) {
+void ArmyEventBase::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     const auto board = gameBoard();
-    ar.archiveField("forces", [this, board](eSaveArchive& childAr) {
+    ar.archiveField("forces", [this, board](SaveArchive& childAr) {
         mForces.serialize(childAr, board);
     });
     ar.worldCityField("city", board, mCity);
 }
 
 void ArmyEventBase::planArmyReturn() {
-    planArmyReturn(eNumbers::sArmyTravelTime);
+    planArmyReturn(Numbers::sArmyTravelTime);
 }
 
 void ArmyEventBase::planArmyReturn(const int travelTime) {

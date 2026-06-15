@@ -20,7 +20,7 @@ public:
                    const int id,
                    const eCityId cid);
 
-    stdsptr<eTexture> getTexture(const eTileSize size) const override;
+    stdsptr<Texture> getTexture(const eTileSize size) const override;
 
     GodType type() const { return mType; }
     int id() const { return mId; }

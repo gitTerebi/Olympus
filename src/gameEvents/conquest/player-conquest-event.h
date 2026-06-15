@@ -4,7 +4,7 @@
 #include "player-conquest-event-base.h"
 
 class eInvasionEvent;
-class eSaveArchive;
+class SaveArchive;
 
 class PlayerConquestEvent : public PlayerConquestEventBase {
 public:
@@ -25,7 +25,7 @@ public:
 
     using PlayerConquestEventBase::planArmyReturn;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdptr<eInvasionEvent> mInvasionEvent;
 };

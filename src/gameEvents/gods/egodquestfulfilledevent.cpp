@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 #include "buildings/eheroshall.h"
 
@@ -33,5 +33,5 @@ void eGodQuestFulfilledEvent::trigger() {
 }
 
 std::string eGodQuestFulfilledEvent::longName() const {
-    return eLanguage::text("god_quest_fulfilled");
+    return Language::text("god_quest_fulfilled");
 }

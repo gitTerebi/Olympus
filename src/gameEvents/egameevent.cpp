@@ -1,7 +1,7 @@
 #include "egameevent.h"
 
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "gameEvents/gods/egodvisitevent.h"
 #include "gameEvents/gods/egodattackevent.h"
@@ -54,7 +54,7 @@ eGameEvent::eGameEvent(const eCityId cid,
     mBoard.addGameEvent(this);
 
     if(shouldHaveBaseTrigger()) {
-        const auto e4 = eLanguage::text("base_trigger");
+        const auto e4 = Language::text("base_trigger");
         mBaseTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
         addTrigger(mBaseTrigger);
     }
@@ -68,10 +68,10 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
     std::vector<char> mem;
     {
         worldBoard()->setIOIDs();
-        eWriteTarget target(&mem);
-        eWriteStream dst(target);
+        WriteTarget target(&mem);
+        WriteStream dst(target);
         dst.writeFormat("eZeus");
-        eSaveArchive ar(dst);
+        SaveArchive ar(dst);
         const_cast<eGameEvent*>(this)->serialize(ar);
     }
     const auto result = sCreate(mCid, mType, mBranch, mBoard);
@@ -79,10 +79,10 @@ stdsptr<eGameEvent> eGameEvent::makeCopy() const {
         return nullptr;
     }
     {
-        eReadSource source(mem.data());
-        eReadStream src(source);
+        ReadSource source(mem.data());
+        ReadStream src(source);
         src.readFormat();
-        eSaveArchive ar(src);
+        SaveArchive ar(src);
         result->serialize(ar);
         src.handlePostFuncs();
     }
@@ -302,7 +302,7 @@ void eGameEvent::setWarningMonths(const int ms) {
 int eGameEvent::choosePeriod() const {
     int periodDays = mPeriodDaysMin;
     if(mPeriodDaysMax > mPeriodDaysMin) {
-        periodDays += eRand::rand() % (mPeriodDaysMax - mPeriodDaysMin);
+        periodDays += Rand::rand() % (mPeriodDaysMax - mPeriodDaysMin);
     }
     return periodDays;
 }
@@ -310,7 +310,7 @@ int eGameEvent::choosePeriod() const {
 int eGameEvent::chooseYear() const {
     int years = mDatePlusYearsMin;
     if(mDatePlusYearsMax > mDatePlusYearsMin) {
-        years += eRand::rand() % (mDatePlusYearsMax - mDatePlusYearsMin);
+        years += Rand::rand() % (mDatePlusYearsMax - mDatePlusYearsMin);
     }
     return years;
 }
@@ -403,11 +403,11 @@ void eGameEvent::updateWarningDates() {
     }
 }
 
-void eGameEvent::serialize(eSaveArchive& ar) {
+void eGameEvent::serialize(SaveArchive& ar) {
     serializeFields(ar);
 }
 
-void eGameEvent::serializeFields(eSaveArchive& ar) {
+void eGameEvent::serializeFields(SaveArchive& ar) {
     ar.field("ioId", mIOID, -1);
     ar.field("datePlusDays", mDatePlusDays, 0);
     ar.field("datePlusMonths", mDatePlusMonths, 0);
@@ -421,13 +421,13 @@ void eGameEvent::serializeFields(eSaveArchive& ar) {
     ar.field("reason", mReason, std::string());
     ar.field("episodeCompleteEvent", mEpisodeCompleteEvent, false);
 
-    ar.fixedArrayField("warnings.count", mWarnings, [](eSaveArchive& ar, auto& w) {
-        ar.archiveField("warning", [&w](eSaveArchive& childAr) {
+    ar.fixedArrayField("warnings.count", mWarnings, [](SaveArchive& ar, auto& w) {
+        ar.archiveField("warning", [&w](SaveArchive& childAr) {
             w->serialize(childAr);
         });
     });
 
-    ar.arrayField("consequences", mConsequences, [this](eSaveArchive& ar, auto& e) {
+    ar.arrayField("consequences", mConsequences, [this](SaveArchive& ar, auto& e) {
         eGameEventType type;
         eGameEventBranch branch;
         if(ar.writing()) {
@@ -439,7 +439,7 @@ void eGameEvent::serializeFields(eSaveArchive& ar) {
         if(ar.reading()) {
             e = eGameEvent::sCreate(mCid, type, branch, mBoard);
         }
-        ar.archiveField("state", [&e](eSaveArchive& childAr) {
+        ar.archiveField("state", [&e](SaveArchive& childAr) {
             e->serialize(childAr);
         });
         if(ar.reading()) {
@@ -450,8 +450,8 @@ void eGameEvent::serializeFields(eSaveArchive& ar) {
         }
     });
 
-    ar.fixedArrayField("triggers.count", mTriggers, [](eSaveArchive& ar, auto& et) {
-        ar.archiveField("trigger", [&et](eSaveArchive& childAr) {
+    ar.fixedArrayField("triggers.count", mTriggers, [](SaveArchive& ar, auto& et) {
+        ar.archiveField("trigger", [&et](SaveArchive& childAr) {
             et->serialize(childAr);
         });
     });

@@ -1,9 +1,9 @@
 #ifndef SPRITE_LOADER_H
 #define SPRITE_LOADER_H
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 #include "spriteData/espritedata.h"
-#include "egamedir.h"
+#include "game-dir.h"
 #include "binary-image-loader.h"
 
 using eOffset = std::pair<int, int>;
@@ -22,42 +22,42 @@ public:
 
     void loadTrailer(const int doff,
                      const int min, const int max,
-                     eTextureCollection& coll,
+                     TextureCollection& coll,
                      const int dy);
     void loadArrowSkipFlipped(const int doff,
                               const int min, const int max,
-                              eTextureCollection& coll);
+                              TextureCollection& coll);
     void loadSkipFlipped(const int doff,
                          const int min, const int max,
-                         eTextureCollection& coll);
+                         TextureCollection& coll);
     void loadSkipFlipped(const int doff,
                          const int min, const int max,
-                         std::vector<eTextureCollection>& colls);
+                         std::vector<TextureCollection>& colls);
     void loadHorseSkipFlipped(const int doff,
                               const int min, const int max,
-                              std::vector<eTextureCollection>& colls);
+                              std::vector<TextureCollection>& colls);
     void loadBoatSkipFlipped(const int doff,
                              const int min, const int max,
-                             std::vector<eTextureCollection>& colls);
+                             std::vector<TextureCollection>& colls);
 
-    const std::shared_ptr<eTexture>& load(
+    const std::shared_ptr<Texture>& load(
             const int doff, const int i,
-            eTextureCollection& coll);
+            TextureCollection& coll);
 
-    std::shared_ptr<eTexture> load(
+    std::shared_ptr<Texture> load(
             const int doff, const int i);
 private:
     void loadTex(const int i);
     void buildSpriteAtlas();
 
-    const std::shared_ptr<eTexture>& getTex(const int i);;
+    const std::shared_ptr<Texture>& getTex(const int i);;
 
     const std::string mSize;
     const std::string mName;
     const std::vector<eSpriteData> mSds;
     const eOffsets* const mOffs;
     SDL_Renderer* const mRenderer;
-    std::map<int, std::shared_ptr<eTexture>> mTexs;
+    std::map<int, std::shared_ptr<Texture>> mTexs;
 };
 
 inline const std::vector<eSpriteData>& spriteData(

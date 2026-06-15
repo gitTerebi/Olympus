@@ -1,7 +1,7 @@
 #include "emonsterbutton.h"
 
 #include "echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include "characters/monsters/emonster.h"
 
@@ -23,7 +23,7 @@ void eMonsterButton::initialize(const eMonsterAction& mact,
         choose->initialize(8, monsterNames, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     setType(eMonsterType::calydonianBoar);
     fitContent();

@@ -1,7 +1,7 @@
 #include "epathboard.h"
 
-#include "etilehelper.h"
-#include "elimits.h"
+#include "tile-helper.h"
+#include "game-limits.h"
 
 ePathBoard::ePathBoard(const int x, const int y,
                        const int w, const int h) :
@@ -15,14 +15,14 @@ ePathBoard::ePathBoard(const int x, const int y,
 bool ePathBoard::getAbsValue(const int x, const int y, int** value) {
     int dtx;
     int dty;
-    eTileHelper::tileIdToDTileId(x, y, dtx, dty);
+    TileHelper::tileIdToDTileId(x, y, dtx, dty);
     return getDAbsValue(dtx, dty, value);
 }
 
 bool ePathBoard::getAbsValue(const int x, const int y, int& value) const {
     int dtx;
     int dty;
-    eTileHelper::tileIdToDTileId(x, y, dtx, dty);
+    TileHelper::tileIdToDTileId(x, y, dtx, dty);
     return getDAbsValue(dtx, dty, value);
 }
 

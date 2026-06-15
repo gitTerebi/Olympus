@@ -3,7 +3,7 @@
 
 #include "characters/gods/actions/god-monster-action.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eDefendAttackCityStage {
     none, appear, goTo, wait, fight, comeback, disappear
@@ -15,7 +15,7 @@ public:
 
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
     int maxKilled() const { return mMaxKilled; }
     void setMaxKilled(const int max) { mMaxKilled = max; }

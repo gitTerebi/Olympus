@@ -2,5 +2,5 @@
 
 #include "textures/interface-textures.h"
 
-eLeftButton::eLeftButton(eMainWindow* const window) :
+eLeftButton::eLeftButton(MainWindow* const window) :
     eBasicButton(&InterfaceTextures::fLeftButton, window) {}

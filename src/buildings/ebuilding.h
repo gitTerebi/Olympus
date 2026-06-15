@@ -3,7 +3,7 @@
 
 #include "pointers/eobject.h"
 
-#include "eoverlay.h"
+#include "overlay.h"
 #include "engine/etilesize.h"
 #include "engine/ecityid.h"
 #include "engine/eprovide.h"
@@ -11,7 +11,7 @@
 enum class eMoveDirection;
 
 class GameBoard;
-class eSaveArchive;
+class SaveArchive;
 class eTile;
 
 // Serialized as raw integers in save files. Append new values only; do not
@@ -254,7 +254,7 @@ enum class eBuildingType {
 };
 
 struct eTextureSpace {
-    std::shared_ptr<eTexture> fTex;
+    std::shared_ptr<Texture> fTex;
     bool fHasOverlays = false;
     SDL_Rect fRect{0, 0, 0, 0};
     double fX = 0;
@@ -263,11 +263,11 @@ struct eTextureSpace {
 };
 
 struct BuildingContainedActorDraw {
-    std::shared_ptr<eTexture> fTexture;
+    std::shared_ptr<Texture> fTexture;
     double fViewTileX = 0;
     double fViewTileY = 0;
     bool fUseAlignment = false;
-    eAlignment fAlignment = eAlignment::top;
+    Alignment fAlignment = Alignment::top;
 };
 
 class eBuilding : public eObject {
@@ -278,12 +278,12 @@ public:
               const eCityId cid);
     virtual ~eBuilding();
 
-    virtual std::shared_ptr<eTexture>
+    virtual std::shared_ptr<Texture>
     getTexture(const eTileSize size) const = 0;
-    virtual std::vector<eOverlay>
+    virtual std::vector<Overlay>
     getOverlays(const eTileSize size) const {
         (void)size;
-        return std::vector<eOverlay>();
+        return std::vector<Overlay>();
     }
     // Characters/animals owned by this building but drawn after its texture.
     virtual std::vector<BuildingContainedActorDraw>
@@ -391,7 +391,7 @@ public:
     bool accessToRoad() const;
 
 protected:
-    virtual void serializeFields(eSaveArchive& ar);
+    virtual void serializeFields(SaveArchive& ar);
     GameBoard& ownerBoard() const;
 public:
 
@@ -410,7 +410,7 @@ public:
 
     double appeal() const;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
 private:
     eTile* mCenterTile = nullptr;

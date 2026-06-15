@@ -1,10 +1,10 @@
 #include "ewagechangeevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 eWageChangeEvent::eWageChangeEvent(
         const eCityId cid,
@@ -13,7 +13,7 @@ eWageChangeEvent::eWageChangeEvent(
     eGameEvent(cid, eGameEventType::wageChange,
                branch, board) {}
 
-void eWageChangeEvent::serializeFields(eSaveArchive& ar) {
+void eWageChangeEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCountEventValue::serialize(ar);
 }
@@ -31,5 +31,5 @@ void eWageChangeEvent::trigger() {
 }
 
 std::string eWageChangeEvent::longName() const {
-    return eLanguage::text("wage_change");
+    return Language::text("wage_change");
 }

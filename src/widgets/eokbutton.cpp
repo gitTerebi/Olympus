@@ -2,5 +2,5 @@
 
 #include "textures/game-textures.h"
 
-eOkButton::eOkButton(eMainWindow* const window) :
+eOkButton::eOkButton(MainWindow* const window) :
     eBasicButton(&InterfaceTextures::fOkButton, window) {}

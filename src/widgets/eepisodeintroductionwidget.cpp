@@ -8,19 +8,19 @@
 #include "etextscroller.h"
 #include "eproceedbutton.h"
 
-#include "elanguage.h"
-#include "emainwindow.h"
+#include "language.h"
+#include "main-window.h"
 #include "edifficultywidget.h"
 #include "game-widget.h"
 #include "framed-button.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 
 #include "audio/music.h"
 
 
 class eTooltipWidget : public eWidget {
 public:
-    eTooltipWidget(eMainWindow* const window) :
+    eTooltipWidget(MainWindow* const window) :
         eWidget(window) {}
     bool mouseMoveEvent(const eMouseEvent&) override { return true; }
 };
@@ -63,7 +63,7 @@ void eEpisodeIntroductionWidget::initialize(
     mainTitle->setText(title);
     mainTitle->fitContent();
     inner->addWidget(mainTitle);
-    mainTitle->align(eAlignment::hcenter);
+    mainTitle->align(Alignment::hcenter);
 
     const auto subTitle = new eLabel(window());
     subTitle->setNoPadding();
@@ -147,9 +147,9 @@ void eEpisodeIntroductionWidget::initialize(
             }
             w->stackHorizontally(p);
             w->fitHeight();
-            checkBox->align(eAlignment::vcenter);
-            l->align(eAlignment::vcenter);
-            if(complete) complete->align(eAlignment::vcenter);
+            checkBox->align(Alignment::vcenter);
+            l->align(Alignment::vcenter);
+            if(complete) complete->align(Alignment::vcenter);
             goalsInner->addWidget(w);
 
             if(type == eEpisodeIntroType::goals) {
@@ -167,11 +167,11 @@ void eEpisodeIntroductionWidget::initialize(
                         setAside->setRenderBg(true);
                         setAside->setPaddingXS();
                         setAside->setFontSizeS();
-                        setAside->setText(eLanguage::zeusText(194, 61));
+                        setAside->setText(Language::zeusText(194, 61));
                         setAside->fitContent();
                         setAside->setWidth(2*setAside->width());
                         w->addWidget(setAside);
-                        setAside->align(eAlignment::vcenter | eAlignment::right);
+                        setAside->align(Alignment::vcenter | Alignment::right);
                         setAside->setPressAction([board, res, g, setAside,
                                                   checkBox, ctexs, cids]() {
                             int rem = g->fRequiredCount;
@@ -195,7 +195,7 @@ void eEpisodeIntroductionWidget::initialize(
                         stl->setText(st);
                         stl->fitContent();
                         w->addWidget(stl);
-                        stl->align(eAlignment::vcenter | eAlignment::right);
+                        stl->align(Alignment::vcenter | Alignment::right);
                     }
                 }
             }
@@ -231,7 +231,7 @@ void eEpisodeIntroductionWidget::initialize(
         const auto proceedLabel = new eLabel(window());
         proceedLabel->setFontSizeS();
         proceedLabel->setPaddingS();
-        proceedLabel->setText(eLanguage::zeusText(62, 5));
+        proceedLabel->setText(Language::zeusText(62, 5));
         proceedLabel->fitContent();
         proceedW->addWidget(proceedLabel);
 
@@ -241,29 +241,29 @@ void eEpisodeIntroductionWidget::initialize(
 
         proceedW->stackHorizontally(2*p);
         proceedW->fitContent();
-        proceedLabel->align(eAlignment::vcenter);
-        proceedB->align(eAlignment::vcenter);
+        proceedLabel->align(Alignment::vcenter);
+        proceedB->align(Alignment::vcenter);
 
         lowerButtons->addWidget(proceedW);
-        proceedW->align(eAlignment::right);
+        proceedW->align(Alignment::right);
     } else if(type == eEpisodeIntroType::goals) {
         const auto rpc = new eLabel(window());
         rpc->setNoPadding();
         rpc->setFontSizeS();
-        rpc->setText(eLanguage::zeusText(13, 1));
+        rpc->setText(Language::zeusText(13, 1));
         rpc->fitContent();
         lowerButtons->addWidget(rpc);
-        rpc->align(eAlignment::hcenter);
+        rpc->align(Alignment::hcenter);
 
     } else if(type == eEpisodeIntroType::victory ||
               type == eEpisodeIntroType::campaingVictory) {
         const auto p = new FramedButton(window());
         p->setUnderline(false);
-        p->setText(eLanguage::zeusText(62, 2));
+        p->setText(Language::zeusText(62, 2));
         p->fitContent();
         p->setPressAction(proceedA);
         lowerButtons->addWidget(p);
-        p->align(eAlignment::hcenter);
+        p->align(Alignment::hcenter);
     }
 
     lowerButtons->fitHeight();
@@ -280,7 +280,7 @@ void eEpisodeIntroductionWidget::initialize(
     introText->setSmallTextFontSize();
     introText->setTinyTextPadding();
     auto textPrep = text;
-    eStringHelpers::replaceSpecial(textPrep);
+    StringHelpers::replaceSpecial(textPrep);
     introText->setText(textPrep);
     inner->addWidget(introText);
 
@@ -289,5 +289,5 @@ void eEpisodeIntroductionWidget::initialize(
     inner->stackVertically(p);
 
     addWidget(frame);
-    frame->align(eAlignment::center);
+    frame->align(Alignment::center);
 }

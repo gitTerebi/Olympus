@@ -1,7 +1,7 @@
 #include "evaluebutton.h"
 
 #include "enumlineeditwidget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 void eValueButton::initialize(const int min, const int max) {
     setUnderline(false);
@@ -13,7 +13,7 @@ void eValueButton::initialize(const int min, const int max) {
         }, false, min, max);
         dw->setValue(mValue);
         window()->execDialog(dw);
-        dw->align(eAlignment::center);
+        dw->align(Alignment::center);
     });
     setValue(max);
     fitContent();

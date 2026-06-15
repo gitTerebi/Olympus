@@ -5,7 +5,7 @@
 #include <vector>
 #include "elabel.h"
 #include "ewidget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 namespace eLayoutHelpers {
 
@@ -16,7 +16,7 @@ static void layoutFlexItems(eWidget* container,
                             const std::vector<eFlexItem>& items,
                             eFlexParams params);
 
-eWidget* createFlexContainer(eMainWindow* const window,
+eWidget* createFlexContainer(MainWindow* const window,
                              const int containerW,
                              const int containerH,
                              const eFlexDirection direction,
@@ -26,7 +26,7 @@ eWidget* createFlexContainer(eMainWindow* const window,
                                std::vector<eFlexItem>(items), params);
 }
 
-eWidget* createFlexContainer(eMainWindow* const window,
+eWidget* createFlexContainer(MainWindow* const window,
                              const int containerW,
                              const int containerH,
                              const eFlexDirection direction,

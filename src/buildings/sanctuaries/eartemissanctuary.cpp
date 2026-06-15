@@ -4,9 +4,9 @@
 
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
-#include "elanguage.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eArtemisSanctuary::eArtemisSanctuary(
         const int sw, const int sh, GameBoard& board,
@@ -37,9 +37,9 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
             } else {
                 return;
             }
-            const auto name = eLanguage::zeusText(138, string);
+            const auto name = Language::zeusText(138, string);
             const auto b = e::make_shared<SoldierBanner>(bt, board);
-            for(int i = 0; i < eNumbers::sSoldiersPerAresArtemisBanner; i++) {
+            for(int i = 0; i < Numbers::sSoldiersPerAresArtemisBanner; i++) {
                 b->incCount();
             }
             b->setName(name);
@@ -50,12 +50,12 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
             id++;
         }
         mSoldierSpawn += by;
-        const int ssr = 7 * eNumbers::sDayLength;
+        const int ssr = 7 * Numbers::sDayLength;
         if(mSoldierSpawn > ssr) {
             mSoldierSpawn -= ssr;
             for(const auto& b : mSoldierBanners) {
                 const int count = b->count();
-                if(count >= eNumbers::sSoldiersPerAresArtemisBanner) continue;
+                if(count >= Numbers::sSoldiersPerAresArtemisBanner) continue;
                 b->incCount();
                 break;
             }
@@ -64,7 +64,7 @@ void eSanctuaryWithWarriors::timeChanged(const int by) {
     eSanctuary::timeChanged(by);
 }
 
-void eSanctuaryWithWarriors::serializeFields(eSaveArchive& ar) {
+void eSanctuaryWithWarriors::serializeFields(SaveArchive& ar) {
     eSanctuary::serializeFields(ar);
     auto& board = getBoard();
     if(ar.reading()) {
@@ -72,7 +72,7 @@ void eSanctuaryWithWarriors::serializeFields(eSaveArchive& ar) {
         auto banners = std::make_shared<std::vector<std::shared_ptr<stdsptr<SoldierBanner>>>>();
         mSoldierBanners.clear();
         ar.countedArrayField("soldierBanners", 0,
-            [&board, banners](eSaveArchive& itemAr, const int i) {
+            [&board, banners](SaveArchive& itemAr, const int i) {
                 if(i >= static_cast<int>(banners->size())) banners->resize(i + 1);
                 if(!(*banners)[i]) (*banners)[i] = std::make_shared<stdsptr<SoldierBanner>>();
                 itemAr.soldierBannerField("banner", &board, *(*banners)[i]);
@@ -96,14 +96,14 @@ void eSanctuaryWithWarriors::serializeFields(eSaveArchive& ar) {
                 } else {
                     continue;
                 }
-                const auto name = eLanguage::zeusText(138, string);
+                const auto name = Language::zeusText(138, string);
                 b->setName(name);
             }
         }, "eSanctuaryWithWarriors::banners");
     } else {
         const int nb = static_cast<int>(mSoldierBanners.size());
         ar.countedArrayField("soldierBanners", nb,
-            [&board, this](eSaveArchive& itemAr, const int i) {
+            [&board, this](SaveArchive& itemAr, const int i) {
                 itemAr.soldierBannerField("banner", &board, mSoldierBanners[i]);
             });
     }

@@ -1,7 +1,7 @@
 #include "eherobutton.h"
 
 #include "echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 void eHeroButton::initialize(const eHeroAction& gact) {
     setUnderline(false);
@@ -18,7 +18,7 @@ void eHeroButton::initialize(const eHeroAction& gact) {
         choose->initialize(8, heroNames, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     setType(eHeroType::bellerophon);
     fitContent();

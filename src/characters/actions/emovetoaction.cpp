@@ -8,10 +8,10 @@
 #include "engine/game-board.h"
 #include "engine/thread/ethreadboard.h"
 #include "engine/ethreadpool.h"
-#include "epathfindtask.h"
+#include "path-find-task.h"
 #include "ewaitaction.h"
 #include "earcheraction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "buildings/epatroltarget.h"
 
 eMoveToAction::eMoveToAction(eCharacter* const c) :
@@ -110,7 +110,7 @@ void eMoveToAction::startInternal(const eTileFinal& final,
 
     const auto cid = onCityId();
     const auto tileBRect = brd.boardCityTileBRect(cid);
-    const auto pft = new ePathFindTask(cid, tileBRect,
+    const auto pft = new PathFindTask(cid, tileBRect,
                                        startTile,
                                        pathFindWalkable,
                                        final, finishFunc,
@@ -217,7 +217,7 @@ void eMoveToAction::setTileDistance(const eTileDistance& dist) {
     mDistance = dist;
 }
 
-void eMoveToAction::serializeFields(eSaveArchive& ar) {
+void eMoveToAction::serializeFields(SaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     ar.field("stateRelevance", mRelevance, eStateRelevance::all);
     ar.field("removeLastTurn", mRemoveLastTurn, false);

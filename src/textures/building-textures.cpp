@@ -1213,7 +1213,7 @@ void BuildingTextures::loadStadium() {
 
         for(int i = 1547; i < 1629;) {
             for(int j = 0; j < 2; j++, i++) {
-                eTextureCollection* coll;
+                TextureCollection* coll;
                 if(j == 0) {
                     coll = &fStadiumOverlay4W;
                 } else {
@@ -1252,7 +1252,7 @@ void BuildingTextures::loadStadium() {
 
         for(int i = 1773; i < 1937;) {
             for(int j = 0; j < 2; j++, i++) {
-                eTextureCollection* coll;
+                TextureCollection* coll;
                 if(j == 0) {
                     coll = &fStadiumOverlay5W;
                 } else {
@@ -2056,7 +2056,7 @@ void BuildingTextures::loadSanctuary() {
                              nullptr, fRenderer);
 
         int i = 1;
-        const auto loadStatues = [&](eTextureCollection& coll) {
+        const auto loadStatues = [&](TextureCollection& coll) {
             for(int j = 0; j < 4; j++, i++) {
                 loader.load(1, i, coll);
             }
@@ -2087,7 +2087,7 @@ void BuildingTextures::loadSanctuary() {
         fSanctuaryAltar = loader.load(1, 61);
         {
             const auto& src = fSanctuaryAltar;
-            auto flipped = std::make_shared<eTexture>();
+            auto flipped = std::make_shared<Texture>();
             flipped->setFlipTex(src);
             flipped->setOffset(src->width() - src->offsetX(), src->offsetY());
             fSanctuaryAltarFlipped = flipped;
@@ -2104,7 +2104,7 @@ void BuildingTextures::loadSanctuary() {
                              nullptr, fRenderer);
 
         int i = 1;
-        const auto loadStatues = [&](eTextureCollection& coll) {
+        const auto loadStatues = [&](TextureCollection& coll) {
             for(int j = 0; j < 4; j++, i++) {
                 loader.load(1, i, coll);
             }
@@ -2123,7 +2123,7 @@ void BuildingTextures::loadSanctuary() {
                              nullptr, fRenderer);
 
         int i = 11;
-        const auto loadStatues = [&](eTextureCollection& coll) {
+        const auto loadStatues = [&](TextureCollection& coll) {
             for(int j = 0; j < 4; j++, i++) {
                 loader.load(11, i, coll);
             }
@@ -2226,8 +2226,8 @@ void BuildingTextures::loadZeusSanctuary() {
     }
 
     // SW = SE(S3) flipped, NW overlay = NE(S3) flipped; index 2 = S3
-    const auto makeFlipped = [&](const std::shared_ptr<eTexture>& src,
-                                 eTextureCollection& dst) {
+    const auto makeFlipped = [&](const std::shared_ptr<Texture>& src,
+                                 TextureCollection& dst) {
         auto& tex = dst.addTexture();
         tex->setOffset(0, src->offsetY());
         tex->setFlipTex(src);
@@ -2317,8 +2317,8 @@ void BuildingTextures::loadWaterPark() {
                          nullptr, fRenderer);
 
     const auto loadWaterPark = [&](const int i,
-                                   std::shared_ptr<eTexture>& tex,
-                                   eTextureCollection& overlay) {
+                                   std::shared_ptr<Texture>& tex,
+                                   TextureCollection& overlay) {
         tex = loader.load(64, i);
         const int jMax = i + 8;
         for(int j = i + 1; j < jMax; j++) {
@@ -3046,7 +3046,7 @@ void BuildingTextures::loadPier() {
     }
 
     if(fTileH == 30) {
-        auto loadFrame = [&](const int i) -> std::shared_ptr<eTexture> {
+        auto loadFrame = [&](const int i) -> std::shared_ptr<Texture> {
             char buf[64];
             snprintf(buf, sizeof(buf), "SprAmbient_%05d.png", i);
             const std::string path = "30/SprAmbient/" + std::string(buf);
@@ -3063,7 +3063,7 @@ void BuildingTextures::loadPier() {
             const auto src = loadFrame(134 + i);
             auto& slot = fPierOverlay.addTexture();
             if(src) {
-                auto flipped = std::make_shared<eTexture>();
+                auto flipped = std::make_shared<Texture>();
                 flipped->setFlipTex(src);
                 flipped->setOffset(src->width() - src->offsetX(),
                                    src->offsetY());
@@ -3080,7 +3080,7 @@ void BuildingTextures::loadPier() {
             const auto src = loadFrame(198 + i);
             auto& slot = fPierOverlay.addTexture();
             if(src) {
-                auto flipped = std::make_shared<eTexture>();
+                auto flipped = std::make_shared<Texture>();
                 flipped->setFlipTex(src);
                 flipped->setOffset(src->width() - src->offsetX(),
                                    src->offsetY());
@@ -3425,7 +3425,7 @@ void BuildingTextures::loadGodMonuments(
         const std::vector<eSpriteData>& sd45,
         const std::vector<eSpriteData>& sd60,
         const std::string& name,
-        eTextureCollection& coll) {
+        TextureCollection& coll) {
     const auto& sds = spriteData(fTileH, sd15, sd30, sd45, sd60);
     SpriteLoader loader(fTileH, name, sds, nullptr, fRenderer);
     for(int i = 1; i < 5; i++) {
@@ -3433,8 +3433,8 @@ void BuildingTextures::loadGodMonuments(
     }
 }
 
-void BuildingTextures::generateFlipped(const eTextureCollection& src,
-                                        eTextureCollection& dst) {
+void BuildingTextures::generateFlipped(const TextureCollection& src,
+                                        TextureCollection& dst) {
     for(int i = 0; i < src.size(); i++) {
         auto& tex = dst.addTexture();
         const auto& srcTex = src.getTexture(i);

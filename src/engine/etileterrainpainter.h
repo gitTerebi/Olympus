@@ -1,17 +1,17 @@
 #ifndef ETILETERRAINPAINTER_H
 #define ETILETERRAINPAINTER_H
 
-class eTexture;
-class eTextureCollection;
+class Texture;
+class TextureCollection;
 
 #include "pointers/estdselfref.h"
 
 struct eTileTerrainPainter {
-    stdsptr<eTexture> fTex = nullptr;
-    const eTextureCollection* fColl = nullptr;
+    stdsptr<Texture> fTex = nullptr;
+    const TextureCollection* fColl = nullptr;
     int fDrawDim = 1;
 
-    stdsptr<eTexture> getTexture(const int frame) const;
+    stdsptr<Texture> getTexture(const int frame) const;
 };
 
 #endif // ETILETERRAINPAINTER_H

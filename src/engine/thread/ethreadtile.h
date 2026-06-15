@@ -3,7 +3,7 @@
 
 #include "ethreadbuilding.h"
 #include "ethreadcharacter.h"
-#include "spawners/ebanner.h"
+#include "spawners/banner.h"
 
 #include "../etilebase.h"
 

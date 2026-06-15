@@ -30,8 +30,8 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
     const auto doDrawTex = [&](double drawX, double drawY,
                                eBuildingType buildingType, int tileSpanW, bool canBuild)
     {
-        stdsptr<eTexture> tex;
-        const auto firstTex = [](const eTextureCollection &coll) -> stdsptr<eTexture>
+        stdsptr<Texture> tex;
+        const auto firstTex = [](const TextureCollection &coll) -> stdsptr<Texture>
         {
             if (coll.size() <= 0)
                 return nullptr;
@@ -398,7 +398,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
         else if (!canBuild)
             tex->setColorMod(255, 0, 0);
         tex->setAlpha(120);
-        tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+        tp.drawTexture(drawX, drawY, tex, Alignment::top);
         tex->clearAlphaMod();
         if (fallback || !canBuild)
             tex->clearColorMod();
@@ -434,7 +434,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
                 double drawX;
                 double drawY;
                 drawXY(x, y, drawX, drawY, 1, 1, tile->altitude());
-                stdsptr<eTexture> tex;
+                stdsptr<Texture> tex;
                 if (isRoad(x, y))
                 {
                     tex = builTexs.fAgoraRoad.getTexture(tile->seed() %
@@ -449,7 +449,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
                     continue;
                 tex->setColorMod(0, 255, 0);
                 tex->setAlpha(120);
-                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                tp.drawTexture(drawX, drawY, tex, Alignment::top);
                 tex->clearAlphaMod();
                 tex->clearColorMod();
             }
@@ -468,7 +468,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
             double drawX;
             double drawY;
             drawXY(x, y, drawX, drawY, 1, 1, tile->altitude());
-            stdsptr<eTexture> tex;
+            stdsptr<Texture> tex;
             if (road)
             {
                 tex = builTexs.fAgoraRoad.getTexture(tile->seed() %
@@ -483,7 +483,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
                 return;
             tex->setColorMod(0, 255, 0);
             tex->setAlpha(120);
-            tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+            tp.drawTexture(drawX, drawY, tex, Alignment::top);
             tex->clearAlphaMod();
             tex->clearColorMod();
         };

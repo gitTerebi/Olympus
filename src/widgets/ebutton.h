@@ -3,18 +3,18 @@
 
 #include "ebuttonbase.h"
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 class eButton : public eButtonBase {
 public:
     using eButtonBase::eButtonBase;
 
-    void setHoverTexture(const std::shared_ptr<eTexture>& tex);
-    void setPressedTexture(const std::shared_ptr<eTexture>& tex);
-    void setDisabledTexture(const std::shared_ptr<eTexture>& tex);
+    void setHoverTexture(const std::shared_ptr<Texture>& tex);
+    void setPressedTexture(const std::shared_ptr<Texture>& tex);
+    void setDisabledTexture(const std::shared_ptr<Texture>& tex);
 
-    static eButton* sCreate(const eTextureCollection& texs,
-                            eMainWindow* const window,
+    static eButton* sCreate(const TextureCollection& texs,
+                            MainWindow* const window,
                             eWidget* const buttons = nullptr);
 
     void setUnderline(const bool u) { mUnderline = u; }
@@ -24,20 +24,20 @@ protected:
 
     template <class T>
     static T* sCreateButtonBase(
-            const eTextureCollection& texs,
-            eMainWindow* const window,
+            const TextureCollection& texs,
+            MainWindow* const window,
             eWidget* const buttons);
 private:
-    std::shared_ptr<eTexture> mHoverTexture;
-    std::shared_ptr<eTexture> mPressedTexture;
-    std::shared_ptr<eTexture> mDisabledTexture;
+    std::shared_ptr<Texture> mHoverTexture;
+    std::shared_ptr<Texture> mPressedTexture;
+    std::shared_ptr<Texture> mDisabledTexture;
 
     bool mUnderline = true;
 };
 
 template <class T>
-T* eButton::sCreateButtonBase(const eTextureCollection& texs,
-                              eMainWindow* const window,
+T* eButton::sCreateButtonBase(const TextureCollection& texs,
+                              MainWindow* const window,
                               eWidget* const buttons) {
     const auto b = new T(window);
     b->setTexture(texs.getTexture(0));

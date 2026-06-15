@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "characters/soldier-banner.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 bool eMilitaryAid::count() const {
     int c = 0;
@@ -21,11 +21,11 @@ void eMilitaryAid::goBack() {
     fSoldiers.clear();
 }
 
-void eMilitaryAid::serialize(eSaveArchive& ar, GameBoard* board) {
+void eMilitaryAid::serialize(SaveArchive& ar, GameBoard* board) {
     ar.worldCityField("city", board, fCity);
     if(ar.reading()) {
         auto soldiers = std::make_shared<std::vector<stdsptr<SoldierBanner>>>();
-        ar.arrayField("soldiers", *soldiers, [board](eSaveArchive& itemAr, auto& soldier) {
+        ar.arrayField("soldiers", *soldiers, [board](SaveArchive& itemAr, auto& soldier) {
             itemAr.soldierBanner(board, soldier);
         });
         ar.addPostFunc([this, soldiers]() {
@@ -35,7 +35,7 @@ void eMilitaryAid::serialize(eSaveArchive& ar, GameBoard* board) {
                             fSoldiers.end());
         }, "eMilitaryAid::soldiers");
     } else {
-        ar.arrayField("soldiers", fSoldiers, [board](eSaveArchive& itemAr, auto& soldier) {
+        ar.arrayField("soldiers", fSoldiers, [board](SaveArchive& itemAr, auto& soldier) {
             itemAr.soldierBanner(board, soldier);
         });
     }

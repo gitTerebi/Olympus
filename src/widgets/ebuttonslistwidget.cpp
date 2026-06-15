@@ -4,7 +4,7 @@
 #include "framed-button.h"
 #include "ecancelbutton.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 void eListButton::initialize(const std::string& text, const int id,
                              const bool renderBg, const bool small,
@@ -42,7 +42,7 @@ void eListButton::initialize(const std::string& text, const int id,
             if(mCloseAction) mCloseAction(mId);
         });
         addWidget(mCloseButton);
-        mCloseButton->align(eAlignment::vcenter);
+        mCloseButton->align(Alignment::vcenter);
     }
 }
 
@@ -74,7 +74,7 @@ void eListButton::fitToWidth(const int w) {
 void eButtonsListWidget::initialize(const bool newButton,
                                     const bool closeButtons) {
     if(newButton) {
-        const auto addStr = eLanguage::text("add");
+        const auto addStr = Language::text("add");
         mNewButton = new FramedButton(addStr, window());
         if(mSmallSize) {
             mNewButton->setFontSizeS();

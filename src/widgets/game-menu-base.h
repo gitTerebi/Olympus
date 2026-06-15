@@ -4,7 +4,7 @@
 #include "elabel.h"
 
 #include "echeckablebutton.h"
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 class eDataWidget;
 
@@ -23,7 +23,7 @@ public:
     using eLabel::eLabel;
 
     void initialize();
-    eCheckableButton* addButton(const eTextureCollection& coll,
+    eCheckableButton* addButton(const TextureCollection& coll,
                                 const eWid& w);
     void connectAndLayoutButtons();
     void layoutButtons();

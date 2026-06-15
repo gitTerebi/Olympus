@@ -10,8 +10,8 @@
 #include "characters/actions/ewaitaction.h"
 #include "buildings/sanctuaries/etemplealtarbuilding.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 #include "walkable/walkable-object.h"
 
 PriestSacrificeAction::PriestSacrificeAction(eCharacter* const c,
@@ -88,7 +88,7 @@ void PriestSacrificeAction::toFindAnimal() {
     const auto a = findAnimal();
     if(!a) {
         mStage = ePriestSacrificeStage::findingAnimal;
-        wait(eNumbers::sDayLength * 4);
+        wait(Numbers::sDayLength * 4);
         return;
     }
     toMovingToAnimal(a);
@@ -159,7 +159,7 @@ void PriestSacrificeAction::toAtAnimal() {
     const auto w = e::make_shared<eWaitAction>(c);
     w->setFinishAction(finish);
     w->setFailAction(finish);
-    w->setTime(eNumbers::sDayLength * 2);
+    w->setTime(Numbers::sDayLength * 2);
     setCurrentAction(w);
 }
 
@@ -180,10 +180,10 @@ void PriestSacrificeAction::toIdle() {
         mAltar->startSacrifice(animalSacType);
     }
     mStage = ePriestSacrificeStage::idle;
-    wait(eNumbers::sDayLength * eNumbers::sPriestSacrificeRecurringSpawnDays);
+    wait(Numbers::sDayLength * Numbers::sPriestSacrificeRecurringSpawnDays);
 }
 
-void PriestSacrificeAction::serializeFields(eSaveArchive& ar) {
+void PriestSacrificeAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.buildingAsField("altar", &board(), mAltar);
     ar.characterAsField("targetAnimal", &board(), mTargetAnimal);

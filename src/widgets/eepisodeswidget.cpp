@@ -1,12 +1,12 @@
 ﻿#include "eepisodeswidget.h"
 
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
 #include "elabel.h"
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 #include "echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "eeditorsettingsmenu.h"
 
 #include "engine/ecampaign.h"
@@ -29,8 +29,8 @@ void eEpisodesWidget::intialize(const bool colony,
     const auto idC = new eLabel(window());
     idC->setFontSizeXS();
     idC->setPaddingXS();
-    idC->setText(colony ? eLanguage::zeusText(195, 12) :
-                          eLanguage::zeusText(195, 9));
+    idC->setText(colony ? Language::zeusText(195, 12) :
+                          Language::zeusText(195, 9));
     idC->fitContent();
     idC->setWidth(colW);
     labelsW->addWidget(idC);
@@ -38,7 +38,7 @@ void eEpisodesWidget::intialize(const bool colony,
     const auto nextEpisodeC = new eLabel(window());
     nextEpisodeC->setFontSizeXS();
     nextEpisodeC->setPaddingXS();
-    nextEpisodeC->setText(eLanguage::zeusText(195, 2));
+    nextEpisodeC->setText(Language::zeusText(195, 2));
     nextEpisodeC->fitContent();
     nextEpisodeC->setWidth(colW);
     labelsW->addWidget(nextEpisodeC);
@@ -47,8 +47,8 @@ void eEpisodesWidget::intialize(const bool colony,
     const auto episodeSettingsC = new eLabel(window());
     episodeSettingsC->setFontSizeXS();
     episodeSettingsC->setPaddingXS();
-    episodeSettingsC->setText(colony ? eLanguage::zeusText(195, 49) :
-                                       eLanguage::zeusText(195, 10));
+    episodeSettingsC->setText(colony ? Language::zeusText(195, 49) :
+                                       Language::zeusText(195, 10));
     episodeSettingsC->fitContent();
     episodeSettingsC->setWidth(colW);
     labelsW->addWidget(episodeSettingsC);
@@ -56,8 +56,8 @@ void eEpisodesWidget::intialize(const bool colony,
     const auto episodeTextC = new eLabel(window());
     episodeTextC->setFontSizeXS();
     episodeTextC->setPaddingXS();
-    episodeTextC->setText(colony ? eLanguage::zeusText(195, 48) :
-                                   eLanguage::zeusText(195, 21));
+    episodeTextC->setText(colony ? Language::zeusText(195, 48) :
+                                   Language::zeusText(195, 21));
     episodeTextC->fitContent();
     episodeTextC->setWidth(colW);
     labelsW->addWidget(episodeTextC);
@@ -137,12 +137,12 @@ public:
             editB->setUnderline(false);
             editB->setFontSizeXS();
             editB->setPaddingXS();
-            editB->setText(eLanguage::zeusText(195, 20));
-            editB->setTooltip(eLanguage::zeusText(278, 14));
+            editB->setText(Language::zeusText(195, 20));
+            editB->setTooltip(Language::zeusText(278, 14));
             editB->fitContent();
             editW->addWidget(editB);
             editW->fitHeight();
-            editB->align(eAlignment::hcenter);
+            editB->align(Alignment::hcenter);
             addWidget(editW);
             editB->setPressAction([id, ecb]() {
                 ecb(id);
@@ -164,7 +164,7 @@ public:
             cityB->setCity(ee->fCity);
             cityW->addWidget(cityB);
             cityW->fitHeight();
-            cityB->align(eAlignment::hcenter);
+            cityB->align(Alignment::hcenter);
             addWidget(cityW);
         }
 
@@ -178,17 +178,17 @@ public:
             nextEpisodeB->setFontSizeXS();
             nextEpisodeB->setPaddingXS();
             if(last) {
-                nextEpisodeB->setText(eLanguage::zeusText(195, 50));
-                nextEpisodeB->setTooltip(eLanguage::zeusText(278, 13));
+                nextEpisodeB->setText(Language::zeusText(195, 50));
+                nextEpisodeB->setTooltip(Language::zeusText(278, 13));
                 nextEpisodeB->setPressAction(newE);
             } else {
                 const auto ne = ee->fNextEpisode;
                 nextEpisodeB->setText(ne == eEpisodeType::parentCity ?
-                                          eLanguage::zeusText(195, 14) :
-                                          eLanguage::zeusText(195, 15));
+                                          Language::zeusText(195, 14) :
+                                          Language::zeusText(195, 15));
                 nextEpisodeB->setTooltip(ne == eEpisodeType::parentCity ?
-                                          eLanguage::zeusText(278, 12) :
-                                          eLanguage::zeusText(278, 11));
+                                          Language::zeusText(278, 12) :
+                                          Language::zeusText(278, 11));
                 nextEpisodeB->setPressAction([ee, nextEpisodeB]() {
                     auto& ne = ee->fNextEpisode;
                     if(ne == eEpisodeType::parentCity) {
@@ -197,23 +197,23 @@ public:
                         ne = eEpisodeType::parentCity;
                     }
                     nextEpisodeB->setText(ne == eEpisodeType::parentCity ?
-                                              eLanguage::zeusText(195, 14) :
-                                              eLanguage::zeusText(195, 15));
+                                              Language::zeusText(195, 14) :
+                                              Language::zeusText(195, 15));
                     nextEpisodeB->setTooltip(ne == eEpisodeType::parentCity ?
-                                              eLanguage::zeusText(278, 12) :
-                                              eLanguage::zeusText(278, 11));
+                                              Language::zeusText(278, 12) :
+                                              Language::zeusText(278, 11));
                 });
             }
             nextEpisodeB->fitContent();
             nextEpisodeW->addWidget(nextEpisodeB);
             nextEpisodeW->fitHeight();
-            nextEpisodeB->align(eAlignment::hcenter);
+            nextEpisodeB->align(Alignment::hcenter);
             addWidget(nextEpisodeW);
             nextEpisodeB->setRightPressAction([this, insertE, deleteE, victoryE]() {
                 const std::vector<std::string> anames{
-                    eLanguage::zeusText(195, 50), // victory
-                    eLanguage::zeusText(195, 17), // insert
-                    eLanguage::zeusText(195, 18) // delete
+                    Language::zeusText(195, 50), // victory
+                    Language::zeusText(195, 17), // insert
+                    Language::zeusText(195, 18) // delete
                 };
                 const auto choose = new eChooseButton(window());
                 const auto act = [insertE, deleteE, victoryE](const int val) {
@@ -228,7 +228,7 @@ public:
                 choose->initialize(8, anames, act);
 
                 window()->execDialog(choose);
-                choose->align(eAlignment::center);
+                choose->align(Alignment::center);
             });
         }
 
@@ -239,12 +239,12 @@ public:
         settingsB->setUnderline(false);
         settingsB->setFontSizeXS();
         settingsB->setPaddingXS();
-        settingsB->setText(eLanguage::zeusText(195, 13));
-        settingsB->setTooltip(eLanguage::zeusText(278, 15));
+        settingsB->setText(Language::zeusText(195, 13));
+        settingsB->setTooltip(Language::zeusText(278, 15));
         settingsB->fitContent();
         settingsW->addWidget(settingsB);
         settingsW->fitHeight();
-        settingsB->align(eAlignment::hcenter);
+        settingsB->align(Alignment::hcenter);
         addWidget(settingsW);
         settingsB->setPressAction([this, c, e, first]() {
             const auto w = window();
@@ -253,7 +253,7 @@ public:
             m->initialize(first, c, e.get(), &c->worldBoard());
 
             window()->execDialog(m);
-            m->align(eAlignment::center);
+            m->align(Alignment::center);
         });
         settingsB->setRightPressAction([this, colony, c, e]() {
             if(colony) {
@@ -264,10 +264,10 @@ public:
                 for(int i = 0; i < iMax; i++) {
                     const auto& ee = es[i];
                     if(ee == e) continue;
-                    anames.push_back(eLanguage::zeusText(195, 34 + i));
+                    anames.push_back(Language::zeusText(195, 34 + i));
                     res.push_back(ee);
                 }
-                anames.push_back(eLanguage::zeusText(195, 44)); // clear
+                anames.push_back(Language::zeusText(195, 44)); // clear
                 const auto choose = new eChooseButton(window());
                 const auto act = [c, res, e](const int val) {
                     const int rs = res.size();
@@ -281,7 +281,7 @@ public:
                 choose->initialize(8, anames, act);
 
                 window()->execDialog(choose);
-                choose->align(eAlignment::center);
+                choose->align(Alignment::center);
             } else {
                 const auto& es = c->parentCityEpisodes();
                 std::vector<stdsptr<eParentCityEpisode>> res;
@@ -290,10 +290,10 @@ public:
                 for(int i = 0; i < iMax; i++) {
                     const auto& ee = es[i];
                     if(ee == e) continue;
-                    anames.push_back(eLanguage::zeusText(195, 34 + i));
+                    anames.push_back(Language::zeusText(195, 34 + i));
                     res.push_back(ee);
                 }
-                anames.push_back(eLanguage::zeusText(195, 44)); // clear
+                anames.push_back(Language::zeusText(195, 44)); // clear
                 const auto choose = new eChooseButton(window());
                 const auto act = [c, res, e](const int val) {
                     const int rs = res.size();
@@ -307,7 +307,7 @@ public:
                 choose->initialize(8, anames, act);
 
                 window()->execDialog(choose);
-                choose->align(eAlignment::center);
+                choose->align(Alignment::center);
             }
         });
 
@@ -319,12 +319,12 @@ public:
         mTextB->setFontSizeXS();
         mTextB->setPaddingXS();
         mTextB->setText("x");
-        mTextB->setTooltip(colony ? eLanguage::zeusText(278, 17) :
-                                    eLanguage::zeusText(278, 16));
+        mTextB->setTooltip(colony ? Language::zeusText(278, 17) :
+                                    Language::zeusText(278, 16));
         mTextB->fitContent();
         textW->addWidget(mTextB);
         textW->fitHeight();
-        mTextB->align(eAlignment::hcenter);
+        mTextB->align(Alignment::hcenter);
         addWidget(textW);
         mTextB->setPressAction([this, selectTextE]() {
             mTextB->setText("x");
@@ -335,7 +335,7 @@ public:
         stackHorizontally();
         fitContent();
 
-        idL->align(eAlignment::vcenter);
+        idL->align(Alignment::vcenter);
     }
 
     void deselectTextB() {

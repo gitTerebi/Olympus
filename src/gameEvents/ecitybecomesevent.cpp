@@ -3,8 +3,8 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "fileIO/save-archive.h"
 
 eCityBecomesEvent::eCityBecomesEvent(
         const eCityId cid,
@@ -178,28 +178,28 @@ void eCityBecomesEvent::trigger() {
 std::string eCityBecomesEvent::longName() const {
     switch(mType) {
     case eCityBecomesType::ally:
-        return eLanguage::zeusText(290, 36);
+        return Language::zeusText(290, 36);
     case eCityBecomesType::rival:
-        return eLanguage::zeusText(290, 37);
+        return Language::zeusText(290, 37);
     case eCityBecomesType::vassal:
-        return eLanguage::zeusText(290, 38);
+        return Language::zeusText(290, 38);
     case eCityBecomesType::active:
-        return eLanguage::zeusText(290, 45);
+        return Language::zeusText(290, 45);
     case eCityBecomesType::inactive:
-        return eLanguage::zeusText(290, 46);
+        return Language::zeusText(290, 46);
     case eCityBecomesType::visible:
-        return eLanguage::zeusText(290, 47);
+        return Language::zeusText(290, 47);
     case eCityBecomesType::invisible:
-        return eLanguage::zeusText(290, 48);
+        return Language::zeusText(290, 48);
     case eCityBecomesType::rebellionOver:
-        return eLanguage::zeusText(290, 49);
+        return Language::zeusText(290, 49);
     case eCityBecomesType::conquered:
-        return eLanguage::zeusText(290, 50);
+        return Language::zeusText(290, 50);
     }
     return "";
 }
 
-void eCityBecomesEvent::serializeFields(eSaveArchive& ar) {
+void eCityBecomesEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCityEventValue::serialize(ar, *gameBoard());
     eAttackingCityEventValue::serialize(ar, gameBoard());

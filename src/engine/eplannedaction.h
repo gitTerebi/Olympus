@@ -2,7 +2,7 @@
 #define EPLANNEDACTION_H
 
 class GameBoard;
-class eSaveArchive;
+class SaveArchive;
 
 enum class ePlannedActionType {
     regrowForest,
@@ -19,7 +19,7 @@ public:
 
     virtual void trigger(GameBoard& board) = 0;
 
-    void serialize(eSaveArchive& ar, GameBoard* board);
+    void serialize(SaveArchive& ar, GameBoard* board);
 
     static ePlannedAction* sCreate(const ePlannedActionType type);
 
@@ -28,7 +28,7 @@ public:
     void incTime(const int by, GameBoard& board);
     bool finished() const { return mFinished; }
 protected:
-    virtual void serializeFields(eSaveArchive& ar, GameBoard* board);
+    virtual void serializeFields(SaveArchive& ar, GameBoard* board);
 private:
     const ePlannedActionType mType;
     bool mRecurring;

@@ -14,7 +14,7 @@ enum class eResourceType;
 enum class ePlayerId;
 enum class eCityId;
 class GameBoard;
-class eSaveArchive;
+class SaveArchive;
 
 class AICityPlan {
 public:
@@ -39,7 +39,7 @@ public:
 
     void editorDisplayBuildings(GameBoard& board);
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
 
     eCityId mCid;

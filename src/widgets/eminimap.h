@@ -8,13 +8,13 @@
 struct eDirectionTexture {
     bool fTotalUpdateScheduled = true;
     bool fUpdateScheduled = false;
-    std::shared_ptr<eTexture> fTexture;
+    std::shared_ptr<Texture> fTexture;
     std::vector<eTile*> fTilesToUpdate;
 };
 
 class eMiniMap : public eWidget {
 public:
-    eMiniMap(eMainWindow* const window);
+    eMiniMap(MainWindow* const window);
 
     void renderTargetsReset() override;
 

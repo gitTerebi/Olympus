@@ -1,12 +1,12 @@
-#ifndef EBANNER_H
-#define EBANNER_H
+#ifndef BANNER_H
+#define BANNER_H
 
 class GameBoard;
 class eTile;
-class eSaveArchive;
+class SaveArchive;
 enum class eCityId;
 
-enum class eBannerTypeS {
+enum class BannerTypeS {
     boar,
     deer,
     landInvasion,
@@ -23,13 +23,13 @@ enum class eBannerTypeS {
     landSlidePoint
 };
 
-class eBanner {
+class Banner {
 public:
-    eBanner(const eBannerTypeS type,
+    Banner(const BannerTypeS type,
             const int id,
             eTile* const tile,
             GameBoard& board);
-    virtual ~eBanner();
+    virtual ~Banner();
 
     eTile* tile() const { return mTile; }
     eCityId cityId() const;
@@ -40,22 +40,22 @@ public:
     void setIOID(const int id) { mIOID = id; }
     int ioID() const { return mIOID; }
 
-    eBannerTypeS type() const { return mType; }
+    BannerTypeS type() const { return mType; }
 
-    static bool sBuildable(const eBannerTypeS type);
+    static bool sBuildable(const BannerTypeS type);
     bool buildable() const;
 
-    virtual void serialize(eSaveArchive& ar);
+    virtual void serialize(SaveArchive& ar);
 
-    static eBanner* sCreate(const int id, eTile* const tile,
+    static Banner* sCreate(const int id, eTile* const tile,
                             GameBoard& board,
-                            const eBannerTypeS type);
+                            const BannerTypeS type);
 private:
-    const eBannerTypeS mType;
+    const BannerTypeS mType;
     const int mId;
     eTile* const mTile;
     GameBoard& mBoard;
     int mIOID = -1;
 };
 
-#endif // EBANNER_H
+#endif // BANNER_H

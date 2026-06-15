@@ -1,7 +1,7 @@
 #include "eresourcebutton.h"
 
 #include "echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 void eResourceButton::initialize(const eResourceAction& ract,
                                  const eResourceType res,
@@ -30,7 +30,7 @@ void eResourceButton::initialize(const eResourceAction& ract,
         choose->initialize(8, resourceNames, act);
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     setResource(eResourceType::none);
     setUnderline(false);

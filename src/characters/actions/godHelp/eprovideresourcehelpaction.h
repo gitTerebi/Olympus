@@ -2,13 +2,13 @@
 #define EPROVIDERESOURCEHELPACTION_H
 
 #include "characters/gods/actions/god-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 enum class eProvideResourceHelpStage {
     none, appear, goTo, give, giving, disappear
 };
 
-class eSaveArchive;
+class SaveArchive;
 
 class eProvideResourceHelpAction : public eGodAction {
 public:
@@ -29,7 +29,7 @@ public:
     void rebuildCurrentStage();
     void finishGiving();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void goToTarget();
@@ -75,7 +75,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("targetStorage", &board(), mTarget);
         ar.field("resource", mResource);
         ar.field("count", mCount);
@@ -105,7 +105,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

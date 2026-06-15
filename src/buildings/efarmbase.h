@@ -6,7 +6,7 @@
 
 #include "textures/building-textures.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eFarmBase : public eResourceBuildingBase {
 public:
@@ -16,8 +16,8 @@ public:
               const eResourceType resType,
               const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 
@@ -34,7 +34,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
 
     const std::vector<BuildingTextures>& mTextures;

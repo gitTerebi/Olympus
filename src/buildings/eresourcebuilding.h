@@ -3,7 +3,7 @@
 
 #include "ebuilding.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eResourceBuildingType {
     oliveTree,
@@ -17,7 +17,7 @@ public:
                       const eResourceBuildingType type,
                       const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
 
     void erase() override;
     void sanctuaryErase();
@@ -38,7 +38,7 @@ public:
     void nextMonth() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     const eResourceBuildingType mType;
     const int mRipePeriod;

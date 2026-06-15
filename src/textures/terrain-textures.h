@@ -1,7 +1,7 @@
 #ifndef TERRAIN_TEXTURES_H
 #define TERRAIN_TEXTURES_H
 
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 class TerrainTextures {
 public:
@@ -23,90 +23,90 @@ public:
     bool fOrichalcLoaded = false;
     void loadOrichalc();
 
-    eTextureCollection fDryTerrainTexs;
-    eTextureCollection fBeachTerrainTexs;
-    eTextureCollection fBeachToDryTerrainTexs;
-    eTextureCollection fWaterTerrainTexs;
-    std::vector<eTextureCollection> fWaterTexs;
-    std::vector<eTextureCollection> fWaterToDryTerrainTexs;
-    eTextureCollection fDeepMarsh;
-    eTextureCollection fMarsh;
-    std::vector<eTextureCollection> fMarshToDry;
-    eTextureCollection fLava;
-    std::vector<eTextureCollection> fLavaToDry;
-    eTextureCollection fFertileTerrainTexs;
-    eTextureCollection fFertileToDryTerrainTexs;
-    std::vector<eTextureCollection> fDryToScrubTerrainTexs;
-    eTextureCollection fScrubTerrainTexs;
-    std::vector<eTextureCollection> fFertileToScrubTerrainTexs;
-    std::vector<eTextureCollection> fForestToDryTerrainTexs;
-    eTextureCollection fForestToScrubTerrainTexs;
-    eTextureCollection fForestTerrainTexs;
-    std::vector<eTextureCollection> fPoseidonForestToDryTerrainTexs;
-    eTextureCollection fPoseidonForestToScrubTerrainTexs;
-    eTextureCollection fPoseidonForestTerrainTexs;
-    eTextureCollection fChoppedForestToScrubTerrainTexs;
-    eTextureCollection fChoppedForestTerrainTexs;
-    std::vector<eTextureCollection> fWaterToBeachTerrainTexs;
-    std::shared_ptr<eTexture> fInvalidTex;
-    std::shared_ptr<eTexture> fSelectedTex;
-    eTextureCollection fWaterToBeachToDryTerrainTexs;
+    TextureCollection fDryTerrainTexs;
+    TextureCollection fBeachTerrainTexs;
+    TextureCollection fBeachToDryTerrainTexs;
+    TextureCollection fWaterTerrainTexs;
+    std::vector<TextureCollection> fWaterTexs;
+    std::vector<TextureCollection> fWaterToDryTerrainTexs;
+    TextureCollection fDeepMarsh;
+    TextureCollection fMarsh;
+    std::vector<TextureCollection> fMarshToDry;
+    TextureCollection fLava;
+    std::vector<TextureCollection> fLavaToDry;
+    TextureCollection fFertileTerrainTexs;
+    TextureCollection fFertileToDryTerrainTexs;
+    std::vector<TextureCollection> fDryToScrubTerrainTexs;
+    TextureCollection fScrubTerrainTexs;
+    std::vector<TextureCollection> fFertileToScrubTerrainTexs;
+    std::vector<TextureCollection> fForestToDryTerrainTexs;
+    TextureCollection fForestToScrubTerrainTexs;
+    TextureCollection fForestTerrainTexs;
+    std::vector<TextureCollection> fPoseidonForestToDryTerrainTexs;
+    TextureCollection fPoseidonForestToScrubTerrainTexs;
+    TextureCollection fPoseidonForestTerrainTexs;
+    TextureCollection fChoppedForestToScrubTerrainTexs;
+    TextureCollection fChoppedForestTerrainTexs;
+    std::vector<TextureCollection> fWaterToBeachTerrainTexs;
+    std::shared_ptr<Texture> fInvalidTex;
+    std::shared_ptr<Texture> fSelectedTex;
+    TextureCollection fWaterToBeachToDryTerrainTexs;
 
-    eTextureCollection fFlatStonesTerrainTexs;
-    eTextureCollection fLargeFlatStonesTerrainTexs;
-    eTextureCollection fHugeFlatStonesTerrainTexs;
+    TextureCollection fFlatStonesTerrainTexs;
+    TextureCollection fLargeFlatStonesTerrainTexs;
+    TextureCollection fHugeFlatStonesTerrainTexs;
 
-    eTextureCollection fBronzeTerrainTexs;
-    eTextureCollection fLargeBronzeTerrainTexs;
-    eTextureCollection fHugeBronzeTerrainTexs;
+    TextureCollection fBronzeTerrainTexs;
+    TextureCollection fLargeBronzeTerrainTexs;
+    TextureCollection fHugeBronzeTerrainTexs;
 
-    eTextureCollection fSilverTerrainTexs;
-    eTextureCollection fLargeSilverTerrainTexs;
-    eTextureCollection fHugeSilverTerrainTexs;
+    TextureCollection fSilverTerrainTexs;
+    TextureCollection fLargeSilverTerrainTexs;
+    TextureCollection fHugeSilverTerrainTexs;
 
-    eTextureCollection fTallStoneTerrainTexs;
-    eTextureCollection fLargeTallStoneTerrainTexs;
-    eTextureCollection fHugeTallStoneTerrainTexs;
+    TextureCollection fTallStoneTerrainTexs;
+    TextureCollection fLargeTallStoneTerrainTexs;
+    TextureCollection fHugeTallStoneTerrainTexs;
 
-    eTextureCollection fOrichalcTerrainTexs;
-    eTextureCollection fLargeOrichalcTerrainTexs;
-    eTextureCollection fHugeOrichalcTerrainTexs;
+    TextureCollection fOrichalcTerrainTexs;
+    TextureCollection fLargeOrichalcTerrainTexs;
+    TextureCollection fHugeOrichalcTerrainTexs;
 
-    eTextureCollection fAppeal;
-    eTextureCollection fHouseAppeal;
+    TextureCollection fAppeal;
+    TextureCollection fHouseAppeal;
 
-    eTextureCollection fBeachRoad;
-    eTextureCollection fToBeachRoad;
-    eTextureCollection fRoad;
-    eTextureCollection fPrettyRoad;
+    TextureCollection fBeachRoad;
+    TextureCollection fToBeachRoad;
+    TextureCollection fRoad;
+    TextureCollection fPrettyRoad;
 
-    eTextureCollection fSanctuaryStairs;
+    TextureCollection fSanctuaryStairs;
 
-    eTextureCollection fTinyStones;
+    TextureCollection fTinyStones;
 
-    eTextureCollection fFlatMarble;
-    eTextureCollection fDryToMarble;
-    eTextureCollection fMarble;
-    eTextureCollection fDeepMarble;
+    TextureCollection fFlatMarble;
+    TextureCollection fDryToMarble;
+    TextureCollection fMarble;
+    TextureCollection fDeepMarble;
 
-    eTextureCollection fFlatBlackMarble;
-    eTextureCollection fDryToBlackMarble;
-    eTextureCollection fBlackMarble;
-    eTextureCollection fDeepBlackMarble;
+    TextureCollection fFlatBlackMarble;
+    TextureCollection fDryToBlackMarble;
+    TextureCollection fBlackMarble;
+    TextureCollection fDeepBlackMarble;
 
-    std::shared_ptr<eTexture> fBuildingBase;
-    std::shared_ptr<eTexture> fSelectedBuildingBase;
+    std::shared_ptr<Texture> fBuildingBase;
+    std::shared_ptr<Texture> fSelectedBuildingBase;
 
-    eTextureCollection fBuildingBase2;
-    eTextureCollection fBuildingBase3;
+    TextureCollection fBuildingBase2;
+    TextureCollection fBuildingBase3;
 
-    eTextureCollection fElevation;
-    eTextureCollection fDoubleElevation;
-    eTextureCollection fDoubleElevation2;
-    eTextureCollection fHalfElevation;
-    eTextureCollection fHalfElevation2;
+    TextureCollection fElevation;
+    TextureCollection fDoubleElevation;
+    TextureCollection fDoubleElevation2;
+    TextureCollection fHalfElevation;
+    TextureCollection fHalfElevation2;
 
-    eTextureCollection fQuakeTexs;
+    TextureCollection fQuakeTexs;
 };
 
 #endif // TERRAIN_TEXTURES_H

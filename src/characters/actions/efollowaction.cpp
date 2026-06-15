@@ -4,7 +4,7 @@
 
 #include "engine/etile.h"
 #include "walkable/walkable-object.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eFollowAction::eFollowAction(eCharacter* const f,
                              eCharacter* const c,
@@ -30,7 +30,7 @@ void eFollowAction::setDistance(const int d) {
     mDistance = d;
 }
 
-void eFollowAction::serializeFields(eSaveArchive& ar) {
+void eFollowAction::serializeFields(SaveArchive& ar) {
     eMoveAction::serializeFields(ar);
     ar.characterField("follow", &board(), mFollow);
     if(ar.reading() && mFollow) {
@@ -39,7 +39,7 @@ void eFollowAction::serializeFields(eSaveArchive& ar) {
     }
     ar.field("catchUp", mCatchUp);
     ar.field("distance", mDistance);
-    ar.dequeField("tiles", mTiles, [this](eSaveArchive& itemAr, ePathNode& n) {
+    ar.dequeField("tiles", mTiles, [this](SaveArchive& itemAr, ePathNode& n) {
         itemAr.tileField("tile", board(), n.fTile);
         itemAr.field("orientation", n.fO);
     });

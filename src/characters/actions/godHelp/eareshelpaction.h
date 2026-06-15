@@ -3,7 +3,7 @@
 
 #include "characters/gods/actions/god-action.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eAresHelpStage {
     none, appear, go
@@ -18,7 +18,7 @@ public:
     static bool sHelpNeeded(const ePlayerId pid,
                             const GameBoard& board);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void goToTarget();

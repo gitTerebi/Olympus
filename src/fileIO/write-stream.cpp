@@ -1,27 +1,27 @@
-﻿#include "ewritestream.h"
+﻿#include "write-stream.h"
 
 #include "engine/game-board.h"
-#include "esavearchive.h"
+#include "save-archive.h"
 #include "characters/actions/character-action.h"
 #include "characters/actions/walkable/walkable-object.h"
 #include "characters/actions/walkable/ehasresourceobject.h"
 #include "characters/gods/actions/god-action.h"
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolmoveaction.h"
-#include "spawners/ebanner.h"
+#include "spawners/banner.h"
 #include "gameEvents/invasions/invasion-handler.h"
 #include "characters/soldier-banner.h"
 
-eWriteStream::eWriteStream(const eWriteTarget& dst) :
+WriteStream::WriteStream(const WriteTarget& dst) :
     mDst(dst) {}
 
-void eWriteStream::writeFormat(const std::string& format) {
+void WriteStream::writeFormat(const std::string& format) {
     mFormat = format;
     *this << std::string(format);
     *this << 0;
 }
 
-void eWriteStream::writeTile(eTile* const tile) {
+void WriteStream::writeTile(eTile* const tile) {
     *this << bool(tile);
     if(tile) {
         *this << tile->x();
@@ -29,71 +29,71 @@ void eWriteStream::writeTile(eTile* const tile) {
     }
 }
 
-void eWriteStream::writeBuilding(eBuilding* const b) {
+void WriteStream::writeBuilding(eBuilding* const b) {
     const int bid = b ? b->ioID() : -1;
     *this << bid;
 }
 
-void eWriteStream::writeCharacter(eCharacter* const c) {
+void WriteStream::writeCharacter(eCharacter* const c) {
     const int bid = c ? c->ioID() : -1;
     *this << bid;
 }
 
-void eWriteStream::writeCharacterAction(eCharacterAction* const ca) {
+void WriteStream::writeCharacterAction(eCharacterAction* const ca) {
     const int bid = ca ? ca->ioID() : -1;
     *this << bid;
 }
 
-void eWriteStream::writeCharActFunc(eCharacterActionFunction* const caf) {
+void WriteStream::writeCharActFunc(eCharacterActionFunction* const caf) {
     const bool hasFinish = caf != nullptr;
     *this << hasFinish;
     if(hasFinish) {
         *this << caf->type();
-        eSaveArchive ar(*this);
+        SaveArchive ar(*this);
         caf->serialize(ar);
     }
 }
 
-void eWriteStream::writeGodAct(eGodAct* const ga) {
+void WriteStream::writeGodAct(eGodAct* const ga) {
     const bool hasFinish = ga != nullptr;
     *this << hasFinish;
     if(hasFinish) {
         *this << ga->type();
-        eSaveArchive ar(*this);
+        SaveArchive ar(*this);
         ga->serialize(ar);
     }
 }
 
-void eWriteStream::writeDirectionTimes(eDirectionTimes* const d) {
+void WriteStream::writeDirectionTimes(eDirectionTimes* const d) {
     *this << d->size();
     for(const auto& dt : *d) {
         writeTile(dt.first);
-        eSaveArchive ar(*this);
+        SaveArchive ar(*this);
         const_cast<eDirectionLastUseTime&>(dt.second).serialize(ar);
     }
 }
 
-void eWriteStream::writeCity(WorldCity* const c) {
+void WriteStream::writeCity(WorldCity* const c) {
     const int cid = c ? c->ioID() : -1;
     *this << cid;
 }
 
-void eWriteStream::writeBanner(eBanner* const b) {
+void WriteStream::writeBanner(Banner* const b) {
     const int bid = b ? b->ioID() : -1;
     *this << bid;
 }
 
-void eWriteStream::writSoldierBanner(SoldierBanner* const b) {
+void WriteStream::writSoldierBanner(SoldierBanner* const b) {
     const int bid = b ? b->ioID() : -1;
     *this << bid;
 }
 
-void eWriteStream::writeGameEvent(eGameEvent* const e) {
+void WriteStream::writeGameEvent(eGameEvent* const e) {
     const int eid = e ? e->ioID() : -1;
     *this << eid;
 }
 
-void eWriteStream::writeInvasionHandler(eInvasionHandler* const i) {
+void WriteStream::writeInvasionHandler(eInvasionHandler* const i) {
     const int iid = i ? i->ioID() : -1;
     *this << iid;
 }

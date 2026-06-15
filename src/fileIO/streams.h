@@ -1,7 +1,7 @@
-#ifndef ESTREAMS_H
-#define ESTREAMS_H
+#ifndef STREAMS_H
+#define STREAMS_H
 
-#include "ereadstream.h"
-#include "ewritestream.h"
+#include "read-stream.h"
+#include "write-stream.h"
 
-#endif // ESTREAMS_H
+#endif // STREAMS_H

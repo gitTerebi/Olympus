@@ -1,13 +1,13 @@
 ﻿#include "god-minion-action.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "characters/monsters/emonster.h"
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/eheroaction.h"
 #include "characters/gods/actions/god-action.h"
 #include "characters/actions/ewaitaction.h"
-#include "erand.h"
+#include "rand.h"
 #include "engine/game-board.h"
 #include "vec2.h"
 
@@ -132,7 +132,7 @@ void eGodMinionAction::rebuildCurrentStage() {
     GodMonsterAction::resumeFromSavedState();
 }
 
-void eGodMinionAction::serializeFields(eSaveArchive& ar) {
+void eGodMinionAction::serializeFields(SaveArchive& ar) {
     GodMonsterAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("lookForSoldier", mLookForSoldier);
@@ -274,7 +274,7 @@ bool eGodMinionAction::fightSoldier(eCharacter* const s) {
     const double dist = posdif.length();
 
     // 75% chance to switch mode, 25% to repeat — prevents flip-flopping
-    const bool goMelee = (eRand::rand() % 4 == 0) ? mLastFightMelee : !mLastFightMelee;
+    const bool goMelee = (Rand::rand() % 4 == 0) ? mLastFightMelee : !mLastFightMelee;
     const double maxDist = goMelee ? 1.5 : 5.;
     if(dist > maxDist) return false;
 
@@ -284,7 +284,7 @@ bool eGodMinionAction::fightSoldier(eCharacter* const s) {
     c->setActionType(eCharacterActionType::fight);
 
     stdsptr<eCharacterAction> ca;
-    const int fightTime = 3000 + (eRand::rand() % 7001); // 3–10s
+    const int fightTime = 3000 + (Rand::rand() % 7001); // 3–10s
     if(goMelee) {
         const auto w = e::make_shared<eWaitAction>(c);
         w->setTime(fightTime);

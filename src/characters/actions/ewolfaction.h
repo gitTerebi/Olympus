@@ -19,7 +19,7 @@ public:
     void findPrey();
     void retaliate(eCharacter* attacker);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 
 private:

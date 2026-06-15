@@ -1,5 +1,5 @@
 #include "ecorral.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "textures/game-textures.h"
 #include "characters/butcher.h"
@@ -7,7 +7,7 @@
 #include "characters/actions/efollowaction.h"
 #include "characters/actions/etakecattleaction.h"
 #include "characters/actions/ereplacecattleaction.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 #include <algorithm>
 
@@ -19,17 +19,17 @@ eCorral::eCorral(GameBoard& board,
     GameTextures::loadCorral();
 }
 
-std::shared_ptr<eTexture> eCorral::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eCorral::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     return blds[sizeId].fCorral;
 }
 
-std::vector<eOverlay> eCorral::getOverlays(const eTileSize size) const {
+std::vector<Overlay> eCorral::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
-    std::vector<eOverlay> result;
+    std::vector<Overlay> result;
     if(resource() > 0) {
         const int res = std::clamp(resource() - 1, 0, 4);
         auto& meat = result.emplace_back();
@@ -90,7 +90,7 @@ std::vector<eOverlay> eCorral::getOverlays(const eTileSize size) const {
     return result;
 }
 
-void eCorral::serializeFields(eSaveArchive& ar) {
+void eCorral::serializeFields(SaveArchive& ar) {
     eResourceBuildingBase::serializeFields(ar);
     ar.field("noCattle", mNoCattle);
     ar.field("processing", mProcessing);
@@ -113,20 +113,20 @@ void eCorral::timeChanged(const int by) {
 
     if(mNCattle < 3) {
         mTakeWait += by*eff;
-        if(mTakeWait > eNumbers::sCorralTakePeriod) {
+        if(mTakeWait > Numbers::sCorralTakePeriod) {
             mTakeWait = 0;
             takeCattle();
         }
     }
     if(mNCattle > 0) {
         mKillWait += by*eff;
-        if(mKillWait > eNumbers::sCorralKillPeriod) {
+        if(mKillWait > Numbers::sCorralKillPeriod) {
             mKillWait = 0;
             killCattle();
         }
     }
     mReplaceWait += by*eff;
-    if(mReplaceWait > eNumbers::sCorralReplacePeriod) {
+    if(mReplaceWait > Numbers::sCorralReplacePeriod) {
         mReplaceWait = 0;
         replaceCattle();
     }
@@ -147,7 +147,7 @@ bool eCorral::killCattle() {
     const int space = spaceLeft(eResourceType::meat);
     if(space < 3) return false;
     mNCattle--;
-    mProcessing = eNumbers::sCorralProcessingPeriod;
+    mProcessing = Numbers::sCorralProcessingPeriod;
     return true;
 }
 

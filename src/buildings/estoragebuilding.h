@@ -3,7 +3,7 @@
 
 #include "eemployingbuilding.h"
 
-class eSaveArchive;
+class SaveArchive;
 class eCartTransporter;
 class eBuildingWithResource;
 
@@ -109,7 +109,7 @@ public:
                                    eCityId cid);
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     // which held resources this building is allowed to push out to consumers.
     // trade post overrides this to push imported goods only (not exports).
     virtual bool pushAllows(const eResourceType) const { return true; }

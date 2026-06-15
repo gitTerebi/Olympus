@@ -399,11 +399,11 @@ const char* const kXbrz2Ps =
     "  bool shallow=(STEEPT*d14<=d38)&&(v0!=v4)&&(v5!=v4);\n"
     "  bool steep=(STEEPT*d38<=d14)&&(v0!=v8)&&(v7!=v8);\n"
     "  bool need=(blend[2]!=BLEND_NONE);\n"
-    "  bool line=(blend[2]>=BLEND_DOMINANT || !((blend[1]!=BLEND_NONE && !eq(k[0],k[4])) || (blend[3]!=BLEND_NONE && !eq(k[0],k[8])) || (eq(k[4],k[3])&&eq(k[3],k[2])&&eq(k[2],k[1])&&eq(k[1],k[8])&&!eq(k[0],k[2]))));\n"
+    "  bool doLine=(blend[2]>=BLEND_DOMINANT || !((blend[1]!=BLEND_NONE && !eq(k[0],k[4])) || (blend[3]!=BLEND_NONE && !eq(k[0],k[8])) || (eq(k[4],k[3])&&eq(k[3],k[2])&&eq(k[2],k[1])&&eq(k[1],k[8])&&!eq(k[0],k[2]))));\n"
     "  float3 bp = (dist(k[0],k[1])<=dist(k[0],k[3])) ? k[1] : k[3];\n"
-    "  dst[1]=lerp(dst[1],bp,(need&&line&&steep)?0.25:0.0);\n"
-    "  dst[2]=lerp(dst[2],bp,(need)?((line)?((shallow)?((steep)?5.0/6.0:0.75):((steep)?0.75:0.5)):1.0-(MPI/4.0)):0.0);\n"
-    "  dst[3]=lerp(dst[3],bp,(need&&line&&shallow)?0.25:0.0);\n"
+    "  dst[1]=lerp(dst[1],bp,(need&&doLine&&steep)?0.25:0.0);\n"
+    "  dst[2]=lerp(dst[2],bp,(need)?((doLine)?((shallow)?((steep)?5.0/6.0:0.75):((steep)?0.75:0.5)):1.0-(MPI/4.0)):0.0);\n"
+    "  dst[3]=lerp(dst[3],bp,(need&&doLine&&shallow)?0.25:0.0);\n"
     "}\n"
     "float4 main(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target {\n"
     "  float2 ps = uTexel;\n"
@@ -766,11 +766,14 @@ void setPostprocessFilters(const int interpolation, const int upscale,
     gFactor = factor < 2 ? 2 : (factor > 6 ? 6 : factor);
 }
 
-bool applyFullFramePostprocess(SDL_Renderer* const r,
-                               const void* const pixels,
-                               const int pitch,
-                               const int texW,
-                               const int texH) {
+bool applyPostprocess(SDL_Renderer* const r,
+                      const void* const pixels,
+                      const int pitch,
+                      const int texW,
+                      const int texH,
+                      const SDL_Rect* const dstRect,
+                      const bool outputToBackbuffer,
+                      const bool applyUpscale) {
     if(!initShader(r)) {
         return false;
     }
@@ -783,7 +786,7 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
     s.fContext->UpdateSubresource(s.fSource, 0, nullptr, pixels, pitch, 0);
     ID3D11ShaderResourceView* const frameSrv = s.fSourceSrv;
 
-    SDL_SetRenderTarget(r, nullptr);
+    if(outputToBackbuffer) SDL_SetRenderTarget(r, nullptr);
     SDL_RenderFlush(r);
     auto* const ctx = s.fContext;
 
@@ -844,18 +847,21 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
         if(oldPsCb0) oldPsCb0->Release();
     };
 
-    ID3D11RenderTargetView* omRtv = nullptr;
-    ID3D11DepthStencilView* dsv = nullptr;
-    ctx->OMGetRenderTargets(1, &omRtv, &dsv);
     void* rendererData = nullptr;
-    ID3D11RenderTargetView* rtv = mainRtv(r, &rendererData);
-    if(omRtv) omRtv->Release();
-    if(!rtv) { if(dsv) dsv->Release(); restoreState(); return false; }
+    ID3D11RenderTargetView* const backbufferRtv = mainRtv(r, &rendererData);
+    ID3D11RenderTargetView* const rtv = outputToBackbuffer ?
+        backbufferRtv : oldRtvs[0];
+    if(!rtv) { restoreState(); return false; }
 
     int outW = 0;
     int outH = 0;
-    SDL_GetRendererOutputSize(r, &outW, &outH);
-    if(outW <= 0 || outH <= 0) { if(dsv) dsv->Release(); restoreState(); return false; }
+    if(dstRect) {
+        outW = dstRect->w;
+        outH = dstRect->h;
+    } else {
+        SDL_GetRendererOutputSize(r, &outW, &outH);
+    }
+    if(outW <= 0 || outH <= 0) { restoreState(); return false; }
 
     const float blendFactor[4] = {0, 0, 0, 0};
     ID3D11ShaderResourceView* const nullSrv = nullptr;
@@ -876,7 +882,8 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
     int interpH = texH;
     int factor = gFactor;
     int nativeFactor = 1;
-    const char* upSrc = upscalePs(gUpscale, factor, nativeFactor);
+    const char* upSrc = applyUpscale ?
+        upscalePs(gUpscale, factor, nativeFactor) : nullptr;
     if(upSrc) {
         ID3D11PixelShader* const upPs = getPs(s, upSrc);
         const int midW = texW * nativeFactor;
@@ -925,17 +932,21 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
         }
     }
 
-    // --- stage 2: interpolation resample (-> backbuffer, letterboxed) ---
+    // --- stage 2: interpolation resample (-> output target) ---
     const float srcAspect = float(texW) / float(texH);
     const float outAspect = float(outW) / float(outH);
     float vpW = float(outW);
     float vpH = float(outH);
     if(outAspect > srcAspect) vpW = vpH * srcAspect; else vpH = vpW / srcAspect;
-    const float vpX = (float(outW) - vpW) * 0.5f;
-    const float vpY = (float(outH) - vpH) * 0.5f;
+    float vpX = (float(outW) - vpW) * 0.5f;
+    float vpY = (float(outH) - vpH) * 0.5f;
+    if(dstRect) {
+        vpX += float(dstRect->x);
+        vpY += float(dstRect->y);
+    }
 
     const float black[4] = {0, 0, 0, 1};
-    ctx->ClearRenderTargetView(rtv, black);
+    if(outputToBackbuffer) ctx->ClearRenderTargetView(rtv, black);
 
     bool linear = true;
     const char* inSrc = interpPs(gInterp, linear);
@@ -943,7 +954,7 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
     if(!inPs) {
         static bool once = false;
         if(!once) { once = true; printf("post-process: interp PS compile failed (interp=%d)\n", gInterp); }
-        if(dsv) dsv->Release(); restoreState(); return false;
+        restoreState(); return false;
     }
 
     setCb(s, interpW, interpH);
@@ -968,9 +979,19 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
     restoreState();
     dirtySdlD3D11State(rendererData);
 
-    if(dsv) dsv->Release();
     return true;
 }
+
+bool applyFullFramePostprocess(SDL_Renderer* const r,
+                               const void* const pixels,
+                               const int pitch,
+                               const int texW,
+                               const int texH,
+                               const bool applyUpscale) {
+    return applyPostprocess(r, pixels, pitch, texW, texH, nullptr, true,
+                            applyUpscale);
+}
+
 #else
 namespace {
 int gInterp = 3;
@@ -989,12 +1010,14 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
                                const void* const pixels,
                                const int pitch,
                                const int texW,
-                               const int texH) {
+                               const int texH,
+                               const bool applyUpscale) {
     (void)r;
     (void)pixels;
     (void)pitch;
     (void)texW;
     (void)texH;
+    (void)applyUpscale;
     static bool once = false;
     if(!once) {
         once = true;
@@ -1004,4 +1027,5 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
     }
     return false;
 }
+
 #endif

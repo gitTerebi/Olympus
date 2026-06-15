@@ -2,5 +2,5 @@
 
 #include "textures/game-textures.h"
 
-eProceedButton::eProceedButton(eMainWindow* const window) :
+eProceedButton::eProceedButton(MainWindow* const window) :
     eBasicButton(&InterfaceTextures::fProceedButton, window) {}

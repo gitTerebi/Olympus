@@ -1,7 +1,7 @@
 #include "ehermeshelpaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "buildings/epalace.h"
 #include "gameEvents/requests/send-resources-to-city-event.h"
 
@@ -33,7 +33,7 @@ bool eHermesHelpAction::decide() {
     return true;
 }
 
-void eHermesHelpAction::serializeFields(eSaveArchive& ar) {
+void eHermesHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("preProvidingStage", mPreProvidingStage);

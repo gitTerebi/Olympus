@@ -106,7 +106,7 @@ bool EngParser::sParse(eMMStrings& strings,
         const int32_t contentOff = readInt(d, rec + 76);
         if(titleOff == 0 && subtitleOff == 0 && contentOff == 0) continue;
 
-        eMM& mm = strings[id];
+        MM& mm = strings[id];
         if(titleOff > 0) mm.fTitle = readBlobStr(blob, blobSize, titleOff);
         if(subtitleOff > 0) mm.fSubtitle = readBlobStr(blob, blobSize, subtitleOff);
         if(contentOff > 0) mm.fContent = readBlobStr(blob, blobSize, contentOff);

@@ -7,7 +7,7 @@ class eCharacter;
 
 class eCharacterInfoWidget : public eInfoWidget {
 public:
-    eCharacterInfoWidget(eMainWindow* const window,
+    eCharacterInfoWidget(MainWindow* const window,
                          eMainWidget* const mw);
 
     void initialize(const std::vector<eCharacter*> chars);

@@ -10,7 +10,7 @@ public:
     void timeChanged(const int by) override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mSoldierSpawn = 0;
     std::vector<stdsptr<SoldierBanner>> mSoldierBanners;

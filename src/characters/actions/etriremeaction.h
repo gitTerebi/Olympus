@@ -4,7 +4,7 @@
 #include "fighting-action.h"
 
 class eTriremeWharf;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eTriremeActionStage {
     idle, home, abroad
@@ -24,7 +24,7 @@ public:
 
     eTriremeWharf* home() const;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     eTile* exitPoint() const;

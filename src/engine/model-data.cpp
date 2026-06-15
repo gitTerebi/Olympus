@@ -1,7 +1,7 @@
 #include "model-data.h"
 
 #include "difficulty.h"
-#include "egamedir.h"
+#include "game-dir.h"
 
 #include <cstdio>
 #include <fstream>
@@ -14,7 +14,7 @@ ModelData& ModelData::instance() {
 
 std::string ModelData::modelDir() {
     // Path is correct: Model dir sits two levels above exe (build/bin/).
-    return eGameDir::exeDir() + "../../Model/";
+    return GameDir::exeDir() + "../../Model/";
 }
 
 int ModelData::diffIndex(Difficulty d) {

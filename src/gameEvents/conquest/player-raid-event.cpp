@@ -1,13 +1,13 @@
 #include "player-raid-event.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 #include "engine/egifthelpers.h"
 #include "raid-resource-event.h"
-#include "erand.h"
+#include "rand.h"
 
 #include <algorithm>
 
@@ -45,7 +45,7 @@ void PlayerRaidEvent::trigger() {
     const double killFrac = std::clamp(0.5*enemyStr/str, 0., 1.);
     mForces.kill(killFrac);
 
-    const bool raided = eRand::combatRoll(str, raidTargetStrength(enemyStr));
+    const bool raided = Rand::combatRoll(str, raidTargetStrength(enemyStr));
     const auto pid = playerId();
     eEventData ed(pid);
     ed.fCity = mCity;
@@ -57,7 +57,7 @@ void PlayerRaidEvent::trigger() {
     if(raided) {
         eResourceType res = mResource;
         if(res == eResourceType::none) {
-            if(eRand::rand() % 2) {
+            if(Rand::rand() % 2) {
                 res = eResourceType::drachmas;
             } else {
                 const auto& sells = mCity->sells();
@@ -65,7 +65,7 @@ void PlayerRaidEvent::trigger() {
                     res = eResourceType::drachmas;
                 } else {
                     const int ss = sells.size();
-                    res = sells[eRand::rand() % ss].fType;
+                    res = sells[Rand::rand() % ss].fType;
                 }
             }
         }
@@ -86,10 +86,10 @@ void PlayerRaidEvent::trigger() {
 }
 
 std::string PlayerRaidEvent::longName() const {
-    return eLanguage::text("player_raid_event_long_name");
+    return Language::text("player_raid_event_long_name");
 }
 
-void PlayerRaidEvent::serializeFields(eSaveArchive& ar) {
+void PlayerRaidEvent::serializeFields(SaveArchive& ar) {
     ArmyEventBase::serializeFields(ar);
     ar.field("resource", mResource, eResourceType::none);
 }

@@ -2,9 +2,9 @@
 #define EZEUSHELPACTION_H
 
 #include "characters/gods/actions/god-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eZeusHelpStage {
     none, appear, kill, killing, disappear
@@ -19,7 +19,7 @@ public:
     static bool sHelpNeeded(const eCityId cid,
                             const GameBoard& board);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void kill();
@@ -39,7 +39,7 @@ public:
     void call() override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.field("cityId", mCid);
     }
 private:

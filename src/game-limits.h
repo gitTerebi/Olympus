@@ -1,7 +1,7 @@
-#ifndef ELIMITS_H
-#define ELIMITS_H
+#ifndef GAME_LIMITS_H
+#define GAME_LIMITS_H
 
-#include "erand.h"
+#include "rand.h"
 
 #if (defined (_WIN32) || defined (_WIN64))
     #include <limits.h>
@@ -16,10 +16,10 @@
             for (diff_t i = last - first - 1; i > 0; --i)
             {
                 using std::swap;
-                swap(first[i], first[eRand::rand() % (i + 1)]);
+                swap(first[i], first[Rand::rand() % (i + 1)]);
             }
         }
     }
 #endif
 
-#endif // ELIMITS_H
+#endif // GAME_LIMITS_H

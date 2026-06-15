@@ -6,7 +6,7 @@
 #include "engine/etile.h"
 #include "characters/echaracter.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class FireFighterActionStage {
     idle, lookingForFire, puttingOutFire
@@ -24,7 +24,7 @@ public:
     bool decide() override;
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     bool lookForFire(const bool second);
@@ -58,7 +58,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mPtr);
     }
 private:
@@ -83,7 +83,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterField("character", &board(), mCptr);
         ar.tileField("tile", board(), mTile);
     }

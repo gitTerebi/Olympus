@@ -1,6 +1,6 @@
 #include "cursors.h"
 
-#include "egamedir.h"
+#include "game-dir.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -12,7 +12,7 @@ SDL_Cursor* Cursors::sStamp = nullptr;
 SDL_Cursor* Cursors::sSword = nullptr;
 
 SDL_Cursor* Cursors::load(const char* filename, int hotX, int hotY) {
-    const auto path = eGameDir::cursorsDir() + filename;
+    const auto path = GameDir::cursorsDir() + filename;
     SDL_Surface* surf = IMG_Load(path.c_str());
     if(!surf) {
         printf("Could not load cursor '%s': %s\n", path.c_str(), IMG_GetError());

@@ -6,8 +6,8 @@
 
 #include "eresourcetype.h"
 #include "pointers/estdselfref.h"
-#include "fileIO/estreams.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/streams.h"
+#include "fileIO/save-archive.h"
 #include "engine/ecityid.h"
 
 class WorldBoard;
@@ -124,7 +124,7 @@ struct eResourceTrade {
         }
     }
 
-    void serialize(eSaveArchive& ar) {
+    void serialize(SaveArchive& ar) {
         ar.field("type", fType, eResourceType::none);
 
         int nu = static_cast<int>(fUsed.size());
@@ -134,7 +134,7 @@ struct eResourceTrade {
             for(int i = 0; i < nu; i++) {
                 ePlayerId pid; int c;
                 ar.archiveField(("used." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("playerId", pid);
                         it.field("count", c);
                     });
@@ -145,7 +145,7 @@ struct eResourceTrade {
             for(auto& kv : fUsed) {
                 ePlayerId pid = kv.first; int c = kv.second;
                 ar.archiveField(("used." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("playerId", pid);
                         it.field("count", c);
                     });
@@ -308,7 +308,7 @@ public:
     eResourceType payTributeType() const { return mPayTributeType; }
     int payTributeCount() const { return mPayTributeCount; }
 
-    void serialize(eSaveArchive& ar, WorldBoard* board);
+    void serialize(SaveArchive& ar, WorldBoard* board);
 
     void gifted(const eResourceType type, const int count);
     bool acceptsGift(const eResourceType type, const int count) const;

@@ -1,7 +1,7 @@
 #include "etypebutton.h"
 
 #include "widgets/echoosebutton.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 void eTypeButton::initialize(const int value,
                              const std::vector<std::string>& values,
@@ -20,6 +20,6 @@ void eTypeButton::initialize(const int value,
         };
         chooseButton->initialize(values.size()/3, values, act);
         window()->execDialog(chooseButton);
-        chooseButton->align(eAlignment::center);
+        chooseButton->align(Alignment::center);
     });
 }

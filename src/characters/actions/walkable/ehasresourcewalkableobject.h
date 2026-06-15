@@ -3,7 +3,7 @@
 
 #include "walkable-object.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eHasResourceWalkableObject : public WalkableObject {
 public:
@@ -14,7 +14,7 @@ public:
     bool walkable(eTileBase* const t) const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdsptr<eHasResourceObject> mHr;
     stdsptr<WalkableObject> mW;

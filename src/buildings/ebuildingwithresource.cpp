@@ -5,7 +5,7 @@
 #include "characters/actions/deliver-cart-action.h"
 #include "characters/actions/get-cart-action.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 int eBuildingWithResource::addProduced(const eResourceType type, const int count) {
     const int c = add(type, count);
@@ -95,10 +95,10 @@ stdptr<eCartTransporter> eBuildingWithResource::spawnCart(
     return c.get();
 }
 
-void eBuildingWithResource::serializeFields(eSaveArchive& ar) {
+void eBuildingWithResource::serializeFields(SaveArchive& ar) {
     eBuilding::serializeFields(ar);
     ar.field("stashable", mStashable);
-    ar.arrayField("stash", mStash, [](eSaveArchive& itemAr, eStash& s) {
+    ar.arrayField("stash", mStash, [](SaveArchive& itemAr, eStash& s) {
         itemAr.field("resource", s.fType);
         itemAr.field("count", s.fCount);
     });

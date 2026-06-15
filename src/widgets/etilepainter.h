@@ -23,19 +23,19 @@ public:
     void translate(const double x, const double y);
 
     void drawTexture(const double x, const double y,
-                     const std::shared_ptr<eTexture>& tex,
-                     const eAlignment align) const;
+                     const std::shared_ptr<Texture>& tex,
+                     const Alignment align) const;
     void drawTexture(const double x, const double y,
-                     const std::shared_ptr<eTexture>& tex) const;
+                     const std::shared_ptr<Texture>& tex) const;
 
     void scheduleDrawTexture(const double x, const double y,
-                             const std::shared_ptr<eTexture>& tex);
+                             const std::shared_ptr<Texture>& tex);
     void scheduleDrawTexture(const double x, const double y,
-                             const std::shared_ptr<eTexture>& tex,
-                             const eAlignment align);
+                             const std::shared_ptr<Texture>& tex,
+                             const Alignment align);
     void scheduleDrawTexture(const double x, const double y,
-                             const std::shared_ptr<eTexture>& tex,
-                             const eAlignment align,
+                             const std::shared_ptr<Texture>& tex,
+                             const Alignment align,
                              const SDL_Color& colorMod);
     void handleScheduledDraw();
 
@@ -60,9 +60,9 @@ private:
     struct eScheduledDraw {
         double fX;
         double fY;
-        std::shared_ptr<eTexture> fTex;
+        std::shared_ptr<Texture> fTex;
         bool fHasAlign = false;
-        eAlignment fAlign = eAlignment::top;
+        Alignment fAlign = Alignment::top;
         bool fHasColorMod = false;
         SDL_Color fColorMod{255, 255, 255, 255};
     };

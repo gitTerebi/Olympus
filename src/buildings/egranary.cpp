@@ -10,13 +10,13 @@ eGranary::eGranary(GameBoard& board, const eCityId cid) :
     setOverlayEnabledFunc([]() { return true; });
 }
 
-std::shared_ptr<eTexture> eGranary::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eGranary::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     return mTextures[sizeId].fGranary;
 }
 
-std::vector<eOverlay> eGranary::getOverlays(const eTileSize size) const {
-    std::vector<eOverlay> os;
+std::vector<Overlay> eGranary::getOverlays(const eTileSize size) const {
+    std::vector<Overlay> os;
     const int sizeId = static_cast<int>(size);
     const auto& texs = mTextures[sizeId];
     if(enabled()) {
@@ -41,7 +41,7 @@ std::vector<eOverlay> eGranary::getOverlays(const eTileSize size) const {
         if(count <= 0) continue;
         const auto type = resourceType(i);
         if(type == eResourceType::none) continue;
-        eOverlay& o = os.emplace_back();
+        Overlay& o = os.emplace_back();
         switch(type) {
         case eResourceType::urchin:
             o.fTex = texs.fGranaryUrchin;

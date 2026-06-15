@@ -12,13 +12,13 @@ eTempleTileBuilding::eTempleTileBuilding(
     setEnabled(true);
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eTempleTileBuilding::getTexture(const eTileSize size) const {
     (void)size;
     return nullptr;
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eTempleTileBuilding::getTileTexture(const eTileSize size) const {
     const int f = finished();
     if(!f) return nullptr;
@@ -29,12 +29,12 @@ eTempleTileBuilding::getTileTexture(const eTileSize size) const {
     return coll.getTexture(mId);
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eTempleTileBuilding::getOverlays(const eTileSize size) const {
     const int f = finished();
     if(!f) return {};
     if(mId < 10) return {};
-    eOverlay o;
+    Overlay o;
     o.fX = 0.5;
     o.fY = -0.5;
     const int sizeId = static_cast<int>(size);

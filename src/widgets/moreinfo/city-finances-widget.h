@@ -8,7 +8,7 @@ enum class eCityId;
 
 class eCityFinancesWidget : public eInfoWidget {
 public:
-    eCityFinancesWidget(eMainWindow* const window,
+    eCityFinancesWidget(MainWindow* const window,
                         eMainWidget* const mw);
 
     void initialize(GameBoard& board, const eCityId cid);

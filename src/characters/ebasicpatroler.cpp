@@ -11,11 +11,11 @@ eBasicPatroler::eBasicPatroler(GameBoard& board,
 
 }
 
-std::shared_ptr<eTexture> eBasicPatroler::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> eBasicPatroler::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& gTexs = GameTextures::characters();
     const auto& charTexs = gTexs[id].*mCharTexs;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     bool wrap = true;
     const int oid = static_cast<int>(rotatedOrientation());
     const auto a = actionType();

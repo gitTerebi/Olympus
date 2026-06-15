@@ -5,32 +5,32 @@
 #include "widgets/elinewidget.h"
 #include "engine/game-board.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 void eHygieneSafetyDataWidget::initialize() {
     mSeeWater = new eViewModeButton(
-                     eLanguage::zeusText(14, 5),
+                     Language::zeusText(14, 5),
                      eViewMode::water,
                      window());
     addViewButton(mSeeWater);
 
 
     mSeeHygiene = new eViewModeButton(
-                     eLanguage::zeusText(14, 6),
+                     Language::zeusText(14, 6),
                      eViewMode::hygiene,
                      window());
     addViewButton(mSeeHygiene);
 
 
     mSeeHazards = new eViewModeButton(
-                     eLanguage::zeusText(14, 7),
+                     Language::zeusText(14, 7),
                      eViewMode::hazards,
                      window());
     addViewButton(mSeeHazards);
 
 
     mSeeUnrest = new eViewModeButton(
-                     eLanguage::zeusText(14, 8),
+                     Language::zeusText(14, 8),
                      eViewMode::unrest,
                      window());
 
@@ -44,19 +44,19 @@ void eHygieneSafetyDataWidget::initialize() {
     const auto chtitle = new eLabel(window());
     chtitle->setFontSizeXS();
     chtitle->setNoPadding();
-    chtitle->setText(eLanguage::zeusText(56, 1)); // city hygiene
+    chtitle->setText(Language::zeusText(56, 1)); // city hygiene
     chtitle->fitContent();
     inner->addWidget(chtitle);
-    chtitle->align(eAlignment::hcenter);
+    chtitle->align(Alignment::hcenter);
 
     mHygieneLabel = new eLabel(window());
     mHygieneLabel->setNoPadding();
     mHygieneLabel->setYellowFontColor();
     mHygieneLabel->setFontSizeXS();
-    mHygieneLabel->setText(eLanguage::zeusText(56, 10)); // excellent
+    mHygieneLabel->setText(Language::zeusText(56, 10)); // excellent
     mHygieneLabel->fitContent();
     inner->addWidget(mHygieneLabel);
-    mHygieneLabel->align(eAlignment::hcenter);
+    mHygieneLabel->align(Alignment::hcenter);
 
     const auto spacer1 = new eWidget(window());
     spacer1->setHeight(spacing());
@@ -76,23 +76,23 @@ void eHygieneSafetyDataWidget::initialize() {
         const auto unrestTitle = new eLabel(window());
         unrestTitle->setFontSizeXS();
         unrestTitle->setNoPadding();
-        unrestTitle->setText(eLanguage::zeusText(56, 17)); // unrest
+        unrestTitle->setText(Language::zeusText(56, 17)); // unrest
         unrestTitle->fitContent();
         inner->addWidget(unrestTitle);
-        unrestTitle->align(eAlignment::hcenter);
+        unrestTitle->align(Alignment::hcenter);
     }
     {
         mUnrestLabel = new eLabel(window());
         mUnrestLabel->setWrapWidth(iw);
-        mUnrestLabel->setWrapAlignment(eAlignment::hcenter);
+        mUnrestLabel->setWrapAlignment(Alignment::hcenter);
         mUnrestLabel->setNoPadding();
         mUnrestLabel->setFontSizeXS();
         mUnrestLabel->setYellowFontColor();
-        mUnrestLabel->setText(eLanguage::zeusText(56, 23)); // no unrest
+        mUnrestLabel->setText(Language::zeusText(56, 23)); // no unrest
         mUnrestLabel->fitContent();
 
         inner->addWidget(mUnrestLabel);
-        mUnrestLabel->align(eAlignment::hcenter);
+        mUnrestLabel->align(Alignment::hcenter);
     }
     inner->stackVertically();
 }
@@ -126,9 +126,9 @@ void eHygieneSafetyDataWidget::paintEvent(ePainter& p) {
         } else {
             hString = 2;
         }
-        mHygieneLabel->setText(eLanguage::zeusText(56, hString));
+        mHygieneLabel->setText(Language::zeusText(56, hString));
         mHygieneLabel->fitContent();
-        mHygieneLabel->align(eAlignment::hcenter);
+        mHygieneLabel->align(Alignment::hcenter);
 
         const int unrest = mBoard.unrest(cid);
         int uString = -1;
@@ -143,9 +143,9 @@ void eHygieneSafetyDataWidget::paintEvent(ePainter& p) {
         } else {
             uString = 23;
         }
-        mUnrestLabel->setText(eLanguage::zeusText(56, uString));
+        mUnrestLabel->setText(Language::zeusText(56, uString));
         mUnrestLabel->fitContent();
-        mUnrestLabel->align(eAlignment::hcenter);
+        mUnrestLabel->align(Alignment::hcenter);
     }
     eWidget::paintEvent(p);
 }

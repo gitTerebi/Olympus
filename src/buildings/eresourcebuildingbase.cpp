@@ -2,8 +2,8 @@
 
 #include "characters/actions/cart-transporter-action.h"
 #include "engine/game-board.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 #include <algorithm>
 
@@ -30,7 +30,7 @@ void eResourceBuildingBase::timeChanged(const int by) {
             mCart = spawnCart(eCartActionTypeSupport::deliver);
         }
         if(mCart) {
-            mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
+            mCart->setMaxDistance(Numbers::sResourceBuildingMaxResourceGiveDistance);
         }
     }
     eEmployingBuilding::timeChanged(by);
@@ -79,7 +79,7 @@ std::vector<eCartTask> eResourceBuildingBase::cartTasks() const {
     return tasks;
 }
 
-void eResourceBuildingBase::serializeFields(eSaveArchive& ar) {
+void eResourceBuildingBase::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("resource", mResource);
     ar.characterField("cart", &getBoard(), mCart);

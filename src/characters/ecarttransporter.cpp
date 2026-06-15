@@ -8,7 +8,7 @@
 #include "characters/actions/cart-transporter-action.h"
 #include "buildings/ebuildingwithresource.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "etrailer.h"
 #include "eox.h"
 #include "eporter.h"
@@ -32,13 +32,13 @@ eCartTransporter::~eCartTransporter() {
     }
 }
 
-eOverlay eCartTransporter::getSecondaryTexture(const eTileSize size) const {
+Overlay eCartTransporter::getSecondaryTexture(const eTileSize size) const {
     if(mType != eCartTransporterType::basic) {
         return eBasicPatroler::getSecondaryTexture(size);
     }
     const auto a = actionType();
     if(a == eCharacterActionType::none) {
-        return eOverlay{0, 0, std::shared_ptr<eTexture>()};
+        return Overlay{0, 0, std::shared_ptr<Texture>()};
     }
     const int id = static_cast<int>(size);
     const auto& texs = GameTextures::characters()[id];
@@ -111,7 +111,7 @@ eOverlay eCartTransporter::getSecondaryTexture(const eTileSize size) const {
         break;
     }
 
-    std::shared_ptr<eTexture> tex;
+    std::shared_ptr<Texture> tex;
     if(rCount <= 0) {
         tex = texs.fEmptyCart.getTexture(oi);
     } else {
@@ -366,7 +366,7 @@ void eCartTransporter::catchUp() {
     }
 }
 
-void eCartTransporter::serializeFields(eSaveArchive& ar) {
+void eCartTransporter::serializeFields(SaveArchive& ar) {
     eBasicPatroler::serializeFields(ar);
     int count = mResourceCount;
     ar.field("resourceCount", count);
@@ -387,7 +387,7 @@ void eCartTransporter::serializeFields(eSaveArchive& ar) {
     if(ar.reading()) {
         const stdptr<eCartTransporter> tptr(this);
         auto followers = std::make_shared<std::vector<stdptr<eCharacter>>>();
-        ar.arrayField("followers", *followers, [this](eSaveArchive& itemAr, auto& f) {
+        ar.arrayField("followers", *followers, [this](SaveArchive& itemAr, auto& f) {
             itemAr.character(&getBoard(), f);
         });
         ar.addPostFunc([tptr, followers]() {
@@ -396,7 +396,7 @@ void eCartTransporter::serializeFields(eSaveArchive& ar) {
             tptr->updateTextures();
         }, "eCartTransporter::followers");
     } else {
-        ar.arrayField("followers", mFollowers, [this](eSaveArchive& itemAr, auto& f) {
+        ar.arrayField("followers", mFollowers, [this](SaveArchive& itemAr, auto& f) {
             itemAr.character(&getBoard(), f);
         });
     }

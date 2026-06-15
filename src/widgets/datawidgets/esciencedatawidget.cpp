@@ -3,7 +3,7 @@
 #include "eviewmodebutton.h"
 #include "widgets/elinewidget.h"
 #include "engine/game-board.h"
-#include "elanguage.h"
+#include "language.h"
 #include "buildings/emuseum.h"
 
 class eTwoCloseLabels : public eWidget {
@@ -40,31 +40,31 @@ private:
 
 void eScienceDataWidget::initialize() {
     const auto seeAstronomers = new eViewModeButton(
-                     eLanguage::zeusText(14, 20), // see astronomers
+                     Language::zeusText(14, 20), // see astronomers
                      eViewMode::astronomers,
                      window());
     addViewButton(seeAstronomers);
 
     const auto seeScholars = new eViewModeButton(
-                     eLanguage::zeusText(14, 23),
+                     Language::zeusText(14, 23),
                      eViewMode::scholars,
                      window());
     addViewButton(seeScholars);
 
     const auto seeInventors = new eViewModeButton(
-                     eLanguage::zeusText(14, 22),
+                     Language::zeusText(14, 22),
                      eViewMode::inventors,
                      window());
     addViewButton(seeInventors);
 
     const auto seeCurators = new eViewModeButton(
-                     eLanguage::zeusText(14, 21),
+                     Language::zeusText(14, 21),
                      eViewMode::curators,
                      window());
     addViewButton(seeCurators);
 
     const auto seeAllScience = new eViewModeButton(
-                     eLanguage::zeusText(14, 24),
+                     Language::zeusText(14, 24),
                      eViewMode::allScience,
                      window());
     addViewButton(seeAllScience);
@@ -80,8 +80,8 @@ void eScienceDataWidget::initialize() {
     title->setFontSizeXS();
     title->setNoPadding();
     title->setWrapWidth(0.8*iw->width());
-    title->setWrapAlignment(eAlignment::hcenter);
-    title->setText(eLanguage::zeusText(58, 75)); // Science in the city
+    title->setWrapAlignment(Alignment::hcenter);
+    title->setText(Language::zeusText(58, 75)); // Science in the city
     title->fitContent();
     title->setWidth(iw->width());
     cw->addWidget(title);
@@ -93,22 +93,22 @@ void eScienceDataWidget::initialize() {
     cw->addWidget(line);
 
     const auto astronomy = new eTwoCloseLabels(window());
-    astronomy->initialize(eLanguage::zeusText(58, 76));
+    astronomy->initialize(Language::zeusText(58, 76));
     mAstronomyCoverage = astronomy->label();
     cw->addWidget(astronomy);
 
     const auto research = new eTwoCloseLabels(window());
-    research->initialize(eLanguage::zeusText(58, 77));
+    research->initialize(Language::zeusText(58, 77));
     mResearchCoverage = research->label();
     cw->addWidget(research);
 
     const auto learning = new eTwoCloseLabels(window());
-    learning->initialize(eLanguage::zeusText(58, 78));
+    learning->initialize(Language::zeusText(58, 78));
     mLearningCoverage = learning->label();
     cw->addWidget(learning);
 
     const auto exhibits = new eTwoCloseLabels(window());
-    exhibits->initialize(eLanguage::zeusText(58, 79));
+    exhibits->initialize(Language::zeusText(58, 79));
     mExhibits = exhibits->label();
     cw->addWidget(exhibits);
 
@@ -123,7 +123,7 @@ void eScienceDataWidget::updateCoverage() {
     {
         const int pc = mBoard.philosophyResearchCoverage(cid);
         const auto pt = sCoverageToText(pc);
-        const auto ptt = eLanguage::zeusText(58, pt);
+        const auto ptt = Language::zeusText(58, pt);
         mResearchCoverage->setText(ptt);
         mResearchCoverage->fitContent();
     }
@@ -131,7 +131,7 @@ void eScienceDataWidget::updateCoverage() {
     {
         const int ac = mBoard.athleticsLearningCoverage(cid);
         const auto at = sCoverageToText(ac);
-        const auto att = eLanguage::zeusText(58, at);
+        const auto att = Language::zeusText(58, at);
         mLearningCoverage->setText(att);
         mLearningCoverage->fitContent();
     }
@@ -139,7 +139,7 @@ void eScienceDataWidget::updateCoverage() {
     {
         const int dc = mBoard.dramaAstronomyCoverage(cid);
         const auto dt = sCoverageToText(dc);
-        const auto dtt = eLanguage::zeusText(58, dt);
+        const auto dtt = Language::zeusText(58, dt);
         mAstronomyCoverage->setText(dtt);
         mAstronomyCoverage->fitContent();
     }
@@ -147,7 +147,7 @@ void eScienceDataWidget::updateCoverage() {
     {
         const auto m = mBoard.museum(cid);
         const bool exhibits = m ? m->isActive() : false;
-        const auto ddtt = eLanguage::zeusText(18, exhibits ? 1 : 0);
+        const auto ddtt = Language::zeusText(18, exhibits ? 1 : 0);
         mExhibits->setText(ddtt);
         mExhibits->fitContent();
     }

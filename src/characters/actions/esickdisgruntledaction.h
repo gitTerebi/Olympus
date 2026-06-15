@@ -4,7 +4,7 @@
 #include "eactionwithcomeback.h"
 
 class SmallHouse;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eSickDisgruntledActionStage {
     idle, patrolling, goingBack
@@ -17,7 +17,7 @@ public:
 
     bool decide() override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
     void patrol();
     void goBackDecision(const stdsptr<WalkableObject>& w =

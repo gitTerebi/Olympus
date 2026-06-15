@@ -1,21 +1,21 @@
 #include "egodquestevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
-#include "emessages.h"
+#include "language.h"
+#include "messages.h"
 #include "gameEvents/gods/egodquestfulfilledevent.h"
 #include "buildings/eheroshall.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 
 eGodQuestEvent::eGodQuestEvent(
         const eCityId cid,
         const eGameEventBranch branch,
         GameBoard& board) :
     eGodQuestEventBase(cid, eGameEventType::godQuest, branch, board) {
-    const auto e4 = eLanguage::text("fulfilled_trigger");
+    const auto e4 = Language::text("fulfilled_trigger");
     mFulfilledTrigger = e::make_shared<eEventTrigger>(cid, e4, board);
 
     addTrigger(mFulfilledTrigger);
@@ -35,10 +35,10 @@ void eGodQuestEvent::trigger() {
     ed.fQuestId = id();
     ed.fGod = god();
     board->event(eEvent::godQuest, ed);
-    const auto& inst = eMessages::instance;
+    const auto& inst = Messages::instance;
     const auto gm = inst.godMessages(god());
     if(!gm) return board->allowHero(cityId(), hero());
-    const eQuestMessages* qm = nullptr;
+    const QuestMessages* qm = nullptr;
     switch(id()) {
     case GodQuestId::godQuest1:
         qm = &gm->fQuest1;
@@ -52,14 +52,14 @@ void eGodQuestEvent::trigger() {
 }
 
 std::string eGodQuestEvent::longName() const {
-    return eLanguage::text("god_quest");
+    return Language::text("god_quest");
 }
 
 bool eGodQuestEvent::finished() const {
     return mFulfilled;
 }
 
-void eGodQuestEvent::serializeFields(eSaveArchive& ar) {
+void eGodQuestEvent::serializeFields(SaveArchive& ar) {
     eGodQuestEventBase::serializeFields(ar);
     ar.field("fulfilled", mFulfilled, false);
 }
@@ -90,9 +90,9 @@ void eGodQuestEvent::fulfilled() {
     const auto board = gameBoard();
     if(!board) return;
     const auto date = board->date();
-    const auto& msgs = eMessages::instance;
+    const auto& msgs = Messages::instance;
     const auto godMsgs = msgs.godMessages(god());
-    const eQuestMessages* qMsgs = nullptr;
+    const QuestMessages* qMsgs = nullptr;
     switch(id()) {
     case GodQuestId::godQuest1:
         qMsgs = &godMsgs->fQuest1;
@@ -103,7 +103,7 @@ void eGodQuestEvent::fulfilled() {
     }
     auto rFull = qMsgs->fFulfilled.fReason;
     const auto heroName = eHero::sHeroName(hero());
-    eStringHelpers::replaceAll(rFull, "[hero_needed]", heroName);
+    StringHelpers::replaceAll(rFull, "[hero_needed]", heroName);
     mFulfilledTrigger->trigger(*this, date, rFull);
     mFulfilled = true;
 }

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "etexture.h"
+#include "texture.h"
 
 class ePainter {
     struct ePainterSave {
@@ -27,13 +27,13 @@ public:
     void setFont(TTF_Font* const font);
 
     void drawTexture(const int x, const int y,
-                     const std::shared_ptr<eTexture>& tex,
-                     const eAlignment align) const;
+                     const std::shared_ptr<Texture>& tex,
+                     const Alignment align) const;
     void drawTexture(const SDL_Rect& rect,
-                     const std::shared_ptr<eTexture>& tex,
-                     const eAlignment align) const;
+                     const std::shared_ptr<Texture>& tex,
+                     const Alignment align) const;
     void drawTexture(const int x, const int y,
-                     const std::shared_ptr<eTexture>& tex) const;
+                     const std::shared_ptr<Texture>& tex) const;
     void fillRect(const SDL_Rect& rect,
                   const SDL_Color& color) const;
     void drawRect(const SDL_Rect& rect,
@@ -41,26 +41,26 @@ public:
                   const int width);
     void drawText(const int x, const int y,
                   const std::string& text,
-                  const eFontColor color,
-                  const eAlignment align = eAlignment::bottom |
-                                           eAlignment::right) const;
+                  const FontColor color,
+                  const Alignment align = Alignment::bottom |
+                                           Alignment::right) const;
     void drawText(const int x, const int y,
                   const std::string& text,
-                  const eFontColor color,
+                  const FontColor color,
                   const int fontSize,
-                  const eAlignment align = eAlignment::bottom |
-                                           eAlignment::right) const;
+                  const Alignment align = Alignment::bottom |
+                                           Alignment::right) const;
     void drawText(const SDL_Rect& rect,
                   const std::string& text,
-                  const eFontColor color,
-                  const eAlignment align = eAlignment::bottom |
-                                           eAlignment::right) const;
+                  const FontColor color,
+                  const Alignment align = Alignment::bottom |
+                                           Alignment::right) const;
     void drawText(const SDL_Rect& rect,
                   const std::string& text,
-                  const eFontColor color,
+                  const FontColor color,
                   const int fontSize,
-                  const eAlignment align = eAlignment::bottom |
-                                           eAlignment::right) const;
+                  const Alignment align = Alignment::bottom |
+                                           Alignment::right) const;
     void drawPolygon(std::vector<SDL_Point> pts,
                      const SDL_Color& color) const;
 

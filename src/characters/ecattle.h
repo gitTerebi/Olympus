@@ -3,19 +3,19 @@
 
 #include "echaracter.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eCattle : public eCharacter {
 public:
     eCattle(GameBoard& board, const eCharacterType type);
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize size) const override;
 
     void incTime(const int by) override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool mature();
     bool shouldBecomeBull() const;

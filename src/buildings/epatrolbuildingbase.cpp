@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/etile.h"
 #include "engine/waypoint-move-path-task.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eTile* ePatrolBuildingBase::patrolStartTile() const {
     return centerTile();
@@ -124,7 +124,7 @@ bool ePatrolBuildingBase::spawnsPatrolers() const {
     return mCharGenerator && mActGenerator;
 }
 
-void ePatrolBuildingBase::serializeFields(eSaveArchive& ar) {
+void ePatrolBuildingBase::serializeFields(SaveArchive& ar) {
     eEmployingBuilding::serializeFields(ar);
     ar.field("bothDirections", mBothDirections);
     ar.field("lastDirection", mLastDirection);
@@ -137,7 +137,7 @@ void ePatrolBuildingBase::serializeFields(eSaveArchive& ar) {
     ar.characterField("patroler", &getBoard(), mChar);
 
     ar.arrayField("patrolGuides", mPatrolWaypoints,
-        [](eSaveArchive& itemAr, ePatrolWaypoint& waypoint) {
+        [](SaveArchive& itemAr, ePatrolWaypoint& waypoint) {
             itemAr.field("x", waypoint.fX);
             itemAr.field("y", waypoint.fY);
         });

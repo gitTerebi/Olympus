@@ -1,6 +1,6 @@
 #include "egodquesteventbase.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 void eGodQuestEventBase::setGod(const GodType g) {
     mQuest.fGod = g;
@@ -14,9 +14,9 @@ void eGodQuestEventBase::setHero(const eHeroType h) {
     mQuest.fHero = h;
 }
 
-void eGodQuestEventBase::serializeFields(eSaveArchive& ar) {
+void eGodQuestEventBase::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
-    ar.archiveField("quest", [this](eSaveArchive& childAr) {
+    ar.archiveField("quest", [this](SaveArchive& childAr) {
         mQuest.serialize(childAr);
     });
 }

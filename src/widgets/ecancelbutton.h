@@ -5,7 +5,7 @@
 
 class eCancelButton : public eBasicButton {
 public:
-    eCancelButton(eMainWindow* const window);
+    eCancelButton(MainWindow* const window);
 };
 
 #endif // ECANCELBUTTON_H

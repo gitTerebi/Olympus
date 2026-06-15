@@ -3,8 +3,8 @@
 #include "buildings/small-house.h"
 #include "ecityid.h"
 #include "game-board.h"
-#include "evectorhelpers.h"
-#include "fileIO/esavearchive.h"
+#include "vector-helpers.h"
+#include "fileIO/save-archive.h"
 
 ePlague::ePlague(const eCityId cid, GameBoard& board) :
     mBoard(board), mCityId(cid) {}
@@ -31,7 +31,7 @@ void ePlague::spreadFrom(SmallHouse* const h) {
             if(bt != eBuildingType::commonHouse) continue;
             const auto ch = static_cast<SmallHouse*>(b);
             if(ch->plague()) continue;
-            if(ch != h && eRand::rand() % 2) continue;
+            if(ch != h && Rand::rand() % 2) continue;
             mHouses.push_back(ch);
             ch->setPlague(true);
         }
@@ -48,21 +48,21 @@ void ePlague::healAll() {
 void ePlague::healHouse(SmallHouse* const h) {
     if(!h) return;
     h->setPlague(false);
-    eVectorHelpers::remove(mHouses, h);
+    VectorHelpers::remove(mHouses, h);
 }
 
 bool ePlague::hasHouse(SmallHouse* const h) const {
-    return eVectorHelpers::contains(mHouses, h);
+    return VectorHelpers::contains(mHouses, h);
 }
 
 void ePlague::removeHouse(SmallHouse* const h) {
-    eVectorHelpers::remove(mHouses, h);
+    VectorHelpers::remove(mHouses, h);
 }
 
-void ePlague::serialize(eSaveArchive& ar) {
+void ePlague::serialize(SaveArchive& ar) {
     const auto defaultCityId = mCityId;
     ar.field("cityId", mCityId, defaultCityId);
-    ar.arrayField("houses", mHouses, [this](eSaveArchive& itemAr, SmallHouse*& h) {
+    ar.arrayField("houses", mHouses, [this](SaveArchive& itemAr, SmallHouse*& h) {
         itemAr.buildingAsField("house", &mBoard, h);
     });
 }

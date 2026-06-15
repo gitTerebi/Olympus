@@ -3,7 +3,7 @@
 
 #include "ebasicpatroler.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eSettler : public eBasicPatroler {
 public:
@@ -13,7 +13,7 @@ public:
     bool emigrant() const { return mEmigrant; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool mEmigrant = false;
 };

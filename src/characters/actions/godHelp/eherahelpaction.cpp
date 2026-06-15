@@ -1,5 +1,5 @@
 #include "eherahelpaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include <memory>
 
@@ -43,7 +43,7 @@ bool eHeraHelpAction::decide() {
     return true;
 }
 
-void eHeraHelpAction::serializeFields(eSaveArchive& ar) {
+void eHeraHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.buildingAsField("target", &board(), mTarget);
@@ -51,7 +51,7 @@ void eHeraHelpAction::serializeFields(eSaveArchive& ar) {
         const stdptr<eHeraHelpAction> tptr(this);
         auto futureTargets = std::make_shared<std::vector<stdptr<eAgoraBase>>>();
         ar.arrayField("futureTargets", *futureTargets,
-                      [this](eSaveArchive& itemAr, stdptr<eAgoraBase>& target) {
+                      [this](SaveArchive& itemAr, stdptr<eAgoraBase>& target) {
             itemAr.buildingAsField("agora", &board(), target);
         });
         ar.addPostFunc([tptr, futureTargets]() {
@@ -60,7 +60,7 @@ void eHeraHelpAction::serializeFields(eSaveArchive& ar) {
         }, "eHeraHelpAction::futureTargets");
     } else {
         ar.arrayField("futureTargets", mFutureTargets,
-                      [this](eSaveArchive& itemAr, stdptr<eAgoraBase>& target) {
+                      [this](SaveArchive& itemAr, stdptr<eAgoraBase>& target) {
             itemAr.buildingAsField("agora", &board(), target);
         });
     }

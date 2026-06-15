@@ -7,7 +7,7 @@ class Dionysus : public God {
 public:
     Dionysus(GameBoard& board);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 };
 
 #endif // EDIONYSUS_H

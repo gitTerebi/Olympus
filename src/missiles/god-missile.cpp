@@ -1,18 +1,18 @@
-#include "egodmissile.h"
-#include "fileIO/esavearchive.h"
+#include "god-missile.h"
+#include "fileIO/save-archive.h"
 
 #include "textures/game-textures.h"
 #include "characters/heroes/ehero.h"
 
-eGodMissile::eGodMissile(GameBoard& board,
-                         const std::vector<ePathPoint>& path) :
-    eMissile(board, eMissileType::god, path) {}
+GodMissile::GodMissile(GameBoard& board,
+                         const std::vector<PathPoint>& path) :
+    Missile(board, MissileType::god, path) {}
 
-std::shared_ptr<eTexture>
-eGodMissile::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture>
+GodMissile::getTexture(const eTileSize size) const {
     auto& board = this->board();
     const auto dir = board.direction();
-    using eTexPtr = std::vector<eTextureCollection> DestructionTextures::*;
+    using eTexPtr = std::vector<TextureCollection> DestructionTextures::*;
     eTexPtr collsptr;
     if(mActionType == eCharacterActionType::bless) {
         GameTextures::loadBless();
@@ -65,14 +65,14 @@ eGodMissile::getTexture(const eTileSize size) const {
     return coll.getTexture(texId % coll.size());
 }
 
-void eGodMissile::setTexture(const eCharacterType ct,
+void GodMissile::setTexture(const eCharacterType ct,
                              const eCharacterActionType cat) {
     mCharType = ct;
     mActionType = cat;
 }
 
-void eGodMissile::serializeFields(eSaveArchive& ar) {
-    eMissile::serializeFields(ar);
+void GodMissile::serializeFields(SaveArchive& ar) {
+    Missile::serializeFields(ar);
     ar.field("mCharType", mCharType);
     ar.field("mActionType", mActionType);
 }

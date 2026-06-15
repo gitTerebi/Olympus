@@ -3,8 +3,8 @@
 #include "move-around-action.h"
 #include "characters/echaracter.h"
 #include "ewaitaction.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 #include "engine/etile.h"
 
 eAnimalAction::eAnimalAction(eCharacter* const c,
@@ -31,7 +31,7 @@ bool eAnimalAction::decide() {
             }
         }
     }
-    if(shared || eRand::rand() % 2 == 0) {
+    if(shared || Rand::rand() % 2 == 0) {
         walkAround();
     } else {
         lay();
@@ -39,7 +39,7 @@ bool eAnimalAction::decide() {
     return true;
 }
 
-void eAnimalAction::serializeFields(eSaveArchive& ar) {
+void eAnimalAction::serializeFields(SaveArchive& ar) {
     eComplexAction::serializeFields(ar);
     ar.field("spawnerX", mSpawnerX);
     ar.field("spawnerY", mSpawnerY);
@@ -74,7 +74,7 @@ void eAnimalAction::walkAround() {
     const auto m = e::make_shared<MoveAroundAction>(
                        c, mSpawnerX, mSpawnerY,
                        mTileWalkable);
-    m->setMaxDistance(eNumbers::sAnimalMoveRange);
+    m->setMaxDistance(Numbers::sAnimalMoveRange);
     m->setTime(mWalkTime);
     setCurrentAction(m);
 }

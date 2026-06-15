@@ -3,7 +3,7 @@
 
 #include "gameEvents/egameevent.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eGameEvents {
 public:
@@ -20,7 +20,7 @@ public:
     void loadResources();
 
     void clear();
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
 
     const eCityId mCid;

@@ -3,8 +3,8 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
-#include "fileIO/esavearchive.h"
+#include "language.h"
+#include "fileIO/save-archive.h"
 
 eGodDisasterEvent::eGodDisasterEvent(
         const eCityId cid,
@@ -41,10 +41,10 @@ void eGodDisasterEvent::trigger() {
 }
 
 std::string eGodDisasterEvent::longName() const {
-    return eLanguage::zeusText(35, 13);
+    return Language::zeusText(35, 13);
 }
 
-void eGodDisasterEvent::serializeFields(eSaveArchive& ar) {
+void eGodDisasterEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eGodEventValue::serialize(ar);
     eCityEventValue::serialize(ar, *gameBoard());

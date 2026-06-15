@@ -8,7 +8,7 @@ class ePark : public eBuilding {
 public:
     ePark(GameBoard& board, const eCityId cid);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 private:
     const std::vector<BuildingTextures>& mTextures;
 };

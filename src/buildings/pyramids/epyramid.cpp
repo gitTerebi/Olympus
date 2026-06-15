@@ -14,7 +14,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 ePyramid::ePyramid(GameBoard& board,
                    const eBuildingType type,
@@ -1182,13 +1182,13 @@ void ePyramid::buildingProgressed() {
     }
 }
 
-void ePyramid::serializeFields(eSaveArchive& ar) {
+void ePyramid::serializeFields(SaveArchive& ar) {
     eMonument::serializeFields(ar);
     if(ar.reading()) mSelf = ref<ePyramid>();
     const int writeCount = ar.writing() ? static_cast<int>(mDark.size()) : 0;
     if(ar.reading()) mDark.clear();
     ar.countedArrayField("dark", writeCount,
-        [this](eSaveArchive& itemAr, const int i) {
+        [this](SaveArchive& itemAr, const int i) {
             bool d = itemAr.writing() ? static_cast<bool>(mDark[i]) : false;
             itemAr.field("dark", d, false);
             if(itemAr.reading()) mDark.push_back(d);

@@ -50,7 +50,7 @@ eTextureSpace eGatehouse::getTextureSpace(
     return {};
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eGatehouse::getTextureSides(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -63,7 +63,7 @@ eGatehouse::getTextureSides(const eTileSize size) const {
     return coll.getTexture(0);
 }
 
-eOverlay eGatehouse::getTextureEntrance(const eTileSize size) const {
+Overlay eGatehouse::getTextureEntrance(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
     const bool rotatedDir = dir == eWorldDirection::E ||
@@ -75,7 +75,7 @@ eOverlay eGatehouse::getTextureEntrance(const eTileSize size) const {
     const bool switchedOrder = dir == eWorldDirection::S ||
                                (mRotated && dir == eWorldDirection::E) ||
                                (!mRotated && dir == eWorldDirection::W);
-    eOverlay o;
+    Overlay o;
     o.fTex = coll.getTexture(switchedOrder ? 2 : 1);
     o.fAlignTop = true;
     if(mRotated) {
@@ -88,7 +88,7 @@ eOverlay eGatehouse::getTextureEntrance(const eTileSize size) const {
     return o;
 }
 
-eOverlay eGatehouse::getTextureEntranceBack(const eTileSize size) const {
+Overlay eGatehouse::getTextureEntranceBack(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
     const bool rotatedDir = dir == eWorldDirection::E ||
@@ -100,7 +100,7 @@ eOverlay eGatehouse::getTextureEntranceBack(const eTileSize size) const {
     const bool switchedOrder = dir == eWorldDirection::S ||
                                (mRotated && dir == eWorldDirection::E) ||
                                (!mRotated && dir == eWorldDirection::W);
-    eOverlay o;
+    Overlay o;
     o.fTex = coll.getTexture(switchedOrder ? 1 : 2);
     o.fAlignTop = true;
     if(mRotated) {
@@ -113,7 +113,7 @@ eOverlay eGatehouse::getTextureEntranceBack(const eTileSize size) const {
     return o;
 }
 
-eOverlay eGatehouse::getTextureEntranceOverlay(const eTileSize size) const {
+Overlay eGatehouse::getTextureEntranceOverlay(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
     const bool rotatedDir = dir == eWorldDirection::E ||
@@ -122,7 +122,7 @@ eOverlay eGatehouse::getTextureEntranceOverlay(const eTileSize size) const {
     const auto& blds = GameTextures::buildings()[sizeId];
     const auto& coll = mRotated!= rotatedDir  ? blds.fGatehouseH :
                                                 blds.fGatehouseW;
-    eOverlay o;
+    Overlay o;
     o.fTex = coll.getTexture(3);
     o.fAlignTop = true;
     if(mRotated) {

@@ -2,7 +2,7 @@
 
 #include "escrollwidgetcomplete.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "framed-button.h"
 
 void eScrollButtonsList::initialize() {
@@ -10,7 +10,7 @@ void eScrollButtonsList::initialize() {
 
     const int p = padding();
 
-    const auto addStr = eLanguage::text("add");
+    const auto addStr = Language::text("add");
     mNewButton = new FramedButton(addStr, window());
     if(mSmallSize) {
         mNewButton->setFontSizeS();

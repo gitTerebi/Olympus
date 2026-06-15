@@ -7,7 +7,7 @@ ePalace1Renderer::ePalace1Renderer(
     eBuildingRenderer(b, eBuildingRendererType::palace1),
     mPalace(b) {}
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 ePalace1Renderer::getTexture(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -41,7 +41,7 @@ ePalace1Renderer::getTexture(const eTileSize size) const {
     }
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 ePalace1Renderer::getOverlays(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -61,7 +61,7 @@ ePalace2Renderer::ePalace2Renderer(
     eBuildingRenderer(b, eBuildingRendererType::palace2),
     mPalace(b) {}
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 ePalace2Renderer::getTexture(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -95,7 +95,7 @@ ePalace2Renderer::getTexture(const eTileSize size) const {
     }
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 ePalace2Renderer::getOverlays(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();

@@ -1,6 +1,6 @@
 #include "eheatmap.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 
 #include <algorithm>
 #include <cassert>
@@ -104,7 +104,7 @@ void eHeatMap::addHeat(const eHeat& a,
             if(appeal == 0) continue;
             int dtx;
             int dty;
-            eTileHelper::tileIdToDTileId(x, y, dtx, dty);
+            TileHelper::tileIdToDTileId(x, y, dtx, dty);
             addHeat(dtx, dty, static_cast<double>(appeal));
         }
     }

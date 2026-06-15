@@ -4,10 +4,10 @@
 #include "emoveaction.h"
 
 #include "walkable/walkable-object.h"
-#include "elimits.h"
+#include "game-limits.h"
 #include <vector>
 
-class eSaveArchive;
+class SaveArchive;
 
 class MoveAroundAction : public eMoveAction {
 public:
@@ -23,7 +23,7 @@ public:
 
     void setMaxDistance(const int md);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eCharacterActionState nextTurn(eOrientation& turn) override;
 

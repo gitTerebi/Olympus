@@ -5,7 +5,7 @@
 
 #include "engine/ecityid.h"
 #include "invasion-targeting.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 class GameBoard;
 class SoldierBanner;
@@ -23,7 +23,7 @@ enum class eGeneralPhase {
     defend = 5
 };
 
-inline const int stallMaxWait = 7*eNumbers::sDayLength;
+inline const int stallMaxWait = 7*Numbers::sDayLength;
 
 struct eGeneralState {
     eGeneralPhase fPhase = eGeneralPhase::spread;

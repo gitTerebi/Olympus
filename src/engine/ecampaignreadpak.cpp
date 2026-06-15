@@ -1,9 +1,9 @@
 #include "ecampaign.h"
 
-#include "elanguage.h"
+#include "language.h"
 #include "pak/zeusfile.h"
 #include "pak/epakhelpers.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 
 #include "buildings/pyramids/epyramid.h"
 
@@ -1232,7 +1232,7 @@ void readEpisodeText(eEpisode& ep, ZeusFile& file) {
     const uint16_t completeId = file.readUShort();
     if(introId != 0 && introId != 65535) {
         ep.fIntroId = introId;
-        const auto intro = eLanguage::zeusMM(introId);
+        const auto intro = Language::zeusMM(introId);
         ep.fTitle = intro.fTitle;
         ep.fIntroduction = intro.fContent;
         if(const auto cep = dynamic_cast<eColonyEpisode*>(&ep)) {
@@ -1241,7 +1241,7 @@ void readEpisodeText(eEpisode& ep, ZeusFile& file) {
     }
     if(completeId != 0 && completeId != 65535) {
         ep.fCompleteId = completeId;
-        const auto complete = eLanguage::zeusMM(completeId);
+        const auto complete = Language::zeusMM(completeId);
         ep.fComplete = complete.fContent;
     }
 }
@@ -1263,7 +1263,7 @@ void removeNullEvents(const eCityId cid, eEpisode& ep) {
 void eCampaign::readPak(const std::string& title,
                         const std::string& path) {
     mIsPak = true;
-    mPakFilename = eStringHelpers::pathToName(path);
+    mPakFilename = StringHelpers::pathToName(path);
     mName = mPakFilename.substr(0, mPakFilename.size() - 4);
     ZeusFile file(path);
     file.readVersion();
@@ -1308,7 +1308,7 @@ void eCampaign::readPak(const std::string& title,
     const uint16_t briefId = file.readUShort();
     if(briefId != 0 && briefId != 65535) {
         mBriefId = briefId;
-        const auto brief = eLanguage::zeusMM(briefId);
+        const auto brief = Language::zeusMM(briefId);
         mTitle = brief.fTitle;
         mIntroduction = brief.fContent;
     }
@@ -1317,7 +1317,7 @@ void eCampaign::readPak(const std::string& title,
     const uint16_t completeId = file.readUShort();
     if(completeId != 0 && completeId != 65535) {
         mCompleteId = completeId;
-        mComplete = eLanguage::zeusMM(completeId).fContent;
+        mComplete = Language::zeusMM(completeId).fContent;
     }
 
     std::vector<ePakGod> friendlyGods;

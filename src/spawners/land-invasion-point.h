@@ -1,13 +1,13 @@
-#ifndef ELANDINVASIONPOINT_H
-#define ELANDINVASIONPOINT_H
+#ifndef LAND_INVASION_POINT_H
+#define LAND_INVASION_POINT_H
 
-#include "ebanner.h"
+#include "banner.h"
 
-class eLandInvasionPoint : public eBanner {
+class LandInvasionPoint : public Banner {
 public:
-    eLandInvasionPoint(const int id,
+    LandInvasionPoint(const int id,
                        eTile* const tile,
                        GameBoard& board);
 };
 
-#endif // ELANDINVASIONPOINT_H
+#endif // LAND_INVASION_POINT_H

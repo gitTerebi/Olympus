@@ -5,7 +5,7 @@
 
 #include "engine/egodquest.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eGodQuestEventBase : public eGameEvent {
 public:
@@ -22,7 +22,7 @@ public:
     eHeroType hero() const { return mQuest.fHero; }
     void setHero(const eHeroType h);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eGodQuest mQuest;
 };

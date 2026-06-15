@@ -7,12 +7,12 @@ Hermes::Hermes(GameBoard& board) :
     GameTextures::loadHermes();
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 Hermes::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& godTexs = GameTextures::gods()[id];
     const auto& texs = godTexs.fHermes;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     bool wrap = true;
     bool disappear = false;
     const int oid = static_cast<int>(rotatedOrientation());

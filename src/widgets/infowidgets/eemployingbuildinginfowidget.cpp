@@ -5,7 +5,7 @@
 #include "widgets/elabel.h"
 #include "widgets/elayouthelpers.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 void eEmployingBuildingInfoWidget::initialize(
         const std::string& title,
@@ -45,14 +45,14 @@ void eEmployingBuildingInfoWidget::addEmploymentWidget(
         lbl->setWrapWidth(wid->width());
         lbl->fitContent();
         lbl->setWidth(wid->width());
-        lbl->setTextAlignment(eAlignment::hcenter);
+        lbl->setTextAlignment(Alignment::hcenter);
         return lbl;
     };
 
     const auto estr = std::to_string(b->employed());
     const auto mestr = std::to_string(b->maxEmployees());
-    const auto emplStr = estr + " " + eLanguage::zeusText(8, 13) +
-                         "  (" + mestr + " " + eLanguage::zeusText(69, 0);
+    const auto emplStr = estr + " " + Language::zeusText(8, 13) +
+                         "  (" + mestr + " " + Language::zeusText(69, 0);
 
     std::vector<eLayoutHelpers::eFlexItem> items;
     items.push_back({makeLbl(emplStr)});

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "emessage.h"
+#include "message.h"
 #include "engine/eeventdata.h"
 #include "engine/edate.h"
 
@@ -8,7 +8,7 @@ class eWidget;
 
 struct eToast {
     eEventData fEd;
-    eMessage fMsg;
+    Message fMsg;
     eWidget* fWid = nullptr;
     int fExpireTick = 0;
     eDate fDate;

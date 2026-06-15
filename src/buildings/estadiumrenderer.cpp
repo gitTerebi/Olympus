@@ -7,7 +7,7 @@ eStadium1Renderer::eStadium1Renderer(
     eBuildingRenderer(b, eBuildingRendererType::stadium1),
     mStadium(b) {}
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eStadium1Renderer::getTexture(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -41,7 +41,7 @@ eStadium1Renderer::getTexture(const eTileSize size) const {
     }
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eStadium1Renderer::getOverlays(const eTileSize size) const {
 //    auto& board = getBoard();
 //    const auto dir = board.direction();
@@ -63,7 +63,7 @@ eStadium2Renderer::eStadium2Renderer(
     eBuildingRenderer(b, eBuildingRendererType::stadium2),
     mStadium(b) {}
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 eStadium2Renderer::getTexture(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -97,7 +97,7 @@ eStadium2Renderer::getTexture(const eTileSize size) const {
     }
 }
 
-std::vector<eOverlay>
+std::vector<Overlay>
 eStadium2Renderer::getOverlays(const eTileSize size) const {
 //    auto& board = getBoard();
 //    const auto dir = board.direction();

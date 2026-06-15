@@ -9,7 +9,7 @@ class eMainWidget;
 
 class eInfoWidget : public eModal {
 public:
-    eInfoWidget(eMainWindow* const window,
+    eInfoWidget(MainWindow* const window,
                 eMainWidget* const mw,
                 const bool narrow, const bool shrt);
 

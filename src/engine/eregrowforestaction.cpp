@@ -2,7 +2,7 @@
 
 #include "engine/etile.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eRegrowForestAction::eRegrowForestAction(eTile* const tile) :
     ePlannedAction(false, 500000, ePlannedActionType::regrowForest),
@@ -17,7 +17,7 @@ void eRegrowForestAction::trigger(GameBoard& board) {
     mTile->setTerrain(eTerrain::forest);
 }
 
-void eRegrowForestAction::serializeFields(eSaveArchive& ar, GameBoard* board) {
+void eRegrowForestAction::serializeFields(SaveArchive& ar, GameBoard* board) {
     ePlannedAction::serializeFields(ar, board);
     ar.tile(mTile, *board);
 }

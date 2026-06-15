@@ -2,13 +2,13 @@
 #define EHADESHELPACTION_H
 
 #include "characters/gods/actions/god-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 enum class eHadesHelpStage {
     none, appear, goTo, give, giving, disappear
 };
 
-class eSaveArchive;
+class SaveArchive;
 
 class eHadesHelpAction : public eGodAction {
 public:
@@ -22,7 +22,7 @@ public:
     void rebuildCurrentStage();
     void finishGiving();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void goToTarget();
@@ -51,7 +51,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -76,7 +76,7 @@ public:
         board().addResource(mCityId, eResourceType::drachmas, 1500);
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.field("cityId", mCityId);
     }
 private:

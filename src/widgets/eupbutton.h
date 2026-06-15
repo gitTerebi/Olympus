@@ -5,7 +5,7 @@
 
 class eUpButton : public eBasicButton {
 public:
-    eUpButton(eMainWindow* const window);
+    eUpButton(MainWindow* const window);
 };
 
 #endif // EUPBUTTON_H

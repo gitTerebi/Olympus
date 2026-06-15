@@ -1,7 +1,7 @@
 #include "ecomplexaction.h"
 
 #include "ewaitaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 void eComplexAction::increment(const int by) {
     if(mCurrentAction) {
@@ -18,7 +18,7 @@ void eComplexAction::increment(const int by) {
     }
 }
 
-void eComplexAction::serializeFields(eSaveArchive& ar) {
+void eComplexAction::serializeFields(SaveArchive& ar) {
     eCharacterAction::serializeFields(ar);
 }
 

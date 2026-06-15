@@ -2,7 +2,7 @@
 
 #include "achilles.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 eHero::eHero(GameBoard& board, const eHeroType mt) :
     eCharacter(board, sHeroToCharacterType(mt)) {
@@ -111,7 +111,7 @@ std::string eHero::sHeroName(const eHeroType ht) {
         string = 5;
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 void eHero::sHeroStrings(std::vector<eHeroType>& heros,

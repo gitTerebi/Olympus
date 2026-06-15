@@ -11,7 +11,7 @@ enum class eMonsterAttackStage {
     none, wait, goTo, patrol, goBack, attacking, destroyingBuilding
 };
 
-class eSaveArchive;
+class SaveArchive;
 
 class MonsterAction : public GodMonsterAction {
     friend class eMonsterObsticleHandler;
@@ -45,7 +45,7 @@ public:
 
     void rebuildCurrentStage();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void destroyBuilding(eBuilding* const b);
@@ -111,7 +111,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -140,7 +140,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
         ar.buildingField("building", &board(), mBptr);
     }
@@ -166,7 +166,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -194,7 +194,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:

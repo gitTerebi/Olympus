@@ -8,7 +8,7 @@
 
 #include "engine/eevent.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eResourceGrantedEventBase : public eGameEvent,
                                   public eCityEventValue,
@@ -38,7 +38,7 @@ public:
     void respond(int response, eCityId city = eCityId::neutralAggresive) override;
     bool finished() const override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     bool mPostpone = true;
 private:
     enum class eResponse {

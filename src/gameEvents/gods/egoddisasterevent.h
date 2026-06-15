@@ -6,7 +6,7 @@
 #include "gameEvents/gods/egodeventvalue.h"
 #include "gameEvents/ecityeventvalue.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eGodDisasterEvent : public eGameEvent,
                           public eGodEventValue,
@@ -25,7 +25,7 @@ public:
     void setDuration(const int d) { mDuration = d; }
     int duration() const { return mDuration; }
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     int mDuration = 180;
     bool mEnd = false;

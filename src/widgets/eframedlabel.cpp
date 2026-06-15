@@ -1,12 +1,12 @@
 #include "eframedlabel.h"
 
-eFramedLabel::eFramedLabel(eMainWindow* const window) :
+eFramedLabel::eFramedLabel(MainWindow* const window) :
     eFramedWidget(window), eLabelBase(window) {
     setFont(eFonts::defaultFont(resolution()));
 }
 
 eFramedLabel::eFramedLabel(const std::string& text,
-                           eMainWindow* const window) :
+                           MainWindow* const window) :
     eFramedLabel(window) {
     setText(text);
 }

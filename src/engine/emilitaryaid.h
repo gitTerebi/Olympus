@@ -8,7 +8,7 @@
 class GameBoard;
 class WorldCity;
 class SoldierBanner;
-class eSaveArchive;
+class SaveArchive;
 
 struct eMilitaryAid {
     bool count() const;
@@ -19,7 +19,7 @@ struct eMilitaryAid {
 
     void goBack();
 
-    void serialize(eSaveArchive& ar, GameBoard* board);
+    void serialize(SaveArchive& ar, GameBoard* board);
 
     stdsptr<WorldCity> fCity;
     std::vector<stdsptr<SoldierBanner>> fSoldiers;

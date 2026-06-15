@@ -5,7 +5,7 @@
 
 #include "buildings/small-house.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eApolloHelpStage {
     none, appear, goTo, heal, healing, disappear
@@ -23,7 +23,7 @@ public:
     void rebuildCurrentStage();
     void finishHealing();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void goToTarget();
@@ -52,7 +52,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -81,7 +81,7 @@ public:
         if(p) board.healPlague(p);
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("targetHouse", &board(), mTarget);
     }
 private:

@@ -34,7 +34,7 @@ void eGodAttackEventWidget::initialize(eWidget* const parent,
         choose->initialize(act, e->types());
 
         window()->execDialog(choose);
-        choose->align(eAlignment::center);
+        choose->align(Alignment::center);
     });
     addWidget(godsButton);
 

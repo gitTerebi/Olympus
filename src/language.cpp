@@ -1,42 +1,42 @@
-#include "elanguage.h"
+#include "language.h"
 
-#include "eloadtexthelper.h"
+#include "load-text-helper.h"
 
-#include "exmlparser.h"
+#include "xml-parser.h"
 #include "eng-parser.h"
-#include "egamedir.h"
+#include "game-dir.h"
 
-eLanguage eLanguage::instance;
+Language Language::instance;
 
-const std::string& eLanguage::text(const std::string& key) {
+const std::string& Language::text(const std::string& key) {
     return instance.fText[key];
 }
 
-const std::string& eLanguage::zeusText(const int g, const int s) {
+const std::string& Language::zeusText(const int g, const int s) {
     return instance.fZeusText[g][s];
 }
 
-const eMM& eLanguage::zeusMM(const int id) {
+const MM& Language::zeusMM(const int id) {
     return instance.fZeusMM[id];
 }
 
-bool eLanguage::load() {
+bool Language::load() {
     return instance.loadImpl();
 }
 
-bool eLanguage::loaded() {
+bool Language::loaded() {
     return instance.mLoaded;
 }
 
-bool eLanguage::loadImpl() {
+bool Language::loadImpl() {
     if(mLoaded) return false;
     mLoaded = true;
 
-    if(!EngParser::sParse(fZeusText, eGameDir::path("Zeus_Text.eng")))
-        eXmlParser::sParse(fZeusText, eGameDir::exeDir() + "../Zeus_Text.xml");
-    if(!EngParser::sParse(fZeusMM, eGameDir::path("Zeus_MM.eng")))
-        eXmlParser::sParse(fZeusMM, eGameDir::exeDir() + "../Zeus_MM.xml");
+    if(!EngParser::sParse(fZeusText, GameDir::path("Zeus_Text.eng")))
+        XmlParser::sParse(fZeusText, GameDir::exeDir() + "../Zeus_Text.xml");
+    if(!EngParser::sParse(fZeusMM, GameDir::path("Zeus_MM.eng")))
+        XmlParser::sParse(fZeusMM, GameDir::exeDir() + "../Zeus_MM.xml");
 
-    const std::string path = eGameDir::exeDir() + "../Text/language.txt";
-    return eLoadTextHelper::load(path, fText);
+    const std::string path = GameDir::exeDir() + "../Text/language.txt";
+    return LoadTextHelper::load(path, fText);
 }

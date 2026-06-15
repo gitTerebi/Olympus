@@ -1,8 +1,8 @@
 #include "receive-requested-resources-event.h"
 
 #include "engine/game-board.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
 #include "engine/egifthelpers.h"
@@ -35,11 +35,11 @@ void ReceiveRequestedResourcesEvent::initialize(
 }
 
 std::string ReceiveRequestedResourcesEvent::longName() const {
-    auto tmpl = eLanguage::text("make_request");
+    auto tmpl = Language::text("make_request");
     const auto resName = eResourceTypeHelpers::typeName(mResource);
-    eStringHelpers::replace(tmpl, "%1", resName);
-    const auto none = eLanguage::text("none");
+    StringHelpers::replace(tmpl, "%1", resName);
+    const auto none = Language::text("none");
     const auto ctstr = mCity ? mCity->name() : none;
-    eStringHelpers::replace(tmpl, "%2", ctstr);
+    StringHelpers::replace(tmpl, "%2", ctstr);
     return tmpl;
 }

@@ -20,7 +20,7 @@ public:
 
     bool decide() override;
 
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
     bool savesCartState() const override;
 

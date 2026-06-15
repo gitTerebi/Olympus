@@ -25,7 +25,7 @@ ePyramidMuseum::ePyramidMuseum(
     GameTextures::loadMuseum();
 }
 
-stdsptr<eTexture> ePyramidMuseum::getTexture(const eTileSize size) const {
+stdsptr<Texture> ePyramidMuseum::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];

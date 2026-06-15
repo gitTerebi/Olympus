@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "etexture.h"
+#include "texture.h"
 #include "widgets/eresolution.h"
 
 enum class eResourceType
@@ -72,7 +72,7 @@ namespace eResourceTypeHelpers
         const eResourceType from);
     std::string typeName(const eResourceType type);
     std::string typeLongName(const eResourceType type);
-    std::shared_ptr<eTexture> icon(const eUIScale scale, const eResourceType type);
+    std::shared_ptr<Texture> icon(const eUIScale scale, const eResourceType type);
     inline int transportSize(const eResourceType type,
                              const bool doubleCapacity = false)
     {

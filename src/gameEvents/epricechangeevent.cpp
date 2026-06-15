@@ -1,10 +1,10 @@
 #include "epricechangeevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 ePriceChangeEvent::ePriceChangeEvent(
         const eCityId cid,
@@ -26,12 +26,12 @@ void ePriceChangeEvent::trigger() {
 }
 
 std::string ePriceChangeEvent::longName() const {
-    auto tmpl = eLanguage::text("price_change_long_name");
+    auto tmpl = Language::text("price_change_long_name");
     longNameReplaceResource("%1", tmpl);
     return tmpl;
 }
 
-void ePriceChangeEvent::serializeFields(eSaveArchive& ar) {
+void ePriceChangeEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eResourceEventValue::serialize(ar);
     eCountEventValue::serialize(ar);

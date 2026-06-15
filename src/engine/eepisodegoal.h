@@ -1,12 +1,12 @@
 #ifndef EEPISODEGOAL_H
 #define EEPISODEGOAL_H
 
-#include "fileIO/ereadstream.h"
-#include "fileIO/ewritestream.h"
+#include "fileIO/read-stream.h"
+#include "fileIO/write-stream.h"
 
 #include "edate.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eEpisodeGoalType {
     population,
@@ -38,7 +38,7 @@ struct eEpisodeGoal {
 
     stdsptr<eEpisodeGoal> makeCopy() const;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
     bool met() const;
     void skipByPlayer();
 

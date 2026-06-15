@@ -1,5 +1,5 @@
 #include "eareshelpaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/ekillcharacterfinishfail.h"
@@ -31,7 +31,7 @@ bool eAresHelpAction::sHelpNeeded(const ePlayerId pid,
     return !cs.empty();
 }
 
-void eAresHelpAction::serializeFields(eSaveArchive& ar) {
+void eAresHelpAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
 }

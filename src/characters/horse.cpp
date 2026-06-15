@@ -7,11 +7,11 @@ Horse::Horse(GameBoard& board) :
     GameTextures::loadHorse();
 }
 
-std::shared_ptr<eTexture> Horse::getTexture(const eTileSize size) const {
+std::shared_ptr<Texture> Horse::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& chars = GameTextures::characters();
     const auto& charTexs = chars[id].fHorse;
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
     bool wrap = true;
     const auto a = actionType();

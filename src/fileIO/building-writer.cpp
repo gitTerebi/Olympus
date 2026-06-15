@@ -2,33 +2,33 @@
 
 #include "buildings/allbuildings.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 void BuildingArchive::save(const eBuilding* const b,
-                            eSaveArchive& ar) {
+                            SaveArchive& ar) {
     const auto type = b->type();
     if(type == eBuildingType::palace) {
         const auto p = static_cast<const ePalace*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             bool rotated = p->rotated();
             it.field("cityId", cid);
             it.field("rotated", rotated);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::palaceTile) {
         const auto p = static_cast<const ePalaceTile*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             bool other = p->other();
             it.field("cityId", cid);
             it.field("other", other);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
@@ -115,56 +115,56 @@ void BuildingArchive::save(const eBuilding* const b,
             break;
         }
         if(simple) {
-            ar.archiveField("factory", [&](eSaveArchive& it) {
+            ar.archiveField("factory", [&](SaveArchive& it) {
                 eCityId cid = b->cityId();
                 it.field("cityId", cid);
             });
-            ar.archiveField("state", [&](eSaveArchive& it) {
+            ar.archiveField("state", [&](SaveArchive& it) {
                 const_cast<eBuilding*>(b)->serialize(it);
             });
             return;
         }
     }
     if(type == eBuildingType::stadium) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             bool rotated = static_cast<const eStadium*>(b)->rotated();
             it.field("cityId", cid);
             it.field("rotated", rotated);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::gatehouse) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             bool rotated = static_cast<const eGatehouse*>(b)->rotated();
             it.field("cityId", cid);
             it.field("rotated", rotated);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::pier) {
         const auto p = static_cast<const ePier*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             eDiagonalOrientation o = p->orientation();
             it.field("cityId", cid);
             it.field("orientation", o);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::tradePost) {
         const auto tp = static_cast<const TradePost*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             eTradePostType tpt = tp->tpType();
             eDiagonalOrientation o = tp->orientation();
@@ -174,27 +174,27 @@ void BuildingArchive::save(const eBuilding* const b,
             it.field("orientation", o);
             it.field("worldCityId", ctid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::horseRanch) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::horseRanchEnclosure) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
@@ -206,11 +206,11 @@ void BuildingArchive::save(const eBuilding* const b,
        type == eBuildingType::armsVendor ||
        type == eBuildingType::horseTrainer ||
        type == eBuildingType::chariotVendor) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
@@ -218,7 +218,7 @@ void BuildingArchive::save(const eBuilding* const b,
     if(type == eBuildingType::urchinQuay ||
        type == eBuildingType::fishery ||
        type == eBuildingType::triremeWharf) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             eDiagonalOrientation o = eDiagonalOrientation::topRight;
             switch(type) {
@@ -233,14 +233,14 @@ void BuildingArchive::save(const eBuilding* const b,
             it.field("cityId", cid);
             it.field("orientation", o);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::commonAgora ||
        type == eBuildingType::grandAgora) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             eAgoraOrientation o = (type == eBuildingType::commonAgora) ?
                 static_cast<const eCommonAgora*>(b)->orientation() :
@@ -248,13 +248,13 @@ void BuildingArchive::save(const eBuilding* const b,
             it.field("cityId", cid);
             it.field("orientation", o);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::agoraSpace) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
@@ -262,20 +262,20 @@ void BuildingArchive::save(const eBuilding* const b,
     }
     if(type == eBuildingType::commemorative) {
         const auto p = static_cast<const eCommemorative*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             int id = p->id();
             it.field("cityId", cid);
             it.field("id", id);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::godMonument) {
         const auto gm = static_cast<const eGodMonument*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             GodType gtype = gm->god();
             GodQuestId qid = gm->id();
@@ -283,27 +283,27 @@ void BuildingArchive::save(const eBuilding* const b,
             it.field("god", gtype);
             it.field("questId", qid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::godMonumentTile) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(eBuilding::sHeroHall(type)) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
@@ -319,11 +319,11 @@ void BuildingArchive::save(const eBuilding* const b,
        type != eBuildingType::pyramidTemple &&
        type != eBuildingType::pyramidObservatory &&
        type != eBuildingType::pyramidMuseum) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
@@ -342,7 +342,7 @@ void BuildingArchive::save(const eBuilding* const b,
             type == eBuildingType::pyramidMuseum;
         if(isPyramidElem) {
             const auto se = static_cast<const ePyramidElement*>(b);
-            ar.archiveField("factory", [&](eSaveArchive& it) {
+            ar.archiveField("factory", [&](SaveArchive& it) {
                 eCityId cid = b->cityId();
                 it.field("cityId", cid);
                 int elevation = se->elevation();
@@ -376,11 +376,11 @@ void BuildingArchive::save(const eBuilding* const b,
                     it.field("elevation", elevation);
                 }
                 std::vector<eSanctCost> costs = se->costs();
-                it.arrayField("costs", costs, [](eSaveArchive& ia, eSanctCost& c) {
+                it.arrayField("costs", costs, [](SaveArchive& ia, eSanctCost& c) {
                     c.serialize(ia);
                 });
             });
-            ar.archiveField("state", [&](eSaveArchive& it) {
+            ar.archiveField("state", [&](SaveArchive& it) {
                 const_cast<eBuilding*>(b)->serialize(it);
             });
             return;
@@ -389,11 +389,11 @@ void BuildingArchive::save(const eBuilding* const b,
     if(type == eBuildingType::ruins ||
        type == eBuildingType::placeholder ||
        type == eBuildingType::hippodromePiece) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
@@ -405,7 +405,7 @@ void BuildingArchive::save(const eBuilding* const b,
        type != eBuildingType::temple &&
        type != eBuildingType::templeTile) {
         const auto s = static_cast<const eSanctuary*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             int sw = s->spanW();
             int sh = s->spanH();
@@ -413,14 +413,14 @@ void BuildingArchive::save(const eBuilding* const b,
             it.field("spanW", sw);
             it.field("spanH", sh);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::templeStatue) {
         const auto s = static_cast<const eTempleStatueBuilding*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             GodType godType = s->godType();
             int id = s->id();
@@ -428,14 +428,14 @@ void BuildingArchive::save(const eBuilding* const b,
             it.field("godType", godType);
             it.field("id", id);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::templeMonument) {
         const auto s = static_cast<const eTempleMonumentBuilding*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             GodType godType = s->godType();
             int id = s->id();
@@ -443,40 +443,40 @@ void BuildingArchive::save(const eBuilding* const b,
             it.field("godType", godType);
             it.field("id", id);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::templeAltar) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::temple) {
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             it.field("cityId", cid);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;
     }
     if(type == eBuildingType::templeTile) {
         const auto s = static_cast<const eTempleTileBuilding*>(b);
-        ar.archiveField("factory", [&](eSaveArchive& it) {
+        ar.archiveField("factory", [&](SaveArchive& it) {
             eCityId cid = b->cityId();
             int id = s->id();
             it.field("cityId", cid);
             it.field("id", id);
         });
-        ar.archiveField("state", [&](eSaveArchive& it) {
+        ar.archiveField("state", [&](SaveArchive& it) {
             const_cast<eBuilding*>(b)->serialize(it);
         });
         return;

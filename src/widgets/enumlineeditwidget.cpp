@@ -36,7 +36,7 @@ void eNumLineEditWidget::initialize(const eValueAction& a,
             deleteLater();
         });
         addWidget(ok);
-        ok->align(eAlignment::right | eAlignment::bottom);
+        ok->align(Alignment::right | Alignment::bottom);
         ok->setX(ok->x() - 1.5*p);
         ok->setY(ok->y() - 1.5*p);
     }

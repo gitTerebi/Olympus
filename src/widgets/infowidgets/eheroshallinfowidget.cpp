@@ -5,7 +5,7 @@
 #include "widgets/framed-button.h"
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
-#include "elanguage.h"
+#include "language.h"
 
 void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
     b->updateRequirementsStatus();
@@ -77,7 +77,7 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
             sttsLabel->fitContent();
 
             w->addWidget(sttsLabel);
-            sttsLabel->align(eAlignment::right);
+            sttsLabel->align(Alignment::right);
         }
 
         w->setY(y);
@@ -94,7 +94,7 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
     const auto stage = b->stage();
     if(met >= reqC && stage == eHeroSummoningStage::none) {
         const auto summonButton = new FramedButton(window());
-        const auto txt = eLanguage::zeusText(185, 62) + " " + eHero::sHeroName(ht);
+        const auto txt = Language::zeusText(185, 62) + " " + eHero::sHeroName(ht);
         summonButton->setText(txt);
         summonButton->setFontSizeS();
         summonButton->fitContent();
@@ -107,6 +107,6 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
         });
         const auto wid = addRegularWidget(summonButton->height());
         wid->addWidget(summonButton);
-        summonButton->align(eAlignment::center);
+        summonButton->align(Alignment::center);
     }
 }

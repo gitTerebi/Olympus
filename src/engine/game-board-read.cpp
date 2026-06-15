@@ -1,29 +1,29 @@
 #include "game-board.h"
 
-#include "spawners/ebanner.h"
+#include "spawners/banner.h"
 #include "fileIO/building-reader.h"
 #include "fileIO/building-writer.h"
 #include "gameEvents/invasions/invasion-handler.h"
-#include "missiles/emissile.h"
+#include "missiles/missile.h"
 #include "destruction-puff.h"
 #include "gameEvents/egameevent.h"
 #include "gameEvents/requests/receive-tribute-event.h"
 #include "gameEvents/requests/send-resources-to-city-event.h"
 #include "gameEvents/requests/send-troops-event.h"
 #include "eplague.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 #include "characters/actions/character-action.h"
 #include "characters/soldier-banner.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 
-void GameBoard::serializeYearlyProduction(eSaveArchive& ar) {
+void GameBoard::serializeYearlyProduction(SaveArchive& ar) {
     int productionCount = ar.writing() ? static_cast<int>(mYearlyProduction.size()) : 0;
     ar.field("yearlyProduction.count", productionCount);
     if(ar.reading()) {
         for(int i = 0; i < productionCount; i++) {
             eResourceType type;
             ar.archiveField(("yearlyProduction." + std::to_string(i)).c_str(),
-                [&](eSaveArchive& it) {
+                [&](SaveArchive& it) {
                     it.field("resource", type);
                     auto& y = mYearlyProduction[type];
                     it.field("best", y.fBest);
@@ -36,7 +36,7 @@ void GameBoard::serializeYearlyProduction(eSaveArchive& ar) {
         for(auto& p : mYearlyProduction) {
             eResourceType type = p.first;
             ar.archiveField(("yearlyProduction." + std::to_string(i++)).c_str(),
-                [&](eSaveArchive& it) {
+                [&](SaveArchive& it) {
                     it.field("resource", type);
                     it.field("best", p.second.fBest);
                     it.field("lastYear", p.second.fLastYear);
@@ -47,7 +47,7 @@ void GameBoard::serializeYearlyProduction(eSaveArchive& ar) {
     ar.field("lastAutosaveYear", mLastAutosaveYear);
 }
 
-void GameBoard::serialize(eSaveArchive& ar) {
+void GameBoard::serialize(SaveArchive& ar) {
     // assign ids before write
     if(ar.writing()) {
         int id = 0;
@@ -86,7 +86,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
         }
     }
 
-    ar.archiveField("date", [this](eSaveArchive& it) { mDate.serialize(it); });
+    ar.archiveField("date", [this](SaveArchive& it) { mDate.serialize(it); });
     ar.field("frame", mFrame);
     ar.field("time", mTime);
     ar.field("totalTime", mTotalTime);
@@ -100,11 +100,11 @@ void GameBoard::serialize(eSaveArchive& ar) {
             for(int i = 0; i < cityCount; i++) {
                 eCityId cid;
                 ar.archiveField(("cityOnBoard." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("cityId", cid);
                         const auto c = addCityToBoard(cid);
                         it.archiveField("city",
-                            [&c](eSaveArchive& cAr) { c->serialize(cAr); });
+                            [&c](SaveArchive& cAr) { c->serialize(cAr); });
                     });
                 scheduleAppealMapUpdate(cid);
             }
@@ -112,11 +112,11 @@ void GameBoard::serialize(eSaveArchive& ar) {
             int i = 0;
             for(const auto& c : mCitiesOnBoard) {
                 ar.archiveField(("cityOnBoard." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         eCityId cid = c->id();
                         it.field("cityId", cid);
                         it.archiveField("city",
-                            [&c](eSaveArchive& cAr) { c->serialize(cAr); });
+                            [&c](SaveArchive& cAr) { c->serialize(cAr); });
                     });
             }
         }
@@ -130,11 +130,11 @@ void GameBoard::serialize(eSaveArchive& ar) {
             for(int i = 0; i < playerCount; i++) {
                 ePlayerId pid;
                 ar.archiveField(("playerOnBoard." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("playerId", pid);
                         const auto p = std::make_shared<eBoardPlayer>(pid, *this);
                         it.archiveField("player",
-                            [&p](eSaveArchive& playerAr) { p->serialize(playerAr); });
+                            [&p](SaveArchive& playerAr) { p->serialize(playerAr); });
                         mPlayersOnBoard.push_back(p);
                     });
             }
@@ -142,11 +142,11 @@ void GameBoard::serialize(eSaveArchive& ar) {
             int i = 0;
             for(const auto& p : mPlayersOnBoard) {
                 ar.archiveField(("playerOnBoard." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         ePlayerId pid = p->id();
                         it.field("playerId", pid);
                         it.archiveField("player",
-                            [&p](eSaveArchive& playerAr) { p->serialize(playerAr); });
+                            [&p](SaveArchive& playerAr) { p->serialize(playerAr); });
                     });
             }
         }
@@ -160,7 +160,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
             for(const auto& t : ts) {
                 ar.archiveField(
                     ("tile." + std::to_string(i) + "." + std::to_string(j)).c_str(),
-                    [&t](eSaveArchive& tAr) {
+                    [&t](SaveArchive& tAr) {
                         t->eTileBase::serialize(tAr);
                         t->serialize(tAr);
                     });
@@ -178,7 +178,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
             for(int i = 0; i < buildingCount; i++) {
                 eBuildingType type;
                 ar.archiveField(("building." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("buildingType", type);
                         BuildingArchive::load(*this, type, it);
                     });
@@ -187,7 +187,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
             int i = 0;
             for(const auto b : mAllBuildings) {
                 ar.archiveField(("building." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         eBuildingType type = b->type();
                         it.field("buildingType", type);
                         BuildingArchive::save(b, it);
@@ -204,22 +204,22 @@ void GameBoard::serialize(eSaveArchive& ar) {
             for(int i = 0; i < characterCount; i++) {
                 eCharacterType type;
                 ar.archiveField(("character." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("characterType", type);
                         const auto c = eCharacter::sCreate(type, *this);
                         it.archiveField("state",
-                            [c](eSaveArchive& charAr) { c->serialize(charAr); });
+                            [c](SaveArchive& charAr) { c->serialize(charAr); });
                     });
             }
         } else {
             int i = 0;
             for(const auto c : mCharacters) {
                 ar.archiveField(("character." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         eCharacterType type = c->type();
                         it.field("characterType", type);
                         it.archiveField("state",
-                            [c](eSaveArchive& charAr) { c->serialize(charAr); });
+                            [c](SaveArchive& charAr) { c->serialize(charAr); });
                     });
             }
         }
@@ -231,24 +231,24 @@ void GameBoard::serialize(eSaveArchive& ar) {
         ar.field("missiles.count", missileCount);
         if(ar.reading()) {
             for(int i = 0; i < missileCount; i++) {
-                eMissileType type;
+                MissileType type;
                 ar.archiveField(("missile." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("missileType", type);
-                        const auto c = eMissile::sCreate(*this, type);
+                        const auto c = Missile::sCreate(*this, type);
                         it.archiveField("missileData",
-                            [c](eSaveArchive& childAr) { c->serialize(childAr); });
+                            [c](SaveArchive& childAr) { c->serialize(childAr); });
                     });
             }
         } else {
             int i = 0;
             for(const auto c : mMissiles) {
                 ar.archiveField(("missile." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
-                        eMissileType type = c->type();
+                    [&](SaveArchive& it) {
+                        MissileType type = c->type();
                         it.field("missileType", type);
                         it.archiveField("missileData",
-                            [c](eSaveArchive& childAr) { c->serialize(childAr); });
+                            [c](SaveArchive& childAr) { c->serialize(childAr); });
                     });
             }
         }
@@ -261,19 +261,19 @@ void GameBoard::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             for(int i = 0; i < puffCount; i++) {
                 ar.archiveField(("destructionPuff." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         const auto p = new DestructionPuff(*this);
                         it.archiveField("puffData",
-                            [p](eSaveArchive& childAr) { p->serialize(childAr); });
+                            [p](SaveArchive& childAr) { p->serialize(childAr); });
                     });
             }
         } else {
             int i = 0;
             for(const auto p : mDestructionPuffs) {
                 ar.archiveField(("destructionPuff." + std::to_string(i++)).c_str(),
-                    [p](eSaveArchive& it) {
+                    [p](SaveArchive& it) {
                         it.archiveField("puffData",
-                            [p](eSaveArchive& childAr) { p->serialize(childAr); });
+                            [p](SaveArchive& childAr) { p->serialize(childAr); });
                     });
             }
         }
@@ -281,7 +281,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
 
     // goals
     ar.arrayField("goals", mGoals,
-        [](eSaveArchive& itemAr, stdsptr<eEpisodeGoal>& g) {
+        [](SaveArchive& itemAr, stdsptr<eEpisodeGoal>& g) {
             if(itemAr.reading() && !g) g = std::make_shared<eEpisodeGoal>();
             g->serialize(itemAr);
         });
@@ -289,28 +289,28 @@ void GameBoard::serialize(eSaveArchive& ar) {
 
     ar.field("progressEarthquakes", mProgressEarthquakes);
     ar.arrayField("earthquakes", mEarthquakes,
-        [this](eSaveArchive& itemAr, stdsptr<eEarthquake>& e) {
+        [this](SaveArchive& itemAr, stdsptr<eEarthquake>& e) {
             if(itemAr.reading() && !e) e = std::make_shared<eEarthquake>();
             e->serialize(itemAr, *this);
         });
 
     ar.field("progressWaves", mProgressWaves);
     ar.arrayField("tidalWaves", mTidalWaves,
-        [this](eSaveArchive& itemAr, stdsptr<eTidalWave>& w) {
+        [this](SaveArchive& itemAr, stdsptr<eTidalWave>& w) {
             if(itemAr.reading() && !w) w = std::make_shared<eTidalWave>();
             w->serialize(itemAr, *this);
         });
 
     ar.field("progressLavaFlows", mProgressLavaFlows);
     ar.arrayField("lavaFlows", mLavaFlows,
-        [this](eSaveArchive& itemAr, stdsptr<eLavaFlow>& w) {
+        [this](SaveArchive& itemAr, stdsptr<eLavaFlow>& w) {
             if(itemAr.reading() && !w) w = std::make_shared<eLavaFlow>();
             w->serialize(itemAr, *this);
         });
 
     ar.field("progressLandSlides", mProgressLandSlides);
     ar.arrayField("landSlides", mLandSlides,
-        [this](eSaveArchive& itemAr, stdsptr<eLandSlide>& w) {
+        [this](SaveArchive& itemAr, stdsptr<eLandSlide>& w) {
             if(itemAr.reading() && !w) w = std::make_shared<eLandSlide>();
             w->serialize(itemAr, *this);
         });
@@ -322,12 +322,12 @@ void GameBoard::serialize(eSaveArchive& ar) {
         if(ar.reading()) {
             for(int i = 0; i < conqueredByCount; i++) {
                 ar.archiveField(("conqueredBy." + std::to_string(i)).c_str(),
-                    [this](eSaveArchive& it) {
+                    [this](SaveArchive& it) {
                         eCityId cid;
                         it.field("cityId", cid);
                         auto& cities = mConqueredBy[cid];
                         it.arrayField("cities", cities,
-                            [this](eSaveArchive& itemAr, stdsptr<WorldCity>& c) {
+                            [this](SaveArchive& itemAr, stdsptr<WorldCity>& c) {
                                 itemAr.worldCityField("city", this, c);
                             });
                     });
@@ -338,10 +338,10 @@ void GameBoard::serialize(eSaveArchive& ar) {
                 eCityId cid = p.first;
                 auto& cities = p.second;
                 ar.archiveField(("conqueredBy." + std::to_string(i++)).c_str(),
-                    [this, &cid, &cities](eSaveArchive& it) {
+                    [this, &cid, &cities](SaveArchive& it) {
                         it.field("cityId", cid);
                         it.arrayField("cities", cities,
-                            [this](eSaveArchive& itemAr, stdsptr<WorldCity>& c) {
+                            [this](SaveArchive& itemAr, stdsptr<WorldCity>& c) {
                                 itemAr.worldCityField("city", this, c);
                             });
                     });
@@ -357,7 +357,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
             for(int i = 0; i < plannedActionCount; i++) {
                 ePlannedActionType type;
                 ar.archiveField(("plannedAction." + std::to_string(i)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         it.field("actionType", type);
                         const auto a = ePlannedAction::sCreate(type);
                         a->serialize(it, this);
@@ -368,7 +368,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
             int i = 0;
             for(const auto a : mPlannedActions) {
                 ar.archiveField(("plannedAction." + std::to_string(i++)).c_str(),
-                    [&](eSaveArchive& it) {
+                    [&](SaveArchive& it) {
                         ePlannedActionType type = a->type();
                         it.field("actionType", type);
                         a->serialize(it, this);
@@ -392,7 +392,7 @@ void GameBoard::serialize(eSaveArchive& ar) {
             }
             const auto bt = b->type();
             if(!eBuilding::sTimedBuilding(bt)) continue;
-            if(eVectorHelpers::contains(mTimedBuildings, b)) continue;
+            if(VectorHelpers::contains(mTimedBuildings, b)) continue;
             mTimedBuildings.push_back(b);
         }
         for(const auto& c : mCitiesOnBoard) {

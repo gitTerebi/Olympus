@@ -1,9 +1,9 @@
 #include "egodreasoneventvalue.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
-#include "fileIO/ewritestream.h"
-#include "fileIO/ereadstream.h"
+#include "fileIO/write-stream.h"
+#include "fileIO/read-stream.h"
 
-void eGodReasonEventValue::serialize(eSaveArchive& ar) {
+void eGodReasonEventValue::serialize(SaveArchive& ar) {
     ar.field("godReason", mGodReason, false);
 }

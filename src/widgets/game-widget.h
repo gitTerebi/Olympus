@@ -17,7 +17,7 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 #include "eframedlabel.h"
 
 #include "engine/etile.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "textures/terrain-textures.h"
 #include "textures/building-textures.h"
@@ -33,7 +33,7 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 #include "etopbarwidget.h"
 
 #include "eviewmode.h"
-#include "emessage.h"
+#include "message.h"
 #include "widgets/toasts/toast-manager.h"
 
 #include "engine/eeventdata.h"
@@ -43,8 +43,8 @@ class eTerrainEditMenu;
 class eDomesticatedAnimal;
 struct eSanctBlueprint;
 class eWorldWidget;
-struct eGodMessages;
-struct eHeroMessages;
+struct GodMessages;
+struct HeroMessages;
 class eMessageBox;
 class eMessageListWidget;
 class GameBoard;
@@ -66,7 +66,7 @@ using eBuildingCreator = std::function<stdsptr<eBuilding>()>;
 
 struct eSavedMessage {
     eEventData fEd;
-    eMessage fMsg;
+    Message fMsg;
     bool fForcePopup = false;
 };
 
@@ -80,7 +80,7 @@ struct GameWidgetSettings {
     eWorldDirection fDir = eWorldDirection::N;
     std::map<int, std::pair<int, int>> fBookmarks;
 
-    void serialize(eSaveArchive& ar) {
+    void serialize(SaveArchive& ar) {
         ar.field("paused", fPaused);
         ar.field("speedId", fSpeedId);
         ar.field("speed", fSpeed);
@@ -91,7 +91,7 @@ struct GameWidgetSettings {
         if(ar.reading()) {
             fBookmarks.clear();
             ar.countedArrayField("bookmarks", 0,
-                [this](eSaveArchive& itemAr, const int) {
+                [this](SaveArchive& itemAr, const int) {
                     int id = 0;
                     itemAr.field("id", id);
                     auto& b = fBookmarks[id];
@@ -101,7 +101,7 @@ struct GameWidgetSettings {
         } else {
             auto it = fBookmarks.begin();
             ar.countedArrayField("bookmarks", static_cast<int>(fBookmarks.size()),
-                [&it](eSaveArchive& itemAr, const int) {
+                [&it](SaveArchive& itemAr, const int) {
                     int id = it->first;
                     int x = it->second.first;
                     int y = it->second.second;
@@ -116,7 +116,7 @@ struct GameWidgetSettings {
 
 class GameWidget : public eMainWidget {
 public:
-    GameWidget(eMainWindow* const window);
+    GameWidget(MainWindow* const window);
     ~GameWidget();
 
     void initialize();
@@ -176,7 +176,7 @@ public:
     void centerDialog(eWidget* const d);
     void openDialog(eWidget* const d) override;
 
-    void showMessage(eEventData& ed, const eMessage& msg,
+    void showMessage(eEventData& ed, const Message& msg,
                      const bool prepend = false,
                      const bool forcePopup = false,
                      const bool addToList = true);
@@ -262,7 +262,6 @@ private:
     void showGoals();
     void showOptionsMenu();
     void showOptionsMenu(const int initialPage);
-    void showGraphicsMenu();
     void showStampManager();
     void beginStampTemplateCreate();
     void cancelStampTemplateCreate();
@@ -373,14 +372,14 @@ private:
     int hippodromeId() const;
     void updateHippodromeIds();
 
-    void showMessage(eEventData& ed, const eMessageType& msg,
+    void showMessage(eEventData& ed, const MessageType& msg,
                      const bool prepend = false);
-    void showMessage(eEventData& ed, const eEventMessageType& msg,
+    void showMessage(eEventData& ed, const EventMessageType& msg,
                      const bool prepend = false);
 
     void updateTipPositions();
     void updateToastPositions();
-    void showToast(eEventData& ed, const eMessage& msg);
+    void showToast(eEventData& ed, const Message& msg);
     void createToastWidget(eToast& toast);
 
     std::vector<eTile*> roadPath() const;
@@ -437,7 +436,7 @@ private:
     void setKeyScrollSpeed(const int speed);
     void setGameSpeed(const int speed);
 
-    stdsptr<eTexture> getBasementTexture(
+    stdsptr<Texture> getBasementTexture(
             const int viewTileX, const int viewTileY,
             eBuilding* const building,
             const TerrainTextures& trrTexs, const eWorldDirection dir,
@@ -522,8 +521,8 @@ private:
     int mTileH = 30;
     int mScale = 100;
     double mZoom = 1.0;
-    std::shared_ptr<eTexture> mWorldTex;
-    std::shared_ptr<eTexture> mCompassTex;
+    std::shared_ptr<Texture> mWorldTex;
+    std::shared_ptr<Texture> mCompassTex;
     int mCompassDir = -1;
 
     int mUpdateRect = 0;
@@ -577,7 +576,7 @@ private:
 
     std::deque<eTip> mTips;
 
-    std::map<eTileSize, std::vector<stdsptr<eTexture>>> mNumbers;
+    std::map<eTileSize, std::vector<stdsptr<Texture>>> mNumbers;
     std::vector<eTile*> mInflTiles;
     std::vector<eTile*> mHoverTiles;
 

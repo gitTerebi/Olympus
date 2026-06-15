@@ -1,6 +1,6 @@
 #include "ewagerate.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 std::string eWageRateHelpers::name(const eWageRate wr) {
     const int group = 285;
@@ -25,7 +25,7 @@ std::string eWageRateHelpers::name(const eWageRate wr) {
         string = 5;
         break;
     }
-    return eLanguage::zeusText(group, string);
+    return Language::zeusText(group, string);
 }
 
 double eWageRateHelpers::wageMultiplier(const eWageRate wr) {

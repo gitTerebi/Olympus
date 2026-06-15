@@ -1,10 +1,10 @@
 #ifndef EHASRESOURCEOBJECT_H
 #define EHASRESOURCEOBJECT_H
 
-#include "fileIO/estreams.h"
+#include "fileIO/streams.h"
 #include "engine/etilebase.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eHasResourceObjectType {
     nonBusy,
@@ -53,7 +53,7 @@ public:
         }
     }
 
-    void serialize(eSaveArchive& ar) { serializeFields(ar); }
+    void serialize(SaveArchive& ar) { serializeFields(ar); }
 
     eHasResourceObjectType type() const { return mType; }
 
@@ -63,7 +63,7 @@ public:
     static stdsptr<eHasResourceObject> sCreateNonBusy(
             const stdsptr<eHasResourceObject>& other);
 protected:
-    virtual void serializeFields(eSaveArchive& ar) { (void)ar; }
+    virtual void serializeFields(SaveArchive& ar) { (void)ar; }
 private:
     const eHasResourceObjectType mType;
 };

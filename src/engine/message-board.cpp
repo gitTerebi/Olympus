@@ -7,7 +7,7 @@ void GameBoard::setMessageShower(const eMessageShower& msg)
     mMsgShower = msg;
 }
 
-void GameBoard::showMessage(eEventData& ed, const eMessageType& msg)
+void GameBoard::showMessage(eEventData& ed, const MessageType& msg)
 {
     mMsgShower(ed, msg);
 }
@@ -24,7 +24,7 @@ void GameBoard::respondToEvent(
 
 void GameBoard::addMessageLog(
     const eEventData& ed,
-    const eMessage& msg,
+    const Message& msg,
     const eDate& date)
 {
     auto& lm = mMessageLog.emplace_back();
@@ -49,7 +49,7 @@ void GameBoard::setMessageLogRead(const int index)
     mMessageLog[index].fRead = true;
 }
 
-void GameBoard::serializeMessageLog(eSaveArchive& ar)
+void GameBoard::serializeMessageLog(SaveArchive& ar)
 {
     int messageCount = ar.writing() ? static_cast<int>(mMessageLog.size()) : 0;
     ar.field("messageLog.count", messageCount);
@@ -58,10 +58,10 @@ void GameBoard::serializeMessageLog(eSaveArchive& ar)
         for(int i = 0; i < messageCount; i++) {
             eLoggedMessage lm;
             ar.archiveField(("message." + std::to_string(i)).c_str(),
-                [&](eSaveArchive& it) {
+                [&](SaveArchive& it) {
                     it.field("title", lm.fMsg.fTitle);
                     it.field("text", lm.fMsg.fText);
-                    it.archiveField("date", [&](eSaveArchive& dAr) {
+                    it.archiveField("date", [&](SaveArchive& dAr) {
                         lm.fDate.serialize(dAr);
                     });
                     it.field("playerName", lm.fEd.fPlayerName);
@@ -75,10 +75,10 @@ void GameBoard::serializeMessageLog(eSaveArchive& ar)
         int i = 0;
         for(auto& lm : mMessageLog) {
             ar.archiveField(("message." + std::to_string(i++)).c_str(),
-                [&](eSaveArchive& it) {
+                [&](SaveArchive& it) {
                     it.field("title", lm.fMsg.fTitle);
                     it.field("text", lm.fMsg.fText);
-                    it.archiveField("date", [&](eSaveArchive& dAr) {
+                    it.archiveField("date", [&](SaveArchive& dAr) {
                         lm.fDate.serialize(dAr);
                     });
                     it.field("playerName", lm.fEd.fPlayerName);

@@ -1,10 +1,10 @@
 ﻿#include "ewolfaction.h"
 
-#include "erand.h"
-#include "enumbers.h"
+#include "rand.h"
+#include "numbers.h"
 #include "emovetoaction.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/epathfinder.h"
 #include "characters/actions/walkable/walkable-object.h"
@@ -96,10 +96,10 @@ bool eWolfAction::decide()
         attackWall(wall);
         return true;
     }
-    const int wait = eNumbers::sWolfHuntWait;
+    const int wait = Numbers::sWolfHuntWait;
     if (wait <= 0)
         return AnimalAction::decide();
-    const bool hunt = (eRand::rand() % wait) == 0;
+    const bool hunt = (Rand::rand() % wait) == 0;
     if (hunt)
     {
         mHunting = true;
@@ -109,7 +109,7 @@ bool eWolfAction::decide()
     return AnimalAction::decide();
 }
 
-void eWolfAction::serializeFields(eSaveArchive& ar)
+void eWolfAction::serializeFields(SaveArchive& ar)
 {
     AnimalAction::serializeFields(ar);
     ar.field("hunting", mHunting);
@@ -176,7 +176,7 @@ void eWolfAction::goBack()
         c->kill();
     };
     a->setFindFailAction(findFailFunc);
-    a->setMaxFindDistance(2 * eNumbers::sWolfHuntDistance);
+    a->setMaxFindDistance(2 * Numbers::sWolfHuntDistance);
     a->start(tile);
     setCurrentAction(a);
 }
@@ -228,7 +228,7 @@ void eWolfAction::findPrey()
         const auto pf = std::make_shared<ePathFinder>(wallWalkable, hha);
         const auto &board = this->board();
         const SDL_Rect r{0, 0, board.width(), board.height()};
-        if (!pf->findPath(r, ct, eNumbers::sWolfHuntDistance, false, 1, 1)) {
+        if (!pf->findPath(r, ct, Numbers::sWolfHuntDistance, false, 1, 1)) {
             goBack();
             return;
         }
@@ -243,7 +243,7 @@ void eWolfAction::findPrey()
         else goBack();
     };
     a->setFindFailAction(findFailFunc);
-    a->setMaxFindDistance(eNumbers::sWolfHuntDistance);
+    a->setMaxFindDistance(Numbers::sWolfHuntDistance);
     a->start(hha);
     setCurrentAction(a);
 }
@@ -318,7 +318,7 @@ void eWolfAction::moveToRetaliationTarget()
         if(!actionPtr) return;
         actionPtr->goBack();
     });
-    a->setMaxFindDistance(eNumbers::sWolfHuntDistance * 2);
+    a->setMaxFindDistance(Numbers::sWolfHuntDistance * 2);
     a->start(final);
     setCurrentAction(a);
 }

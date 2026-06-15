@@ -4,7 +4,7 @@
 #include "../emonument.h"
 
 enum class GodType;
-class eSaveArchive;
+class SaveArchive;
 
 struct ePyramidSettings {
     eBuildingType fType;
@@ -36,7 +36,7 @@ public:
                                     const GodType god);
     static bool sIsToGod(const eBuildingType type);
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     stdsptr<ePyramid> mSelf;
 

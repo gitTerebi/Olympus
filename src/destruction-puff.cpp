@@ -2,13 +2,13 @@
 
 #include "engine/game-board.h"
 #include "textures/game-textures.h"
-#include "fileIO/esavearchive.h"
-#include "erand.h"
+#include "fileIO/save-archive.h"
+#include "rand.h"
 
 static std::vector<int> randomFrameDwell() {
     std::vector<int> dwell(9);
     for(int i = 0; i < 9; i++)
-        dwell[i] = 150 + (std::abs(eRand::rand()) % 201);
+        dwell[i] = 150 + (std::abs(Rand::rand()) % 201);
     return dwell;
 }
 
@@ -50,7 +50,7 @@ void DestructionPuff::incTime(const int by) {
     if(mAnimFrame >= 9) mDead = true;
 }
 
-std::shared_ptr<eTexture>
+std::shared_ptr<Texture>
 DestructionPuff::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& textures = GameTextures::destrution();
@@ -59,7 +59,7 @@ DestructionPuff::getTexture(const eTileSize size) const {
     return coll.getTexture(mAnimFrame % coll.size());
 }
 
-void DestructionPuff::serialize(eSaveArchive& ar) {
+void DestructionPuff::serialize(SaveArchive& ar) {
     ar.field("worldX", mWorldX);
     ar.field("worldY", mWorldY);
     ar.field("dirX", mDirX);
@@ -71,5 +71,5 @@ void DestructionPuff::serialize(eSaveArchive& ar) {
     ar.field("animAccum", mAnimAccum);
     ar.field("dead", mDead);
     ar.arrayField("frameDwell", mFrameDwell,
-        [](eSaveArchive& itemAr, int& v) { itemAr.field("dwell", v); });
+        [](SaveArchive& itemAr, int& v) { itemAr.field("dwell", v); });
 }

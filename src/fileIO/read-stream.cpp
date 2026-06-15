@@ -1,4 +1,4 @@
-﻿#include "ereadstream.h"
+﻿#include "read-stream.h"
 
 #include "engine/game-board.h"
 #include "characters/actions/walkable/walkable-object.h"
@@ -8,19 +8,19 @@
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "characters/actions/epatrolaction.h"
 #include "characters/actions/epatrolmoveaction.h"
-#include "esavearchive.h"
+#include "save-archive.h"
 #include "characters/soldier-banner.h"
 
-eReadStream::eReadStream(const eReadSource& src) :
+ReadStream::ReadStream(const ReadSource& src) :
     mSrc(src) {}
 
-void eReadStream::readFormat() {
+void ReadStream::readFormat() {
     *this >> mFormat;
     int ignoredLegacyVersion;
     *this >> ignoredLegacyVersion;
 }
 
-eTile* eReadStream::readTile(GameBoard& board) {
+eTile* ReadStream::readTile(GameBoard& board) {
     bool valid;
     *this >> valid;
     if(valid) {
@@ -34,7 +34,7 @@ eTile* eReadStream::readTile(GameBoard& board) {
     }
 }
 
-void eReadStream::readBuilding(GameBoard* board,
+void ReadStream::readBuilding(GameBoard* board,
                                const eBuildingFunc& func,
                                const char* tag) {
     int bid;
@@ -57,7 +57,7 @@ void eReadStream::readBuilding(GameBoard* board,
     }, tag);
 }
 
-void eReadStream::readCharacter(GameBoard* board,
+void ReadStream::readCharacter(GameBoard* board,
                                 const eCharFunc& func,
                                 const char* tag) {
     int cid;
@@ -80,7 +80,7 @@ void eReadStream::readCharacter(GameBoard* board,
     }, tag);
 }
 
-void eReadStream::readCharacterAction(GameBoard* board,
+void ReadStream::readCharacterAction(GameBoard* board,
                                       const eCharActFunc& func,
                                       const char* tag) {
     int caid;
@@ -103,7 +103,7 @@ void eReadStream::readCharacterAction(GameBoard* board,
     }, tag);
 }
 
-stdsptr<eCharacterActionFunction> eReadStream::readCharActFunc(
+stdsptr<eCharacterActionFunction> ReadStream::readCharActFunc(
         GameBoard& board) {
     bool hasFinish;
     *this >> hasFinish;
@@ -111,28 +111,28 @@ stdsptr<eCharacterActionFunction> eReadStream::readCharActFunc(
         eCharActFuncType type;
         *this >> type;
         const auto f = eCharacterActionFunction::sCreate(board, type);
-        eSaveArchive ar(*this);
+        SaveArchive ar(*this);
         f->serialize(ar);
         return f;
     }
     return nullptr;
 }
 
-stdsptr<eGodAct> eReadStream::readGodAct(GameBoard& board) {
+stdsptr<eGodAct> ReadStream::readGodAct(GameBoard& board) {
     bool hasFinish;
     *this >> hasFinish;
     if(hasFinish) {
         eGodActType type;
         *this >> type;
         const auto f = eGodAct::sCreate(board, type);
-        eSaveArchive ar(*this);
+        SaveArchive ar(*this);
         f->serialize(ar);
         return f;
     }
     return nullptr;
 }
 
-stdsptr<eDirectionTimes> eReadStream::readDirectionTimes(
+stdsptr<eDirectionTimes> ReadStream::readDirectionTimes(
         GameBoard& board) {
     const auto r = std::make_shared<eDirectionTimes>();
     int n;
@@ -140,18 +140,18 @@ stdsptr<eDirectionTimes> eReadStream::readDirectionTimes(
     for(int i = 0; i < n; i++) {
         const auto tile = readTile(board);
         eDirectionLastUseTime u;
-        eSaveArchive ar(*this);
+        SaveArchive ar(*this);
         u.serialize(ar);
         (*r)[tile] = u;
     }
     return r;
 }
 
-void eReadStream::readCity(GameBoard* board, const eCityFunc& func) {
+void ReadStream::readCity(GameBoard* board, const eCityFunc& func) {
     return readCity(&board->world(), func);
 }
 
-void eReadStream::readCity(WorldBoard* board, const eCityFunc& func) {
+void ReadStream::readCity(WorldBoard* board, const eCityFunc& func) {
     int cid;
     *this >> cid;
     addPostFunc([board, func, cid]() {
@@ -162,7 +162,7 @@ void eReadStream::readCity(WorldBoard* board, const eCityFunc& func) {
     }, "city");
 }
 
-void eReadStream::readBanner(GameBoard* board, const eBannerFunc& func) {
+void ReadStream::readBanner(GameBoard* board, const eBannerFunc& func) {
     int bid;
     *this >> bid;
     addPostFunc([board, func, bid]() {
@@ -173,7 +173,7 @@ void eReadStream::readBanner(GameBoard* board, const eBannerFunc& func) {
     }, "banner");
 }
 
-void eReadStream::readSoldierBanner(GameBoard* board, const SoldierBannerFunc& func) {
+void ReadStream::readSoldierBanner(GameBoard* board, const SoldierBannerFunc& func) {
     int bid;
     *this >> bid;
     addPostFunc([board, func, bid]() {
@@ -184,7 +184,7 @@ void eReadStream::readSoldierBanner(GameBoard* board, const SoldierBannerFunc& f
     }, "soldierBanner");
 }
 
-void eReadStream::readGameEvent(GameBoard* board, const eEventFunc& func) {
+void ReadStream::readGameEvent(GameBoard* board, const eEventFunc& func) {
     int eid;
     *this >> eid;
     addPostFunc([board, func, eid]() {
@@ -195,7 +195,7 @@ void eReadStream::readGameEvent(GameBoard* board, const eEventFunc& func) {
     }, "gameEvent");
 }
 
-void eReadStream::readInvasionHandler(GameBoard* board, const eeInvasionHandlerFunc& func) {
+void ReadStream::readInvasionHandler(GameBoard* board, const eeInvasionHandlerFunc& func) {
     int iid;
     *this >> iid;
     addPostFunc([board, func, iid]() {
@@ -206,18 +206,18 @@ void eReadStream::readInvasionHandler(GameBoard* board, const eeInvasionHandlerF
     }, "invasionHandler");
 }
 
-void eReadStream::addPostFunc(const eFunc& func, const char* tag) {
+void ReadStream::addPostFunc(const eFunc& func, const char* tag) {
     mPostFuncs.push_back({func, tag});
 }
 
-void eReadStream::transferPostFuncsTo(eReadStream& dst) {
+void ReadStream::transferPostFuncsTo(ReadStream& dst) {
     for(const auto& f : mPostFuncs) {
         dst.mPostFuncs.push_back(f);
     }
     mPostFuncs.clear();
 }
 
-void eReadStream::handlePostFuncs() {
+void ReadStream::handlePostFuncs() {
     const int n = (int)mPostFuncs.size();
     for(int i = 0; i < n; i++) {
         mPostFuncs[i].first();

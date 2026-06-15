@@ -1,6 +1,6 @@
 #include "etabwidget.h"
 
-eTabWidget::eTabWidget(eMainWindow* const window) :
+eTabWidget::eTabWidget(MainWindow* const window) :
     eWidget(window), mTabWidget(new eWidget(window)) {
     mTabWidget->setHeight(75);
     addWidget(mTabWidget);

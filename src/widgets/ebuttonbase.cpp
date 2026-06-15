@@ -1,6 +1,6 @@
 #include "ebuttonbase.h"
 
-#include "emainwindow.h"
+#include "main-window.h"
 #include "audio/sounds.h"
 
 #include <SDL2/SDL.h>

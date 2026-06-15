@@ -1,11 +1,11 @@
 #include "esheep.h"
 
 #include "textures/game-textures.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eSheep::eSheep(GameBoard& board) :
     eDomesticatedAnimal(board, &CharacterTextures::fNudeSheep,
-                        eCharacterType::sheep, eNumbers::sSheepMaxGroom) {
+                        eCharacterType::sheep, Numbers::sSheepMaxGroom) {
     GameTextures::loadSheep();
 }
 

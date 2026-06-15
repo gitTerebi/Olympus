@@ -7,15 +7,15 @@
 
 #include "characters/actions/emovetoaction.h"
 #include "engine/epathfinder.h"
-#include "epathfindtask.h"
+#include "path-find-task.h"
 #include "engine/ethreadpool.h"
 #include "engine/game-board.h"
 #include "characters/actions/walkable/walkable-object.h"
-#include "evectorhelpers.h"
+#include "vector-helpers.h"
 #include "epatroltarget.h"
 #include "estadium.h"
 #include "emuseum.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 ePatrolSourceBuilding::ePatrolSourceBuilding(GameBoard &board,
                                              const eBaseTex baseTex,
@@ -31,8 +31,8 @@ ePatrolSourceBuilding::ePatrolSourceBuilding(GameBoard &board,
                                                                                               overlays, charGen, type, sw, sh, maxEmployees, cid),
                                                                               mTargets(targets)
 {
-    mSpawnInterval = eNumbers::sDestinationWalkerRecurringSpawnDays * eNumbers::sDayLength;
-    mInitialDelay = eNumbers::sDestinationWalkerInitialSpawnWaitDays * eNumbers::sDayLength;
+    mSpawnInterval = Numbers::sDestinationWalkerRecurringSpawnDays * Numbers::sDayLength;
+    mInitialDelay = Numbers::sDestinationWalkerInitialSpawnWaitDays * Numbers::sDayLength;
     for (const auto &t : mTargets)
     {
         (void)t;
@@ -49,7 +49,7 @@ void ePatrolSourceBuilding::timeChanged(const int by)
         const int em = employed();
         const int scaledBy = (me > 0) ? (by * em) / me : 0;
         const int iMax = mTargetData.size();
-        const int dayLen = eNumbers::sDayLength;
+        const int dayLen = Numbers::sDayLength;
         for (int i = 0; i < iMax; i++)
         {
             int &spawnTime = mTargetData[i].fSpawnTime;
@@ -77,7 +77,7 @@ void ePatrolSourceBuilding::timeChanged(const int by)
     }
 }
 
-void ePatrolSourceBuilding::serializeFields(eSaveArchive &ar)
+void ePatrolSourceBuilding::serializeFields(SaveArchive &ar)
 {
     ePatrolBuildingBase::serializeFields(ar);
     if (ar.reading())
@@ -85,7 +85,7 @@ void ePatrolSourceBuilding::serializeFields(eSaveArchive &ar)
         const stdptr<ePatrolSourceBuilding> tptr(this);
         auto targetData = std::make_shared<std::vector<eTargetData>>(mTargetData);
         ar.fixedArrayField("targetData", *targetData,
-                           [this](eSaveArchive &itemAr, eTargetData &td)
+                           [this](SaveArchive &itemAr, eTargetData &td)
                            {
                                itemAr.field("fSpawnTime", td.fSpawnTime);
                                itemAr.field("fRerouteAccum", td.fRerouteAccum);
@@ -99,7 +99,7 @@ void ePatrolSourceBuilding::serializeFields(eSaveArchive &ar)
     else
     {
         ar.fixedArrayField("targetData", mTargetData,
-                           [this](eSaveArchive &itemAr, eTargetData &td)
+                           [this](SaveArchive &itemAr, eTargetData &td)
                            {
                                itemAr.field("fSpawnTime", td.fSpawnTime);
                                itemAr.field("fRerouteAccum", td.fRerouteAccum);
@@ -205,7 +205,7 @@ void ePatrolSourceBuilding::spawn(const int id)
     };
     // road distance per matched tile -> fold into each target building's
     // shortest distance (the rect that contains the tile).
-    const auto foundFunc = [targetRects](const ePathFindTask::eFoundTiles &found)
+    const auto foundFunc = [targetRects](const PathFindTask::eFoundTiles &found)
     {
         for (const auto &f : found)
         {
@@ -258,7 +258,7 @@ void ePatrolSourceBuilding::spawn(const int id)
     };
 
     const auto tileBRect = board.boardCityTileBRect(cid);
-    const auto pft = new ePathFindTask(cid, tileBRect,
+    const auto pft = new PathFindTask(cid, tileBRect,
                                        startTile, walkable,
                                        finalTile, finishFunc,
                                        failFunc, true, 200,

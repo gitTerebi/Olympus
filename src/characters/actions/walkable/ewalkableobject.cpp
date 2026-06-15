@@ -1,7 +1,7 @@
 #include "ewalkableobject.h"
 
 #include "buildings/ebuilding.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "erectwalkableobject.h"
 #include "ehasresourcewalkableobject.h"
@@ -41,7 +41,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.field("rect", mRect);
     }
 private:

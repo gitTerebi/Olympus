@@ -12,7 +12,7 @@
 
 class eStorageInfoWidget : public eEmployingBuildingInfoWidget {
 public:
-    eStorageInfoWidget(eMainWindow* const window,
+    eStorageInfoWidget(MainWindow* const window,
                        eMainWidget* const mw);
 
     void initialize(eStorageBuilding* const stor);

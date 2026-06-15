@@ -6,13 +6,13 @@
 #include "buildings/eheatgetters.h"
 
 #include "emovetoaction.h"
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 
 #include "characters/gods/actions/god-action.h"
 
-#include "enumbers.h"
-#include "erand.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "rand.h"
+#include "fileIO/save-archive.h"
 #include "combat-timing.h"
 #include "vec2.h"
 
@@ -32,7 +32,7 @@ void MonsterAction::increment(const int by) {
         mStage == eMonsterAttackStage::patrol)) {
         lookForAnyAttack(by, mLookForAttack,
                          attackPeriod(),
-                         eNumbers::sMonsterAttackRange);
+                         Numbers::sMonsterAttackRange);
     }
 
     if(mStage == eMonsterAttackStage::wait && mWaitRemaining > 0) {
@@ -220,7 +220,7 @@ void MonsterAction::spawnBuildingAttackMissiles() {
                           nullptr, playHitSound, finishAttackA, 3);
 }
 
-void MonsterAction::serializeFields(eSaveArchive& ar) {
+void MonsterAction::serializeFields(SaveArchive& ar) {
     GodMonsterAction::serializeFields(ar);
     ar.tileField("homeTile", board(), mHomeTile);
     ar.field("aggressivness", mAggressivness);
@@ -299,7 +299,7 @@ eTile* MonsterAction::closestEmptySpace(const int rdx, const int rdy) const {
     };
 
     for(int k = 0; k < 1000; k++) {
-        eIterateSquare::iterateSquare(k, prcsTile, 1);
+        IterateSquare::iterateSquare(k, prcsTile, 1);
     }
 
     return plainTile;
@@ -375,7 +375,7 @@ void MonsterAction::goToTarget() {
                                   board(), this);
         GodMonsterAction::goToTarget(eHeatGetters::any, tryAgain,
                                       obsticleHandler(),
-                                      eWalkableHelpers::sMonsterTileDistance,
+                                      WalkableHelpers::sMonsterTileDistance,
                                       WalkableObject::sCreateAttacker(),
                                       WalkableObject::sCreateDefault());
     }
@@ -388,7 +388,7 @@ void MonsterAction::goBack() {
     const auto a = e::make_shared<eMoveToAction>(c);
     a->setStateRelevance(eStateRelevance::buildings |
                          eStateRelevance::terrain);
-    a->setTileDistance(eWalkableHelpers::sMonsterTileDistance);
+    a->setTileDistance(WalkableHelpers::sMonsterTileDistance);
     a->setObsticleHandler(obsticleHandler());
     a->setFindFailAction([](){});
 
@@ -528,7 +528,7 @@ bool MonsterAction::lookForAnyAttack(const int dtime,
             std::make_shared<eLookForAttackGodAct>(board(), character()),
             nullptr, true);
     };
-    const int roll = eRand::rand() % 4;
+    const int roll = Rand::rand() % 4;
     if(roll < 2) {
         if(rangedBuilding()) return true;
         if(lookForMeleeAttack(false, true)) return true;
@@ -610,15 +610,15 @@ bool MonsterAction::lookForRangeAction(const int dtime,
 int MonsterAction::attackPeriod() const {
     switch(mAggressivness) {
     case eMonsterAggressivness::passive:
-        return eNumbers::sPassiveMonsterAttackPeriod;
+        return Numbers::sPassiveMonsterAttackPeriod;
     case eMonsterAggressivness::active:
-        return eNumbers::sActiveMonsterAttackPeriod;
+        return Numbers::sActiveMonsterAttackPeriod;
     case eMonsterAggressivness::veryActive:
-        return eNumbers::sVeryActiveMonsterAttackPeriod;
+        return Numbers::sVeryActiveMonsterAttackPeriod;
     case eMonsterAggressivness::aggressive:
-        return eNumbers::sAggressiveMonsterAttackPeriod;
+        return Numbers::sAggressiveMonsterAttackPeriod;
     }
-    return eNumbers::sPassiveMonsterAttackPeriod;
+    return Numbers::sPassiveMonsterAttackPeriod;
 }
 
 int MonsterAction::invadePeriod() const {
@@ -626,27 +626,27 @@ int MonsterAction::invadePeriod() const {
        mType == eMonsterType::kraken) {
         switch(mAggressivness) {
         case eMonsterAggressivness::passive:
-            return eNumbers::sPassiveWaterMonsterInvadePeriod;
+            return Numbers::sPassiveWaterMonsterInvadePeriod;
         case eMonsterAggressivness::active:
-            return eNumbers::sActiveWaterMonsterInvadePeriod;
+            return Numbers::sActiveWaterMonsterInvadePeriod;
         case eMonsterAggressivness::veryActive:
-            return eNumbers::sVeryActiveWaterMonsterInvadePeriod;
+            return Numbers::sVeryActiveWaterMonsterInvadePeriod;
         case eMonsterAggressivness::aggressive:
-            return eNumbers::sAggressiveWaterMonsterInvadePeriod;
+            return Numbers::sAggressiveWaterMonsterInvadePeriod;
         }
-        return eNumbers::sPassiveWaterMonsterInvadePeriod;
+        return Numbers::sPassiveWaterMonsterInvadePeriod;
     } else {
         switch(mAggressivness) {
         case eMonsterAggressivness::passive:
-            return eNumbers::sPassiveLandMonsterInvadePeriod;
+            return Numbers::sPassiveLandMonsterInvadePeriod;
         case eMonsterAggressivness::active:
-            return eNumbers::sActiveLandMonsterInvadePeriod;
+            return Numbers::sActiveLandMonsterInvadePeriod;
         case eMonsterAggressivness::veryActive:
-            return eNumbers::sVeryActiveLandMonsterInvadePeriod;
+            return Numbers::sVeryActiveLandMonsterInvadePeriod;
         case eMonsterAggressivness::aggressive:
-            return eNumbers::sAggressiveLandMonsterInvadePeriod;
+            return Numbers::sAggressiveLandMonsterInvadePeriod;
         }
-        return eNumbers::sPassiveLandMonsterInvadePeriod;
+        return Numbers::sPassiveLandMonsterInvadePeriod;
     }
 }
 
@@ -655,26 +655,26 @@ int MonsterAction::moveAroundPeriod() const {
         mType == eMonsterType::kraken) {
         switch(mAggressivness) {
         case eMonsterAggressivness::passive:
-            return eNumbers::sPassiveWaterMonsterMoveAroundPeriod;
+            return Numbers::sPassiveWaterMonsterMoveAroundPeriod;
         case eMonsterAggressivness::active:
-            return eNumbers::sActiveWaterMonsterMoveAroundPeriod;
+            return Numbers::sActiveWaterMonsterMoveAroundPeriod;
         case eMonsterAggressivness::veryActive:
-            return eNumbers::sVeryActiveWaterMonsterMoveAroundPeriod;
+            return Numbers::sVeryActiveWaterMonsterMoveAroundPeriod;
         case eMonsterAggressivness::aggressive:
-            return eNumbers::sAggressiveWaterMonsterMoveAroundPeriod;
+            return Numbers::sAggressiveWaterMonsterMoveAroundPeriod;
         }
-        return eNumbers::sPassiveWaterMonsterMoveAroundPeriod;
+        return Numbers::sPassiveWaterMonsterMoveAroundPeriod;
     } else {
         switch(mAggressivness) {
         case eMonsterAggressivness::passive:
-            return eNumbers::sPassiveLandMonsterMoveAroundPeriod;
+            return Numbers::sPassiveLandMonsterMoveAroundPeriod;
         case eMonsterAggressivness::active:
-            return eNumbers::sActiveLandMonsterMoveAroundPeriod;
+            return Numbers::sActiveLandMonsterMoveAroundPeriod;
         case eMonsterAggressivness::veryActive:
-            return eNumbers::sVeryActiveLandMonsterMoveAroundPeriod;
+            return Numbers::sVeryActiveLandMonsterMoveAroundPeriod;
         case eMonsterAggressivness::aggressive:
-            return eNumbers::sAggressiveLandMonsterMoveAroundPeriod;
+            return Numbers::sAggressiveLandMonsterMoveAroundPeriod;
         }
-        return eNumbers::sPassiveLandMonsterMoveAroundPeriod;
+        return Numbers::sPassiveLandMonsterMoveAroundPeriod;
     }
 }

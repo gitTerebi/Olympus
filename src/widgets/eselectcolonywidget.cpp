@@ -4,7 +4,7 @@
 #include "eproceedbutton.h"
 #include "eworldmenu.h"
 #include "engine/ecampaign.h"
-#include "elanguage.h"
+#include "language.h"
 
 void eSelectColonyWidget::initialize(const eColonySelection& sel,
                                      const eCitySelected& s,
@@ -40,7 +40,7 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
     const auto proceedL = new eLabel(window());
     proceedL->setNoPadding();
     proceedL->setFontSizeXS();
-    proceedL->setText(eLanguage::zeusText(62, 38));
+    proceedL->setText(Language::zeusText(62, 38));
     proceedL->fitContent();
     buttonW->addWidget(proceedL);
 
@@ -54,11 +54,11 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
 
     buttonW->stackHorizontally();
     buttonW->fitContent();
-    proceedL->align(eAlignment::vcenter);
-    proceed->align(eAlignment::vcenter);
+    proceedL->align(Alignment::vcenter);
+    proceed->align(Alignment::vcenter);
 
     w->addWidget(buttonW);
-    buttonW->align(eAlignment::bottom | eAlignment::right);
+    buttonW->align(Alignment::bottom | Alignment::right);
 
     const auto citySelectedA = [cityLabel, tw, sel, selectedCity](
                                const stdsptr<WorldCity>& c) {
@@ -84,11 +84,11 @@ void eSelectColonyWidget::initialize(const eColonySelection& sel,
     wmw->setSelectColonyMode(true, selC);
     wmw->setSelectCityAction(citySelectedA);
     wmw->setWorldBoard(board);
-    wmw->align(eAlignment::center);
+    wmw->align(Alignment::center);
     wmw->setX((width() - menu->width() - wmw->width())/2);
 
     addWidget(menu);
-    menu->align(eAlignment::right | eAlignment::top);
+    menu->align(Alignment::right | Alignment::top);
 
     citySelectedA(selC[0]);
 }

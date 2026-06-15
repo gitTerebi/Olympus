@@ -1,6 +1,6 @@
 #include "enumlineedit.h"
 
-eNumLineEdit::eNumLineEdit(eMainWindow* const window) :
+eNumLineEdit::eNumLineEdit(MainWindow* const window) :
     eLineEdit(window) {
     setValue(0);
 }

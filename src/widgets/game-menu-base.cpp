@@ -31,7 +31,7 @@ void GameMenuBase::initialize() {
 }
 
 eCheckableButton* GameMenuBase::addButton(
-        const eTextureCollection& texs,
+        const TextureCollection& texs,
         const eWid& w) {
     const auto b = eCheckableButton::sCreate(texs, window(), mButtonsWidget);
     mButtons.push_back(b);

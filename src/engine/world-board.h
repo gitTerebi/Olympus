@@ -7,7 +7,7 @@
 #include "pointers/estdselfref.h"
 #include "eworldregion.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eWorldMap {
     greece1,
@@ -59,7 +59,7 @@ public:
     stdsptr<WorldCity> cityWithIOID(const int id) const;
     void setIOIDs() const;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     stdsptr<WorldCity> colonyWithId(const int id) const;
     void activateColony(const int id);

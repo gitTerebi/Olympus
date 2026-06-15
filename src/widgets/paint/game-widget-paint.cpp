@@ -3,7 +3,7 @@
 
 #include <functional>
 
-#include "enumbers.h"
+#include "numbers.h"
 
 #include "characters/actions/walkable/walkable-object.h"
 
@@ -21,14 +21,14 @@
 #include "buildings/eheatgetters.h"
 #include "buildings/pyramids/epyramid.h"
 
-#include "missiles/emissile.h"
+#include "missiles/missile.h"
 #include "destruction-puff.h"
 #include "characters/soldier-banner.h"
 #include "widgets/paint/invasion-debug-paint.h"
 #include "widgets/paint/draw/draw-column.h"
 #include "widgets/paint/draw/dont-draw-appeal.h"
 
-#include "spawners/elandinvasionpoint.h"
+#include "spawners/land-invasion-point.h"
 
 #include <algorithm>
 
@@ -38,13 +38,13 @@
 #include "characters/actions/emovetoaction.h"
 #include "buildings/epatroltarget.h"
 
-#include "evectorhelpers.h"
-#include "etilehelper.h"
-#include "emainwindow.h"
+#include "vector-helpers.h"
+#include "tile-helper.h"
+#include "main-window.h"
 #include "widgets/eminimap.h"
 #include "widgets/gamebuild/ecommonhousingbuild.h"
 
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "widgets/efonts.h"
 
 #include <array>
@@ -78,7 +78,7 @@ void GameWidget::paintEvent(ePainter &p)
     const int w = width();
     const int h = height();
     if (!mWorldTex || mWorldTex->width() != w || mWorldTex->height() != h) {
-        mWorldTex = std::make_shared<eTexture>();
+        mWorldTex = std::make_shared<Texture>();
         mWorldTex->create(r, w, h);
         SDL_SetTextureScaleMode(mWorldTex->tex(), SDL_ScaleModeNearest);
     }
@@ -114,8 +114,8 @@ void GameWidget::paintEvent(ePainter &p)
     }
     if (mBoard->duringEarthquake())
     {
-        mDX += (eRand::rand() % 11) - 5;
-        mDY += (eRand::rand() % 11) - 5;
+        mDX += (Rand::rand() % 11) - 5;
+        mDY += (Rand::rand() % 11) - 5;
         clampViewBox();
     }
     {
@@ -199,7 +199,7 @@ void GameWidget::paintEvent(ePainter &p)
         auto border = tile->territoryBorder();
         int viewTileX;
         int viewTileY;
-        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+        TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                            viewTileX, viewTileY, dir,
                                            boardWidth, boardHeight);
 
@@ -255,7 +255,7 @@ void GameWidget::paintEvent(ePainter &p)
         const int a = mDrawElevation ? tile->altitude() : 0;
         drawXY(worldTileX, worldTileY, drawX, drawY, drawDim, drawDim, a);
 
-        stdsptr<eTexture> tex;
+        stdsptr<Texture> tex;
         if (drawDim == 0)
         {
             const auto u = tile->underTile();
@@ -303,8 +303,8 @@ void GameWidget::paintEvent(ePainter &p)
             bool editorHover = false;
             if (terrainEditing)
             {
-                editorHover = eVectorHelpers::contains(mHoverTiles, tile) ||
-                              eVectorHelpers::contains(mInflTiles, tile);
+                editorHover = VectorHelpers::contains(mHoverTiles, tile) ||
+                              VectorHelpers::contains(mInflTiles, tile);
                 if (editorHover)
                 {
                     tex->setColorMod(255, 175, 175);
@@ -318,7 +318,7 @@ void GameWidget::paintEvent(ePainter &p)
                 tex->setColorMod(255, 0, 0);
             }
             else if (mDestinationBuilding && !mDestinationPath.empty() &&
-                     eVectorHelpers::contains(mDestinationPath, tile))
+                     VectorHelpers::contains(mDestinationPath, tile))
             {
                 patrolCm = true;
                 tex->setColorMod(175, 255, 175);
@@ -327,18 +327,18 @@ void GameWidget::paintEvent(ePainter &p)
                      (!mWaypointOutPath.empty() || !mWaypointOutPath1.empty()))
             {
                 const bool bothDirections = mPatrolBuilding->bothDirections();
-                patrolCm = eVectorHelpers::contains(mWaypointOutPath, tile) ||
+                patrolCm = VectorHelpers::contains(mWaypointOutPath, tile) ||
                            (bothDirections &&
-                            eVectorHelpers::contains(mWaypointOutPath1, tile));
+                            VectorHelpers::contains(mWaypointOutPath1, tile));
                 if (patrolCm)
                 {
                     tex->setColorMod(175, 255, 175);
                 }
                 else
                 {
-                    patrolCm = eVectorHelpers::contains(mWaypointReturnPath, tile) ||
+                    patrolCm = VectorHelpers::contains(mWaypointReturnPath, tile) ||
                                (bothDirections &&
-                                eVectorHelpers::contains(mWaypointReturnPath1, tile));
+                                VectorHelpers::contains(mWaypointReturnPath1, tile));
                     if (patrolCm)
                     {
                         tex->setColorMod(255, 175, 175);
@@ -433,9 +433,9 @@ void GameWidget::paintEvent(ePainter &p)
                 const auto &coll = trrTexs.fDryTerrainTexs;
                 const int texId = seed % coll.size();
                 const auto tex = coll.getTexture(texId);
-                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                tp.drawTexture(drawX, drawY, tex, Alignment::top);
             }
-            tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+            tp.drawTexture(drawX, drawY, tex, Alignment::top);
             if (drawDim == 0)
                 SDL_RenderSetClipRect(p.renderer(), nullptr);
             if (eraseCm || repairCm || patrolCm || editorHover ||
@@ -529,7 +529,7 @@ void GameWidget::paintEvent(ePainter &p)
         const int worldTileY = tile->y();
         int viewTileX;
         int viewTileY;
-        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+        TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                            viewTileX, viewTileY, dir,
                                            boardWidth, boardHeight);
         const int a = mDrawElevation ? tile->altitude() : 0;
@@ -562,14 +562,14 @@ void GameWidget::paintEvent(ePainter &p)
                 GameTextures::loadBlessed();
                 const auto &blsd = destTexs.fBlessed;
                 const auto tex = blsd.getTexture(building->textureTime() % blsd.size());
-                tp.drawTexture(bx, by, tex, eAlignment::bottom);
+                tp.drawTexture(bx, by, tex, Alignment::bottom);
             }
             else if (building->cursed())
             {
                 GameTextures::loadCursed();
                 const auto &blsd = destTexs.fCursed;
                 const auto tex = blsd.getTexture(building->textureTime() % blsd.size());
-                tp.drawTexture(bx, by, tex, eAlignment::bottom);
+                tp.drawTexture(bx, by, tex, Alignment::bottom);
             }
         };
 
@@ -585,7 +585,7 @@ void GameWidget::paintEvent(ePainter &p)
             const auto &ff = destTexs.fFire[f];
             const int dt = mBoard->frame() + std::abs(worldTileX * worldTileY);
             const auto tex = ff.getTexture(dt % ff.size());
-            tp.drawTexture(frx + 1, fry, tex, eAlignment::hcenter | eAlignment::top);
+            tp.drawTexture(frx + 1, fry, tex, Alignment::hcenter | Alignment::top);
         };
 
         const auto drawBuildingModes = [&]()
@@ -609,7 +609,7 @@ void GameWidget::paintEvent(ePainter &p)
                 if ((fr || dr) && h > 5)
                 {
                     const int n = h / 15;
-                    const eTextureCollection *coll = nullptr;
+                    const TextureCollection *coll = nullptr;
                     if (n < 2)
                     {
                         coll = &builTexs.fColumn1;
@@ -661,7 +661,7 @@ void GameWidget::paintEvent(ePainter &p)
                         return;
                     const int h = ch->hygiene();
                     const int n = h / 15;
-                    const eTextureCollection *coll = nullptr;
+                    const TextureCollection *coll = nullptr;
                     if (n < 2)
                     {
                         coll = &builTexs.fColumn4;
@@ -691,7 +691,7 @@ void GameWidget::paintEvent(ePainter &p)
                         return;
                     const int h = 100 - ch->satisfaction();
                     const int n = h / 15;
-                    const eTextureCollection *coll = nullptr;
+                    const TextureCollection *coll = nullptr;
                     if (n < 2)
                     {
                         coll = &builTexs.fColumn1;
@@ -852,7 +852,7 @@ void GameWidget::paintEvent(ePainter &p)
             {
                 const auto tex = getBasementTexture(viewTileX, viewTileY, building, trrTexs,
                                                     dir, boardWidth, boardHeight);
-                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                tp.drawTexture(drawX, drawY, tex, Alignment::top);
             }
         }
         else if (building && !drawsCharactersInsteadOfTexture)
@@ -900,7 +900,7 @@ void GameWidget::paintEvent(ePainter &p)
             const auto size = tp.size();
             const auto textureSpace = building->getTextureSpace(worldTileX, worldTileY, size);
             const auto &textureWorldRect = textureSpace.fRect;
-            const auto textureViewRect = eTileHelper::toRotatedRect(
+            const auto textureViewRect = TileHelper::toRotatedRect(
                 textureWorldRect, dir, boardWidth, boardHeight);
             const int textureFitTileY = textureViewRect.y + textureViewRect.h - 1;
             const int textureFitTileX = textureViewRect.x + textureViewRect.w - 1;
@@ -957,7 +957,7 @@ void GameWidget::paintEvent(ePainter &p)
                 const bool walkerBuildingSelected = mWalkerBuilding && building == mWalkerBuilding.get();
                 const bool destSrcSelected = mDestinationBuilding && building == mDestinationBuilding.get();
                 const bool destTargetSelected = mDestinationBuilding &&
-                    eVectorHelpers::contains(mDestinationTargets, building);
+                    VectorHelpers::contains(mDestinationTargets, building);
                 const bool buildingHovered = [&]()
                 {
                     if (mode != eBuildingMode::none)
@@ -1041,11 +1041,11 @@ void GameWidget::paintEvent(ePainter &p)
                 }
                 const bool isSancPart =
                     isSanctuaryRealDrawPart(buildingType);
-                const auto drawBuildingTexture = [&](const std::shared_ptr<eTexture>& tex) {
+                const auto drawBuildingTexture = [&](const std::shared_ptr<Texture>& tex) {
                     if(!tex) return;
                     if(colorMod) tex->setColorMod(cred, cgreen, cblue);
                     if(alphaMod) tex->setAlpha(84);
-                    tp.drawTexture(buildingDrawX + textureSpace.fX, buildingDrawY + textureSpace.fY, tex, eAlignment::top);
+                    tp.drawTexture(buildingDrawX + textureSpace.fX, buildingDrawY + textureSpace.fY, tex, Alignment::top);
                     if(colorMod) tex->clearColorMod();
                     if(alphaMod) tex->clearAlphaMod();
                 };
@@ -1072,7 +1072,7 @@ void GameWidget::paintEvent(ePainter &p)
                             {
                                 tp.scheduleDrawTexture(
                                     buildingDrawX + textureSpace.fX + o.fX,
-                                    buildingDrawY + textureSpace.fY + o.fY, tex, eAlignment::top);
+                                    buildingDrawY + textureSpace.fY + o.fY, tex, Alignment::top);
                             }
                             else
                             {
@@ -1088,7 +1088,7 @@ void GameWidget::paintEvent(ePainter &p)
                         if (o.fAlignTop)
                         {
                             tp.drawTexture(buildingDrawX + textureSpace.fX + o.fX, buildingDrawY + textureSpace.fY + o.fY,
-                                           tex, eAlignment::top);
+                                           tex, Alignment::top);
                         }
                         else
                         {
@@ -1161,7 +1161,7 @@ void GameWidget::paintEvent(ePainter &p)
                     if (buildingType == eBuildingType::eliteHousing)
                     {
                         const auto ubRect = building->tileRect();
-                        const auto rubRect = eTileHelper::toRotatedRect(
+                        const auto rubRect = TileHelper::toRotatedRect(
                             ubRect, dir, boardWidth, boardHeight);
                         const int globalFitY = rubRect.y + rubRect.h - 1;
                         const int globalFitX = rubRect.x + rubRect.w - 1;
@@ -1178,7 +1178,7 @@ void GameWidget::paintEvent(ePainter &p)
                             const int texId = building->textureTime() % blsd.size();
                             const auto tex = blsd.getTexture(texId);
 
-                            tp.drawTexture(buildingDrawX + 3, buildingDrawY + 1, tex, eAlignment::top);
+                            tp.drawTexture(buildingDrawX + 3, buildingDrawY + 1, tex, Alignment::top);
                         }
                     }
                     if (building->isOnFire())
@@ -1226,7 +1226,7 @@ void GameWidget::paintEvent(ePainter &p)
         const int worldTileY = tile->y();
         int viewTileX;
         int viewTileY;
-        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+        TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                            viewTileX, viewTileY, dir,
                                            boardWidth, boardHeight);
         const int dtx = tile->dx();
@@ -1258,7 +1258,7 @@ void GameWidget::paintEvent(ePainter &p)
                     const auto tex = trrTexs.fBuildingBase;
                     const bool e = inErase(building);
                     if(e) tex->setColorMod(255, 175, 175);
-                    tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                    tp.drawTexture(drawX, drawY, tex, Alignment::top);
                     if(e) tex->clearColorMod();
                     bd = true;
                 }
@@ -1274,7 +1274,7 @@ void GameWidget::paintEvent(ePainter &p)
                 if(drawsCharactersInsteadOfTexture) return;
                 const auto tex = getBasementTexture(viewTileX, viewTileY, building, trrTexs,
                                                     dir, boardWidth, boardHeight);
-                tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                tp.drawTexture(drawX, drawY, tex, Alignment::top);
                 bd = true;
             }
         };
@@ -1295,7 +1295,7 @@ void GameWidget::paintEvent(ePainter &p)
                         const auto p = static_cast<ePyramidElement*>(building);
                         da = 2*p->currentElevation();
                     }
-                    const eTextureCollection* coll;
+                    const TextureCollection* coll;
                     if(ch) {
                         coll = &trrTexs.fHouseAppeal;
                     } else {
@@ -1307,7 +1307,7 @@ void GameWidget::paintEvent(ePainter &p)
                     int appId = (int)std::round(appS + 2.);
                     appId = std::clamp(appId, 0, 9);
                     const auto tex = coll->getTexture(appId);
-                    tp.drawTexture(drawX + da, drawY + da, tex, eAlignment::top);
+                    tp.drawTexture(drawX + da, drawY + da, tex, Alignment::top);
                     bd = true;
                 }
             }
@@ -1321,7 +1321,7 @@ void GameWidget::paintEvent(ePainter &p)
             const int worldTileY = tile->y();
             int viewTileX;
             int viewTileY;
-            eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+            TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                                viewTileX, viewTileY, dir,
                                                boardWidth, boardHeight);
             const int da = tile->characterDoubleAltitude();
@@ -1467,7 +1467,7 @@ void GameWidget::paintEvent(ePainter &p)
                     }();
                     const bool charHighlighted = walkerSelected || patrolerSelected || destWalkerSelected;
                     const bool charDead = c->dead();
-                    const auto drawCharTex = [&](const std::shared_ptr<eTexture>& t,
+                    const auto drawCharTex = [&](const std::shared_ptr<Texture>& t,
                                                  const double cx, const double cy,
                                                  const bool drawDot) {
                         if(!t) return;
@@ -1513,7 +1513,7 @@ void GameWidget::paintEvent(ePainter &p)
         const auto drawNumber = [&](const int id) {
             const auto tex = numbers[id % 10];
             tp.drawTexture(drawX - 1.65, drawY - 2.60, tex,
-                           eAlignment::hcenter | eAlignment::top);
+                           Alignment::hcenter | Alignment::top);
         };
 
         const auto drawPatrolWaypoints = [&]() {
@@ -1525,18 +1525,18 @@ void GameWidget::paintEvent(ePainter &p)
                         if(waypoint.fX == worldTileX && waypoint.fY == worldTileY) {
                             const bool bothDirections =
                                     mPatrolBuilding->bothDirections();
-                            const bool invalid = !eVectorHelpers::contains(mWaypointOutPath, tile) &&
+                            const bool invalid = !VectorHelpers::contains(mWaypointOutPath, tile) &&
                                                  (!bothDirections ||
-                                                  !eVectorHelpers::contains(mWaypointOutPath1, tile));
+                                                  !VectorHelpers::contains(mWaypointOutPath1, tile));
                             const auto& coll = builTexs.fSpawner;
                             const int texId = mAnimFrame % coll.size();
                             const auto& tex = coll.getTexture(texId);
                             if(invalid) tex->setColorMod(255, 125, 125);
                             //const auto& coll = builTexs.fPatrolWaypoints;
                             //const auto tex = coll.getTexture(14);
-                            //tp.drawTexture(drawX, drawY, tex, eAlignment::top);
+                            //tp.drawTexture(drawX, drawY, tex, Alignment::top);
                             tp.drawTexture(drawX, drawY - 1, tex,
-                                           eAlignment::hcenter | eAlignment::top);
+                                           Alignment::hcenter | Alignment::top);
                             drawNumber(i + 1);
                             if(invalid) tex->clearColorMod();
                             break;
@@ -1557,53 +1557,53 @@ void GameWidget::paintEvent(ePainter &p)
                     const int texId = mAnimFrame % coll.size();
                     const auto& tex = coll.getTexture(texId);
                     tp.drawTexture(drawX, drawY - 1, tex,
-                                   eAlignment::hcenter | eAlignment::top);
+                                   Alignment::hcenter | Alignment::top);
                     const int id = b->id();
                     drawNumber(id);
 
-                    std::shared_ptr<eTexture> topTex;
+                    std::shared_ptr<Texture> topTex;
                     switch(b->type()) {
-                    case eBannerTypeS::none:
+                    case BannerTypeS::none:
                         break;
-                    case eBannerTypeS::boar:
+                    case BannerTypeS::boar:
                         topTex = builTexs.fBoarPoint;
                         break;
-                    case eBannerTypeS::deer:
+                    case BannerTypeS::deer:
                         topTex = builTexs.fDeerPoint;
                         break;
-                    case eBannerTypeS::landInvasion:
-                    case eBannerTypeS::seaInvasion:
+                    case BannerTypeS::landInvasion:
+                    case BannerTypeS::seaInvasion:
                         topTex = builTexs.fLandInvasionPoint;
                         break;
-                    case eBannerTypeS::disembarkPoint:
+                    case BannerTypeS::disembarkPoint:
                         topTex = builTexs.fDisembarkPoint;
                         break;
-                    case eBannerTypeS::entryPoint:
+                    case BannerTypeS::entryPoint:
                         topTex = builTexs.fEntryPoint;
                         break;
-                    case eBannerTypeS::riverEntryPoint:
+                    case BannerTypeS::riverEntryPoint:
                         topTex = builTexs.fRiverEntryPoint;
                         break;
-                    case eBannerTypeS::exitPoint:
+                    case BannerTypeS::exitPoint:
                         topTex = builTexs.fExitPoint;
                         break;
-                    case eBannerTypeS::riverExitPoint:
+                    case BannerTypeS::riverExitPoint:
                         topTex = builTexs.fRiverExitPoint;
                         break;
-                    case eBannerTypeS::monsterPoint:
+                    case BannerTypeS::monsterPoint:
                         topTex = builTexs.fMonsterPoint;
                         break;
-                    case eBannerTypeS::disasterPoint:
-                    case eBannerTypeS::landSlidePoint:
+                    case BannerTypeS::disasterPoint:
+                    case BannerTypeS::landSlidePoint:
                         topTex = builTexs.fDisasterPoint;
                         break;
-                    case eBannerTypeS::wolf:
+                    case BannerTypeS::wolf:
                         topTex = builTexs.fWolfPoint;
                         break;
                     }
                     if(topTex) {
                         tp.drawTexture(drawX - 2.5, drawY - 3.5, topTex,
-                                       eAlignment::hcenter | eAlignment::top);
+                                       Alignment::hcenter | Alignment::top);
                     }
                 }
             }
@@ -1613,10 +1613,10 @@ void GameWidget::paintEvent(ePainter &p)
             const auto& mss = tile->missiles();
             for(const auto& m : mss) {
                 const auto type = m->type();
-                if(type == eMissileType::racingHorse) continue;
-                const bool isWave = type == eMissileType::wave ||
-                                    type == eMissileType::lava ||
-                                    type == eMissileType::dust;
+                if(type == MissileType::racingHorse) continue;
+                const bool isWave = type == MissileType::wave ||
+                                    type == MissileType::lava ||
+                                    type == MissileType::dust;
                 if(isWave) continue;
                 const double h = m->height();
                 const double mx = m->x();
@@ -1646,16 +1646,16 @@ void GameWidget::paintEvent(ePainter &p)
             const int worldTileY = tile->y();
             int viewTileX;
             int viewTileY;
-            eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+            TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                                viewTileX, viewTileY, dir,
                                                boardWidth, boardHeight);
             const auto& mss = tile->missiles();
             for(const auto& m : mss) {
                 const auto type = m->type();
-                if(type == eMissileType::racingHorse) continue;
-                const bool isWave = type == eMissileType::wave ||
-                                    type == eMissileType::lava ||
-                                    type == eMissileType::dust;
+                if(type == MissileType::racingHorse) continue;
+                const bool isWave = type == MissileType::wave ||
+                                    type == MissileType::lava ||
+                                    type == MissileType::dust;
                 if(!isWave) continue;
                 const double h = m->height();
                 const double mx = m->x();
@@ -1685,10 +1685,10 @@ void GameWidget::paintEvent(ePainter &p)
         const auto drawBannerTextures = [this, &tp, &charTexs]
             (SoldierBanner* const b, const double drawX, const double drawY,
              const SDL_Color bnrMod) {
-            const auto mod = [&](const std::shared_ptr<eTexture>& t) {
+            const auto mod = [&](const std::shared_ptr<Texture>& t) {
                 t->setColorMod(bnrMod.r, bnrMod.g, bnrMod.b);
             };
-            const auto unmod = [&](const std::shared_ptr<eTexture>& t) {
+            const auto unmod = [&](const std::shared_ptr<Texture>& t) {
                 t->clearColorMod();
             };
             {
@@ -1697,7 +1697,7 @@ void GameWidget::paintEvent(ePainter &p)
                 const auto& rod = rods.getTexture(0);
                 mod(rod);
                 tp.drawTexture(drawX, drawY - 1, rod,
-                               eAlignment::hcenter | eAlignment::top);
+                               Alignment::hcenter | Alignment::top);
                 unmod(rod);
             }
             {
@@ -1713,7 +1713,7 @@ void GameWidget::paintEvent(ePainter &p)
                 const auto& tex = bnr.getTexture(texId);
                 mod(tex);
                 tp.drawTexture(drawX - 1, drawY - 2.6, tex,
-                               eAlignment::hcenter | eAlignment::top);
+                               Alignment::hcenter | Alignment::top);
                 unmod(tex);
             }
             {
@@ -1736,7 +1736,7 @@ void GameWidget::paintEvent(ePainter &p)
                         const auto& top = tps.getTexture(itype);
                         mod(top);
                         tp.drawTexture(drawX - 2.5, drawY -  3.5, top,
-                                       eAlignment::hcenter | eAlignment::top);
+                                       Alignment::hcenter | Alignment::top);
                         unmod(top);
                     }
                 } else {
@@ -1752,7 +1752,7 @@ void GameWidget::paintEvent(ePainter &p)
                         const auto& top = pTps.getTexture(itype);
                         mod(top);
                         tp.drawTexture(drawX - 2.5, drawY -  3.5, top,
-                                       eAlignment::hcenter | eAlignment::top);
+                                       Alignment::hcenter | Alignment::top);
                         unmod(top);
                     }
                 }
@@ -1832,28 +1832,28 @@ void GameWidget::paintEvent(ePainter &p)
             const auto& fh = builTexs.fFish;
             const int t = mTime/30;
             const auto tex = fh.getTexture(t % fh.size());
-            const auto a = eAlignment::right | eAlignment::top;
+            const auto a = Alignment::right | Alignment::top;
             tp.drawTexture(drawX + 1, drawY, tex, a);
         }
         if(tile->hasUrchin()) {
             const auto& fh = builTexs.fUrchin;
             const int t = mTime/30;
             const auto tex = fh.getTexture(t % fh.size());
-            const auto a = eAlignment::bottom;
+            const auto a = Alignment::bottom;
             tp.drawTexture(drawX + 0.5, drawY - 0.5, tex, a);
         }
 
         const auto drawBridge = [&]() {
             if(mode == eBuildingMode::bridge) {
                 GameTextures::loadBridge();
-                const bool r = eVectorHelpers::contains(bridgetTs, tile);
+                const bool r = VectorHelpers::contains(bridgetTs, tile);
                 if(r) {
                     const int texId = bridgeRot ? 11 : 10;
                     const auto& tex = builTexs.fBridge.getTexture(texId);
                     if(bridgeValid) tex->setColorMod(0, 255, 0);
                     else tex->setColorMod(255, 0, 0);
                     tp.drawTexture(drawX + 0.5, drawY - 0.5, tex,
-                                   eAlignment::hcenter | eAlignment::top);
+                                   Alignment::hcenter | Alignment::top);
                     tex->clearColorMod();
                 }
             }
@@ -1887,7 +1887,7 @@ void GameWidget::paintEvent(ePainter &p)
                         return;
                     }
                     const auto& r = h->tileRect();
-                    const auto rr = eTileHelper::toRotatedRect(
+                    const auto rr = TileHelper::toRotatedRect(
                         r, dir, boardWidth, boardHeight);
                     const int textureFitTileX = rr.x + rr.w - 1;
                     const int textureFitTileY = rr.y + rr.h - 1;
@@ -1896,7 +1896,7 @@ void GameWidget::paintEvent(ePainter &p)
                     const int sizeId = static_cast<int>(mTileSize);
                     const auto& builTexs = GameTextures::buildings()[sizeId];
                     const auto& coll = builTexs.fHippodrome;
-                    stdsptr<eTexture> tex;
+                    stdsptr<Texture> tex;
                     int hx;
                     int hy;
                     const auto draw = [&]() {
@@ -1907,7 +1907,7 @@ void GameWidget::paintEvent(ePainter &p)
                             if(red) tex->setColorMod(255, 0, 0);
                             else tex->setColorMod(0, 255, 0);
                             tp.drawTexture(drawX + 0.5, drawY - 0.5, tex,
-                                           eAlignment::hcenter | eAlignment::top);
+                                           Alignment::hcenter | Alignment::top);
                             tex->clearColorMod();
                         }
                     };
@@ -2013,7 +2013,7 @@ void GameWidget::paintEvent(ePainter &p)
             }
             if(b && b->type() == eBuildingType::hippodromePiece) {
                 const auto& r = b->tileRect();
-                const auto rr = eTileHelper::toRotatedRect(
+                const auto rr = TileHelper::toRotatedRect(
                     r, dir, boardWidth, boardHeight);
                 const int textureFitTileX = rr.x + rr.w - 1;
                 const int textureFitTileY = rr.y + rr.h - 1;
@@ -2071,7 +2071,7 @@ void GameWidget::paintEvent(ePainter &p)
                     const int textureTime = mAnimFrame/4;
                     const int texId = textureTime % coll.size();
                     const auto& tex = coll.getTexture(texId);
-                    tp.drawTexture(drawX + 0.5, drawY - 0.5, tex, eAlignment::bottom);
+                    tp.drawTexture(drawX + 0.5, drawY - 0.5, tex, Alignment::bottom);
                 }
             }
         }
@@ -2236,7 +2236,7 @@ void GameWidget::paintEvent(ePainter &p)
         const int worldTileY = static_cast<int>(puff->worldY());
         int viewTileX;
         int viewTileY;
-        eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+        TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                            viewTileX, viewTileY, dir,
                                            boardWidth, boardHeight);
         double sx;
@@ -2282,7 +2282,7 @@ void GameWidget::paintEvent(ePainter &p)
                 if (!tile) return;
                 int viewTileX;
                 int viewTileY;
-                eTileHelper::tileIdToRotatedTileId(tile->x(), tile->y(),
+                TileHelper::tileIdToRotatedTileId(tile->x(), tile->y(),
                                                    viewTileX, viewTileY, dir,
                                                    boardWidth, boardHeight);
                 const int ta = mDrawElevation ? tile->altitude() : 0;
@@ -2318,7 +2318,7 @@ void GameWidget::paintEvent(ePainter &p)
                 rod->setColorMod(tint.r, tint.g, tint.b);
                 rod->setAlpha(tint.a);
                 tp.drawTexture(drawX, drawY - 1, rod,
-                               eAlignment::hcenter | eAlignment::top);
+                               Alignment::hcenter | Alignment::top);
                 rod->clearAlphaMod();
                 rod->clearColorMod();
 
@@ -2328,14 +2328,14 @@ void GameWidget::paintEvent(ePainter &p)
                 tex->setColorMod(tint.r, tint.g, tint.b);
                 tex->setAlpha(tint.a);
                 tp.drawTexture(drawX - 1, drawY - 2.6, tex,
-                               eAlignment::hcenter | eAlignment::top);
+                               Alignment::hcenter | Alignment::top);
                 tex->clearAlphaMod();
                 tex->clearColorMod();
 
                 const auto type = b->type();
                 const bool poseidon = b->atlantean();
                 int itype = -1;
-                const eTextureCollection* tops = nullptr;
+                const TextureCollection* tops = nullptr;
                 if(!poseidon ||
                    type == eBannerType::aresWarrior ||
                    type == eBannerType::amazon) {
@@ -2361,7 +2361,7 @@ void GameWidget::paintEvent(ePainter &p)
                     top->setColorMod(tint.r, tint.g, tint.b);
                     top->setAlpha(tint.a);
                     tp.drawTexture(drawX - 2.5, drawY -  3.5, top,
-                                   eAlignment::hcenter | eAlignment::top);
+                                   Alignment::hcenter | Alignment::top);
                     top->clearAlphaMod();
                     top->clearColorMod();
                 }
@@ -2416,7 +2416,7 @@ void GameWidget::paintEvent(ePainter &p)
             const int worldTileY = t->y();
             int viewTileX;
             int viewTileY;
-            eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+            TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                                viewTileX, viewTileY, dir,
                                                boardWidth, boardHeight);
             const int ta = t->altitude();
@@ -2429,7 +2429,7 @@ void GameWidget::paintEvent(ePainter &p)
                 const int worldTileY = waypoint.fY;
                 int viewTileX;
                 int viewTileY;
-                eTileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
+                TileHelper::tileIdToRotatedTileId(worldTileX, worldTileY,
                                                    viewTileX, viewTileY, dir,
                                                    boardWidth, boardHeight);
                 const auto t = mBoard->tile(worldTileX, worldTileY);
@@ -2479,7 +2479,7 @@ void GameWidget::paintEvent(ePainter &p)
     const SDL_Rect srcRect{srcX, srcY, srcW, srcH};
     const SDL_Rect dstRect{0, 0, w, h};
     // Restore the frame target and blit the zoomed/scrolled world into it. The
-    // whole-frame bicubic upscale happens later at the window level (emainwindow).
+    // whole-frame postprocess happens later at the window level.
     SDL_SetRenderTarget(r, prevTarget);
     SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
 
@@ -2488,10 +2488,10 @@ void GameWidget::paintEvent(ePainter &p)
         const int idx = static_cast<int>(dir);
         if(!mCompassTex || mCompassDir != idx) {
             const auto letter = letters[idx % 4];
-            const auto tex = std::make_shared<eTexture>();
+            const auto tex = std::make_shared<Texture>();
             auto* font = eFonts::defaultFont(45);
             if(font) {
-                tex->loadText(r, letter, eFontColor::light, *font);
+                tex->loadText(r, letter, FontColor::light, *font);
                 SDL_SetTextureBlendMode(tex->tex(), SDL_BLENDMODE_BLEND);
                 tex->setAlpha(140);
                 mCompassTex = tex;

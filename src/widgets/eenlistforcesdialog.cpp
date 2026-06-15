@@ -1,16 +1,16 @@
 #include "eenlistforcesdialog.h"
 
-#include "efontcolor.h"
+#include "font-color.h"
 #include "framed-button.h"
-#include "elanguage.h"
-#include "evectorhelpers.h"
+#include "language.h"
+#include "vector-helpers.h"
 #include "escrollwidget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "echoosebutton.h"
 #include "eframedlabel.h"
 #include "eswitchbutton.h"
 #include "elayouthelpers.h"
-#include "erand.h"
+#include "rand.h"
 #include "characters/soldier-banner.h"
 
 #include <algorithm>
@@ -124,10 +124,10 @@ public:
         mEnlistedLabel->setNoPadding();
         mEnlistedLabel->setFontSizeXS();
         if(abroad) {
-            const auto etxt = eLanguage::zeusText(283, 16);
+            const auto etxt = Language::zeusText(283, 16);
             mEnlistedLabel->setText(etxt);
         } else {
-            const auto etxt = eLanguage::zeusText(283, 13);
+            const auto etxt = Language::zeusText(283, 13);
             mEnlistedLabel->setText(etxt);
         }
         mEnlistedLabel->fitContent();
@@ -208,10 +208,10 @@ public:
             d.fId = s->id();
             d.fTroops = s->count();
             d.fAction = [this, s, selectionChanged]() {
-                const bool selected = eVectorHelpers::contains(
+                const bool selected = VectorHelpers::contains(
                                           mSelected.fSoldiers, s);
                 if(selected) {
-                    eVectorHelpers::remove(mSelected.fSoldiers, s);
+                    VectorHelpers::remove(mSelected.fSoldiers, s);
                 } else {
                     mSelected.fSoldiers.push_back(s);
                 }
@@ -223,16 +223,16 @@ public:
         for(int i = 0; i < iMax; i++) {
             const auto h = e.fHeroes[i];
             auto& d = data.emplace_back();
-            d.fAbroad = eVectorHelpers::contains(heroesAbroad, h.second);
+            d.fAbroad = VectorHelpers::contains(heroesAbroad, h.second);
             d.fType = eEnlistType::hero;
             d.fTitle = eHero::sHeroName(h.second);
             d.fId = static_cast<int>(h.second);
             d.fTroops = -1;
             d.fAction = [this, h, selectionChanged]() {
-                const bool selected = eVectorHelpers::contains(
+                const bool selected = VectorHelpers::contains(
                                           mSelected.fHeroes, h);
                 if(selected) {
-                    eVectorHelpers::remove(mSelected.fHeroes, h);
+                    VectorHelpers::remove(mSelected.fHeroes, h);
                 } else {
                     mSelected.fHeroes.push_back(h);
                 }
@@ -262,10 +262,10 @@ public:
             d.fId = -1;
             d.fTroops = -1;
             d.fAction = [this, a, selectionChanged]() {
-                const bool selected = eVectorHelpers::contains(
+                const bool selected = VectorHelpers::contains(
                                           mSelected.fAllies, a);
                 if(selected) {
-                    eVectorHelpers::remove(mSelected.fAllies, a);
+                    VectorHelpers::remove(mSelected.fAllies, a);
                 } else {
                     clearCities();
                     mSelected.fAllies.push_back(a);
@@ -403,16 +403,16 @@ public:
         titleLabel->setNoPadding();
         titleLabel->fitContent();
         innerWid->addWidget(titleLabel);
-        titleLabel->align(eAlignment::top | eAlignment::left);
+        titleLabel->align(Alignment::top | Alignment::left);
 
         if(troops) {
-            const auto text = eLanguage::zeusText(283, 11);
+            const auto text = Language::zeusText(283, 11);
             const auto troopsLabel = new eLabel(text, window());
             troopsLabel->setFontSizeXS();
             troopsLabel->setNoPadding();
             troopsLabel->fitContent();
             innerWid->addWidget(troopsLabel);
-            troopsLabel->align(eAlignment::top | eAlignment::right);
+            troopsLabel->align(Alignment::top | Alignment::right);
             troopsLabel->setX(11*width()/18);
         }
 
@@ -429,7 +429,7 @@ public:
                 mScrollW = new eScrollWidget(window());
                 mScrollW->resize(ww, hh);
                 innerWid->addWidget(mScrollW);
-                mScrollW->align(eAlignment::bottom | eAlignment::hcenter);
+                mScrollW->align(Alignment::bottom | Alignment::hcenter);
                 setCurrentCity(cid);
             }
         }
@@ -480,7 +480,7 @@ void eEnlistForcesDialog::initialize(
     const int w = r.centralWidgetLargeWidth();
     const int h = r.centralWidgetLargeHeight();
     resize(w, h);
-    align(eAlignment::center);
+    align(Alignment::center);
 
     const auto innerWid = new eWidget(window());
     addWidget(innerWid);
@@ -516,7 +516,7 @@ void eEnlistForcesDialog::initialize(
             leftW->setNoPadding();
         }
 
-        const auto text = eLanguage::zeusText(283, 0);
+        const auto text = Language::zeusText(283, 0);
         const auto titleLabel = new eLabel(window());
         titleLabel->setPaddingXS();
         titleLabel->setText(text);
@@ -524,7 +524,7 @@ void eEnlistForcesDialog::initialize(
 
         eWidget* rightW = nullptr;
         if(!plunderResources.empty()) {
-            const auto text = eLanguage::zeusText(283, 22);
+            const auto text = Language::zeusText(283, 22);
             const auto plunderLabel = new eLabel(window());
             plunderLabel->setFontSizeS();
             plunderLabel->setPaddingS();
@@ -535,7 +535,7 @@ void eEnlistForcesDialog::initialize(
             button->setUnderline(false);
             button->setPaddingS();
             button->setFontSizeS();
-            button->setText(eLanguage::zeusText(283, 23));
+            button->setText(Language::zeusText(283, 23));
             button->fitContent();
             button->setWidth(plunderLabel->width());
 
@@ -544,7 +544,7 @@ void eEnlistForcesDialog::initialize(
                 std::vector<std::string> names;
                 for(const auto r : plunderResources) {
                     const auto name = r == eResourceType::none ?
-                                          eLanguage::zeusText(283, 23) :
+                                          Language::zeusText(283, 23) :
                                           eResourceTypeHelpers::typeName(r);
                     names.push_back(name);
                 }
@@ -556,7 +556,7 @@ void eEnlistForcesDialog::initialize(
                 choose->initialize(8, names, act);
 
                 window()->execDialog(choose);
-                choose->align(eAlignment::center);
+                choose->align(Alignment::center);
             });
 
             rightW = eLayoutHelpers::createFlexContainer(
@@ -601,7 +601,7 @@ void eEnlistForcesDialog::initialize(
     const auto strEnemyLabel = new eLabel(window());
     strEnemyLabel->setNoPadding();
     strEnemyLabel->setFontSizeS();
-    strEnemyLabel->setFontColor(eFontColor::red);
+    strEnemyLabel->setFontColor(FontColor::red);
     strEnemyLabel->setText("0");
     strEnemyLabel->fitContent();
     strWid->addWidget(strPlayerLabel);
@@ -646,7 +646,7 @@ void eEnlistForcesDialog::initialize(
 
         strWid->show();
         const int ps = mSelected.strength();
-        const int winPct = eRand::combatChancePercent(ps, mEnemyStr);
+        const int winPct = Rand::combatChancePercent(ps, mEnemyStr);
         strPlayerLabel->setText(std::to_string(winPct) + "%");
         strPlayerLabel->fitContent();
         strVsLabel->setText(" win chance");
@@ -678,7 +678,7 @@ void eEnlistForcesDialog::initialize(
         const auto cancelButt = new FramedButton(window());
         cancelButt->setFontSizeXS();
         cancelButt->setUnderline(false);
-        cancelButt->setText(eLanguage::zeusText(283, 18));
+        cancelButt->setText(Language::zeusText(283, 18));
         cancelButt->fitContent();
         const auto cancelAct = [this]() {
             deleteLater();
@@ -688,7 +688,7 @@ void eEnlistForcesDialog::initialize(
         const auto enlistAllButt = new FramedButton(window());
         enlistAllButt->setFontSizeXS();
         enlistAllButt->setUnderline(false);
-        enlistAllButt->setText(eLanguage::zeusText(283, 19));
+        enlistAllButt->setText(Language::zeusText(283, 19));
         enlistAllButt->fitContent();
         const auto enlistAllAct = [enlistable,
                                    horsemen,
@@ -711,7 +711,7 @@ void eEnlistForcesDialog::initialize(
         const auto clearAllButt = new FramedButton(window());
         clearAllButt->setFontSizeXS();
         clearAllButt->setUnderline(false);
-        clearAllButt->setText(eLanguage::zeusText(283, 20));
+        clearAllButt->setText(Language::zeusText(283, 20));
         clearAllButt->fitContent();
         const auto clearAllAct = [horsemen,
                                   hoplite,
@@ -733,7 +733,7 @@ void eEnlistForcesDialog::initialize(
         const auto dispatchButt = new FramedButton(window());
         dispatchButt->setFontSizeXS();
         dispatchButt->setUnderline(false);
-        dispatchButt->setText(eLanguage::zeusText(283, 21));
+        dispatchButt->setText(Language::zeusText(283, 21));
         dispatchButt->fitContent();
         const auto dispatchAct = [this, action]() {
             if(mSelected.fHeroes.empty() && mSelected.fSoldiers.empty()) {
@@ -741,12 +741,12 @@ void eEnlistForcesDialog::initialize(
                 msgb->setType(eFrameType::message);
                 msgb->setWrapWidth(width()/2);
                 msgb->setFontSizeS();
-                msgb->setText(eLanguage::zeusText(5, 13));
+                msgb->setText(Language::zeusText(5, 13));
                 msgb->fitContent();
                 const int p = msgb->padding();
                 addWidget(msgb);
                 msgb->resize(msgb->width() + 2*p, msgb->height() + 2*p);
-                msgb->align(eAlignment::center);
+                msgb->align(Alignment::center);
                 eTip etip;
                 etip.fWid = msgb;
                 etip.fLastFrame = mFrame + 100;
@@ -789,22 +789,22 @@ void eEnlistForcesDialog::initialize(
     horsemen->resize(colW, leftH);
     const auto hef = extractType(eBannerType::horseman, enlistable);
     horsemen->initialize(hef, cids, {}, selectionChanged,
-                         eLanguage::zeusText(283, 7), true);
+                         Language::zeusText(283, 7), true);
 
     hoplite->resize(colW, leftH);
     const auto hopliteEf = extractType(eBannerType::hoplite, enlistable);
     hoplite->initialize(hopliteEf, cids, {}, selectionChanged,
-                        eLanguage::zeusText(283, 14), true);
+                        Language::zeusText(283, 14), true);
 
     navy->resize(colW, rightH);
     navy->initialize(eEnlistedForces(), cids, {}, selectionChanged,
-                     eLanguage::zeusText(283, 6), false);
+                     Language::zeusText(283, 6), false);
 
     heroes->resize(colW, rightH);
     eEnlistedForces efh;
     efh.fHeroes = enlistable.fHeroes;
     heroes->initialize(efh, cids, heroesAbroad, selectionChanged,
-                       eLanguage::zeusText(283, 9), false);
+                       Language::zeusText(283, 9), false);
 
     mythical->resize(colW, rightH);
     eEnlistedForces hhef;
@@ -818,13 +818,13 @@ void eEnlistForcesDialog::initialize(
     hhef.fAres = enlistable.fAres;
     hhef.fAresCity = enlistable.fAresCity;
     mythical->initialize(hhef, cids, {}, selectionChanged,
-                         eLanguage::zeusText(283, 10), true);
+                         Language::zeusText(283, 10), true);
 
     allies->resize(colW, rightH);
     eEnlistedForces efa;
     efa.fAllies = enlistable.fAllies;
     allies->initialize(efa, {cids[0]}, {}, selectionChanged,
-                       eLanguage::zeusText(283, 24), false);
+                       Language::zeusText(283, 24), false);
 
     const auto leftCol = eLayoutHelpers::createFlexContainer(
         window(), colW, hhh, eLayoutHelpers::eFlexDirection::column,

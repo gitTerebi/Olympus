@@ -27,7 +27,7 @@ ePyramidTile::ePyramidTile(ePyramid* const pyramid,
     GameTextures::loadPalaceTiles();
 }
 
-stdsptr<eTexture> ePyramidTile::getTexture(const eTileSize size) const {
+stdsptr<Texture> ePyramidTile::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];

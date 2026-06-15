@@ -1,8 +1,8 @@
 #include "ereinforcements.h"
 #include "ecityid.h"
 
-#include "evectorhelpers.h"
-#include "fileIO/esavearchive.h"
+#include "vector-helpers.h"
+#include "fileIO/save-archive.h"
 #include "characters/soldier-banner.h"
 
 eReinforcements::eReinforcements() {}
@@ -13,16 +13,16 @@ eReinforcements::eReinforcements(const eEnlistedForces& forces,
     mFromCid(fromCid) {}
 
 bool eReinforcements::remove(const stdsptr<SoldierBanner>& b) {
-    return eVectorHelpers::remove(mForces.fSoldiers, b);
+    return VectorHelpers::remove(mForces.fSoldiers, b);
 }
 
 bool eReinforcements::checkEmpty() const {
     return mForces.fSoldiers.empty();
 }
 
-void eReinforcements::serialize(eSaveArchive& ar, GameBoard* board) {
+void eReinforcements::serialize(SaveArchive& ar, GameBoard* board) {
     ar.field("fromCityId", mFromCid, eCityId::neutralFriendly);
-    ar.archiveField("forces", [this, board](eSaveArchive& itemAr) {
+    ar.archiveField("forces", [this, board](SaveArchive& itemAr) {
         mForces.serialize(itemAr, itemAr.reading() ? board : nullptr);
     });
 }

@@ -5,7 +5,7 @@
 
 class eGameLoadingWidget : public eLoadingWidget {
 public:
-    eGameLoadingWidget(eMainWindow* const window);
+    eGameLoadingWidget(MainWindow* const window);
 };
 
 #endif // EGAMELOADINGWIDGET_H

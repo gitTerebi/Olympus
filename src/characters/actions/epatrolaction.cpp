@@ -4,7 +4,7 @@
 #include "engine/etile.h"
 #include "epatrolmoveaction.h"
 #include "buildings/epatrolbuildingbase.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 ePatrolAction::ePatrolAction(eCharacter* const c,
                              ePatrolBuildingBase* const b,
@@ -32,9 +32,9 @@ bool ePatrolAction::decide() {
     return true;
 }
 
-void ePatrolAction::serializeFields(eSaveArchive& ar) {
+void ePatrolAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
-    ar.arrayField("path", mPath, [](eSaveArchive& itemAr, eOrientation& o) {
+    ar.arrayField("path", mPath, [](SaveArchive& itemAr, eOrientation& o) {
         itemAr.field("orientation", o);
     });
     ar.buildingAsField("building", &board(), mBuilding);

@@ -1,7 +1,7 @@
 #include "esculpturestudio.h"
 
 #include "textures/game-textures.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eSculptureStudio::eSculptureStudio(GameBoard& board,
                                    const eCityId cid) :
@@ -12,7 +12,7 @@ eSculptureStudio::eSculptureStudio(GameBoard& board,
                         eBuildingType::sculptureStudio, 2, 2, 12,
                         eResourceType::bronze,
                         eResourceType::sculpture, 4,
-                        eNumbers::sSculptureStudioProcessingPeriod,
+                        Numbers::sSculptureStudioProcessingPeriod,
                         cid) {
     GameTextures::loadSculptureStudio();
 }

@@ -7,12 +7,12 @@
 #include "characters/actions/ecollectresourceaction.h"
 
 class eResourceCollectorBase;
-class eSaveArchive;
+class SaveArchive;
 
 class eResourceCollectBuilding : public eResourceCollectBuildingBase {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
-    using eOverlays = eTextureCollection BuildingTextures::*;
+    using eBaseTex = std::shared_ptr<Texture> BuildingTextures::*;
+    using eOverlays = TextureCollection BuildingTextures::*;
     using eCharGenerator =  std::function<stdsptr<eResourceCollectorBase>()>;
     eResourceCollectBuilding(GameBoard& board,
                              const eBaseTex baseTex,
@@ -31,8 +31,8 @@ public:
                              const eCityId cid);
     ~eResourceCollectBuilding();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 
@@ -43,7 +43,7 @@ public:
     void setAddResource(const bool b) { mAddResource = b; }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void enableSpawn() { mSpawnEnabled = true; }
     void disableSpawn() { mSpawnEnabled = false; }
 

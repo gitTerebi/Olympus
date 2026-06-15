@@ -11,7 +11,7 @@ public:
     eShepherdBase(GameBoard& board, const eCharTexs charTexs,
                   const eCharacterType type);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 private:
     const std::vector<CharacterTextures>& mTextures;
     eCharTexs mCharTexs;

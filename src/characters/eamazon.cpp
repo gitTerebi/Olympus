@@ -1,8 +1,8 @@
 #include "eamazon.h"
 
 #include "textures/game-textures.h"
-#include "enumbers.h"
-#include "fileIO/esavearchive.h"
+#include "numbers.h"
+#include "fileIO/save-archive.h"
 
 eAmazon::eAmazon(GameBoard& board) :
     eSoldier(board, nullptr, eCharacterType::amazon) {
@@ -14,19 +14,19 @@ void eAmazon::setIsArcher(const bool a) {
     if(a) {
         GameTextures::loadAmazonArcher();
         setCharTexs(&CharacterTextures::fAmazonArcher);
-        setRange(eNumbers::sArcherRange);
-        setAttack(eNumbers::sArcherAttack);
-        setHP(eNumbers::sArcherHP);
+        setRange(Numbers::sArcherRange);
+        setAttack(Numbers::sArcherAttack);
+        setHP(Numbers::sArcherHP);
     } else {
         GameTextures::loadAmazonSpear();
         setCharTexs(&CharacterTextures::fAmazonSpear);
         setRange(0);
-        setAttack(eNumbers::sHopliteAttack);
-        setHP(eNumbers::sHopliteHP);
+        setAttack(Numbers::sHopliteAttack);
+        setHP(Numbers::sHopliteHP);
     }
 }
 
-void eAmazon::serializeFields(eSaveArchive& ar) {
+void eAmazon::serializeFields(SaveArchive& ar) {
     eSoldier::serializeFields(ar);
     bool archer = mIsArcher;
     ar.field("archer", archer);

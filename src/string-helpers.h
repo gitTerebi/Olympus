@@ -1,9 +1,9 @@
-#ifndef ESTRINGHELPERS_H
-#define ESTRINGHELPERS_H
+#ifndef STRING_HELPERS_H
+#define STRING_HELPERS_H
 
 #include <string>
 
-namespace eStringHelpers {
+namespace StringHelpers {
     bool replace(std::string& source,
                 const std::string& from,
                 const std::string& to);
@@ -15,4 +15,4 @@ namespace eStringHelpers {
     void replaceSpecial(std::string& value);
 };
 
-#endif // ESTRINGHELPERS_H
+#endif // STRING_HELPERS_H

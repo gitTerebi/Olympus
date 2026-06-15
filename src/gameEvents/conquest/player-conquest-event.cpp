@@ -1,15 +1,15 @@
 #include "player-conquest-event.h"
-#include "erand.h"
+#include "rand.h"
 
 #include "engine/game-board.h"
 #include "engine/board-city.h"
 #include "buildings/sanctuaries/sanctuary.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 #include "gameEvents/invasions/invasion-event.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 PlayerConquestEvent::PlayerConquestEvent(
         const eCityId cid,
@@ -82,7 +82,7 @@ void PlayerConquestEvent::trigger() {
         }
 
         const bool conquered = !unbeatable &&
-                               eRand::combatRoll(playerStr, enemyStr);
+                               Rand::combatRoll(playerStr, enemyStr);
 
         const auto pid = playerId();
         eEventData ed(pid);
@@ -121,7 +121,7 @@ void PlayerConquestEvent::trigger() {
 }
 
 std::string PlayerConquestEvent::longName() const {
-    return eLanguage::text("player_conquest_event_long_name");
+    return Language::text("player_conquest_event_long_name");
 }
 
 bool PlayerConquestEvent::finished() const {
@@ -129,7 +129,7 @@ bool PlayerConquestEvent::finished() const {
             (!mInvasionEvent || mInvasionEvent->finished());
 }
 
-void PlayerConquestEvent::serializeFields(eSaveArchive& ar) {
+void PlayerConquestEvent::serializeFields(SaveArchive& ar) {
     ArmyEventBase::serializeFields(ar);
     ar.gameEventField("invasionEvent", gameBoard(), mInvasionEvent);
 }

@@ -1,23 +1,23 @@
-#include "ebanner.h"
-#include "fileIO/esavearchive.h"
+#include "banner.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 
-#include "eboarspawner.h"
-#include "edeerspawner.h"
-#include "elandinvasionpoint.h"
-#include "eseainvasionpoint.h"
-#include "edisembarkpoint.h"
-#include "emonsterpoint.h"
+#include "boar-spawner.h"
+#include "deer-spawner.h"
+#include "land-invasion-point.h"
+#include "sea-invasion-point.h"
+#include "disembark-point.h"
+#include "monster-point.h"
 #include "entry-point.h"
-#include "eexitpoint.h"
-#include "edisasterpoint.h"
-#include "elandslidepoint.h"
-#include "ewolfspawner.h"
+#include "exit-point.h"
+#include "disaster-point.h"
+#include "landslide-point.h"
+#include "wolf-spawner.h"
 #include "engine/etile.h"
 #include "characters/soldier-banner.h"
 
-eBanner::eBanner(const eBannerTypeS type,
+Banner::Banner(const BannerTypeS type,
                  const int id,
                  eTile* const tile,
                  GameBoard& board) :
@@ -25,81 +25,81 @@ eBanner::eBanner(const eBannerTypeS type,
     board.registerBanner(this);
 }
 
-eBanner::~eBanner() {
+Banner::~Banner() {
     board().unregisterBanner(this);
 }
 
-GameBoard& eBanner::board() {
+GameBoard& Banner::board() {
     if(mTile) return mTile->board();
     return mBoard;
 }
 
-eCityId eBanner::cityId() const {
+eCityId Banner::cityId() const {
     if(!mTile) return eCityId::neutralFriendly;
     return mTile->cityId();
 }
 
-bool eBanner::sBuildable(const eBannerTypeS type) {
-    return type == eBannerTypeS::none ||
-           type == eBannerTypeS::disasterPoint ||
-           type == eBannerTypeS::landSlidePoint ||
-           type == eBannerTypeS::monsterPoint;
+bool Banner::sBuildable(const BannerTypeS type) {
+    return type == BannerTypeS::none ||
+           type == BannerTypeS::disasterPoint ||
+           type == BannerTypeS::landSlidePoint ||
+           type == BannerTypeS::monsterPoint;
 }
 
-bool eBanner::buildable() const {
+bool Banner::buildable() const {
     return sBuildable(mType);
 }
 
-void eBanner::serialize(eSaveArchive& ar) {
+void Banner::serialize(SaveArchive& ar) {
     ar.field("ioId", mIOID, -1);
 }
 
-eBanner* eBanner::sCreate(const int id,
+Banner* Banner::sCreate(const int id,
                           eTile* const tile,
                           GameBoard& board,
-                          const eBannerTypeS type) {
-    stdsptr<eBanner> b;
+                          const BannerTypeS type) {
+    stdsptr<Banner> b;
     switch(type) {
-    case eBannerTypeS::none:
+    case BannerTypeS::none:
         break;
-    case eBannerTypeS::boar:
-        b = std::make_shared<eBoarSpawner>(id, tile, board);
+    case BannerTypeS::boar:
+        b = std::make_shared<BoarSpawner>(id, tile, board);
         break;
-    case eBannerTypeS::deer:
-        b = std::make_shared<eDeerSpawner>(id, tile, board);
+    case BannerTypeS::deer:
+        b = std::make_shared<DeerSpawner>(id, tile, board);
         break;
-    case eBannerTypeS::landInvasion:
-        b = std::make_shared<eLandInvasionPoint>(id, tile, board);
+    case BannerTypeS::landInvasion:
+        b = std::make_shared<LandInvasionPoint>(id, tile, board);
         break;
-    case eBannerTypeS::seaInvasion:
-        b = std::make_shared<eSeaInvasionPoint>(id, tile, board);
+    case BannerTypeS::seaInvasion:
+        b = std::make_shared<SeaInvasionPoint>(id, tile, board);
         break;
-    case eBannerTypeS::disembarkPoint:
-        b = std::make_shared<eDisembarkPoint>(id, tile, board);
+    case BannerTypeS::disembarkPoint:
+        b = std::make_shared<DisembarkPoint>(id, tile, board);
         break;
-    case eBannerTypeS::monsterPoint:
-        b = std::make_shared<eMonsterPoint>(id, tile, board);
+    case BannerTypeS::monsterPoint:
+        b = std::make_shared<MonsterPoint>(id, tile, board);
         break;
-    case eBannerTypeS::entryPoint:
+    case BannerTypeS::entryPoint:
         b = std::make_shared<EntryPoint>(id, tile, board);
         break;
-    case eBannerTypeS::exitPoint:
-        b = std::make_shared<eExitPoint>(id, tile, board);
+    case BannerTypeS::exitPoint:
+        b = std::make_shared<ExitPoint>(id, tile, board);
         break;
-    case eBannerTypeS::riverEntryPoint:
-        b = std::make_shared<eRiverEntryPoint>(id, tile, board);
+    case BannerTypeS::riverEntryPoint:
+        b = std::make_shared<RiverEntryPoint>(id, tile, board);
         break;
-    case eBannerTypeS::riverExitPoint:
-        b = std::make_shared<eRiverExitPoint>(id, tile, board);
+    case BannerTypeS::riverExitPoint:
+        b = std::make_shared<RiverExitPoint>(id, tile, board);
         break;
-    case eBannerTypeS::disasterPoint:
-        b = std::make_shared<eDisasterPoint>(id, tile, board);
+    case BannerTypeS::disasterPoint:
+        b = std::make_shared<DisasterPoint>(id, tile, board);
         break;
-    case eBannerTypeS::landSlidePoint:
-        b = std::make_shared<eLandSlidePoint>(id, tile, board);
+    case BannerTypeS::landSlidePoint:
+        b = std::make_shared<LandSlidePoint>(id, tile, board);
         break;
-    case eBannerTypeS::wolf:
-        b = std::make_shared<eWolfSpawner>(id, tile, board);
+    case BannerTypeS::wolf:
+        b = std::make_shared<WolfSpawner>(id, tile, board);
         break;
     }
     tile->addBanner(b);

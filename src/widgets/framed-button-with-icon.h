@@ -9,7 +9,7 @@ class FramedButtonWithIcon : public FramedButton {
 public:
     using FramedButton::FramedButton;
 
-    void initialize(const std::shared_ptr<eTexture>& icon,
+    void initialize(const std::shared_ptr<Texture>& icon,
                     const std::string& text);
 
     void initialize(const eResourceType type,

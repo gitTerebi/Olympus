@@ -6,8 +6,8 @@
 #include "../emonstereventvalue.h"
 #include "../eattackingcityeventvalue.h"
 
-struct eReason;
-class eSaveArchive;
+struct Reason;
+class SaveArchive;
 
 enum class SendTroopsEventType {
     cityUnderAttack,
@@ -47,7 +47,7 @@ public:
     void won();
     void lost();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     enum class eResponse {
         dispatchNow,
@@ -58,7 +58,7 @@ private:
     void postponeResponse();
     void refuse();
 
-    void finished(eEventTrigger& t, const eReason& r);
+    void finished(eEventTrigger& t, const Reason& r);
 
     void set(SendTroopsEvent& src,
              const int postpone,

@@ -12,7 +12,7 @@ public:
     int cartCapacity(const eResourceType res) const override;
 
 private:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     bool acceptsTargetForTask(const eCartTask& task,
                               const eThreadBuilding& target) const override;
     bool hasDeliveryTarget(const eCartTask& task) const;

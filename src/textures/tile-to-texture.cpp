@@ -31,10 +31,10 @@
 
 #include "engine/game-board.h"
 
-std::shared_ptr<eTexture> getStonesTexture(eTile* const tile,
-                          const eTextureCollection& small,
-                          const eTextureCollection& large,
-                          const eTextureCollection& huge,
+std::shared_ptr<Texture> getStonesTexture(eTile* const tile,
+                          const TextureCollection& small,
+                          const TextureCollection& large,
+                          const TextureCollection& huge,
                           int& drawDim,
                           const eWorldDirection dir) {
     return VaryingSizeTex::getVaryingTexture(
@@ -44,13 +44,13 @@ std::shared_ptr<eTexture> getStonesTexture(eTile* const tile,
                  dir);
 }
 
-std::shared_ptr<eTexture> TileToTexture::get(eTile* const tile,
+std::shared_ptr<Texture> TileToTexture::get(eTile* const tile,
                              const TerrainTextures& textures,
                              const BuildingTextures& blds,
                              const eTileSize tileSize,
                              const bool drawElev,
                              int& drawDim,
-                             const eTextureCollection** coll,
+                             const TextureCollection** coll,
                              const eWorldDirection dir) {
     drawDim = 1;
     const int seed = tile->seed();
@@ -510,7 +510,7 @@ std::shared_ptr<eTexture> TileToTexture::get(eTile* const tile,
             return texs.getTexture(texId);
         }
 
-        const eTextureCollection* coll = nullptr;
+        const TextureCollection* coll = nullptr;
         if(!tile->isShoreTile(eTerrain::marsh)) {
             coll = &textures.fDeepMarsh;
         } else {

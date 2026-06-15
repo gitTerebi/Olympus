@@ -3,7 +3,7 @@
 
 #include "epatrolbuilding.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class ePatrolTarget : public ePatrolBuilding {
 public:
@@ -30,7 +30,7 @@ public:
     int spawnCooldown() const override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     const eCharGenerator mCharGen;
 
@@ -54,7 +54,7 @@ public:
 
     ePatrolTarget* target() const { return mTptr.get(); }
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("patrolTarget", &board(), mTptr);
     }
 private:

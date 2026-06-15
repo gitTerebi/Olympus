@@ -1,7 +1,7 @@
 #include "sound-vector.h"
 
 #include "audio-device.h"
-#include "erand.h"
+#include "rand.h"
 #include <filesystem>
 #include <algorithm>
 #include <SDL2/SDL_timer.h>
@@ -169,11 +169,11 @@ void eSoundVector::playRandomSound(const eSoundType type) {
         if(++mPlayCounter < mPlayEveryNth) return;
         mPlayCounter = 0;
     }
-    int id = eRand::rand() % sc;
+    int id = Rand::rand() % sc;
     if(sc > kRecentMax) {
         int tries = 0;
         while(std::find(mRecent.begin(), mRecent.end(), id) != mRecent.end() && tries++ < 8) {
-            id = eRand::rand() % sc;
+            id = Rand::rand() % sc;
         }
     }
     mRecent.push_back(id);

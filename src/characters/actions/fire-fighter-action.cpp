@@ -1,5 +1,5 @@
 ﻿#include "fire-fighter-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "../echaracter.h"
 #include "engine/game-board.h"
@@ -94,7 +94,7 @@ bool FireFighterAction::decide() {
     return true;
 }
 
-void FireFighterAction::serializeFields(eSaveArchive& ar) {
+void FireFighterAction::serializeFields(SaveArchive& ar) {
     ePatrolAction::serializeFields(ar);
     ar.field("fireFighting", mFireFighting);
     ar.field("fireCheck", mFireCheck);

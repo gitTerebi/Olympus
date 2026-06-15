@@ -1,6 +1,6 @@
 #include "eplannedaction.h"
 
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "eregrowforestaction.h"
 #include "ecolonymonumentaction.h"
@@ -16,11 +16,11 @@ ePlannedAction::ePlannedAction(const ePlannedActionType type) :
 
 ePlannedAction::~ePlannedAction() {}
 
-void ePlannedAction::serialize(eSaveArchive& ar, GameBoard* board) {
+void ePlannedAction::serialize(SaveArchive& ar, GameBoard* board) {
     serializeFields(ar, board);
 }
 
-void ePlannedAction::serializeFields(eSaveArchive& ar, GameBoard* board) {
+void ePlannedAction::serializeFields(SaveArchive& ar, GameBoard* board) {
     (void)board;
     ar.field("recurring", mRecurring);
     ar.field("actionTime", mActionTime);

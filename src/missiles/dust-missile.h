@@ -1,17 +1,17 @@
-#ifndef EDUSTMISSILE_H
-#define EDUSTMISSILE_H
+#ifndef DUST_MISSILE_H
+#define DUST_MISSILE_H
 
-#include "emissile.h"
+#include "missile.h"
 
-class eDustMissile : public eMissile {
+class DustMissile : public Missile {
 public:
-    eDustMissile(GameBoard& board,
-                 const std::vector<ePathPoint>& path = {});
+    DustMissile(GameBoard& board,
+                 const std::vector<PathPoint>& path = {});
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize size) const override;
 private:
     mutable int mCollId;
 };
 
-#endif // EDUSTMISSILE_H
+#endif // DUST_MISSILE_H

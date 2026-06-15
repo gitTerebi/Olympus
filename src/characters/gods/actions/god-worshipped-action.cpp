@@ -1,23 +1,23 @@
 ﻿#include "god-worshipped-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "characters/actions/edefendcityaction.h"
 #include "characters/actions/emovetoaction.h"
 #include "characters/actions/eheroaction.h"
 #include "vec2.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 GodWorshippedAction::GodWorshippedAction(eCharacter* const c) :
     eGodAction(c, eCharActionType::godWorshippedAction) {}
 
 void GodWorshippedAction::increment(const int by) {
-    const int blessPeriod = eNumbers::sGodWorshippedBlessPeriod;
-    const int blessRange = eNumbers::sGodWorshippedBlessRange;
+    const int blessPeriod = Numbers::sGodWorshippedBlessPeriod;
+    const int blessRange = Numbers::sGodWorshippedBlessRange;
     const bool r = lookForTargetedBlessCurse(by, mLookForBless,
                                              blessPeriod, blessRange, 1);
     if(!r) {
-        const int attackPeriod = eNumbers::sGodWorshippedSoldierAttackPeriod;
-        const int attackRange = eNumbers::sGodWorshippedSoldierAttackRange;
+        const int attackPeriod = Numbers::sGodWorshippedSoldierAttackPeriod;
+        const int attackRange = Numbers::sGodWorshippedSoldierAttackRange;
         const bool r = lookForSoldierAttack(by, mLookForSoldierAttack,
                                             attackPeriod, attackRange);
         if(!r) {
@@ -128,7 +128,7 @@ void GodWorshippedAction::rebuildCurrentStage() {
     }
 }
 
-void GodWorshippedAction::serializeFields(eSaveArchive& ar) {
+void GodWorshippedAction::serializeFields(SaveArchive& ar) {
     eGodAction::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("lookForBless", mLookForBless);

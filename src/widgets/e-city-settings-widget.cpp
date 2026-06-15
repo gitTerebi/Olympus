@@ -1,9 +1,9 @@
 ﻿#include "ecitysettingswidget.h"
 
 #include "framed-button.h"
-#include "elanguage.h"
+#include "language.h"
 #include "etradeeditwidget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 #include "eresourcebutton.h"
 #include "evaluebutton.h"
 #include "elineedit.h"
@@ -107,7 +107,7 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
     const auto nameButton = new FramedButton(window());
     nameButton->setUnderline(false);
     const auto n = c->name();
-    nameButton->setText(n.empty() ? eLanguage::text("name") : n);
+    nameButton->setText(n.empty() ? Language::text("name") : n);
     nameButton->fitContent();
     nameButton->setPressAction([this, nameButton, c]()
                                {
@@ -117,18 +117,18 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
             c->setName(name);
             nameButton->setText(name);
             nameButton->fitContent();
-            nameButton->align(eAlignment::hcenter);
+            nameButton->align(Alignment::hcenter);
         });
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW1->addWidget(nameButton);
-    nameButton->align(eAlignment::hcenter);
+    nameButton->align(Alignment::hcenter);
 
     const auto leaderButton = new FramedButton(window());
     leaderButton->setUnderline(false);
     const auto l = c->leader();
-    leaderButton->setText(l.empty() ? eLanguage::text("leader") : l);
+    leaderButton->setText(l.empty() ? Language::text("leader") : l);
     leaderButton->fitContent();
     leaderButton->setPressAction([this, leaderButton, c]()
                                  {
@@ -138,13 +138,13 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
             c->setLeader(name);
             leaderButton->setText(name);
             leaderButton->fitContent();
-            leaderButton->align(eAlignment::hcenter);
+            leaderButton->align(Alignment::hcenter);
         });
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW1->addWidget(leaderButton);
-    leaderButton->align(eAlignment::hcenter);
+    leaderButton->align(Alignment::hcenter);
 
     const auto relationshipButton = new FramedButton(window());
     const auto nationalityButton = new FramedButton(window());
@@ -256,7 +256,7 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
             const auto name = typeNames[val];
             typeButton->setText(name);
             typeButton->fitContent();
-            typeButton->align(eAlignment::hcenter);
+            typeButton->align(Alignment::hcenter);
 
             relationshipButton->setVisible(type == eCityType::foreignCity);
             nationalityButton->setVisible(type == eCityType::foreignCity ||
@@ -269,15 +269,15 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
 
             attitudeButton->setText(attitudeTextToPlayer(c, ppid));
             attitudeButton->fitContent();
-            attitudeButton->align(eAlignment::hcenter);
+            attitudeButton->align(Alignment::hcenter);
         };
         const auto d = new eChooseButton(window());
         d->initialize(3, typeNames, act);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW1->addWidget(typeButton);
-    typeButton->align(eAlignment::hcenter);
+    typeButton->align(Alignment::hcenter);
 
     relationshipButton->setUnderline(false);
     const auto relationship = c->relationship();
@@ -304,18 +304,18 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
             const auto name = relationshipNames[val];
             relationshipButton->setText(name);
             relationshipButton->fitContent();
-            relationshipButton->align(eAlignment::hcenter);
+            relationshipButton->align(Alignment::hcenter);
 
             attitudeButton->setText(attitudeTextToPlayer(c, ppid));
             attitudeButton->fitContent();
-            attitudeButton->align(eAlignment::hcenter);
+            attitudeButton->align(Alignment::hcenter);
         };
         d->initialize(5, relationshipNames, act);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW1->addWidget(relationshipButton);
-    relationshipButton->align(eAlignment::hcenter);
+    relationshipButton->align(Alignment::hcenter);
 
     stateButton->setUnderline(false);
     stateButton->addValue(WorldCity::sStateName(eCityState::active));
@@ -326,18 +326,18 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
     stateButton->setSwitchAction([c](const int v)
                                  { c->setState(v == 0 ? eCityState::active : eCityState::inactive); });
     buttonsW1->addWidget(stateButton);
-    stateButton->align(eAlignment::hcenter);
+    stateButton->align(Alignment::hcenter);
 
     visibleButton->setUnderline(false);
-    visibleButton->addValue(eLanguage::zeusText(44, 306)); // invisible
-    visibleButton->addValue(eLanguage::zeusText(44, 307)); // visible
+    visibleButton->addValue(Language::zeusText(44, 306)); // invisible
+    visibleButton->addValue(Language::zeusText(44, 307)); // visible
     visibleButton->fitValidContent();
     const bool vis = c->visible();
     visibleButton->setValue(vis ? 1 : 0);
     visibleButton->setSwitchAction([c](const int v)
                                    { c->setVisible(v); });
     buttonsW1->addWidget(visibleButton);
-    visibleButton->align(eAlignment::hcenter);
+    visibleButton->align(Alignment::hcenter);
 
     attitudeButton->setUnderline(false);
     attitudeButton->setText(attitudeTextToPlayer(c, ppid));
@@ -377,14 +377,14 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
             attitudeButton->setText(name + " (" +
                                     std::to_string(c->attitude(ppid)) + ")");
             attitudeButton->fitContent();
-            attitudeButton->align(eAlignment::hcenter);
+            attitudeButton->align(Alignment::hcenter);
         };
         d->initialize(8, attitudeNames, act);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW1->addWidget(attitudeButton);
-    attitudeButton->align(eAlignment::hcenter);
+    attitudeButton->align(Alignment::hcenter);
 
     nationalityButton->setUnderline(false);
     const auto nationality = c->nationality();
@@ -429,14 +429,14 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
             const auto name = nationalityNames[val];
             nationalityButton->setText(name);
             nationalityButton->fitContent();
-            nationalityButton->align(eAlignment::hcenter);
+            nationalityButton->align(Alignment::hcenter);
         };
         d->initialize(5, nationalityNames, act);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW1->addWidget(nationalityButton);
-    nationalityButton->align(eAlignment::hcenter);
+    nationalityButton->align(Alignment::hcenter);
 
     playerButton->setUnderline(false);
     const auto cid = c->cityId();
@@ -470,9 +470,9 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         d->initialize(8, playerNames, act);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW3->addWidget(playerButton);
-    playerButton->align(eAlignment::hcenter);
+    playerButton->align(Alignment::hcenter);
 
     teamButton->setUnderline(false);
     const auto tid = wb->cityIdToTeamId(cid);
@@ -497,9 +497,9 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         d->initialize(8, teamNames, act);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW3->addWidget(teamButton);
-    teamButton->align(eAlignment::hcenter);
+    teamButton->align(Alignment::hcenter);
 
     capitalButton->setUnderline(false);
     capitalButton->setText("Capital " + playerCaptialIdToName(pid));
@@ -522,9 +522,9 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         d->initialize(8, playerNames, act);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW3->addWidget(capitalButton);
-    capitalButton->align(eAlignment::hcenter);
+    capitalButton->align(Alignment::hcenter);
 
     directionButton->setUnderline(false);
     const auto dir = c->direction();
@@ -555,18 +555,18 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
             const auto name = directionNames[val];
             directionButton->setText(name);
             directionButton->fitContent();
-            directionButton->align(eAlignment::hcenter);
+            directionButton->align(Alignment::hcenter);
         };
         d->initialize(5, directionNames, act);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW1->addWidget(directionButton);
-    directionButton->align(eAlignment::hcenter);
+    directionButton->align(Alignment::hcenter);
 
     const auto buysButton = new FramedButton(window());
     buysButton->setUnderline(false);
-    buysButton->setText(eLanguage::zeusText(47, 1));
+    buysButton->setText(Language::zeusText(47, 1));
     buysButton->fitContent();
     buysButton->setPressAction([this, c]()
                                {
@@ -578,13 +578,13 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         d->initialize(&c->buys());
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW2->addWidget(buysButton);
-    buysButton->align(eAlignment::hcenter);
+    buysButton->align(Alignment::hcenter);
 
     const auto sellsButton = new FramedButton(window());
     sellsButton->setUnderline(false);
-    sellsButton->setText(eLanguage::zeusText(47, 2));
+    sellsButton->setText(Language::zeusText(47, 2));
     sellsButton->fitContent();
     sellsButton->setPressAction([this, c]()
                                 {
@@ -596,13 +596,13 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         d->initialize(&c->sells());
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW2->addWidget(sellsButton);
-    sellsButton->align(eAlignment::hcenter);
+    sellsButton->align(Alignment::hcenter);
 
     const auto receiveTributeButton = new FramedButton(window());
     receiveTributeButton->setUnderline(false);
-    receiveTributeButton->setText(eLanguage::text("receive_tribute"));
+    receiveTributeButton->setText(Language::text("receive_tribute"));
     receiveTributeButton->fitContent();
     receiveTributeButton->setPressAction([this, c]()
                                          {
@@ -610,13 +610,13 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         d->initialize(c, false);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW2->addWidget(receiveTributeButton);
-    receiveTributeButton->align(eAlignment::hcenter);
+    receiveTributeButton->align(Alignment::hcenter);
 
     const auto payTributeButton = new FramedButton(window());
     payTributeButton->setUnderline(false);
-    payTributeButton->setText(eLanguage::text("pay_tribute"));
+    payTributeButton->setText(Language::text("pay_tribute"));
     payTributeButton->fitContent();
     payTributeButton->setPressAction([this, c]()
                                      {
@@ -624,13 +624,13 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         d->initialize(c, true);
 
         window()->execDialog(d);
-        d->align(eAlignment::center); });
+        d->align(Alignment::center); });
     buttonsW2->addWidget(payTributeButton);
-    payTributeButton->align(eAlignment::hcenter);
+    payTributeButton->align(Alignment::hcenter);
 
     const auto waterTradeButton = new FramedButton(window());
     waterTradeButton->setUnderline(false);
-    waterTradeButton->setText(eLanguage::text("water_trade"));
+    waterTradeButton->setText(Language::text("water_trade"));
     waterTradeButton->fitContent();
     waterTradeButton->setPressAction([this, c, wb]()
                                      {
@@ -657,14 +657,14 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         w->initialize(get, add, remove, wb);
 
         window()->execDialog(w);
-        w->align(eAlignment::center); });
+        w->align(Alignment::center); });
     buttonsW2->addWidget(waterTradeButton);
-    waterTradeButton->align(eAlignment::hcenter);
+    waterTradeButton->align(Alignment::hcenter);
 
     const auto mStr = new eValueButton(window());
     mStr->initialize(1, 5);
     mStr->setValue(c->militaryStrength());
-    const auto mStrStr = eLanguage::zeusText(44, 349);
+    const auto mStrStr = Language::zeusText(44, 349);
     mStr->setText(mStrStr + " " + mStr->text());
     mStr->fitContent();
     mStr->setValueChangeAction([c, mStr, mStrStr](const int v)
@@ -674,12 +674,12 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         mStr->setValue(vv);
         mStr->setText(mStrStr + " " + mStr->text()); });
     buttonsW2->addWidget(mStr);
-    mStr->align(eAlignment::hcenter);
+    mStr->align(Alignment::hcenter);
 
     const auto eStr = new eValueButton(window());
     eStr->initialize(1, 5);
     eStr->setValue(c->wealth());
-    const auto eStrStr = eLanguage::zeusText(44, 350);
+    const auto eStrStr = Language::zeusText(44, 350);
     eStr->setText(eStrStr + " " + eStr->text());
     eStr->fitContent();
     eStr->setValueChangeAction([c, eStr, eStrStr](const int v)
@@ -689,7 +689,7 @@ void eCitySettingsWidget::initialize(const stdsptr<WorldCity> &c,
         eStr->setValue(vv);
         eStr->setText(eStrStr + " " + eStr->text()); });
     buttonsW2->addWidget(eStr);
-    eStr->align(eAlignment::hcenter);
+    eStr->align(Alignment::hcenter);
 
     buttonsW1->stackVertically(p, true);
     buttonsW2->stackVertically(p, true);

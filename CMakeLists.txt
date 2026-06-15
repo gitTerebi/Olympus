@@ -369,19 +369,19 @@ set(SOURCES
     src/characters/monsters/ewatermonster.cpp
     src/binary-image-loader.cpp
     src/buildable-helpers.cpp
-    src/efontcolor.cpp
-    src/egamedir.cpp
+    src/font-color.cpp
+    src/game-dir.cpp
     src/cursors.cpp
     src/gameEvents/invasions/invasion-handler.cpp
     src/gameEvents/invasions/invasion-general.cpp
     src/gameEvents/invasions/invasion-targeting.cpp
     src/widgets/paint/invasion-debug-paint.cpp
-    src/eiteratesquare.cpp
-    src/elanguage.cpp
-    src/eloadtexthelper.cpp
-    src/emainwindow.cpp
-    src/emessage.cpp
-    src/emessages.cpp
+    src/iterate-square.cpp
+    src/language.cpp
+    src/load-text-helper.cpp
+    src/main-window.cpp
+    src/message.cpp
+    src/messages.cpp
     src/engine/ai/ai-building.cpp
     src/engine/ai/ai-city-plan.cpp
     src/engine/ai/ai-district.cpp
@@ -447,22 +447,22 @@ set(SOURCES
     src/engine/thread/ethreadcharacter.cpp
     src/engine/thread/ethreaddata.cpp
     src/engine/thread/ethreadtile.cpp
-    src/enumbers.cpp
-    src/epathfindtask.cpp
-    src/erand.cpp
-    src/esettings.cpp
-    src/estringhelpers.cpp
-    src/etexture.cpp
-    src/etexturecollection.cpp
-    src/etilehelper.cpp
-    src/evectorhelpers.cpp
-    src/ewalkablehelpers.cpp
-    src/exmlparser.cpp
+    src/numbers.cpp
+    src/path-find-task.cpp
+    src/rand.cpp
+    src/settings.cpp
+    src/string-helpers.cpp
+    src/texture.cpp
+    src/texture-collection.cpp
+    src/tile-helper.cpp
+    src/vector-helpers.cpp
+    src/walkable-helpers.cpp
+    src/xml-parser.cpp
     src/eng-parser.cpp
     src/fileIO/building-reader.cpp
     src/fileIO/building-writer.cpp
-    src/fileIO/ereadstream.cpp
-    src/fileIO/ewritestream.cpp
+    src/fileIO/read-stream.cpp
+    src/fileIO/write-stream.cpp
     src/gameEvents/conquest/army-event-base.cpp
     src/gameEvents/conquest/army-return-event.cpp
     src/gameEvents/eattackingcityeventvalue.cpp
@@ -528,15 +528,15 @@ set(SOURCES
     src/gameEvents/requests/troops-sent-event.cpp
     src/gameEvents/ewagechangeevent.cpp
     src/gameEvents/ewarning.cpp
-    src/missiles/earrowmissile.cpp
-    src/missiles/earrowspearbase.cpp
-    src/missiles/edustmissile.cpp
-    src/missiles/egodmissile.cpp
-    src/missiles/elavamissile.cpp
-    src/missiles/emissile.cpp
-    src/missiles/erockmissile.cpp
-    src/missiles/espearmissile.cpp
-    src/missiles/ewavemissile.cpp
+    src/missiles/arrow-missile.cpp
+    src/missiles/arrow-spear-base.cpp
+    src/missiles/dust-missile.cpp
+    src/missiles/god-missile.cpp
+    src/missiles/lava-missile.cpp
+    src/missiles/missile.cpp
+    src/missiles/rock-missile.cpp
+    src/missiles/spear-missile.cpp
+    src/missiles/wave-missile.cpp
     src/pak/epakhelpers.cpp
     src/pak/gamefile.cpp
     src/pak/pkwareinputstream.cpp
@@ -544,20 +544,20 @@ set(SOURCES
     src/pak/zeus-file.cpp
     src/pointers/eobject.cpp
     src/pointers/estdselfref.cpp
-    src/spawners/eanimalspawner.cpp
-    src/spawners/ebanner.cpp
-    src/spawners/eboarspawner.cpp
-    src/spawners/edeerspawner.cpp
-    src/spawners/edisasterpoint.cpp
-    src/spawners/edisembarkpoint.cpp
+    src/spawners/animal-spawner.cpp
+    src/spawners/banner.cpp
+    src/spawners/boar-spawner.cpp
+    src/spawners/deer-spawner.cpp
+    src/spawners/disaster-point.cpp
+    src/spawners/disembark-point.cpp
     src/spawners/entry-point.cpp
-    src/spawners/eexitpoint.cpp
-    src/spawners/elandinvasionpoint.cpp
-    src/spawners/elandslidepoint.cpp
-    src/spawners/emonsterpoint.cpp
-    src/spawners/eseainvasionpoint.cpp
-    src/spawners/espawner.cpp
-    src/spawners/ewolfspawner.cpp
+    src/spawners/exit-point.cpp
+    src/spawners/land-invasion-point.cpp
+    src/spawners/landslide-point.cpp
+    src/spawners/monster-point.cpp
+    src/spawners/sea-invasion-point.cpp
+    src/spawners/spawner.cpp
+    src/spawners/wolf-spawner.cpp
     src/textures/beach-to-dry.cpp
     src/textures/building-textures.cpp
     src/textures/building-textures1.cpp
@@ -753,7 +753,6 @@ set(SOURCES
     src/widgets/escrollwidget.cpp
     src/widgets/escrollwidgetcomplete.cpp
     src/widgets/eselectcolonywidget.cpp
-    src/widgets/egraphicsmenu.cpp
     src/widgets/esmalldownbutton.cpp
     src/widgets/esmallupbutton.cpp
     src/widgets/espinbox.cpp

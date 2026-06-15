@@ -3,11 +3,11 @@
 
 #include "actions/echaracteractiontype.h"
 
-#include "fileIO/estreams.h"
+#include "fileIO/streams.h"
 
 #include "engine/ecityid.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eCharacterType {
     none,
@@ -245,9 +245,9 @@ public:
     bool isMonster() const;
     bool isImmortal() const;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 protected:
-    virtual void serializeFields(eSaveArchive& ar);
+    virtual void serializeFields(SaveArchive& ar);
 private:
     eCharacterType mType;
     eCharacterActionType mActionType{eCharacterActionType::none};

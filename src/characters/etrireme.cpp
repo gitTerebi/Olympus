@@ -6,7 +6,7 @@
 #include "actions/fighting-action.h"
 #include "actions/etriremeaction.h"
 #include "engine/game-board.h"
-#include "eiteratesquare.h"
+#include "iterate-square.h"
 #include "engine/epathfinder.h"
 
 eTrireme::eTrireme(GameBoard& board) :
@@ -55,7 +55,7 @@ void eTrireme::sPlace(std::vector<eTrireme*> bs,
     };
 
     for(int k = 0; k < 9; k++) {
-        eIterateSquare::iterateSquare(k, prcsTile, dist);
+        IterateSquare::iterateSquare(k, prcsTile, dist);
         if(startTile) break;
     }
 
@@ -99,13 +99,13 @@ eTriremeAction *eTrireme::triremeAction() const {
     return dynamic_cast<eTriremeAction*>(a);
 }
 
-eOverlay eTrireme::getSecondaryTexture(const eTileSize size) const {
+Overlay eTrireme::getSecondaryTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto a = actionType();
     const bool die = a == eCharacterActionType::die;
-    const std::vector<eTextureCollection>* charTexs;
+    const std::vector<TextureCollection>* charTexs;
     if(a == eCharacterActionType::die) {
         charTexs = &colls.fTriremeDieOverlay;
     } else if(a == eCharacterActionType::fight ||
@@ -119,7 +119,7 @@ eOverlay eTrireme::getSecondaryTexture(const eTileSize size) const {
     const bool wrap = !die;
     const bool disappear = die;
     const auto tex = eCharacter::getTexture(coll, wrap, disappear);
-    return eOverlay{0., 0., tex, false};
+    return Overlay{0., 0., tex, false};
 }
 
 bool eTrireme::selectable() const {

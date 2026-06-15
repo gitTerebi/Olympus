@@ -9,7 +9,7 @@
 #include "buildings/elite-housing.h"
 #include "engine/game-board.h"
 #include "ekillcharacterfinishfail.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 eSettlerAction::eSettlerAction(eCharacter* const c) :
     eActionWithComeback(c, eCharActionType::settlerAction) {
@@ -42,7 +42,7 @@ bool eSettlerAction::decide() {
     return true;
 }
 
-void eSettlerAction::serializeFields(eSaveArchive& ar) {
+void eSettlerAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     int nPeople = mNPeople;
     ar.field("nPeople", nPeople);

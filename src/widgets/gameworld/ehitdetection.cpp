@@ -1,6 +1,6 @@
 #include "ehitdetection.h"
 
-#include "etilehelper.h"
+#include "tile-helper.h"
 #include "engine/etile.h"
 #include "engine/game-board.h"
 
@@ -42,7 +42,7 @@ void pixToId(int pixX, int pixY, int &idX, int &idY, int scale, int tileW, int t
         {
             int rx;
             int ry;
-            eTileHelper::rotatedTileIdToTileId(x, y, rx, ry, dir, width, height);
+            TileHelper::rotatedTileIdToTileId(x, y, rx, ry, dir, width, height);
             const auto t = board->tile(rx, ry);
             if (!t)
                 continue;
@@ -76,6 +76,6 @@ void pixToId(int pixX, int pixY, int &idX, int &idY, int scale, int tileW, int t
 
     const int idXT = idX;
     const int idYT = idY;
-    eTileHelper::rotatedTileIdToTileId(idXT, idYT, idX, idY,
+    TileHelper::rotatedTileIdToTileId(idXT, idYT, idX, idY,
                                        dir, width, height);
 }

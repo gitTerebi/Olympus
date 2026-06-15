@@ -1,10 +1,10 @@
 #include "egoat.h"
 
 #include "textures/game-textures.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 eGoat::eGoat(GameBoard& board) :
     eDomesticatedAnimal(board, &CharacterTextures::fGoat,
-                        eCharacterType::goat, eNumbers::sGoatMaxGroom) {
+                        eCharacterType::goat, Numbers::sGoatMaxGroom) {
     GameTextures::loadGoat();
 }

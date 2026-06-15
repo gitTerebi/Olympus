@@ -5,14 +5,14 @@
 
 #include "eepisodegoal.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 struct eSetAside {
     eResourceType fRes = eResourceType::none;
     int fCount = 0;
     stdsptr<WorldCity> fFrom;
 
-    void serialize(eSaveArchive& ar, WorldBoard* const board) {
+    void serialize(SaveArchive& ar, WorldBoard* const board) {
         ar.field("resource", fRes, eResourceType::none);
         ar.field("count", fCount, 0);
         ar.worldCityField("from", board, fFrom);
@@ -64,7 +64,7 @@ public:
 
     static bool sReadGlossary(const std::string& name,
                               eCampaignGlossary& glossary);
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 
     void readPak(const std::string& title,
                  const std::string& path);

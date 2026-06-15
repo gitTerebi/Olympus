@@ -7,7 +7,7 @@ class eAresWarrior : public eSoldier {
 public:
     eAresWarrior(GameBoard& board);
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const;
 };
 
 #endif // EARESWARRIOR_H

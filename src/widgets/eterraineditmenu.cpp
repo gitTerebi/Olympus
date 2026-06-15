@@ -3,11 +3,11 @@
 #include "textures/game-textures.h"
 #include "eactionlistwidget.h"
 #include "engine/game-board.h"
-#include "spawners/ebanner.h"
+#include "spawners/banner.h"
 #include "erotatebutton.h"
 #include "eminimap.h"
 #include "game-widget.h"
-#include "elanguage.h"
+#include "language.h"
 #include "characters/soldier-banner.h"
 
 void eTerrainEditMenu::initialize(GameWidget* const gw,
@@ -34,7 +34,7 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
         return mBrushType == eBrushType::apply;
     });
     for(int i = 0; i < 5; i++) {
-        w0->addAction(eLanguage::zeusText(48, i), [this, i]() {
+        w0->addAction(Language::zeusText(48, i), [this, i]() {
             mBrushType = eBrushType::brush;
             mBrushSize = i + 1;
         }, [this, i]() {
@@ -43,7 +43,7 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
         });
     }
     for(int i = 0; i < 5; i++) {
-        w0->addAction(eLanguage::zeusText(48, 5 + i), [this, i]() {
+        w0->addAction(Language::zeusText(48, 5 + i), [this, i]() {
             mBrushType = eBrushType::square;
             mBrushSize = i + 2;
         }, [this, i]() {
@@ -135,16 +135,16 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
     w7->fitContent();
 
     const auto w8 = new eActionListWidget(window());
-    w8->addAction(eLanguage::zeusText(48, 12), [this]() {
+    w8->addAction(Language::zeusText(48, 12), [this]() {
         mMode = eTerrainEditMode::raise;
     });
-    w8->addAction(eLanguage::zeusText(48, 13), [this]() {
+    w8->addAction(Language::zeusText(48, 13), [this]() {
         mMode = eTerrainEditMode::lower;
     });
-    w8->addAction(eLanguage::zeusText(48, 14), [this]() {
+    w8->addAction(Language::zeusText(48, 14), [this]() {
         mMode = eTerrainEditMode::raiseHigh;
     });
-    w8->addAction(eLanguage::zeusText(48, 15), [this]() {
+    w8->addAction(Language::zeusText(48, 15), [this]() {
         mMode = eTerrainEditMode::lowerHigh;
     });
     w8->addAction("Level Out", [this]() {
@@ -153,45 +153,45 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
     w8->addAction("Reset Elevation", [this]() {
         mMode = eTerrainEditMode::resetElev;
     });
-    w8->addAction(eLanguage::zeusText(48, 18), [this]() {
+    w8->addAction(Language::zeusText(48, 18), [this]() {
         mMode = eTerrainEditMode::halfSlope;
     });
-    w8->addAction(eLanguage::zeusText(48, 16), [this]() {
+    w8->addAction(Language::zeusText(48, 16), [this]() {
         mMode = eTerrainEditMode::makeWalkable;
     });
     w8->stackVertically(mSpacing);
     w8->fitContent();
 
     const auto w9 = new eActionListWidget(window());
-    w9->addAction(eLanguage::zeusText(48, 67), [this]() {
+    w9->addAction(Language::zeusText(48, 67), [this]() {
         mMode = eTerrainEditMode::quake;
     });
-    w9->addAction(eLanguage::zeusText(48, 68), [this]() {
+    w9->addAction(Language::zeusText(48, 68), [this]() {
         mMode = eTerrainEditMode::lava;
     });
-    w9->addAction(eLanguage::zeusText(48, 69), [this]() {
+    w9->addAction(Language::zeusText(48, 69), [this]() {
         mMode = eTerrainEditMode::tidalWave;
     });
-    w9->addAction(eLanguage::zeusText(156, 5), [this]() {
+    w9->addAction(Language::zeusText(156, 5), [this]() {
         mMode = eTerrainEditMode::landSlide;
     });
     for(int i = 0; i < 8; i++) {
-        w9->addAction(eLanguage::zeusText(48, 70 + i), [this, i]() {
+        w9->addAction(Language::zeusText(48, 70 + i), [this, i]() {
             mMode = eTerrainEditMode::disasterPoint;
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::disasterPoint, i + 1);
+            const auto b = board->banner(cid, BannerTypeS::disasterPoint, i + 1);
             return b != nullptr;
         });
     }
     for(int i = 0; i < 3; i++) {
-        w9->addAction(eLanguage::zeusText(48, 89 + i), [this, i]() {
+        w9->addAction(Language::zeusText(48, 89 + i), [this, i]() {
             mMode = eTerrainEditMode::landSlidePoint;
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::landSlidePoint, i + 1);
+            const auto b = board->banner(cid, BannerTypeS::landSlidePoint, i + 1);
             return b != nullptr;
         });
     }
@@ -200,22 +200,22 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
 
     const auto w10 = new eActionListWidget(window());
     for(int i = 8; i < 16; i++) {
-        w10->addAction(eLanguage::zeusText(48, 56 + i - 8), [this, i]() {
+        w10->addAction(Language::zeusText(48, 56 + i - 8), [this, i]() {
             mMode = eTerrainEditMode::seaInvasion;
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::seaInvasion, i + 1);
+            const auto b = board->banner(cid, BannerTypeS::seaInvasion, i + 1);
             return b != nullptr;
         });
     }
     for(int i = 0; i < 3; i++) {
-        w10->addAction(eLanguage::zeusText(48, 64 + i), [this, i]() {
+        w10->addAction(Language::zeusText(48, 64 + i), [this, i]() {
             mMode = eTerrainEditMode::disembarkPoint;
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::disembarkPoint, i + 1);
+            const auto b = board->banner(cid, BannerTypeS::disembarkPoint, i + 1);
             return b != nullptr;
         });
     }
@@ -224,22 +224,22 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
 
     const auto w11 = new eActionListWidget(window());
     for(int i = 0; i < 8; i++) {
-        w11->addAction(eLanguage::zeusText(48, 19 + i), [this, i]() {
+        w11->addAction(Language::zeusText(48, 19 + i), [this, i]() {
             mMode = eTerrainEditMode::landInvasion;
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::landInvasion, i + 1);
+            const auto b = board->banner(cid, BannerTypeS::landInvasion, i + 1);
             return b != nullptr;
         });
     }
     for(int i = 0; i < 3; i++) {
-        w11->addAction(eLanguage::zeusText(48, 86 + i), [this, i]() {
+        w11->addAction(Language::zeusText(48, 86 + i), [this, i]() {
             mMode = eTerrainEditMode::monsterPoint;
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::monsterPoint, i + 1);
+            const auto b = board->banner(cid, BannerTypeS::monsterPoint, i + 1);
             return b != nullptr;
         });
     }
@@ -247,37 +247,37 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
     w11->fitContent();
 
     mW12 = new eActionListWidget(window());
-    mW12->addAction(eLanguage::zeusText(48, 10), [this]() {
+    mW12->addAction(Language::zeusText(48, 10), [this]() {
         mMode = eTerrainEditMode::entryPoint;
         mModeId = 1;
     }, [board, gw]() {
         const auto cid = gw->viewedCity();
-        const auto b = board->banner(cid, eBannerTypeS::entryPoint);
+        const auto b = board->banner(cid, BannerTypeS::entryPoint);
         return b != nullptr;
     });
-    mW12->addAction(eLanguage::zeusText(48, 11), [this]() {
+    mW12->addAction(Language::zeusText(48, 11), [this]() {
         mMode = eTerrainEditMode::exitPoint;
         mModeId = 1;
     }, [board, gw]() {
         const auto cid = gw->viewedCity();
-        const auto b = board->banner(cid, eBannerTypeS::exitPoint);
+        const auto b = board->banner(cid, BannerTypeS::exitPoint);
         return b != nullptr;
     });
 
-    mW12->addAction(eLanguage::zeusText(48, 27), [this]() {
+    mW12->addAction(Language::zeusText(48, 27), [this]() {
         mMode = eTerrainEditMode::riverEntryPoint;
         mModeId = 1;
     }, [board, gw]() {
         const auto cid = gw->viewedCity();
-        const auto b = board->banner(cid, eBannerTypeS::riverEntryPoint);
+        const auto b = board->banner(cid, BannerTypeS::riverEntryPoint);
         return b != nullptr;
     });
-    mW12->addAction(eLanguage::zeusText(48, 28), [this]() {
+    mW12->addAction(Language::zeusText(48, 28), [this]() {
         mMode = eTerrainEditMode::riverExitPoint;
         mModeId = 1;
     }, [board, gw]() {
         const auto cid = gw->viewedCity();
-        const auto b = board->banner(cid, eBannerTypeS::riverExitPoint);
+        const auto b = board->banner(cid, BannerTypeS::riverExitPoint);
         return b != nullptr;
     });
     {
@@ -297,22 +297,22 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
 
     const auto w13 = new eActionListWidget(window());
     for(int i = 0; i < 3; i++) {
-        w13->addAction(eLanguage::zeusText(48, 47 + i), [this, i]() {
+        w13->addAction(Language::zeusText(48, 47 + i), [this, i]() {
             mMode = eTerrainEditMode::boar;
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::boar, i + 1);
+            const auto b = board->banner(cid, BannerTypeS::boar, i + 1);
             return b != nullptr;
         });
     }
     for(int i = 0; i < 3; i++) {
-        w13->addAction(eLanguage::zeusText(48, 92 + i), [this, i]() {
+        w13->addAction(Language::zeusText(48, 92 + i), [this, i]() {
             mMode = eTerrainEditMode::deer;
             mModeId = i + 1;
         }, [board, i, gw]() {
             const auto cid = gw->viewedCity();
-            const auto b = board->banner(cid, eBannerTypeS::deer, i + 1);
+            const auto b = board->banner(cid, BannerTypeS::deer, i + 1);
             return b != nullptr;
         });
     }

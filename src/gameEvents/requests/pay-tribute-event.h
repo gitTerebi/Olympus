@@ -5,7 +5,7 @@
 
 #include "engine/world-city.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class PayTributeEvent : public eGameEvent {
 public:
@@ -21,7 +21,7 @@ public:
     bool finished() const override;
     std::string longName() const override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     enum class eResponse {
         accept,

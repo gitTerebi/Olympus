@@ -2,7 +2,7 @@
 
 #include "textures/game-textures.h"
 #include "engine/game-board.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 // index: 0=bottomRight 1=bottomLeft 2=topLeft 3=topRight
 double ePier::sOvX[4] = {0.30, -0.20, -0.40, 0.00};
@@ -30,7 +30,7 @@ ePier::ePier(GameBoard &board, const eDiagonalOrientation o,
                           { return true; });
 }
 
-std::shared_ptr<eTexture> ePier::getTexture(const eTileSize size) const
+std::shared_ptr<Texture> ePier::getTexture(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
     const auto &blds = GameTextures::buildings();
@@ -61,9 +61,9 @@ std::shared_ptr<eTexture> ePier::getTexture(const eTileSize size) const
     return coll.getTexture(id);
 }
 
-std::vector<eOverlay> ePier::getOverlays(const eTileSize size) const
+std::vector<Overlay> ePier::getOverlays(const eTileSize size) const
 {
-    std::vector<eOverlay> os;
+    std::vector<Overlay> os;
     const int sizeId = static_cast<int>(size);
     const auto &blds = GameTextures::buildings();
     const auto &coll = mLoading ? blds[sizeId].fPierLoadOverlay
@@ -120,7 +120,7 @@ void ePier::setTradePost(eBuilding *const b)
     mTradePost = b;
 }
 
-void ePier::serializeFields(eSaveArchive &ar)
+void ePier::serializeFields(SaveArchive &ar)
 {
     eBuilding::serializeFields(ar);
     ar.buildingAsField("tradePost", &getBoard(), mTradePost);

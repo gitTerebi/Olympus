@@ -1,9 +1,9 @@
-#include "edisasterpoint.h"
+#include "disaster-point.h"
 
 #include "engine/game-board.h"
 #include "characters/soldier-banner.h"
 
-eDisasterPoint::eDisasterPoint(const int id,
+DisasterPoint::DisasterPoint(const int id,
                               eTile* const tile,
                               GameBoard& board) :
-    eBanner(eBannerTypeS::disasterPoint, id, tile, board) {}
+    Banner(BannerTypeS::disasterPoint, id, tile, board) {}

@@ -4,7 +4,7 @@
 #include "eresourcebuildingbase.h"
 
 class eTrireme;
-class eSaveArchive;
+class SaveArchive;
 
 class eTriremeWharf : public eEmployingBuilding {
 public:
@@ -13,8 +13,8 @@ public:
                   const eCityId cid);
     ~eTriremeWharf();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
 
@@ -35,7 +35,7 @@ public:
 
     eTile* triremeTile() const;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     void spawnTrireme();
 

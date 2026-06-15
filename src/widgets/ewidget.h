@@ -8,20 +8,22 @@
 #include "emouseevent.h"
 #include "eresolution.h"
 
-class eMainWindow;
+class MainWindow;
 class eLayout;
 
 using eAction = std::function<void()>;
 
 class eWidget {
 public:
-    eWidget(eMainWindow* const window);
+    eWidget(MainWindow* const window);
 
     virtual void renderTargetsReset();
+    virtual void windowSizeChanged(int w, int h);
 protected:
     virtual ~eWidget();
 
     void iResAndMult(int& iRes, int& mult) const;
+    int scalePx(double base) const;
 public:
     void move(const int x, const int y);
     void setX(const int x);
@@ -46,7 +48,7 @@ public:
     void setPaddingXXS();
     void setNoPadding();
 
-    void align(const eAlignment a);
+    void align(const Alignment a);
 
     int x() const { return mX; }
     int y() const { return mY; }
@@ -111,7 +113,7 @@ public:
                          const bool skipHidden = false);
     void layoutVertically(const bool skipHidden = false);
     void layoutVerticallyWithoutSpaces();
-    void layoutVertically(const int gap, const eAlignment align);
+    void layoutVertically(const int gap, const Alignment align);
     void stackHorizontally(const int p = 0);
     void layoutHorizontally();
     void layoutHorizontallyWithoutSpaces();
@@ -119,7 +121,7 @@ public:
     void setMouseReceiver(eWidget* const w);
     void setMouseReceiverDXDY(const int dx, const int dy);
 
-    eMainWindow* window() const { return mWindow; }
+    MainWindow* window() const { return mWindow; }
 protected:
     virtual void sizeHint(int& w, int& h);
 
@@ -183,7 +185,7 @@ private:
     bool mDeleteLater = false;
     eWidget* mParent = nullptr;
     std::vector<eWidget*> mChildren;
-    eMainWindow* const mWindow;
+    MainWindow* const mWindow;
 
     std::string mTooltip;
 

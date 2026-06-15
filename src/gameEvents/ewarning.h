@@ -4,9 +4,9 @@
 #include "engine/edate.h"
 
 class eGameEvent;
-class eSaveArchive;
-class eWriteStream;
-class eReadStream;
+class SaveArchive;
+class WriteStream;
+class ReadStream;
 
 enum class eCityId;
 
@@ -37,7 +37,7 @@ public:
 
     void setFinished(const bool f) { mFinished = f; }
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
     eGameEvent& mParent;
     const eCityId mCid;

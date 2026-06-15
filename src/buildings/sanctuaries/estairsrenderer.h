@@ -7,7 +7,7 @@ class eStairsRenderer : public eBuildingRenderer {
 public:
     eStairsRenderer(const int id, const stdsptr<eBuilding>& b);
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
         getTexture(const eTileSize size) const;
 
     int spanW() const { return 1; }

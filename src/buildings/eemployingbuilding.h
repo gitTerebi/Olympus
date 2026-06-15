@@ -3,7 +3,7 @@
 
 #include "ebuildingwithresource.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eEmployingBuilding : public eBuildingWithResource {
 public:
@@ -26,7 +26,7 @@ public:
     void incTime(const int by) override;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 
 private:
     bool mShutDown = false;

@@ -1,7 +1,7 @@
 ﻿#include "widgets/game-widget.h"
 
 #include "widgets/eflatbutton.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 #include "characters/gods/god.h"
 #include "characters/monsters/emonster.h"
 #include "engine/eresourcetype.h"
@@ -48,7 +48,7 @@ private:
         return std::max(8, fontSize()/2);
     }
 
-    void updateCache(ePainter& p, std::shared_ptr<eTexture>& cache) {
+    void updateCache(ePainter& p, std::shared_ptr<Texture>& cache) {
         if(width() <= 0 || height() <= 0) return;
         const int bleedX = cacheBleedX();
         const int bleedTop = cacheBleedTop();
@@ -56,7 +56,7 @@ private:
         const int cacheW = width() + 2*bleedX;
         const int cacheH = height() + bleedTop + bleedBottom;
         const auto r = p.renderer();
-        auto next = std::make_shared<eTexture>();
+        auto next = std::make_shared<Texture>();
         if(!next->create(r, cacheW, cacheH)) return;
 
         const auto prevTarget = SDL_GetRenderTarget(r);
@@ -78,8 +78,8 @@ private:
         cache = next;
     }
 
-    std::shared_ptr<eTexture> mNormalCache;
-    std::shared_ptr<eTexture> mHoverCache;
+    std::shared_ptr<Texture> mNormalCache;
+    std::shared_ptr<Texture> mHoverCache;
 };
 }
 
@@ -93,15 +93,15 @@ void GameWidget::createToastWidget(eToast &toast)
     tw->setFontSizeXS();
     auto title = msg.fTitle;
     if (const auto &c = toast.fEd.fCity)
-        eStringHelpers::replaceAll(title, "[city_name]", c->name());
+        StringHelpers::replaceAll(title, "[city_name]", c->name());
     if (const auto &c = toast.fEd.fRivalCity)
-        eStringHelpers::replaceAll(title, "[rival_city_name]", c->name());
-    eStringHelpers::replaceAll(title, "[item]",
+        StringHelpers::replaceAll(title, "[rival_city_name]", c->name());
+    StringHelpers::replaceAll(title, "[item]",
                                eResourceTypeHelpers::typeLongName(toast.fEd.fResourceType));
-    eStringHelpers::replaceAll(title, "[itemshort]",
+    StringHelpers::replaceAll(title, "[itemshort]",
                                eResourceTypeHelpers::typeName(toast.fEd.fResourceType));
-    eStringHelpers::replaceAll(title, "[god]", God::sGodName(toast.fEd.fGod));
-    eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(toast.fEd.fMonster));
+    StringHelpers::replaceAll(title, "[god]", God::sGodName(toast.fEd.fGod));
+    StringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(toast.fEd.fMonster));
     if (title.length() > 40)
         title = title.substr(0, 37) + "...";
     tw->setText(title);
@@ -133,7 +133,7 @@ void GameWidget::createToastWidget(eToast &toast)
         printf("toast create %.2f ms title='%s'\n", ms, title.c_str());
 }
 
-void GameWidget::showToast(eEventData &ed, const eMessage &msg)
+void GameWidget::showToast(eEventData &ed, const Message &msg)
 {
     eToast pendingToast;
     pendingToast.fEd = ed;

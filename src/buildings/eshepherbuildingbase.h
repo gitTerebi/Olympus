@@ -4,17 +4,17 @@
 #include "eresourcebuildingbase.h"
 
 #include "textures/building-textures.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 class eResourceCollectorBase;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eCharacterType;
 
 class eShepherBuildingBase : public eResourceBuildingBase {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
-    using eOverlays = eTextureCollection BuildingTextures::*;
+    using eBaseTex = std::shared_ptr<Texture> BuildingTextures::*;
+    using eOverlays = TextureCollection BuildingTextures::*;
     using eRC = eResourceCollectorBase;
     using eCharGenerator =  std::function<stdsptr<eRC>(GameBoard&)>;
     eShepherBuildingBase(GameBoard& board,
@@ -31,8 +31,8 @@ public:
                          const eCityId cid);
     ~eShepherBuildingBase();
 
-    std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
-    std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    std::shared_ptr<Texture> getTexture(const eTileSize size) const override;
+    std::vector<Overlay> getOverlays(const eTileSize size) const override;
 
     void timeChanged(const int by) override;
     void nextMonth() override;
@@ -43,7 +43,7 @@ public:
 
     bool spawn();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
 
     const eCharGenerator mCharGenerator;

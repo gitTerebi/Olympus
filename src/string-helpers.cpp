@@ -1,8 +1,8 @@
-#include "estringhelpers.h"
+#include "string-helpers.h"
 
 #include <regex>
 
-bool eStringHelpers::replace(std::string& str, const std::string& from,
+bool StringHelpers::replace(std::string& str, const std::string& from,
                              const std::string& to) {
     size_t start_pos = str.find(from);
     if(start_pos == std::string::npos)
@@ -11,7 +11,7 @@ bool eStringHelpers::replace(std::string& str, const std::string& from,
     return true;
 }
 
-void eStringHelpers::replaceAll(std::string& source,
+void StringHelpers::replaceAll(std::string& source,
                                 const std::string& from,
                                 const std::string& to) {
     std::string newString;
@@ -33,7 +33,7 @@ void eStringHelpers::replaceAll(std::string& source,
     source.swap(newString);
 }
 
-std::string eStringHelpers::pathToName(const std::string& path) {
+std::string StringHelpers::pathToName(const std::string& path) {
     std::string name;
     for(int i = path.size() - 1; i >= 0; i--) {
         const auto c = path[i];
@@ -43,7 +43,7 @@ std::string eStringHelpers::pathToName(const std::string& path) {
     return name;
 }
 
-void eStringHelpers::replaceSpecial(std::string& value) {
+void StringHelpers::replaceSpecial(std::string& value) {
     value = std::regex_replace(value, std::regex("^@L"), "");
     value = std::regex_replace(value, std::regex("@L"), "\n");
     value = std::regex_replace(value, std::regex("^@P"), "   ");

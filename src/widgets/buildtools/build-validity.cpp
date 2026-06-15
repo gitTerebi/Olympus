@@ -7,7 +7,7 @@
 #include "buildable-helpers.h"
 #include "buildings/eagoraspace.h"
 #include "buildings/eagorabase.h"
-#include "spawners/ebanner.h"
+#include "spawners/banner.h"
 
 namespace BuildValidity {
 

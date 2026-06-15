@@ -4,7 +4,7 @@
 #include "eactionwithcomeback.h"
 
 class eCorral;
-class eSaveArchive;
+class SaveArchive;
 
 enum class eTakeCattleActionStage {
     none, get, goBack
@@ -18,7 +18,7 @@ public:
     bool decide() override;
     void increment(const int by) override;
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void goGetCattle();

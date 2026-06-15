@@ -6,7 +6,7 @@
 class eGatehouse;
 class eAgoraBase;
 class eHippodromePiece;
-class eSaveArchive;
+class SaveArchive;
 
 class eRoad : public eBuilding {
 public:
@@ -14,7 +14,7 @@ public:
 
     void erase() override;
 
-    std::shared_ptr<eTexture>
+    std::shared_ptr<Texture>
     getTexture(const eTileSize size) const override;
 
     int getHippodromeTextureId() const;
@@ -38,7 +38,7 @@ public:
     void bridgeConnectedTiles(std::vector<eTile*>& tiles) const;
 
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     eGatehouse* mUnderGatehouse = nullptr;
     eAgoraBase* mUnderAgora = nullptr;

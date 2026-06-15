@@ -52,7 +52,7 @@ void FramedButton::paintEvent(ePainter& p) {
     const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
-    const eTextureCollection* coll = nullptr;
+    const TextureCollection* coll = nullptr;
     if(hovered()) {
         coll = &intrfc.fButtonFrameHover;
     } else {

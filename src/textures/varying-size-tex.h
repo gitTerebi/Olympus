@@ -2,7 +2,7 @@
 #define VARYING_SIZE_TEX_H
 
 #include "engine/etile.h"
-#include "etexturecollection.h"
+#include "texture-collection.h"
 
 namespace VaryingSizeTex {
     using eChecker = std::function<bool(eTile*)>;
@@ -18,12 +18,12 @@ namespace VaryingSizeTex {
     using eVaryingFunc = std::function<void(eTile* const tile,
                                             int& drawDim,
                                             const eWorldDirection dir)>;
-    std::shared_ptr<eTexture> getVaryingTexture(
+    std::shared_ptr<Texture> getVaryingTexture(
             const eVaryingFunc& func,
             eTile* const tile,
-            const eTextureCollection& small,
-            const eTextureCollection& large,
-            const eTextureCollection& huge,
+            const TextureCollection& small,
+            const TextureCollection& large,
+            const TextureCollection& huge,
             int& drawDim,
             const eWorldDirection dir);
 };

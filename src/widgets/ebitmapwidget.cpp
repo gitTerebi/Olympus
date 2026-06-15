@@ -22,7 +22,7 @@ void eBitmapWidget::paintEvent(ePainter& p) {
     SDL_RenderCopy(p.renderer(), tex->tex(), &srcRect, &dstRect);
 }
 
-stdsptr<eTexture> eBitmapWidget::texture() const {
+stdsptr<Texture> eBitmapWidget::texture() const {
     const auto res = resolution();
     const auto uiScale = res.uiScale();
     const int iRes = static_cast<int>(uiScale);

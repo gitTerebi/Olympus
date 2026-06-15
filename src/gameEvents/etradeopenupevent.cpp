@@ -1,11 +1,11 @@
 #include "etradeopenupevent.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "estringhelpers.h"
-#include "elanguage.h"
+#include "string-helpers.h"
+#include "language.h"
 
 eTradeOpenUpEvent::eTradeOpenUpEvent(
         const eCityId cid,
@@ -28,10 +28,10 @@ void eTradeOpenUpEvent::trigger() {
 }
 
 std::string eTradeOpenUpEvent::longName() const {
-    return eLanguage::zeusText(35, 3);
+    return Language::zeusText(35, 3);
 }
 
-void eTradeOpenUpEvent::serializeFields(eSaveArchive& ar) {
+void eTradeOpenUpEvent::serializeFields(SaveArchive& ar) {
     eGameEvent::serializeFields(ar);
     eCityEventValue::serialize(ar, *gameBoard());
 }

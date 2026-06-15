@@ -2,9 +2,9 @@
 #define EATTACKCITYACTION_H
 
 #include "edefendattackcityaction.h"
-#include "erand.h"
+#include "rand.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 class eAttackCityAction : public eDefendAttackCityAction {
 public:
@@ -15,11 +15,11 @@ public:
 
     void invasionFinished();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
 private:
     bool goToNearestSoldier();
 
-    int mLookForGod = eRand::rand() % 2000;
+    int mLookForGod = Rand::rand() % 2000;
 };
 
 #endif // EATTACKCITYACTION_H

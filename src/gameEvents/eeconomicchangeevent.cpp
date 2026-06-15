@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/eeventdata.h"
 #include "engine/eevent.h"
-#include "elanguage.h"
+#include "language.h"
 
 eEconomicChangeEvent::eEconomicChangeEvent(
         const eCityId cid,
@@ -30,5 +30,5 @@ void eEconomicChangeEvent::trigger() {
 }
 
 std::string eEconomicChangeEvent::longName() const {
-    return eLanguage::text("economic_change_long_name");
+    return Language::text("economic_change_long_name");
 }

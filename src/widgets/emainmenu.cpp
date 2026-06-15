@@ -4,8 +4,8 @@
 
 #include "ebuttonutils.h"
 #include "enamewidget.h"
-#include "elanguage.h"
-#include "emainwindow.h"
+#include "language.h"
+#include "main-window.h"
 #include "engine/world-city.h"
 
 
@@ -14,7 +14,6 @@ void eMainMenu::initialize(const eAction& continueGameA,
                             const eAction& newGameA,
                             const eAction& loadGameA,
                             const eAction& editGameA,
-                            const eAction& settingsA,
                             const eAction& optionsA,
                             const eAction& quitA,
                             const eAction& leaderA) {
@@ -22,35 +21,54 @@ void eMainMenu::initialize(const eAction& continueGameA,
 
     const auto w = window();
 
-    const auto buttons = new eWidget(w);
-    addWidget(buttons);
+    mButtons = new eWidget(w);
+    addWidget(mButtons);
 
-    const auto res = resolution();
-    const int cww = res.centralWidgetLargeWidth();
-    const int cwh = res.centralWidgetLargeHeight();
-    buttons->resize(cww, cwh);
-
-    buttons->align(eAlignment::center);
-
-    const auto continueGame = addPlainButton("Continue Adventure",
-                                             continueGameA, buttons, w);
+    const auto continueGame = addPlainButton("Continue Adventure", continueGameA,
+                                             mButtons, w);
     continueGame->setEnabled(continueGameEnabled);
-    addFramedButton(eLanguage::zeusText(1, 1), newGameA, buttons, w);
-    addPlainButton(eLanguage::zeusText(1, 3), loadGameA, buttons, w);
-    addPlainButton(eLanguage::zeusText(287, 3), editGameA, buttons, w);
-    addPlainButton("Graphics", settingsA, buttons, w);
-    addPlainButton("Options", optionsA, buttons, w);
-    addPlainButton(eLanguage::zeusText(1, 5), quitA, buttons, w);
+    addFramedButton(Language::zeusText(1, 1), newGameA, mButtons, w);
+    addPlainButton(Language::zeusText(1, 3), loadGameA, mButtons, w);
+    addPlainButton(Language::zeusText(287, 3), editGameA, mButtons, w);
+    addPlainButton("Options", optionsA, mButtons, w);
+    addPlainButton(Language::zeusText(1, 5), quitA, mButtons, w);
 
-    buttons->layoutVertically();
+    mButtons->layoutVertically();
 
-    const auto leader = new FramedButton(w);
-    leader->setRenderBg(true);
-    leader->setUnderline(false);
-    leader->setPressAction(leaderA);
-    leader->setText(w->leader());
-    leader->fitContent();
-    addWidget(leader);
+    mLeader = new FramedButton(w);
+    mLeader->setRenderBg(true);
+    mLeader->setUnderline(false);
+    mLeader->setPressAction(leaderA);
+    mLeader->setText(w->leader());
+    mLeader->fitContent();
+    addWidget(mLeader);
+
+    layoutControls();
+}
+
+void eMainMenu::paintEvent(ePainter& p) {
+    eMainMenuBase::paintEvent(p);
+}
+
+void eMainMenu::windowSizeChanged(const int w, const int h) {
+    eMainMenuBase::windowSizeChanged(w, h);
+    layoutControls();
+}
+
+void eMainMenu::layoutControls() {
+    const auto res = resolution();
+    if(mButtons) {
+        mButtons->resize(res.centralWidgetLargeWidth(),
+                         res.centralWidgetLargeHeight());
+        mButtons->align(Alignment::center);
+        mButtons->layoutVertically();
+        for(const auto child : mButtons->children()) {
+            child->align(Alignment::hcenter);
+        }
+    }
+
+    if(!mLeader) return;
+    mLeader->fitContent();
     const int p = res.paddingXL();
     int tw;
     int th;
@@ -64,6 +82,6 @@ void eMainMenu::initialize(const eAction& continueGameA,
         const int dh = (int)(th * scale);
         imgX = (ww - dw) / 2;
     }
-    leader->setX(imgX + 2*p);
-    leader->setY(2*p);
+    mLeader->setX(imgX + 2*p);
+    mLeader->setY(2*p);
 }

@@ -3,9 +3,9 @@
 
 #include <string>
 
-#include "fileIO/estreams.h"
+#include "fileIO/streams.h"
 
-class eSaveArchive;
+class SaveArchive;
 
 enum class eMonth {
     january,
@@ -61,7 +61,7 @@ public:
     eDate operator-(const int d) const;
     int operator-(const eDate& d) const;
 
-    void serialize(eSaveArchive& ar);
+    void serialize(SaveArchive& ar);
 private:
     int mDay;
     eMonth mMonth;

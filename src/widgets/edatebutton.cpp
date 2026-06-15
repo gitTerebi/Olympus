@@ -1,7 +1,7 @@
 #include "edatebutton.h"
 
 #include "edatewidget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 void eDateButton::initialize() {
     setUnderline(false);
@@ -13,7 +13,7 @@ void eDateButton::initialize() {
         }, false);
         dw->setDate(mDate);
         window()->execDialog(dw);
-        dw->align(eAlignment::center);
+        dw->align(Alignment::center);
     });
     setDate(eDate(20, eMonth::june, -2000));
     fitContent();

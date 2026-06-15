@@ -1,5 +1,5 @@
 ﻿#include "soldier-action.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "characters/esoldier.h"
 #include "engine/game-board.h"
@@ -16,7 +16,7 @@
 #include "buildings/elite-housing.h"
 #include "buildings/sanctuaries/etemplebuilding.h"
 #include "ekillcharacterfinishfail.h"
-#include "enumbers.h"
+#include "numbers.h"
 
 SoldierAction::SoldierAction(eCharacter *const c) : FightingAction(c, eCharActionType::soldierAction) {}
 
@@ -392,7 +392,7 @@ bool SoldierAction::enemyNear() const
     return b->enemyNear(0);
 }
 
-void SoldierAction::serializeFields(eSaveArchive &ar)
+void SoldierAction::serializeFields(SaveArchive &ar)
 {
     FightingAction::serializeFields(ar);
     ar.field("spreadPeriod", mSpreadPeriod);

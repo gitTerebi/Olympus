@@ -1,6 +1,6 @@
 #include "elinewidget.h"
 
-#include "efontcolor.h"
+#include "font-color.h"
 
 void eLineWidget::sizeHint(int& w, int& h) {
     const auto res = resolution();

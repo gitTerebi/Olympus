@@ -1,5 +1,5 @@
 ﻿#include "eheroaction.h"
-#include "fileIO/esavearchive.h"
+#include "fileIO/save-archive.h"
 
 #include "characters/monsters/emonster.h"
 #include "characters/heroes/ehero.h"
@@ -68,7 +68,7 @@ void eHeroAction::increment(const int by) {
     eActionWithComeback::increment(by);
 }
 
-void eHeroAction::serializeFields(eSaveArchive& ar) {
+void eHeroAction::serializeFields(SaveArchive& ar) {
     eActionWithComeback::serializeFields(ar);
     ar.field("stage", mStage);
     ar.field("lookForMonster", mLookForMonster);

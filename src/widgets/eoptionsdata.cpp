@@ -1,8 +1,8 @@
 ﻿#include "eoptionsdata.h"
 
-#include "emainwindow.h"
-#include "esettings.h"
-#include "elanguage.h"
+#include "main-window.h"
+#include "settings.h"
+#include "language.h"
 #include "engine/game-board.h"
 #include "widgets/game-widget.h"
 
@@ -46,7 +46,7 @@ int bestResolutionForAspect(const std::string& aspect,
 }
 }
 
-std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
+std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
                                                  GameBoard* const board,
                                                  GameWidget* const gw) {
     const auto& settings = window->settings();
@@ -81,12 +81,12 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
             {
                 {
                     "Key scroll speed",
-                    eSettings::sMinKeyScrollSpeed,
-                    eSettings::sMaxKeyScrollSpeed,
+                    Settings::sMinKeyScrollSpeed,
+                    Settings::sMaxKeyScrollSpeed,
                     settings.fKeyScrollSpeed,
                     "",
                     [](const int v) {
-                        return eSettings::clampKeyScrollSpeed(v);
+                        return Settings::clampKeyScrollSpeed(v);
                     },
                     [window](const int speed) {
                         window->setKeyScrollSpeed(speed);
@@ -115,6 +115,17 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
             {},
             {}, // fDifficulties
             {
+                {"--- UI ---", {}, 0, nullptr},
+                {
+                    "UI scale",
+                    {"Tiny", "Small", "Medium", "Large"},
+                    static_cast<int>(settings.fUiScale),
+                    [window](const int v) { window->setUiScale(v); },
+                    [window](const int v) {
+                        return v != static_cast<int>(window->settings().fUiScale);
+                    }
+                },
+                {"--- Resolution ---", {}, 0, nullptr},
                 {
                     "Aspect",
                     aspectOptions,
@@ -126,15 +137,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                             window->settings().fRes);
                         if(resolution >= 0) window->setResolution(resolution);
                     },
-                    [window, aspectOptions](const int v) {
-                        if(v < 0 || v >= static_cast<int>(aspectOptions.size())) return false;
-                        const int resolution = bestResolutionForAspect(
-                            aspectOptions[v],
-                            window->settings().fRes);
-                        if(resolution < 0) return false;
-                        return eResolution::sResolutions[resolution].uiScale() !=
-                               window->settings().fRes.uiScale();
-                    }
+                    nullptr
                 },
                 {
                     "Resolution",
@@ -144,11 +147,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                         if(v < 0 || v >= static_cast<int>(resolutionIndices.size())) return;
                         window->setResolution(resolutionIndices[v]);
                     },
-                    [window, resolutionIndices](const int v) {
-                        if(v < 0 || v >= static_cast<int>(resolutionIndices.size())) return false;
-                        return eResolution::sResolutions[resolutionIndices[v]].uiScale() !=
-                               window->settings().fRes.uiScale();
-                    }
+                    nullptr
                 },
                 {
                     "Display",
@@ -156,6 +155,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                     static_cast<int>(settings.fDisplayMode),
                     [window](const int v) { window->setDisplayMode(v); }
                 },
+                {"--- Shader ---", {}, 0, nullptr},
                 {
                     "Filter",
                     {"Nearest", "Linear", "Hermite", "Cubic", "Lanczos"},
@@ -182,154 +182,154 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
             "Hotkeys",
             {},
             {
-                {"Game menu", eHotkeyId::gameMenu, settings.fHotkeyGameMenu,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Game menu", HotkeyId::gameMenu, settings.fHotkeyGameMenu,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Pause game", eHotkeyId::pause, settings.fHotkeyPause,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Pause game", HotkeyId::pause, settings.fHotkeyPause,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"--- Speed Control ---", eHotkeyId::speedUp, settings.fHotkeySpeedUp, nullptr},
-                {"Increase game speed", eHotkeyId::speedUp, settings.fHotkeySpeedUp,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"--- Speed Control ---", HotkeyId::speedUp, settings.fHotkeySpeedUp, nullptr},
+                {"Increase game speed", HotkeyId::speedUp, settings.fHotkeySpeedUp,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Decrease game speed", eHotkeyId::speedDown, settings.fHotkeySpeedDown,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Decrease game speed", HotkeyId::speedDown, settings.fHotkeySpeedDown,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"--- Building Tools ---", eHotkeyId::rotatePreview, settings.fHotkeyRotatePreview, nullptr},
-                {"Rotate building preview", eHotkeyId::rotatePreview, settings.fHotkeyRotatePreview,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"--- Building Tools ---", HotkeyId::rotatePreview, settings.fHotkeyRotatePreview, nullptr},
+                {"Rotate building preview", HotkeyId::rotatePreview, settings.fHotkeyRotatePreview,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Copy hovered building mode", eHotkeyId::copyBuilding, settings.fHotkeyCopyBuilding,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Copy hovered building mode", HotkeyId::copyBuilding, settings.fHotkeyCopyBuilding,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Delete tool", eHotkeyId::deleteTool, settings.fHotkeyDeleteTool,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Delete tool", HotkeyId::deleteTool, settings.fHotkeyDeleteTool,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Repair tool", eHotkeyId::repairTool, settings.fHotkeyRepairTool,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Repair tool", HotkeyId::repairTool, settings.fHotkeyRepairTool,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Undo last action", eHotkeyId::undo, settings.fHotkeyUndo,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Undo last action", HotkeyId::undo, settings.fHotkeyUndo,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"--- Construction ---", eHotkeyId::buildRoad, settings.fHotkeyBuildRoad, nullptr},
-                {"Build road", eHotkeyId::buildRoad, settings.fHotkeyBuildRoad,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"--- Construction ---", HotkeyId::buildRoad, settings.fHotkeyBuildRoad, nullptr},
+                {"Build road", HotkeyId::buildRoad, settings.fHotkeyBuildRoad,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Roadblock", eHotkeyId::buildRoadblock, settings.fHotkeyBuildRoadblock,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Roadblock", HotkeyId::buildRoadblock, settings.fHotkeyBuildRoadblock,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Maintenance office", eHotkeyId::buildMaintenanceOffice, settings.fHotkeyBuildMaintenanceOffice,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Maintenance office", HotkeyId::buildMaintenanceOffice, settings.fHotkeyBuildMaintenanceOffice,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Common housing", eHotkeyId::buildCommonHousing, settings.fHotkeyBuildCommonHousing,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Common housing", HotkeyId::buildCommonHousing, settings.fHotkeyBuildCommonHousing,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Watchpost", eHotkeyId::buildWatchpost, settings.fHotkeyBuildWatchpost,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Watchpost", HotkeyId::buildWatchpost, settings.fHotkeyBuildWatchpost,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Stamp tool", eHotkeyId::buildStamp, settings.fHotkeyBuildStamp,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Stamp tool", HotkeyId::buildStamp, settings.fHotkeyBuildStamp,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Display stamp manager", eHotkeyId::stampManager, settings.fHotkeyStampManager,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Display stamp manager", HotkeyId::stampManager, settings.fHotkeyStampManager,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Show roads overlay", eHotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Show roads overlay", HotkeyId::showRoadsOverlay, settings.fHotkeyShowRoadsOverlay,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"--- Camera ---", eHotkeyId::scrollLeft, settings.fHotkeyScrollLeft, nullptr},
-                {"Smooth scroll left", eHotkeyId::scrollLeft, settings.fHotkeyScrollLeft,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"--- Camera ---", HotkeyId::scrollLeft, settings.fHotkeyScrollLeft, nullptr},
+                {"Smooth scroll left", HotkeyId::scrollLeft, settings.fHotkeyScrollLeft,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Smooth scroll right", eHotkeyId::scrollRight, settings.fHotkeyScrollRight,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Smooth scroll right", HotkeyId::scrollRight, settings.fHotkeyScrollRight,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Smooth scroll up", eHotkeyId::scrollUp, settings.fHotkeyScrollUp,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Smooth scroll up", HotkeyId::scrollUp, settings.fHotkeyScrollUp,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Smooth scroll down", eHotkeyId::scrollDown, settings.fHotkeyScrollDown,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Smooth scroll down", HotkeyId::scrollDown, settings.fHotkeyScrollDown,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"--- Bookmarks ---", eHotkeyId::bookmark1, settings.fHotkeyBookmark1, nullptr},
-                {"Bookmark 1", eHotkeyId::bookmark1, settings.fHotkeyBookmark1,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"--- Bookmarks ---", HotkeyId::bookmark1, settings.fHotkeyBookmark1, nullptr},
+                {"Bookmark 1", HotkeyId::bookmark1, settings.fHotkeyBookmark1,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Bookmark 2", eHotkeyId::bookmark2, settings.fHotkeyBookmark2,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Bookmark 2", HotkeyId::bookmark2, settings.fHotkeyBookmark2,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Bookmark 3", eHotkeyId::bookmark3, settings.fHotkeyBookmark3,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Bookmark 3", HotkeyId::bookmark3, settings.fHotkeyBookmark3,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Bookmark 4", eHotkeyId::bookmark4, settings.fHotkeyBookmark4,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Bookmark 4", HotkeyId::bookmark4, settings.fHotkeyBookmark4,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"--- Menu Tabs ---", eHotkeyId::menuTab1, settings.fHotkeyMenuTab1, nullptr},
-                {"Population tab", eHotkeyId::menuTab1, settings.fHotkeyMenuTab1,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"--- Menu Tabs ---", HotkeyId::menuTab1, settings.fHotkeyMenuTab1, nullptr},
+                {"Population tab", HotkeyId::menuTab1, settings.fHotkeyMenuTab1,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Husbandry tab", eHotkeyId::menuTab2, settings.fHotkeyMenuTab2,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Husbandry tab", HotkeyId::menuTab2, settings.fHotkeyMenuTab2,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Industry tab", eHotkeyId::menuTab3, settings.fHotkeyMenuTab3,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Industry tab", HotkeyId::menuTab3, settings.fHotkeyMenuTab3,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Distribution tab", eHotkeyId::menuTab4, settings.fHotkeyMenuTab4,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Distribution tab", HotkeyId::menuTab4, settings.fHotkeyMenuTab4,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Hygiene & safety tab", eHotkeyId::menuTab5, settings.fHotkeyMenuTab5,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Hygiene & safety tab", HotkeyId::menuTab5, settings.fHotkeyMenuTab5,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Administration tab", eHotkeyId::menuTab6, settings.fHotkeyMenuTab6,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Administration tab", HotkeyId::menuTab6, settings.fHotkeyMenuTab6,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Culture tab", eHotkeyId::menuTab7, settings.fHotkeyMenuTab7,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Culture tab", HotkeyId::menuTab7, settings.fHotkeyMenuTab7,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Mythology tab", eHotkeyId::menuTab8, settings.fHotkeyMenuTab8,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Mythology tab", HotkeyId::menuTab8, settings.fHotkeyMenuTab8,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Military tab", eHotkeyId::menuTab9, settings.fHotkeyMenuTab9,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Military tab", HotkeyId::menuTab9, settings.fHotkeyMenuTab9,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Aesthetics tab", eHotkeyId::menuTab10, settings.fHotkeyMenuTab10,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Aesthetics tab", HotkeyId::menuTab10, settings.fHotkeyMenuTab10,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }},
-                {"Overview tab", eHotkeyId::menuTab11, settings.fHotkeyMenuTab11,
-                 [window](const eHotkeyId id, const SDL_Scancode key) {
+                {"Overview tab", HotkeyId::menuTab11, settings.fHotkeyMenuTab11,
+                 [window](const HotkeyId id, const SDL_Scancode key) {
                      window->setHotkey(id, key);
                  }}
             },
@@ -420,12 +420,12 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
             {
                 {
                     "General volume",
-                    eSettings::sMinVolume,
-                    eSettings::sMaxVolume,
+                    Settings::sMinVolume,
+                    Settings::sMaxVolume,
                     settings.fGeneralVolume,
                     "%",
                     [](const int v) {
-                        return eSettings::clampVolume(v);
+                        return Settings::clampVolume(v);
                     },
                     [window](const int v) {
                         window->setGeneralVolume(v);
@@ -433,12 +433,12 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                 },
                 {
                     "Music volume",
-                    eSettings::sMinVolume,
-                    eSettings::sMaxVolume,
+                    Settings::sMinVolume,
+                    Settings::sMaxVolume,
                     settings.fMusicVolume,
                     "%",
                     [](const int v) {
-                        return eSettings::clampVolume(v);
+                        return Settings::clampVolume(v);
                     },
                     [window](const int v) {
                         window->setMusicVolume(v);
@@ -446,12 +446,12 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                 },
                 {
                     "Voice volume",
-                    eSettings::sMinVolume,
-                    eSettings::sMaxVolume,
+                    Settings::sMinVolume,
+                    Settings::sMaxVolume,
                     settings.fVoiceVolume,
                     "%",
                     [](const int v) {
-                        return eSettings::clampVolume(v);
+                        return Settings::clampVolume(v);
                     },
                     [window](const int v) {
                         window->setVoiceVolume(v);
@@ -459,12 +459,12 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                 },
                 {
                     "Event volume",
-                    eSettings::sMinVolume,
-                    eSettings::sMaxVolume,
+                    Settings::sMinVolume,
+                    Settings::sMaxVolume,
                     settings.fEventVolume,
                     "%",
                     [](const int v) {
-                        return eSettings::clampVolume(v);
+                        return Settings::clampVolume(v);
                     },
                     [window](const int v) {
                         window->setEventVolume(v);
@@ -472,12 +472,12 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
                 },
                 {
                     "Ambient volume",
-                    eSettings::sMinVolume,
-                    eSettings::sMaxVolume,
+                    Settings::sMinVolume,
+                    Settings::sMaxVolume,
                     settings.fAmbientVolume,
                     "%",
                     [](const int v) {
-                        return eSettings::clampVolume(v);
+                        return Settings::clampVolume(v);
                     },
                     [window](const int v) {
                         window->setAmbientVolume(v);
@@ -494,7 +494,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(eMainWindow* const window,
             if(page.fButtonLabel != "Gameplay") continue;
             const auto pid = board->personPlayer();
             page.fDifficulties.push_back({
-                eLanguage::zeusText(44, 219),
+                Language::zeusText(44, 219),
                 [board, pid]() { return board->difficulty(pid); },
                 [board, gw](const Difficulty d) {
                     board->setDifficulty(d);

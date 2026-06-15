@@ -3,7 +3,7 @@
 #include <fstream>
 #include <regex>
 
-#include "egamedir.h"
+#include "game-dir.h"
 
 eSanctBlueprints eSanctBlueprints::instance;
 
@@ -232,7 +232,7 @@ eSanctBlueprint rotate(const eSanctBlueprint& src) {
 void eSanctBlueprints::loadImpl() {
     if(mLoaded) return;
     mLoaded = true;
-    const std::string dir = eGameDir::exeDir() + "../Sanctuaries/";
+    const std::string dir = GameDir::exeDir() + "../Sanctuaries/";
 
     loadBP(fZeusW, dir + "zeus.txt");
     fZeusH = rotate(fZeusW);

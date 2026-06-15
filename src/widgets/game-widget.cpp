@@ -1,5 +1,5 @@
 #include "game-widget.h"
-#include "enumbers.h"
+#include "numbers.h"
 #include "buildtools/road-tool.h"
 #include "buildtools/column-tool.h"
 #include "buildtools/bridge-tool.h"
@@ -14,7 +14,7 @@
 #include "emodal.h"
 #include "e-message-list-widget.h"
 #include "eoptionsdata.h"
-#include "egamedir.h"
+#include "game-dir.h"
 #include "engine/game-board.h"
 #include "engine/egifthelpers.h"
 #include "engine/world-city.h"
@@ -22,8 +22,8 @@
 #include "characters/monsters/emonster.h"
 #include "characters/echaracter.h"
 #include "characters/actions/ecomplexaction.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 
 #include "eflatbutton.h"
 #include "eframedlabel.h"
@@ -36,52 +36,52 @@
 #include <cmath>
 #include <set>
 
-void formatStoredMessage(eMessage& msg,
+void formatStoredMessage(Message& msg,
                          const eEventData& ed,
                          const std::string& playerName) {
     auto formatText = [&](std::string& text) {
-        eStringHelpers::replaceAll(text, "[greeting]",
-                                   eLanguage::text("greetings"));
-        eStringHelpers::replaceAll(text, "[player_name]", playerName);
-        eStringHelpers::replaceAll(text, "[god]", God::sGodName(ed.fGod));
-        eStringHelpers::replaceAll(text, "[monster]",
+        StringHelpers::replaceAll(text, "[greeting]",
+                                   Language::text("greetings"));
+        StringHelpers::replaceAll(text, "[player_name]", playerName);
+        StringHelpers::replaceAll(text, "[god]", God::sGodName(ed.fGod));
+        StringHelpers::replaceAll(text, "[monster]",
                                    eMonster::sMonsterName(ed.fMonster));
-        eStringHelpers::replaceAll(text, "[amount]",
+        StringHelpers::replaceAll(text, "[amount]",
                                    std::to_string(ed.fResourceCount));
-        eStringHelpers::replaceAll(text, "[amount_granted]",
+        StringHelpers::replaceAll(text, "[amount_granted]",
                                    std::to_string(ed.fResourceCount));
-        eStringHelpers::replaceAll(text, "[item]",
+        StringHelpers::replaceAll(text, "[item]",
                                    eResourceTypeHelpers::typeLongName(ed.fResourceType));
-        eStringHelpers::replaceAll(text, "[itemshort]",
+        StringHelpers::replaceAll(text, "[itemshort]",
                                    eResourceTypeHelpers::typeName(ed.fResourceType));
         if(ed.fTime > 0) {
             const auto time = std::to_string(ed.fTime);
-            eStringHelpers::replaceAll(text, "[time_until_attack]", time);
-            eStringHelpers::replaceAll(text, "[time_allotted]", time);
-            eStringHelpers::replaceAll(text, "[travel_time]", time);
+            StringHelpers::replaceAll(text, "[time_until_attack]", time);
+            StringHelpers::replaceAll(text, "[time_allotted]", time);
+            StringHelpers::replaceAll(text, "[travel_time]", time);
         }
         const int giftSize = eGiftHelpers::giftCount(ed.fResourceType);
         if(giftSize > 0) {
             const int size = ed.fResourceCount/giftSize;
             std::string giftSizeText;
-            if(size < 2) giftSizeText = eLanguage::zeusText(162, 0);
-            else if(size < 3) giftSizeText = eLanguage::zeusText(162, 1);
-            else giftSizeText = eLanguage::zeusText(162, 2);
-            eStringHelpers::replaceAll(text, "[gift_size]", giftSizeText);
+            if(size < 2) giftSizeText = Language::zeusText(162, 0);
+            else if(size < 3) giftSizeText = Language::zeusText(162, 1);
+            else giftSizeText = Language::zeusText(162, 2);
+            StringHelpers::replaceAll(text, "[gift_size]", giftSizeText);
         }
         if(const auto c = ed.fCity) {
             const auto nat = WorldCity::sNationalityName(c->nationality());
-            eStringHelpers::replaceAll(text, "[nationality]", nat);
-            eStringHelpers::replaceAll(text, "[city_name]", c->name());
-            eStringHelpers::replaceAll(text, "[last_colony]", c->name());
-            eStringHelpers::replaceAll(text, "[leader_name]", c->leader());
-            eStringHelpers::replaceAll(text, "[a_foreign_army]", c->anArmy());
+            StringHelpers::replaceAll(text, "[nationality]", nat);
+            StringHelpers::replaceAll(text, "[city_name]", c->name());
+            StringHelpers::replaceAll(text, "[last_colony]", c->name());
+            StringHelpers::replaceAll(text, "[leader_name]", c->leader());
+            StringHelpers::replaceAll(text, "[a_foreign_army]", c->anArmy());
         }
         const auto c = ed.fRivalCity ? ed.fRivalCity : ed.fCity;
         if(c) {
             const auto nat = WorldCity::sNationalityName(c->nationality());
-            eStringHelpers::replaceAll(text, "[rival_nationality]", nat);
-            eStringHelpers::replaceAll(text, "[rival_city_name]", c->name());
+            StringHelpers::replaceAll(text, "[rival_nationality]", nat);
+            StringHelpers::replaceAll(text, "[rival_city_name]", c->name());
         }
     };
     formatText(msg.fTitle);
@@ -106,14 +106,13 @@ void formatStoredMessage(eMessage& msg,
 #include "engine/boardData/eheatmaptask.h"
 #include "engine/epathfinder.h"
 
-#include "emainwindow.h"
-#include "esettings.h"
+#include "main-window.h"
+#include "settings.h"
 
 #include "framed-button.h"
 #include "eframedwidget.h"
 #include "elabel.h"
 #include "eoptionsmenu.h"
-#include "egraphicsmenu.h"
 #include "widgets/eboardsettingsmenu.h"
 #include "widgets/eflatbutton.h"
 #include "widgets/infowidgets/einfowidget.h"
@@ -139,12 +138,12 @@ void formatStoredMessage(eMessage& msg,
 #include "buildings/epier.h"
 #include "epierdebugwidget.h"
 
-#include "elanguage.h"
+#include "language.h"
 
 #include "widgets/eloadgame.h"
 #include "widgets/estampmanager.h"
-#include "evectorhelpers.h"
-#include "etilehelper.h"
+#include "vector-helpers.h"
+#include "tile-helper.h"
 #include "widgets/equestionwidget.h"
 
 #include "widgets/eenlistforcesdialog.h"
@@ -152,7 +151,7 @@ void formatStoredMessage(eMessage& msg,
 #include "widgets/eworldwidget.h"
 #include "engine/ecampaign.h"
 #include "audio/music.h"
-#include "spawners/ebanner.h"
+#include "spawners/banner.h"
 
 #include "buildable-helpers.h"
 #include "characters/etrireme.h"
@@ -160,7 +159,7 @@ void formatStoredMessage(eMessage& msg,
 #include "district-conditions-widget.h"
 #include "buildings/ehippodromepiece.h"
 #include "gameworld/ehitdetection.h"
-#include "estringhelpers.h"
+#include "string-helpers.h"
 
 #include <algorithm>
 #include <cmath>
@@ -186,7 +185,7 @@ namespace
     }
 }
 
-GameWidget::GameWidget(eMainWindow *const window) : eMainWidget(window) {
+GameWidget::GameWidget(MainWindow *const window) : eMainWidget(window) {
     mStampTool = std::make_shared<eStampTool>();
 }
 
@@ -231,7 +230,7 @@ void GameWidget::setBoard(GameBoard *const board)
                                  { return tileVisible(tile); });
     mBoard->setButtonsVisUpdater([this]()
                                  { mGm->updateButtonsVisibility(); });
-    mBoard->setMessageShower([this](eEventData &ed, const eMessageType &msg)
+    mBoard->setMessageShower([this](eEventData &ed, const MessageType &msg)
                              { showMessage(ed, msg); });
     mBoard->setTipShower([this](const ePlayerCityTarget &target,
                                 const std::string &tip)
@@ -254,13 +253,13 @@ void GameWidget::setBoard(GameBoard *const board)
         if(!played) eMusic::playMissionVictoryMusic();
 
         e->initialize(c,
-                      eLanguage::zeusText(62, 0),
+                      Language::zeusText(62, 0),
                       ee->fComplete,
                       mBoard->goals(),
                       proceedA,
                       eEpisodeIntroType::victory);
         addWidget(e);
-        e->align(eAlignment::vcenter);
+        e->align(Alignment::vcenter);
         e->setX(x() + (width() - e->width() - mGm->width())/2); });
     mBoard->setAutosaver([this]()
                          {
@@ -382,8 +381,8 @@ void GameWidget::initializeNumbers()
         const auto r = window()->renderer();
         for (int i = 0; i < 10; i++)
         {
-            const auto tex = std::make_shared<eTexture>();
-            tex->loadText(r, std::to_string(i), eFontColor::light, *font);
+            const auto tex = std::make_shared<Texture>();
+            tex->loadText(r, std::to_string(i), FontColor::light, *font);
             numbers.push_back(tex);
         }
     }
@@ -431,7 +430,7 @@ void GameWidget::createGameMenu()
     };
     mGm->initialize(mBoard, viewGoals);
     addWidget(mGm);
-    mGm->align(eAlignment::right | eAlignment::top);
+    mGm->align(Alignment::right | Alignment::top);
     mGm->setGameWidget(this);
 
     mGm->setViewTileHandler([this](eTile *const tile)
@@ -515,7 +514,7 @@ void GameWidget::initialize()
     mAm->initialize(*mBoard);
     mAm->setGameWidget(this);
     addWidget(mAm);
-    mAm->align(eAlignment::right | eAlignment::top);
+    mAm->align(Alignment::right | Alignment::top);
     mAm->hide();
 
     const auto mma = mAm->miniMap();
@@ -533,12 +532,12 @@ void GameWidget::initialize()
     mTopBar->setBoard(mBoard);
     mTopBar->setGameWidget(this);
     addWidget(mTopBar);
-    mTopBar->align(eAlignment::top);
+    mTopBar->align(Alignment::top);
 
     mTem = new eTerrainEditMenu(window());
     mTem->initialize(this, mBoard);
     addWidget(mTem);
-    mTem->align(eAlignment::right | eAlignment::top);
+    mTem->align(Alignment::right | Alignment::top);
     mTem->hide();
 
     const auto mm2 = mTem->miniMap();
@@ -562,7 +561,7 @@ void GameWidget::initialize()
 
     if (mEditorMode)
     {
-        const auto str = eLanguage::text("settings");
+        const auto str = Language::text("settings");
         const auto settingsButt = new FramedButton(str, window());
         settingsButt->fitContent();
         addWidget(settingsButt);
@@ -578,13 +577,13 @@ void GameWidget::initialize()
             settingsMenu->initialize(this, *mBoard);
 
             window()->execDialog(settingsMenu);
-            settingsMenu->align(eAlignment::center); });
+            settingsMenu->align(Alignment::center); });
 
         {
             const auto editorSwitch = new FramedButton(window());
             editorSwitch->setRenderBg(true);
             editorSwitch->setUnderline(false);
-            editorSwitch->setText(eLanguage::text("editor"));
+            editorSwitch->setText(Language::text("editor"));
             editorSwitch->fitContent();
             editorSwitch->move(mGm->x() - editorSwitch->width() - p,
                                mTopBar->height() + p);
@@ -605,7 +604,7 @@ void GameWidget::initialize()
         const auto condButton = new FramedButton(window());
         condButton->setRenderBg(true);
         condButton->setUnderline(false);
-        condButton->setText(eLanguage::text("conditions"));
+        condButton->setText(Language::text("conditions"));
         condButton->fitContent();
         cityEditorWidget->addWidget(condButton);
         condButton->setPressAction([this]()
@@ -640,12 +639,12 @@ void GameWidget::initialize()
             condsMenu->initialize(get, add, set, remove);
 
             window()->execDialog(condsMenu);
-            condsMenu->align(eAlignment::center); });
+            condsMenu->align(Alignment::center); });
 
         const auto saveButton = new FramedButton(window());
         saveButton->setRenderBg(true);
         saveButton->setUnderline(false);
-        saveButton->setText(eLanguage::zeusText(44, 74));
+        saveButton->setText(Language::zeusText(44, 74));
         saveButton->fitContent();
         cityEditorWidget->addWidget(saveButton);
         saveButton->setPressAction([this]()
@@ -654,7 +653,7 @@ void GameWidget::initialize()
         const auto restoreButton = new FramedButton(window());
         restoreButton->setRenderBg(true);
         restoreButton->setUnderline(false);
-        restoreButton->setText(eLanguage::text("restore"));
+        restoreButton->setText(Language::text("restore"));
         restoreButton->fitContent();
         cityEditorWidget->addWidget(restoreButton);
         restoreButton->setPressAction([this]()
@@ -668,7 +667,7 @@ void GameWidget::initialize()
         const auto cityEditorSwitch = new FramedButton(window());
         cityEditorSwitch->setRenderBg(true);
         cityEditorSwitch->setUnderline(false);
-        cityEditorSwitch->setText(eLanguage::text("city_editor"));
+        cityEditorSwitch->setText(Language::text("city_editor"));
         cityEditorSwitch->fitContent();
         cityEditorSwitch->move(p, mTopBar->height() + p);
         cityEditorSwitch->setPressAction([this, cityEditorWidget]()
@@ -778,15 +777,15 @@ void GameWidget::initialize()
         const auto button = new FramedButton(window());
         mBuyCityButton = button;
         button->setUnderline(false);
-        button->setText(eLanguage::zeusText(44, 5));
+        button->setText(Language::zeusText(44, 5));
         button->fitContent();
         innerWidget->addWidget(button);
 
         innerWidget->stackVertically(p);
         innerWidget->fitContent();
-        cityLabel->align(eAlignment::hcenter);
-        priceWidget->align(eAlignment::hcenter);
-        button->align(eAlignment::hcenter);
+        cityLabel->align(Alignment::hcenter);
+        priceWidget->align(Alignment::hcenter);
+        button->align(Alignment::hcenter);
         buyCityWidget->resize(innerWidget->width() + 2 * p,
                               innerWidget->height() + 2 * p);
         addWidget(buyCityWidget);
@@ -864,7 +863,7 @@ void GameWidget::tileViewFraction(eTile *const tile,
     const int bh = mBoard->height();
     int rdtx;
     int rdty;
-    eTileHelper::dTileIdToRotatedDTileId(tile->dx(), tile->dy(),
+    TileHelper::dTileIdToRotatedDTileId(tile->dx(), tile->dy(),
                                          rdtx, rdty, dir, bw, bh);
     const double tx = rdtx * mTileW;
     const double ty = 0.5 * rdty * mTileH;
@@ -899,7 +898,7 @@ void GameWidget::viewTile(eTile *const tile)
     const int height = mBoard->height();
     int rdtx;
     int rdty;
-    eTileHelper::dTileIdToRotatedDTileId(dtx, dty, rdtx, rdty,
+    TileHelper::dTileIdToRotatedDTileId(dtx, dty, rdtx, rdty,
                                          dir, width, height);
     const int tx = rdtx * mTileW;
     const int ty = rdty * mTileH / 2;
@@ -965,7 +964,7 @@ void GameWidget::showBuyCity(const eCityId cid)
     const auto c = mBoard->boardCityWithId(cid);
     const int price = c->basePrice();
     mBuyCityName->setText(mBoard->cityName(cid));
-    mBuyCityName->align(eAlignment::hcenter);
+    mBuyCityName->align(Alignment::hcenter);
     mBuyCityPrice->setText(std::to_string(price));
     mBuyCityWidget->show();
     const auto ppid = mBoard->personPlayer();
@@ -981,7 +980,7 @@ void GameWidget::showBuyCity(const eCityId cid)
             hideBuyCity();
             mGm->viewedCityChanged();
         } else {
-            showTip(ppid, eLanguage::zeusText(19, 19));
+            showTip(ppid, Language::zeusText(19, 19));
         } });
 }
 
@@ -1035,7 +1034,7 @@ void GameWidget::playVisibleAmbientSound(const int minX, const int maxX,
     const int cooldown = 60000;
     if (now - mLastAmbientSoundTime < interval)
         return;
-    if (eRand::rand() % 3 != 0)
+    if (Rand::rand() % 3 != 0)
         return;
 
     std::vector<eTile *> tiles;
@@ -1055,7 +1054,7 @@ void GameWidget::playVisibleAmbientSound(const int minX, const int maxX,
         if (tiles.empty())
             return false;
         const int size = tiles.size();
-        const int startId = eRand::rand() % size;
+        const int startId = Rand::rand() % size;
         for (int i = 0; i < size; i++)
         {
             const int id = (startId + i) % size;
@@ -1290,31 +1289,31 @@ void GameWidget::updateHippodromeIds()
 
     if (!topLeft && topLeftBlocked)
     {
-        eVectorHelpers::remove(mValiableHippodromePieces, 0);
-        eVectorHelpers::remove(mValiableHippodromePieces, 1);
-        eVectorHelpers::remove(mValiableHippodromePieces, 3);
-        eVectorHelpers::remove(mValiableHippodromePieces, 4);
+        VectorHelpers::remove(mValiableHippodromePieces, 0);
+        VectorHelpers::remove(mValiableHippodromePieces, 1);
+        VectorHelpers::remove(mValiableHippodromePieces, 3);
+        VectorHelpers::remove(mValiableHippodromePieces, 4);
     }
     if (!topRight && topRightBlocked)
     {
-        eVectorHelpers::remove(mValiableHippodromePieces, 2);
-        eVectorHelpers::remove(mValiableHippodromePieces, 3);
-        eVectorHelpers::remove(mValiableHippodromePieces, 5);
-        eVectorHelpers::remove(mValiableHippodromePieces, 6);
+        VectorHelpers::remove(mValiableHippodromePieces, 2);
+        VectorHelpers::remove(mValiableHippodromePieces, 3);
+        VectorHelpers::remove(mValiableHippodromePieces, 5);
+        VectorHelpers::remove(mValiableHippodromePieces, 6);
     }
     if (!bottomRight && bottomRightBlocked)
     {
-        eVectorHelpers::remove(mValiableHippodromePieces, 0);
-        eVectorHelpers::remove(mValiableHippodromePieces, 4);
-        eVectorHelpers::remove(mValiableHippodromePieces, 5);
-        eVectorHelpers::remove(mValiableHippodromePieces, 7);
+        VectorHelpers::remove(mValiableHippodromePieces, 0);
+        VectorHelpers::remove(mValiableHippodromePieces, 4);
+        VectorHelpers::remove(mValiableHippodromePieces, 5);
+        VectorHelpers::remove(mValiableHippodromePieces, 7);
     }
     if (!bottomLeft && bottomLeftBlocked)
     {
-        eVectorHelpers::remove(mValiableHippodromePieces, 1);
-        eVectorHelpers::remove(mValiableHippodromePieces, 2);
-        eVectorHelpers::remove(mValiableHippodromePieces, 6);
-        eVectorHelpers::remove(mValiableHippodromePieces, 7);
+        VectorHelpers::remove(mValiableHippodromePieces, 1);
+        VectorHelpers::remove(mValiableHippodromePieces, 2);
+        VectorHelpers::remove(mValiableHippodromePieces, 6);
+        VectorHelpers::remove(mValiableHippodromePieces, 7);
     }
 }
 
@@ -1368,7 +1367,7 @@ void GameWidget::showTip(const ePlayerCityTarget &target,
     etip.fTarget = target;
     etip.fText = tip;
     etip.fWid = msgb;
-    etip.fLastTick = mBoard->totalTime() + 14 * eNumbers::sDayLength;
+    etip.fLastTick = mBoard->totalTime() + 14 * Numbers::sDayLength;
     const auto etipPtr = &etip;
     msgb->setPressAction([etipPtr]()
                          { etipPtr->fLastTick = 0; });
@@ -1394,7 +1393,7 @@ void GameWidget::showQuestion(
     const auto qw = new eQuestionWidget(window());
     qw->initialize(title, q, acceptA, cancelA);
     addWidget(qw);
-    qw->align(eAlignment::vcenter);
+    qw->align(Alignment::vcenter);
     const int vw = width() - mGm->width();
     const int w = qw->width();
     qw->setX((vw - w) / 2);
@@ -1423,7 +1422,7 @@ void GameWidget::showQuestion(
     const auto icon = eResourceTypeHelpers::icon(resolution().uiScale(), resource);
     qw->initialize(title, q, icon, acceptA, cancelA);
     addWidget(qw);
-    qw->align(eAlignment::vcenter);
+    qw->align(Alignment::vcenter);
     const int vw = width() - mGm->width();
     const int w = qw->width();
     qw->setX((vw - w) / 2);
@@ -1510,7 +1509,7 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         const int p = fw->padding();
         fw->resize(60 * p, 11 * p);
         addWidget(fw);
-        fw->align(eAlignment::bottom);
+        fw->align(Alignment::bottom);
         fw->move((width() - mGm->width() - fw->width()) / 2, fw->y() - 2 * p);
 
         const auto fitWaypointText = [](auto* const w) {
@@ -1521,7 +1520,7 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
         const auto title = new eLabel("Waypoints", window());
         fitWaypointText(title);
         fw->addWidget(title);
-        title->align(eAlignment::hcenter);
+        title->align(Alignment::hcenter);
         title->setY(p);
 
         const auto buttons = new eWidget(window());
@@ -1539,7 +1538,7 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
             updateWaypointPath(); 
             setViewMode(mSavedViewMode); });
         buttons->addWidget(clearb);
-        clearb->align(eAlignment::vcenter);
+        clearb->align(Alignment::vcenter);
 
         const auto resetb = new eButton("restore", window());
         fitWaypointText(resetb);
@@ -1549,7 +1548,7 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
             waypoints = mSavedWaypoints;
             updateWaypointPath(); });
         buttons->addWidget(resetb);
-        resetb->align(eAlignment::vcenter);
+        resetb->align(Alignment::vcenter);
 
         const bool bd = pb->bothDirections();
         const auto bothTxt = bd ? "both ways" : "one way";
@@ -1563,14 +1562,14 @@ void GameWidget::setPatrolBuilding(ePatrolBuildingBase *const pb)
             bothb->setText(bothTxt);
             updateWaypointPath(); });
         buttons->addWidget(bothb);
-        bothb->align(eAlignment::vcenter);
+        bothb->align(Alignment::vcenter);
 
-        const auto closeb = new eButton(eLanguage::text("close"), window());
+        const auto closeb = new eButton(Language::text("close"), window());
         fitWaypointText(closeb);
         closeb->setPressAction([this]()
                                { setPatrolBuilding(nullptr); });
         buttons->addWidget(closeb);
-        closeb->align(eAlignment::vcenter);
+        closeb->align(Alignment::vcenter);
 
         buttons->layoutHorizontally();
 
@@ -2216,10 +2215,10 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
                     fw->deleteLater();
                 };
                 const auto dir = w->leaderSaveDir();
-                fw->intialize(eLanguage::zeusText(1, 4),
+                fw->intialize(Language::zeusText(1, 4),
                               dir, func, closeAct);
                 addWidget(fw);
-                fw->align(eAlignment::center);
+                fw->align(Alignment::center);
                 w->execDialog(fw);
             };
             const auto loadAct = [this, w]()
@@ -2241,7 +2240,7 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
                     fw->deleteLater();
                 };
                 const auto dir = w->leaderSaveDir();
-                fw->intialize(eLanguage::zeusText(1, 3),
+                fw->intialize(Language::zeusText(1, 3),
                               dir, func, closeAct);
                 w->execDialog(fw, true, closeAct);
             };
@@ -2263,7 +2262,7 @@ bool GameWidget::keyPressEvent(const eKeyPressEvent &e)
             menu->initialize(resumeAct, saveAct, loadAct, optionsAct,
                              exitAct);
             addWidget(menu);
-            menu->align(eAlignment::center);
+            menu->align(Alignment::center);
             w->execDialog(menu, true, closeMenu);
         }
     }
@@ -2395,7 +2394,7 @@ void GameWidget::smoothScroll()
 
 void GameWidget::setKeyScrollSpeed(const int speed)
 {
-    mKeyScrollSpeed = eSettings::clampKeyScrollSpeed(speed);
+    mKeyScrollSpeed = Settings::clampKeyScrollSpeed(speed);
     window()->setKeyScrollSpeed(mKeyScrollSpeed * 10);
 }
 
@@ -2623,12 +2622,12 @@ void brushTiles(GameBoard *const board, const int bSize,
 {
     int cdx0;
     int cdy0;
-    eTileHelper::tileIdToDTileId(cx, cy, cdx0, cdy0);
+    TileHelper::tileIdToDTileId(cx, cy, cdx0, cdy0);
     const int x0 = cx - bSize + 1;
     const int y0 = cy;
     int dx0;
     int dy0;
-    eTileHelper::tileIdToDTileId(x0, y0, dx0, dy0);
+    TileHelper::tileIdToDTileId(x0, y0, dx0, dy0);
     for (int ddy = 0; ddy < 2 * bSize - 1; ddy++)
     {
         const int dy = dy0 + ddy;
@@ -2755,7 +2754,7 @@ bool GameWidget::mouseMoveEvent(const eMouseEvent &e)
             //            if(!apply) return true;
             for (const auto t : mHoverTiles)
             {
-                const bool r = eVectorHelpers::contains(mInflTiles, t);
+                const bool r = VectorHelpers::contains(mInflTiles, t);
                 if (r)
                     continue;
                 //                apply(t);
@@ -3038,7 +3037,7 @@ void GameWidget::showGoals()
                   proceedA,
                   eEpisodeIntroType::goals);
     addWidget(e);
-    e->align(eAlignment::vcenter);
+    e->align(Alignment::vcenter);
     e->setX(x() + (width() - e->width() - mGm->width()) / 2);
     window()->execDialog(e);
 }
@@ -3062,31 +3061,6 @@ void GameWidget::showOptionsMenu(const int initialPage)
                          { window()->setWidget(this); });
 }
 
-void GameWidget::showGraphicsMenu()
-{
-    const auto w = window();
-    const auto esm = new eGraphicsMenu(w->settings(), w);
-    esm->resize(width(), height());
-    const auto applyA = [this, esm, w](const eSettings &settings)
-    {
-        const bool loadNeeded = settings.fRes.uiScale() != w->settings().fRes.uiScale();
-        w->applyGraphicsSettings(settings);
-        if (!loadNeeded)
-        {
-            removeWidget(esm);
-            esm->deleteLater();
-        }
-    };
-    const auto displayModeA = [w](const eDisplayMode mode)
-    {
-        w->setDisplayMode(mode);
-    };
-    esm->initialize(applyA, displayModeA);
-    addWidget(esm);
-    esm->align(eAlignment::center);
-    w->execDialog(esm);
-}
-
 void GameWidget::showStampManager()
 {
     mGm->setMode(eBuildingMode::none);
@@ -3101,7 +3075,7 @@ void GameWidget::showStampManager()
         beginStampTemplateCreate();
     });
     window()->execDialog(d);
-    d->align(eAlignment::center);
+    d->align(Alignment::center);
 }
 
 void GameWidget::beginStampTemplateCreate()
@@ -3162,7 +3136,7 @@ void GameWidget::beginStampTemplateCreate()
     const int panelH = cancelB->y() + cancelB->height() + p;
     panel->resize(panelW, panelH);
     addWidget(panel);
-    panel->align(eAlignment::bottom | eAlignment::hcenter);
+    panel->align(Alignment::bottom | Alignment::hcenter);
     panel->setY(panel->y() - 2 * padding());
     mStampTemplatePanel = panel;
 }
@@ -3228,7 +3202,7 @@ void GameWidget::updateStampTemplatePanel()
                             2 * mStampTemplatePanel->padding();
         if(neededW > mStampTemplatePanel->width()) {
             mStampTemplatePanel->resize(neededW, mStampTemplatePanel->height());
-            mStampTemplatePanel->align(eAlignment::bottom | eAlignment::hcenter);
+            mStampTemplatePanel->align(Alignment::bottom | Alignment::hcenter);
             mStampTemplatePanel->setY(mStampTemplatePanel->y() - 2 * padding());
         }
     }
@@ -3290,7 +3264,7 @@ void GameWidget::showStampTemplateNameDialog()
     d->resize(w, h);
 
     window()->execDialog(d);
-    d->align(eAlignment::center);
+    d->align(Alignment::center);
     edit->grabKeyboard();
 }
 
@@ -3309,7 +3283,7 @@ void GameWidget::saveStampTemplate(const std::string& name)
     if(safeName.empty()) safeName = "template";
 
     namespace fs = std::filesystem;
-    const fs::path dir = eGameDir::stampsDir();
+    const fs::path dir = GameDir::stampsDir();
     fs::path path = dir / (safeName + ".txt");
     int suffix = 2;
     while(fs::exists(path)) {
@@ -3607,7 +3581,7 @@ void GameWidget::setTileSize(const eTileSize size)
 {
     const auto &setts = window()->settings();
     const auto sizes = setts.availableSizes();
-    if (eVectorHelpers::contains(sizes, size))
+    if (VectorHelpers::contains(sizes, size))
     {
         mTileSize = size;
     }
@@ -3758,7 +3732,7 @@ void GameWidget::updateBeforePaint()
         while(!mPendingToasts.empty() && (turbo || mToasts.size() < 3)) {
             eToast toast = mPendingToasts.front();
             mPendingToasts.pop_front();
-            toast.fExpireTick = mBoard->totalTime() + 14 * eNumbers::sDayLength;
+            toast.fExpireTick = mBoard->totalTime() + 14 * Numbers::sDayLength;
             createToastWidget(toast);
             mToasts.push_back(toast);
             updateToasts = true;

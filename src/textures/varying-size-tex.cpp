@@ -70,17 +70,17 @@ void VaryingSizeTex::get(eTile* const tile,
     drawDim = 1;
 }
 
-std::shared_ptr<eTexture> VaryingSizeTex::getVaryingTexture(
+std::shared_ptr<Texture> VaryingSizeTex::getVaryingTexture(
         const eVaryingFunc& func,
         eTile* const tile,
-        const eTextureCollection& small,
-        const eTextureCollection& large,
-        const eTextureCollection& huge,
+        const TextureCollection& small,
+        const TextureCollection& large,
+        const TextureCollection& huge,
         int& drawDim,
         const eWorldDirection dir) {
     func(tile, drawDim, dir);
     if(drawDim == 0) {
-        return std::shared_ptr<eTexture>();
+        return std::shared_ptr<Texture>();
     } else if(drawDim == 1) {
         const auto& coll = small;
         const int texId = tile->seed() % coll.size();
@@ -94,5 +94,5 @@ std::shared_ptr<eTexture> VaryingSizeTex::getVaryingTexture(
         const int texId = tile->seed() % coll.size();
         return coll.getTexture(texId);
     }
-    return std::shared_ptr<eTexture>();
+    return std::shared_ptr<Texture>();
 }

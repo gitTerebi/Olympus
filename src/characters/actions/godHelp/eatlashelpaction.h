@@ -7,7 +7,7 @@ enum class eAtlasHelpStage {
     none, appear, goTo, give, giving, disappear
 };
 
-class eSaveArchive;
+class SaveArchive;
 
 class eAtlasHelpAction : public eGodAction {
 public:
@@ -21,7 +21,7 @@ public:
     void rebuildCurrentStage();
     void finishGiving();
 protected:
-    void serializeFields(eSaveArchive& ar) override;
+    void serializeFields(SaveArchive& ar) override;
     void resumeFromSavedState() override;
 private:
     void goToTarget();
@@ -50,7 +50,7 @@ public:
     }
 
 protected:
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.characterActionAsField("target", &board(), mTptr);
     }
 private:
@@ -83,7 +83,7 @@ public:
         }
     }
 
-    void serializeFields(eSaveArchive& ar) override {
+    void serializeFields(SaveArchive& ar) override {
         ar.buildingAsField("targetMonument", &board(), mTarget);
     }
 private:
