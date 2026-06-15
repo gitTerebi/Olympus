@@ -1,35 +1,35 @@
 ﻿#include "widgets/game-widget.h"
-#include "emainwindow.h"
+#include "main-window.h"
 
 #include "widgets/e-message-list-widget.h"
 #include "widgets/e-message-box.h"
 #include "engine/game-board.h"
-#include "elanguage.h"
-#include "estringhelpers.h"
+#include "language.h"
+#include "string-helpers.h"
 
-void formatStoredMessage(eMessage& msg, const eEventData& ed, const std::string& playerName);
+void formatStoredMessage(Message& msg, const eEventData& ed, const std::string& playerName);
 
 void GameWidget::showMessage(eEventData &ed,
-                              const eMessageType &msg,
+                              const MessageType &msg,
                               const bool prepend)
 {
     showMessage(ed, msg.fFull, prepend, false, true);
 }
 
 void GameWidget::showMessage(eEventData &ed,
-                              const eEventMessageType &msg,
+                              const EventMessageType &msg,
                               const bool prepend)
 {
-    eMessageType m = msg;
+    MessageType m = msg;
     std::string reason = ed.fReason;
     if (reason.empty())
         reason = msg.fNoReason;
-    eStringHelpers::replace(m.fFull.fText, "[reason_phrase]", reason);
+    StringHelpers::replace(m.fFull.fText, "[reason_phrase]", reason);
     showMessage(ed, m.fFull, prepend, false, true);
 }
 
 void GameWidget::showMessage(eEventData &ed,
-                              const eMessage &msg,
+                              const Message &msg,
                               const bool prepend,
                               const bool forcePopup,
                               const bool logToHistory)
@@ -203,7 +203,5 @@ void GameWidget::showMessage(eEventData &ed,
 
     msgb->initialize(*mBoard, ed, a, close, msg);
     window()->execDialog(msgb, msgb->closable(), close, this);
-    msgb->align(eAlignment::bottom | eAlignment::hcenter);
-    msgb->setY(msgb->y() - mGm->width() / 10);
-    msgb->setX(msgb->x() - mGm->width() / 2);
+    msgb->align(Alignment::center);
 }
