@@ -3,12 +3,12 @@
 #include "edonkey.h"
 #include "characters/actions/efollowaction.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Trader::Trader(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fTrader,
+    eBasicPatroler(board, &CharacterTextures::fTrader,
                    eCharacterType::trader) {
-    eGameTextures::loadTrader();
+    GameTextures::loadTrader();
 }
 
 void Trader::createFollowers() {

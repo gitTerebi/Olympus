@@ -53,5 +53,5 @@ void eLavaEvent::serializeFields(eSaveArchive& ar) {
 }
 
 void eLavaEvent::loadResources() const {
-    eGameTextures::loadLava();
+    GameTextures::loadLava();
 }

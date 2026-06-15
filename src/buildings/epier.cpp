@@ -1,6 +1,6 @@
 #include "epier.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
@@ -25,7 +25,7 @@ ePier::ePier(GameBoard &board, const eDiagonalOrientation o,
              const eCityId cid) : eBuilding(board, eBuildingType::pier, 2, 2, cid),
                                   mO(o)
 {
-    eGameTextures::loadPier();
+    GameTextures::loadPier();
     setOverlayEnabledFunc([]()
                           { return true; });
 }
@@ -33,7 +33,7 @@ ePier::ePier(GameBoard &board, const eDiagonalOrientation o,
 std::shared_ptr<eTexture> ePier::getTexture(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
-    const auto &blds = eGameTextures::buildings();
+    const auto &blds = GameTextures::buildings();
     const auto &coll = blds[sizeId].fPier1;
     auto &board = getBoard();
     const auto dir = board.direction();
@@ -65,7 +65,7 @@ std::vector<eOverlay> ePier::getOverlays(const eTileSize size) const
 {
     std::vector<eOverlay> os;
     const int sizeId = static_cast<int>(size);
-    const auto &blds = eGameTextures::buildings();
+    const auto &blds = GameTextures::buildings();
     const auto &coll = mLoading ? blds[sizeId].fPierLoadOverlay
                                 : blds[sizeId].fPierOverlay;
     const int per = mLoading ? 34 : 32;

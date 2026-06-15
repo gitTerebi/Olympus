@@ -165,7 +165,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
     const auto scrollbar = new eScrollBar(window());
     {
-        const auto probe = new eBasicButton(&eInterfaceTextures::fBigUpButton, window());
+        const auto probe = new eBasicButton(&InterfaceTextures::fBigUpButton, window());
         const int sbW = probe->width() / 2;
         probe->deleteLater();
         scrollbar->resize(sbW, 1);

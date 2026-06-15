@@ -56,5 +56,5 @@ void eTidalWaveEvent::serializeFields(eSaveArchive& ar) {
 }
 
 void eTidalWaveEvent::loadResources() const {
-    eGameTextures::loadWave();
+    GameTextures::loadWave();
 }

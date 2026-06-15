@@ -1,9 +1,9 @@
 #include "shepherd.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Shepherd::Shepherd(GameBoard& board) :
-    eShepherdBase(board, &eCharacterTextures::fShepherd,
+    eShepherdBase(board, &CharacterTextures::fShepherd,
                   eCharacterType::shepherd) {
-    eGameTextures::loadShepherd();
+    GameTextures::loadShepherd();
 }

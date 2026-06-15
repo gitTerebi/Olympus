@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "audio/sounds.h"
 
-#include "textures/emarbletile.h"
+#include "textures/marble-tile.h"
 
 #include "engine/eregrowforestaction.h"
 #include "enumbers.h"

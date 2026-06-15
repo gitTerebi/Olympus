@@ -11,7 +11,7 @@ public:
 
     std::vector<eOverlay> getOverlays(const eTileSize size) const;
 private:
-    const std::vector<eBuildingTextures>& mTextures;
+    const std::vector<BuildingTextures>& mTextures;
 };
 
 #endif // ECARDINGSHED_H

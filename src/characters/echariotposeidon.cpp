@@ -1,10 +1,10 @@
 #include "echariotposeidon.h"
 
-#include "textures/echaractertextures.h"
-#include "textures/egametextures.h"
+#include "textures/character-textures.h"
+#include "textures/game-textures.h"
 
 eChariotPoseidon::eChariotPoseidon(GameBoard& board) :
-    eChariotBase(board, &eCharacterTextures::fChariotPoseidon,
+    eChariotBase(board, &CharacterTextures::fChariotPoseidon,
                  eCharacterType::chariotPoseidon) {
-    eGameTextures::loadChariotPoseidon();
+    GameTextures::loadChariotPoseidon();
 }

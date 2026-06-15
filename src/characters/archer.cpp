@@ -1,6 +1,6 @@
 #include "archer.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "enumbers.h"
 
@@ -12,13 +12,13 @@ Archer::Archer(GameBoard& board) :
 std::shared_ptr<eTexture>
 Archer::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters()[id];
-    const eArcherTextures* charTexs;
+    const auto& texs = GameTextures::characters()[id];
+    const ArcherTextures* charTexs;
     if(atlantean()) {
-        eGameTextures::loadPoseidonTowerArcher();
+        GameTextures::loadPoseidonTowerArcher();
         charTexs = &texs.fPoseidonTowerArcher;
     } else {
-        eGameTextures::loadArcher();
+        GameTextures::loadArcher();
         charTexs = &texs.fArcher;
     }
     const eTextureCollection* coll = nullptr;

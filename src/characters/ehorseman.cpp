@@ -1,9 +1,9 @@
 #include "ehorseman.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eHorseman::eHorseman(GameBoard& board) :
-    eHorsemanBase(board, &eCharacterTextures::fHorseman,
+    eHorsemanBase(board, &CharacterTextures::fHorseman,
                   eCharacterType::horseman) {
-    eGameTextures::loadHorseman();
+    GameTextures::loadHorseman();
 }

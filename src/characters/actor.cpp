@@ -1,10 +1,10 @@
 #include "actor.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Actor::Actor(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fActor,
+    eBasicPatroler(board, &CharacterTextures::fActor,
                    eCharacterType::actor) {
     setProvide(eProvide::actorAstronomer, 10000);
-    eGameTextures::loadActor();
+    GameTextures::loadActor();
 }

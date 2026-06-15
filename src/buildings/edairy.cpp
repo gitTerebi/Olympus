@@ -1,7 +1,7 @@
 #include "edairy.h"
 
 #include "characters/goatherd.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "characters/actions/shepherd-action.h"
 
 #include <algorithm>
@@ -11,16 +11,16 @@ stdsptr<eResourceCollectorBase> dairyCharGenerator(GameBoard& board) {
 }
 
 eDairy::eDairy(GameBoard& board, const eCityId cid) :
-    eShepherBuildingBase(board, &eBuildingTextures::fDairy,
+    eShepherBuildingBase(board, &BuildingTextures::fDairy,
                          -1.35, -2.95,
-                         &eBuildingTextures::fDairyOverlay,
+                         &BuildingTextures::fDairyOverlay,
                          dairyCharGenerator,
                          eBuildingType::dairy,
                          eResourceType::cheese,
                          eCharacterType::goat,
                          2, 2, 8, cid),
-    mTextures(eGameTextures::buildings())  {
-    eGameTextures::loadDairy();
+    mTextures(GameTextures::buildings())  {
+    GameTextures::loadDairy();
 }
 
 std::vector<eOverlay> eDairy::getOverlays(const eTileSize size) const {

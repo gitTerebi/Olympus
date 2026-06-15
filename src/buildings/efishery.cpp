@@ -2,7 +2,7 @@
 
 #include "characters/efishingboat.h"
 #include "characters/actions/ecollectresourceaction.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 #include "engine/game-board.h"
 #include "enumbers.h"
@@ -14,7 +14,7 @@ eFishery::eFishery(GameBoard& board,
                                  2, 2, 10, eResourceType::fish,
                                  cid),
     mO(o) {
-    eGameTextures::loadFishery();
+    GameTextures::loadFishery();
 }
 
 eFishery::~eFishery() {
@@ -52,7 +52,7 @@ void eFishery::timeChanged(const int by) {
 
 std::shared_ptr<eTexture> eFishery::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].fFishery;
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -81,7 +81,7 @@ std::shared_ptr<eTexture> eFishery::getTexture(const eTileSize size) const {
 
 std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto oo = sRotated(mO, dir);

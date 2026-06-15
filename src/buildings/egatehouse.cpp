@@ -3,14 +3,14 @@
 #include "engine/game-board.h"
 #include "eroad.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eGatehouse::eGatehouse(GameBoard& board, const bool r,
                        const eCityId cid) :
     eBuilding(board, eBuildingType::gatehouse,
               r ? 2 : 5, r ? 5 : 2, cid),
     mRotated(r) {
-    eGameTextures::loadGatehouseAndTower();
+    GameTextures::loadGatehouseAndTower();
     setEnabled(true);
 }
 
@@ -57,7 +57,7 @@ eGatehouse::getTextureSides(const eTileSize size) const {
     const bool rotatedDir = dir == eWorldDirection::E ||
                             dir == eWorldDirection::W;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const auto& coll = mRotated != rotatedDir ? blds.fGatehouseH :
                                                 blds.fGatehouseW;
     return coll.getTexture(0);
@@ -69,7 +69,7 @@ eOverlay eGatehouse::getTextureEntrance(const eTileSize size) const {
     const bool rotatedDir = dir == eWorldDirection::E ||
                             dir == eWorldDirection::W;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const auto& coll = mRotated != rotatedDir ? blds.fGatehouseH :
                                                 blds.fGatehouseW;
     const bool switchedOrder = dir == eWorldDirection::S ||
@@ -94,7 +94,7 @@ eOverlay eGatehouse::getTextureEntranceBack(const eTileSize size) const {
     const bool rotatedDir = dir == eWorldDirection::E ||
                             dir == eWorldDirection::W;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const auto& coll = mRotated != rotatedDir ? blds.fGatehouseH :
                                                 blds.fGatehouseW;
     const bool switchedOrder = dir == eWorldDirection::S ||
@@ -119,7 +119,7 @@ eOverlay eGatehouse::getTextureEntranceOverlay(const eTileSize size) const {
     const bool rotatedDir = dir == eWorldDirection::E ||
                             dir == eWorldDirection::W;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const auto& coll = mRotated!= rotatedDir  ? blds.fGatehouseH :
                                                 blds.fGatehouseW;
     eOverlay o;

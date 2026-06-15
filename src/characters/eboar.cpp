@@ -1,10 +1,10 @@
 #include "eboar.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eBoar::eBoar(GameBoard& board) :
-    eWildAnimal(board, &eCharacterTextures::fBoar,
+    eWildAnimal(board, &CharacterTextures::fBoar,
     eCharacterType::boar) {
-    eGameTextures::loadBoar();
+    GameTextures::loadBoar();
     setCityId(eCityId::neutralFriendly);
 }

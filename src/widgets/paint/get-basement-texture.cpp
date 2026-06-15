@@ -7,7 +7,7 @@
 stdsptr<eTexture> GameWidget::getBasementTexture(
     const int viewTileX, const int viewTileY,
     eBuilding *const building,
-    const eTerrainTextures &trrTexs,
+    const TerrainTextures &trrTexs,
     const eWorldDirection dir,
     const int boardWidth,
     const int boardHeight)

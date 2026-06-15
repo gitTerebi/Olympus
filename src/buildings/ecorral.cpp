@@ -1,7 +1,7 @@
 #include "ecorral.h"
 #include "fileIO/esavearchive.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "characters/butcher.h"
 #include "characters/ecattle.h"
 #include "characters/actions/efollowaction.h"
@@ -16,18 +16,18 @@ eCorral::eCorral(GameBoard& board,
     eResourceBuildingBase(board, eBuildingType::corral,
                           4, 4, 25, eResourceType::meat,
                           cid) {
-    eGameTextures::loadCorral();
+    GameTextures::loadCorral();
 }
 
 std::shared_ptr<eTexture> eCorral::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     return blds[sizeId].fCorral;
 }
 
 std::vector<eOverlay> eCorral::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
     std::vector<eOverlay> result;
     if(resource() > 0) {
@@ -69,8 +69,8 @@ std::vector<eOverlay> eCorral::getOverlays(const eTileSize size) const {
         o.fY = -4.44;
     }
     if(mNCattle > 0) {
-        eGameTextures::loadCattle();
-        const auto& chars = eGameTextures::characters();
+        GameTextures::loadCattle();
+        const auto& chars = GameTextures::characters();
         const auto& texs = chars[sizeId];
         const auto& coll = texs.fCattle1.fStand;
         const int texId = textureTime() % coll.size();

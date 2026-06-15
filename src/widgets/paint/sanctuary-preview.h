@@ -13,8 +13,8 @@ class eBuilding;
 class eTexture;
 enum class eBuildingMode;
 enum class eBuildingType;
-class eBuildingTextures;
-class eTerrainTextures;
+class BuildingTextures;
+class TerrainTextures;
 class eTilePainter;
 class GameBoard;
 enum class eCityId;
@@ -83,26 +83,26 @@ struct SanctuaryTempleTextures {
 };
 
 SanctuaryTempleTextures sanctuaryTempleGetTextures(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     int rotateId,
     eWorldDirection dir,
     int animFrame,
     int stage);
 
 std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     GodType god,
     int rotateId,
     eWorldDirection dir);
 
 std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     GodType god,
     int rotateId,
     eWorldDirection dir);
 
 std::shared_ptr<eTexture> sanctuaryAltarGetTexture(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     int rotateId);
 
 void sanctuaryTempleDrawOrigin(
@@ -117,7 +117,7 @@ void sanctuaryTempleDrawOrigin(
 void drawSanctuaryTempleBuildingPreview(
     GameBoard &board,
     eTilePainter &tp,
-    const eBuildingTextures &builTexs,
+    const BuildingTextures &builTexs,
     int worldTileX,
     int worldTileY,
     int altitude,
@@ -130,7 +130,7 @@ void drawSanctuaryTempleBuildingPreview(
 void drawSanctuaryStatuePreview(
     GameBoard &board,
     eTilePainter &tp,
-    const eBuildingTextures &builTexs,
+    const BuildingTextures &builTexs,
     GodType god,
     int statueTextureId,
     int worldTileX,
@@ -142,7 +142,7 @@ void drawSanctuaryStatuePreview(
 void drawSanctuaryMonumentPreview(
     GameBoard &board,
     eTilePainter &tp,
-    const eBuildingTextures &builTexs,
+    const BuildingTextures &builTexs,
     GodType god,
     int monumentTextureId,
     int worldTileX,
@@ -154,7 +154,7 @@ void drawSanctuaryMonumentPreview(
 void drawSanctuaryAltarPreview(
     GameBoard &board,
     eTilePainter &tp,
-    const eBuildingTextures &builTexs,
+    const BuildingTextures &builTexs,
     int worldTileX,
     int worldTileY,
     int altitude,
@@ -165,7 +165,7 @@ void drawSanctuaryAltarPreview(
 void drawSanctuaryTorchPreview(
     GameBoard &board,
     eTilePainter &tp,
-    const eBuildingTextures &builTexs,
+    const BuildingTextures &builTexs,
     int worldTileX,
     int worldTileY,
     int altitude,
@@ -174,8 +174,8 @@ void drawSanctuaryTorchPreview(
 void drawSanctuaryTerrainPreview(
     GameBoard &board,
     eTilePainter &tp,
-    const eBuildingTextures &builTexs,
-    const eTerrainTextures &trrTexs,
+    const BuildingTextures &builTexs,
+    const TerrainTextures &trrTexs,
     eBuildingMode mode,
     int rotateId,
     int hoverTX,

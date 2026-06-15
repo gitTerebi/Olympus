@@ -1,6 +1,6 @@
 #include "epyramidmuseum.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epyramid.h"
 
 ePyramidMuseum::ePyramidMuseum(
@@ -10,7 +10,7 @@ ePyramidMuseum::ePyramidMuseum(
         const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidMuseum,
                     elevation, 6, cid) {
-    eGameTextures::loadMuseum();
+    GameTextures::loadMuseum();
 }
 
 ePyramidMuseum::ePyramidMuseum(
@@ -22,12 +22,12 @@ ePyramidMuseum::ePyramidMuseum(
                     {eSanctCost{10, 10, 0}},
                     board, eBuildingType::pyramidMuseum,
                     elevation, 6, cid) {
-    eGameTextures::loadMuseum();
+    GameTextures::loadMuseum();
 }
 
 stdsptr<eTexture> ePyramidMuseum::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     return blds.fMuseum;
 }

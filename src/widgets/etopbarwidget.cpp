@@ -3,7 +3,7 @@
 #include "engine/game-board.h"
 #include "engine/boardData/eemploymentdata.h"
 #include "engine/boardData/epopulationdata.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "ebutton.h"
 #include "edatewidget.h"
 #include "game-widget.h"
@@ -37,7 +37,7 @@ std::string unemployedText(const eEmploymentData& emplData) {
 }
 
 void eTopBarWidget::initialize() {
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto uiScale = resolution().uiScale();
     const int icoll = static_cast<int>(uiScale);
     const int mult = icoll + 1;
@@ -171,7 +171,7 @@ void eTopBarWidget::paintEvent(ePainter& p) {
         int iRes;
         int mult;
         iResAndMult(iRes, mult);
-        const auto& intrfc = eGameTextures::interface()[iRes];
+        const auto& intrfc = GameTextures::interface()[iRes];
         const auto& tex = intrfc.fGameTopBar;
         const int texWidth = tex->width();
         const auto& rend = p.renderer();

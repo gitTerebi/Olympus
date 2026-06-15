@@ -1,12 +1,12 @@
 #include "egranary.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eGranary::eGranary(GameBoard& board, const eCityId cid) :
     eStorageBuilding(board, eBuildingType::granary,
                      4, 4, 18, eResourceType::food, cid),
-    mTextures(eGameTextures::buildings()) {
-    eGameTextures::loadGranary();
+    mTextures(GameTextures::buildings()) {
+    GameTextures::loadGranary();
     setOverlayEnabledFunc([]() { return true; });
 }
 

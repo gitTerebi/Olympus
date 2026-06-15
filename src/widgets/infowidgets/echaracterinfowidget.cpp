@@ -7,7 +7,7 @@
 #include "characters/egrower.h"
 #include "characters/ehunter.h"
 #include "widgets/elabel.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "elanguage.h"
 #include "characters/gods/god.h"
 #include "characters/heroes/ehero.h"
@@ -36,7 +36,7 @@ std::shared_ptr<eTexture> gCharPortrait(
     const auto type = c->type();
     const auto uiScale = res.uiScale();
     const int iRes = static_cast<int>(uiScale);
-    const auto &intrfc = eGameTextures::interface()[iRes];
+    const auto &intrfc = GameTextures::interface()[iRes];
     const auto &zp = intrfc.fZeusPortraits;
     const auto &zgp = intrfc.fZeusGodPortraits;
     const auto &pp = intrfc.fPoseidonPortraits;
@@ -2135,7 +2135,7 @@ void eCharacterInfoWidget::initialize(const std::vector<eCharacter *> chars)
     mTextWidget->addWidget(mMsgLabel);
 
     const auto speakButton = new eBasicButton(
-        &eInterfaceTextures::fSpeakButton, window());
+        &InterfaceTextures::fSpeakButton, window());
     speakButton->setPressAction([this]()
                                 {
         if(mSpeakAction) mSpeakAction(); });

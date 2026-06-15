@@ -1,8 +1,8 @@
 #include "eresourcebuilding.h"
 #include "fileIO/esavearchive.h"
 
-#include "textures/egametextures.h"
-#include "textures/ebuildingtextures.h"
+#include "textures/game-textures.h"
+#include "textures/building-textures.h"
 #include "engine/game-board.h"
 #include "engine/edate.h"
 #include "enumbers.h"
@@ -58,19 +58,19 @@ eResourceBuilding::eResourceBuilding(
     mType(type), mRipePeriod(resourceTypeToRipePeriod(type)) {
     switch(type) {
     case eResourceBuildingType::oliveTree:
-        eGameTextures::loadOliveTree();
+        GameTextures::loadOliveTree();
         break;
     case eResourceBuildingType::vine:
-        eGameTextures::loadVine();
+        GameTextures::loadVine();
         break;
     case eResourceBuildingType::orangeTree:
-        //eGameTextures::loadOrangeTree();
+        //GameTextures::loadOrangeTree();
         break;
     }
 }
 
 std::shared_ptr<eTexture> eResourceBuilding::getTexture(const eTileSize size) const {
-    const auto& texs = eGameTextures::buildings();
+    const auto& texs = GameTextures::buildings();
     const int sizeId = static_cast<int>(size);
     const auto& colls = texs[sizeId];
     switch(mType) {

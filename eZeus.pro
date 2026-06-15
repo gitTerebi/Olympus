@@ -363,8 +363,8 @@ SOURCES += \
         characters/monsters/ecalydonianboar.cpp \
         characters/monsters/emonster.cpp \
         characters/monsters/ewatermonster.cpp \
-        ebinaryimageloader.cpp \
-        ebuildablehelpers.cpp \
+        binary-image-loader.cpp \
+        buildable-helpers.cpp \
         efontcolor.cpp \
         egamedir.cpp \
         e-invasion-handler.cpp \
@@ -546,40 +546,40 @@ SOURCES += \
         spawners/eseainvasionpoint.cpp \
         spawners/espawner.cpp \
         spawners/ewolfspawner.cpp \
-        textures/ebeachtodry.cpp \
-        textures/ebuildingtextures.cpp \
-        textures/ebuildingtextures1.cpp \
-        textures/ebuildingtextures2.cpp \
-        textures/echaractertextures.cpp \
-        textures/echaractertextures1.cpp \
-        textures/echaractertextures2.cpp \
-        textures/echaractertextures3.cpp \
-        textures/echaractertextures4.cpp \
-        textures/echaractertextures5.cpp \
-        textures/echaractertextures6.cpp \
-        textures/echaractertextures7.cpp \
-        textures/echaractertextures8.cpp \
-        textures/echaractertextures9.cpp \
-        textures/edestructiontextures.cpp \
-        textures/efertiletodry.cpp \
-        textures/eforesttodry.cpp \
-        textures/egametextures.cpp \
-        textures/egodtextures.cpp \
-        textures/einterfacetextures.cpp \
-        textures/elavatodry.cpp \
-        textures/emarbletile.cpp \
-        textures/emarshtodry.cpp \
-        textures/eparktexture.cpp \
-        textures/espriteloader.cpp \
-        textures/estonestodry.cpp \
-        textures/esurroundingterrain.cpp \
-        textures/eterraintextures.cpp \
-        textures/etiletotexture.cpp \
-        textures/evaryingsizetex.cpp \
-        textures/ewatercorner.cpp \
-        textures/ewatertobeach.cpp \
-        textures/ewatertodry.cpp \
-        textures/ewatertox.cpp \
+        textures/beach-to-dry.cpp \
+        textures/building-textures.cpp \
+        textures/building-textures1.cpp \
+        textures/building-textures2.cpp \
+        textures/character-textures.cpp \
+        textures/character-textures1.cpp \
+        textures/character-textures2.cpp \
+        textures/character-textures3.cpp \
+        textures/character-textures4.cpp \
+        textures/character-textures5.cpp \
+        textures/character-textures6.cpp \
+        textures/character-textures7.cpp \
+        textures/character-textures8.cpp \
+        textures/character-textures9.cpp \
+        textures/destruction-textures.cpp \
+        textures/fertile-to-dry.cpp \
+        textures/forest-to-dry.cpp \
+        textures/game-textures.cpp \
+        textures/god-textures.cpp \
+        textures/interface-textures.cpp \
+        textures/lava-to-dry.cpp \
+        textures/marble-tile.cpp \
+        textures/marsh-to-dry.cpp \
+        textures/park-texture.cpp \
+        textures/sprite-loader.cpp \
+        textures/stones-to-dry.cpp \
+        textures/surrounding-terrain.cpp \
+        textures/terrain-textures.cpp \
+        textures/tile-to-texture.cpp \
+        textures/varying-size-tex.cpp \
+        textures/water-corner.cpp \
+        textures/water-to-beach.cpp \
+        textures/water-to-dry.cpp \
+        textures/water-to-x.cpp \
         widgets/datawidgets/eadmindatawidget.cpp \
         widgets/datawidgets/eappealdatawidget.cpp \
         widgets/datawidgets/eculturedatawidget.cpp \
@@ -1079,8 +1079,8 @@ HEADERS += \
     characters/monsters/emonster.h \
     characters/monsters/emonstertype.h \
     characters/monsters/ewatermonster.h \
-    ebinaryimageloader.h \
-    ebuildablehelpers.h \
+    binary-image-loader.h \
+    buildable-helpers.h \
     efontcolor.h \
     egamedir.h \
     e-invasion-handler.h \
@@ -2788,29 +2788,29 @@ HEADERS += \
     spriteData/zeusTrees30.h \
     spriteData/zeusTrees45.h \
     spriteData/zeusTrees60.h \
-    textures/ebeachtodry.h \
-    textures/ebuildingtextures.h \
-    textures/echaractertextures.h \
-    textures/edestructiontextures.h \
-    textures/efertiletodry.h \
-    textures/eforesttodry.h \
-    textures/egametextures.h \
-    textures/egodtextures.h \
-    textures/einterfacetextures.h \
-    textures/elavatodry.h \
-    textures/emarbletile.h \
-    textures/emarshtodry.h \
-    textures/eparktexture.h \
-    textures/espriteloader.h \
-    textures/estonestodry.h \
-    textures/esurroundingterrain.h \
-    textures/eterraintextures.h \
-    textures/etiletotexture.h \
-    textures/evaryingsizetex.h \
-    textures/ewatercorner.h \
-    textures/ewatertobeach.h \
-    textures/ewatertodry.h \
-    textures/ewatertox.h \
+    textures/beach-to-dry.h \
+    textures/building-textures.h \
+    textures/character-textures.h \
+    textures/destruction-textures.h \
+    textures/fertile-to-dry.h \
+    textures/forest-to-dry.h \
+    textures/game-textures.h \
+    textures/god-textures.h \
+    textures/interface-textures.h \
+    textures/lava-to-dry.h \
+    textures/marble-tile.h \
+    textures/marsh-to-dry.h \
+    textures/park-texture.h \
+    textures/sprite-loader.h \
+    textures/stones-to-dry.h \
+    textures/surrounding-terrain.h \
+    textures/terrain-textures.h \
+    textures/tile-to-texture.h \
+    textures/varying-size-tex.h \
+    textures/water-corner.h \
+    textures/water-to-beach.h \
+    textures/water-to-dry.h \
+    textures/water-to-x.h \
     vec2.h \
     widgets/datawidgets/eadmindatawidget.h \
     widgets/datawidgets/eappealdatawidget.h \

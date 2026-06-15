@@ -6,7 +6,7 @@
 #include <string>
 
 #include "emainwindow.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "egamedir.h"
 #include "engine/model-data.h"
@@ -186,7 +186,7 @@ int main() {
         eMainWindow w;
         const bool i = w.initialize(settings);
         if(!i) return 1;
-        const bool e = eGameTextures::initialize(w.renderer());
+        const bool e = GameTextures::initialize(w.renderer());
         Cursors::initialize();
 
         if(e) r = w.exec();

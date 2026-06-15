@@ -4,7 +4,7 @@
 
 #include "engine/game-board.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eStadium::eStadium(GameBoard& board, const bool r,
                    const eCityId cid) :
@@ -14,7 +14,7 @@ eStadium::eStadium(GameBoard& board, const bool r,
                   eBuildingType::stadium, r ? 5 : 10, r ? 10 : 5,
                   45, cid),
     mRotated(r) {
-    eGameTextures::loadStadium();
+    GameTextures::loadStadium();
     board.registerStadium(this);
 }
 
@@ -28,7 +28,7 @@ eTextureSpace eStadium::getTextureSpace(const int tx, const int ty,
     const SDL_Point p{tx, ty};
     const auto r = tileRect();
     if(!SDL_PointInRect(&p, &r)) return {nullptr};
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const int sizeId = static_cast<int>(size);
     const auto& plcs = blds[sizeId];
     auto& board = getBoard();
@@ -84,7 +84,7 @@ eTextureSpace eStadium::getTextureSpace(const int tx, const int ty,
 
 std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
 
     std::vector<eOverlay> os;
 

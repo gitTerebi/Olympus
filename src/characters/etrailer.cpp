@@ -1,17 +1,17 @@
 #include "etrailer.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 
 eTrailer::eTrailer(GameBoard& board) :
     eCharacter(board, eCharacterType::trailer) {
-    eGameTextures::loadTrailer();
+    GameTextures::loadTrailer();
 }
 
 std::shared_ptr<eTexture>
 eTrailer::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& charTexs = eGameTextures::characters()[id];
+    const auto& charTexs = GameTextures::characters()[id];
     const int oid = static_cast<int>(rotatedOrientation());
     const eTextureCollection* coll = nullptr;
     const int resCount = mFollow ? mFollow->resCount() : mResCount;

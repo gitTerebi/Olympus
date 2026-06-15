@@ -1,12 +1,12 @@
 #include "animal.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Animal::Animal(GameBoard& board,
                  const eCharTexs charTexs,
                  const eCharacterType type) :
     eCharacter(board, type),
-    mTextures(eGameTextures::characters()),
+    mTextures(GameTextures::characters()),
     mCharTexs(charTexs) {}
 
 void Animal::setTextures(const eCharTexs& texs) {

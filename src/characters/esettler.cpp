@@ -1,17 +1,17 @@
 #include "esettler.h"
 
 #include "fileIO/esavearchive.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "erand.h"
 
 eSettler::eSettler(GameBoard& board) :
     eBasicPatroler(board,
-                   eRand::rand() % 2 ? &eCharacterTextures::fSettlers1 :
-                                &eCharacterTextures::fSettlers2,
+                   eRand::rand() % 2 ? &CharacterTextures::fSettlers1 :
+                                &CharacterTextures::fSettlers2,
                    eCharacterType::settler) {
 
-    eGameTextures::loadSettlers();
+    GameTextures::loadSettlers();
 }
 
 void eSettler::setEmigrant(const bool e) {

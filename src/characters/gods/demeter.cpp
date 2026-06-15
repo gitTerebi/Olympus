@@ -1,38 +1,38 @@
 #include "demeter.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Aphrodite::Aphrodite(GameBoard& board) :
-    BasicGod(board, &eGodTextures::fAphrodite, GodType::aphrodite) {
-    eGameTextures::loadAphrodite();
+    BasicGod(board, &GodTextures::fAphrodite, GodType::aphrodite) {
+    GameTextures::loadAphrodite();
 }
 
 Ares::Ares(GameBoard& board) :
-    BasicGod(board, &eGodTextures::fAres, GodType::ares) {
-    eGameTextures::loadAres();
+    BasicGod(board, &GodTextures::fAres, GodType::ares) {
+    GameTextures::loadAres();
 }
 
 Demeter::Demeter(GameBoard& board) :
-    BasicGod(board, &eGodTextures::fDemeter, GodType::demeter) {
-    eGameTextures::loadDemeter();
+    BasicGod(board, &GodTextures::fDemeter, GodType::demeter) {
+    GameTextures::loadDemeter();
 }
 
 Hades::Hades(GameBoard& board) :
-    BasicGod(board, &eGodTextures::fHades, GodType::hades) {
-    eGameTextures::loadHades();
+    BasicGod(board, &GodTextures::fHades, GodType::hades) {
+    GameTextures::loadHades();
 }
 
 Hephaestus::Hephaestus(GameBoard& board) :
-    BasicGod(board, &eGodTextures::fHephaestus, GodType::hephaestus) {
-    eGameTextures::loadHephaestus();
+    BasicGod(board, &GodTextures::fHephaestus, GodType::hephaestus) {
+    GameTextures::loadHephaestus();
 }
 
 Hera::Hera(GameBoard& board) :
-    BasicGod(board, &eGodTextures::fHera, GodType::hera) {
-    eGameTextures::loadHera();
+    BasicGod(board, &GodTextures::fHera, GodType::hera) {
+    GameTextures::loadHera();
 }
 
 Poseidon::Poseidon(GameBoard& board) :
-    BasicGod(board, &eGodTextures::fPoseidon, GodType::poseidon) {
-    eGameTextures::loadPoseidon();
+    BasicGod(board, &GodTextures::fPoseidon, GodType::poseidon) {
+    GameTextures::loadPoseidon();
 }

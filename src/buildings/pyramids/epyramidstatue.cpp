@@ -1,6 +1,6 @@
 #include "epyramidstatue.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epyramid.h"
 
 #include "characters/gods/god.h"
@@ -15,7 +15,7 @@ ePyramidStatue::ePyramidStatue(const std::vector<eSanctCost>& cost,
     ePyramidElement(cost, board, eBuildingType::pyramidStatue,
                     elevation, 1, cid),
     mType(type), mId(id) {
-    eGameTextures::loadSanctuary();
+    GameTextures::loadSanctuary();
 }
 
 ePyramidStatue::ePyramidStatue(ePyramid* const pyramid,
@@ -29,13 +29,13 @@ ePyramidStatue::ePyramidStatue(ePyramid* const pyramid,
                     board, eBuildingType::pyramidStatue,
                     elevation, 1, cid),
     mType(type), mId(id) {
-    eGameTextures::loadSanctuary();
+    GameTextures::loadSanctuary();
 }
 
 stdsptr<eTexture> ePyramidStatue::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const eTextureCollection* coll = nullptr;
     switch(mType) {
     case GodType::aphrodite:

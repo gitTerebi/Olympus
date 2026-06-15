@@ -367,8 +367,8 @@ set(SOURCES
     src/characters/monsters/ecalydonianboar.cpp
     src/characters/monsters/emonster.cpp
     src/characters/monsters/ewatermonster.cpp
-    src/ebinaryimageloader.cpp
-    src/ebuildablehelpers.cpp
+    src/binary-image-loader.cpp
+    src/buildable-helpers.cpp
     src/efontcolor.cpp
     src/egamedir.cpp
     src/cursors.cpp
@@ -558,41 +558,41 @@ set(SOURCES
     src/spawners/eseainvasionpoint.cpp
     src/spawners/espawner.cpp
     src/spawners/ewolfspawner.cpp
-    src/textures/ebeachtodry.cpp
-    src/textures/ebuildingtextures.cpp
-    src/textures/ebuildingtextures1.cpp
-    src/textures/ebuildingtextures2.cpp
-    src/textures/echaractertextures.cpp
-    src/textures/echaractertextures1.cpp
-    src/textures/echaractertextures2.cpp
-    src/textures/echaractertextures3.cpp
-    src/textures/echaractertextures4.cpp
-    src/textures/echaractertextures5.cpp
-    src/textures/echaractertextures6.cpp
-    src/textures/echaractertextures7.cpp
-    src/textures/echaractertextures8.cpp
-    src/textures/echaractertextures9.cpp
-    src/textures/edestructiontextures.cpp
-    src/textures/efertiletodry.cpp
-    src/textures/eforesttodry.cpp
-    src/textures/egametextures.cpp
+    src/textures/beach-to-dry.cpp
+    src/textures/building-textures.cpp
+    src/textures/building-textures1.cpp
+    src/textures/building-textures2.cpp
+    src/textures/character-textures.cpp
+    src/textures/character-textures1.cpp
+    src/textures/character-textures2.cpp
+    src/textures/character-textures3.cpp
+    src/textures/character-textures4.cpp
+    src/textures/character-textures5.cpp
+    src/textures/character-textures6.cpp
+    src/textures/character-textures7.cpp
+    src/textures/character-textures8.cpp
+    src/textures/character-textures9.cpp
+    src/textures/destruction-textures.cpp
+    src/textures/fertile-to-dry.cpp
+    src/textures/forest-to-dry.cpp
+    src/textures/game-textures.cpp
     src/textures/sg-reader.cpp
-    src/textures/egodtextures.cpp
-    src/textures/einterfacetextures.cpp
-    src/textures/elavatodry.cpp
-    src/textures/emarbletile.cpp
-    src/textures/emarshtodry.cpp
-    src/textures/eparktexture.cpp
-    src/textures/espriteloader.cpp
-    src/textures/estonestodry.cpp
-    src/textures/esurroundingterrain.cpp
-    src/textures/eterraintextures.cpp
-    src/textures/etiletotexture.cpp
-    src/textures/evaryingsizetex.cpp
-    src/textures/ewatercorner.cpp
-    src/textures/ewatertobeach.cpp
-    src/textures/ewatertodry.cpp
-    src/textures/ewatertox.cpp
+    src/textures/god-textures.cpp
+    src/textures/interface-textures.cpp
+    src/textures/lava-to-dry.cpp
+    src/textures/marble-tile.cpp
+    src/textures/marsh-to-dry.cpp
+    src/textures/park-texture.cpp
+    src/textures/sprite-loader.cpp
+    src/textures/stones-to-dry.cpp
+    src/textures/surrounding-terrain.cpp
+    src/textures/terrain-textures.cpp
+    src/textures/tile-to-texture.cpp
+    src/textures/varying-size-tex.cpp
+    src/textures/water-corner.cpp
+    src/textures/water-to-beach.cpp
+    src/textures/water-to-dry.cpp
+    src/textures/water-to-x.cpp
     src/widgets/datawidgets/eadmindatawidget.cpp
     src/widgets/datawidgets/eappealdatawidget.cpp
     src/widgets/datawidgets/eculturedatawidget.cpp

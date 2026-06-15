@@ -37,7 +37,7 @@ void eForcesWidget::setBanners(const SoldierBanners& ss,
     int iRes;
     int mult;
     iResAndMult(iRes, mult);
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[iRes];
     const auto& tops = coll.fInterfaceBannerTops;
     const auto& pTops = coll.fPoseidonInterfaceBannerTops;
@@ -137,7 +137,7 @@ void eMilitaryDataWidget::initialize() {
     const auto res = resolution();
     const auto uiScale = res.uiScale();
     const int iRes = static_cast<int>(uiScale);
-    const auto& intrfc = eGameTextures::interface()[iRes];
+    const auto& intrfc = GameTextures::interface()[iRes];
 
     eDataWidget::initialize();
 
@@ -239,7 +239,7 @@ void eMilitaryDataWidget::initialize() {
     buttonsW->addWidget(microButtonsW);
     microButtonsW->setX(std::round(18*mult));
 
-    const auto coll = &eInterfaceTextures::fMilitaryControlManual;
+    const auto coll = &InterfaceTextures::fMilitaryControlManual;
     const auto controlButton = new eBasicButton(coll, window());
     buttonsW->addWidget(controlButton);
     controlButton->setX(std::round(106*mult));

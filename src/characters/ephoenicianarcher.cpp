@@ -1,9 +1,9 @@
 #include "ephoenicianarcher.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 ePhoenicianArcher::ePhoenicianArcher(GameBoard& board) :
-    eArcherBase(board, &eCharacterTextures::fPhoenicianArcher,
+    eArcherBase(board, &CharacterTextures::fPhoenicianArcher,
                 eCharacterType::phoenicianArcher) {
-    eGameTextures::loadPhoenicianArcher();
+    GameTextures::loadPhoenicianArcher();
 }

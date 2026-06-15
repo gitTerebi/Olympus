@@ -1,16 +1,16 @@
 #include "dionysus.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Dionysus::Dionysus(GameBoard& board) :
     God(board, GodType::dionysus) {
-    eGameTextures::loadDionysus();
+    GameTextures::loadDionysus();
 }
 
 std::shared_ptr<eTexture>
 Dionysus::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& godTexs = eGameTextures::gods()[id];
+    const auto& godTexs = GameTextures::gods()[id];
     const auto& texs = godTexs.fDionysus;
     const eTextureCollection* coll = nullptr;
     bool reverse = false;

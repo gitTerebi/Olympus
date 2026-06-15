@@ -1,7 +1,7 @@
 #include "ehuntinglodge.h"
 
 #include "characters/ehunter.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "characters/actions/ehuntaction.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
@@ -12,7 +12,7 @@ eHuntingLodge::eHuntingLodge(GameBoard& board,
                              const eCityId cid) :
     eResourceCollectBuildingBase(board, eBuildingType::huntingLodge,
                           2, 2, 8, eResourceType::meat, cid) {
-    eGameTextures::loadHuntingLodge();
+    GameTextures::loadHuntingLodge();
 }
 
 eHuntingLodge::~eHuntingLodge() {
@@ -21,12 +21,12 @@ eHuntingLodge::~eHuntingLodge() {
 
 std::shared_ptr<eTexture> eHuntingLodge::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    return eGameTextures::buildings()[sizeId].fHuntingLodge;
+    return GameTextures::buildings()[sizeId].fHuntingLodge;
 }
 
 std::vector<eOverlay> eHuntingLodge::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
     const auto& coll = texs.fHuntingLodgeOverlay;
     const int texId = textureTime() % coll.size();
     eOverlay o;

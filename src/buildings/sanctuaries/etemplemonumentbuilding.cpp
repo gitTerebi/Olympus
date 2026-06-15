@@ -1,5 +1,5 @@
 #include "etemplemonumentbuilding.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eTempleMonumentBuilding::eTempleMonumentBuilding(
         const GodType god,
@@ -15,7 +15,7 @@ eTempleMonumentBuilding::eTempleMonumentBuilding(
 const eTextureCollection* eTempleMonumentBuilding::sGodMonumentTextureCollection(
         const eTileSize size, const GodType god) {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     switch(god) {
     case GodType::aphrodite:
         return &blds.fAphroditeMonuments;

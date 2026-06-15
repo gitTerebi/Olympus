@@ -1,6 +1,6 @@
 #include "extended-god.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 ExtendedGod::ExtendedGod(GameBoard& board,
                            const eGodTexs godTexs,
@@ -10,7 +10,7 @@ ExtendedGod::ExtendedGod(GameBoard& board,
 
 std::shared_ptr<eTexture> ExtendedGod::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& charTexs = eGameTextures::gods()[id];
+    const auto& charTexs = GameTextures::gods()[id];
     const auto& atn = charTexs.*mGodTexs;
     const eTextureCollection* coll = nullptr;
     bool reverse = false;

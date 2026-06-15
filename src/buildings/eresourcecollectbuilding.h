@@ -3,7 +3,7 @@
 
 #include "eresourcecollectbuildingbase.h"
 
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 #include "characters/actions/ecollectresourceaction.h"
 
 class eResourceCollectorBase;
@@ -11,8 +11,8 @@ class eSaveArchive;
 
 class eResourceCollectBuilding : public eResourceCollectBuildingBase {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
-    using eOverlays = eTextureCollection eBuildingTextures::*;
+    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
+    using eOverlays = eTextureCollection BuildingTextures::*;
     using eCharGenerator =  std::function<stdsptr<eResourceCollectorBase>()>;
     eResourceCollectBuilding(GameBoard& board,
                              const eBaseTex baseTex,
@@ -55,7 +55,7 @@ protected:
     void setRawCountCollect(const int r) { mRawCountCollect = r; }
 private:
     const eCharGenerator mCharGenerator;
-    const std::vector<eBuildingTextures>& mTextures;
+    const std::vector<BuildingTextures>& mTextures;
 
     const eBaseTex mBaseTex;
     const eOverlays mOverlays;

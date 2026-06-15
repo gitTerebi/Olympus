@@ -1,9 +1,9 @@
 #include "eoceanidhoplite.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eOceanidHoplite::eOceanidHoplite(GameBoard& board) :
-    eHopliteBase(board, &eCharacterTextures::fOceanidHoplite,
+    eHopliteBase(board, &CharacterTextures::fOceanidHoplite,
                  eCharacterType::oceanidHoplite) {
-    eGameTextures::loadOceanidHoplite();
+    GameTextures::loadOceanidHoplite();
 }

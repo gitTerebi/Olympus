@@ -1,9 +1,9 @@
 #include "eox.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eOx::eOx(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fOx,
+    eBasicPatroler(board, &CharacterTextures::fOx,
                    eCharacterType::ox) {
-    eGameTextures::loadOx();
+    GameTextures::loadOx();
 }

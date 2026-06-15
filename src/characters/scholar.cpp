@@ -1,10 +1,10 @@
 #include "scholar.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Scholar::Scholar(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fScholar,
+    eBasicPatroler(board, &CharacterTextures::fScholar,
                    eCharacterType::scholar) {
-    eGameTextures::loadScholar();
+    GameTextures::loadScholar();
     setProvide(eProvide::gymnastScholar, 10000);
 }

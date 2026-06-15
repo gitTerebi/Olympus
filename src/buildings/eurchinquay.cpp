@@ -2,7 +2,7 @@
 
 #include "characters/eurchingatherer.h"
 #include "characters/actions/ecollectresourceaction.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 #include "engine/game-board.h"
 #include "enumbers.h"
@@ -13,7 +13,7 @@ eUrchinQuay::eUrchinQuay(GameBoard& board,
     eResourceCollectBuildingBase(board, eBuildingType::urchinQuay,
                                  2, 2, 10, eResourceType::urchin, cid),
     mO(o) {
-    eGameTextures::loadUrchinQuay();
+    GameTextures::loadUrchinQuay();
 }
 
 eUrchinQuay::~eUrchinQuay() {
@@ -44,7 +44,7 @@ void eUrchinQuay::timeChanged(const int by) {
 
 std::shared_ptr<eTexture> eUrchinQuay::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].fUrchinQuay;
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -73,7 +73,7 @@ std::shared_ptr<eTexture> eUrchinQuay::getTexture(const eTileSize size) const {
 
 std::vector<eOverlay> eUrchinQuay::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto oo = sRotated(mO, dir);

@@ -2,7 +2,7 @@
 
 #include "characters/fire-fighter.h"
 #include "characters/actions/fire-fighter-action.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 stdsptr<eCharacterAction> gFireFighterActGenerator(
            eCharacter* const c,
@@ -14,11 +14,11 @@ stdsptr<eCharacterAction> gFireFighterActGenerator(
 
 eMaintenanceOffice::eMaintenanceOffice(GameBoard& board,
                                        const eCityId cid) :
-    ePatrolBuilding(board, &eBuildingTextures::fMaintenanceOffice,
+    ePatrolBuilding(board, &BuildingTextures::fMaintenanceOffice,
                     -3.85, -4.35,
-                    &eBuildingTextures::fMaintenanceOfficeOverlay,
+                    &BuildingTextures::fMaintenanceOfficeOverlay,
                     [this]() { return e::make_shared<FireFighter>(getBoard()); },
                     gFireFighterActGenerator,
                     eBuildingType::maintenanceOffice, 2, 2, 5, cid)  {
-    eGameTextures::loadMaintenanceOffice();
+    GameTextures::loadMaintenanceOffice();
 }

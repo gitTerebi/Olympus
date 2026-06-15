@@ -3,11 +3,11 @@
 
 #include "echaracter.h"
 
-#include "textures/echaractertextures.h"
+#include "textures/character-textures.h"
 
 class eBoatBase : public eCharacter {
 public:
-    using eCharTexs = eTradeBoatTextures eCharacterTextures::*;
+    using eCharTexs = TradeBoatTextures CharacterTextures::*;
     eBoatBase(GameBoard& board, const eCharTexs charTexs,
               const eCharacterType type);
 

@@ -1,6 +1,6 @@
 #include "efightingpatroler.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eFightingPatroler::eFightingPatroler(
         GameBoard& board, const eCharTexs charTexs,
@@ -10,7 +10,7 @@ eFightingPatroler::eFightingPatroler(
 
 std::shared_ptr<eTexture> eFightingPatroler::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& textures = eGameTextures::characters();
+    const auto& textures = GameTextures::characters();
     const auto& charTexs = textures[id].*mCharTexs;
     const eTextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());

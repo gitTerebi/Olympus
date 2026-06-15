@@ -1,6 +1,6 @@
 #include "egrowerslodge.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "characters/actions/cart-transporter-action.h"
 #include "characters/actions/egroweraction.h"
 #include "buildings/eresourcebuilding.h"
@@ -21,10 +21,10 @@ eGrowersLodge::eGrowersLodge(GameBoard& board, const eGrowerType type,
     mType(type) {
     switch(type) {
     case eGrowerType::grapesAndOlives:
-        eGameTextures::loadGrowersLodge();
+        GameTextures::loadGrowersLodge();
         break;
     case eGrowerType::oranges:
-        eGameTextures::loadOrangeTendersLodge();
+        GameTextures::loadOrangeTendersLodge();
         break;
     }
 }
@@ -57,7 +57,7 @@ void eGrowersLodge::killWalkers() {
 
 std::shared_ptr<eTexture> eGrowersLodge::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
     switch(mType) {
     case eGrowerType::grapesAndOlives:
         return texs.fGrowersLodge;
@@ -70,7 +70,7 @@ std::shared_ptr<eTexture> eGrowersLodge::getTexture(const eTileSize size) const 
 std::vector<eOverlay> eGrowersLodge::
     getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
     std::vector<eOverlay> os;
 
     switch(mType) {

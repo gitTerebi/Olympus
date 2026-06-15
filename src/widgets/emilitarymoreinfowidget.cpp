@@ -76,7 +76,7 @@ public:
 
         const auto res = resolution();
         const auto uiScale = res.uiScale();
-        const auto& intrfc = eGameTextures::interface();
+        const auto& intrfc = GameTextures::interface();
         const auto& coll = intrfc[static_cast<int>(uiScale)];
         const int p = padding();
 

@@ -1,6 +1,6 @@
 #include "eroad.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "engine/game-board.h"
 #include "eagorabase.h"
@@ -51,11 +51,11 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
     const auto dir = board.direction();
 
     const int sizeId = static_cast<int>(size);
-    const auto& trrTexs = eGameTextures::terrain()[sizeId];
-    const auto& builTexs = eGameTextures::buildings()[sizeId];
+    const auto& trrTexs = GameTextures::terrain()[sizeId];
+    const auto& builTexs = GameTextures::buildings()[sizeId];
 
     if(mRoadblock) {
-        eGameTextures::loadRoadblock();
+        GameTextures::loadRoadblock();
         return builTexs.fRoadblock;
     }
 
@@ -96,7 +96,7 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
 
     const bool bridge = ti->hasBridge();
     if(bridge) {
-        eGameTextures::loadBridge();
+        GameTextures::loadBridge();
 
         int texId = 10;
 

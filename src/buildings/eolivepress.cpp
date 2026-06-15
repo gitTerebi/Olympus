@@ -1,6 +1,6 @@
 #include "eolivepress.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "enumbers.h"
 #include <algorithm>
 
@@ -13,16 +13,16 @@ constexpr double sIdleY = -1.5;
 eOlivePress::eOlivePress(GameBoard& board,
                          const eCityId cid) :
     eProcessingBuilding(board,
-                        &eBuildingTextures::fOlivePress,
+                        &BuildingTextures::fOlivePress,
                         -3.65, -3.75,
-                        &eBuildingTextures::fOlivePressOverlay,
+                        &BuildingTextures::fOlivePressOverlay,
                         eBuildingType::olivePress, 2, 2, 12,
                         eResourceType::olives,
                         eResourceType::oliveOil, 1,
                         eNumbers::sOlivePressProcessingPeriod,
                         cid) {
-    eGameTextures::loadOlivePress();
-    eGameTextures::loadWaitingOverlay();
+    GameTextures::loadOlivePress();
+    GameTextures::loadWaitingOverlay();
     setOverlayEnabledFunc([this]() {
         return enabled();
     });
@@ -34,7 +34,7 @@ std::vector<eOverlay> eOlivePress::getOverlays(const eTileSize size) const {
     if(olives > 0) {
         os = eProcessingBuilding::getOverlays(size);
         const int sizeId = static_cast<int>(size);
-        const auto& texs = eGameTextures::buildings()[sizeId];
+        const auto& texs = GameTextures::buildings()[sizeId];
         const auto& coll = texs.fWaitingOlives;
         const int resMax = coll.size() - 1;
         const int res = std::clamp(olives - 1, 0, resMax);
@@ -45,7 +45,7 @@ std::vector<eOverlay> eOlivePress::getOverlays(const eTileSize size) const {
         os.push_back(o);
     } else {
         const int sizeId = static_cast<int>(size);
-        const auto& texs = eGameTextures::buildings()[sizeId];
+        const auto& texs = GameTextures::buildings()[sizeId];
         const auto& colls = seed() % 2 ?
                             texs.fWaitingOverlay0 :
                             texs.fWaitingOverlay1;

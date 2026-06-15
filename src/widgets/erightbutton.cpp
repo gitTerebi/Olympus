@@ -1,6 +1,6 @@
 #include "erightbutton.h"
 
-#include "textures/einterfacetextures.h"
+#include "textures/interface-textures.h"
 
 eRightButton::eRightButton(eMainWindow* const window) :
-    eBasicButton(&eInterfaceTextures::fRightButton, window) {}
+    eBasicButton(&InterfaceTextures::fRightButton, window) {}

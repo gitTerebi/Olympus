@@ -1,15 +1,15 @@
 #include "horse.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Horse::Horse(GameBoard& board) :
     eCharacter(board, eCharacterType::horse) {
-    eGameTextures::loadHorse();
+    GameTextures::loadHorse();
 }
 
 std::shared_ptr<eTexture> Horse::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& chars = eGameTextures::characters();
+    const auto& chars = GameTextures::characters();
     const auto& charTexs = chars[id].fHorse;
     const eTextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());

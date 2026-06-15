@@ -2,11 +2,11 @@
 #define EWATERMONSTER_H
 
 #include "emonster.h"
-#include "textures/echaractertextures.h"
+#include "textures/character-textures.h"
 
 class eWaterMonster : public eMonster {
 public:
-    using eCharTexs = eWaterMonsterTextures eCharacterTextures::*;
+    using eCharTexs = WaterMonsterTextures CharacterTextures::*;
     eWaterMonster(GameBoard& board,
                   const eCharTexs charTexs,
                   const eMonsterType type);

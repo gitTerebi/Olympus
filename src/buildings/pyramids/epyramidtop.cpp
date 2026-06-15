@@ -1,6 +1,6 @@
 #include "epyramidtop.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epyramid.h"
 
 ePyramidTop::ePyramidTop(const std::vector<eSanctCost>& cost,
@@ -22,7 +22,7 @@ ePyramidTop::ePyramidTop(ePyramid* const pyramid,
 stdsptr<eTexture> ePyramidTop::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const int e = elevation();
     const auto m = monument();
     const auto p = static_cast<ePyramid*>(m);

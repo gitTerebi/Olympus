@@ -1,9 +1,9 @@
 #include "lumberjack.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Lumberjack::Lumberjack(GameBoard& board) :
-    eResourceCollector(board, &eCharacterTextures::fLumberjack,
+    eResourceCollector(board, &CharacterTextures::fLumberjack,
                        eCharacterType::lumberjack) {
-    eGameTextures::loadLumberjack();
+    GameTextures::loadLumberjack();
 }

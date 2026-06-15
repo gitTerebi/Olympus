@@ -8,8 +8,8 @@ class eSaveArchive;
 
 class eVendor : public eEmployingBuilding {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
-    using eOverlays = eTextureCollection eBuildingTextures::*;
+    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
+    using eOverlays = eTextureCollection BuildingTextures::*;
     using eCharGenerator =  std::function<stdsptr<eCharacter>()>;
     eVendor(GameBoard& board,
             const eResourceType resType,

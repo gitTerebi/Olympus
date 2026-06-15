@@ -3,12 +3,12 @@
 
 #include "ebuilding.h"
 
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 #include "characters/gods/god.h"
 
 class eAestheticsBuilding : public eBuilding {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
+    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
     eAestheticsBuilding(GameBoard& board,
                         const eBaseTex baseTex,
                         const eBuildingType type,
@@ -22,8 +22,8 @@ private:
 
 class eOverlayAesthBuilding : public eAestheticsBuilding {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
-    using eOverlays = eTextureCollection eBuildingTextures::*;
+    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
+    using eOverlays = eTextureCollection BuildingTextures::*;
     eOverlayAesthBuilding(GameBoard& board,
                           const eBaseTex baseTex,
                           const double overlayX,

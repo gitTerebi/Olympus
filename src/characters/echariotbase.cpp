@@ -1,12 +1,12 @@
 #include "echariotbase.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "enumbers.h"
 
 eChariotBase::eChariotBase(GameBoard& board,
                              const eCharTexs charTexs,
                              const eCharacterType type) :
-    eSoldier(board, &eCharacterTextures::fHoplite, type),
+    eSoldier(board, &CharacterTextures::fHoplite, type),
     mCharTexs(charTexs) {
     setAttack(eNumbers::sChariotAttack);
     setHP(eNumbers::sChariotHP);
@@ -15,7 +15,7 @@ eChariotBase::eChariotBase(GameBoard& board,
 std::shared_ptr<eTexture>
 eChariotBase::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& gTexs = eGameTextures::characters();
+    const auto& gTexs = GameTextures::characters();
     const auto& texs = gTexs[id].*mCharTexs;
     const eTextureCollection* coll = nullptr;
     bool wrap = true;

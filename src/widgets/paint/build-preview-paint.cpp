@@ -3,7 +3,7 @@
 #include "buildings/eheatgetters.h"
 #include "buildings/ebuildingrenderer.h"
 #include "engine/game-board.h"
-#include "textures/eterraintextures.h"
+#include "textures/terrain-textures.h"
 #include "widgets/etilepainter.h"
 #include "widgets/paint/draw/dont-draw-appeal.h"
 
@@ -57,7 +57,7 @@ eTile* avenueRoad(eTile* const tile) {
 }
 
 void GameWidget::paintAppealBuildPreview(eTilePainter& tp,
-                                         const eTerrainTextures& trrTexs,
+                                         const TerrainTextures& trrTexs,
                                          eBuilding* const building,
                                          eBuildingRenderer* const renderer,
                                          const int worldTileX, const int worldTileY) {

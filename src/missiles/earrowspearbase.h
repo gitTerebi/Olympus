@@ -3,11 +3,11 @@
 
 #include "emissile.h"
 
-#include "textures/edestructiontextures.h"
+#include "textures/destruction-textures.h"
 
 class eArrowSpearBase : public eMissile {
 public:
-    using eMissileTexs = eTextureCollection eDestructionTextures::*;
+    using eMissileTexs = eTextureCollection DestructionTextures::*;
     eArrowSpearBase(GameBoard& board,
                     const eMissileTexs missileTexs,
                     const eMissileType type,

@@ -21,8 +21,8 @@ ePyramid::ePyramid(GameBoard& board,
                    const int sw, const int sh,
                    const eCityId cid) :
     eMonument(board, type, sw, sh, 0, cid) {
-    eGameTextures::loadPyramid();
-    eGameTextures::loadSanctuary();
+    GameTextures::loadPyramid();
+    GameTextures::loadSanctuary();
 }
 
 void ePyramid::erase() {

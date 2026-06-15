@@ -2,7 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "characters/actions/epatrolaction.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "characters/actions/emovepathaction.h"
 #include "engine/epathfinder.h"
 #include "epathfindtask.h"

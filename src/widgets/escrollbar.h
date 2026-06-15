@@ -2,7 +2,7 @@
 #define ESCROLLBAR_H
 
 #include "ewidget.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epainter.h"
 #include "ebasicbutton.h"
 
@@ -22,7 +22,7 @@ protected:
         int iRes, mult;
         iResAndMult(iRes, mult);
         const int dim = 8 * mult;
-        const auto& intrfc = eGameTextures::interface()[iRes];
+        const auto& intrfc = GameTextures::interface()[iRes];
         if(!intrfc.fLoaded) return;
         const auto& coll = mDragging ? intrfc.fButtonFrameHover : intrfc.fButtonFrame;
         const int iMax = width() / dim + 1;
@@ -172,7 +172,7 @@ public:
     void initialize(const int h) {
         setNoPadding();
 
-        const auto probe = new eBasicButton(&eInterfaceTextures::fBigUpButton, window());
+        const auto probe = new eBasicButton(&InterfaceTextures::fBigUpButton, window());
         const int w = probe->width() / 2;
         probe->deleteLater();
 

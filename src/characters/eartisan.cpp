@@ -1,15 +1,15 @@
 #include "eartisan.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eArtisan::eArtisan(GameBoard& board) :
     eCharacter(board, eCharacterType::artisan) {
-    eGameTextures::loadArtisan();
+    GameTextures::loadArtisan();
 }
 
 std::shared_ptr<eTexture> eArtisan::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters();
+    const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto& charTexs = colls.fArtisan;
     const eTextureCollection* coll = nullptr;

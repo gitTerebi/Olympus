@@ -1,6 +1,6 @@
 #include "warehouse-base.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include <algorithm>
 
@@ -9,7 +9,7 @@ void WarehouseBase::getSpaceOverlay(const eTileSize size,
                                      const std::pair<double, double>& xy,
                                      const int id) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
     const int count = resourceCount(id);
     const auto type = resourceType(id);

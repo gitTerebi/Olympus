@@ -3,11 +3,11 @@
 
 #include "god.h"
 
-#include "textures/egodtextures.h"
+#include "textures/god-textures.h"
 
 class ExtendedGod : public God {
 public:
-    using eGodTexs = eExtendedGodTextures eGodTextures::*;
+    using eGodTexs = ExtendedGodTextures GodTextures::*;
     ExtendedGod(GameBoard& board,
                  const eGodTexs godTexs,
                  const GodType gt);

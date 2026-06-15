@@ -1,6 +1,6 @@
 #include "eexclamationbutton.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eExclamationButton::eExclamationButton(eMainWindow* const window) :
-    eBasicButton(&eInterfaceTextures::fExclamationButton, window) {}
+    eBasicButton(&InterfaceTextures::fExclamationButton, window) {}

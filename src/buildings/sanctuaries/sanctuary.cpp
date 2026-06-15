@@ -49,7 +49,7 @@ eSanctuary::eSanctuary(GameBoard& board,
                        const eCityId cid) :
     eMonument(board, type, sw, sh,
               maxEmployees, cid) {
-    eGameTextures::loadSanctuary();
+    GameTextures::loadSanctuary();
     sLoadMonumentTextures(godType());
     board.registerSanctuary(this);
 }
@@ -301,33 +301,33 @@ stdsptr<eSanctuary> eSanctuary::sCreate(
 void eSanctuary::sLoadMonumentTextures(const GodType type) {
     switch(type) {
     case GodType::aphrodite:
-        return eGameTextures::loadAphroditeMonuments();
+        return GameTextures::loadAphroditeMonuments();
     case GodType::apollo:
-        return eGameTextures::loadApolloMonuments();
+        return GameTextures::loadApolloMonuments();
     case GodType::ares:
-        return eGameTextures::loadAresMonuments();
+        return GameTextures::loadAresMonuments();
     case GodType::artemis:
-        return eGameTextures::loadArtemisMonuments();
+        return GameTextures::loadArtemisMonuments();
     case GodType::athena:
-        return eGameTextures::loadAthenaMonuments();
+        return GameTextures::loadAthenaMonuments();
     case GodType::atlas:
-        return eGameTextures::loadAtlasMonuments();
+        return GameTextures::loadAtlasMonuments();
     case GodType::demeter:
-        return eGameTextures::loadDemeterMonuments();
+        return GameTextures::loadDemeterMonuments();
     case GodType::dionysus:
-        return eGameTextures::loadDionysusMonuments();
+        return GameTextures::loadDionysusMonuments();
     case GodType::hades:
-        return eGameTextures::loadHadesMonuments();
+        return GameTextures::loadHadesMonuments();
     case GodType::hephaestus:
-        return eGameTextures::loadHephaestusMonuments();
+        return GameTextures::loadHephaestusMonuments();
     case GodType::hera:
-        return eGameTextures::loadHeraMonuments();
+        return GameTextures::loadHeraMonuments();
     case GodType::hermes:
-        return eGameTextures::loadHermesMonuments();
+        return GameTextures::loadHermesMonuments();
     case GodType::poseidon:
-        return eGameTextures::loadPoseidonMonuments();
+        return GameTextures::loadPoseidonMonuments();
     case GodType::zeus:
-        return eGameTextures::loadZeusMonuments();
+        return GameTextures::loadZeusMonuments();
     }
 }
 

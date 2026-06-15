@@ -1,6 +1,6 @@
 #include "framed-button.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include <random>
 
@@ -10,7 +10,7 @@ void FramedButton::paintEvent(ePainter& p) {
         // draw border normally
         int iRes; int mult; iResAndMult(iRes, mult);
         const int dim = 8*mult;
-        const auto& intrfc = eGameTextures::interface()[iRes];
+        const auto& intrfc = GameTextures::interface()[iRes];
         if(intrfc.fLoaded) {
             const auto& coll = intrfc.fButtonFrame;
             const int iMax = width()/dim + 1;
@@ -49,7 +49,7 @@ void FramedButton::paintEvent(ePainter& p) {
     int mult;
     iResAndMult(iRes, mult);
     const int dim = 8*mult;
-    const auto& intrfc = eGameTextures::interface()[iRes];
+    const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
     const eTextureCollection* coll = nullptr;
@@ -111,7 +111,7 @@ void FramedButton::renderBg(ePainter& p) {
     int mult;
     iResAndMult(iRes, mult);
     const int dim = 8*mult;
-    const auto& intrfc = eGameTextures::interface()[iRes];
+    const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
     const int iMax = width()/dim + 1;

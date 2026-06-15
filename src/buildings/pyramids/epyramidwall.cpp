@@ -28,7 +28,7 @@ ePyramidWall::ePyramidWall(ePyramid* const pyramid,
 stdsptr<eTexture> ePyramidWall::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto o = sRotated(mO, dir);

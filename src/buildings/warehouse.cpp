@@ -2,7 +2,7 @@
 
 #include "engine/game-board.h"
 #include "etilehelper.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include <algorithm>
 #include <vector>
@@ -137,7 +137,7 @@ eTextureSpace Warehouse::getTextureSpace(const int tx, const int ty,
 std::vector<eOverlay> Warehouse::getOverlays(const eTileSize size) const {
     std::vector<eOverlay> os;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
     const eWorldDirection dir = getBoard().direction();
     const auto rect = tileRect();

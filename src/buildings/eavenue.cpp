@@ -1,11 +1,11 @@
 #include "eavenue.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 
 eAvenue::eAvenue(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::avenue, 1, 1, cid) {
-    eGameTextures::loadAvenue();
+    GameTextures::loadAvenue();
 }
 
 int eAvenue::provide(const eProvide p, const int n) {
@@ -65,7 +65,7 @@ bool isSingle(eTile* const t,
 std::shared_ptr<eTexture>
 eAvenue::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const auto& avn = blds.fAvenue;
     const auto t = centerTile();
 

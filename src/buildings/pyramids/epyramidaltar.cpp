@@ -1,6 +1,6 @@
 #include "epyramidaltar.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epyramid.h"
 
 ePyramidAltar::ePyramidAltar(const std::vector<eSanctCost>& cost,
@@ -9,7 +9,7 @@ ePyramidAltar::ePyramidAltar(const std::vector<eSanctCost>& cost,
                              const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidAltar,
                     elevation, 2, cid) {
-    eGameTextures::loadSanctuary();
+    GameTextures::loadSanctuary();
 }
 
 ePyramidAltar::ePyramidAltar(ePyramid* const pyramid,
@@ -20,12 +20,12 @@ ePyramidAltar::ePyramidAltar(ePyramid* const pyramid,
                     {eSanctCost{0, 4, 0}},
                     board, eBuildingType::pyramidAltar,
                     elevation, 2, cid) {
-    eGameTextures::loadSanctuary();
+    GameTextures::loadSanctuary();
 }
 
 stdsptr<eTexture> ePyramidAltar::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     return blds.fSanctuaryAltar;
 }

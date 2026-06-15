@@ -1,16 +1,16 @@
 #include "epeddler.h"
 
 #include "buildings/eagorabase.h"
-#include "textures/echaractertextures.h"
-#include "textures/egametextures.h"
+#include "textures/character-textures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 #include "engine/game-board.h"
 
 ePeddler::ePeddler(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fPeddler,
+    eBasicPatroler(board, &CharacterTextures::fPeddler,
                    eCharacterType::peddler) {
     setProvide(eProvide::peddler, 10000);
-    eGameTextures::loadPeddler();
+    GameTextures::loadPeddler();
 }
 
 void ePeddler::provideToBuilding(eBuilding* const b) {

@@ -2,11 +2,11 @@
 #define EBASICHERO_H
 
 #include "ehero.h"
-#include "textures/echaractertextures.h"
+#include "textures/character-textures.h"
 
 class eBasicHero : public eHero {
 public:
-    using eCharTexs = eHeroTextures eCharacterTextures::*;
+    using eCharTexs = HeroTextures CharacterTextures::*;
     eBasicHero(GameBoard& board,
                const eCharTexs charTexs,
                const eHeroType type);

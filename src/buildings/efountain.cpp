@@ -1,15 +1,15 @@
 #include "efountain.h"
 
 #include "characters/water-distributor.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eFountain::eFountain(GameBoard& board,
                      const eCityId cid) :
     ePatrolBuilding(board,
-                    &eBuildingTextures::fFountain,
+                    &BuildingTextures::fFountain,
                     -1.15, -2.37,
-                    &eBuildingTextures::fFountainOverlay,
+                    &BuildingTextures::fFountainOverlay,
                     [this]() { return e::make_shared<WaterDistributor>(getBoard()); },
                     eBuildingType::fountain, 2, 2, 4, cid)  {
-    eGameTextures::loadFountain();
+    GameTextures::loadFountain();
 }

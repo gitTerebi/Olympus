@@ -1,12 +1,12 @@
 #include "eresourcecollector.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eResourceCollector::eResourceCollector(
         GameBoard& board, const eCharTexs charTexs,
         const eCharacterType type) :
     eResourceCollectorBase(board, type),
-    mTextures(eGameTextures::characters()),
+    mTextures(GameTextures::characters()),
     mCharTexs(charTexs) {
 
 }

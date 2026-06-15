@@ -27,7 +27,7 @@ eAgoraBase::eAgoraBase(GameBoard& board,
                         },
                         type, sw, sh, 0, cid),
     mNPts(nPts), mO(o) {
-    eGameTextures::loadAgora();
+    GameTextures::loadAgora();
     for(int i = 0; i < mNPts; i++) {
         mBs.push_back(nullptr);
     }

@@ -1,10 +1,10 @@
 #include "esick.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eSick::eSick(GameBoard& board) :
-    eFightingPatroler(board, &eCharacterTextures::fSick,
+    eFightingPatroler(board, &CharacterTextures::fSick,
                       eCharacterType::sick) {
-    eGameTextures::loadSick();
+    GameTextures::loadSick();
     setSpeed(18.375);
 }

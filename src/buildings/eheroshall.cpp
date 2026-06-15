@@ -1,6 +1,6 @@
 ﻿#include "eheroshall.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "elanguage.h"
 #include "engine/game-board.h"
@@ -725,9 +725,9 @@ eHerosHall::eHerosHall(const eHeroType type, GameBoard& board,
                        const eCityId cid) :
     eBuilding(board, sHeroTypeToHallType(type), 4, 4, cid),
     mType(type) {
-    eGameTextures::loadHerosHall();
+    GameTextures::loadHerosHall();
     if(atlantean()) {
-        eGameTextures::loadPoseidonHerosHall();
+        GameTextures::loadPoseidonHerosHall();
     } else {
     }
     board.registerHeroHall(this);
@@ -805,7 +805,7 @@ eHerosHall::~eHerosHall() {
 
 std::shared_ptr<eTexture> eHerosHall::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
     if(atlantean()) {
         return texs.fPoseidonHeroHall;
     } else {
@@ -815,7 +815,7 @@ std::shared_ptr<eTexture> eHerosHall::getTexture(const eTileSize size) const {
 
 std::vector<eOverlay> eHerosHall::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
     const auto& statues = texs.fHeroStatues;
     int id;
     switch(mType) {

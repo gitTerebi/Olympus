@@ -2,7 +2,7 @@
 #define EPATROLSOURCEBUILDING_H
 
 #include "epatrolbuilding.h"
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 #include "pointers/estdpointer.h"
 
 class eCharacter;
@@ -17,8 +17,8 @@ class eSaveArchive;
 
 class ePatrolSourceBuilding : public ePatrolBuilding {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
-    using eOverlays = eTextureCollection eBuildingTextures::*;
+    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
+    using eOverlays = eTextureCollection BuildingTextures::*;
     using eTarget = std::pair<eCharacterType, eBuildingType>;
     using eTargets = std::vector<eTarget>;
     ePatrolSourceBuilding(GameBoard& board,

@@ -1,21 +1,21 @@
 #include "ehunter.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 
 eHunter::eHunter(GameBoard& board) :
-    eResourceCollector(board, &eCharacterTextures::fHunter,
+    eResourceCollector(board, &CharacterTextures::fHunter,
                        eCharacterType::hunter) {
-    eGameTextures::loadHunter();
+    GameTextures::loadHunter();
     setAttack(0.3);
 }
 
 void eHunter::setDeerHunter(const bool h) {
     mDeerHunter = h;
     if(h) {
-        setCharTexs(&eCharacterTextures::fDeerHunter);
+        setCharTexs(&CharacterTextures::fDeerHunter);
     } else {
-        setCharTexs(&eCharacterTextures::fHunter);
+        setCharTexs(&CharacterTextures::fHunter);
     }
 }
 

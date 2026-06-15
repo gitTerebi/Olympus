@@ -5,7 +5,7 @@
 
 class eRangeSoldier : public eSoldier {
 public:
-    using eCharTexs = eRockThrowerTextures eCharacterTextures::*;
+    using eCharTexs = RockThrowerTextures CharacterTextures::*;
     eRangeSoldier(GameBoard& board,
                   const eCharTexs charTexs,
                   const eCharacterType type,

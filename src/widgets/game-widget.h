@@ -19,8 +19,8 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 #include "engine/etile.h"
 #include "fileIO/esavearchive.h"
 
-#include "textures/eterraintextures.h"
-#include "textures/ebuildingtextures.h"
+#include "textures/terrain-textures.h"
+#include "textures/building-textures.h"
 
 #include "buildings/epatrolbuilding.h"
 
@@ -206,19 +206,19 @@ private:
                 const int altitude);
 
     void paintStampPreview(eTilePainter& tp,
-                           const eTerrainTextures& trrTexs,
-                           const eBuildingTextures& builTexs,
+                           const TerrainTextures& trrTexs,
+                           const BuildingTextures& builTexs,
                            int worldTileX, int worldTileY,
                            ePlayerId ppid);
     void paintAppealBuildPreview(eTilePainter& tp,
-                                 const eTerrainTextures& trrTexs,
+                                 const TerrainTextures& trrTexs,
                                  eBuilding* building,
                                  eBuildingRenderer* renderer,
                                  int worldTileX, int worldTileY);
     void paintBuildPreview(eTilePainter& tp,
                            ePainter& painter,
-                           const eTerrainTextures& trrTexs,
-                           const eBuildingTextures& builTexs,
+                           const TerrainTextures& trrTexs,
+                           const BuildingTextures& builTexs,
                            ePlayerId ppid,
                            eBuildingMode mode,
                            eWorldDirection dir,
@@ -231,7 +231,7 @@ private:
 
     void drawRoadFootprint(eTile* tile, SDL_Color color,
                            eTilePainter& tp,
-                           const eTerrainTextures& trrTexs);
+                           const TerrainTextures& trrTexs);
     static bool isRoadBandTile(eTile* tile);
     void addPatrolWalkerPreview(eTile* start, eTile* home,
                          eRoadPreviewPath& path,
@@ -249,14 +249,14 @@ private:
     void drawRoadBandTile(eTile* tile, eTile* start,
                           const eRoadPreviewPath& path,
                           eTilePainter& tp,
-                          const eTerrainTextures& trrTexs);
+                          const TerrainTextures& trrTexs);
     void drawRoadPreview(const eRoadPreviewPath& path,
                          eTile* spawnTile,
                          eTilePainter& tp,
-                         const eTerrainTextures& trrTexs);
+                         const TerrainTextures& trrTexs);
     void drawRoadBands(const std::vector<eTile*>& roads,
                        eTilePainter& tp,
-                       const eTerrainTextures& trrTexs);
+                       const TerrainTextures& trrTexs);
 
     void createGameMenu();
     void showGoals();
@@ -411,8 +411,8 @@ private:
 
     void scheduleConnectedTerrainUpdate(eTile* const startTile);
     void updateTerrainTextures(eTile* const tile,
-                               const eTerrainTextures& trrTexs,
-                               const eBuildingTextures& builTexs);
+                               const TerrainTextures& trrTexs,
+                               const BuildingTextures& builTexs);
     void updateTerrainTextures();
 
     void updateWaypointPath();
@@ -440,7 +440,7 @@ private:
     stdsptr<eTexture> getBasementTexture(
             const int viewTileX, const int viewTileY,
             eBuilding* const building,
-            const eTerrainTextures& trrTexs, const eWorldDirection dir,
+            const TerrainTextures& trrTexs, const eWorldDirection dir,
             const int boardWidth, const int boardHeight);
 
     std::vector<eTile*> selectedTiles() const;

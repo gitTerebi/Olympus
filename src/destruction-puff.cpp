@@ -1,7 +1,7 @@
 #include "destruction-puff.h"
 
 #include "engine/game-board.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 #include "erand.h"
 
@@ -14,7 +14,7 @@ static std::vector<int> randomFrameDwell() {
 
 DestructionPuff::DestructionPuff(GameBoard& board) :
     mBoard(board) {
-    eGameTextures::loadDust();
+    GameTextures::loadDust();
     board.registerDestructionPuff(this);
 }
 
@@ -27,7 +27,7 @@ DestructionPuff::DestructionPuff(GameBoard& board,
     mDirX(dirX), mDirY(dirY),
     mStepCount(stepCount), mCollId(collId),
     mFrameDwell(randomFrameDwell()) {
-    eGameTextures::loadDust();
+    GameTextures::loadDust();
     board.registerDestructionPuff(this);
 }
 
@@ -53,7 +53,7 @@ void DestructionPuff::incTime(const int by) {
 std::shared_ptr<eTexture>
 DestructionPuff::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& textures = eGameTextures::destrution();
+    const auto& textures = GameTextures::destrution();
     const auto& colls = textures[id].fDust;
     const auto& coll = colls[mCollId % static_cast<int>(colls.size())];
     return coll.getTexture(mAnimFrame % coll.size());

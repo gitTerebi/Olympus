@@ -1,6 +1,6 @@
 #include "eamazon.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
@@ -12,14 +12,14 @@ eAmazon::eAmazon(GameBoard& board) :
 void eAmazon::setIsArcher(const bool a) {
     mIsArcher = a;
     if(a) {
-        eGameTextures::loadAmazonArcher();
-        setCharTexs(&eCharacterTextures::fAmazonArcher);
+        GameTextures::loadAmazonArcher();
+        setCharTexs(&CharacterTextures::fAmazonArcher);
         setRange(eNumbers::sArcherRange);
         setAttack(eNumbers::sArcherAttack);
         setHP(eNumbers::sArcherHP);
     } else {
-        eGameTextures::loadAmazonSpear();
-        setCharTexs(&eCharacterTextures::fAmazonSpear);
+        GameTextures::loadAmazonSpear();
+        setCharTexs(&CharacterTextures::fAmazonSpear);
         setRange(0);
         setAttack(eNumbers::sHopliteAttack);
         setHP(eNumbers::sHopliteHP);

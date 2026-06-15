@@ -1,6 +1,6 @@
 #include "eruins.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 
 eRuins::eRuins(GameBoard& board, const eCityId cid) :
@@ -17,7 +17,7 @@ void eRuins::setOrigin(const int x, const int y, const int w, const int h) {
 
 stdsptr<eTexture> eRuins::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::terrain();
+    const auto& texs = GameTextures::terrain();
     const auto& coll = texs[sizeId].fTinyStones;
     return coll.getTexture(seed() % coll.size());
 }

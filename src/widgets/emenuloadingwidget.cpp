@@ -1,6 +1,6 @@
 #include "emenuloadingwidget.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "audio/music.h"
 #include "audio/sounds.h"
 #include "emessages.h"
@@ -8,10 +8,10 @@
 #include "emainwindow.h"
 
 eMenuLoadingWidget::eMenuLoadingWidget(eMainWindow* const window) :
-    eLoadingWidget(eGameTextures::menuSize(),
+    eLoadingWidget(GameTextures::menuSize(),
                    [window](std::string& text) {
     const auto& sett = window->settings();
-        const bool r = eGameTextures::loadNextMenu(sett, text);
+        const bool r = GameTextures::loadNextMenu(sett, text);
         if(r) {
             text = "Loading music...";
             eMusic::loadMenu();

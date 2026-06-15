@@ -1,9 +1,9 @@
 #include "egreekhoplite.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eGreekHoplite::eGreekHoplite(GameBoard& board) :
-    eHopliteBase(board, &eCharacterTextures::fGreekHoplite,
+    eHopliteBase(board, &CharacterTextures::fGreekHoplite,
                  eCharacterType::greekHoplite) {
-    eGameTextures::loadGreekHoplite();
+    GameTextures::loadGreekHoplite();
 }

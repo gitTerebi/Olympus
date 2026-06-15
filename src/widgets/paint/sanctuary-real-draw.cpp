@@ -4,8 +4,8 @@
 #include "engine/game-board.h"
 #include "engine/etile.h"
 #include "etexture.h"
-#include "textures/egametextures.h"
-#include "textures/ebuildingtextures.h"
+#include "textures/game-textures.h"
+#include "textures/building-textures.h"
 #include "widgets/etilepainter.h"
 #include "widgets/paint/sanctuary-preview.h"
 
@@ -54,7 +54,7 @@ void drawAtTextureAnchor(
 void drawTemple(
     GameBoard& board,
     eTilePainter& tilePainter,
-    const eBuildingTextures& buildingTextures,
+    const BuildingTextures& buildingTextures,
     eTempleBuilding& templeBuilding,
     const eTextureSpace& textureSpace,
     const eWorldDirection dir,
@@ -78,7 +78,7 @@ void drawTemple(
     const bool templeFrontVisible =
         sanctuaryTempleFrontFacing(templeRotateId, dir);
 
-    eGameTextures::loadZeusSanctuary();
+    GameTextures::loadZeusSanctuary();
     const auto textures = sanctuaryTempleGetTextures(
         buildingTextures, templeRotateId, dir, animFrame, stage);
     drawAtTextureAnchor(
@@ -123,7 +123,7 @@ void drawTemple(
 
 void drawStatue(
     eTilePainter& tilePainter,
-    const eBuildingTextures& buildingTextures,
+    const BuildingTextures& buildingTextures,
     eTempleStatueBuilding& statueBuilding,
     const eTextureSpace& textureSpace,
     const eWorldDirection dir,
@@ -148,7 +148,7 @@ void drawStatue(
 
 void drawMonument(
     eTilePainter& tilePainter,
-    const eBuildingTextures& buildingTextures,
+    const BuildingTextures& buildingTextures,
     eTempleMonumentBuilding& monumentBuilding,
     const eTextureSpace& textureSpace,
     const eWorldDirection dir,
@@ -173,7 +173,7 @@ void drawMonument(
 
 void drawAltar(
     eTilePainter& tilePainter,
-    const eBuildingTextures& buildingTextures,
+    const BuildingTextures& buildingTextures,
     eTempleAltarBuilding& altarBuilding,
     const eTextureSpace& textureSpace,
     const double buildingDrawX,
@@ -212,7 +212,7 @@ bool isSanctuaryRealDrawPart(const eBuildingType buildingType)
 void drawSanctuaryRealBuildingPart(
     GameBoard& board,
     eTilePainter& tilePainter,
-    const eBuildingTextures& buildingTextures,
+    const BuildingTextures& buildingTextures,
     eBuilding* const building,
     const eBuildingType buildingType,
     const eTextureSpace& textureSpace,

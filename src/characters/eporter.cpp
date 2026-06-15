@@ -1,9 +1,9 @@
 #include "eporter.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 ePorter::ePorter(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fPorter,
+    eBasicPatroler(board, &CharacterTextures::fPorter,
                    eCharacterType::porter) {
-    eGameTextures::loadPorter();
+    GameTextures::loadPorter();
 }

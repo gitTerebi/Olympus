@@ -1,7 +1,7 @@
 ﻿#include "trade-post.h"
 #include "fileIO/esavearchive.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "engine/game-board.h"
 #include "etilehelper.h"
@@ -134,8 +134,8 @@ TradePost::TradePost(GameBoard& board, WorldCity& city,
     WarehouseBase(board, eBuildingType::tradePost, 4, 4, 24,
                    eResourceType::tradePost, cid, 15),
     mCity(city), mType(type) {
-    eGameTextures::loadTradingPost();
-    if(type == eTradePostType::pier) eGameTextures::loadPier();
+    GameTextures::loadTradingPost();
+    if(type == eTradePostType::pier) GameTextures::loadPier();
     setOverlayEnabledFunc([]() { return true; });
     setOrders(eResourceType::none, eResourceType::none);
     getBoard().registerTradePost(this);
@@ -179,7 +179,7 @@ eTextureSpace TradePost::getTextureSpace(const int tx, const int ty,
 std::vector<eOverlay> TradePost::getOverlays(const eTileSize size) const {
     std::vector<eOverlay> os;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
     const eWorldDirection dir = getBoard().direction();
     const auto rect = tileRect();

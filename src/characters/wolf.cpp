@@ -3,14 +3,14 @@
 #include "actions/ewolfaction.h"
 #include "enumbers.h"
 #include "engine/etile.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include <vector>
 
 Wolf::Wolf(GameBoard& board) :
-    eWildAnimal(board, &eCharacterTextures::fWolf,
+    eWildAnimal(board, &CharacterTextures::fWolf,
                 eCharacterType::wolf) {
-    eGameTextures::loadWolf();
+    GameTextures::loadWolf();
     setCityId(eCityId::neutralAggresive);
 }
 

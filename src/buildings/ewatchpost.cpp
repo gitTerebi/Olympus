@@ -1,14 +1,14 @@
 #include "ewatchpost.h"
 
 #include "characters/watchman.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eWatchpost::eWatchpost(GameBoard& board,
                        const eCityId cid) :
-    ePatrolBuilding(board, &eBuildingTextures::fWatchPost,
+    ePatrolBuilding(board, &BuildingTextures::fWatchPost,
                     -0.25, -2.1,
-                    &eBuildingTextures::fWatchPostOverlay,
+                    &BuildingTextures::fWatchPostOverlay,
                     [this]() { return e::make_shared<Watchman>(getBoard()); },
                     eBuildingType::watchPost, 2, 2, 6, cid)  {
-    eGameTextures::loadWatchpost();
+    GameTextures::loadWatchpost();
 }

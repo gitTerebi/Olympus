@@ -7,15 +7,15 @@
 #include "evectorhelpers.h"
 #include "widgets/etilepainter.h"
 #include "widgets/epainter.h"
-#include "textures/eterraintextures.h"
-#include "textures/ebuildingtextures.h"
-#include "textures/egametextures.h"
+#include "textures/terrain-textures.h"
+#include "textures/building-textures.h"
+#include "textures/game-textures.h"
 #include "buildings/allbuildings.h"
 #include "buildings/ebuildingrenderer.h"
 #include "buildings/eagorabase.h"
 #include "buildings/eagoraspace.h"
 #include "etilehelper.h"
-#include "textures/etiletotexture.h"
+#include "textures/tile-to-texture.h"
 #include "widgets/gamebuild/ecommonhousingbuild.h"
 #include "widgets/paint/build-preview-render.h"
 #include "widgets/paint/sanctuary-preview.h"
@@ -26,8 +26,8 @@
 void GameWidget::paintBuildPreview(
     eTilePainter& tp,
     ePainter& painter,
-    const eTerrainTextures& trrTexs,
-    const eBuildingTextures& builTexs,
+    const TerrainTextures& trrTexs,
+    const BuildingTextures& builTexs,
     ePlayerId ppid,
     eBuildingMode mode,
     eWorldDirection dir,
@@ -79,20 +79,20 @@ void GameWidget::paintBuildPreview(
     if(mCreatingStampTemplate) drawStampTemplateSelection();
 
     const auto animalBuildTexture = [&](const eBuildingMode mode) {
-        auto& charTexs = eGameTextures::characters()[static_cast<int>(mTileSize)];
-        const eAnimalTextures* animalTexs = nullptr;
-        const eCattleTextures* cattleTexs = nullptr;
+        auto& charTexs = GameTextures::characters()[static_cast<int>(mTileSize)];
+        const AnimalTextures* animalTexs = nullptr;
+        const CattleTextures* cattleTexs = nullptr;
         switch(mode) {
         case eBuildingMode::sheep:
-            eGameTextures::loadSheep();
+            GameTextures::loadSheep();
             animalTexs = &charTexs.fNudeSheep;
             break;
         case eBuildingMode::goat:
-            eGameTextures::loadGoat();
+            GameTextures::loadGoat();
             animalTexs = &charTexs.fGoat;
             break;
         case eBuildingMode::cattle:
-            eGameTextures::loadCattle();
+            GameTextures::loadCattle();
             cattleTexs = &charTexs.fCattle2;
             break;
         default:
@@ -235,7 +235,7 @@ void GameWidget::paintBuildPreview(
     {
         if (!bridgeValid && bridgetTs.empty())
         {
-            eGameTextures::loadBridge();
+            GameTextures::loadBridge();
             const auto hoverTile = mBoard->tile(mHoverTX, mHoverTY);
             if (hoverTile)
             {
@@ -441,7 +441,7 @@ void GameWidget::paintBuildPreview(
     {
     case eBuildingMode::commonAgora:
     {
-        eGameTextures::loadAgora();
+        GameTextures::loadAgora();
         const auto &agr = builTexs.fAgora;
         const auto &agrr = builTexs.fAgoraRoad;
 
@@ -695,7 +695,7 @@ void GameWidget::paintBuildPreview(
     break;
     case eBuildingMode::grandAgora:
     {
-        eGameTextures::loadAgora();
+        GameTextures::loadAgora();
         const auto &agr = builTexs.fAgora;
         const auto &agrr = builTexs.fAgoraRoad;
 
@@ -1829,7 +1829,7 @@ void GameWidget::paintBuildPreview(
                         double drawX, drawY;
                         drawXY(mHoverTX + dx, mHoverTY + dy, drawX, drawY, 1, 1, t->altitude());
                         int dd;
-                        auto tex = eTileToTexture::get(t, trrTexs, builTexs, mTileSize, false, dd, nullptr, eWorldDirection::N);
+                        auto tex = TileToTexture::get(t, trrTexs, builTexs, mTileSize, false, dd, nullptr, eWorldDirection::N);
                         tex->setColorMod(255, 0, 0);
                         tp.drawTexture(drawX, drawY, tex, eAlignment::top);
                         tex->clearColorMod();

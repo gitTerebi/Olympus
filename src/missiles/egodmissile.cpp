@@ -1,7 +1,7 @@
 #include "egodmissile.h"
 #include "fileIO/esavearchive.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "characters/heroes/ehero.h"
 
 eGodMissile::eGodMissile(GameBoard& board,
@@ -12,14 +12,14 @@ std::shared_ptr<eTexture>
 eGodMissile::getTexture(const eTileSize size) const {
     auto& board = this->board();
     const auto dir = board.direction();
-    using eTexPtr = std::vector<eTextureCollection> eDestructionTextures::*;
+    using eTexPtr = std::vector<eTextureCollection> DestructionTextures::*;
     eTexPtr collsptr;
     if(mActionType == eCharacterActionType::bless) {
-        eGameTextures::loadBless();
-        collsptr = &eDestructionTextures::fBless;
+        GameTextures::loadBless();
+        collsptr = &DestructionTextures::fBless;
     } else if(mActionType == eCharacterActionType::curse) {
-        eGameTextures::loadCurse();
-        collsptr = &eDestructionTextures::fCurse;
+        GameTextures::loadCurse();
+        collsptr = &DestructionTextures::fCurse;
     } else {
         switch(mCharType) {
         case eCharacterType::aphrodite:
@@ -44,17 +44,17 @@ eGodMissile::getTexture(const eTileSize size) const {
             collsptr = eHero::sHeroMissile(ht);
         } break;
         case eCharacterType::hydra:
-            eGameTextures::loadGodBlueArrow();
-            collsptr = &eDestructionTextures::fGodBlueArrow;
+            GameTextures::loadGodBlueArrow();
+            collsptr = &DestructionTextures::fGodBlueArrow;
             break;
         default:
-            eGameTextures::loadMonsterMissile();
-            collsptr = &eDestructionTextures::fMonsterMissile;
+            GameTextures::loadMonsterMissile();
+            collsptr = &DestructionTextures::fMonsterMissile;
         }
     }
 
     const int id = static_cast<int>(size);
-    const auto& textures = eGameTextures::destrution();
+    const auto& textures = GameTextures::destrution();
     const double a = angle();
     const auto o = sAngleOrientation(a);
     const auto oo = sRotated(o, dir);

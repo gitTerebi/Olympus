@@ -3,10 +3,10 @@
 
 #include "widgets/ewidget.h"
 #include "widgets/eresolution.h"
-#include "textures/eterraintextures.h"
-#include "textures/egodtextures.h"
-#include "textures/ebuildingtextures.h"
-#include "textures/echaractertextures.h"
+#include "textures/terrain-textures.h"
+#include "textures/god-textures.h"
+#include "textures/building-textures.h"
+#include "textures/character-textures.h"
 #include "widgets/egraphicsmenu.h"
 #include "widgets/eoptionsmenu.h"
 

@@ -10,7 +10,7 @@
 #include "buildings/eresourcebuilding.h"
 #include "fileIO/esavearchive.h"
 
-class eDestructionTextures;
+class DestructionTextures;
 class eSaveArchive;
 enum class eGodSound;
 
@@ -437,7 +437,7 @@ class eGodAction : public GodMonsterAction {
 public:
     eGodAction(eCharacter* const c, const eCharActionType type);
 
-    using eTexPtr = eTextureCollection eDestructionTextures::*;
+    using eTexPtr = eTextureCollection DestructionTextures::*;
     virtual bool lookForRangeAction(const int dtime,
                             int& time, const int freq,
                             const int range,

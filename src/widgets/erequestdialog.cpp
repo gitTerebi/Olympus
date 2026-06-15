@@ -4,7 +4,7 @@
 #include "elabel.h"
 #include "framed-button-with-icon.h"
 #include "estringhelpers.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "eboardcityswitchbutton.h"
 #include "engine/world-board.h"
 
@@ -162,7 +162,7 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
             const auto r = resolution();
             const auto uiScale = r.uiScale();
             const int icoll = static_cast<int>(uiScale);
-            const auto& intrfc = eGameTextures::interface();
+            const auto& intrfc = GameTextures::interface();
             const auto& coll = intrfc[icoll];
 
             {

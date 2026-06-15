@@ -1,9 +1,9 @@
 #include "etradeboat.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eTradeBoat::eTradeBoat(GameBoard& board) :
-    eBoatBase(board, &eCharacterTextures::fTradeBoat,
+    eBoatBase(board, &CharacterTextures::fTradeBoat,
               eCharacterType::tradeBoat) {
-    eGameTextures::loadTradeBoat();
+    GameTextures::loadTradeBoat();
 }

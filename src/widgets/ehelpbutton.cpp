@@ -1,6 +1,6 @@
 #include "ehelpbutton.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eHelpButton::eHelpButton(eMainWindow* const window) :
-    eBasicButton(&eInterfaceTextures::fHelpButton, window) {}
+    eBasicButton(&InterfaceTextures::fHelpButton, window) {}

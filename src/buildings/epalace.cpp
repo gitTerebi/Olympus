@@ -1,7 +1,7 @@
 #include "epalace.h"
 
 #include "engine/game-board.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epalacetile.h"
 #include "fileIO/esavearchive.h"
 
@@ -10,7 +10,7 @@ ePalace::ePalace(GameBoard& board, const bool r,
     eBuilding(board, eBuildingType::palace,
               r ? 4 : 8, r ? 8 : 4, cid),
     mRotated(r) {
-    eGameTextures::loadPalace();
+    GameTextures::loadPalace();
     setEnabled(true);
     board.registerPalace(this);
 }
@@ -32,7 +32,7 @@ eTextureSpace ePalace::getTextureSpace(const int tx, const int ty,
     const SDL_Point p{tx, ty};
     const auto r = tileRect();
     if(!SDL_PointInRect(&p, &r)) return {nullptr};
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const int sizeId = static_cast<int>(size);
     const auto& plcs = blds[sizeId];
     auto& board = getBoard();
@@ -88,7 +88,7 @@ eTextureSpace ePalace::getTextureSpace(const int tx, const int ty,
 
 std::vector<eOverlay> ePalace::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
 
     std::vector<eOverlay> os;
 

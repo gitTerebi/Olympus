@@ -89,7 +89,7 @@
 #include "ecampaign.h"
 #include "eiteratesquare.h"
 #include "ecolonymonumentaction.h"
-#include "textures/emarbletile.h"
+#include "textures/marble-tile.h"
 #include "elanguage.h"
 #include "enumbers.h"
 
@@ -761,13 +761,13 @@ void GameBoard::eMarbleTiles::restock() const
         {
             if (maxLevel >= 2)
             {
-                const bool e = eMarbleTile::edge(t);
+                const bool e = MarbleTile::edge(t);
                 if (!e)
                     t->setResource(99999);
             }
             else
             {
-                const bool e = eMarbleTile::edge(t);
+                const bool e = MarbleTile::edge(t);
                 if (!e)
                     t->setResource(1);
             }

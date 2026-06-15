@@ -2,7 +2,7 @@
 
 #include "ebutton.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "eupbutton.h"
 #include "edownbutton.h"

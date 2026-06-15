@@ -4,7 +4,7 @@
 #include "engine/etile.h"
 #include "engine/etilebase.h"
 #include "engine/eknownendpathfinder.h"
-#include "ebuildablehelpers.h"
+#include "buildable-helpers.h"
 #include "buildings/eagoraspace.h"
 #include "buildings/eagorabase.h"
 #include "spawners/ebanner.h"
@@ -73,19 +73,19 @@ bool canBuildFishery(GameBoard* const board, const int tx, const int ty,
     }
     const auto t = board->tile(tx, ty);
     if(!t) return false;
-    if(eBuildableHelpers::canBuildFisheryTR(t)) {
+    if(BuildableHelpers::canBuildFisheryTR(t)) {
         o = eDiagonalOrientation::topRight;
         return true;
     }
-    if(eBuildableHelpers::canBuildFisheryBR(t)) {
+    if(BuildableHelpers::canBuildFisheryBR(t)) {
         o = eDiagonalOrientation::bottomRight;
         return true;
     }
-    if(eBuildableHelpers::canBuildFisheryBL(t)) {
+    if(BuildableHelpers::canBuildFisheryBL(t)) {
         o = eDiagonalOrientation::bottomLeft;
         return true;
     }
-    if(eBuildableHelpers::canBuildFisheryTL(t)) {
+    if(BuildableHelpers::canBuildFisheryTL(t)) {
         o = eDiagonalOrientation::topLeft;
         return true;
     }
@@ -104,9 +104,9 @@ bool canBuildTriremeWharf(GameBoard* const board, const int tx, const int ty,
     {
         const auto t = board->tile(tx - 1, ty);
         if(!t) return false;
-        if(eBuildableHelpers::canBuildFisheryTR(t)) {
+        if(BuildableHelpers::canBuildFisheryTR(t)) {
             const auto br = t->bottomRight<eTile>();
-            if(eBuildableHelpers::canBuildFisheryTR(br)) {
+            if(BuildableHelpers::canBuildFisheryTR(br)) {
                 o = eDiagonalOrientation::topRight;
                 return true;
             }
@@ -115,9 +115,9 @@ bool canBuildTriremeWharf(GameBoard* const board, const int tx, const int ty,
     {
         const auto t = board->tile(tx, ty);
         if(!t) return false;
-        if(eBuildableHelpers::canBuildFisheryBR(t)) {
+        if(BuildableHelpers::canBuildFisheryBR(t)) {
             const auto bl = t->bottomLeft<eTile>();
-            if(eBuildableHelpers::canBuildFisheryBR(bl)) {
+            if(BuildableHelpers::canBuildFisheryBR(bl)) {
                 o = eDiagonalOrientation::bottomRight;
                 return true;
             }
@@ -126,9 +126,9 @@ bool canBuildTriremeWharf(GameBoard* const board, const int tx, const int ty,
     {
         const auto t = board->tile(tx - 1, ty + 1);
         if(!t) return false;
-        if(eBuildableHelpers::canBuildFisheryBL(t)) {
+        if(BuildableHelpers::canBuildFisheryBL(t)) {
             const auto br = t->bottomRight<eTile>();
-            if(eBuildableHelpers::canBuildFisheryBL(br)) {
+            if(BuildableHelpers::canBuildFisheryBL(br)) {
                 o = eDiagonalOrientation::bottomLeft;
                 return true;
             }
@@ -137,9 +137,9 @@ bool canBuildTriremeWharf(GameBoard* const board, const int tx, const int ty,
     {
         const auto t = board->tile(tx - 1, ty + 1);
         if(!t) return false;
-        if(eBuildableHelpers::canBuildFisheryTL(t)) {
+        if(BuildableHelpers::canBuildFisheryTL(t)) {
             const auto tr = t->topRight<eTile>();
-            if(eBuildableHelpers::canBuildFisheryTL(tr)) {
+            if(BuildableHelpers::canBuildFisheryTL(tr)) {
                 o = eDiagonalOrientation::topLeft;
                 return true;
             }

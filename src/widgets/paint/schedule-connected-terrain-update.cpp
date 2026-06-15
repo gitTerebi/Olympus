@@ -1,6 +1,6 @@
 #include "widgets/game-widget.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "evectorhelpers.h"
 
@@ -107,8 +107,8 @@ void GameWidget::scheduleConnectedTerrainUpdate(eTile *const startTile)
               });
 
     const int tid = static_cast<int>(mTileSize);
-    const auto &trrTexs = eGameTextures::terrain().at(tid);
-    const auto &builTexs = eGameTextures::buildings().at(tid);
+    const auto &trrTexs = GameTextures::terrain().at(tid);
+    const auto &builTexs = GameTextures::buildings().at(tid);
 
     for (const auto tile : tiles)
     {

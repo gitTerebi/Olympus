@@ -3,18 +3,18 @@
 
 #include "echaracter.h"
 
-#include "textures/echaractertextures.h"
+#include "textures/character-textures.h"
 
 class FireFighter : public eCharacter {
 public:
-    using eCharTexs = eFireFighterTextures eCharacterTextures::*;
+    using eCharTexs = FireFighterTextures CharacterTextures::*;
     FireFighter(GameBoard& board);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
 
     void beingKilled() override;
 private:
-    const std::vector<eCharacterTextures>& mTextures;
+    const std::vector<CharacterTextures>& mTextures;
     const eCharTexs mCharTexs;
 };
 

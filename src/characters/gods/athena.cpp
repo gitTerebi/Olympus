@@ -1,28 +1,28 @@
 #include "athena.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Apollo::Apollo(GameBoard& board) :
-    ExtendedGod(board, &eGodTextures::fApollo, GodType::apollo) {
-    eGameTextures::loadApollo();
+    ExtendedGod(board, &GodTextures::fApollo, GodType::apollo) {
+    GameTextures::loadApollo();
 }
 
 Artemis::Artemis(GameBoard& board) :
-    ExtendedGod(board, &eGodTextures::fArtemis, GodType::artemis) {
-    eGameTextures::loadArtemis();
+    ExtendedGod(board, &GodTextures::fArtemis, GodType::artemis) {
+    GameTextures::loadArtemis();
 }
 
 Athena::Athena(GameBoard& board) :
-    ExtendedGod(board, &eGodTextures::fAthena, GodType::athena) {
-    eGameTextures::loadAthena();
+    ExtendedGod(board, &GodTextures::fAthena, GodType::athena) {
+    GameTextures::loadAthena();
 }
 
 Atlas::Atlas(GameBoard& board) :
-    ExtendedGod(board, &eGodTextures::fAtlas, GodType::atlas) {
-    eGameTextures::loadAtlas();
+    ExtendedGod(board, &GodTextures::fAtlas, GodType::atlas) {
+    GameTextures::loadAtlas();
 }
 
 Zeus::Zeus(GameBoard& board) :
-    ExtendedGod(board, &eGodTextures::fZeus, GodType::zeus) {
-    eGameTextures::loadZeus();
+    ExtendedGod(board, &GodTextures::fZeus, GodType::zeus) {
+    GameTextures::loadZeus();
 }

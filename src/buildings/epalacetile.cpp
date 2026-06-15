@@ -1,6 +1,6 @@
 #include "epalacetile.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epalace.h"
 #include "fileIO/esavearchive.h"
 
@@ -9,7 +9,7 @@ ePalaceTile::ePalaceTile(GameBoard& board,
                          const eCityId cid) :
     eBuilding(board, eBuildingType::palaceTile, 1, 1, cid),
     mOther(other) {
-    eGameTextures::loadPalaceTiles();
+    GameTextures::loadPalaceTiles();
 }
 
 void ePalaceTile::erase() {
@@ -18,7 +18,7 @@ void ePalaceTile::erase() {
 
 std::shared_ptr<eTexture> ePalaceTile::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings();
+    const auto& texs = GameTextures::buildings();
     const auto& coll = texs[sizeId].fPalaceTiles;
     const int id = mOther ? 1 : 0;
     return coll.getTexture(id);

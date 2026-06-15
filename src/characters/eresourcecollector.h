@@ -3,11 +3,11 @@
 
 #include "eresourcecollectorbase.h"
 
-#include "textures/echaractertextures.h"
+#include "textures/character-textures.h"
 
 class eResourceCollector : public eResourceCollectorBase {
 public:
-    using eCharTexs = eResourceCollectorTextures eCharacterTextures::*;
+    using eCharTexs = ResourceCollectorTextures CharacterTextures::*;
     eResourceCollector(GameBoard& board, const eCharTexs charTexs,
                        const eCharacterType type);
 
@@ -15,7 +15,7 @@ public:
 protected:
     void setCharTexs(const eCharTexs& texs);
 private:
-    const std::vector<eCharacterTextures>& mTextures;
+    const std::vector<CharacterTextures>& mTextures;
     eCharTexs mCharTexs;
 };
 

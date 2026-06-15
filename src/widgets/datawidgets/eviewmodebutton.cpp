@@ -1,6 +1,6 @@
 ﻿#include "eviewmodebutton.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eViewModeButton::eViewModeButton(const std::string& text,
                                  const eViewMode vm,
@@ -16,7 +16,7 @@ eViewModeButton::eViewModeButton(const std::string& text,
         }
     });
 
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes].fSeeButton;

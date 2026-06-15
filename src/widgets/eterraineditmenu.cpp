@@ -1,6 +1,6 @@
 ﻿#include "eterraineditmenu.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "eactionlistwidget.h"
 #include "engine/game-board.h"
 #include "spawners/ebanner.h"
@@ -18,7 +18,7 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
     int mult;
     iResAndMult(iRes, mult);
 
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[iRes];
     const auto tex = coll.fMapEditMenuBackground;
     setTexture(tex);

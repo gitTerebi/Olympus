@@ -91,7 +91,7 @@ void formatStoredMessage(eMessage& msg,
 #include "engine/eknownendpathfinder.h"
 #include "eterraineditmenu.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "game-menu.h"
 #include "eminimap.h"
@@ -154,7 +154,7 @@ void formatStoredMessage(eMessage& msg,
 #include "audio/music.h"
 #include "spawners/ebanner.h"
 
-#include "ebuildablehelpers.h"
+#include "buildable-helpers.h"
 #include "characters/etrireme.h"
 
 #include "district-conditions-widget.h"
@@ -756,7 +756,7 @@ void GameWidget::initialize()
 
         const auto iconLabel = new eLabel(window());
         iconLabel->setNoPadding();
-        const auto &intrfc = eGameTextures::interface();
+        const auto &intrfc = GameTextures::interface();
         const auto uiScale = resolution().uiScale();
         const int icoll = static_cast<int>(uiScale);
         const auto &coll = intrfc[icoll];
@@ -3616,7 +3616,7 @@ void GameWidget::setTileSize(const eTileSize size)
         mTileSize = sizes[0];
     }
     const int tid = static_cast<int>(mTileSize);
-    const auto &trrTexs = eGameTextures::terrain().at(tid);
+    const auto &trrTexs = GameTextures::terrain().at(tid);
     const int newW = trrTexs.fTileW;
     const int newH = trrTexs.fTileH;
 

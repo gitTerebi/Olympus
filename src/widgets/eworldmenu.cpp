@@ -1,6 +1,6 @@
 ﻿#include "eworldmenu.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "ebutton.h"
 #include "emainwindow.h"
@@ -21,7 +21,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
     int mult;
     iResAndMult(iRes, mult);
 
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[iRes];
     const auto tex = coll.fWorldMenuBackground;
     setTexture(tex);

@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "emainwindow.h"
 #include "echeckablebutton.h"
 #include "engine/game-board.h"
@@ -173,7 +173,7 @@ private:
     GameBoard &mBoard;
 };
 
-eWidget *GameMenu::createPriceWidget(const eInterfaceTextures &coll)
+eWidget *GameMenu::createPriceWidget(const InterfaceTextures &coll)
 {
     const auto r = new eWidget(window());
     r->setNoPadding();
@@ -410,7 +410,7 @@ eBuildButton *GameMenu::createTradeBuildButton(
     {
         const int mult = bb->height() / 10;
         const int iRes = mult - 1;
-        const auto &intrfc = eGameTextures::interface();
+        const auto &intrfc = GameTextures::interface();
         const auto &coll = intrfc[iRes];
         if (c.fMarbleCost > 0)
         {
@@ -573,7 +573,7 @@ void GameMenu::initialize(GameBoard *const b,
     int mult;
     iResAndMult(iRes, mult);
 
-    const auto &intrfc = eGameTextures::interface();
+    const auto &intrfc = GameTextures::interface();
     const auto &coll = intrfc[iRes];
     const auto tex = coll.fGameMenuBackground;
     setTexture(tex);
@@ -1407,7 +1407,7 @@ void GameMenu::initialize(GameBoard *const b,
         const auto butts = new eBlueWidget(window());
         butts->setPadding(0);
 
-        const auto goals = new eBasicButton(&eInterfaceTextures::fGoals, window());
+        const auto goals = new eBasicButton(&InterfaceTextures::fGoals, window());
         goals->setTooltip(eLanguage::zeusText(68, 9));
         butts->addWidget(goals);
         goals->setPressAction(goalsView);

@@ -1,13 +1,13 @@
 #include "fire-fighter.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 
 FireFighter::FireFighter(GameBoard& board) :
     eCharacter(board, eCharacterType::fireFighter),
-    mTextures(eGameTextures::characters()),
-    mCharTexs(&eCharacterTextures::fFireFighter) {
-    eGameTextures::loadFireFighter();
+    mTextures(GameTextures::characters()),
+    mCharTexs(&CharacterTextures::fFireFighter) {
+    GameTextures::loadFireFighter();
     setProvide(eProvide::maintanance, __INT_MAX__);
 }
 

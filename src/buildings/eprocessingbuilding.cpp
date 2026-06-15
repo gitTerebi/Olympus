@@ -1,6 +1,6 @@
 #include "eprocessingbuilding.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "fileIO/esavearchive.h"
 
@@ -23,7 +23,7 @@ eProcessingBuilding::eProcessingBuilding(
         const eCityId cid) :
     eResourceBuildingBase(board, type, sw, sh,
                           maxEmployees, product, cid),
-    mTextures(eGameTextures::buildings()),
+    mTextures(GameTextures::buildings()),
     mBaseTex(baseTex), mOverlays(overlays),
     mOverlayX(overlayX), mOverlayY(overlayY),
     mRawMaterial(rawMaterial), mRawUse(rawUse),

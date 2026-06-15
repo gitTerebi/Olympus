@@ -1,30 +1,30 @@
 #include "ecolumn.h"
 
-#include "textures/egametextures.h"
-#include "textures/ebuildingtextures.h"
+#include "textures/game-textures.h"
+#include "textures/building-textures.h"
 #include "engine/game-board.h"
 
 eDoricColumn::eDoricColumn(GameBoard& board, const eCityId cid) :
-    eColumn(board, &eBuildingTextures::fDoricColumn,
+    eColumn(board, &BuildingTextures::fDoricColumn,
             eBuildingType::doricColumn, 1, 1, cid) {
-    eGameTextures::loadColumns();
+    GameTextures::loadColumns();
 }
 
 eIonicColumn::eIonicColumn(GameBoard& board, const eCityId cid) :
-    eColumn(board, &eBuildingTextures::fIonicColumn,
+    eColumn(board, &BuildingTextures::fIonicColumn,
             eBuildingType::ionicColumn, 1, 1, cid) {
-    eGameTextures::loadColumns();
+    GameTextures::loadColumns();
 }
 
 eCorinthianColumn::eCorinthianColumn(GameBoard& board, const eCityId cid) :
-    eColumn(board, &eBuildingTextures::fCorinthianColumn,
+    eColumn(board, &BuildingTextures::fCorinthianColumn,
             eBuildingType::corinthianColumn, 1, 1, cid) {
-    eGameTextures::loadColumns();
+    GameTextures::loadColumns();
 }
 
 std::vector<eOverlay> eColumn::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& bds = eGameTextures::buildings();
+    const auto& bds = GameTextures::buildings();
     const auto& texs = bds[sizeId];
     const auto t = centerTile();
     auto& board = getBoard();

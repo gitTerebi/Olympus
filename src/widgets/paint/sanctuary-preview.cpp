@@ -3,12 +3,12 @@
 #include "buildings/allbuildings.h"
 #include "buildings/sanctuaries/esanctbuilding.h"
 #include "buildings/sanctuaries/esanctuaryblueprint.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/etile.h"
 #include "engine/game-board.h"
 #include "etilehelper.h"
-#include "textures/ebuildingtextures.h"
-#include "textures/eterraintextures.h"
+#include "textures/building-textures.h"
+#include "textures/terrain-textures.h"
 #include "widgets/ebuildingmode.h"
 #include "widgets/etilepainter.h"
 
@@ -338,8 +338,8 @@ std::shared_ptr<eTexture> sanctuaryTerrainTexture(
     GameBoard& board,
     const eCityId viewedCityId,
     const eTileSize tileSize,
-    const eBuildingTextures& builTexs,
-    const eTerrainTextures& trrTexs,
+    const BuildingTextures& builTexs,
+    const TerrainTextures& trrTexs,
     const eWorldDirection dir)
 {
     if (isTempleFloorTile(tile.fType)) {
@@ -360,7 +360,7 @@ std::shared_ptr<eTexture> sanctuaryTerrainTexture(
 }
 
 const eTextureCollection* statueTextureCollection(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const GodType god)
 {
     switch(god) {
@@ -383,7 +383,7 @@ const eTextureCollection* statueTextureCollection(
 }
 
 const eTextureCollection* monumentTextureCollection(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const GodType god)
 {
     switch(god) {
@@ -446,9 +446,9 @@ std::vector<SanctuaryPreviewEntry> createSanctuaryPreviewEntries(
         board, type, tileSpanW, tileSpanH, 0, viewedCityId);
     sanctuary->setRotateId(rotateId);
     sanctuary->setTileRect(footprint);
-    eGameTextures::loadZeusSanctuary();
+    GameTextures::loadZeusSanctuary();
     eSanctuary::sLoadMonumentTextures(god);
-    eGameTextures::loadSanctuary();
+    GameTextures::loadSanctuary();
 
     std::vector<SanctuaryPreviewEntry> result;
     const auto tiles = sanctuaryPreviewTiles(*h, rotateId);
@@ -622,7 +622,7 @@ double sanctuaryWomanTileDY(const int rotateId, const int dirIdx) {
 }
 
 SanctuaryTempleTextures sanctuaryTempleGetTextures(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const int rotateId,
     const eWorldDirection dir,
     const int animFrame,
@@ -656,7 +656,7 @@ SanctuaryTempleTextures sanctuaryTempleGetTextures(
 
 
 std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const GodType god,
     const int rotateId,
     const eWorldDirection dir)
@@ -667,7 +667,7 @@ std::shared_ptr<eTexture> sanctuaryStatueGetTexture(
 }
 
 std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const GodType god,
     const int rotateId,
     const eWorldDirection dir)
@@ -678,7 +678,7 @@ std::shared_ptr<eTexture> sanctuaryMonumentGetTexture(
 }
 
 std::shared_ptr<eTexture> sanctuaryAltarGetTexture(
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const int rotateId)
 {
     return (rotateId % 2 == 1) ? builTexs.fSanctuaryAltarFlipped
@@ -729,7 +729,7 @@ void sanctuaryTempleDrawOrigin(
 void drawSanctuaryTempleBuildingPreview(
     GameBoard& board,
     eTilePainter& tp,
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const int worldTileX,
     const int worldTileY,
     const int altitude,
@@ -773,7 +773,7 @@ void drawSanctuaryTempleBuildingPreview(
 void drawSanctuaryStatuePreview(
     GameBoard& board,
     eTilePainter& tp,
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const GodType god,
     const int statueTextureId,
     const int worldTileX,
@@ -798,7 +798,7 @@ void drawSanctuaryStatuePreview(
 void drawSanctuaryMonumentPreview(
     GameBoard& board,
     eTilePainter& tp,
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const GodType god,
     const int monumentTextureId,
     const int worldTileX,
@@ -824,7 +824,7 @@ void drawSanctuaryMonumentPreview(
 void drawSanctuaryAltarPreview(
     GameBoard& board,
     eTilePainter& tp,
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const int worldTileX,
     const int worldTileY,
     const int altitude,
@@ -848,7 +848,7 @@ void drawSanctuaryAltarPreview(
 void drawSanctuaryTorchPreview(
     GameBoard& board,
     eTilePainter& tp,
-    const eBuildingTextures& builTexs,
+    const BuildingTextures& builTexs,
     const int worldTileX,
     const int worldTileY,
     const int altitude,
@@ -867,8 +867,8 @@ void drawSanctuaryTorchPreview(
 void drawSanctuaryTerrainPreview(
     GameBoard& board,
     eTilePainter& tp,
-    const eBuildingTextures& builTexs,
-    const eTerrainTextures& trrTexs,
+    const BuildingTextures& builTexs,
+    const TerrainTextures& trrTexs,
     const eBuildingMode mode,
     const int rotateId,
     const int hoverTX,

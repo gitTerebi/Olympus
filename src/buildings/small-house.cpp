@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include "erand.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "engine/difficulty.h"
 #include "engine/model-data.h"
@@ -36,10 +36,10 @@ static std::vector<int> sCommonCapacity(GameBoard& board, const eCityId cid) {
 SmallHouse::SmallHouse(GameBoard &board, const eCityId cid) : eHouseBase(board, eBuildingType::commonHouse, 2, 2,
                                                                             sCommonCapacity(board, cid), cid)
 {
-    eGameTextures::loadCommonHouse();
+    GameTextures::loadCommonHouse();
     if (atlantean())
     {
-        eGameTextures::loadPoseidonCommonHouse();
+        GameTextures::loadPoseidonCommonHouse();
     }
 }
 
@@ -56,7 +56,7 @@ SmallHouse::~SmallHouse()
 std::shared_ptr<eTexture> SmallHouse::getTexture(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
-    const auto &blds = eGameTextures::buildings();
+    const auto &blds = GameTextures::buildings();
     const auto &texs = blds[sizeId];
 
     if (mPeople == 0)

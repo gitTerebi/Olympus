@@ -1,9 +1,9 @@
 #include "silver-miner.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 SilverMiner::SilverMiner(GameBoard& board) :
-    eResourceCollector(board, &eCharacterTextures::fSilverMiner,
+    eResourceCollector(board, &CharacterTextures::fSilverMiner,
                        eCharacterType::silverMiner) {
-    eGameTextures::loadSilverMiner();
+    GameTextures::loadSilverMiner();
 }

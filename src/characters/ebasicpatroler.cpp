@@ -1,6 +1,6 @@
 #include "ebasicpatroler.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 
 eBasicPatroler::eBasicPatroler(GameBoard& board,
@@ -13,7 +13,7 @@ eBasicPatroler::eBasicPatroler(GameBoard& board,
 
 std::shared_ptr<eTexture> eBasicPatroler::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& gTexs = eGameTextures::characters();
+    const auto& gTexs = GameTextures::characters();
     const auto& charTexs = gTexs[id].*mCharTexs;
     const eTextureCollection* coll = nullptr;
     bool wrap = true;

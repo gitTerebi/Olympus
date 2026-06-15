@@ -1,6 +1,6 @@
 ﻿#include "ehorseranch.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 
 #include "horse-ranch-enclosure.h"
@@ -12,7 +12,7 @@
 eHorseRanch::eHorseRanch(GameBoard& board,
                          const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::horseRanch, 3, 3, 15, cid) {
-    eGameTextures::loadHorseRanch();
+    GameTextures::loadHorseRanch();
 }
 
 eHorseRanch::~eHorseRanch() {
@@ -27,14 +27,14 @@ void eHorseRanch::erase() {
 std::shared_ptr<eTexture> eHorseRanch::getTexture(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     return blds[sizeId].fHorseRanch;
 }
 
 std::vector<eOverlay> eHorseRanch::getOverlays(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
     const auto& coll = texs.fHorseRanchOverlay;
     const int texId = textureTime() % coll.size();

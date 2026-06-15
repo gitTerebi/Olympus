@@ -1,6 +1,6 @@
 #include "eresourcetype.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "elanguage.h"
 
@@ -224,7 +224,7 @@ std::string eResourceTypeHelpers::typeLongName(const eResourceType type) {
 std::shared_ptr<eTexture> eResourceTypeHelpers::icon(
         const eUIScale scale, const eResourceType type) {
     const int icoll = static_cast<int>(scale);
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[icoll];
     switch(type) {
     case eResourceType::urchin:

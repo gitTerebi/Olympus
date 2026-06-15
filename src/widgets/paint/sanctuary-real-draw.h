@@ -7,7 +7,7 @@
 #include <set>
 
 class eBuilding;
-class eBuildingTextures;
+class BuildingTextures;
 class eMonument;
 class eTile;
 class eTilePainter;
@@ -29,7 +29,7 @@ bool isSanctuaryRealDrawPart(eBuildingType buildingType);
 void drawSanctuaryRealBuildingPart(
     GameBoard& board,
     eTilePainter& tilePainter,
-    const eBuildingTextures& buildingTextures,
+    const BuildingTextures& buildingTextures,
     eBuilding* building,
     eBuildingType buildingType,
     const eTextureSpace& textureSpace,

@@ -1,10 +1,10 @@
 #include "eatlanteanchariot.h"
 
-#include "textures/echaractertextures.h"
-#include "textures/egametextures.h"
+#include "textures/character-textures.h"
+#include "textures/game-textures.h"
 
 eAtlanteanChariot::eAtlanteanChariot(GameBoard& board) :
-    eChariotBase(board, &eCharacterTextures::fAtlanteanChariot,
+    eChariotBase(board, &CharacterTextures::fAtlanteanChariot,
                  eCharacterType::atlanteanChariot) {
-    eGameTextures::loadAtlanteanChariot();
+    GameTextures::loadAtlanteanChariot();
 }

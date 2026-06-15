@@ -1,9 +1,9 @@
 #include "eatlanteanhoplite.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eAtlanteanHoplite::eAtlanteanHoplite(GameBoard& board) :
-    eHopliteBase(board, &eCharacterTextures::fAtlanteanHoplite,
+    eHopliteBase(board, &CharacterTextures::fAtlanteanHoplite,
                  eCharacterType::atlanteanHoplite) {
-    eGameTextures::loadAtlanteanHoplite();
+    GameTextures::loadAtlanteanHoplite();
 }

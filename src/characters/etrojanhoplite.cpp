@@ -1,9 +1,9 @@
 #include "etrojanhoplite.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eTrojanHoplite::eTrojanHoplite(GameBoard& board) :
-    eHopliteBase(board, &eCharacterTextures::fTrojanHoplite,
+    eHopliteBase(board, &CharacterTextures::fTrojanHoplite,
                  eCharacterType::trojanHoplite) {
-    eGameTextures::loadTrojanHoplite();
+    GameTextures::loadTrojanHoplite();
 }

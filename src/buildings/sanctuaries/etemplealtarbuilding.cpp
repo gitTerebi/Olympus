@@ -1,7 +1,7 @@
 #include "etemplealtarbuilding.h"
 #include "fileIO/esavearchive.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "sanctuary.h"
 #include "engine/game-board.h"
@@ -21,16 +21,16 @@ eTempleAltarBuilding::eTempleAltarBuilding(GameBoard& board,
 
 std::vector<eOverlay> eTempleAltarBuilding::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const eTextureCollection* coll = nullptr;
     if(mSacrifice == eSacrifice::sheep) {
-        eGameTextures::loadAltarSheepOverlay();
+        GameTextures::loadAltarSheepOverlay();
         coll = &blds.fAltarSheepOverlay;
     } else if(mSacrifice == eSacrifice::goods) {
-        eGameTextures::loadAltarGoodsOverlay();
+        GameTextures::loadAltarGoodsOverlay();
         coll = &blds.fAltarGoodsOverlay;
     } else if(mSacrifice == eSacrifice::bull) {
-        eGameTextures::loadAltarBullOverlay();
+        GameTextures::loadAltarBullOverlay();
         coll = &blds.fAltarBullOverlay;
     } else {
         return {};

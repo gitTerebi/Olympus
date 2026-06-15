@@ -1,9 +1,9 @@
 #include "edonkey.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eDonkey::eDonkey(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fDonkey,
+    eBasicPatroler(board, &CharacterTextures::fDonkey,
                    eCharacterType::donkey) {
-    eGameTextures::loadDonkey();
+    GameTextures::loadDonkey();
 }

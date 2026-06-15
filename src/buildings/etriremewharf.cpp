@@ -3,7 +3,7 @@
 #include "characters/etrireme.h"
 #include "characters/actions/etriremeaction.h"
 #include "engine/epathfinder.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
@@ -14,7 +14,7 @@ eTriremeWharf::eTriremeWharf(GameBoard& board,
     eEmployingBuilding(board, eBuildingType::triremeWharf,
                        3, 3, 100, cid),
     mO(o) {
-    eGameTextures::loadTriremeWharf();
+    GameTextures::loadTriremeWharf();
     setStashable(eResourceType::wood | eResourceType::armor);
 }
 
@@ -25,7 +25,7 @@ eTriremeWharf::~eTriremeWharf() {
 
 std::shared_ptr<eTexture> eTriremeWharf::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].fTriremeWharf;
     auto& board = getBoard();
     const auto dir = board.direction();
@@ -55,7 +55,7 @@ std::shared_ptr<eTexture> eTriremeWharf::getTexture(const eTileSize size) const 
 std::vector<eOverlay> eTriremeWharf::getOverlays(const eTileSize size) const {
     if(!enabled()) return {};
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto oo = sRotated(mO, dir);

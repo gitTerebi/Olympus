@@ -1,10 +1,10 @@
 #include "ecentaurarcher.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eCentaurArcher::eCentaurArcher(GameBoard& board) :
-    eArcherBase(board, &eCharacterTextures::fCentaurArcher,
+    eArcherBase(board, &CharacterTextures::fCentaurArcher,
                 eCharacterType::centaurArcher) {
-    eGameTextures::loadCentaurArcher();
+    GameTextures::loadCentaurArcher();
     setSpeed(78.75);
 }

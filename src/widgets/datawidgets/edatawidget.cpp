@@ -38,7 +38,7 @@ void eDataWidget::initialize() {
     frame->addWidget(mInnerWidget);
     mInnerWidget->move(pp, pp);
 
-    const auto coll = &eInterfaceTextures::fMoreInfo;
+    const auto coll = &InterfaceTextures::fMoreInfo;
     mMoreInfo = new eBasicButton(coll, window());
     frame->addWidget(mMoreInfo);
     mMoreInfo->align(eAlignment::right | eAlignment::bottom);

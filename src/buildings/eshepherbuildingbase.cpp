@@ -1,6 +1,6 @@
 #include "eshepherbuildingbase.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "characters/actions/shepherd-action.h"
 #include "fileIO/esavearchive.h"
 
@@ -20,7 +20,7 @@ eShepherBuildingBase::eShepherBuildingBase(
     eResourceBuildingBase(board, type, sw, sh,
                           maxEmployees, resType, cid),
     mCharGenerator(charGen),
-    mTextures(eGameTextures::buildings()),
+    mTextures(GameTextures::buildings()),
     mBaseTex(baseTex), mOverlays(overlays),
     mOverlayX(overlayX), mOverlayY(overlayY),
     mAnimalType(animalType) {

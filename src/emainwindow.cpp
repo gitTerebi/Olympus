@@ -128,7 +128,7 @@ bool eMainWindow::initialize(const eSettings& settings) {
     const std::string icoPath = eGameDir::path("zeus.ico");
     const auto icon = IMG_Load(icoPath.c_str());
     SDL_SetWindowIcon(window, icon);
-    eGameTextures::setSettings(mSettings);
+    GameTextures::setSettings(mSettings);
     eMusic::setGeneralVolume(mSettings.fGeneralVolume);
     eSounds::setGeneralVolume(mSettings.fGeneralVolume);
     eMusic::setVolume(mSettings.fMusicVolume);
@@ -682,7 +682,7 @@ void eMainWindow::applyGraphicsSettings(const eSettings& settings) {
        !mSettings.fLargeTextures) {
         mSettings.fSmallTextures = true;
     }
-    eGameTextures::setSettings(mSettings);
+    GameTextures::setSettings(mSettings);
     if(loadNeeded) showMenuLoading();
     else if(mGW) {
         addSlot([this]() {

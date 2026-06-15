@@ -1,6 +1,6 @@
 #include "epyramidmonument.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epyramid.h"
 
 #include "characters/gods/god.h"
@@ -41,7 +41,7 @@ ePyramidMonument::getTexture(const eTileSize size) const {
     const int p = 2 - maxProgress() + progress();
     if(p <= 0) return nullptr;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     if(p == 1) {
         return blds.fBlankMonument;
     }

@@ -1,11 +1,11 @@
 #include "edisgruntled.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eDisgruntled::eDisgruntled(GameBoard& board) :
-    eFightingPatroler(board, &eCharacterTextures::fDisgruntled,
+    eFightingPatroler(board, &CharacterTextures::fDisgruntled,
                       eCharacterType::disgruntled) {
-    eGameTextures::loadDisgruntled();
+    GameTextures::loadDisgruntled();
     setAttack(4);
     setHP(10);
 }

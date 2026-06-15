@@ -1,15 +1,15 @@
 #include "einventorsworkshop.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eInventorsWorkshop::eInventorsWorkshop(GameBoard& board,
                                        const eCityId cid) :
     ePatrolSourceBuilding(board,
-                          &eBuildingTextures::fInventorsWorkshop,
+                          &BuildingTextures::fInventorsWorkshop,
                           -1.08, -4.61,
-                          &eBuildingTextures::fInventorsWorkshopOverlay,
+                          &BuildingTextures::fInventorsWorkshopOverlay,
                           {{eCharacterType::inventor,
                             eBuildingType::laboratory}},
                           eBuildingType::inventorsWorkshop, 3, 3, 12, cid) {
-    eGameTextures::loadInventorsWorkshop();
+    GameTextures::loadInventorsWorkshop();
 }

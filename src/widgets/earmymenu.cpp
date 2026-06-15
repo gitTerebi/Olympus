@@ -1,7 +1,7 @@
 ﻿#include "earmymenu.h"
 
 #include "elanguage.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "eminimap.h"
 #include "ebasicbutton.h"
@@ -31,7 +31,7 @@ void eArmyMenu::initialize(GameBoard &b)
     int mult;
     iResAndMult(iRes, mult);
 
-    const auto &intrfc = eGameTextures::interface();
+    const auto &intrfc = GameTextures::interface();
     const auto &coll = intrfc[iRes];
     const auto tex = coll.fGameArmyBackground;
     setTexture(tex);
@@ -62,7 +62,7 @@ void eArmyMenu::initialize(GameBoard &b)
     const int dy = mult * 2.5;
     int y = mult * 88.5;
 
-    const auto t1 = &eInterfaceTextures::fGoToCompany;
+    const auto t1 = &InterfaceTextures::fGoToCompany;
     const auto cou = new eBasicButton(t1, window());
     wid->addWidget(cou);
     cou->setY(y);
@@ -80,7 +80,7 @@ void eArmyMenu::initialize(GameBoard &b)
         mGW->viewTile(t);
     } });
 
-    const auto t2 = &eInterfaceTextures::fDefensiveTactics;
+    const auto t2 = &InterfaceTextures::fDefensiveTactics;
     const auto dt = new eBasicButton(t2, window());
     wid->addWidget(dt);
     dt->setY(y);
@@ -89,7 +89,7 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const int ddy = dy + cou->height();
 
-    const auto t3 = &eInterfaceTextures::fRotateCompany;
+    const auto t3 = &InterfaceTextures::fRotateCompany;
     const auto rc = new eBasicButton(t3, window());
     wid->addWidget(rc);
     rc->setY(y + ddy);
@@ -100,14 +100,14 @@ void eArmyMenu::initialize(GameBoard &b)
         SoldierBanner::sRotatePlayerBanners(
             mBoard->selectedSoldiers(), mBoard->personPlayer()); });
 
-    const auto t4 = &eInterfaceTextures::fOffensiveTactics;
+    const auto t4 = &InterfaceTextures::fOffensiveTactics;
     const auto ot = new eBasicButton(t4, window());
     wid->addWidget(ot);
     ot->setY(y + ddy);
     ot->setX(xx);
     ot->setTooltip(eLanguage::zeusText(51, 74)); // Offensive Tactics
 
-    const auto t5 = &eInterfaceTextures::fGoToBanner;
+    const auto t5 = &InterfaceTextures::fGoToBanner;
     mGoToBanner = new eBasicButton(t5, window());
     wid->addWidget(mGoToBanner);
     mGoToBanner->setY(y + 2 * ddy);
@@ -117,7 +117,7 @@ void eArmyMenu::initialize(GameBoard &b)
         mBoard->bannersBackFromHome();
         setSoldiersHome(false); });
 
-    const auto t5_2 = &eInterfaceTextures::fGoHome;
+    const auto t5_2 = &InterfaceTextures::fGoHome;
     mGoHome = new eBasicButton(t5_2, window());
     wid->addWidget(mGoHome);
     mGoHome->setY(y + 2 * ddy);
@@ -128,7 +128,7 @@ void eArmyMenu::initialize(GameBoard &b)
         mBoard->bannersGoHome();
         setSoldiersHome(true); });
 
-    const auto t6 = &eInterfaceTextures::fSpecialTactics;
+    const auto t6 = &InterfaceTextures::fSpecialTactics;
     const auto st = new eBasicButton(t6, window());
     wid->addWidget(st);
     st->setY(y + 2 * ddy);
