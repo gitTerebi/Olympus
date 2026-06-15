@@ -448,6 +448,7 @@ SOURCES += \
         evectorhelpers.cpp \
         ewalkablehelpers.cpp \
         exmlparser.cpp \
+        eng-parser.cpp \
         fileIO/building-reader.cpp \
         fileIO/building-writer.cpp \
         fileIO/ereadstream.cpp \
@@ -1171,6 +1172,7 @@ HEADERS += \
     evectorhelpers.h \
     ewalkablehelpers.h \
     exmlparser.h \
+    eng-parser.h \
     fileIO/building-reader.h \
     fileIO/building-writer.h \
     fileIO/ereadstream.h \

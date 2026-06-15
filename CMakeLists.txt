@@ -458,6 +458,7 @@ set(SOURCES
     src/evectorhelpers.cpp
     src/ewalkablehelpers.cpp
     src/exmlparser.cpp
+    src/eng-parser.cpp
     src/fileIO/building-reader.cpp
     src/fileIO/building-writer.cpp
     src/fileIO/ereadstream.cpp
