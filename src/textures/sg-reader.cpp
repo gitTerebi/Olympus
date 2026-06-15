@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <functional>
 #include <map>
 #include <memory>
 #include <vector>
@@ -33,6 +34,8 @@ struct SgRecord {
     uint16_t height = 0;
     bool compressed = false;
     bool isometric = false;    // type@50 == 30: footprint-diamond layout (terrain)
+    uint32_t alphaOffset = 0;  // v214: byte offset of RLE alpha mask in the .555 blob
+    uint32_t alphaLength = 0;  // v214: alpha-mask byte length (0 = no mask)
 };
 
 // One opened .sg3 + its .555 pixel blob, parsed once and cached for the session.
@@ -110,6 +113,10 @@ std::shared_ptr<SgFile> parseSg(const std::string& sgName) {
         r.height = rd16(sg, b + 22);
         r.compressed = sg[b + compOff] != 0;
         r.isometric = sg[b + 50] == 30; // IMAGE_TYPE_ISOMETRIC
+        if(version >= 214) { // 72-byte record appends alpha-mask offset/length
+            r.alphaOffset = rd32(sg, b + 64);
+            r.alphaLength = rd32(sg, b + 68);
+        }
     }
 
     for(uint32_t i = 0; i < numBitmaps; i++) {
@@ -193,15 +200,45 @@ SDL_Surface* decodeRecord(const SgFile& f, const SgRecord& r) {
     const uint8_t* const buf = f.fPixels.data() + r.offset;
     const uint32_t len = r.dataLength;
 
+    // Shared RLE walk: ctrl 255 -> skip N indices (transparent run); else ctrl
+    // units follow, each emitted via emit(index, dataPtr). unitBytes advances the
+    // cursor per unit (2 for 16-bit color, 1 for alpha). Returns ending index.
+    auto rle = [](const uint8_t* const d, const uint32_t dlen, const int cap,
+                  const int unitBytes, int start,
+                  const std::function<void(int, const uint8_t*)>& emit) {
+        uint32_t pos = 0;
+        int i = start;
+        while(pos < dlen && i < cap) {
+            const uint8_t ctrl = d[pos++];
+            if(ctrl == 255) {
+                if(pos >= dlen) break;
+                i += d[pos++]; // transparent run
+            } else {
+                for(int k = 0; k < ctrl && pos + unitBytes - 1 < dlen &&
+                               i < cap; k++) {
+                    emit(i++, d + pos);
+                    pos += unitBytes;
+                }
+            }
+        }
+        return i;
+    };
+    auto color16 = [](const uint8_t* const p) {
+        return uint16_t(p[0] | (p[1] << 8));
+    };
+
+    // No alpha mask -> the Impressions shadow convention applies: pure red is a
+    // flat grey shadow. Alpha-mask records (v214 gods) use red as real glow, so
+    // skip the transform and let the mask supply transparency.
+    const bool shadowMagic = r.alphaLength == 0;
     auto put = [&](const int i, const uint16_t c) {
         if(i < 0 || i >= total) return;
         if(c == kTransparent) { px[i] = 0; return; }
         Uint8 rr, gg, bb;
         to888(c, rr, gg, bb);
-        // Impressions shadow magic: pure red -> flat grey shadow (same transform
-        // eZeus applied to its loose-texture PNGs in applyLooseTextureMasks).
-        if(rr >= 250 && gg <= 5 && bb <= 5) {
-            px[i] = SDL_MapRGBA(surf->format, 72, 72, 72, 255);
+        if(shadowMagic && rr >= 250 && gg <= 5 && bb <= 5) {
+            // Semi-transparent dark shadow so the ground shows through.
+            px[i] = SDL_MapRGBA(surf->format, 0, 0, 0, 96);
             return;
         }
         px[i] = SDL_MapRGBA(surf->format, rr, gg, bb, 255);
@@ -270,27 +307,32 @@ SDL_Surface* decodeRecord(const SgFile& f, const SgRecord& r) {
             }
         }
     } else if(r.compressed) {
-        uint32_t pos = 0;
-        int i = 0;
-        while(pos < len && i < total) {
-            const uint8_t ctrl = buf[pos++];
-            if(ctrl == 255) {
-                if(pos >= len) break;
-                i += buf[pos++]; // transparent run
-            } else {
-                for(int k = 0; k < ctrl && pos + 1 < len && i < total; k++) {
-                    const uint16_t c = uint16_t(buf[pos] | (buf[pos + 1] << 8));
-                    pos += 2;
-                    put(i++, c);
-                }
-            }
-        }
+        rle(buf, len, total, 2, 0,
+            [&](const int i, const uint8_t* const p) { put(i, color16(p)); });
     } else {
         uint32_t pos = 0;
         for(int i = 0; i < total && pos + 1 < len; i++) {
             const uint16_t c = uint16_t(buf[pos] | (buf[pos + 1] << 8));
             pos += 2;
             put(i, c);
+        }
+    }
+
+    // v214 alpha mask: a second RLE image stored right after the RGB data.
+    // ctrl 255 -> skip N transparent pixels; else N bytes, each 5-bit alpha.
+    // Scales 5 bits to 8 (bvschaik citybuilding-tools SgImage::setAlphaPixel).
+    if(r.alphaLength > 0) {
+        const size_t ab = size_t(r.offset) + r.dataLength;
+        if(ab + r.alphaLength <= f.fPixels.size()) {
+            const uint8_t* const abuf = f.fPixels.data() + ab;
+            rle(abuf, r.alphaLength, total, 1, 0,
+                [&](const int i, const uint8_t* const p) {
+                    const uint8_t c = *p;
+                    const Uint8 a = Uint8(((c & 0x1f) << 3) | ((c & 0x1c) >> 2));
+                    Uint8 rr, gg, bb, oa;
+                    SDL_GetRGBA(px[i], surf->format, &rr, &gg, &bb, &oa);
+                    px[i] = SDL_MapRGBA(surf->format, rr, gg, bb, a);
+                });
         }
     }
 
