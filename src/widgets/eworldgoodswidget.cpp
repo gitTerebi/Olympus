@@ -2,7 +2,7 @@
 
 #include "elabel.h"
 #include "ebutton.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "eworldgoodswidget.h"
 #include "engine/game-board.h"
 #include "framed-button.h"
@@ -116,7 +116,7 @@ void eWorldGoodsWidget::initialize() {
     int iRes;
     int mult;
     iResAndMult(iRes, mult);
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[iRes];
 
     mGoodsLabel = new eLabel(window());

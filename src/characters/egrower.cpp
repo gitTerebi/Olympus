@@ -1,11 +1,11 @@
 #include "egrower.h"
 
 #include "fileIO/esavearchive.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eGrower::eGrower(GameBoard& board) :
     eCharacter(board, eCharacterType::grower) {
-    eGameTextures::loadGrower();
+    GameTextures::loadGrower();
 }
 
 void eGrower::incGrapes(const int i) {
@@ -30,7 +30,7 @@ void eGrower::serializeFields(eSaveArchive& ar) {
 
 std::shared_ptr<eTexture> eGrower::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters();
+    const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     switch(mType) {
     case eGrowerType::grapesAndOlives:
@@ -42,7 +42,7 @@ std::shared_ptr<eTexture> eGrower::getTexture(const eTileSize size) const {
 }
 
 std::shared_ptr<eTexture> eGrower::getGrapesAndOlivesTex(
-        const eCharacterTextures& texs) const {
+        const CharacterTextures& texs) const {
     const auto& charTexs = texs.fGrower;
     const eTextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());
@@ -81,7 +81,7 @@ std::shared_ptr<eTexture> eGrower::getGrapesAndOlivesTex(
 }
 
 std::shared_ptr<eTexture> eGrower::getOrangesTex(
-        const eCharacterTextures& texs) const {
+        const CharacterTextures& texs) const {
     const auto& charTexs = texs.fOrangeTender;
     const eTextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());

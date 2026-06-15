@@ -1,14 +1,14 @@
 #include "ehomeless.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/ecityid.h"
 #include "engine/etile.h"
 #include "characters/actions/esettleraction.h"
 
 eHomeless::eHomeless(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fHomeless,
+    eBasicPatroler(board, &CharacterTextures::fHomeless,
                    eCharacterType::homeless) {
-    eGameTextures::loadHomeless();
+    GameTextures::loadHomeless();
 }
 
 void eHomeless::spawn(GameBoard& board, eTile* tile,

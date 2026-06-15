@@ -1,106 +1,106 @@
 #include "ecalydonianboar.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eCalydonianBoar::eCalydonianBoar(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fCalydonianBoar,
+    eBasicMonster(board, &CharacterTextures::fCalydonianBoar,
                   eMonsterType::calydonianBoar) {
-    eGameTextures::loadCalydonianBoar();
+    GameTextures::loadCalydonianBoar();
 }
 
 eCerberus::eCerberus(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fCerberus,
+    eBasicMonster(board, &CharacterTextures::fCerberus,
                   eMonsterType::cerberus) {
-    eGameTextures::loadCerberus();
+    GameTextures::loadCerberus();
 }
 
 eChimera::eChimera(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fChimera,
+    eBasicMonster(board, &CharacterTextures::fChimera,
                   eMonsterType::chimera) {
-    eGameTextures::loadChimera();
+    GameTextures::loadChimera();
 }
 
 eCyclops::eCyclops(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fCyclops,
+    eBasicMonster(board, &CharacterTextures::fCyclops,
                   eMonsterType::cyclops) {
-    eGameTextures::loadCyclops();
+    GameTextures::loadCyclops();
 }
 
 eDragon::eDragon(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fDragon,
+    eBasicMonster(board, &CharacterTextures::fDragon,
                   eMonsterType::dragon) {
-    eGameTextures::loadDragon();
+    GameTextures::loadDragon();
 }
 
 eEchidna::eEchidna(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fEchidna,
+    eBasicMonster(board, &CharacterTextures::fEchidna,
                   eMonsterType::echidna) {
-    eGameTextures::loadEchidna();
+    GameTextures::loadEchidna();
 }
 
 eHarpies::eHarpies(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fHarpies,
+    eBasicMonster(board, &CharacterTextures::fHarpies,
                   eMonsterType::harpies) {
-    eGameTextures::loadHarpie();
+    GameTextures::loadHarpie();
 }
 
 eHector::eHector(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fHector,
+    eBasicMonster(board, &CharacterTextures::fHector,
                   eMonsterType::hector) {
-    eGameTextures::loadHector();
+    GameTextures::loadHector();
 }
 
 eHydra::eHydra(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fHydra,
+    eBasicMonster(board, &CharacterTextures::fHydra,
                   eMonsterType::hydra) {
-    eGameTextures::loadHydra();
+    GameTextures::loadHydra();
 }
 
 eKraken::eKraken(GameBoard& board) :
-    eWaterMonster(board, &eCharacterTextures::fKraken,
+    eWaterMonster(board, &CharacterTextures::fKraken,
                   eMonsterType::kraken) {
-    eGameTextures::loadKraken();
+    GameTextures::loadKraken();
 }
 
 eMaenads::eMaenads(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fMaenads,
+    eBasicMonster(board, &CharacterTextures::fMaenads,
                   eMonsterType::maenads) {
-    eGameTextures::loadMaenads();
+    GameTextures::loadMaenads();
 }
 
 eMedusa::eMedusa(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fMedusa,
+    eBasicMonster(board, &CharacterTextures::fMedusa,
                   eMonsterType::medusa) {
-    eGameTextures::loadMedusa();
+    GameTextures::loadMedusa();
 }
 
 eMinotaur::eMinotaur(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fMinotaur,
+    eBasicMonster(board, &CharacterTextures::fMinotaur,
                   eMonsterType::minotaur) {
-    eGameTextures::loadMinotaur();
+    GameTextures::loadMinotaur();
 }
 
 eScylla::eScylla(GameBoard& board) :
-    eWaterMonster(board, &eCharacterTextures::fScylla,
+    eWaterMonster(board, &CharacterTextures::fScylla,
                   eMonsterType::scylla) {
-    eGameTextures::loadScylla();
+    GameTextures::loadScylla();
 }
 
 eSphinx::eSphinx(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fSphinx,
+    eBasicMonster(board, &CharacterTextures::fSphinx,
                   eMonsterType::sphinx) {
-    eGameTextures::loadSphinx();
+    GameTextures::loadSphinx();
 }
 
 eTalos::eTalos(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fTalos,
+    eBasicMonster(board, &CharacterTextures::fTalos,
                   eMonsterType::talos) {
-    eGameTextures::loadTalos();
+    GameTextures::loadTalos();
 }
 
 eSatyr::eSatyr(GameBoard& board) :
-    eBasicMonster(board, &eCharacterTextures::fSatyr,
+    eBasicMonster(board, &CharacterTextures::fSatyr,
                   eMonsterType::satyr) {
-    eGameTextures::loadSatyr();
+    GameTextures::loadSatyr();
 }
 

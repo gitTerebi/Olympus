@@ -1,10 +1,10 @@
 #include "eegyptianchariot.h"
 
-#include "textures/echaractertextures.h"
-#include "textures/egametextures.h"
+#include "textures/character-textures.h"
+#include "textures/game-textures.h"
 
 eEgyptianChariot::eEgyptianChariot(GameBoard& board) :
-    eChariotBase(board, &eCharacterTextures::fEgyptianChariot,
+    eChariotBase(board, &CharacterTextures::fEgyptianChariot,
                  eCharacterType::egyptianChariot) {
-    eGameTextures::loadEgyptianChariot();
+    GameTextures::loadEgyptianChariot();
 }

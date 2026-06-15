@@ -149,7 +149,7 @@ void OverviewDataWidget::shown() {
 
 stdsptr<eTexture> sGodIcon(const eUIScale scale,
                            const GodType god) {
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const int iRes = static_cast<int>(scale);
     const auto& coll = intrfc[iRes];
     switch(god) {
@@ -260,7 +260,7 @@ private:
         const auto res = resolution();
         const auto scale = res.uiScale();
         const int iRes = static_cast<int>(scale);
-        const auto& intrfc = eGameTextures::interface();
+        const auto& intrfc = GameTextures::interface();
         const auto& texs = intrfc[iRes];
         const auto& coll = f ? texs.fRequestFulfilledBox :
                                texs.fRequestWaitingBox;
@@ -329,7 +329,7 @@ void initialize(const stdsptr<WorldCity>& city,
          const auto res = resolution();
         const auto uiScale = res.uiScale();
         const int iRes = static_cast<int>(uiScale);
-        const auto& intrfc = eGameTextures::interface();
+        const auto& intrfc = GameTextures::interface();
         const auto& texs = intrfc[iRes];
         const auto& troopsIcon = texs.fTroopsRequestIcon;
         eRequestButton::initialize(troopsIcon, cityName, checker);

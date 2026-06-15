@@ -1,13 +1,13 @@
 #include "echariotfactory.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
 
 eChariotFactory::eChariotFactory(
         GameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::chariotFactory, 4, 4, 30, cid) {
-    eGameTextures::loadChariotFactory();
+    GameTextures::loadChariotFactory();
 }
 
 eChariotFactory::~eChariotFactory() {
@@ -18,14 +18,14 @@ eChariotFactory::~eChariotFactory() {
 std::shared_ptr<eTexture>
 eChariotFactory::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     return blds[sizeId].fChariotFactory;
 }
 
 std::vector<eOverlay>
 eChariotFactory::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& texs = blds[sizeId];
 
     std::vector<eOverlay> os;

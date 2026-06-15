@@ -1,9 +1,9 @@
 #include "emayanarcher.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eMayanArcher::eMayanArcher(GameBoard& board) :
-    eArcherBase(board, &eCharacterTextures::fMayanArcher,
+    eArcherBase(board, &CharacterTextures::fMayanArcher,
                 eCharacterType::mayanArcher) {
-    eGameTextures::loadMayanArcher();
+    GameTextures::loadMayanArcher();
 }

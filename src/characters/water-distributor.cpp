@@ -1,10 +1,10 @@
 #include "water-distributor.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 WaterDistributor::WaterDistributor(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fWaterDistributor,
+    eBasicPatroler(board, &CharacterTextures::fWaterDistributor,
                    eCharacterType::waterDistributor) {
-    eGameTextures::loadWaterDistributor();
+    GameTextures::loadWaterDistributor();
     setProvide(eProvide::water, 10000);
 }

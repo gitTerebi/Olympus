@@ -5,14 +5,14 @@
 
 eTimberMill::eTimberMill(GameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
-                             &eBuildingTextures::fTimberMill,
+                             &BuildingTextures::fTimberMill,
                              -3.65, -3.65,
-                             &eBuildingTextures::fTimberMillOverlay,
+                             &BuildingTextures::fTimberMillOverlay,
                              3, 0.9, -1.1,
                              [this]() { return e::make_shared<Lumberjack>(getBoard()); },
                              eBuildingType::timberMill,
                              eHasResourceObject::sCreate(eHasResourceObjectType::forest),
                              2, 2, 12, eResourceType::wood, cid) {
-    eGameTextures::loadTimberMill();
+    GameTextures::loadTimberMill();
     setRawCountCollect(4);
 }

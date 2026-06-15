@@ -1,6 +1,6 @@
 #include "ehephaestussanctuary.h"
 
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 
 eHephaestusSanctuary::eHephaestusSanctuary(
         const int sw, const int sh, GameBoard& board,

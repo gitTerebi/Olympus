@@ -1,6 +1,6 @@
 #include "efarmbase.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "enumbers.h"
 #include "engine/edate.h"
 #include "engine/game-board.h"
@@ -15,8 +15,8 @@ eFarmBase::eFarmBase(GameBoard& board,
                      const eResourceType resType,
                      const eCityId cid) :
     eResourceBuildingBase(board, type, sw, sh, 10, resType, cid),
-    mTextures(eGameTextures::buildings())  {
-    eGameTextures::loadPlantation();
+    mTextures(GameTextures::buildings())  {
+    GameTextures::loadPlantation();
 }
 
 std::shared_ptr<eTexture> eFarmBase::getTexture(const eTileSize size) const {

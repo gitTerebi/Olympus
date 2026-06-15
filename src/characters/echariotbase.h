@@ -5,7 +5,7 @@
 
 class eChariotBase : public eSoldier {
 public:
-    using eCharTexs = eChariotTextures eCharacterTextures::*;
+    using eCharTexs = ChariotTextures CharacterTextures::*;
     eChariotBase(GameBoard& board,
                  const eCharTexs charTexs,
                  const eCharacterType type);

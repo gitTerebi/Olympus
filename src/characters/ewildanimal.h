@@ -3,7 +3,7 @@
 
 #include "animal.h"
 
-#include "textures/echaractertextures.h"
+#include "textures/character-textures.h"
 
 class eSpawner;
 class eSaveArchive;

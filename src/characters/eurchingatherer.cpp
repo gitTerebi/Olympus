@@ -1,15 +1,15 @@
 #include "eurchingatherer.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eUrchinGatherer::eUrchinGatherer(GameBoard& board) :
     eResourceCollectorBase(board, eCharacterType::urchinGatherer) {
-    eGameTextures::loadUrchinGatherer();
+    GameTextures::loadUrchinGatherer();
 }
 
 std::shared_ptr<eTexture> eUrchinGatherer::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters();
+    const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto& charTexs = colls.fUrchinGatherer;
     const eTextureCollection* coll = nullptr;

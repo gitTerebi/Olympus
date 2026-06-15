@@ -2,7 +2,7 @@
 
 #include "engine/game-board.h"
 #include "engine/eevent.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/eeventdata.h"
 
 void eEventWidget::pushEvent(const eEvent e, const eEventData& ed) {
@@ -42,7 +42,7 @@ void eEventWidget::setViewTileHandler(const eViewTileHandler& h) {
 eEventButton::eEventButton(const eEvent e,
                            eMainWindow* const window) :
     eButton(window) {
-    const auto intrfc = eGameTextures::interface();
+    const auto intrfc = GameTextures::interface();
     const auto uiScale = resolution().uiScale();
     const int iRes = static_cast<int>(uiScale);
     const auto& texs = intrfc[iRes];

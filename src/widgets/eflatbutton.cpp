@@ -1,6 +1,6 @@
 #include "eflatbutton.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 void eFlatButton::sizeHint(int &w, int &h) {
     eButtonBase::sizeHint(w, h);
@@ -17,7 +17,7 @@ void eFlatButton::paintEvent(ePainter& p) {
     int mult;
     iResAndMult(iRes, mult);
     const int dim = 8*mult;
-    const auto& intrfc = eGameTextures::interface()[iRes];
+    const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
     const int iMax = width()/dim + 1;

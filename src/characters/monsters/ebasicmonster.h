@@ -2,11 +2,11 @@
 #define EBASICMONSTER_H
 
 #include "emonster.h"
-#include "textures/echaractertextures.h"
+#include "textures/character-textures.h"
 
 class eBasicMonster : public eMonster {
 public:
-    using eCharTexs = eMonsterTextures eCharacterTextures::*;
+    using eCharTexs = MonsterTextures CharacterTextures::*;
     eBasicMonster(GameBoard& board,
                   const eCharTexs charTexs,
                   const eMonsterType type);

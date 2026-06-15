@@ -3,7 +3,7 @@
 
 #include "eresourcebuildingbase.h"
 
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 #include "enumbers.h"
 
 class eResourceCollectorBase;
@@ -13,8 +13,8 @@ enum class eCharacterType;
 
 class eShepherBuildingBase : public eResourceBuildingBase {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
-    using eOverlays = eTextureCollection eBuildingTextures::*;
+    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
+    using eOverlays = eTextureCollection BuildingTextures::*;
     using eRC = eResourceCollectorBase;
     using eCharGenerator =  std::function<stdsptr<eRC>(GameBoard&)>;
     eShepherBuildingBase(GameBoard& board,
@@ -47,7 +47,7 @@ protected:
 private:
 
     const eCharGenerator mCharGenerator;
-    const std::vector<eBuildingTextures>& mTextures;
+    const std::vector<BuildingTextures>& mTextures;
 
     const eBaseTex mBaseTex;
     const eOverlays mOverlays;

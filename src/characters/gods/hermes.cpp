@@ -1,16 +1,16 @@
 #include "hermes.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Hermes::Hermes(GameBoard& board) :
     God(board, GodType::hermes) {
-    eGameTextures::loadHermes();
+    GameTextures::loadHermes();
 }
 
 std::shared_ptr<eTexture>
 Hermes::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& godTexs = eGameTextures::gods()[id];
+    const auto& godTexs = GameTextures::gods()[id];
     const auto& texs = godTexs.fHermes;
     const eTextureCollection* coll = nullptr;
     bool wrap = true;

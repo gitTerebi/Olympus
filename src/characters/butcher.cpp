@@ -1,9 +1,9 @@
 #include "butcher.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Butcher::Butcher(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fButcher,
+    eBasicPatroler(board, &CharacterTextures::fButcher,
                    eCharacterType::butcher) {
-    eGameTextures::loadButcher();
+    GameTextures::loadButcher();
 }

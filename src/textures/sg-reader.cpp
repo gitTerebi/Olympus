@@ -401,7 +401,7 @@ SDL_Surface* SgReader::load(const std::string& path) {
     int index = 0;
     if(!parsePath(path, tileH, group, index)) {
         // 2-segment "zoom/name_idx" paths are eZeus composites - handled by the
-        // loadComposite path in eSpriteLoader, not here. Stay silent for those;
+        // loadComposite path in SpriteLoader, not here. Stay silent for those;
         // only warn on genuinely malformed paths.
         const auto s1 = path.find('/');
         const bool composite = s1 != std::string::npos &&

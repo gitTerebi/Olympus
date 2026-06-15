@@ -1,10 +1,10 @@
 #include "philosopher.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Philosopher::Philosopher(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fPhilosopher,
+    eBasicPatroler(board, &CharacterTextures::fPhilosopher,
                    eCharacterType::philosopher) {
-    eGameTextures::loadPhilosopher();
+    GameTextures::loadPhilosopher();
     setProvide(eProvide::philosopherInventor, 10000);
 }

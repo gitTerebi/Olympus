@@ -1,6 +1,6 @@
 #include "ewatermonster.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eWaterMonster::eWaterMonster(GameBoard& board,
                              const eCharTexs charTexs,
@@ -10,7 +10,7 @@ eWaterMonster::eWaterMonster(GameBoard& board,
 std::shared_ptr<eTexture>
 eWaterMonster::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& gTexs = eGameTextures::characters();
+    const auto& gTexs = GameTextures::characters();
     const auto& texs = gTexs[id].*mCharTexs;
     const eTextureCollection* coll = nullptr;
     bool reverse = false;

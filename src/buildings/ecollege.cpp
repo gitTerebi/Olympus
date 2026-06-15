@@ -1,15 +1,15 @@
 #include "ecollege.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eCollege::eCollege(GameBoard& board,
                    const eCityId cid) :
     ePatrolSourceBuilding(board,
-                          &eBuildingTextures::fCollege,
+                          &BuildingTextures::fCollege,
                           -2.7, -4.38,
-                          &eBuildingTextures::fCollegeOverlay,
+                          &BuildingTextures::fCollegeOverlay,
                           {{eCharacterType::philosopher,
                             eBuildingType::podium}},
                           eBuildingType::college, 3, 3, 12, cid) {
-    eGameTextures::loadCollege();
+    GameTextures::loadCollege();
 }

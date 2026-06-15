@@ -1,19 +1,19 @@
 #include "erangesoldier.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eRangeSoldier::eRangeSoldier(GameBoard& board,
                              const eCharTexs charTexs,
                              const eCharacterType type,
                              const int range) :
-    eSoldier(board, &eCharacterTextures::fHoplite, type),
+    eSoldier(board, &CharacterTextures::fHoplite, type),
     mCharTexs(charTexs) {
     setRange(range);
 }
 
 std::shared_ptr<eTexture> eRangeSoldier::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& textures = eGameTextures::characters();
+    const auto& textures = GameTextures::characters();
     const auto& charTexs = textures[id].*mCharTexs;
     const eTextureCollection* coll = nullptr;
     const int oid = static_cast<int>(rotatedOrientation());

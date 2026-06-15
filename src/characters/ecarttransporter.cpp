@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "characters/actions/efollowaction.h"
 #include "characters/actions/cart-transporter-action.h"
@@ -16,10 +16,10 @@
 #include "echariot.h"
 
 eCartTransporter::eCartTransporter(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fTransporter,
+    eBasicPatroler(board, &CharacterTextures::fTransporter,
                    eCharacterType::cartTransporter) {
-    eGameTextures::loadTransporter();
-    eGameTextures::loadCart();
+    GameTextures::loadTransporter();
+    GameTextures::loadCart();
     setHasSecondaryTexture(true);
 }
 
@@ -41,7 +41,7 @@ eOverlay eCartTransporter::getSecondaryTexture(const eTileSize size) const {
         return eOverlay{0, 0, std::shared_ptr<eTexture>()};
     }
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters()[id];
+    const auto& texs = GameTextures::characters()[id];
     const int oi = static_cast<int>(rotatedOrientation());
 
     int ci = 0;
@@ -405,46 +405,46 @@ void eCartTransporter::serializeFields(eSaveArchive& ar) {
 void eCartTransporter::updateTextures() {
     switch(mType) {
     case eCartTransporterType::basic: {
-        eGameTextures::loadTransporter();
-        eGameTextures::loadCart();
-        setCharTextures(&eCharacterTextures::fTransporter);
+        GameTextures::loadTransporter();
+        GameTextures::loadCart();
+        setCharTextures(&CharacterTextures::fTransporter);
     } break;
     case eCartTransporterType::ox: {
         if(atlantean()) {
-            eGameTextures::loadElephant();
-            setCharTextures(&eCharacterTextures::fElephant);
+            GameTextures::loadElephant();
+            setCharTextures(&CharacterTextures::fElephant);
         } else {
-            eGameTextures::loadOxHandler();
-            setCharTextures(&eCharacterTextures::fOxHandler);
+            GameTextures::loadOxHandler();
+            setCharTextures(&CharacterTextures::fOxHandler);
         }
     } break;
     case eCartTransporterType::food: {
-        eGameTextures::loadFoodVendor();
-        setCharTextures(&eCharacterTextures::fFoodVendor);
+        GameTextures::loadFoodVendor();
+        setCharTextures(&CharacterTextures::fFoodVendor);
     } break;
     case eCartTransporterType::fleece: {
-        eGameTextures::loadFleeceVendor();
-        setCharTextures(&eCharacterTextures::fFleeceVendor);
+        GameTextures::loadFleeceVendor();
+        setCharTextures(&CharacterTextures::fFleeceVendor);
     } break;
     case eCartTransporterType::oil: {
-        eGameTextures::loadOilVendor();
-        setCharTextures(&eCharacterTextures::fOilVendor);
+        GameTextures::loadOilVendor();
+        setCharTextures(&CharacterTextures::fOilVendor);
     } break;
     case eCartTransporterType::wine: {
-        eGameTextures::loadWineVendor();
-        setCharTextures(&eCharacterTextures::fWineVendor);
+        GameTextures::loadWineVendor();
+        setCharTextures(&CharacterTextures::fWineVendor);
     } break;
     case eCartTransporterType::arms: {
-        eGameTextures::loadArmsVendor();
-        setCharTextures(&eCharacterTextures::fArmsVendor);
+        GameTextures::loadArmsVendor();
+        setCharTextures(&CharacterTextures::fArmsVendor);
     } break;
     case eCartTransporterType::horse: {
-        eGameTextures::loadHorseVendor();
-        setCharTextures(&eCharacterTextures::fHorseVendor);
+        GameTextures::loadHorseVendor();
+        setCharTextures(&CharacterTextures::fHorseVendor);
     } break;
     case eCartTransporterType::chariot: {
-        eGameTextures::loadChariotVendorCharacter();
-        setCharTextures(&eCharacterTextures::fChariotVendor);
+        GameTextures::loadChariotVendorCharacter();
+        setCharTextures(&CharacterTextures::fChariotVendor);
     } break;
     }
 }

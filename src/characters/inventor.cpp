@@ -1,10 +1,10 @@
 #include "inventor.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Inventor::Inventor(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fInventor,
+    eBasicPatroler(board, &CharacterTextures::fInventor,
                    eCharacterType::inventor) {
-    eGameTextures::loadInventor();
+    GameTextures::loadInventor();
     setProvide(eProvide::philosopherInventor, 10000);
 }

@@ -1,9 +1,9 @@
 #include "bronze-miner.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 BronzeMiner::BronzeMiner(GameBoard& board) :
-    eResourceCollector(board, &eCharacterTextures::fBronzeMiner,
+    eResourceCollector(board, &CharacterTextures::fBronzeMiner,
                        eCharacterType::bronzeMiner) {
-    eGameTextures::loadBronzeMiner();
+    GameTextures::loadBronzeMiner();
 }

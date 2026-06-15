@@ -2,7 +2,7 @@
 #include "fileIO/esavearchive.h"
 
 #include "epyramid.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 
 std::vector<eSanctCost> addElevationCost(ePyramid* const pyramid,
@@ -52,7 +52,7 @@ eTextureSpace ePyramidElement::getTextureSpace(
     const auto& r = tileRect();
     if(!SDL_PointInRect(&pt, &r)) return {nullptr};
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     int p = progress();
     if(mCurrentElevation == 0 && p == 0) {
         const auto& coll = blds.fSanctuarySpace;

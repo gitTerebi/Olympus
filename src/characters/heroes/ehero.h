@@ -3,7 +3,7 @@
 
 #include "characters/echaracter.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 enum class eHeroType {
     achilles, // hector, maenads
@@ -25,7 +25,7 @@ public:
     static bool sRangedHero(const eHeroType ht);
     static int sHeroAttackTime(const eHeroType ht);
 
-    using eTexPtr = std::vector<eTextureCollection> eDestructionTextures::*;
+    using eTexPtr = std::vector<eTextureCollection> DestructionTextures::*;
     static eTexPtr sHeroMissile(const eHeroType gt);
 
     static eCharacterType sHeroToCharacterType(

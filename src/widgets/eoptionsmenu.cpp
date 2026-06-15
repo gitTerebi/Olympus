@@ -9,7 +9,7 @@
 #include "edifficultywidget.h"
 #include "ebasicbutton.h"
 #include "ecancelbutton.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "escrollbar.h"
 
 

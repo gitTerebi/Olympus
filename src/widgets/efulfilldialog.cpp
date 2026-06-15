@@ -29,7 +29,7 @@ void eFulfillDialog::initialize(GameBoard* const board,
     const auto res = resolution();
     const auto uiScale = res.uiScale();
     const int iRes = static_cast<int>(uiScale);
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto& texs = intrfc[iRes];
     const int p = res.paddingL();
 

@@ -1,6 +1,6 @@
 #include "emicrobutton.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 void eMicroButton::sizeHint(int& w, int& h) {
     eButtonBase::sizeHint(w, h);
@@ -15,7 +15,7 @@ void eMicroButton::paintEvent(ePainter& p) {
     const int iRes = static_cast<int>(uiScale);
     const double mult = res.multiplier();
     const int wdim = std::round(18*mult);
-    const auto& intrfc = eGameTextures::interface()[iRes];
+    const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
     const int iMax = width()/wdim + 1;

@@ -4,7 +4,7 @@
 #include "eresourcebuildingbase.h"
 #include "engine/edate.h"
 
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 
 class eSaveArchive;
 
@@ -37,7 +37,7 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
 
-    const std::vector<eBuildingTextures>& mTextures;
+    const std::vector<BuildingTextures>& mTextures;
     double mNextRipe = 0;
     int mGrownFields = 0;  // 0 - 5
     int mFieldStage = 0;   // 0 - 4

@@ -1,13 +1,13 @@
 #include "ewinevendor.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eWineVendor::eWineVendor(GameBoard& board, const eCityId cid) :
     eVendor(board,
             eResourceType::wine, eProvide::wine,
-            &eBuildingTextures::fWineVendor,
-            -2.15, -2.35, &eBuildingTextures::fWineVendorOverlay,
-            0.35, -2.55, &eBuildingTextures::fWineVendorOverlay2,
+            &BuildingTextures::fWineVendor,
+            -2.15, -2.35, &BuildingTextures::fWineVendorOverlay,
+            0.35, -2.55, &BuildingTextures::fWineVendorOverlay2,
             eBuildingType::wineVendor, 2, 2, 4, cid) {
-    eGameTextures::loadWineVendorBuilding();
+    GameTextures::loadWineVendorBuilding();
 }

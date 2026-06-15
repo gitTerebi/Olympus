@@ -1,10 +1,10 @@
 #include "healer.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Healer::Healer(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fHealer,
+    eBasicPatroler(board, &CharacterTextures::fHealer,
                    eCharacterType::healer) {
-    eGameTextures::loadHealer();
+    GameTextures::loadHealer();
     setProvide(eProvide::hygiene, 100000);
 }

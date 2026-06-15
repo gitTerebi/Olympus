@@ -1,10 +1,10 @@
 #include "priest.h"
 
-#include "textures/echaractertextures.h"
-#include "textures/egametextures.h"
+#include "textures/character-textures.h"
+#include "textures/game-textures.h"
 
 Priest::Priest(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fPriest,
+    eBasicPatroler(board, &CharacterTextures::fPriest,
                    eCharacterType::priest) {
-    eGameTextures::loadPriest();
+    GameTextures::loadPriest();
 }

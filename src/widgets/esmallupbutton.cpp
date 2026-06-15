@@ -1,10 +1,10 @@
 #include "esmallupbutton.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eSmallUpButton::eSmallUpButton(eMainWindow* const window) :
     eButton(window) {
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
     const auto uiScale = res.uiScale();
     const int iRes = static_cast<int>(uiScale);

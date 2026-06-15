@@ -39,5 +39,5 @@ void eSinkLandEvent::serializeFields(eSaveArchive& ar) {
 }
 
 void eSinkLandEvent::loadResources() const {
-    eGameTextures::loadWave();
+    GameTextures::loadWave();
 }

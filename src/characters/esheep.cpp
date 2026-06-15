@@ -1,18 +1,18 @@
 #include "esheep.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "enumbers.h"
 
 eSheep::eSheep(GameBoard& board) :
-    eDomesticatedAnimal(board, &eCharacterTextures::fNudeSheep,
+    eDomesticatedAnimal(board, &CharacterTextures::fNudeSheep,
                         eCharacterType::sheep, eNumbers::sSheepMaxGroom) {
-    eGameTextures::loadSheep();
+    GameTextures::loadSheep();
 }
 
 void eSheep::setNakedTexture() {
-    setTextures(&eCharacterTextures::fNudeSheep);
+    setTextures(&CharacterTextures::fNudeSheep);
 }
 
 void eSheep::setFleecedTexture() {
-    setTextures(&eCharacterTextures::fFleecedSheep);
+    setTextures(&CharacterTextures::fFleecedSheep);
 }

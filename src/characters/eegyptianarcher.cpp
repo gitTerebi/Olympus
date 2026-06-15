@@ -1,9 +1,9 @@
 #include "eegyptianarcher.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eEgyptianArcher::eEgyptianArcher(GameBoard& board) :
-    eArcherBase(board, &eCharacterTextures::fEgyptianArcher,
+    eArcherBase(board, &CharacterTextures::fEgyptianArcher,
                 eCharacterType::egyptianArcher) {
-    eGameTextures::loadEgyptianArcher();
+    GameTextures::loadEgyptianArcher();
 }

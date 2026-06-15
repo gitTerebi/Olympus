@@ -11,7 +11,7 @@ class eSaveArchive;
 class eSoldier : public eFightingPatroler,
                  public eFightingCharacter {
 public:
-    using eCharTexs = eFightingCharacterTextures eCharacterTextures::*;
+    using eCharTexs = FightingCharacterTextures CharacterTextures::*;
     eSoldier(GameBoard& board,
              const eCharTexs charTexs,
              const eCharacterType type);

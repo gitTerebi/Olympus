@@ -1,6 +1,6 @@
 #include "basic-god.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 BasicGod::BasicGod(GameBoard& board,
                      const eGodTexs godTexs,
@@ -11,7 +11,7 @@ BasicGod::BasicGod(GameBoard& board,
 std::shared_ptr<eTexture>
 BasicGod::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& godTexs = eGameTextures::gods()[id];
+    const auto& godTexs = GameTextures::gods()[id];
     const auto& texs = godTexs.*mGodTexs;
     const eTextureCollection* coll = nullptr;
     bool reverse = false;

@@ -1,15 +1,15 @@
 #include "efishingboat.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eFishingBoat::eFishingBoat(GameBoard& board) :
     eResourceCollectorBase(board, eCharacterType::fishingBoat) {
-    eGameTextures::loadFishingBoat();
+    GameTextures::loadFishingBoat();
 }
 
 std::shared_ptr<eTexture> eFishingBoat::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters();
+    const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto& charTexs = colls.fFishingBoat;
     const eTextureCollection* coll = nullptr;

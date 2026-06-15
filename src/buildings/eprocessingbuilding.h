@@ -2,14 +2,14 @@
 #define EPROCESSINGBUILDING_H
 
 #include "eresourcebuildingbase.h"
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 
 class eSaveArchive;
 
 class eProcessingBuilding : public eResourceBuildingBase {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
-    using eOverlays = eTextureCollection eBuildingTextures::*;
+    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
+    using eOverlays = eTextureCollection BuildingTextures::*;
     eProcessingBuilding(GameBoard& board,
                         const eBaseTex baseTex,
                         const double overlayX,
@@ -48,7 +48,7 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
 
-    const std::vector<eBuildingTextures>& mTextures;
+    const std::vector<BuildingTextures>& mTextures;
 
     const eBaseTex mBaseTex;
     const eOverlays mOverlays;

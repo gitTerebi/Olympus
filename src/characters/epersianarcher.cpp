@@ -1,9 +1,9 @@
 #include "epersianarcher.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 ePersianArcher::ePersianArcher(GameBoard& board) :
-    eArcherBase(board, &eCharacterTextures::fPersianArcher,
+    eArcherBase(board, &CharacterTextures::fPersianArcher,
                 eCharacterType::persianArcher) {
-    eGameTextures::loadPersianArcher();
+    GameTextures::loadPersianArcher();
 }

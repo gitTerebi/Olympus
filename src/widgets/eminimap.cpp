@@ -1,6 +1,6 @@
 #include "eminimap.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "etilehelper.h"
 
@@ -253,7 +253,7 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
     ePainter p(rend);
 
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const int id = static_cast<int>(resolution().uiScale());
     const auto& coll = intrfc[id];
     const auto& ds = coll.fDiamond;

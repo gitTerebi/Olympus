@@ -10,7 +10,7 @@
 #include "buildings/eroad.h"
 #include "enumbers.h"
 #include "widgets/etilepainter.h"
-#include "textures/eterraintextures.h"
+#include "textures/terrain-textures.h"
 
 #include <algorithm>
 #include <map>
@@ -41,7 +41,7 @@ void addPreviewTile(eTile* const tile, std::map<eTile*, int>& path,
 
 void GameWidget::drawRoadFootprint(eTile* const tile, const SDL_Color color,
                                    eTilePainter& tp,
-                                   const eTerrainTextures& trrTexs)
+                                   const TerrainTextures& trrTexs)
 {
     if (!tile) return;
     const int worldTileX = tile->x();
@@ -236,7 +236,7 @@ void GameWidget::drawRoadBandTile(eTile* const tile,
                                   eTile* const start,
                                   const eRoadPreviewPath& path,
                                   eTilePainter& tp,
-                                  const eTerrainTextures& trrTexs)
+                                  const TerrainTextures& trrTexs)
 {
     if (!tile || !start) return;
     if (tile == start) {
@@ -251,7 +251,7 @@ void GameWidget::drawRoadBandTile(eTile* const tile,
 void GameWidget::drawRoadPreview(const eRoadPreviewPath& path,
                                  eTile* const spawnTile,
                                  eTilePainter& tp,
-                                 const eTerrainTextures& trrTexs)
+                                 const TerrainTextures& trrTexs)
 {
     for (const auto& p : path) {
         drawRoadBandTile(p.first, spawnTile, path, tp, trrTexs);
@@ -263,7 +263,7 @@ void GameWidget::drawRoadPreview(const eRoadPreviewPath& path,
 
 void GameWidget::drawRoadBands(const std::vector<eTile*>& roads,
                                eTilePainter& tp,
-                               const eTerrainTextures& trrTexs)
+                               const TerrainTextures& trrTexs)
 {
     if (roads.empty()) return;
     const auto start = roads.front();

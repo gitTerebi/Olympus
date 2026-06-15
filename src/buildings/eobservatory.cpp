@@ -1,16 +1,16 @@
 #include "eobservatory.h"
 
 #include "characters/astronomer.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eObservatory::eObservatory(GameBoard& board,
                            const eCityId cid) :
     ePatrolTarget(board,
-                  &eBuildingTextures::fObservatory,
+                  &BuildingTextures::fObservatory,
                   -8.15, -10.65,
-                  &eBuildingTextures::fObservatoryOverlay,
+                  &BuildingTextures::fObservatoryOverlay,
                   [this]() { return e::make_shared<Astronomer>(getBoard()); },
                   eBuildingType::observatory, 5, 5, 18, cid) {
-    eGameTextures::loadObservatory();
+    GameTextures::loadObservatory();
     setOverlaySpeed(0.25);
 }

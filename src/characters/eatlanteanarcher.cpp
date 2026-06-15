@@ -1,9 +1,9 @@
 #include "eatlanteanarcher.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eAtlanteanArcher::eAtlanteanArcher(GameBoard& board) :
-    eArcherBase(board, &eCharacterTextures::fAtlanteanArcher,
+    eArcherBase(board, &CharacterTextures::fAtlanteanArcher,
                 eCharacterType::atlanteanArcher) {
-    eGameTextures::loadAtlanteanArcher();
+    GameTextures::loadAtlanteanArcher();
 }

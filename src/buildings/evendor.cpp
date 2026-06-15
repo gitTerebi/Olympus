@@ -2,7 +2,7 @@
 
 #include "characters/echaracter.h"
 #include "characters/ecarttransporter.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 #include "buildings/eagorabase.h"
 #include "characters/actions/eactionwithcomeback.h"
@@ -37,7 +37,7 @@ eVendor::eVendor(GameBoard& board,
     mOverlayX2(overlayX2),
     mOverlayY2(overlayY2),
     mOverlayTex2(overlayTex2) {
-    eGameTextures::loadAgora();
+    GameTextures::loadAgora();
 }
 
 eVendor::~eVendor() {
@@ -46,7 +46,7 @@ eVendor::~eVendor() {
 
 std::shared_ptr<eTexture> eVendor::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     return blds[sizeId].*mBaseTex;
 }
 
@@ -55,7 +55,7 @@ std::vector<eOverlay> eVendor::getOverlays(const eTileSize size) const {
 
     auto os = eEmployingBuilding::getOverlays(size);
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings();
+    const auto& texs = GameTextures::buildings();
 
     if(mOverlayTex) {
         eOverlay o;

@@ -2,7 +2,7 @@
 
 #include "eiteratesquare.h"
 #include "engine/game-board.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "enumbers.h"
 #include "actions/animal-action.h"
 #include "fileIO/esavearchive.h"
@@ -11,23 +11,23 @@ int eCattle::sId = 0;
 
 eCattle::eCattle(GameBoard& board, const eCharacterType type) :
     eCharacter(board, type), mId(sId++) {
-    eGameTextures::loadCattle();
+    GameTextures::loadCattle();
 }
 
 std::shared_ptr<eTexture> eCattle::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters();
-    using eCTexs = eCattleTextures eCharacterTextures::*;
+    const auto& texs = GameTextures::characters();
+    using eCTexs = CattleTextures CharacterTextures::*;
     eCTexs cTexs;
     const auto t = type();
     if(t == eCharacterType::cattle1) {
-        cTexs = &eCharacterTextures::fCattle1;
+        cTexs = &CharacterTextures::fCattle1;
     } else if(t == eCharacterType::cattle2) {
-        cTexs = &eCharacterTextures::fCattle2;
+        cTexs = &CharacterTextures::fCattle2;
     } else if(t == eCharacterType::cattle3) {
-        cTexs = &eCharacterTextures::fCattle3;
+        cTexs = &CharacterTextures::fCattle3;
     } else {
-        eGameTextures::loadBull();
+        GameTextures::loadBull();
         const auto& charTexs = texs[id].fBull;
         const eTextureCollection* coll = nullptr;
         const int oid = static_cast<int>(rotatedOrientation());

@@ -11,7 +11,7 @@ std::shared_ptr<eTexture>
 ePalace1Renderer::getTexture(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const int sizeId = static_cast<int>(size);
     const bool rotated = mPalace->rotated();
     if(dir == eWorldDirection::S) {
@@ -65,7 +65,7 @@ std::shared_ptr<eTexture>
 ePalace2Renderer::getTexture(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const int sizeId = static_cast<int>(size);
     const bool rotated = mPalace->rotated();
     if(dir == eWorldDirection::S) {

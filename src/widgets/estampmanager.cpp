@@ -13,7 +13,7 @@
 #include "engine/stamps/estamptool.h"
 #include "engine/stamps/estampblueprint.h"
 #include "engine/difficulty.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "elabelbase.h"
 
 #include <algorithm>
@@ -154,7 +154,7 @@ void eStampManager::rebuildList()
     const auto res = resolution();
     const auto uiScale = res.uiScale();
     const int icoll = static_cast<int>(uiScale);
-    const auto& intrfc = eGameTextures::interface()[icoll];
+    const auto& intrfc = GameTextures::interface()[icoll];
     const auto popIcon = intrfc.fPopulationTopMenu;
     const auto drachmaIcon = intrfc.fDrachmasTopMenu;
     const int iconH = res.fontSizeS();

@@ -1,18 +1,18 @@
 #include "widgets/game-widget.h"
 
-#include "textures/etiletotexture.h"
-#include "textures/egametextures.h"
+#include "textures/tile-to-texture.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 
 void GameWidget::updateTerrainTextures(eTile *const tile,
-                                        const eTerrainTextures &trrTexs,
-                                        const eBuildingTextures &builTexs)
+                                        const TerrainTextures &trrTexs,
+                                        const BuildingTextures &builTexs)
 {
     tile->setUnderTile(nullptr);
     auto &painter = tile->terrainPainter();
 
     painter.fColl = nullptr;
-    painter.fTex = eTileToTexture::get(tile, trrTexs, builTexs,
+    painter.fTex = TileToTexture::get(tile, trrTexs, builTexs,
                                        mTileSize, mDrawElevation,
                                        painter.fDrawDim,
                                        &painter.fColl,
@@ -22,8 +22,8 @@ void GameWidget::updateTerrainTextures(eTile *const tile,
 void GameWidget::updateTerrainTextures()
 {
     const int tid = static_cast<int>(mTileSize);
-    const auto &trrTexs = eGameTextures::terrain().at(tid);
-    const auto &builTexs = eGameTextures::buildings().at(tid);
+    const auto &trrTexs = GameTextures::terrain().at(tid);
+    const auto &builTexs = GameTextures::buildings().at(tid);
 
     mBoard->iterateOverAllTiles([&](eTile *const tile)
                                 {

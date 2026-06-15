@@ -3,7 +3,7 @@
 
 #include "estoragebuilding.h"
 
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 
 class eGranary : public eStorageBuilding {
 public:
@@ -12,7 +12,7 @@ public:
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
     std::vector<eOverlay> getOverlays(const eTileSize size) const;
 private:
-    const std::vector<eBuildingTextures>& mTextures;
+    const std::vector<BuildingTextures>& mTextures;
 };
 
 #endif // EGRANARY_H

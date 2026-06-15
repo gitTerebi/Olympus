@@ -1,9 +1,9 @@
 #include "eegyptianhoplite.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eEgyptianHoplite::eEgyptianHoplite(GameBoard& board) :
-    eHopliteBase(board, &eCharacterTextures::fEgyptianHoplite,
+    eHopliteBase(board, &CharacterTextures::fEgyptianHoplite,
                  eCharacterType::egyptianHoplite) {
-    eGameTextures::loadEgyptianHoplite();
+    GameTextures::loadEgyptianHoplite();
 }

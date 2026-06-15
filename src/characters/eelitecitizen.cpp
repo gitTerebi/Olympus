@@ -1,11 +1,11 @@
 #include "eelitecitizen.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eEliteCitizen::eEliteCitizen(GameBoard& board) :
-    eFightingPatroler(board, &eCharacterTextures::fEliteCitizen,
+    eFightingPatroler(board, &CharacterTextures::fEliteCitizen,
                       eCharacterType::eliteCitizen) {
-    eGameTextures::loadEliteCitizen();
+    GameTextures::loadEliteCitizen();
     setAttack(0.5);
     setHP(200);
 }

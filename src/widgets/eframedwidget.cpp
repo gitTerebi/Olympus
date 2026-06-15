@@ -1,6 +1,6 @@
 #include "eframedwidget.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include <random>
 
@@ -13,7 +13,7 @@ void eFramedWidget::paintEvent(ePainter& p) {
     int mult;
     iResAndMult(iRes, mult);
     const int dim = 8*mult;
-    const auto& intrfc = eGameTextures::interface()[iRes];
+    const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
     const int iMax = width()/dim + 1;

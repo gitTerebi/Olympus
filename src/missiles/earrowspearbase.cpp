@@ -12,7 +12,7 @@ eArrowSpearBase::getTexture(const eTileSize size) const {
     auto& board = this->board();
     const auto dir = board.direction();
     const int id = static_cast<int>(size);
-    const auto& textures = eGameTextures::destrution();
+    const auto& textures = GameTextures::destrution();
     const auto& rockTex = textures[id].*mTexs;
     const double a = angle();
     double da;

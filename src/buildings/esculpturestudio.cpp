@@ -1,18 +1,18 @@
 #include "esculpturestudio.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "enumbers.h"
 
 eSculptureStudio::eSculptureStudio(GameBoard& board,
                                    const eCityId cid) :
     eProcessingBuilding(board,
-                        &eBuildingTextures::fSculptureStudio,
+                        &BuildingTextures::fSculptureStudio,
                         -3.73, -4.48,
-                        &eBuildingTextures::fSculptureStudioOverlay,
+                        &BuildingTextures::fSculptureStudioOverlay,
                         eBuildingType::sculptureStudio, 2, 2, 12,
                         eResourceType::bronze,
                         eResourceType::sculpture, 4,
                         eNumbers::sSculptureStudioProcessingPeriod,
                         cid) {
-    eGameTextures::loadSculptureStudio();
+    GameTextures::loadSculptureStudio();
 }

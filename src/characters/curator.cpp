@@ -1,10 +1,10 @@
 #include "curator.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Curator::Curator(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fCurator,
+    eBasicPatroler(board, &CharacterTextures::fCurator,
                    eCharacterType::curator) {
-    eGameTextures::loadCurator();
+    GameTextures::loadCurator();
     setProvide(eProvide::competitorCurator, 10000);
 }

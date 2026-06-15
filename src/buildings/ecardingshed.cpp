@@ -1,7 +1,7 @@
 #include "ecardingshed.h"
 
 #include "characters/shepherd.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "characters/actions/shepherd-action.h"
 
 #include <algorithm>
@@ -11,21 +11,21 @@ stdsptr<eResourceCollectorBase> cardingShedCharGenerator(GameBoard& board) {
 }
 
 eCardingShed::eCardingShed(GameBoard& board, const eCityId cid) :
-    eShepherBuildingBase(board, &eBuildingTextures::fCardingShed,
+    eShepherBuildingBase(board, &BuildingTextures::fCardingShed,
                          -0.98, -2.15,
-                         &eBuildingTextures::fCardingShedOverlay,
+                         &BuildingTextures::fCardingShedOverlay,
                          cardingShedCharGenerator,
                          eBuildingType::cardingShed,
                          eResourceType::fleece,
                          eCharacterType::sheep,
                          2, 2, 8, cid),
-    mTextures(eGameTextures::buildings())  {
-    eGameTextures::loadCardingShed();
+    mTextures(GameTextures::buildings())  {
+    GameTextures::loadCardingShed();
 }
 
 std::vector<eOverlay> eCardingShed::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::interface()[sizeId];
+    const auto& texs = GameTextures::interface()[sizeId];
     auto os = eShepherBuildingBase::getOverlays(size);
     if(resource() > 0) {
         const int res = std::clamp((resource() + 1)/2, 0, 4);

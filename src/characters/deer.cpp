@@ -1,10 +1,10 @@
 #include "deer.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Deer::Deer(GameBoard& board) :
-    eWildAnimal(board, &eCharacterTextures::fDeer,
+    eWildAnimal(board, &CharacterTextures::fDeer,
                 eCharacterType::deer) {
-    eGameTextures::loadDeer();
+    GameTextures::loadDeer();
     setCityId(eCityId::neutralFriendly);
 }

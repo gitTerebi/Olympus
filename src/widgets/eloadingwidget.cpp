@@ -1,8 +1,8 @@
 #include "eloadingwidget.h"
 
 #include "emainwindow.h"
-#include "textures/egametextures.h"
-#include "textures/einterfacetextures.h"
+#include "textures/game-textures.h"
+#include "textures/interface-textures.h"
 
 #include "erand.h"
 
@@ -54,7 +54,7 @@ void eLoadingWidget::setDoneAction(const eAction& a) {
 
 void eLoadingWidget::setLoadImage(const int id) {
     if(!mImageLabel) return;
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes];

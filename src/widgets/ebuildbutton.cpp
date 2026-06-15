@@ -2,14 +2,14 @@
 
 #include <algorithm>
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "elabel.h"
 
 void eBuildButton::initialize(const std::string& name,
                               const int marbleCost,
                               const int cost,
                               const int customWidth) {
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     int iRes;
     int mult;
     iResAndMult(iRes, mult);

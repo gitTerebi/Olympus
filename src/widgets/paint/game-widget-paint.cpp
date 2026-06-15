@@ -9,11 +9,11 @@
 
 #include "widgets/eterraineditmenu.h"
 
-#include "textures/etiletotexture.h"
-#include "textures/egametextures.h"
+#include "textures/tile-to-texture.h"
+#include "textures/game-textures.h"
 
-#include "textures/eparktexture.h"
-#include "textures/evaryingsizetex.h"
+#include "textures/park-texture.h"
+#include "textures/varying-size-tex.h"
 
 #include "buildings/allbuildings.h"
 #include "widgets/paint/sanctuary-preview.h"
@@ -164,10 +164,10 @@ void GameWidget::paintEvent(ePainter &p)
     const auto ppid = mBoard->personPlayer();
 
     const int tid = static_cast<int>(mTileSize);
-    const auto &trrTexs = eGameTextures::terrain().at(tid);
-    const auto &builTexs = eGameTextures::buildings().at(tid);
-    const auto &destTexs = eGameTextures::destrution().at(tid);
-    const auto &charTexs = eGameTextures::characters().at(tid);
+    const auto &trrTexs = GameTextures::terrain().at(tid);
+    const auto &builTexs = GameTextures::buildings().at(tid);
+    const auto &destTexs = GameTextures::destrution().at(tid);
+    const auto &charTexs = GameTextures::characters().at(tid);
     const auto dir = mBoard->direction();
     const int boardWidth = mBoard->width();
     const int boardHeight = mBoard->height();
@@ -559,14 +559,14 @@ void GameWidget::paintEvent(ePainter &p)
         {
             if (building->blessed())
             {
-                eGameTextures::loadBlessed();
+                GameTextures::loadBlessed();
                 const auto &blsd = destTexs.fBlessed;
                 const auto tex = blsd.getTexture(building->textureTime() % blsd.size());
                 tp.drawTexture(bx, by, tex, eAlignment::bottom);
             }
             else if (building->cursed())
             {
-                eGameTextures::loadCursed();
+                GameTextures::loadCursed();
                 const auto &blsd = destTexs.fCursed;
                 const auto tex = blsd.getTexture(building->textureTime() % blsd.size());
                 tp.drawTexture(bx, by, tex, eAlignment::bottom);
@@ -580,7 +580,7 @@ void GameWidget::paintEvent(ePainter &p)
             double frx;
             double fry;
             drawXY(worldTileX, worldTileY, frx, fry, 1, 1, a);
-            eGameTextures::loadFire();
+            GameTextures::loadFire();
             const int f = (worldTileX + worldTileY) % destTexs.fFire.size();
             const auto &ff = destTexs.fFire[f];
             const int dt = mBoard->frame() + std::abs(worldTileX * worldTileY);
@@ -1173,7 +1173,7 @@ void GameWidget::paintEvent(ePainter &p)
                         const bool p = ch->plague();
                         if (p && ch->people())
                         {
-                            eGameTextures::loadPlague();
+                            GameTextures::loadPlague();
                             const auto &blsd = destTexs.fPlague;
                             const int texId = building->textureTime() % blsd.size();
                             const auto tex = blsd.getTexture(texId);
@@ -1692,7 +1692,7 @@ void GameWidget::paintEvent(ePainter &p)
                 t->clearColorMod();
             };
             {
-                eGameTextures::loadBanners();
+                GameTextures::loadBanners();
                 const auto& rods = charTexs.fBannerRod;
                 const auto& rod = rods.getTexture(0);
                 mod(rod);
@@ -1845,7 +1845,7 @@ void GameWidget::paintEvent(ePainter &p)
 
         const auto drawBridge = [&]() {
             if(mode == eBuildingMode::bridge) {
-                eGameTextures::loadBridge();
+                GameTextures::loadBridge();
                 const bool r = eVectorHelpers::contains(bridgetTs, tile);
                 if(r) {
                     const int texId = bridgeRot ? 11 : 10;
@@ -1894,7 +1894,7 @@ void GameWidget::paintEvent(ePainter &p)
                     if(viewTileX != textureFitTileX || viewTileY != textureFitTileY) return;
 
                     const int sizeId = static_cast<int>(mTileSize);
-                    const auto& builTexs = eGameTextures::buildings()[sizeId];
+                    const auto& builTexs = GameTextures::buildings()[sizeId];
                     const auto& coll = builTexs.fHippodrome;
                     stdsptr<eTexture> tex;
                     int hx;
@@ -2275,7 +2275,7 @@ void GameWidget::paintEvent(ePainter &p)
             const auto slots = SoldierBanner::sFormationPositions(
                 banners, mPressedTX, mPressedTY, facing, lineDX, lineDY, dist);
 
-            eGameTextures::loadBanners();
+            GameTextures::loadBanners();
             const auto drawGhostTile = [&](eTile* const tile,
                                            const bool valid)
             {

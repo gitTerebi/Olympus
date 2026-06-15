@@ -6,12 +6,12 @@
 eMuseum::eMuseum(GameBoard& board,
                  const eCityId cid) :
     ePatrolTarget(board,
-                  &eBuildingTextures::fMuseum,
+                  &BuildingTextures::fMuseum,
                   -11.55, -12.70,
-                  &eBuildingTextures::fMuseumOverlay,
+                  &BuildingTextures::fMuseumOverlay,
                   [this]() { return e::make_shared<Curator>(getBoard()); },
                   eBuildingType::museum, 6, 6, 50, cid) {
-    eGameTextures::loadMuseum();
+    GameTextures::loadMuseum();
     board.registerMuseum(this);
 }
 

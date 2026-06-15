@@ -6,7 +6,7 @@ eRacingHorse::eRacingHorse(GameBoard& board, const int id,
                            const std::vector<ePathPoint>& path) :
     eMissile(board, eMissileType::racingHorse, path),
     mId(id) {
-    eGameTextures::loadRacingHorses();
+    GameTextures::loadRacingHorses();
 }
 
 eRacingHorse::eRacingHorse(GameBoard& board) :
@@ -15,8 +15,8 @@ eRacingHorse::eRacingHorse(GameBoard& board) :
 std::shared_ptr<eTexture>
 eRacingHorse::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& ctexs = eGameTextures::characters()[sizeId];
-    const eRacingHorseTextures* texs = nullptr;
+    const auto& ctexs = GameTextures::characters()[sizeId];
+    const RacingHorseTextures* texs = nullptr;
     const int id = mId % 4;
     if(id == 0) {
         texs = &ctexs.fRacingHorse1;

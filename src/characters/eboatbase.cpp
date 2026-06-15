@@ -1,6 +1,6 @@
 #include "eboatbase.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eBoatBase::eBoatBase(
         GameBoard& board, const eCharTexs charTexs,
@@ -10,7 +10,7 @@ eBoatBase::eBoatBase(
 
 std::shared_ptr<eTexture> eBoatBase::getTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters();
+    const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto& charTexs = colls.*mCharTexs;
     const eTextureCollection* coll = nullptr;

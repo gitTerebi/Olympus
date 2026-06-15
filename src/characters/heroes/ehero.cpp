@@ -39,8 +39,8 @@ int eHero::sHeroAttackTime(const eHeroType ht) {
 eHero::eTexPtr eHero::sHeroMissile(const eHeroType gt) {
     switch(gt) {
     case eHeroType::atalanta:
-        eGameTextures::loadGodBlueArrow();
-        return &eDestructionTextures::fGodBlueArrow;
+        GameTextures::loadGodBlueArrow();
+        return &DestructionTextures::fGodBlueArrow;
     default:
         return nullptr;
     }

@@ -1,14 +1,14 @@
 #include "epark.h"
 
-#include "textures/egametextures.h"
-#include "textures/evaryingsizetex.h"
-#include "textures/eparktexture.h"
+#include "textures/game-textures.h"
+#include "textures/varying-size-tex.h"
+#include "textures/park-texture.h"
 
 ePark::ePark(GameBoard& board,
              const eCityId cid) :
     eBuilding(board, eBuildingType::park, 1, 1, cid),
-    mTextures(eGameTextures::buildings()) {
-    eGameTextures::loadPark();
+    mTextures(GameTextures::buildings()) {
+    GameTextures::loadPark();
 }
 
 std::shared_ptr<eTexture> ePark::getTexture(const eTileSize size) const {

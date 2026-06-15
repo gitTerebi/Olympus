@@ -1,9 +1,9 @@
 #include "eoceanidspearthrower.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eOceanidSpearthrower::eOceanidSpearthrower(GameBoard& board) :
-    eSpearthrowerBase(board, &eCharacterTextures::fOceanidSpearthrower,
+    eSpearthrowerBase(board, &CharacterTextures::fOceanidSpearthrower,
                       eCharacterType::oceanidSpearthrower) {
-    eGameTextures::loadOceanidSpearthrower();
+    GameTextures::loadOceanidSpearthrower();
 }

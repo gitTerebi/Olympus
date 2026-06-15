@@ -6,7 +6,7 @@
 
 class eCheckableButton;
 class eTextureCollection;
-class eInterfaceTextures;
+class InterfaceTextures;
 class eButton;
 class GameBoard;
 class PopulationDataWidget;
@@ -93,7 +93,7 @@ private:
                                          const int tradeIconWidth);
 
     void displayPrice(const int price, const int loc);
-    eWidget* createPriceWidget(const eInterfaceTextures& coll);
+    eWidget* createPriceWidget(const InterfaceTextures& coll);
 
     GameBoard* mBoard{nullptr};
     GameWidget* mGW = nullptr;

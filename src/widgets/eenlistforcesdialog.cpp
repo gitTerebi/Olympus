@@ -46,7 +46,7 @@ public:
         int iRes;
         int mult;
         iResAndMult(iRes, mult);
-        const auto& intrfc = eGameTextures::interface();
+        const auto& intrfc = GameTextures::interface();
         const auto& coll = intrfc[iRes];
 
         if(type == eEnlistType::horseman ||

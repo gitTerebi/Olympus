@@ -1,9 +1,9 @@
 #include "eorichalcminer.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eOrichalcMiner::eOrichalcMiner(GameBoard& board) :
-    eResourceCollector(board, &eCharacterTextures::fOrichalcMiner,
+    eResourceCollector(board, &CharacterTextures::fOrichalcMiner,
                        eCharacterType::orichalcMiner) {
-    eGameTextures::loadOrichalcMiner();
+    GameTextures::loadOrichalcMiner();
 }

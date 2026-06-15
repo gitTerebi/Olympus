@@ -1,9 +1,9 @@
 #include "goatherd.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Goatherd::Goatherd(GameBoard& board) :
-    eShepherdBase(board, &eCharacterTextures::fGoatherd,
+    eShepherdBase(board, &CharacterTextures::fGoatherd,
                   eCharacterType::goatherd) {
-    eGameTextures::loadGoatherd();
+    GameTextures::loadGoatherd();
 }

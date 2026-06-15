@@ -1,9 +1,9 @@
 #include "egreekrockthrower.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eGreekRockThrower::eGreekRockThrower(GameBoard& board) :
-    eRockThrowerBase(board, &eCharacterTextures::fGreekRockThrower,
+    eRockThrowerBase(board, &CharacterTextures::fGreekRockThrower,
                      eCharacterType::greekRockThrower) {
-    eGameTextures::loadGreekRockThrower();
+    GameTextures::loadGreekRockThrower();
 }

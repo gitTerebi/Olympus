@@ -9,7 +9,7 @@
 #include "characters/actions/walkable/eobsticlehandler.h"
 #include "fileIO/esavearchive.h"
 
-#include "textures/edestructiontextures.h"
+#include "textures/destruction-textures.h"
 
 class God;
 class eGodAct;
@@ -131,7 +131,7 @@ public:
                   const stdsptr<WalkableObject>& moveWalkable = nullptr);
 
 
-    using eTexPtr = eTextureCollection eDestructionTextures::*;
+    using eTexPtr = eTextureCollection DestructionTextures::*;
     using eFunc = std::function<void()>;
     void spawnMissile(const eCharacterActionType at,
                       const eCharacterType chart,

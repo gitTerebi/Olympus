@@ -1,9 +1,9 @@
 #include "etrojanspearthrower.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eTrojanSpearthrower::eTrojanSpearthrower(GameBoard& board) :
-    eSpearthrowerBase(board, &eCharacterTextures::fTrojanSpearthrower,
+    eSpearthrowerBase(board, &CharacterTextures::fTrojanSpearthrower,
                       eCharacterType::trojanSpearthrower) {
-    eGameTextures::loadTrojanSpearthrower();
+    GameTextures::loadTrojanSpearthrower();
 }

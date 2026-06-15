@@ -1,6 +1,6 @@
 #include "ewall.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "characters/echaracter.h"
 #include "engine/game-board.h"
@@ -8,7 +8,7 @@
 
 eWall::eWall(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::wall, 1, 1, cid) {
-    eGameTextures::loadWall();
+    GameTextures::loadWall();
     setHP(eNumbers::sWallHP);
 }
 
@@ -26,7 +26,7 @@ eWall::~eWall() {
 std::shared_ptr<eTexture>
 eWall::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     const auto& wll = blds.fWall;
     const auto t = centerTile();
 

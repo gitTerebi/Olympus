@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "characters/horse.h"
 #include "characters/actions/animal-action.h"
@@ -82,7 +82,7 @@ int HorseRanchEnclosure::provide(const eProvide p, const int n) {
 std::shared_ptr<eTexture> HorseRanchEnclosure::getTexture(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    auto& blds = eGameTextures::buildings();
+    auto& blds = GameTextures::buildings();
     return blds[sizeId].fHorseRanchEnclosure;
 }
 

@@ -1,6 +1,6 @@
 #include "eepisodelostwidget.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "eframedlabel.h"
 #include "framed-button.h"
@@ -8,7 +8,7 @@
 
 void eEpisodeLostWidget::initialize(const eAction& proceedA) {
     const auto res = resolution();
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes];
     setTexture(texs.fDefeatImage);

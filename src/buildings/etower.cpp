@@ -1,6 +1,6 @@
 #include "etower.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "characters/actions/earcheraction.h"
 #include "vec2.h"
@@ -15,15 +15,15 @@
 
 eTower::eTower(GameBoard &board, const eCityId cid) : eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid)
 {
-    eGameTextures::loadGatehouseAndTower();
+    GameTextures::loadGatehouseAndTower();
     setHP(eNumbers::sTowerHP);
     if (atlantean())
     {
-        eGameTextures::loadPoseidonTowerArcher();
+        GameTextures::loadPoseidonTowerArcher();
     }
     else
     {
-        eGameTextures::loadArcher();
+        GameTextures::loadArcher();
     }
 }
 
@@ -63,7 +63,7 @@ std::shared_ptr<eTexture>
 eTower::getTexture(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
-    const auto &texs = eGameTextures::buildings();
+    const auto &texs = GameTextures::buildings();
     return texs[sizeId].fTower;
 }
 
@@ -71,8 +71,8 @@ std::vector<eOverlay>
 eTower::getOverlays(const eTileSize size) const
 {
     const int sizeId = static_cast<int>(size);
-    const auto &texs = eGameTextures::characters()[sizeId];
-    const eArcherTextures *aTexs;
+    const auto &texs = GameTextures::characters()[sizeId];
+    const ArcherTextures *aTexs;
     if (atlantean())
     {
         aTexs = &texs.fPoseidonTowerArcher;

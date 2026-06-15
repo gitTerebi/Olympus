@@ -1,7 +1,7 @@
 #include "ehippodromepiece.h"
 
 #include "etilehelper.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "fileIO/esavearchive.h"
 #include "engine/game-board.h"
 #include "buildings/eroad.h"
@@ -9,10 +9,10 @@
 
 eHippodromePiece::eHippodromePiece(GameBoard &board, const eCityId cid) :
     eBuildingWithResource(board, eBuildingType::hippodromePiece, 4, 4, cid) {
-    eGameTextures::loadHippodrome();
-    eGameTextures::loadHippodromeSpectators();
-    eGameTextures::loadHippodromeFeces();
-    eGameTextures::loadHippodromeFinish();
+    GameTextures::loadHippodrome();
+    GameTextures::loadHippodromeSpectators();
+    GameTextures::loadHippodromeFeces();
+    GameTextures::loadHippodromeFinish();
     setEnabled(true);
 }
 
@@ -351,7 +351,7 @@ eHippodromePiece::getTexture(const eTileSize size) const {
         {eWorldDirection::W, {{0, 6}, {1, 3}, {2, 4}, {3, 5}, {4, 2}, {5, 7}, {6, 0}, {7, 1}}}
     };
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].fHippodrome;
     const int id = idMap.at(dir).at(mId);
     return coll.getTexture(id);
@@ -373,7 +373,7 @@ void eHippodromePiece::crossTile(eTile* const t,
     if((id == 10 || id == 11) && !back) return;
     auto& o = result.emplace_back();
     const int sizeId = static_cast<int>(size);
-    const auto& builTexs = eGameTextures::buildings()[sizeId];
+    const auto& builTexs = GameTextures::buildings()[sizeId];
     const auto& coll = builTexs.fHippodrome;
     o.fTex = coll.getTexture(id);
     o.fAlignTop = true;
@@ -493,7 +493,7 @@ std::vector<eOverlay> eHippodromePiece::getOverlays(const eTileSize size) const 
     std::vector<eOverlay> result;
 
     const int sizeId = static_cast<int>(size);
-    const auto& builTexs = eGameTextures::buildings()[sizeId];
+    const auto& builTexs = GameTextures::buildings()[sizeId];
     const auto& colls = builTexs.fHippodromeSpectators;
     const bool switchDir = mId == 6;
     const int time = textureTime();

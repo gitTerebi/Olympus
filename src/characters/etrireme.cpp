@@ -1,6 +1,6 @@
 #include "etrireme.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "buildings/etriremewharf.h"
 #include "actions/fighting-action.h"
@@ -10,11 +10,11 @@
 #include "engine/epathfinder.h"
 
 eTrireme::eTrireme(GameBoard& board) :
-    eBoatBase(board, &eCharacterTextures::fTrireme,
+    eBoatBase(board, &CharacterTextures::fTrireme,
               eCharacterType::trireme),
     eFightingCharacter(this) {
     setRange(5);
-    eGameTextures::loadTrireme();
+    GameTextures::loadTrireme();
     setHasSecondaryTexture(true);
 }
 
@@ -101,7 +101,7 @@ eTriremeAction *eTrireme::triremeAction() const {
 
 eOverlay eTrireme::getSecondaryTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
-    const auto& texs = eGameTextures::characters();
+    const auto& texs = GameTextures::characters();
     const auto& colls = texs[id];
     const auto a = actionType();
     const bool die = a == eCharacterActionType::die;

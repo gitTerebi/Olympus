@@ -1,12 +1,12 @@
 #include "eshepherdbase.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eShepherdBase::eShepherdBase(
         GameBoard& board, const eCharTexs charTexs,
         const eCharacterType type) :
     eResourceCollectorBase(board, type),
-    mTextures(eGameTextures::characters()),
+    mTextures(GameTextures::characters()),
     mCharTexs(charTexs) {
 
 }

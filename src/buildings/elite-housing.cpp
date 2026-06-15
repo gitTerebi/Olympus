@@ -6,7 +6,7 @@
 #include "engine/model-data.h"
 #include "erand.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "elanguage.h"
 #include "enumbers.h"
 #include "buildings/epalace.h"
@@ -147,9 +147,9 @@ EliteHousing::getHorseOverlays(const eTileSize size) const {
         return {};
     }
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
 
-    eGameTextures::loadEliteHouse();
+    GameTextures::loadEliteHouse();
     const auto& coll = texs.fEliteHouseHorses;
     eOverlay h;
     h.fX = -2.0;
@@ -324,13 +324,13 @@ std::string EliteHousing::sName(const int level) {
 const eTextureCollection& EliteHousing::getTextureCollection(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     if(atlantean()) {
-        eGameTextures::loadPoseidonEliteHouse();
+        GameTextures::loadPoseidonEliteHouse();
         if(mPeople <= 0) return blds.fPoseidonEliteHouse[0];
         return blds.fPoseidonEliteHouse[mLevel + 1];
     } else {
-        eGameTextures::loadEliteHouse();
+        GameTextures::loadEliteHouse();
         if(mPeople <= 0) return blds.fEliteHouse[0];
         return blds.fEliteHouse[mLevel + 1];
     }

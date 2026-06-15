@@ -1,9 +1,9 @@
 #include "emasonryshop.h"
 
 #include "characters/emarbleminer.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
-#include "textures/emarbletile.h"
+#include "textures/marble-tile.h"
 
 #include "characters/ecarttransporter.h"
 
@@ -15,14 +15,14 @@
 
 eMasonryShop::eMasonryShop(GameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
-                             &eBuildingTextures::fMasonryShop,
+                             &BuildingTextures::fMasonryShop,
                              0, 0, nullptr,
                              3, 0.5, -1.5,
                              [this]() { return e::make_shared<eMarbleMiner>(getBoard()); },
                              eBuildingType::masonryShop,
                              eHasResourceObject::sCreate(eHasResourceObjectType::marble),
                              2, 2, 15, eResourceType::marble, cid) {
-    eGameTextures::loadMasonryShop();
+    GameTextures::loadMasonryShop();
     setAddResource(false);
     setRawInc(8);
     setRawCountCollect(0);
@@ -32,7 +32,7 @@ std::vector<eOverlay>
 eMasonryShop::getOverlays(const eTileSize size) const {
     auto os = eResourceCollectBuilding::getOverlays(size);
     const int sizeId = static_cast<int>(size);
-    const auto& btexs = eGameTextures::buildings()[sizeId];
+    const auto& btexs = GameTextures::buildings()[sizeId];
     const int t = textureTime();
     const int rc = rawCount();
     if(rc) {

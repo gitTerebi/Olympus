@@ -8,7 +8,7 @@ enum class eGrowerType {
     oranges
 };
 
-class eCharacterTextures;
+class CharacterTextures;
 
 class eGrower : public eCharacter {
 public:
@@ -31,9 +31,9 @@ protected:
     void serializeFields(eSaveArchive& ar) override;
 private:
     std::shared_ptr<eTexture> getGrapesAndOlivesTex(
-            const eCharacterTextures& texs) const;
+            const CharacterTextures& texs) const;
     std::shared_ptr<eTexture> getOrangesTex(
-            const eCharacterTextures& texs) const;
+            const CharacterTextures& texs) const;
 
     eGrowerType mType = eGrowerType::grapesAndOlives;
     int mOlives = 0;

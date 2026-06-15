@@ -1,9 +1,9 @@
 #include "earcherposeidon.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eArcherPoseidon::eArcherPoseidon(GameBoard& board) :
-    eArcherBase(board, &eCharacterTextures::fArcherPoseidon,
+    eArcherBase(board, &CharacterTextures::fArcherPoseidon,
                 eCharacterType::archerPoseidon) {
-    eGameTextures::loadArcherPoseidon();
+    GameTextures::loadArcherPoseidon();
 }

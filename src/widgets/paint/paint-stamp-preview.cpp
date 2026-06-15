@@ -1,25 +1,25 @@
 #include "widgets/game-widget.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "buildings/allbuildings.h"
 #include "widgets/etilepainter.h"
 #include "engine/game-board.h"
 #include "engine/stamps/estamptool.h"
 
 void GameWidget::paintStampPreview(eTilePainter &tp,
-                                    const eTerrainTextures &trrTexs,
-                                    const eBuildingTextures &builTexs,
+                                    const TerrainTextures &trrTexs,
+                                    const BuildingTextures &builTexs,
                                     int worldTileX, int worldTileY,
                                     ePlayerId ppid)
 {
-    eGameTextures::loadCommonHouse();
-    eGameTextures::loadFoodVendor();
-    eGameTextures::loadFleeceVendor();
-    eGameTextures::loadOilVendor();
-    eGameTextures::loadGranary();
-    eGameTextures::loadMaintenanceOffice();
-    eGameTextures::loadPark();
-    eGameTextures::loadAgora();
+    GameTextures::loadCommonHouse();
+    GameTextures::loadFoodVendor();
+    GameTextures::loadFleeceVendor();
+    GameTextures::loadOilVendor();
+    GameTextures::loadGranary();
+    GameTextures::loadMaintenanceOffice();
+    GameTextures::loadPark();
+    GameTextures::loadAgora();
 
     const auto doDrawXY = [&](int buildingTileX, int buildingTileY, double &drawX, double &drawY,
                               int tileSpanW, int tileSpanH, int altitude)
@@ -43,7 +43,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
             tex = trrTexs.fRoad.getTexture(12);
             break;
         case eBuildingType::roadblock:
-            eGameTextures::loadRoadblock();
+            GameTextures::loadRoadblock();
             tex = builTexs.fRoadblock;
             break;
         case eBuildingType::commonHouse:
@@ -52,129 +52,129 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
             tex = builTexs.fCommonHouse[0].getTexture(0);
             break;
         case eBuildingType::eliteHousing:
-            eGameTextures::loadEliteHouse();
+            GameTextures::loadEliteHouse();
             if (builTexs.fEliteHouse.empty() || builTexs.fEliteHouse[0].size() == 0)
                 return;
             tex = builTexs.fEliteHouse[0].getTexture(0);
             break;
         case eBuildingType::gymnasium:
-            eGameTextures::loadGymnasium();
+            GameTextures::loadGymnasium();
             tex = builTexs.fGymnasium;
             break;
         case eBuildingType::college:
-            eGameTextures::loadCollege();
+            GameTextures::loadCollege();
             tex = builTexs.fCollege;
             break;
         case eBuildingType::dramaSchool:
-            eGameTextures::loadDramaSchool();
+            GameTextures::loadDramaSchool();
             tex = builTexs.fDramaSchool;
             break;
         case eBuildingType::podium:
-            eGameTextures::loadPodium();
+            GameTextures::loadPodium();
             tex = builTexs.fPodium;
             break;
         case eBuildingType::theater:
-            eGameTextures::loadTheater();
+            GameTextures::loadTheater();
             tex = builTexs.fTheater;
             break;
         case eBuildingType::stadium:
-            eGameTextures::loadStadium();
+            GameTextures::loadStadium();
             tex = builTexs.fStadium1H;
             break;
         case eBuildingType::bibliotheke:
-            eGameTextures::loadBibliotheke();
+            GameTextures::loadBibliotheke();
             tex = builTexs.fBibliotheke;
             break;
         case eBuildingType::observatory:
-            eGameTextures::loadObservatory();
+            GameTextures::loadObservatory();
             tex = builTexs.fObservatory;
             break;
         case eBuildingType::university:
-            eGameTextures::loadUniversity();
+            GameTextures::loadUniversity();
             tex = builTexs.fUniversity;
             break;
         case eBuildingType::laboratory:
-            eGameTextures::loadLaboratory();
+            GameTextures::loadLaboratory();
             tex = builTexs.fLaboratory;
             break;
         case eBuildingType::inventorsWorkshop:
-            eGameTextures::loadInventorsWorkshop();
+            GameTextures::loadInventorsWorkshop();
             tex = builTexs.fInventorsWorkshop;
             break;
         case eBuildingType::museum:
-            eGameTextures::loadMuseum();
+            GameTextures::loadMuseum();
             tex = builTexs.fMuseum;
             break;
         case eBuildingType::fountain:
-            eGameTextures::loadFountain();
+            GameTextures::loadFountain();
             tex = builTexs.fFountain;
             break;
         case eBuildingType::hospital:
-            eGameTextures::loadHospital();
+            GameTextures::loadHospital();
             tex = builTexs.fHospital;
             break;
         case eBuildingType::oliveTree:
-            eGameTextures::loadOliveTree();
+            GameTextures::loadOliveTree();
             tex = firstTex(builTexs.fOliveTree);
             break;
         case eBuildingType::vine:
-            eGameTextures::loadVine();
+            GameTextures::loadVine();
             tex = firstTex(builTexs.fVine);
             break;
         case eBuildingType::orangeTree:
-            eGameTextures::loadPlantation();
+            GameTextures::loadPlantation();
             tex = firstTex(builTexs.fOrangeTree);
             break;
         case eBuildingType::wheatFarm:
-            eGameTextures::loadPlantation();
+            GameTextures::loadPlantation();
             tex = builTexs.fPlantation;
             break;
         case eBuildingType::carrotsFarm:
-            eGameTextures::loadPlantation();
+            GameTextures::loadPlantation();
             tex = builTexs.fPlantation;
             break;
         case eBuildingType::onionsFarm:
-            eGameTextures::loadPlantation();
+            GameTextures::loadPlantation();
             tex = builTexs.fPlantation;
             break;
         case eBuildingType::huntingLodge:
-            eGameTextures::loadHuntingLodge();
+            GameTextures::loadHuntingLodge();
             tex = builTexs.fHuntingLodge;
             break;
         case eBuildingType::fishery:
-            eGameTextures::loadFishery();
+            GameTextures::loadFishery();
             tex = firstTex(builTexs.fFishery);
             break;
         case eBuildingType::urchinQuay:
-            eGameTextures::loadUrchinQuay();
+            GameTextures::loadUrchinQuay();
             tex = firstTex(builTexs.fUrchinQuay);
             break;
         case eBuildingType::cardingShed:
-            eGameTextures::loadCardingShed();
+            GameTextures::loadCardingShed();
             tex = builTexs.fCardingShed;
             break;
         case eBuildingType::dairy:
-            eGameTextures::loadDairy();
+            GameTextures::loadDairy();
             tex = builTexs.fDairy;
             break;
         case eBuildingType::growersLodge:
-            eGameTextures::loadGrowersLodge();
+            GameTextures::loadGrowersLodge();
             tex = builTexs.fGrowersLodge;
             break;
         case eBuildingType::orangeTendersLodge:
-            eGameTextures::loadOrangeTendersLodge();
+            GameTextures::loadOrangeTendersLodge();
             tex = builTexs.fOrangeTendersLodge;
             break;
         case eBuildingType::corral:
-            eGameTextures::loadCorral();
+            GameTextures::loadCorral();
             tex = builTexs.fCorral;
             break;
         case eBuildingType::tradePost:
-            eGameTextures::loadTradingPost();
+            GameTextures::loadTradingPost();
             tex = builTexs.fTradingPost;
             break;
         case eBuildingType::pier:
-            eGameTextures::loadPier();
+            GameTextures::loadPier();
             tex = firstTex(builTexs.fPier1);
             break;
         case eBuildingType::foodVendor:
@@ -187,190 +187,190 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
             tex = builTexs.fOilVendor;
             break;
         case eBuildingType::wineVendor:
-            eGameTextures::loadWineVendorBuilding();
+            GameTextures::loadWineVendorBuilding();
             tex = builTexs.fWineVendor;
             break;
         case eBuildingType::armsVendor:
-            eGameTextures::loadArmsVendor();
+            GameTextures::loadArmsVendor();
             tex = builTexs.fArmsVendor;
             break;
         case eBuildingType::horseTrainer:
-            eGameTextures::loadHorseVendor();
+            GameTextures::loadHorseVendor();
             tex = builTexs.fHorseTrainer;
             break;
         case eBuildingType::chariotVendor:
-            eGameTextures::loadChariotVendor();
+            GameTextures::loadChariotVendor();
             tex = builTexs.fChariotVendor;
             break;
         case eBuildingType::timberMill:
-            eGameTextures::loadTimberMill();
+            GameTextures::loadTimberMill();
             tex = builTexs.fTimberMill;
             break;
         case eBuildingType::masonryShop:
-            eGameTextures::loadMasonryShop();
+            GameTextures::loadMasonryShop();
             tex = builTexs.fMasonryShop;
             break;
         case eBuildingType::mint:
-            eGameTextures::loadMint();
+            GameTextures::loadMint();
             tex = builTexs.fMint;
             break;
         case eBuildingType::foundry:
-            eGameTextures::loadFoundry();
+            GameTextures::loadFoundry();
             tex = builTexs.fFoundry;
             break;
         case eBuildingType::olivePress:
-            eGameTextures::loadOlivePress();
+            GameTextures::loadOlivePress();
             tex = builTexs.fOlivePress;
             break;
         case eBuildingType::winery:
-            eGameTextures::loadWinery();
+            GameTextures::loadWinery();
             tex = builTexs.fWinery;
             break;
         case eBuildingType::sculptureStudio:
-            eGameTextures::loadSculptureStudio();
+            GameTextures::loadSculptureStudio();
             tex = builTexs.fSculptureStudio;
             break;
         case eBuildingType::artisansGuild:
-            eGameTextures::loadArtisansGuild();
+            GameTextures::loadArtisansGuild();
             tex = builTexs.fArtisansGuild;
             break;
         case eBuildingType::wall:
-            eGameTextures::loadWall();
+            GameTextures::loadWall();
             tex = firstTex(builTexs.fWall);
             break;
         case eBuildingType::tower:
-            eGameTextures::loadGatehouseAndTower();
+            GameTextures::loadGatehouseAndTower();
             tex = builTexs.fTower;
             break;
         case eBuildingType::triremeWharf:
-            eGameTextures::loadTriremeWharf();
+            GameTextures::loadTriremeWharf();
             tex = firstTex(builTexs.fTriremeWharf);
             break;
         case eBuildingType::horseRanch:
-            eGameTextures::loadHorseRanch();
+            GameTextures::loadHorseRanch();
             tex = builTexs.fHorseRanch;
             break;
         case eBuildingType::horseRanchEnclosure:
-            eGameTextures::loadHorseRanch();
+            GameTextures::loadHorseRanch();
             tex = builTexs.fHorseRanchEnclosure;
             break;
         case eBuildingType::chariotFactory:
-            eGameTextures::loadChariotFactory();
+            GameTextures::loadChariotFactory();
             tex = builTexs.fChariotFactory;
             break;
         case eBuildingType::armory:
-            eGameTextures::loadArmory();
+            GameTextures::loadArmory();
             tex = builTexs.fArmory;
             break;
         case eBuildingType::maintenanceOffice:
-            eGameTextures::loadMaintenanceOffice();
+            GameTextures::loadMaintenanceOffice();
             tex = builTexs.fMaintenanceOffice;
             break;
         case eBuildingType::taxOffice:
-            eGameTextures::loadTaxOffice();
+            GameTextures::loadTaxOffice();
             tex = builTexs.fTaxOffice;
             break;
         case eBuildingType::watchPost:
-            eGameTextures::loadWatchpost();
+            GameTextures::loadWatchpost();
             tex = builTexs.fWatchPost;
             break;
         case eBuildingType::palace:
-            eGameTextures::loadPalace();
+            GameTextures::loadPalace();
             tex = builTexs.fPalace1H;
             break;
         case eBuildingType::park:
             tex = builTexs.fPark.getTexture(0);
             break;
         case eBuildingType::doricColumn:
-            eGameTextures::loadColumns();
+            GameTextures::loadColumns();
             tex = builTexs.fDoricColumn;
             break;
         case eBuildingType::ionicColumn:
-            eGameTextures::loadColumns();
+            GameTextures::loadColumns();
             tex = builTexs.fIonicColumn;
             break;
         case eBuildingType::corinthianColumn:
-            eGameTextures::loadColumns();
+            GameTextures::loadColumns();
             tex = builTexs.fCorinthianColumn;
             break;
         case eBuildingType::avenue:
-            eGameTextures::loadAvenue();
+            GameTextures::loadAvenue();
             tex = !builTexs.fAvenue.empty() ? firstTex(builTexs.fAvenue[0]) : nullptr;
             break;
         case eBuildingType::commemorative:
-            eGameTextures::loadCommemorative();
+            GameTextures::loadCommemorative();
             tex = firstTex(builTexs.fCommemorative);
             break;
         case eBuildingType::bench:
-            eGameTextures::loadBench();
+            GameTextures::loadBench();
             tex = builTexs.fBench;
             break;
         case eBuildingType::flowerGarden:
-            eGameTextures::loadFlowerGarden();
+            GameTextures::loadFlowerGarden();
             tex = builTexs.fFlowerGarden;
             break;
         case eBuildingType::gazebo:
-            eGameTextures::loadGazebo();
+            GameTextures::loadGazebo();
             tex = builTexs.fGazebo;
             break;
         case eBuildingType::hedgeMaze:
-            eGameTextures::loadHedgeMaze();
+            GameTextures::loadHedgeMaze();
             tex = builTexs.fHedgeMaze;
             break;
         case eBuildingType::fishPond:
-            eGameTextures::loadFishPond();
+            GameTextures::loadFishPond();
             tex = builTexs.fFishPond;
             break;
         case eBuildingType::waterPark:
-            eGameTextures::loadWaterPark();
+            GameTextures::loadWaterPark();
             tex = builTexs.fWaterPark1;
             break;
         case eBuildingType::birdBath:
-            eGameTextures::loadBirdBath();
+            GameTextures::loadBirdBath();
             tex = builTexs.fBirdBath;
             break;
         case eBuildingType::shortObelisk:
-            eGameTextures::loadShortObelisk();
+            GameTextures::loadShortObelisk();
             tex = builTexs.fShortObelisk;
             break;
         case eBuildingType::tallObelisk:
-            eGameTextures::loadTallObelisk();
+            GameTextures::loadTallObelisk();
             tex = builTexs.fTallObelisk;
             break;
         case eBuildingType::shellGarden:
-            eGameTextures::loadShellGarden();
+            GameTextures::loadShellGarden();
             tex = builTexs.fShellGarden;
             break;
         case eBuildingType::sundial:
-            eGameTextures::loadSundial();
+            GameTextures::loadSundial();
             tex = builTexs.fSundial;
             break;
         case eBuildingType::dolphinSculpture:
-            eGameTextures::loadDolphinSculpture();
+            GameTextures::loadDolphinSculpture();
             tex = builTexs.fDolphinSculpture;
             break;
         case eBuildingType::orrery:
-            eGameTextures::loadOrrery();
+            GameTextures::loadOrrery();
             tex = builTexs.fOrrery;
             break;
         case eBuildingType::spring:
-            eGameTextures::loadSpring();
+            GameTextures::loadSpring();
             tex = firstTex(builTexs.fSpring);
             break;
         case eBuildingType::topiary:
-            eGameTextures::loadTopiary();
+            GameTextures::loadTopiary();
             tex = builTexs.fTopiary;
             break;
         case eBuildingType::baths:
-            eGameTextures::loadBaths();
+            GameTextures::loadBaths();
             tex = builTexs.fBaths;
             break;
         case eBuildingType::stoneCircle:
-            eGameTextures::loadStoneCircle();
+            GameTextures::loadStoneCircle();
             tex = builTexs.fStoneCircle;
             break;
         case eBuildingType::refinery:
-            eGameTextures::loadRefinery();
+            GameTextures::loadRefinery();
             tex = builTexs.fRefinery;
             break;
         case eBuildingType::blackMarbleWorkshop:
@@ -380,7 +380,7 @@ void GameWidget::paintStampPreview(eTilePainter &tp,
             tex = builTexs.fAgora.getTexture(0);
             break;
         case eBuildingType::granary:
-            eGameTextures::loadGranary();
+            GameTextures::loadGranary();
             tex = builTexs.fGranary;
             break;
         case eBuildingType::warehouse:

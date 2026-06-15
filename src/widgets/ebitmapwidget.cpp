@@ -1,6 +1,6 @@
 #include "ebitmapwidget.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 void eBitmapWidget::sizeHint(int& w, int& h) {
     const auto res = resolution();
@@ -26,7 +26,7 @@ stdsptr<eTexture> eBitmapWidget::texture() const {
     const auto res = resolution();
     const auto uiScale = res.uiScale();
     const int iRes = static_cast<int>(uiScale);
-    const auto& intrfc = eGameTextures::interface()[iRes];
+    const auto& intrfc = GameTextures::interface()[iRes];
     if(mBitmap == 0) {
         return intrfc.fLoadImage1;
     } else if(mBitmap == 1) {
@@ -52,22 +52,22 @@ stdsptr<eTexture> eBitmapWidget::texture() const {
     } else if(mBitmap == 11) {
         return intrfc.fLoadImage12;
     } else if(mBitmap == 12) {
-        eGameTextures::loadPoseidonCampaign1();
+        GameTextures::loadPoseidonCampaign1();
         return intrfc.fPoseidonCampaign1;
     } else if(mBitmap == 13) {
-        eGameTextures::loadPoseidonCampaign2();
+        GameTextures::loadPoseidonCampaign2();
         return intrfc.fPoseidonCampaign2;
     } else if(mBitmap == 14) {
-        eGameTextures::loadPoseidonCampaign3();
+        GameTextures::loadPoseidonCampaign3();
         return intrfc.fPoseidonCampaign3;
     } else if(mBitmap == 15) {
-        eGameTextures::loadPoseidonCampaign4();
+        GameTextures::loadPoseidonCampaign4();
         return intrfc.fPoseidonCampaign4;
     } else if(mBitmap == 16) {
-        eGameTextures::loadPoseidonCampaign5();
+        GameTextures::loadPoseidonCampaign5();
         return intrfc.fPoseidonCampaign5;
     } else if(mBitmap == 17) {
-        eGameTextures::loadPoseidonCampaign6();
+        GameTextures::loadPoseidonCampaign6();
         return intrfc.fPoseidonCampaign6;
     }
     return intrfc.fLoadImage1;

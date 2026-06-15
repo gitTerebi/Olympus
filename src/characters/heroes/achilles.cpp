@@ -1,51 +1,51 @@
 #include "achilles.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Achilles::Achilles(GameBoard& board) :
-    eBasicHero(board, &eCharacterTextures::fAchilles,
+    eBasicHero(board, &CharacterTextures::fAchilles,
                eHeroType::achilles) {
-    eGameTextures::loadAchilles();
+    GameTextures::loadAchilles();
 }
 
 Atalanta::Atalanta(GameBoard& board) :
-    eBasicHero(board, &eCharacterTextures::fAtalanta,
+    eBasicHero(board, &CharacterTextures::fAtalanta,
                eHeroType::atalanta) {
-    eGameTextures::loadAtalanta();
+    GameTextures::loadAtalanta();
 }
 
 Bellerophon::Bellerophon(GameBoard& board) :
-    eBasicHero(board, &eCharacterTextures::fBellerophon,
+    eBasicHero(board, &CharacterTextures::fBellerophon,
                eHeroType::bellerophon) {
-    eGameTextures::loadBellerophon();
+    GameTextures::loadBellerophon();
 }
 
 Hercules::Hercules(GameBoard& board) :
-    eBasicHero(board, &eCharacterTextures::fHercules,
+    eBasicHero(board, &CharacterTextures::fHercules,
                eHeroType::hercules) {
-    eGameTextures::loadHeracles();
+    GameTextures::loadHeracles();
 }
 
 Jason::Jason(GameBoard& board) :
-    eBasicHero(board, &eCharacterTextures::fJason,
+    eBasicHero(board, &CharacterTextures::fJason,
                eHeroType::jason) {
-    eGameTextures::loadJason();
+    GameTextures::loadJason();
 }
 
 Odysseus::Odysseus(GameBoard& board) :
-    eBasicHero(board, &eCharacterTextures::fOdysseus,
+    eBasicHero(board, &CharacterTextures::fOdysseus,
                eHeroType::odysseus) {
-    eGameTextures::loadOdysseus();
+    GameTextures::loadOdysseus();
 }
 
 Perseus::Perseus(GameBoard& board) :
-    eBasicHero(board, &eCharacterTextures::fPerseus,
+    eBasicHero(board, &CharacterTextures::fPerseus,
                eHeroType::perseus) {
-    eGameTextures::loadPerseus();
+    GameTextures::loadPerseus();
 }
 
 Theseus::Theseus(GameBoard& board) :
-    eBasicHero(board, &eCharacterTextures::fTheseus,
+    eBasicHero(board, &CharacterTextures::fTheseus,
                eHeroType::theseus) {
-    eGameTextures::loadTheseus();
+    GameTextures::loadTheseus();
 }

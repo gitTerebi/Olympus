@@ -3,7 +3,7 @@
 #include "buildings/eheroshall.h"
 #include "widgets/elabel.h"
 #include "widgets/framed-button.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "elanguage.h"
 
@@ -37,7 +37,7 @@ void eHerosHallInfoWidget::initialize(eHerosHall* const b) {
             const auto res = resolution();
             const auto uiScale = res.uiScale();
             const int iRes = static_cast<int>(uiScale);
-            const auto& intrfc = eGameTextures::interface();
+            const auto& intrfc = GameTextures::interface();
             const auto& texs = intrfc[iRes].fCheckBox;
 
             if(finished) {

@@ -1,10 +1,10 @@
 #include "astronomer.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Astronomer::Astronomer(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fAstronomer,
+    eBasicPatroler(board, &CharacterTextures::fAstronomer,
                    eCharacterType::astronomer) {
-    eGameTextures::loadAstronomer();
+    GameTextures::loadAstronomer();
     setProvide(eProvide::actorAstronomer, 10000);
 }

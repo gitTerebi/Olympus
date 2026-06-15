@@ -1,6 +1,6 @@
 #include "trade-post-info-widget.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "elanguage.h"
 #include "enumbers.h"
@@ -84,7 +84,7 @@ public:
 
 
             const auto pi = new eLabel(window());
-            const auto& intrfs = eGameTextures::interface();
+            const auto& intrfs = GameTextures::interface();
             int icoll;
             switch(res.uiScale()) {
             case eUIScale::tiny:

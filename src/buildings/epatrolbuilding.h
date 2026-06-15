@@ -4,12 +4,12 @@
 #include "epatrolbuildingbase.h"
 
 #include "characters/actions/epatrolaction.h"
-#include "textures/ebuildingtextures.h"
+#include "textures/building-textures.h"
 
 class ePatrolBuilding : public ePatrolBuildingBase {
 public:
-    using eBaseTex = std::shared_ptr<eTexture> eBuildingTextures::*;
-    using eOverlays = eTextureCollection eBuildingTextures::*;
+    using eBaseTex = std::shared_ptr<eTexture> BuildingTextures::*;
+    using eOverlays = eTextureCollection BuildingTextures::*;
     ePatrolBuilding(GameBoard& board,
                     const eBaseTex baseTex,
                     const double overlayX,

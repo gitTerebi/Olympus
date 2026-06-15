@@ -2,7 +2,7 @@
 
 #include "characters/eresourcecollector.h"
 #include "characters/actions/ecollectresourceaction.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "engine/game-board.h"
 #include "enumbers.h"
 #include "fileIO/esavearchive.h"
@@ -26,13 +26,13 @@ eResourceCollectBuilding::eResourceCollectBuilding(
     eResourceCollectBuildingBase(board, type, sw, sh,
                                  maxEmployees, resType, cid),
     mCharGenerator(charGen),
-    mTextures(eGameTextures::buildings()),
+    mTextures(GameTextures::buildings()),
     mBaseTex(baseTex), mOverlays(overlays),
     mOverlayX(overlayX), mOverlayY(overlayY),
     mWaitingOO(waitingOO),
     mWaitingOX(waitingOX), mWaitingOY(waitingOY),
     mHasRes(hr) {
-    eGameTextures::loadWaitingOverlay();
+    GameTextures::loadWaitingOverlay();
 }
 
 eResourceCollectBuilding::~eResourceCollectBuilding() {
@@ -48,7 +48,7 @@ std::vector<eOverlay> eResourceCollectBuilding::
     getOverlays(const eTileSize size) const {
     std::vector<eOverlay> result;
     const int sizeId = static_cast<int>(size);
-    const auto& btexs = eGameTextures::buildings()[sizeId];
+    const auto& btexs = GameTextures::buildings()[sizeId];
     if(mRawCount <= 0) {
         eOverlay& o = result.emplace_back();
         const int wo = seed() % 2;

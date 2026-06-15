@@ -1,9 +1,9 @@
 #include "epersianhorseman.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 ePersianHorseman::ePersianHorseman(GameBoard& board) :
-    eHorsemanBase(board, &eCharacterTextures::fPersianHorseman,
+    eHorsemanBase(board, &CharacterTextures::fPersianHorseman,
                   eCharacterType::persianHorseman) {
-    eGameTextures::loadPersianHorseman();
+    GameTextures::loadPersianHorseman();
 }

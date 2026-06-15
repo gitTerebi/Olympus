@@ -3,11 +3,11 @@
 
 #include "ebutton.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 class eBasicButton : public eButton {
 public:
-    using eTex = eTextureCollection eInterfaceTextures::*;
+    using eTex = eTextureCollection InterfaceTextures::*;
     eBasicButton(const eTex tex,
                  eMainWindow* const window);
 };

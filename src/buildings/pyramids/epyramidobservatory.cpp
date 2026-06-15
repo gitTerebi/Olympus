@@ -1,6 +1,6 @@
 #include "epyramidobservatory.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 #include "epyramid.h"
 
 ePyramidObservatory::ePyramidObservatory(
@@ -10,7 +10,7 @@ ePyramidObservatory::ePyramidObservatory(
         const eCityId cid) :
     ePyramidElement(cost, board, eBuildingType::pyramidObservatory,
                     elevation, 5, cid) {
-    eGameTextures::loadObservatory();
+    GameTextures::loadObservatory();
 }
 
 ePyramidObservatory::ePyramidObservatory(
@@ -22,12 +22,12 @@ ePyramidObservatory::ePyramidObservatory(
                     {eSanctCost{5, 5, 0}},
                     board, eBuildingType::pyramidObservatory,
                     elevation, 5, cid) {
-    eGameTextures::loadObservatory();
+    GameTextures::loadObservatory();
 }
 
 stdsptr<eTexture> ePyramidObservatory::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings()[sizeId];
+    const auto& blds = GameTextures::buildings()[sizeId];
     return blds.fObservatory;
 }

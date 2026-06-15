@@ -1,10 +1,10 @@
 #include "gymnast.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Gymnast::Gymnast(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fGymnast,
+    eBasicPatroler(board, &CharacterTextures::fGymnast,
                    eCharacterType::gymnast) {
-    eGameTextures::loadGymnast();
+    GameTextures::loadGymnast();
     setProvide(eProvide::gymnastScholar, 10000);
 }

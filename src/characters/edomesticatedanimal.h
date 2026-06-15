@@ -7,7 +7,7 @@ class eSaveArchive;
 
 class eDomesticatedAnimal : public Animal {
 public:
-    using eCharTexs = eAnimalTextures eCharacterTextures::*;
+    using eCharTexs = AnimalTextures CharacterTextures::*;
     eDomesticatedAnimal(GameBoard& board,
                         const eCharTexs charTexs,
                         const eCharacterType type,

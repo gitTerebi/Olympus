@@ -1,6 +1,6 @@
 #include "eupbutton.h"
 
-#include "textures/einterfacetextures.h"
+#include "textures/interface-textures.h"
 
 eUpButton::eUpButton(eMainWindow* const window) :
-    eBasicButton(&eInterfaceTextures::fUpButton, window) {}
+    eBasicButton(&InterfaceTextures::fUpButton, window) {}

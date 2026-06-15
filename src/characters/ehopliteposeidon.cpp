@@ -1,9 +1,9 @@
 #include "ehopliteposeidon.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eHoplitePoseidon::eHoplitePoseidon(GameBoard& board) :
-    eHopliteBase(board, &eCharacterTextures::fHoplitePoseidon,
+    eHopliteBase(board, &CharacterTextures::fHoplitePoseidon,
                  eCharacterType::hoplitePoseidon) {
-    eGameTextures::loadHoplitePoseidon();
+    GameTextures::loadHoplitePoseidon();
 }

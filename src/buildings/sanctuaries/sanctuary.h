@@ -9,7 +9,7 @@
 #include "characters/gods/god.h"
 #include "engine/edate.h"
 
-class eBuildingTextures;
+class BuildingTextures;
 class eSaveArchive;
 class eMonster;
 

@@ -5,7 +5,7 @@
 
 #include "god-type.h"
 
-#include "textures/edestructiontextures.h"
+#include "textures/destruction-textures.h"
 
 class eSaveArchive;
 enum class eBuildingType;
@@ -30,7 +30,7 @@ public:
     static eCharacterType sGodToCharacterType(const GodType type);
     static stdsptr<God> sCreateGod(const GodType type, GameBoard& board);
 
-    using eTexPtr = std::vector<eTextureCollection> eDestructionTextures::*;
+    using eTexPtr = std::vector<eTextureCollection> DestructionTextures::*;
     static eTexPtr sGodMissile(const GodType gt);
 
     static GodType sFightWinner(const GodType g1, const GodType g2);

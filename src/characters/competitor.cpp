@@ -1,10 +1,10 @@
 #include "competitor.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 Competitor::Competitor(GameBoard& board) :
-    eBasicPatroler(board, &eCharacterTextures::fCompetitor,
+    eBasicPatroler(board, &CharacterTextures::fCompetitor,
                    eCharacterType::competitor) {
-    eGameTextures::loadCompetitor();
+    GameTextures::loadCompetitor();
     setProvide(eProvide::competitorCurator, 10000);
 }

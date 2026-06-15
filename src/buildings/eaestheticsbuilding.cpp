@@ -1,7 +1,7 @@
 #include "eaestheticsbuilding.h"
 
 #include "fileIO/esavearchive.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "sanctuaries/sanctuary.h"
 
@@ -20,40 +20,40 @@ std::shared_ptr<eTexture> eAestheticsBuilding::getTexture(
         const eTileSize size) const {
     if(!mTexture) return nullptr;
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings();
+    const auto& texs = GameTextures::buildings();
     return texs[sizeId].*mTexture;
 }
 
 eBench::eBench(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fBench,
+    eAestheticsBuilding(board, &BuildingTextures::fBench,
                         eBuildingType::bench, 1, 1, cid) {
-    eGameTextures::loadBench();
+    GameTextures::loadBench();
 }
 
 eFlowerGarden::eFlowerGarden(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fFlowerGarden,
+    eAestheticsBuilding(board, &BuildingTextures::fFlowerGarden,
                         eBuildingType::flowerGarden, 2, 2, cid) {
-    eGameTextures::loadFlowerGarden();
+    GameTextures::loadFlowerGarden();
 }
 
 eGazebo::eGazebo(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fGazebo,
+    eAestheticsBuilding(board, &BuildingTextures::fGazebo,
                         eBuildingType::gazebo, 2, 2, cid) {
-    eGameTextures::loadGazebo();
+    GameTextures::loadGazebo();
 }
 
 eHedgeMaze::eHedgeMaze(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fHedgeMaze,
+    eAestheticsBuilding(board, &BuildingTextures::fHedgeMaze,
                         eBuildingType::hedgeMaze, 3, 3, cid) {
-    eGameTextures::loadHedgeMaze();
+    GameTextures::loadHedgeMaze();
 }
 
 eFishPond::eFishPond(GameBoard& board, const eCityId cid) :
-    eOverlayAesthBuilding(board, &eBuildingTextures::fFishPond,
+    eOverlayAesthBuilding(board, &BuildingTextures::fFishPond,
                           0.87, -3.10,
-                          &eBuildingTextures::fFishPondOverlay,
+                          &BuildingTextures::fFishPondOverlay,
                           eBuildingType::fishPond, 4, 4, cid) {
-    eGameTextures::loadFishPond();
+    GameTextures::loadFishPond();
 }
 
 eOverlayAesthBuilding::eOverlayAesthBuilding(GameBoard& board,
@@ -75,7 +75,7 @@ std::vector<eOverlay> eOverlayAesthBuilding::getOverlays(
         const eTileSize size) const {
     if(!mOverlays) return {};
     const int sizeId = static_cast<int>(size);
-    const auto& coll = eGameTextures::buildings()[sizeId].*mOverlays;
+    const auto& coll = GameTextures::buildings()[sizeId].*mOverlays;
     const int texId = textureTime() % coll.size();
     eOverlay o;
     o.fTex = coll.getTexture(texId);
@@ -85,84 +85,84 @@ std::vector<eOverlay> eOverlayAesthBuilding::getOverlays(
 }
 
 eBirdBath::eBirdBath(GameBoard& board, const eCityId cid) :
-    eOverlayAesthBuilding(board, &eBuildingTextures::fBirdBath,
+    eOverlayAesthBuilding(board, &BuildingTextures::fBirdBath,
                           -1.35, -1.7,
-                          &eBuildingTextures::fBirdBathOverlay,
+                          &BuildingTextures::fBirdBathOverlay,
                           eBuildingType::birdBath, 1, 1, cid) {
-    eGameTextures::loadBirdBath();
+    GameTextures::loadBirdBath();
 }
 
 eShortObelisk::eShortObelisk(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fShortObelisk,
+    eAestheticsBuilding(board, &BuildingTextures::fShortObelisk,
                         eBuildingType::shortObelisk, 1, 1, cid) {
-    eGameTextures::loadShortObelisk();
+    GameTextures::loadShortObelisk();
 }
 
 eTallObelisk::eTallObelisk(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fTallObelisk,
+    eAestheticsBuilding(board, &BuildingTextures::fTallObelisk,
                         eBuildingType::tallObelisk, 1, 1, cid) {
-    eGameTextures::loadTallObelisk();
+    GameTextures::loadTallObelisk();
 }
 
 eOrrery::eOrrery(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fOrrery,
+    eAestheticsBuilding(board, &BuildingTextures::fOrrery,
                         eBuildingType::orrery, 3, 3, cid) {
-    eGameTextures::loadOrrery();
+    GameTextures::loadOrrery();
 }
 
 eShellGarden::eShellGarden(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fShellGarden,
+    eAestheticsBuilding(board, &BuildingTextures::fShellGarden,
                         eBuildingType::shellGarden, 2, 2, cid) {
-    eGameTextures::loadShellGarden();
+    GameTextures::loadShellGarden();
 }
 
 eSundial::eSundial(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fSundial,
+    eAestheticsBuilding(board, &BuildingTextures::fSundial,
                         eBuildingType::sundial, 2, 2, cid) {
-    eGameTextures::loadSundial();
+    GameTextures::loadSundial();
 }
 
 eDolphinSculpture::eDolphinSculpture(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fDolphinSculpture,
+    eAestheticsBuilding(board, &BuildingTextures::fDolphinSculpture,
                         eBuildingType::dolphinSculpture, 3, 3, cid) {
-    eGameTextures::loadDolphinSculpture();
+    GameTextures::loadDolphinSculpture();
 }
 
 eSpring::eSpring(GameBoard& board, const eCityId cid) :
     eOverlayAesthBuilding(board, nullptr,
                           -3.0, -3.0,
-                          &eBuildingTextures::fSpring,
+                          &BuildingTextures::fSpring,
                           eBuildingType::spring, 3, 3, cid) {
-    eGameTextures::loadSpring();
+    GameTextures::loadSpring();
 }
 
 
 eTopiary::eTopiary(GameBoard& board, const eCityId cid) :
-    eAestheticsBuilding(board, &eBuildingTextures::fTopiary,
+    eAestheticsBuilding(board, &BuildingTextures::fTopiary,
                         eBuildingType::topiary, 3, 3, cid) {
-    eGameTextures::loadTopiary();
+    GameTextures::loadTopiary();
 }
 
 eBaths::eBaths(GameBoard& board, const eCityId cid) :
-    eOverlayAesthBuilding(board, &eBuildingTextures::fBaths,
+    eOverlayAesthBuilding(board, &BuildingTextures::fBaths,
                           -2.39, -3.20,
-                          &eBuildingTextures::fBathsOverlay,
+                          &BuildingTextures::fBathsOverlay,
                           eBuildingType::baths, 4, 4, cid) {
-    eGameTextures::loadBaths();
+    GameTextures::loadBaths();
 }
 
 eStoneCircle::eStoneCircle(GameBoard& board, const eCityId cid) :
-    eOverlayAesthBuilding(board, &eBuildingTextures::fStoneCircle,
+    eOverlayAesthBuilding(board, &BuildingTextures::fStoneCircle,
                           -0.5, -4.0,
-                          &eBuildingTextures::fStoneCircleOverlay,
+                          &BuildingTextures::fStoneCircleOverlay,
                           eBuildingType::stoneCircle, 4, 4, cid) {
-    eGameTextures::loadStoneCircle();
+    GameTextures::loadStoneCircle();
 }
 
 
 eWaterPark::eWaterPark(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::waterPark, 2, 2, cid) {
-    eGameTextures::loadWaterPark();
+    GameTextures::loadWaterPark();
     setEnabled(true);
 }
 
@@ -178,7 +178,7 @@ void eWaterPark::serializeFields(eSaveArchive& ar) {
 std::shared_ptr<eTexture> eWaterPark::getTexture(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& colls = eGameTextures::buildings();
+    const auto& colls = GameTextures::buildings();
     const auto& texs = colls[sizeId];
 
     if(mId == 0) return texs.fWaterPark1;
@@ -203,7 +203,7 @@ const eOverlay waterParkOverlays[] = {{-1.27, -2.08, nullptr},
 std::vector<eOverlay> eWaterPark::getOverlays(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
     const eTextureCollection* coll = nullptr;
     if(mId == 0)      coll = &texs.fWaterPark1Overlay;
     else if(mId == 1) coll = &texs.fWaterPark2Overlay;
@@ -222,13 +222,13 @@ std::vector<eOverlay> eWaterPark::getOverlays(
 eCommemorative::eCommemorative(const int id, GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::commemorative, 3, 3, cid),
     mId(id) {
-    eGameTextures::loadCommemorative();
+    GameTextures::loadCommemorative();
 }
 
 std::shared_ptr<eTexture>
 eCommemorative::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& texs = GameTextures::buildings()[sizeId];
     return texs.fCommemorative.getTexture(mId);
 }
 
@@ -270,7 +270,7 @@ void eGodMonument::serializeFields(eSaveArchive& ar) {
 
 eGodMonumentTile::eGodMonumentTile(GameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::godMonumentTile, 1, 1, cid) {
-    eGameTextures::loadPalaceTiles();
+    GameTextures::loadPalaceTiles();
 }
 
 void eGodMonumentTile::erase() {
@@ -279,7 +279,7 @@ void eGodMonumentTile::erase() {
 
 std::shared_ptr<eTexture> eGodMonumentTile::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings();
+    const auto& texs = GameTextures::buildings();
     const auto& coll = texs[sizeId].fPalaceTiles;
     return coll.getTexture(0);
 }

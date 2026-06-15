@@ -1,9 +1,9 @@
 #include "eenemyboat.h"
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 eEnemyBoat::eEnemyBoat(GameBoard& board) :
-    eBoatBase(board, &eCharacterTextures::fEnemyBoat,
+    eBoatBase(board, &CharacterTextures::fEnemyBoat,
               eCharacterType::enemyBoat) {
-    eGameTextures::loadEnemyBoat();
+    GameTextures::loadEnemyBoat();
 }

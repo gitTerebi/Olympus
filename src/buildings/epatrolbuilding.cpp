@@ -2,7 +2,7 @@
 
 #include "characters/echaracter.h"
 #include "characters/actions/epatrolaction.h"
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 ePatrolBuilding::ePatrolBuilding(GameBoard& board,
                                  const eBaseTex baseTex,
@@ -42,14 +42,14 @@ ePatrolBuilding::ePatrolBuilding(GameBoard& board,
 
 std::shared_ptr<eTexture> ePatrolBuilding::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     return blds[sizeId].*mBaseTex;
 }
 
 std::vector<eOverlay> ePatrolBuilding::getOverlays(const eTileSize size) const {
     if(!mOverlays) return {};
     const int sizeId = static_cast<int>(size);
-    const auto& blds = eGameTextures::buildings();
+    const auto& blds = GameTextures::buildings();
     const auto& coll = blds[sizeId].*mOverlays;
     const int frame = std::round(mOverlaySpeed * textureTime());
     const int texId = frame % coll.size();

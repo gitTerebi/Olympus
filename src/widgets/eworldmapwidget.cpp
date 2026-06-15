@@ -1,7 +1,7 @@
 #include "eworldmapwidget.h"
 
-#include "textures/egametextures.h"
-#include "textures/einterfacetextures.h"
+#include "textures/game-textures.h"
+#include "textures/interface-textures.h"
 
 #include "engine/game-board.h"
 #include "gameEvents/conquest/army-return-event.h"
@@ -173,7 +173,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
     eLabel::paintEvent(p);
     if(!mWorldBoard) return;
 
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes];
@@ -583,7 +583,7 @@ private:
 void eWorldMapWidget::updateWidgets() {
     removeAllWidgets();
     if(!mWorldBoard) return;
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes];
@@ -717,7 +717,7 @@ bool eWorldMapWidget::cityVisible(const stdsptr<WorldCity>& c,
 }
 
 void eWorldMapWidget::setMap(const eWorldMap map) {
-    const auto& intrfc = eGameTextures::interface();
+    const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
     const int iRes = static_cast<int>(res.uiScale());
     const auto& texs = intrfc[iRes];
@@ -725,52 +725,52 @@ void eWorldMapWidget::setMap(const eWorldMap map) {
     stdsptr<eTexture> tex;
     switch(map) {
     case eWorldMap::greece1:
-        eGameTextures::loadMapOfGreece1();
+        GameTextures::loadMapOfGreece1();
         tex = texs.fMapOfGreece1;
         break;
     case eWorldMap::greece2:
-        eGameTextures::loadMapOfGreece2();
+        GameTextures::loadMapOfGreece2();
         tex = texs.fMapOfGreece2;
         break;
     case eWorldMap::greece3:
-        eGameTextures::loadMapOfGreece3();
+        GameTextures::loadMapOfGreece3();
         tex = texs.fMapOfGreece3;
         break;
     case eWorldMap::greece4:
-        eGameTextures::loadMapOfGreece4();
+        GameTextures::loadMapOfGreece4();
         tex = texs.fMapOfGreece4;
         break;
     case eWorldMap::greece5:
-        eGameTextures::loadMapOfGreece5();
+        GameTextures::loadMapOfGreece5();
         tex = texs.fMapOfGreece5;
         break;
     case eWorldMap::greece6:
-        eGameTextures::loadMapOfGreece6();
+        GameTextures::loadMapOfGreece6();
         tex = texs.fMapOfGreece6;
         break;
     case eWorldMap::greece7:
-        eGameTextures::loadMapOfGreece7();
+        GameTextures::loadMapOfGreece7();
         tex = texs.fMapOfGreece7;
         break;
     case eWorldMap::greece8:
-        eGameTextures::loadMapOfGreece8();
+        GameTextures::loadMapOfGreece8();
         tex = texs.fMapOfGreece8;
         break;
 
     case eWorldMap::poseidon1:
-        eGameTextures::loadPoseidonMap1();
+        GameTextures::loadPoseidonMap1();
         tex = texs.fPoseidonMap1;
         break;
     case eWorldMap::poseidon2:
-        eGameTextures::loadPoseidonMap2();
+        GameTextures::loadPoseidonMap2();
         tex = texs.fPoseidonMap2;
         break;
     case eWorldMap::poseidon3:
-        eGameTextures::loadPoseidonMap3();
+        GameTextures::loadPoseidonMap3();
         tex = texs.fPoseidonMap3;
         break;
     case eWorldMap::poseidon4:
-        eGameTextures::loadPoseidonMap4();
+        GameTextures::loadPoseidonMap4();
         tex = texs.fPoseidonMap4;
         break;
     }

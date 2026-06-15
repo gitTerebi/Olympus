@@ -3,7 +3,7 @@
 #include <memory>
 #include <cmath>
 
-#include "textures/egametextures.h"
+#include "textures/game-textures.h"
 
 #include "characters/actions/emovetoaction.h"
 #include "engine/epathfinder.h"

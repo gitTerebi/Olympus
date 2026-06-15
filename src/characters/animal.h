@@ -3,11 +3,11 @@
 
 #include "echaracter.h"
 
-#include "textures/echaractertextures.h"
+#include "textures/character-textures.h"
 
 class Animal : public eCharacter {
 public:
-    using eCharTexs = eAnimalTextures eCharacterTextures::*;
+    using eCharTexs = AnimalTextures CharacterTextures::*;
     Animal(GameBoard& board,
             const eCharTexs charTexs,
             const eCharacterType type);
@@ -16,7 +16,7 @@ public:
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
 private:
-    const std::vector<eCharacterTextures>& mTextures;
+    const std::vector<CharacterTextures>& mTextures;
     eCharTexs mCharTexs;
 };
 

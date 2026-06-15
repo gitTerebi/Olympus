@@ -49,5 +49,5 @@ void eLandSlideEvent::serializeFields(eSaveArchive& ar) {
 }
 
 void eLandSlideEvent::loadResources() const {
-    eGameTextures::loadDust();
+    GameTextures::loadDust();
 }
