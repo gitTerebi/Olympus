@@ -11,6 +11,7 @@ public:
     bool mask() const { return mMask; }
 
     void initializeMask(const int w, const int h);
+    void windowSizeChanged(int w, int h) override;
 
     virtual void close();
     void setCloseAction(const eAction& a) { mCloseAction = a; }

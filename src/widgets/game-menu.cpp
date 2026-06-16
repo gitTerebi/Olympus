@@ -567,6 +567,7 @@ void GameMenu::initialize(GameBoard *const b,
                            const eAction &goalsView)
 {
     mBoard = b;
+    mGoalsView = goalsView;
     GameMenuBase::initialize();
 
     int iRes;
@@ -1439,6 +1440,63 @@ void GameMenu::initialize(GameBoard *const b,
 
     updateButtonsVisibility();
     update();
+}
+
+void GameMenu::rebuildForResolutionChange()
+{
+    if(mMsgListW) {
+        mMsgListW->deleteLater();
+    }
+    removeChildren();
+    clearMenuBaseState();
+    mWidgets.clear();
+    mPriceWidgets.clear();
+    mPriceLabels.clear();
+    for(const auto s : mSubButtons) {
+        delete s;
+    }
+    mSubButtons.clear();
+
+    mBuildWidget = nullptr;
+    mNameLabel = nullptr;
+    mPopulationButton = nullptr;
+    mHusbandryButton = nullptr;
+    mIndustryButton = nullptr;
+    mDistributionButton = nullptr;
+    mHygieneSafetyButton = nullptr;
+    mAdministrationButton = nullptr;
+    mScienceButton = nullptr;
+    mCultureButton = nullptr;
+    mMythologyButton = nullptr;
+    mMilitaryButton = nullptr;
+    mAesthethicsButton = nullptr;
+    mOverviewButton = nullptr;
+    mMessagesButton = nullptr;
+    mMsgListW = nullptr;
+    mMsgBadge = nullptr;
+    mPopDataW = nullptr;
+    mEmplDataW = nullptr;
+    mHusbDataW = nullptr;
+    mStrgDataW = nullptr;
+    mApplDataW = nullptr;
+    mHySaDataW = nullptr;
+    mAdminDataW = nullptr;
+    mCultureDataW = nullptr;
+    mScienceDataW = nullptr;
+    mMythDataW = nullptr;
+    mMiltDataW = nullptr;
+    mOverDataW = nullptr;
+    mRotateButton = nullptr;
+    mWorldButton = nullptr;
+    mUndoButton = nullptr;
+    mMiniMap = nullptr;
+    mEventW = nullptr;
+    mTradeCityId = -1;
+    mMode = eBuildingMode::none;
+
+    initialize(mBoard, mGoalsView);
+    if(mGW) setGameWidget(mGW);
+    align(Alignment::right | Alignment::top);
 }
 
 void GameMenu::setGameWidget(GameWidget *const gw)

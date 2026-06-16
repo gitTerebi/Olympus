@@ -56,19 +56,38 @@ int bestResolutionForAspect(const std::string& aspect,
     }
     return best;
 }
+
+std::vector<std::string> aspectOptionsForDisplayMode(const DisplayMode mode) {
+    if(mode == DisplayMode::window) {
+        return {"Desktop"};
+    }
+    return {"4:3", "16:9", "16:10"};
+}
+
+std::string firstAllowedAspect(const std::vector<std::string>& options,
+                               const std::string& currentAspect) {
+    for(const auto& option : options) {
+        if(option == currentAspect) return currentAspect;
+    }
+    if(options.empty()) return currentAspect;
+    return options.front();
+}
+
+int bestResolutionForDisplayMode(const DisplayMode mode,
+                                 const eResolution& current) {
+    const auto options = aspectOptionsForDisplayMode(mode);
+    const auto aspect = firstAllowedAspect(options, aspectName(current));
+    return bestResolutionForAspect(aspect, current);
+}
 }
 
 std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
                                                  GameBoard* const board,
                                                  GameWidget* const gw) {
     const auto& settings = window->settings();
-    const std::vector<std::string> aspectOptions{
-        "4:3",
-        "16:9",
-        "16:10",
-        "Desktop"
-    };
-    const std::string currentAspect = aspectName(settings.fRes);
+    const auto aspectOptions = aspectOptionsForDisplayMode(settings.fDisplayMode);
+    const std::string currentAspect =
+        firstAllowedAspect(aspectOptions, aspectName(settings.fRes));
     int aspectValue = 0;
     for(int i = 0; i < static_cast<int>(aspectOptions.size()); i++) {
         if(aspectOptions[i] == currentAspect) {
@@ -86,6 +105,77 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
         resolutionOptions.push_back(res.name());
         if(res == settings.fRes) resolutionValue = i;
     }
+    std::vector<eOptionsMenu::eChoiceItem> displayChoices = {
+        {"--- UI ---", {}, 0, nullptr},
+        {
+            "UI scale",
+            {"Tiny", "Small", "Medium", "Large"},
+            static_cast<int>(settings.fUiScale),
+            [window](const int v) { window->setUiScale(v); },
+            [window](const int v) {
+                return v != static_cast<int>(window->settings().fUiScale);
+            }
+        },
+        {"--- Resolution ---", {}, 0, nullptr}
+    };
+    if(settings.fDisplayMode != DisplayMode::window) {
+        displayChoices.push_back({
+            "Aspect",
+            aspectOptions,
+            aspectValue,
+            [window, aspectOptions](const int v) {
+                if(v < 0 || v >= static_cast<int>(aspectOptions.size())) return;
+                const int resolution = bestResolutionForAspect(
+                    aspectOptions[v],
+                    window->settings().fRes);
+                if(resolution >= 0) window->setResolution(resolution);
+            },
+            nullptr
+        });
+    }
+    displayChoices.push_back({
+        "Resolution",
+        resolutionOptions,
+        resolutionValue,
+        [window, resolutionIndices](const int v) {
+            if(v < 0 || v >= static_cast<int>(resolutionIndices.size())) return;
+            window->setResolution(resolutionIndices[v]);
+        },
+        nullptr
+    });
+    displayChoices.push_back({
+        "Display",
+        {"Window", "Borderless", "Fullscreen"},
+        static_cast<int>(settings.fDisplayMode),
+        [window](const int v) {
+            const auto mode = static_cast<DisplayMode>(v);
+            window->setDisplayMode(mode);
+            const int resolution = bestResolutionForDisplayMode(
+                mode,
+                window->settings().fRes);
+            if(resolution >= 0) window->setResolution(resolution);
+        }
+    });
+    displayChoices.push_back({"--- Shader ---", {}, 0, nullptr});
+    displayChoices.push_back({
+        "Filter",
+        {"Nearest", "Linear", "Hermite", "Cubic", "Lanczos"},
+        static_cast<int>(settings.fInterpolation),
+        [window](const int v) { window->setInterpolation(v); }
+    });
+    displayChoices.push_back({
+        "Upscale",
+        {"None", "xBRZ", "ScaleHQ", "ScaleNx", "Eagle", "xSal"},
+        static_cast<int>(settings.fUpscale),
+        [window](const int v) { window->setUpscale(v); }
+    });
+    displayChoices.push_back({
+        "Upscale factor",
+        {"2x", "3x", "4x"},
+        settings.fUpscaleFactor >= 4 ? 2 :
+            (settings.fUpscaleFactor >= 3 ? 1 : 0),
+        [window](const int v) { window->setUpscaleFactor(v == 2 ? 4 : (v == 1 ? 3 : 2)); }
+    });
     std::vector<eOptionsMenu::ePage> pages = {
         {
             "General",
@@ -126,68 +216,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
             {},
             {},
             {}, // fDifficulties
-            {
-                {"--- UI ---", {}, 0, nullptr},
-                {
-                    "UI scale",
-                    {"Tiny", "Small", "Medium", "Large"},
-                    static_cast<int>(settings.fUiScale),
-                    [window](const int v) { window->setUiScale(v); },
-                    [window](const int v) {
-                        return v != static_cast<int>(window->settings().fUiScale);
-                    }
-                },
-                {"--- Resolution ---", {}, 0, nullptr},
-                {
-                    "Aspect",
-                    aspectOptions,
-                    aspectValue,
-                    [window, aspectOptions](const int v) {
-                        if(v < 0 || v >= static_cast<int>(aspectOptions.size())) return;
-                        const int resolution = bestResolutionForAspect(
-                            aspectOptions[v],
-                            window->settings().fRes);
-                        if(resolution >= 0) window->setResolution(resolution);
-                    },
-                    nullptr
-                },
-                {
-                    "Resolution",
-                    resolutionOptions,
-                    resolutionValue,
-                    [window, resolutionIndices](const int v) {
-                        if(v < 0 || v >= static_cast<int>(resolutionIndices.size())) return;
-                        window->setResolution(resolutionIndices[v]);
-                    },
-                    nullptr
-                },
-                {
-                    "Display",
-                    {"Window", "Borderless", "Fullscreen"},
-                    static_cast<int>(settings.fDisplayMode),
-                    [window](const int v) { window->setDisplayMode(v); }
-                },
-                {"--- Shader ---", {}, 0, nullptr},
-                {
-                    "Filter",
-                    {"Nearest", "Linear", "Hermite", "Cubic", "Lanczos"},
-                    static_cast<int>(settings.fInterpolation),
-                    [window](const int v) { window->setInterpolation(v); }
-                },
-                {
-                    "Upscale",
-                    {"None", "xBRZ", "ScaleHQ", "ScaleNx", "Eagle", "xSal"},
-                    static_cast<int>(settings.fUpscale),
-                    [window](const int v) { window->setUpscale(v); }
-                },
-                {
-                    "Upscale factor",
-                    {"2x", "3x", "4x"},
-                    settings.fUpscaleFactor >= 4 ? 2 :
-                        (settings.fUpscaleFactor >= 3 ? 1 : 0),
-                    [window](const int v) { window->setUpscaleFactor(v == 2 ? 4 : (v == 1 ? 3 : 2)); }
-                }
-            }
+            displayChoices
         },
         {
             "Hotkeys",

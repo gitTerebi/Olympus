@@ -735,7 +735,10 @@ void MainWindow::showOptionsMenu(const int initialPage) {
         showMainMenu();
         showOptionsMenu(page);
     };
-    const auto d = new eOptionsMenu(getOptionsPages(this), this, reopenPage);
+    const auto buildPages = [this]() {
+        return getOptionsPages(this);
+    };
+    const auto d = new eOptionsMenu(getOptionsPages(this), this, reopenPage, buildPages);
     d->initialize(initialPage);
     execDialog(d, true, [this]() { showMainMenu(); });
 }

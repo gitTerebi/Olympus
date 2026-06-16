@@ -30,6 +30,13 @@ void GameMenuBase::initialize() {
     addWidget(mButtonsWidget);
 }
 
+void GameMenuBase::clearMenuBaseState()
+{
+    mButtonsWidget = nullptr;
+    mButtons.clear();
+    mWidgets.clear();
+}
+
 eCheckableButton* GameMenuBase::addButton(
         const TextureCollection& texs,
         const eWid& w) {

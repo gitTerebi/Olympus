@@ -11,11 +11,12 @@ public:
                     eWidget* const child,
                     const bool closable,
                     const eAction& closeFunc);
+    void windowSizeChanged(int w, int h) override;
 protected:
-    void paintEvent(ePainter& p);
-    bool keyPressEvent(const eKeyPressEvent& e);
-    bool mousePressEvent(const eMouseEvent& e);
-    bool mouseReleaseEvent(const eMouseEvent& e);
+    void paintEvent(ePainter& p) override;
+    bool keyPressEvent(const eKeyPressEvent& e) override;
+    bool mousePressEvent(const eMouseEvent& e) override;
+    bool mouseReleaseEvent(const eMouseEvent& e) override;
 private:
     void close();
 

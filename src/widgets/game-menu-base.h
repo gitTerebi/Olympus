@@ -30,6 +30,8 @@ public:
     void connectButtons();
     void selectTab(int i);
 protected:
+    void clearMenuBaseState();
+protected:
     bool mousePressEvent(const eMouseEvent& e) override;
     bool mouseReleaseEvent(const eMouseEvent& e) override;
     bool mouseMoveEvent(const eMouseEvent& e) override;

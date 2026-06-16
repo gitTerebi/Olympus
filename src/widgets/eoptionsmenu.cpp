@@ -184,10 +184,12 @@ bool rebuildsChoicePage(const std::string& label) {
 
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
                            MainWindow* const window,
-                           const eReopenPage& reopenPage) :
+                           const eReopenPage& reopenPage,
+                           const eBuildPages& buildPages) :
     eModal(window),
     mPages(pages),
-    mReopenPage(reopenPage) {}
+    mReopenPage(reopenPage),
+    mBuildPages(buildPages) {}
 
 void eOptionsMenu::initialize(const int initialPage) {
     if(initialPage >= 0 && initialPage < static_cast<int>(mPages.size())) {
@@ -281,6 +283,13 @@ void eOptionsMenu::showPage(const int id) {
                 choice.fValue = static_cast<int>(settings.fDisplayMode);
             } else if(choice.fLabel == "UI scale") {
                 choice.fValue = static_cast<int>(settings.fUiScale);
+            } else if(choice.fLabel == "Resolution") {
+                for(int i = 0; i < static_cast<int>(choice.fOptions.size()); i++) {
+                    if(choice.fOptions[i] == settings.fRes.name()) {
+                        choice.fValue = i;
+                        break;
+                    }
+                }
             } else if(choice.fLabel == "Filter") {
                 choice.fValue = static_cast<int>(settings.fInterpolation);
             } else if(choice.fLabel == "Upscale") {
@@ -594,6 +603,7 @@ void eOptionsMenu::clearPage() {
 
 void eOptionsMenu::rebuild() {
     const int page = mCurrentPage;
+    if(mBuildPages) mPages = mBuildPages();
     resetModal();
     mPageViewport = nullptr;
     mPage = nullptr;

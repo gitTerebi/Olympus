@@ -13,6 +13,14 @@ void eEventBackground::initialize(eWidget* const parent,
     mCloseFunc = closeFunc;
 }
 
+void eEventBackground::windowSizeChanged(const int w, const int h) {
+    resize(w, h);
+    eWidget::windowSizeChanged(w, h);
+    for(const auto child : children()) {
+        child->align(Alignment::center);
+    }
+}
+
 void eEventBackground::paintEvent(ePainter& p) {
     (void)p;
     if(children().size() == 0) deleteLater();

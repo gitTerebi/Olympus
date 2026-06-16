@@ -189,6 +189,8 @@ public:
     int windowToCityX(int x) const;
     int windowToCityY(int y) const;
 protected:
+    void windowSizeChanged(int w, int h) override;
+
     void paintEvent(ePainter& p) override;
 
     bool keyPressEvent(const eKeyPressEvent& e) override;
@@ -203,6 +205,7 @@ private:
 
     void renderTargetsReset() override;
     void initializeNumbers();
+    void updateTopBarGeometry();
 
     void drawXY(int worldTileX, int worldTileY,
                 double& drawX, double& drawY,
