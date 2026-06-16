@@ -2329,15 +2329,16 @@ void eSounds::loadImpl() {
     const std::string walkerDir{GameDir::path("Audio/Voice/Walker/")};
 
     const auto loadGodVoices = [&](const std::string& pref,
-                                   eSoundVector& vec) {
-        for(const auto& s : {pref + "_e_1.mp3",
-                             pref + "_e_2.mp3",
-                             pref + "_e_3.mp3"}) {
-            vec.addPath(walkerDir + s);
+                                   eSoundVector& vec,
+                                   const int iMax = 3) {
+        for(int i = 1; i <= iMax; i++) {
+            const auto iStr = std::to_string(i);
+            vec.addPath(walkerDir + pref + "_e_" + iStr + ".mp3");
         }
         const auto e4Path = pref + "_e_4.mp3";
-        const bool e4 = std::filesystem::exists(e4Path);
-        if(e4) vec.addPath(e4Path);
+        const auto fullE4Path = walkerDir + e4Path;
+        const bool e4 = std::filesystem::exists(fullE4Path);
+        if(e4) vec.addPath(fullE4Path);
     };
 
     loadGodVoices("Aph", mAphroditeVoices);
@@ -2348,11 +2349,11 @@ void eSounds::loadImpl() {
     loadGodVoices("Ats", mAtlasVoices);
     loadGodVoices("Dem", mDemeterVoices);
     loadGodVoices("Dio", mDionysusVoices);
-    loadGodVoices("Had", mHadesVoices);
+    loadGodVoices("Had", mHadesVoices, 2);
     loadGodVoices("Hep", mHephaestusVoices);
     loadGodVoices("Hra", mHeraVoices);
     loadGodVoices("Her", mHermesVoices);
-    loadGodVoices("Pos", mPoseidonVoices);
+    loadGodVoices("Pos", mPoseidonVoices, 2);
     loadGodVoices("Zeu", mZeusVoices);
 
     const auto loadVoices = [&](const std::string& pref,
@@ -2434,7 +2435,8 @@ void eSounds::loadImpl() {
     // loadEVoices("oth", mDisgruntledVoices, 1, 7);
 
     loadIVoice("omg", mDisgruntledVoices); // 208
-    loadEVoices("omg", mDisgruntledVoices, 1, 7);
+    loadEVoices("omg", mDisgruntledVoices, 1, 4);
+    loadEVoices("omg", mDisgruntledVoices, 6, 7);
 
     // loadIVoice("ods", mDisgruntledVoices); // 209
     // loadEVoices("ods", mDisgruntledVoices, 1, 7);

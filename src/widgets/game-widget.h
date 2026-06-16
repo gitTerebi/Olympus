@@ -184,6 +184,10 @@ public:
     bool gamePaused() const { return mPaused; }
     void setMessageListWidget(eMessageListWidget* const w);
     void updateBeforePaint();
+    int citySourceWidth() const;
+    int citySourceHeight() const;
+    int windowToCityX(int x) const;
+    int windowToCityY(int y) const;
 protected:
     void paintEvent(ePainter& p) override;
 
@@ -522,6 +526,7 @@ private:
     int mScale = 100;
     double mZoom = 1.0;
     std::shared_ptr<Texture> mWorldTex;
+    std::shared_ptr<Texture> mWorldShaderTex;
     std::shared_ptr<Texture> mCompassTex;
     int mCompassDir = -1;
 

@@ -798,11 +798,37 @@ void GameWidget::initialize()
     setTileSize(sizes.front());
 }
 
+int GameWidget::citySourceWidth() const
+{
+    return window()->resolution().width();
+}
+
+int GameWidget::citySourceHeight() const
+{
+    return window()->resolution().height();
+}
+
+int GameWidget::windowToCityX(const int x) const
+{
+    const int w = width();
+    if(w <= 0) return x;
+    return std::clamp(int(std::round(x * double(citySourceWidth()) / w)),
+                      0, citySourceWidth() - 1);
+}
+
+int GameWidget::windowToCityY(const int y) const
+{
+    const int h = height();
+    if(h <= 0) return y;
+    return std::clamp(int(std::round(y * double(citySourceHeight()) / h)),
+                      0, citySourceHeight() - 1);
+}
+
 void GameWidget::screenToWorld(const int sx, const int sy,
                                int &wx, int &wy) const
 {
-    const double cx = width()  / 2.0;
-    const double cy = height() / 2.0;
+    const double cx = citySourceWidth()  / 2.0;
+    const double cy = citySourceHeight() / 2.0;
     wx = std::round((sx - cx) / mZoom + cx);
     wy = std::round((sy - cy) / mZoom + cy);
 }
@@ -838,8 +864,8 @@ void GameWidget::viewBoxSize(double &fx, double &fy) const
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    fx = (width() - mGm->width()) / (mZoom * double(mdx));
-    fy = height() / (mZoom * double(mdy));
+    fx = (citySourceWidth() - mGm->width()) / (mZoom * double(mdx));
+    fy = citySourceHeight() / (mZoom * double(mdy));
 }
 
 void GameWidget::viewedFraction(double &fx, double &fy) const
@@ -847,9 +873,9 @@ void GameWidget::viewedFraction(double &fx, double &fy) const
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    const int w = width() - mGm->width();
+    const int w = citySourceWidth() - mGm->width();
     fx = (0.5 * w - mDX) / mdx;
-    fy = (0.5 * height() - mDY) / mdy;
+    fy = (0.5 * citySourceHeight() - mDY) / mdy;
 }
 
 void GameWidget::tileViewFraction(eTile *const tile,
@@ -877,9 +903,9 @@ void GameWidget::viewFraction(const double fx, const double fy)
     int mdy;
     mapDimensions(mdx, mdy);
 
-    const int w = width() - mGm->width();
+    const int w = citySourceWidth() - mGm->width();
     const int dx = -fx * mdx + w / 2;
-    const int dy = -fy * mdy + height() / 2;
+    const int dy = -fy * mdy + citySourceHeight() / 2;
     setDX(dx);
     setDY(dy);
 }
@@ -995,11 +1021,11 @@ void GameWidget::iterateOverVisibleTiles(const eTileAction &a)
     const int rh = mBoard->rotatedHeight();
 
     const int minX = std::clamp(-mDX / mTileW, 0, rw);
-    const int visWidth = width() - mGm->width();
+    const int visWidth = citySourceWidth() - mGm->width();
     const int maxX = std::clamp(minX + visWidth / mTileW, 0, rw);
 
     const int minY = std::clamp(-2 * mDY / mTileH, 0, rh);
-    const int maxY = std::clamp(minY + 2 * height() / mTileH, 0, rh);
+    const int maxY = std::clamp(minY + 2 * citySourceHeight() / mTileH, 0, rh);
 
     playVisibleAmbientSound(minX, maxX, minY, maxY);
 
@@ -2413,6 +2439,8 @@ void GameWidget::stopSmoothScroll()
 
 bool GameWidget::mousePressEvent(const eMouseEvent &e)
 {
+    const int cityX = windowToCityX(e.x());
+    const int cityY = windowToCityY(e.y());
     mPressedButtons = mPressedButtons | e.button();
     if (mLocked)
         return true;
@@ -2426,8 +2454,8 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
     switch (b)
     {
     case eMouseButton::middle:
-        mLastX = e.x();
-        mLastY = e.y();
+        mLastX = cityX;
+        mLastY = cityY;
         return true;
     case eMouseButton::left:
     {
@@ -2436,11 +2464,11 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
         mLeftPressed = true;
         int tx;
         int ty;
-        pixToId(e.x(), e.y(), tx, ty);
+        pixToId(cityX, cityY, tx, ty);
         mPressedTX = tx;
         mPressedTY = ty;
-        mPressedX = e.x();
-        mPressedY = e.y();
+        mPressedX = cityX;
+        mPressedY = cityY;
         mRoadTool.reset();
         mColumnTool.reset();
         const auto tile = mBoard->tile(tx, ty);
@@ -2487,11 +2515,11 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
     {
         mRightPressed = true;
         mRightPanning = false;
-        mLastX = e.x();
-        mLastY = e.y();
-        mPressedX = e.x();
-        mPressedY = e.y();
-        pixToId(e.x(), e.y(), mPressedTX, mPressedTY);
+        mLastX = cityX;
+        mLastY = cityY;
+        mPressedX = cityX;
+        mPressedY = cityY;
+        pixToId(cityX, cityY, mPressedTX, mPressedTY);
         return true;
     }
     break;
@@ -2503,6 +2531,8 @@ bool GameWidget::mousePressEvent(const eMouseEvent &e)
 
 bool GameWidget::rightClickRelease(const eMouseEvent &e)
 {
+    const int cityX = windowToCityX(e.x());
+    const int cityY = windowToCityY(e.y());
     for (const auto w : children())
     {
         const auto d = dynamic_cast<eModal *>(w);
@@ -2536,7 +2566,7 @@ bool GameWidget::rightClickRelease(const eMouseEvent &e)
     }
     int tx;
     int ty;
-    pixToId(e.x(), e.y(), tx, ty);
+    pixToId(cityX, cityY, tx, ty);
     const auto tile = mBoard->tile(tx, ty);
     if (mCreatingStampTemplate)
     {
@@ -2672,6 +2702,8 @@ void squareTiles(GameBoard *const board, const int bSize,
 
 bool GameWidget::mouseMoveEvent(const eMouseEvent &e)
 {
+    const int cityX = windowToCityX(e.x());
+    const int cityY = windowToCityY(e.y());
     mHoverTiles.clear();
     if (mTem->visible())
     {
@@ -2693,8 +2725,8 @@ bool GameWidget::mouseMoveEvent(const eMouseEvent &e)
     const bool right = static_cast<bool>(e.buttons() & eMouseButton::right);
     if (right && mRightPressed && !mRightPanning)
     {
-        const int dx = e.x() - mPressedX;
-        const int dy = e.y() - mPressedY;
+        const int dx = cityX - mPressedX;
+        const int dy = cityY - mPressedY;
         if (selectedPlayerBanners())
         {
             mRightFormationFacing = std::abs(dx) > 12 || std::abs(dy) > 12;
@@ -2706,19 +2738,19 @@ bool GameWidget::mouseMoveEvent(const eMouseEvent &e)
     }
     if (middle || (right && mRightPanning))
     {
-        const int dx = std::round((e.x() - mLastX) / mZoom);
-        const int dy = std::round((e.y() - mLastY) / mZoom);
+        const int dx = std::round((cityX - mLastX) / mZoom);
+        const int dy = std::round((cityY - mLastY) / mZoom);
         setDX(mDX + dx);
         setDY(mDY + dy);
         updateMinimap();
-        mLastX = e.x();
-        mLastY = e.y();
+        mLastX = cityX;
+        mLastY = cityY;
     }
     else
     {
-        mHoverX = e.x();
-        mHoverY = e.y();
-        pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
+        mHoverX = cityX;
+        mHoverY = cityY;
+        pixToId(cityX, cityY, mHoverTX, mHoverTY);
         const bool left = static_cast<bool>(e.buttons() & eMouseButton::left);
         if(left && mGm->mode() == eBuildingMode::road) {
             mRoadTool.noteDrag(mPressedTX, mPressedTY, mHoverTX, mHoverTY);
@@ -2917,14 +2949,16 @@ bool GameWidget::mouseReleaseEvent(const eMouseEvent &e)
     break;
     case eMouseButton::right:
     {
+        const int cityX = windowToCityX(e.x());
+        const int cityY = windowToCityY(e.y());
         const bool wasPanning = mRightPanning;
         const bool wasFormationFacing = mRightFormationFacing;
         mRightPressed = false;
         mRightPanning = false;
         mRightFormationFacing = false;
-        pixToId(e.x(), e.y(), mHoverTX, mHoverTY);
-        mHoverX = e.x();
-        mHoverY = e.y();
+        pixToId(cityX, cityY, mHoverTX, mHoverTY);
+        mHoverX = cityX;
+        mHoverY = cityY;
         if (wasFormationFacing)
         {
             const auto tile = mBoard->tile(mPressedTX, mPressedTY);
@@ -2975,16 +3009,18 @@ bool GameWidget::mouseWheelEvent(const eMouseWheelEvent &e)
 {
     if (mLocked)
         return true;
+    const int cityX = windowToCityX(e.x());
+    const int cityY = windowToCityY(e.y());
     const double delta = e.dy() > 0 ? 0.1 : -0.1;
     const double newZoom = std::clamp(std::round((mZoom + delta) * 10.0) / 10.0, 1.0, 4.0);
     if (newZoom != mZoom) {
-        const double cx = width()  / 2.0;
-        const double cy = height() / 2.0;
-        const double worldX = (e.x() - cx) / mZoom - mDX;
-        const double worldY = (e.y() - cy) / mZoom - mDY;
+        const double cx = citySourceWidth()  / 2.0;
+        const double cy = citySourceHeight() / 2.0;
+        const double worldX = (cityX - cx) / mZoom - mDX;
+        const double worldY = (cityY - cy) / mZoom - mDY;
         mZoom = newZoom;
-        mDX = std::round((e.x() - cx) / mZoom - worldX);
-        mDY = std::round((e.y() - cy) / mZoom - worldY);
+        mDX = std::round((cityX - cx) / mZoom - worldX);
+        mDY = std::round((cityY - cy) / mZoom - worldY);
         clampViewBox();
         updateViewBoxSize();
         updateMinimap();
@@ -3013,6 +3049,7 @@ void GameWidget::renderTargetsReset()
 {
     eWidget::renderTargetsReset();
     mWorldTex.reset();
+    mWorldShaderTex.reset();
     mCompassTex.reset();
     mCompassDir = -1;
     initializeNumbers();
@@ -3465,12 +3502,14 @@ void GameWidget::clampViewBox()
     if (mTem->visible())
         return;
     const auto dir = mBoard->direction();
-    const int viewW = std::round(width() / mZoom);
-    const int viewH = std::round(height() / mZoom);
-    const int viewX = (width() - viewW) / 2;
-    const int viewY = (height() - viewH) / 2;
+    const int sourceW = citySourceWidth();
+    const int sourceH = citySourceHeight();
+    const int viewW = std::round(sourceW / mZoom);
+    const int viewH = std::round(sourceH / mZoom);
+    const int viewX = (sourceW - viewW) / 2;
+    const int viewY = (sourceH - viewH) / 2;
     const int w = mBoard->rotatedWidth();
-    const int ww = std::round((width() - mGm->width()) / mZoom);
+    const int ww = std::round((sourceW - mGm->width()) / mZoom);
     mDX = std::min(viewX, mDX);
     const int winc = dir == eWorldDirection::W ? mTileW / 2 : 0;
     mDX = std::max(viewX - w * mTileW + ww + mTileW / 2 + winc, mDX);
@@ -3597,8 +3636,8 @@ void GameWidget::setTileSize(const eTileSize size)
     const double dnewW = newW;
     const double dnewH = newH;
 
-    const int dx = std::round((mDX - width() / 2) * dnewW / mTileW + width() / 2);
-    const int dy = std::round((mDY - height() / 2) * dnewH / mTileH + height() / 2);
+    const int dx = std::round((mDX - citySourceWidth() / 2) * dnewW / mTileW + citySourceWidth() / 2);
+    const int dy = std::round((mDY - citySourceHeight() / 2) * dnewH / mTileH + citySourceHeight() / 2);
 
     mTileW = newW;
     mTileH = newH;
@@ -3783,12 +3822,12 @@ void GameWidget::updateBeforePaint()
         const int edgeStep = std::max(1, int(std::lround(35.0 * dtScale)));
         if(mHoverX == 0) {
             setDX(mDX + edgeStep);
-        } else if(mHoverX == width() - 1) {
+        } else if(mHoverX == citySourceWidth() - 1) {
             setDX(mDX - edgeStep);
         }
         if(mHoverY == 0) {
             setDY(mDY + edgeStep);
-        } else if(mHoverY == height() - 1) {
+        } else if(mHoverY == citySourceHeight() - 1) {
             setDY(mDY - edgeStep);
         }
     }

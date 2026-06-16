@@ -10,6 +10,18 @@ namespace {
 std::string aspectName(const eResolution& res) {
     const int w = res.width();
     const int h = res.height();
+    if((w == 1138 && h == 600) ||
+       (w == 1259 && h == 664) ||
+       (w == 1395 && h == 736) ||
+       (w == 1532 && h == 808) ||
+       (w == 1668 && h == 880) ||
+       (w == 1805 && h == 952) ||
+       (w == 1942 && h == 1024) ||
+       (w == 2078 && h == 1096) ||
+       (w == 2214 && h == 1168) ||
+       (w == 2493 && h == 1315)) {
+        return "Desktop";
+    }
     if(w * 3 == h * 4) return "4:3";
     if(w * 9 == h * 16) return "16:9";
     if(w * 10 == h * 16) return "16:10";
@@ -54,7 +66,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
         "4:3",
         "16:9",
         "16:10",
-        "Other"
+        "Desktop"
     };
     const std::string currentAspect = aspectName(settings.fRes);
     int aspectValue = 0;

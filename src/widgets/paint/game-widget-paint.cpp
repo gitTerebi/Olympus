@@ -27,7 +27,7 @@
 #include "widgets/paint/invasion-debug-paint.h"
 #include "widgets/paint/draw/draw-column.h"
 #include "widgets/paint/draw/dont-draw-appeal.h"
-
+#include "widgets/paint/world-postprocess-shader.h"
 #include "spawners/land-invasion-point.h"
 
 #include <algorithm>
@@ -75,8 +75,10 @@ private:
 void GameWidget::paintEvent(ePainter &p)
 {
     auto* r = p.renderer();
-    const int w = width();
-    const int h = height();
+    const int w = citySourceWidth();
+    const int h = citySourceHeight();
+    const int outputW = width();
+    const int outputH = height();
     if (!mWorldTex || mWorldTex->width() != w || mWorldTex->height() != h) {
         mWorldTex = std::make_shared<Texture>();
         mWorldTex->create(r, w, h);
@@ -2477,11 +2479,31 @@ void GameWidget::paintEvent(ePainter &p)
     const int srcX = (w - srcW) / 2;
     const int srcY = (h - srcH) / 2;
     const SDL_Rect srcRect{srcX, srcY, srcW, srcH};
-    const SDL_Rect dstRect{0, 0, w, h};
-    // Restore the frame target and blit the zoomed/scrolled world into it. The
-    // whole-frame postprocess happens later at the window level.
+    const SDL_Rect dstRect{0, 0, outputW, outputH};
+
+    if(!mWorldShaderTex ||
+       mWorldShaderTex->width() != srcW ||
+       mWorldShaderTex->height() != srcH) {
+        mWorldShaderTex = std::make_shared<Texture>();
+        mWorldShaderTex->create(r, srcW, srcH);
+        SDL_SetTextureScaleMode(mWorldShaderTex->tex(), SDL_ScaleModeNearest);
+        SDL_SetTextureBlendMode(mWorldShaderTex->tex(), SDL_BLENDMODE_NONE);
+    }
+    mWorldShaderTex->setAsRenderTarget(r);
+    SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+    SDL_RenderClear(r);
+    const SDL_Rect shaderDstRect{0, 0, srcW, srcH};
+    const int copyWorldResult = SDL_RenderCopy(
+        r, mWorldTex->tex(), &srcRect, &shaderDstRect);
+    SDL_RenderFlush(r);
+
+    // Restore the frame target and blit the zoomed/scrolled city into it. The
+    // postprocess belongs here so menus, labels, dialogs, and tooltips stay crisp.
     SDL_SetRenderTarget(r, prevTarget);
-    SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
+    if(copyWorldResult != 0 ||
+       !applyTexturePostprocess(r, mWorldShaderTex->tex(), srcW, srcH, true)) {
+        SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
+    }
 
     {
         const char* letters[] = {"N", "W", "S", "E"};
@@ -2500,7 +2522,7 @@ void GameWidget::paintEvent(ePainter &p)
         }
         if(mCompassTex) {
             const int sideW = mGm ? mGm->width() : 0;
-            const int px = w - sideW - mCompassTex->width() - 20;
+            const int px = outputW - sideW - mCompassTex->width() - 20;
             const int topH = mTopBar ? mTopBar->height() : 0;
             const int py = topH + 10;
             mCompassTex->render(r, px, py);

@@ -119,6 +119,36 @@ struct D3D11RenderDataHead {
     ID3D11SamplerState* currentSampler;
 };
 
+struct SdlTextureMirror {
+    const void* magic;
+    Uint32 format;
+    int access;
+    int w;
+    int h;
+    int modMode;
+    SDL_BlendMode blendMode;
+    SDL_ScaleMode scaleMode;
+    SDL_Color color;
+    SDL_Renderer* renderer;
+    SDL_Texture* native;
+    void* yuv;
+    void* pixels;
+    int pitch;
+    SDL_Rect lockedRect;
+    void* lockedSurface;
+    Uint32 lastCommandGeneration;
+    void* driverdata;
+    void* userdata;
+    SDL_Texture* prev;
+    SDL_Texture* next;
+};
+
+struct D3D11TextureDataHead {
+    ID3D11Texture2D* mainTexture;
+    ID3D11ShaderResourceView* mainTextureResourceView;
+    ID3D11RenderTargetView* mainTextureRenderTargetView;
+};
+
 ID3D11RenderTargetView* mainRtv(SDL_Renderer* const r, void** const outData) {
     if(outData) *outData = nullptr;
     if(!r) return nullptr;
@@ -127,6 +157,31 @@ ID3D11RenderTargetView* mainRtv(SDL_Renderer* const r, void** const outData) {
     if(!rm->driverdata) return nullptr;
     const auto data = reinterpret_cast<D3D11RenderDataHead*>(rm->driverdata);
     return data->mainRenderTargetView;
+}
+
+ID3D11ShaderResourceView* textureSrv(SDL_Texture* const tex) {
+    if(!tex) return nullptr;
+    auto tm = reinterpret_cast<const SdlTextureMirror*>(tex);
+    if(!tm->driverdata && tm->native) {
+        tm = reinterpret_cast<const SdlTextureMirror*>(tm->native);
+    }
+    if(!tm->driverdata) {
+        static bool once = false;
+        if(!once) {
+            once = true;
+            printf("post-process: SDL texture has no D3D11 driverdata\n");
+        }
+        return nullptr;
+    }
+    const auto data = reinterpret_cast<D3D11TextureDataHead*>(tm->driverdata);
+    if(!data->mainTextureResourceView) {
+        static bool once = false;
+        if(!once) {
+            once = true;
+            printf("post-process: SDL D3D11 texture has no SRV\n");
+        }
+    }
+    return data->mainTextureResourceView;
 }
 
 void dirtySdlD3D11State(void* const rendererData) {
@@ -728,13 +783,13 @@ const char* upscalePs(const int upscale, const int requestedFactor,
         nativeFactor = 2; return kXbrz2Ps;
     case 2: // scalehq 2x
         nativeFactor = 2; return kScaleHQ2Ps;
-    case 3: // xsal 2x
-        nativeFactor = 2; return kXSalPs;
-    case 4: // eagle 2x
-        nativeFactor = 2; return kEaglePs;
-    case 5: // scalenx 2x or 3x
+    case 3: // scalenx 2x or 3x
         if(requestedFactor == 3) { nativeFactor = 3; return kScaleNx3Ps; }
         nativeFactor = 2; return kScaleNx2Ps;
+    case 4: // eagle 2x
+        nativeFactor = 2; return kEaglePs;
+    case 5: // xsal 2x
+        nativeFactor = 2; return kXSalPs;
     default:
         nativeFactor = 1;
         return nullptr;
@@ -766,25 +821,19 @@ void setPostprocessFilters(const int interpolation, const int upscale,
     gFactor = factor < 2 ? 2 : (factor > 6 ? 6 : factor);
 }
 
-bool applyPostprocess(SDL_Renderer* const r,
-                      const void* const pixels,
-                      const int pitch,
-                      const int texW,
-                      const int texH,
-                      const SDL_Rect* const dstRect,
-                      const bool outputToBackbuffer,
-                      const bool applyUpscale) {
+bool applySrvPostprocess(SDL_Renderer* const r,
+                         ID3D11ShaderResourceView* const frameSrv,
+                         const int texW,
+                         const int texH,
+                         const SDL_Rect* const dstRect,
+                         const bool outputToBackbuffer,
+                         const bool applyUpscale) {
     if(!initShader(r)) {
         return false;
     }
     auto& s = gShader;
 
-    if(!pixels || pitch <= 0 || texW <= 0 || texH <= 0) return false;
-    if(!ensureSource(s, texW, texH)) {
-        return false;
-    }
-    s.fContext->UpdateSubresource(s.fSource, 0, nullptr, pixels, pitch, 0);
-    ID3D11ShaderResourceView* const frameSrv = s.fSourceSrv;
+    if(!frameSrv || texW <= 0 || texH <= 0) return false;
 
     if(outputToBackbuffer) SDL_SetRenderTarget(r, nullptr);
     SDL_RenderFlush(r);
@@ -982,6 +1031,33 @@ bool applyPostprocess(SDL_Renderer* const r,
     return true;
 }
 
+bool applyPostprocess(SDL_Renderer* const r,
+                      const void* const pixels,
+                      const int pitch,
+                      const int texW,
+                      const int texH,
+                      const SDL_Rect* const dstRect,
+                      const bool outputToBackbuffer,
+                      const bool applyUpscale) {
+    if(!initShader(r)) return false;
+    auto& s = gShader;
+
+    if(!pixels || pitch <= 0 || texW <= 0 || texH <= 0) return false;
+    if(!ensureSource(s, texW, texH)) return false;
+    s.fContext->UpdateSubresource(s.fSource, 0, nullptr, pixels, pitch, 0);
+    return applySrvPostprocess(r, s.fSourceSrv, texW, texH, dstRect,
+                               outputToBackbuffer, applyUpscale);
+}
+
+bool applyTexturePostprocess(SDL_Renderer* const r,
+                             SDL_Texture* const texture,
+                             const int textureW,
+                             const int textureH,
+                             const bool applyUpscale) {
+    return applySrvPostprocess(r, textureSrv(texture), textureW, textureH,
+                               nullptr, true, applyUpscale);
+}
+
 bool applyFullFramePostprocess(SDL_Renderer* const r,
                                const void* const pixels,
                                const int pitch,
@@ -1025,6 +1101,19 @@ bool applyFullFramePostprocess(SDL_Renderer* const r,
                "(interp=%d upscale=%d factor=%d)\n",
                gInterp, gUpscale, gFactor);
     }
+    return false;
+}
+
+bool applyTexturePostprocess(SDL_Renderer* const r,
+                             SDL_Texture* const texture,
+                             const int textureW,
+                             const int textureH,
+                             const bool applyUpscale) {
+    (void)r;
+    (void)texture;
+    (void)textureW;
+    (void)textureH;
+    (void)applyUpscale;
     return false;
 }
 

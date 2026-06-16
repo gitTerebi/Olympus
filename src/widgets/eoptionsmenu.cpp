@@ -174,6 +174,12 @@ void clampButtonWidth(FramedButton* const button,
     if(button->width() < minW) button->setWidth(minW);
     if(button->width() > maxW) button->setWidth(maxW);
 }
+
+bool rebuildsChoicePage(const std::string& label) {
+    return label == "Aspect" ||
+           label == "Resolution" ||
+           label == "Display";
+}
 }
 
 eOptionsMenu::eOptionsMenu(const std::vector<ePage>& pages,
@@ -505,7 +511,7 @@ void eOptionsMenu::showPage(const int id) {
         const auto options = item.fOptions;
         const auto set = item.fSet;
         const auto reloadsUiScale = item.fReloadsUiScale;
-        const bool rebuildOnSet = item.fLabel == "Aspect" || reloadsUiScale;
+        const bool rebuildOnSet = rebuildsChoicePage(item.fLabel);
         button->setPressAction([this, button, options, set, rebuildOnSet,
                                 reloadsUiScale, minControlW, maxControlW]() {
             const auto choose = new eChooseButton(window());
@@ -528,14 +534,12 @@ void eOptionsMenu::showPage(const int id) {
                     window()->showMenuLoading();
                     return;
                 }
-                if(set) set(val);
-                if(rebuildOnSet && mReopenPage) {
-                    const int page = mCurrentPage;
-                    window()->addSlot([reopenPage = mReopenPage, page]() {
-                        reopenPage(page);
-                    });
-                    close();
+                if(rebuildOnSet) {
+                    if(set) set(val);
+                    rebuild();
+                    return;
                 }
+                if(set) set(val);
             };
             choose->initialize(8, options, act);
             window()->execDialog(choose);

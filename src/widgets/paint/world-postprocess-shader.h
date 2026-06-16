@@ -25,4 +25,10 @@ bool applyFullFramePostprocess(SDL_Renderer* r,
                                int frameH,
                                bool applyUpscale = true);
 
+bool applyTexturePostprocess(SDL_Renderer* r,
+                             SDL_Texture* texture,
+                             int textureW,
+                             int textureH,
+                             bool applyUpscale = true);
+
 #endif // WORLD_POSTPROCESS_SHADER_H
