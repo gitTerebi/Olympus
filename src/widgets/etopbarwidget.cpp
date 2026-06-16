@@ -6,6 +6,7 @@
 #include "textures/game-textures.h"
 #include "ebutton.h"
 #include "edatewidget.h"
+#include "elayouthelpers.h"
 #include "game-widget.h"
 
 #include "main-window.h"
@@ -44,28 +45,16 @@ void eTopBarWidget::initialize() {
     const auto& coll = intrfc[icoll];
     setPadding(0);
 
-    const auto s0 = new eWidget(window());
-    s0->setWidth(mult*20);
-
     mDrachmasWidget = new eTopWidget(window());
     mDrachmasWidget->initialize(coll.fDrachmasTopMenu, "-");
-
-    const auto s1 = new eWidget(window());
-    s1->setWidth(mult*20);
 
     mCityLabel = new eLabel("-", window());
     mCityLabel->setFontSizeS();
     mCityLabel->setNoPadding();
     mCityLabel->fitContent();
 
-    const auto s2 = new eWidget(window());
-    s2->setWidth(mult*20);
-
     mPopulationWidget = new eTopWidget(window());
     mPopulationWidget->initialize(coll.fPopulationTopMenu, "-");
-
-    const auto s3 = new eWidget(window());
-    s3->setWidth(mult*20);
 
     mUnemployedWidget = new eTopWidget(window());
     mUnemployedWidget->initialize(coll.fPopulationTopMenu, "-");
@@ -88,33 +77,23 @@ void eTopBarWidget::initialize() {
     mDateLabel->fitContent();
     mDateLabel->setEnabled(false);
 
-    const auto s4 = new eWidget(window());
-    s4->setWidth(mult*20);
-
-    const auto s5 = new eWidget(window());
-    s5->setWidth(mult*20);
-
-    addWidget(s0);
-    addWidget(mCityLabel);
-    addWidget(s1);
-    addWidget(mDrachmasWidget);
-    addWidget(s2);
-    addWidget(mPopulationWidget);
-    addWidget(s3);
-    addWidget(mUnemployedWidget);
-    addWidget(s4);
-    addWidget(mDateLabel);
-    addWidget(s5);
-
     setHeight(12*mult);
 
-    mCityLabel->align(Alignment::vcenter);
-    mDrachmasWidget->align(Alignment::vcenter);
-    mPopulationWidget->align(Alignment::vcenter);
-    mUnemployedWidget->align(Alignment::vcenter);
-    mDateLabel->align(Alignment::vcenter);
+    mCitySlot = createTopBarSlot(mCityLabel);
+    mDrachmasSlot = createTopBarSlot(mDrachmasWidget);
+    mPopulationSlot = createTopBarSlot(mPopulationWidget);
+    mUnemployedSlot = createTopBarSlot(mUnemployedWidget);
+    mDateSlot = createTopBarSlot(mDateLabel);
 
-    layoutHorizontally();
+    mContentWidget = eLayoutHelpers::createFlexContainer(
+        window(), width(), height(), eLayoutHelpers::eFlexDirection::row,
+        {{mCitySlot, 0, 1}, {mDrachmasSlot, 0, 1},
+         {mPopulationSlot, 0, 1}, {mUnemployedSlot, 0, 1},
+         {mDateSlot, 0, 1}},
+        {.align = eLayoutHelpers::eAlign::stretch});
+    addWidget(mContentWidget);
+
+    layoutContent();
 }
 
 void eTopBarWidget::setBoard(GameBoard* const board) {
@@ -123,6 +102,37 @@ void eTopBarWidget::setBoard(GameBoard* const board) {
 
 void eTopBarWidget::setGameWidget(GameWidget* const gw) {
     mGW = gw;
+}
+
+eWidget* eTopBarWidget::createTopBarSlot(eWidget* const content) {
+    const auto slot = new eWidget(window());
+    slot->setNoPadding();
+    slot->resize(1, height());
+    slot->addWidget(content);
+    return slot;
+}
+
+void eTopBarWidget::centerSlotContent(eWidget* const slot) {
+    if(!slot || slot->children().empty()) return;
+    const auto content = slot->children().front();
+    content->move((slot->width() - content->width()) / 2,
+                  (slot->height() - content->height()) / 2);
+}
+
+void eTopBarWidget::layoutContent() {
+    if(!mContentWidget) return;
+    mContentWidget->resize(width(), height());
+    eLayoutHelpers::updateFlexContainerLayout(
+        mContentWidget, eLayoutHelpers::eFlexDirection::row,
+        {{mCitySlot, 0, 1}, {mDrachmasSlot, 0, 1},
+         {mPopulationSlot, 0, 1}, {mUnemployedSlot, 0, 1},
+         {mDateSlot, 0, 1}},
+        {.align = eLayoutHelpers::eAlign::stretch});
+    centerSlotContent(mCitySlot);
+    centerSlotContent(mDrachmasSlot);
+    centerSlotContent(mPopulationSlot);
+    centerSlotContent(mUnemployedSlot);
+    centerSlotContent(mDateSlot);
 }
 
 void eTopBarWidget::paintEvent(ePainter& p) {
@@ -166,7 +176,9 @@ void eTopBarWidget::paintEvent(ePainter& p) {
         mDrachmasWidget->setText(std::to_string(d));
 
         mDateLabel->setText(mBoard->date().shortString());
+        mDateLabel->fitContent();
         mDateLabel->setEnabled(mBoard->editorMode());
+        layoutContent();
 
         int iRes;
         int mult;
@@ -175,11 +187,14 @@ void eTopBarWidget::paintEvent(ePainter& p) {
         const auto& tex = intrfc.fGameTopBar;
         const int texWidth = tex->width();
         const auto& rend = p.renderer();
+        const SDL_Rect clipRect{0, 0, width(), height()};
+        p.setClipRect(&clipRect);
         bool flip = false;
         for(int x = width() - texWidth; x > -texWidth; x -= texWidth) {
             tex->render(rend, x, 0, flip);
             flip = !flip;
         }
+        p.setClipRect(nullptr);
     } else {
         mDateLabel->setEnabled(false);
     }

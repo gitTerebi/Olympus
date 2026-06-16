@@ -503,6 +503,25 @@ void GameWidget::reloadUi()
     syncModeCursor();
 }
 
+void GameWidget::windowSizeChanged(const int w, const int h)
+{
+    eMainWidget::windowSizeChanged(w, h);
+    if(!mBoard || !mGm) return;
+    mGm->rebuildForResolutionChange();
+    updateTopBarGeometry();
+    updateViewBoxSize();
+    updateTipPositions();
+    updateToastPositions();
+    syncModeCursor();
+}
+
+void GameWidget::updateTopBarGeometry()
+{
+    if(!mTopBar || !mGm) return;
+    mTopBar->setWidth(width() - mGm->width());
+    mTopBar->align(Alignment::top);
+}
+
 void GameWidget::initialize()
 {
     mEditorMode = mBoard->editorMode();
@@ -526,13 +545,11 @@ void GameWidget::initialize()
         viewFraction(fx, fy); });
 
     mTopBar = new eTopBarWidget(window());
-    const int gw = width() - mGm->width();
-    mTopBar->setWidth(gw);
     mTopBar->initialize();
     mTopBar->setBoard(mBoard);
     mTopBar->setGameWidget(this);
     addWidget(mTopBar);
-    mTopBar->align(Alignment::top);
+    updateTopBarGeometry();
 
     mTem = new eTerrainEditMenu(window());
     mTem->initialize(this, mBoard);
@@ -3090,9 +3107,13 @@ void GameWidget::showOptionsMenu(const int initialPage)
         window()->setWidget(this);
         showOptionsMenu(page);
     };
+    const auto buildPages = [this]() {
+        return getOptionsPages(window(), mBoard.get(), this);
+    };
     const auto d = new eOptionsMenu(getOptionsPages(window(), mBoard.get(), this),
                                     window(),
-                                    reopenPage);
+                                    reopenPage,
+                                    buildPages);
     d->initialize(initialPage);
     window()->execDialog(d, true, [this]()
                          { window()->setWidget(this); });

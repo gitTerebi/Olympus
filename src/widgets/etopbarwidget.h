@@ -68,8 +68,18 @@ public:
     void paintEvent(ePainter &p);
 
 private:
+    void layoutContent();
+    eWidget* createTopBarSlot(eWidget* content);
+    void centerSlotContent(eWidget* slot);
+
     GameBoard *mBoard = nullptr;
     GameWidget *mGW = nullptr;
+    eWidget *mContentWidget = nullptr;
+    eWidget *mCitySlot = nullptr;
+    eWidget *mDrachmasSlot = nullptr;
+    eWidget *mPopulationSlot = nullptr;
+    eWidget *mUnemployedSlot = nullptr;
+    eWidget *mDateSlot = nullptr;
     eLabel *mCityLabel = nullptr;
     eTopWidget *mDrachmasWidget = nullptr;
     eTopWidget *mPopulationWidget = nullptr;

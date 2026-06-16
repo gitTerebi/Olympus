@@ -69,9 +69,12 @@ public:
         std::vector<eChoiceItem> fChoices;
     };
 
+    using eBuildPages = std::function<std::vector<ePage>()>;
+
     eOptionsMenu(const std::vector<ePage>& pages,
                  MainWindow* const window,
-                 const eReopenPage& reopenPage = nullptr);
+                 const eReopenPage& reopenPage = nullptr,
+                 const eBuildPages& buildPages = nullptr);
 
     void initialize(const int initialPage = 0);
 
@@ -82,6 +85,7 @@ private:
 
     std::vector<ePage> mPages;
     eReopenPage mReopenPage;
+    eBuildPages mBuildPages;
     eScrollViewport* mPageViewport = nullptr;
     eWidget* mPage = nullptr;
     eLabel* mMainTitle = nullptr;

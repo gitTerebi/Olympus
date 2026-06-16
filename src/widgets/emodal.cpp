@@ -16,6 +16,12 @@ void eModal::initializeMask(const int w, const int h) {
     mFrame->align(Alignment::center);
 }
 
+void eModal::windowSizeChanged(const int w, const int h) {
+    resize(w, h);
+    eFramedWidget::windowSizeChanged(w, h);
+    if(mFrame) mFrame->align(Alignment::center);
+}
+
 void eModal::resetModal() {
     removeChildren();
     mFrame = nullptr;

@@ -50,6 +50,7 @@ public:
     ~GameMenu();
     void initialize(GameBoard* const b,
                     const eAction& goalsView);
+    void rebuildForResolutionChange();
 
     int tradeCityId() const { return mTradeCityId; }
     eBuildingMode mode() const { return mMode; }
@@ -150,6 +151,7 @@ private:
     std::vector<eSubButton*> mSubButtons;
 
     eAction mModeChangeAct;
+    eAction mGoalsView;
 
     bool mShowAllPossibleBuildings = false;
     bool mMsgListWasPaused = false;
