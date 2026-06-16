@@ -119,9 +119,10 @@ public:
 private:
     void clearWidgets();
     std::string mostRecentSavePath() const;
+    bool resizeCurrentWidgetToWindow();
     void emitWindowSizeChanged();
-    // Map raw window mouse coords to frame-resolution coords, undoing the bicubic
-    // upscale + letterbox so hit-testing matches the on-screen image.
+    // Map raw window mouse coords before dispatch. The city shader now runs inside
+    // GameWidget only, so global UI coordinates stay in window space.
     void mapWindowToFrame(int& x, int& y) const;
 
     Settings mSettings;
@@ -148,14 +149,6 @@ private:
     eWidget* mWidget = nullptr;
     SDL_Window* mSdlWindow = nullptr;
     SDL_Renderer* mSdlRenderer = nullptr;
-    // Frame is rendered at the configured resolution into mFrameTex, then a D3D11
-    // bicubic pass upscales it to fill the current window (maximize/fullscreen).
-    SDL_Texture* mFrameTex = nullptr;
-    SDL_Texture* mFrameTexAlt = nullptr;
-    int mFrameTexW = 0;
-    int mFrameTexH = 0;
-    bool mUseAltFrameTex = false;
-    std::vector<Uint32> mFramePixels;
 };
 
 #endif // MAIN_WINDOW_H
