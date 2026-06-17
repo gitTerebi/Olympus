@@ -43,8 +43,7 @@ eEventButton::eEventButton(const eEvent e,
                            MainWindow* const window) :
     eButton(window) {
     const auto intrfc = GameTextures::interface();
-    const auto uiScale = resolution().uiScale();
-    const int iRes = static_cast<int>(uiScale);
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
     const TextureCollection* coll = nullptr;
     switch(e) {
@@ -98,6 +97,7 @@ eEventButton::eEventButton(const eEvent e,
         return;
     }
 
+    setTextureDrawScale(topSidebarTextureScale());
     setTexture(coll->getTexture(0));
     setHoverTexture(coll->getTexture(1));
     setPressedTexture(coll->getTexture(2));

@@ -146,7 +146,7 @@ void eRotateButton::updateTexture() {
 
     const auto res = resolution();
     const auto uiScale = res.uiScale();
-    const int iRes = static_cast<int>(uiScale);
+    const int iRes = GameTextures::interfaceTextureId();
 
     const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[iRes].fRotation;

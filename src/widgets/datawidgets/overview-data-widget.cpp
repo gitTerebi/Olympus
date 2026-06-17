@@ -150,7 +150,8 @@ void OverviewDataWidget::shown() {
 stdsptr<Texture> sGodIcon(const eUIScale scale,
                            const GodType god) {
     const auto& intrfc = GameTextures::interface();
-    const int iRes = static_cast<int>(scale);
+    (void)scale;
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& coll = intrfc[iRes];
     switch(god) {
     case GodType::zeus:
@@ -259,7 +260,8 @@ private:
     void setViable(const bool f) {
         const auto res = resolution();
         const auto scale = res.uiScale();
-        const int iRes = static_cast<int>(scale);
+        (void)scale;
+        const int iRes = GameTextures::interfaceTextureId();
         const auto& intrfc = GameTextures::interface();
         const auto& texs = intrfc[iRes];
         const auto& coll = f ? texs.fRequestFulfilledBox :
@@ -328,7 +330,7 @@ void initialize(const stdsptr<WorldCity>& city,
          const auto cityName = trimmedString(city->name());
          const auto res = resolution();
         const auto uiScale = res.uiScale();
-        const int iRes = static_cast<int>(uiScale);
+        const int iRes = GameTextures::interfaceTextureId();
         const auto& intrfc = GameTextures::interface();
         const auto& texs = intrfc[iRes];
         const auto& troopsIcon = texs.fTroopsRequestIcon;

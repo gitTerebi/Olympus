@@ -7,6 +7,7 @@
 #include <cstdio>
 
 #include "vector-helpers.h"
+#include "textures/game-textures.h"
 
 eWidget* eWidget::sWidgetUnderMouse = nullptr;
 eWidget* eWidget::sLastPressed = nullptr;
@@ -41,11 +42,30 @@ eWidget::~eWidget() {
     clearWidgetPointers();
 }
 
-void eWidget::iResAndMult(int& iRes, int& mult) const {
-    const auto res = resolution();
-    const auto uiScale = res.uiScale();
-    iRes = static_cast<int>(uiScale);
-    mult = iRes + 1;
+void eWidget::iResAndMult(int& iRes, double& mult) const {
+    iRes = GameTextures::interfaceTextureId();
+    mult = 2.0 * resolution().multiplier();
+}
+
+int eWidget::topSidebarScaleId() const {
+    return Settings::clampTopSidebarScale(window()->settings().fTopSidebarScale);
+}
+
+int eWidget::topSidebarMult() const {
+    return topSidebarScaleId() + 1;
+}
+
+double eWidget::topSidebarTextureScale() const {
+    return 0.5*topSidebarMult();
+}
+
+int eWidget::topSidebarTextureBleed() const {
+    return topSidebarScaleId() == 2 ? 2 : 0;
+}
+
+void eWidget::topSidebarIResAndMult(int& iRes, int& mult) const {
+    iRes = GameTextures::interfaceTextureId();
+    mult = topSidebarMult();
 }
 
 int eWidget::scalePx(const double base) const {

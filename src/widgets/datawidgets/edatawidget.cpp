@@ -40,6 +40,8 @@ void eDataWidget::initialize() {
 
     const auto coll = &InterfaceTextures::fMoreInfo;
     mMoreInfo = new eBasicButton(coll, window());
+    mMoreInfo->setTextureDrawScale(topSidebarTextureScale());
+    mMoreInfo->fitContent();
     frame->addWidget(mMoreInfo);
     mMoreInfo->align(Alignment::right | Alignment::bottom);
     mMoreInfo->move(mMoreInfo->x() - pp, mMoreInfo->y() - pp);
@@ -74,9 +76,7 @@ void eDataWidget::addViewButton(eViewModeButton* const b) {
 }
 
 int eDataWidget::spacing() const {
-    const auto res = resolution();
-    const double m = res.multiplier();
-    return 3*m;
+    return std::round(3*topSidebarTextureScale());
 }
 
 void eDataWidget::showMoreInfoButton() {

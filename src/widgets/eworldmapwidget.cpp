@@ -175,7 +175,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
 
     const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
-    const int iRes = static_cast<int>(res.uiScale());
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
     const bool editor = mWorldBoard->editorMode();
 
@@ -585,7 +585,7 @@ void eWorldMapWidget::updateWidgets() {
     if(!mWorldBoard) return;
     const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
-    const int iRes = static_cast<int>(res.uiScale());
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
     const auto& tex = texs.fZeusMainCity;
     const int w = tex->width();
@@ -719,7 +719,7 @@ bool eWorldMapWidget::cityVisible(const stdsptr<WorldCity>& c,
 void eWorldMapWidget::setMap(const eWorldMap map) {
     const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
-    const int iRes = static_cast<int>(res.uiScale());
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
 
     stdsptr<Texture> tex;

@@ -5,15 +5,18 @@
 void eMicroButton::sizeHint(int& w, int& h) {
     eButtonBase::sizeHint(w, h);
     const auto res = resolution();
-    const double mult = res.multiplier();
+    const double mult = hasTextureDrawScale() ?
+                            textureDrawScale() :
+                            res.multiplier();
     h = std::round(13*mult);
 }
 
 void eMicroButton::paintEvent(ePainter& p) {
     const auto res = resolution();
-    const auto uiScale = res.uiScale();
-    const int iRes = static_cast<int>(uiScale);
-    const double mult = res.multiplier();
+    const int iRes = GameTextures::interfaceTextureId();
+    const double mult = hasTextureDrawScale() ?
+                            textureDrawScale() :
+                            res.multiplier();
     const int wdim = std::round(18*mult);
     const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
@@ -41,7 +44,14 @@ void eMicroButton::paintEvent(ePainter& p) {
             coll = &intrfc.fMicroButton[1];
         }
         const auto& tex = coll->getTexture(texId);
-        p.drawTexture(x, 0, tex);
+        if(!tex) continue;
+        const int drawW = std::round(tex->width()*mult);
+        const int drawH = std::round(tex->height()*mult);
+        const SDL_Rect srcRect{tex->x(), tex->y(),
+                               tex->width(), tex->height()};
+        const SDL_Rect dstRect{p.x() + x, p.y(),
+                               drawW, drawH};
+        tex->render(p.renderer(), srcRect, dstRect);
     }
 
     eButtonBase::paintEvent(p);

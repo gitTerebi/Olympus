@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <filesystem>
+#include <algorithm>
 
 #include "game-dir.h"
 
@@ -13,6 +14,18 @@ std::vector<CharacterTextures> GameTextures::sCharacterTextures;
 std::vector<InterfaceTextures> GameTextures::sInterfaceTextures;
 std::vector<DestructionTextures> GameTextures::sDestructionTextures;
 Settings GameTextures::sSettings;
+
+int GameTextures::interfaceTileDim() {
+    const auto textureId = interfaceTextureId();
+    if(textureId >= 0 && textureId < static_cast<int>(sInterfaceTextures.size())) {
+        const auto& intrfc = sInterfaceTextures[textureId];
+        if(intrfc.fLoaded && intrfc.fButtonFrame.size() > 0) {
+            const auto& tex = intrfc.fButtonFrame.getTexture(0);
+            if(tex) return std::max(1, tex->width());
+        }
+    }
+    return 16;
+}
 
 struct eLoader {
     using eFunc = std::function<void(std::string&)>;
@@ -38,12 +51,9 @@ void GameTextures::loadTexture(const std::function<void(int)>& func) {
 }
 
 void GameTextures::loadInterfaceTexture(const std::function<void(int)>& func) {
-    const auto scale = sSettings.fUiScale;
+    (void)sSettings;
     for(int i = 0; i < 4; i++) {
-        if(i == 0 && scale != eUIScale::tiny) continue;
-        if(i == 1 && scale != eUIScale::small) continue;
-        if(i == 2 && scale != eUIScale::medium) continue;
-        if(i == 3 && scale != eUIScale::large) continue;
+        if(i != interfaceTextureId()) continue;
         func(i);
     }
 }
@@ -2371,19 +2381,13 @@ bool GameTextures::initialize(SDL_Renderer* const r) {
 
 bool GameTextures::loadNextMenu(const Settings& settings,
                                  std::string& text) {
+    (void)settings;
     const int iMax = gMenuLoaders.size();
-    const auto uiScale = settings.fUiScale;
+    const int textureId = interfaceTextureId();
     for(int i = 0; i < iMax; i++) {
         auto& g = gMenuLoaders[i];
         if(g.fFinished) continue;
-        if(uiScale != eUIScale::tiny &&
-           g.fSize == 0) continue;
-        if(uiScale != eUIScale::small &&
-           g.fSize == 1) continue;
-        if(uiScale != eUIScale::medium &&
-           g.fSize == 2) continue;
-        if(uiScale != eUIScale::large &&
-           g.fSize == 3) continue;
+        if(g.fSize != textureId) continue;
         g.fFunc(text);
         g.fFinished = true;
         return false;
@@ -2434,7 +2438,16 @@ int GameTextures::gameSize(const Settings& settings) {
 }
 
 int GameTextures::menuSize() {
-    return sInterfaceTextures.size();
+    int result = 0;
+    const int textureId = interfaceTextureId();
+    const int iMax = gMenuLoaders.size();
+    for(int i = 0; i < iMax; i++) {
+        auto& g = gMenuLoaders[i];
+        if(g.fFinished) continue;
+        if(g.fSize != textureId) continue;
+        result++;
+    }
+    return result;
 }
 
 void GameTextures::setSettings(const Settings& s) {

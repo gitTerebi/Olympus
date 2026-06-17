@@ -46,6 +46,7 @@ public:
     void setUpscale(const int upscale);
     void setUpscaleFactor(const int factor);
     void setUiScale(const int scale);
+    void setTopSidebarScale(const int scale);
     void setDisplayMode(const int mode);
     void applyPostprocessFilters();
     void setKeyScrollSpeed(const int speed);

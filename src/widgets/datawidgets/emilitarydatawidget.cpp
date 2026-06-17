@@ -34,9 +34,7 @@ void eForcesWidget::setBanners(const SoldierBanners& ss,
     const bool changed = !VectorHelpers::same(mBanners, ss);
     if(!changed) return;
     mBanners = ss;
-    int iRes;
-    int mult;
-    iResAndMult(iRes, mult);
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[iRes];
     const auto& tops = coll.fInterfaceBannerTops;
@@ -112,6 +110,7 @@ void eForcesWidget::setBanners(const SoldierBanners& ss,
                 button->setTexture(top);
             }
         }
+        button->setTextureDrawScale(topSidebarTextureScale());
         button->fitContent();
         line->addWidget(button);
         lineI++;
@@ -134,9 +133,7 @@ void eMilitaryDataWidget::initialize() {
                         window());
         addViewButton(mSeeSecurity);
     }
-    const auto res = resolution();
-    const auto uiScale = res.uiScale();
-    const int iRes = static_cast<int>(uiScale);
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& intrfc = GameTextures::interface()[iRes];
 
     eDataWidget::initialize();
@@ -178,13 +175,14 @@ void eMilitaryDataWidget::initialize() {
     buttonsW->setNoPadding();
     buttonsW->setWidth(iw);
 
-    const double mult = res.multiplier();
+    const double scale = topSidebarTextureScale();
 
-    const int microW = std::round(84*mult);
+    const int microW = std::round(84*scale);
     const auto microButtonsW = new eWidget(window());
     microButtonsW->setNoPadding();
     microButtonsW->setWidth(microW);
     mAtPalace = new eMicroButton(window());
+    mAtPalace->setTextureDrawScale(scale);
     mAtPalace->setNoPadding();
     mAtPalace->setFontSizeXS();
     mAtPalace->setText(Language::zeusText(51, 82));
@@ -193,8 +191,9 @@ void eMilitaryDataWidget::initialize() {
     mAtPalace->fitHeight();
     microButtonsW->addWidget(mAtPalace);
 
-    const int iconX = std::round(-10*mult);
+    const int iconX = std::round(-10*scale);
     const auto soldiersIcon = new eLabel(window());
+    soldiersIcon->setTextureDrawScale(scale);
     soldiersIcon->setTexture(intrfc.fSoldiersIcon);
     soldiersIcon->fitContent();
     mAtPalace->addWidget(soldiersIcon);
@@ -202,6 +201,7 @@ void eMilitaryDataWidget::initialize() {
     soldiersIcon->align(Alignment::vcenter);
 
     mNoShips = new eMicroButton(window());
+    mNoShips->setTextureDrawScale(scale);
     mNoShips->setNoPadding();
     mNoShips->setFontSizeXS();
     mNoShips->setText(Language::zeusText(51, 83));
@@ -211,6 +211,7 @@ void eMilitaryDataWidget::initialize() {
     microButtonsW->addWidget(mNoShips);
 
     const auto shipsIcon = new eLabel(window());
+    shipsIcon->setTextureDrawScale(scale);
     shipsIcon->setTexture(intrfc.fShipsIcon);
     shipsIcon->fitContent();
     mNoShips->addWidget(shipsIcon);
@@ -218,6 +219,7 @@ void eMilitaryDataWidget::initialize() {
     shipsIcon->align(Alignment::vcenter);
 
     mNoTowers = new eMicroButton(window());
+    mNoTowers->setTextureDrawScale(scale);
     mNoTowers->setNoPadding();
     mNoTowers->setFontSizeXS();
     mNoTowers->setText(Language::zeusText(51, 84));
@@ -227,22 +229,25 @@ void eMilitaryDataWidget::initialize() {
     microButtonsW->addWidget(mNoTowers);
 
     const auto towersIcon = new eLabel(window());
+    towersIcon->setTextureDrawScale(scale);
     towersIcon->setTexture(intrfc.fTowersIcon);
     towersIcon->fitContent();
     mNoTowers->addWidget(towersIcon);
     towersIcon->setX(iconX - towersIcon->width()/2);
     towersIcon->align(Alignment::vcenter);
 
-    const int microP = std::round(4*mult);
+    const int microP = std::round(4*scale);
     microButtonsW->stackVertically(microP);
     microButtonsW->fitHeight();
     buttonsW->addWidget(microButtonsW);
-    microButtonsW->setX(std::round(18*mult));
+    microButtonsW->setX(std::round(18*scale));
 
     const auto coll = &InterfaceTextures::fMilitaryControlManual;
     const auto controlButton = new eBasicButton(coll, window());
+    controlButton->setTextureDrawScale(scale);
+    controlButton->fitContent();
     buttonsW->addWidget(controlButton);
-    controlButton->setX(std::round(106*mult));
+    controlButton->setX(std::round(106*scale));
 
     buttonsW->fitHeight();
     inner->addWidget(buttonsW);

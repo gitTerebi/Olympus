@@ -77,7 +77,7 @@ public:
         const auto res = resolution();
         const auto uiScale = res.uiScale();
         const auto& intrfc = GameTextures::interface();
-        const auto& coll = intrfc[static_cast<int>(uiScale)];
+        const auto& coll = intrfc[GameTextures::interfaceTextureId()];
         const int p = padding();
 
         const auto inner = new eWidget(window());

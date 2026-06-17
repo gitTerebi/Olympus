@@ -6,7 +6,7 @@ eCheckBox::eCheckBox(MainWindow* const window) :
     eCheckableButton(window) {
     const auto res = resolution();
     const auto uiScale = res.uiScale();
-    const int iRes = static_cast<int>(uiScale);
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& intrfc = GameTextures::interface();
     const auto& texs = intrfc[iRes].fCheckBox;
     setCheckedTexture(texs.getTexture(0));

@@ -15,7 +15,7 @@ void eTerrainEditMenu::initialize(GameWidget* const gw,
     GameMenuBase::initialize();
 
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
 
     const auto& intrfc = GameTextures::interface();

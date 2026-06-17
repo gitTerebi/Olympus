@@ -56,7 +56,7 @@ void eLoadingWidget::setLoadImage(const int id) {
     if(!mImageLabel) return;
     const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
-    const int iRes = static_cast<int>(res.uiScale());
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
     stdsptr<Texture> tex;
     if(id == 1) {

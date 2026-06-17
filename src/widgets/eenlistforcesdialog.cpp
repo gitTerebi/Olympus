@@ -44,7 +44,7 @@ public:
         }
 
         int iRes;
-        int mult;
+        double mult;
         iResAndMult(iRes, mult);
         const auto& intrfc = GameTextures::interface();
         const auto& coll = intrfc[iRes];

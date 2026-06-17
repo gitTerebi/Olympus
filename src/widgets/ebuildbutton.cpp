@@ -11,7 +11,7 @@ void eBuildButton::initialize(const std::string& name,
                               const int customWidth) {
     const auto& intrfc = GameTextures::interface();
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
 
     const int width = customWidth > 0 ? customWidth : 190*mult;

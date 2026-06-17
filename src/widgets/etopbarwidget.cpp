@@ -12,6 +12,7 @@
 #include "main-window.h"
 
 #include <string>
+#include <cmath>
 
 namespace {
 
@@ -39,9 +40,8 @@ std::string unemployedText(const eEmploymentData& emplData) {
 
 void eTopBarWidget::initialize() {
     const auto& intrfc = GameTextures::interface();
-    const auto uiScale = resolution().uiScale();
-    const int icoll = static_cast<int>(uiScale);
-    const int mult = icoll + 1;
+    const int icoll = GameTextures::interfaceTextureId();
+    const int mult = topSidebarMult();
     const auto& coll = intrfc[icoll];
     setPadding(0);
 
@@ -60,6 +60,7 @@ void eTopBarWidget::initialize() {
     mUnemployedWidget->initialize(coll.fPopulationTopMenu, "-");
 
     mDateLabel = new eButton(window());
+    mDateLabel->setTextureDrawScale(topSidebarTextureScale());
     mDateLabel->setPressAction([this]() {
         if(!mBoard) return;
         const auto dw = new eDateWidget(window());
@@ -182,16 +183,20 @@ void eTopBarWidget::paintEvent(ePainter& p) {
 
         int iRes;
         int mult;
-        iResAndMult(iRes, mult);
+        topSidebarIResAndMult(iRes, mult);
         const auto& intrfc = GameTextures::interface()[iRes];
         const auto& tex = intrfc.fGameTopBar;
         const int texWidth = tex->width();
+        const int drawWidth = std::round(texWidth*topSidebarTextureScale());
+        const int drawHeight = std::round(tex->height()*topSidebarTextureScale());
         const auto& rend = p.renderer();
         const SDL_Rect clipRect{0, 0, width(), height()};
         p.setClipRect(&clipRect);
         bool flip = false;
-        for(int x = width() - texWidth; x > -texWidth; x -= texWidth) {
-            tex->render(rend, x, 0, flip);
+        const SDL_Rect srcRect{tex->x(), tex->y(), tex->width(), tex->height()};
+        for(int x = width() - drawWidth; x > -drawWidth; x -= drawWidth) {
+            const SDL_Rect dstRect{x, 0, drawWidth, drawHeight};
+            tex->render(rend, srcRect, dstRect, flip);
             flip = !flip;
         }
         p.setClipRect(nullptr);

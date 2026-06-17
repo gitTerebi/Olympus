@@ -283,6 +283,9 @@ void eOptionsMenu::showPage(const int id) {
                 choice.fValue = static_cast<int>(settings.fDisplayMode);
             } else if(choice.fLabel == "UI scale") {
                 choice.fValue = static_cast<int>(settings.fUiScale);
+            } else if(choice.fLabel == "Top/sidebar factor") {
+                choice.fValue = Settings::clampTopSidebarScale(
+                    settings.fTopSidebarScale);
             } else if(choice.fLabel == "Resolution") {
                 for(int i = 0; i < static_cast<int>(choice.fOptions.size()); i++) {
                     if(choice.fOptions[i] == settings.fRes.name()) {

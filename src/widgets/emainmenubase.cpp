@@ -5,7 +5,7 @@
 void eMainMenuBase::initialize() {
     const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
-    const int iRes = static_cast<int>(res.uiScale());
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
     setTexture(texs.fMainMenuImage);
 }

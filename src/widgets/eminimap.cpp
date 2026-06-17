@@ -254,7 +254,7 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
     ePainter p(rend);
 
     const auto& intrfc = GameTextures::interface();
-    const int id = static_cast<int>(resolution().uiScale());
+    const int id = GameTextures::interfaceTextureId();
     const auto& coll = intrfc[id];
     const auto& ds = coll.fDiamond;
     const auto& dtex = ds.getTexture(0);

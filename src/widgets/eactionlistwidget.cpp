@@ -11,7 +11,7 @@ public:
                     const eAction& a,
                     const eStateChecker& stateChecker) {
         int iRes;
-        int mult;
+        double mult;
         iResAndMult(iRes, mult);
 
         const int width = 64*mult;

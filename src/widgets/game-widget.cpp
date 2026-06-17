@@ -774,7 +774,7 @@ void GameWidget::initialize()
         iconLabel->setNoPadding();
         const auto &intrfc = GameTextures::interface();
         const auto uiScale = resolution().uiScale();
-        const int icoll = static_cast<int>(uiScale);
+        const int icoll = GameTextures::interfaceTextureId();
         const auto &coll = intrfc[icoll];
         iconLabel->setTexture(coll.fDrachmasTopMenu);
         iconLabel->fitContent();

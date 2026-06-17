@@ -5,7 +5,12 @@
 #include <vector>
 
 enum class eUIScale {
-    tiny, small, medium, large
+    tiny = 0,
+    small = 1,
+    mediumSmall = 2,
+    medium = 3,
+    mediumLarge = 4,
+    large = 5
 };
 
 class eResolution {

@@ -34,7 +34,7 @@ void eEpisodeIntroductionWidget::initialize(
         const eEpisodeIntroType type) {
     const auto res = resolution();
     const auto& intrfc = GameTextures::interface();
-    const int iRes = static_cast<int>(res.uiScale());
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
     if(type == eEpisodeIntroType::intro ||
        type == eEpisodeIntroType::campaingVictory) {

@@ -107,6 +107,7 @@ struct Settings {
     int fAmbientVolume = 100;
     eResolution fRes = eResolution(1280, 720);
     eUIScale fUiScale = eUIScale::small;
+    int fTopSidebarScale = 1;
 
     // Whole-frame upscale (window-level D3D11 pass).
     Interpolation fInterpolation = Interpolation::cubic;
@@ -154,6 +155,7 @@ struct Settings {
     static int clampKeyScrollSpeed(const int speed);
     static int clampVolume(const int volume);
     static int clampGameSpeed(const int speed);
+    static int clampTopSidebarScale(const int scale);
     SDL_Scancode hotkey(const HotkeyId id) const;
     void setHotkey(const HotkeyId id, const SDL_Scancode key);
     HotkeyId hotkeyIdForScancode(const SDL_Scancode scancode) const;

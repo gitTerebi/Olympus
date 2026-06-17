@@ -5,6 +5,7 @@
 #include "elabelbase.h"
 
 #include <algorithm>
+#include <cmath>
 
 class eLabel : public eWidget, public eLabelBase {
 public:
@@ -12,11 +13,29 @@ public:
     eLabel(const std::string& text,
            MainWindow* const window);
 
+    void setTextureDrawScale(const double scale) {
+        mTextureDrawScale = std::max(0.1, scale);
+        mHasTextureDrawScale = true;
+    }
+    double textureDrawScale() const { return mTextureDrawScale; }
+    bool hasTextureDrawScale() const { return mHasTextureDrawScale; }
+    void setTextureDrawBleed(const int bleed) {
+        mTextureDrawBleed = std::max(0, bleed);
+    }
     void fitOptions(const std::vector<std::string>& options);
     void renderTargetsReset() override;
 protected:
     void sizeHint(int& w, int& h) override;
     void paintEvent(ePainter& p) override;
+    void paintTexture(ePainter& p,
+                      const std::shared_ptr<Texture>& tex,
+                      Alignment align);
+    int scaledTextureWidth(const std::shared_ptr<Texture>& tex) const;
+    int scaledTextureHeight(const std::shared_ptr<Texture>& tex) const;
+private:
+    double mTextureDrawScale = 1.0;
+    bool mHasTextureDrawScale = false;
+    int mTextureDrawBleed = 0;
 };
 
 class eScaledTextureLabel : public eLabel {

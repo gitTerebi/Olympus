@@ -26,18 +26,18 @@ eButton* eButton::sCreate(const TextureCollection& texs,
 void eButton::sizeHint(int& w, int& h) {
     eLabel::sizeHint(w, h);
     const auto& tex = texture();
-    w = std::max({w, tex ? tex->width() : 0,
-                  mHoverTexture ? mHoverTexture->width() : 0,
-                  mPressedTexture ? mPressedTexture->width() : 0});
-    h = std::max({h, tex ? tex->height() : 0,
-                  mHoverTexture ? mHoverTexture->height() : 0,
-                  mPressedTexture ? mPressedTexture->height() : 0});
+    w = std::max({w, scaledTextureWidth(tex),
+                  scaledTextureWidth(mHoverTexture),
+                  scaledTextureWidth(mPressedTexture)});
+    h = std::max({h, scaledTextureHeight(tex),
+                  scaledTextureHeight(mHoverTexture),
+                  scaledTextureHeight(mPressedTexture)});
 }
 
 void eButton::paintEvent(ePainter& p) {
     if(!enabled()) {
         if(mDisabledTexture) {
-            p.drawTexture(rect(), mDisabledTexture, textAlignment());
+            paintTexture(p, mDisabledTexture, textAlignment());
         } else {
             const auto& t = texture();
             if(t) t->setAlpha(10);
@@ -46,10 +46,10 @@ void eButton::paintEvent(ePainter& p) {
         }
         return;
     } else if(pressed() && mPressedTexture) {
-        p.drawTexture(rect(), mPressedTexture, textAlignment());
+        paintTexture(p, mPressedTexture, textAlignment());
     } else if(hovered()) {
         if(mHoverTexture) {
-            p.drawTexture(rect(), mHoverTexture, textAlignment());
+            paintTexture(p, mHoverTexture, textAlignment());
         } else {
             eLabel::paintEvent(p);
             if(mUnderline && enabled()) {

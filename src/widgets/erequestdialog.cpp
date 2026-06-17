@@ -161,7 +161,7 @@ void eRequestDialog::initialize(const stdsptr<WorldCity>& c,
         } else {
             const auto r = resolution();
             const auto uiScale = r.uiScale();
-            const int icoll = static_cast<int>(uiScale);
+            const int icoll = GameTextures::interfaceTextureId();
             const auto& intrfc = GameTextures::interface();
             const auto& coll = intrfc[icoll];
 

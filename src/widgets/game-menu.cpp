@@ -218,6 +218,8 @@ eWidget *GameMenu::createSubButtons(
         const auto createButton = [&](const TextureCollection &texs)
         {
             const auto b = eButton::sCreate(texs, window(), result);
+            b->setTextureDrawScale(topSidebarTextureScale());
+            b->fitContent();
             b->setPressAction(c.fPressedFunc);
             b->setMouseEnterAction([c, this]()
                                    {
@@ -257,7 +259,7 @@ eBuildButton *GameMenu::createBuildButton(const eSPR &c)
     const auto mode = c.fMode;
     const auto t = eBuildingModeHelpers::toBuildingType(mode);
     const int cost = DifficultyHelpers::buildingCost(diff, t);
-    const int mult = static_cast<int>(resolution().uiScale()) + 1;
+    const int mult = topSidebarMult();
     bb->initialize(c.fName, c.fMarbleCost, cost, 150 * mult);
     bb->setPressAction([this, c]()
                        {
@@ -409,7 +411,7 @@ eBuildButton *GameMenu::createTradeBuildButton(
     if (c.fMarbleCost > 0 || cost > 0)
     {
         const int mult = bb->height() / 10;
-        const int iRes = mult - 1;
+        const int iRes = GameTextures::interfaceTextureId();
         const auto &intrfc = GameTextures::interface();
         const auto &coll = intrfc[iRes];
         if (c.fMarbleCost > 0)
@@ -572,11 +574,12 @@ void GameMenu::initialize(GameBoard *const b,
 
     int iRes;
     int mult;
-    iResAndMult(iRes, mult);
+    topSidebarIResAndMult(iRes, mult);
 
     const auto &intrfc = GameTextures::interface();
     const auto &coll = intrfc[iRes];
     const auto tex = coll.fGameMenuBackground;
+    setTextureDrawScale(topSidebarTextureScale());
     setTexture(tex);
     setPadding(0);
     fitContent();
@@ -1331,15 +1334,27 @@ void GameMenu::initialize(GameBoard *const b,
         btmButtons->setPadding(0);
 
         const auto b = eButton::sCreate(coll.fBuildRoad, window(), btmButtons);
+        b->setTextureDrawScale(topSidebarTextureScale());
+        b->setTextureDrawBleed(topSidebarTextureBleed());
+        b->fitContent();
         b->setPressAction([this]()
                           { setMode(eBuildingMode::road); });
         const auto rb = eButton::sCreate(coll.fRoadBlock, window(), btmButtons);
+        rb->setTextureDrawScale(topSidebarTextureScale());
+        rb->setTextureDrawBleed(topSidebarTextureBleed());
+        rb->fitContent();
         rb->setPressAction([this]()
                            { setMode(eBuildingMode::roadblock); });
         const auto e = eButton::sCreate(coll.fClear, window(), btmButtons);
+        e->setTextureDrawScale(topSidebarTextureScale());
+        e->setTextureDrawBleed(topSidebarTextureBleed());
+        e->fitContent();
         e->setPressAction([this]()
                           { setMode(eBuildingMode::erase); });
         mUndoButton = eButton::sCreate(coll.fUndo, window(), btmButtons);
+        mUndoButton->setTextureDrawScale(topSidebarTextureScale());
+        mUndoButton->setTextureDrawBleed(topSidebarTextureBleed());
+        mUndoButton->fitContent();
         mUndoButton->setPressAction([this]()
                                     {
             mBoard->undoLastAction();
@@ -1357,6 +1372,12 @@ void GameMenu::initialize(GameBoard *const b,
         const auto butts = new eWidget(window());
         const auto info = eCheckableButton::sCreate(coll.fShowInfo, window(), butts);
         const auto map = eCheckableButton::sCreate(coll.fShowMap, window(), butts);
+        info->setTextureDrawScale(topSidebarTextureScale());
+        info->setTextureDrawBleed(topSidebarTextureBleed());
+        info->fitContent();
+        map->setTextureDrawScale(topSidebarTextureScale());
+        map->setTextureDrawBleed(topSidebarTextureBleed());
+        map->fitContent();
         info->setChecked(true);
         info->setCheckAction([info, map](const bool c)
                              {
@@ -1374,6 +1395,9 @@ void GameMenu::initialize(GameBoard *const b,
 
     {
         mMessagesButton = eButton::sCreate(coll.fMessages, window(), this);
+        mMessagesButton->setTextureDrawScale(topSidebarTextureScale());
+        mMessagesButton->setTextureDrawBleed(topSidebarTextureBleed());
+        mMessagesButton->fitContent();
         mMessagesButton->setPressAction([this]()
                                         {
             if(mMsgListW) {
@@ -1409,14 +1433,23 @@ void GameMenu::initialize(GameBoard *const b,
         butts->setPadding(0);
 
         const auto goals = new eBasicButton(&InterfaceTextures::fGoals, window());
+        goals->setTextureDrawScale(topSidebarTextureScale());
+        goals->setTextureDrawBleed(topSidebarTextureBleed());
+        goals->fitContent();
         goals->setTooltip(Language::zeusText(68, 9));
         butts->addWidget(goals);
         goals->setPressAction(goalsView);
 
         mRotateButton = new eRotateButton(window());
+        mRotateButton->setTextureDrawScale(topSidebarTextureScale());
+        mRotateButton->setTextureDrawBleed(topSidebarTextureBleed());
+        mRotateButton->fitContent();
         butts->addWidget(mRotateButton);
 
         mWorldButton = eButton::sCreate(coll.fWorld, window(), butts);
+        mWorldButton->setTextureDrawScale(topSidebarTextureScale());
+        mWorldButton->setTextureDrawBleed(topSidebarTextureBleed());
+        mWorldButton->fitContent();
         mWorldButton->setTooltip(Language::zeusText(68, 17));
 
         const int w = goals->width() + mRotateButton->width() + mWorldButton->width();
