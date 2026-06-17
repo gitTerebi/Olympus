@@ -36,6 +36,11 @@ std::string unemployedText(const eEmploymentData& emplData) {
 
 }
 
+void eTopBarWidget::renderTargetsReset() {
+    eWidget::renderTargetsReset();
+    mBackgroundCache.reset();
+}
+
 void eTopBarWidget::initialize() {
     const auto& intrfc = GameTextures::interface();
     const int icoll = GameTextures::interfaceTextureId();
@@ -178,24 +183,38 @@ void eTopBarWidget::paintEvent(ePainter& p) {
             if(contentChanged) layoutContent();
         }
 
-        int iRes;
-        double mult;
-        topSidebarIResAndMult(iRes, mult);
-        const auto& intrfc = GameTextures::interface()[iRes];
-        const auto& tex = intrfc.fGameTopBar;
-        const int texWidth = tex->width();
-        const int drawWidth = std::round(texWidth*topSidebarTextureScale());
-        const int drawHeight = std::round(tex->height()*topSidebarTextureScale());
         const auto& rend = p.renderer();
-        const SDL_Rect clipRect{0, 0, width(), height()};
-        p.setClipRect(&clipRect);
-        bool flip = false;
-        const SDL_Rect srcRect{tex->x(), tex->y(), tex->width(), tex->height()};
-        for(int x = width() - drawWidth; x > -drawWidth; x -= drawWidth) {
-            const SDL_Rect dstRect{x, 0, drawWidth, drawHeight};
-            tex->render(rend, srcRect, dstRect, flip);
-            flip = !flip;
+        if(!mBackgroundCache ||
+           mBackgroundCache->width() != width() ||
+           mBackgroundCache->height() != height()) {
+            int iRes;
+            double mult;
+            topSidebarIResAndMult(iRes, mult);
+            const auto& intrfc = GameTextures::interface()[iRes];
+            const auto& tex = intrfc.fGameTopBar;
+            const int texWidth = tex->width();
+            const int drawWidth = std::round(texWidth*topSidebarTextureScale());
+            const int drawHeight = std::round(tex->height()*topSidebarTextureScale());
+            const auto cache = std::make_shared<Texture>();
+            if(cache->create(rend, width(), height())) {
+                SDL_SetTextureBlendMode(cache->tex(), SDL_BLENDMODE_NONE);
+                const auto prevTarget = SDL_GetRenderTarget(rend);
+                cache->setAsRenderTarget(rend);
+                SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
+                SDL_RenderClear(rend);
+                bool flip = false;
+                const SDL_Rect srcRect{tex->x(), tex->y(), tex->width(), tex->height()};
+                for(int x = width() - drawWidth; x > -drawWidth; x -= drawWidth) {
+                    const SDL_Rect dstRect{x, 0, drawWidth, drawHeight};
+                    tex->render(rend, srcRect, dstRect, flip);
+                    flip = !flip;
+                }
+                SDL_SetRenderTarget(rend, prevTarget);
+                mBackgroundCache = cache;
+            }
         }
-        p.setClipRect(nullptr);
+        if(mBackgroundCache) {
+            mBackgroundCache->render(rend, p.x(), p.y());
+        }
     }
 }
