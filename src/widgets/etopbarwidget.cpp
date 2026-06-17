@@ -39,7 +39,7 @@ std::string unemployedText(const eEmploymentData& emplData) {
 void eTopBarWidget::initialize() {
     const auto& intrfc = GameTextures::interface();
     const int icoll = GameTextures::interfaceTextureId();
-    const int mult = topSidebarMult();
+    const double mult = topSidebarMult();
     const auto& coll = intrfc[icoll];
     setPadding(0);
 
@@ -63,7 +63,7 @@ void eTopBarWidget::initialize() {
     mDateLabel->setText(date.shortString());
     mDateLabel->fitContent();
 
-    setHeight(12*mult);
+    setHeight(std::round(12*mult));
 
     mCitySlot = createTopBarSlot(mCityLabel);
     mDrachmasSlot = createTopBarSlot(mDrachmasWidget);
@@ -124,6 +124,7 @@ void eTopBarWidget::layoutContent() {
 void eTopBarWidget::paintEvent(ePainter& p) {
     // const bool update = (++mTime % 60) == 0;
     if(mBoard) {
+        bool contentChanged = false;
         const auto cid = mGW->viewedCity();
         const auto pid = mBoard->personPlayer();
 //        const auto pid = mBoard->cityIdToPlayerId(cid);
@@ -131,42 +132,49 @@ void eTopBarWidget::paintEvent(ePainter& p) {
         const auto c = wb.cityWithId(cid);
 
         const auto label = c ? c->name() : "-";
-        mCityLabel->setText(label);
-        mCityLabel->fitContent();
+        if(mCityLabel->text() != label) {
+            mCityLabel->setText(label);
+            mCityLabel->fitContent();
+            contentChanged = true;
+        }
 
         const auto popData = mBoard->populationData(cid);
         if(popData) {
             const int pop = popData->population();
             const auto emplData = mBoard->employmentData(cid);
             if(emplData) {
-                mPopulationWidget->setText(populationText(pop, *emplData));
+                contentChanged |= mPopulationWidget->setText(populationText(pop, *emplData));
                 const std::string uText = unemployedText(*emplData);
-                mUnemployedWidget->setText(uText);
+                contentChanged |= mUnemployedWidget->setText(uText);
                 if(emplData->unemployed() > 0) {
-                    mUnemployedWidget->setIconColor(0, 255, 0); // green
+                    contentChanged |= mUnemployedWidget->setIconColor(0, 255, 0); // green
                 } else if(emplData->freeJobVacancies() > 0) {
-                    mUnemployedWidget->setIconColor(255, 0, 0); // red
+                    contentChanged |= mUnemployedWidget->setIconColor(255, 0, 0); // red
                 } else {
-                    mUnemployedWidget->setIconColor(255, 255, 255); // white
+                    contentChanged |= mUnemployedWidget->setIconColor(255, 255, 255); // white
                 }
             } else {
-                mPopulationWidget->setText(std::to_string(pop));
-                mUnemployedWidget->setText("");
+                contentChanged |= mPopulationWidget->setText(std::to_string(pop));
+                contentChanged |= mUnemployedWidget->setText("");
             }
         } else {
-            mPopulationWidget->setText("-");
-            mUnemployedWidget->setText("");
+            contentChanged |= mPopulationWidget->setText("-");
+            contentChanged |= mUnemployedWidget->setText("");
         }
 
         const int d = mBoard->drachmas(pid);
-        mDrachmasWidget->setText(std::to_string(d));
+        contentChanged |= mDrachmasWidget->setText(std::to_string(d));
 
-        mDateLabel->setText(mBoard->date().shortString());
-        mDateLabel->fitContent();
-        layoutContent();
+        const auto dateText = mBoard->date().shortString();
+        if(mDateLabel->text() != dateText) {
+            mDateLabel->setText(dateText);
+            mDateLabel->fitContent();
+            contentChanged = true;
+        }
+        if(contentChanged) layoutContent();
 
         int iRes;
-        int mult;
+        double mult;
         topSidebarIResAndMult(iRes, mult);
         const auto& intrfc = GameTextures::interface()[iRes];
         const auto& tex = intrfc.fGameTopBar;

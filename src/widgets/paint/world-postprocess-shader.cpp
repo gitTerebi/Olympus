@@ -821,6 +821,10 @@ void setPostprocessFilters(const int interpolation, const int upscale,
     gFactor = factor < 2 ? 2 : (factor > 6 ? 6 : factor);
 }
 
+bool postprocessIsPlainCopy() {
+    return gInterp == 0 && gUpscale == 0;
+}
+
 bool applySrvPostprocess(SDL_Renderer* const r,
                          ID3D11ShaderResourceView* const frameSrv,
                          const int texW,
@@ -950,6 +954,7 @@ bool applySrvPostprocess(SDL_Renderer* const r,
             ctx->PSSetShaderResources(0, 1, &frameSrv);
             ctx->Draw(3, 0);
             ctx->PSSetShaderResources(0, 1, &nullSrv);
+            ctx->OMSetRenderTargets(0, nullptr, nullptr);
             interpSrc = s.fMidSrv;
             interpW = midW;
             interpH = midH;
@@ -970,6 +975,7 @@ bool applySrvPostprocess(SDL_Renderer* const r,
                     ctx->PSSetShaderResources(0, 1, &s.fMidSrv);
                     ctx->Draw(3, 0);
                     ctx->PSSetShaderResources(0, 1, &nullSrv);
+                    ctx->OMSetRenderTargets(0, nullptr, nullptr);
                     interpSrc = s.fMid2Srv;
                     interpW = mid2W;
                     interpH = mid2H;
@@ -1080,6 +1086,10 @@ void setPostprocessFilters(const int interpolation, const int upscale,
     gInterp = interpolation;
     gUpscale = upscale;
     gFactor = factor < 2 ? 2 : (factor > 6 ? 6 : factor);
+}
+
+bool postprocessIsPlainCopy() {
+    return gInterp == 0 && gUpscale == 0;
 }
 
 bool applyFullFramePostprocess(SDL_Renderer* const r,

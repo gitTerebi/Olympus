@@ -17,6 +17,7 @@
 
 // interpolation: Interpolation as int; upscale: Upscale as int; factor: 2..6.
 void setPostprocessFilters(int interpolation, int upscale, int factor);
+bool postprocessIsPlainCopy();
 
 bool applyFullFramePostprocess(SDL_Renderer* r,
                                const void* pixels,

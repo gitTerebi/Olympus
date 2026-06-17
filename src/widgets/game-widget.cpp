@@ -12,6 +12,7 @@
 #include "cursors.h"
 
 #include "emodal.h"
+#include "eeventbackground.h"
 #include "e-message-list-widget.h"
 #include "eoptionsdata.h"
 #include "game-dir.h"
@@ -501,6 +502,27 @@ void GameWidget::reloadUi()
     updateTipPositions();
     updateToastPositions();
     syncModeCursor();
+}
+
+void GameWidget::reloadUiPreservingOverlays()
+{
+    std::vector<eWidget*> overlays;
+    const auto currentChildren = children();
+    for(const auto child : currentChildren) {
+        if(dynamic_cast<eEventBackground*>(child)) {
+            overlays.push_back(child);
+        }
+    }
+    for(const auto overlay : overlays) {
+        removeWidget(overlay);
+    }
+
+    reloadUi();
+
+    for(const auto overlay : overlays) {
+        addWidget(overlay);
+        overlay->windowSizeChanged(width(), height());
+    }
 }
 
 void GameWidget::windowSizeChanged(const int w, const int h)
@@ -1030,43 +1052,6 @@ void GameWidget::showBuyCity(const eCityId cid)
 void GameWidget::hideBuyCity()
 {
     mBuyCityWidget->hide();
-}
-
-void GameWidget::iterateOverVisibleTiles(const eTileAction &a)
-{
-    const int rw = mBoard->rotatedWidth();
-    const int rh = mBoard->rotatedHeight();
-
-    const int minX = std::clamp(-mDX / mTileW, 0, rw);
-    const int visWidth = citySourceWidth() - mGm->width();
-    const int maxX = std::clamp(minX + visWidth / mTileW, 0, rw);
-
-    const int minY = std::clamp(-2 * mDY / mTileH, 0, rh);
-    const int maxY = std::clamp(minY + 2 * citySourceHeight() / mTileH, 0, rh);
-
-    playVisibleAmbientSound(minX, maxX, minY, maxY);
-
-    const int bleedLeft = 6;
-    const int bleedRight = 9;
-    const int bleedTop = 9;
-    const int bleedBottom = 21;
-
-    const int eminX = std::clamp(minX - bleedLeft, 0, rw);
-    const int emaxX = std::clamp(maxX + bleedRight, 0, rw);
-
-    const int eminY = std::clamp(minY - bleedTop, 0, rh);
-    const int emaxY = std::clamp(maxY + bleedBottom, 0, rh);
-
-    for (int y = eminY; y < emaxY; y++)
-    {
-        for (int x = eminX; x < emaxX; x++)
-        {
-            const auto t = mBoard->rotateddtile(x, y);
-            if (!t)
-                continue;
-            a(t);
-        }
-    }
 }
 
 void GameWidget::playVisibleAmbientSound(const int minX, const int maxX,
@@ -3754,6 +3739,10 @@ void GameWidget::updateBeforePaint()
         mSimAccumMs -= kSimStepMs;
         simTicks++;
     }
+    if(simTicks > kMaxSimTicksPerFrame) {
+        simTicks = kMaxSimTicksPerFrame;
+        mSimAccumMs = 0.0;
+    }
     mAnimAccumMs += dtMs;
     while(mAnimAccumMs >= kAnimStepMs) {
         mAnimAccumMs -= kAnimStepMs;
@@ -3811,9 +3800,7 @@ void GameWidget::updateBeforePaint()
     }
     if(mAnimFrame != prevAnimFrame) mBoard->incFrame();
 
-    const bool turbo = mSpeedId == sMaxSpeedId;
-    const int iMax = turbo ? 4 : simTicks;
-    for(int i = 0; i < iMax; i++) {
+    if(simTicks > 0) {
         mBoard->scheduleDataUpdate();
         mBoard->updateAppealMapIfNeeded();
         mBoard->handleFinishedTasks();
@@ -3824,19 +3811,14 @@ void GameWidget::updateBeforePaint()
                 const auto w = window();
                 w->episodeLost();
             } else {
-                mTime += mSpeed;
-                int remaining = mSpeed;
-                while(remaining > 0) {
-                    const int step = std::min(remaining, sSpeeds[2]);
-                    mBoard->incTime(step);
-                    remaining -= step;
-                }
+                const int timeBy = mSpeed * simTicks;
+                mTime += timeBy;
+                mBoard->incTime(timeBy);
                 mGm->update();
                 if(mDestinationBuilding) tickDestinationPath(mTime);
             }
         }
         mBoard->emptyRubbish();
-        if(!incTime) break;
     }
 
     if(!window()->settings().fDisableEdgeScroll) {

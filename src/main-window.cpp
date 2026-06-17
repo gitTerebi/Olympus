@@ -273,9 +273,7 @@ void MainWindow::setUiScale(const int scale) {
                                  mSettings.fUiScale);
     mSettings.write();
     if(mSettings.fUiScale != oldScale && mGW) {
-        addSlot([this]() {
-            if(mGW) mGW->reloadUi();
-        });
+        mGW->reloadUiPreservingOverlays();
     }
 }
 
@@ -285,9 +283,7 @@ void MainWindow::setTopSidebarScale(const int scale) {
     mSettings.fTopSidebarScale = clamped;
     mSettings.write();
     if(mGW) {
-        addSlot([this]() {
-            if(mGW) mGW->reloadUi();
-        });
+        mGW->reloadUiPreservingOverlays();
     }
 }
 
@@ -980,8 +976,10 @@ int MainWindow::exec() {
         SDL_SetRenderTarget(mSdlRenderer, nullptr);
         SDL_RenderSetViewport(mSdlRenderer, nullptr);
         SDL_RenderSetClipRect(mSdlRenderer, nullptr);
-        SDL_SetRenderDrawColor(mSdlRenderer, 0x0, 0x0, 0x0, 0xFF);
-        SDL_RenderClear(mSdlRenderer);
+        if(mWidget != mGW) {
+            SDL_SetRenderDrawColor(mSdlRenderer, 0x0, 0x0, 0x0, 0xFF);
+            SDL_RenderClear(mSdlRenderer);
+        }
 
         ePainter p(mSdlRenderer);
 
