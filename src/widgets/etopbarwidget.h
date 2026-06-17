@@ -71,11 +71,12 @@ class eTopBarWidget : public eWidget
 public:
     using eWidget::eWidget;
 
+    void renderTargetsReset() override;
     void initialize();
     void setBoard(GameBoard *const board);
     void setGameWidget(GameWidget *const gw);
 
-    void paintEvent(ePainter &p);
+    void paintEvent(ePainter &p) override;
 
 private:
     void layoutContent();
@@ -95,6 +96,7 @@ private:
     eTopWidget *mPopulationWidget = nullptr;
     eTopWidget *mUnemployedWidget = nullptr;
     eLabel *mDateLabel = nullptr;
+    std::shared_ptr<Texture> mBackgroundCache;
     int mTime = 0;
     int mLastContentUpdateMs = 0;
 };
