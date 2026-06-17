@@ -91,7 +91,7 @@ void FramedButton::renderFrameCache(ePainter& p, const bool hover) {
     auto next = std::make_shared<Texture>();
     const auto r = p.renderer();
     if(!next->create(r, width(), height())) return;
-    SDL_SetTextureBlendMode(next->tex(), SDL_BLENDMODE_NONE);
+    SDL_SetTextureBlendMode(next->tex(), SDL_BLENDMODE_BLEND);
     const auto prevTarget = SDL_GetRenderTarget(r);
     next->setAsRenderTarget(r);
     SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
