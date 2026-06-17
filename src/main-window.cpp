@@ -194,17 +194,21 @@ bool MainWindow::resizeCurrentWidgetToWindow() {
     return true;
 }
 
+bool MainWindow::isWindowMaximized() const {
+    return mSdlWindow &&
+           (SDL_GetWindowFlags(mSdlWindow) & SDL_WINDOW_MAXIMIZED) != 0;
+}
+
 void MainWindow::setResolution(const eResolution& res) {
     if(mSettings.fRes == res && !mFirstResolutionSetting) return;
     mFirstResolutionSetting = false;
     mSettings.fRes = res;
     const int w = res.width();
     const int h = res.height();
-    const bool wasMaximized =
-        (SDL_GetWindowFlags(mSdlWindow) & SDL_WINDOW_MAXIMIZED) != 0;
-    SDL_SetWindowSize(mSdlWindow, w, h);
-    if(wasMaximized) {
-        SDL_MaximizeWindow(mSdlWindow);
+    if(mSettings.fDisplayMode == DisplayMode::window && isWindowMaximized()) {
+        printf("Keeping maximized window size while changing resolution\n");
+    } else {
+        SDL_SetWindowSize(mSdlWindow, w, h);
     }
     resizeCurrentWidgetToWindow();
 }

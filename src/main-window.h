@@ -120,6 +120,7 @@ private:
     void clearWidgets();
     std::string mostRecentSavePath() const;
     bool resizeCurrentWidgetToWindow();
+    bool isWindowMaximized() const;
     void emitWindowSizeChanged();
     // Map raw window mouse coords before dispatch. The city shader now runs inside
     // GameWidget only, so global UI coordinates stay in window space.
