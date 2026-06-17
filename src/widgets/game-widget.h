@@ -316,7 +316,7 @@ private:
         const int minY = std::clamp(-2 * mDY / mTileH, 0, rh);
         const int maxY = std::clamp(minY + 2 * citySourceHeight() / mTileH, 0, rh);
 
-        playVisibleAmbientSound(minX, maxX, minY, maxY);
+        if(mFrame % 60 == 0) playVisibleAmbientSound(minX, maxX, minY, maxY);
 
         const int bleedLeft = 6;
         const int bleedRight = 9;

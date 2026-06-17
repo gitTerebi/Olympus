@@ -94,27 +94,6 @@ void eMiniMap::paintEvent(ePainter& p) {
             updateTexture(cid, useTexture);
         }
         mTexture->fUpdateScheduled = false;
-    } else {
-        const Uint32 now = SDL_GetTicks();
-        if(mLastMaintenanceMs == 0) mLastMaintenanceMs = now;
-        Uint32 elapsed = now - mLastMaintenanceMs;
-        mLastMaintenanceMs = now;
-        if(elapsed > 250) elapsed = 250;
-        mMaintenanceAccumMs += elapsed;
-        constexpr Uint32 maintenanceStepMs = 1000 / 60;
-        if(mMaintenanceAccumMs >= maintenanceStepMs) {
-            mMaintenanceAccumMs %= maintenanceStepMs;
-            mTime++;
-            const auto cities = mBoard->citiesOnBoard();
-            const int nc = cities.size();
-            const int period = nc > 0 ? 60/nc : 60;
-            if(nc > 0 && mTime % period == 0) {
-                const int id = mCityCounter % nc;
-                const auto cid = cities[id];
-                updateTexture(cid, useTexture);
-                mCityCounter++;
-            }
-        }
     }
     if(!mTexture->fTilesToUpdate.empty()) {
         updateTexture(eCityId::neutralAggresive, useTexture);
