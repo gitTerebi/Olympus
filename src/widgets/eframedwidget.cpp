@@ -5,16 +5,44 @@
 #include <random>
 
 void eFramedWidget::setType(const eFrameType type) {
+    if(mType == type) return;
     mType = type;
+    resetCache();
+}
+
+void eFramedWidget::renderTargetsReset() {
+    eWidget::renderTargetsReset();
+    resetCache();
+}
+
+void eFramedWidget::resetCache() {
+    mBackgroundCache.reset();
 }
 
 void eFramedWidget::paintEvent(ePainter& p) {
+    if(mBackgroundCache &&
+       mBackgroundCache->width() == width() &&
+       mBackgroundCache->height() == height()) {
+        mBackgroundCache->render(p.renderer(), p.x(), p.y());
+        return;
+    }
+
     int iRes;
     double mult;
     iResAndMult(iRes, mult);
     const int dim = GameTextures::interfaceTileDim();
     const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
+
+    const auto r = p.renderer();
+    const auto cache = std::make_shared<Texture>();
+    if(!cache->create(r, width(), height())) return;
+    SDL_SetTextureBlendMode(cache->tex(), SDL_BLENDMODE_NONE);
+    const auto prevTarget = SDL_GetRenderTarget(r);
+    cache->setAsRenderTarget(r);
+    SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
+    SDL_RenderClear(r);
+    ePainter cachePainter(r);
 
     const int iMax = width()/dim + 1;
     const int jMax = height()/dim + 1;
@@ -59,7 +87,7 @@ void eFramedWidget::paintEvent(ePainter& p) {
                 const int texId = texCollId(i, j);
                 const auto& tex = texs.getTexture(texId);
                 const int y = j == jMax - 1 ? lastY : dim*j;
-                p.drawTexture(x, y, tex);
+                cachePainter.drawTexture(x, y, tex);
             }
         }
     } else {
@@ -81,9 +109,12 @@ void eFramedWidget::paintEvent(ePainter& p) {
                 const int texId = rand % coll.size();
                 const auto& tex = coll.getTexture(texId);
                 const int y = j == jMax - 1 ? lastY : dim*j;
-                p.drawTexture(x, y, tex);
+                cachePainter.drawTexture(x, y, tex);
             }
         }
     }
     //p.drawRect(rect(), {0, 0, 0, 255}, 2);
+    SDL_SetRenderTarget(r, prevTarget);
+    mBackgroundCache = cache;
+    mBackgroundCache->render(r, p.x(), p.y());
 }
