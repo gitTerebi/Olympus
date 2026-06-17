@@ -4,6 +4,32 @@
 
 #include <random>
 
+void FramedButton::setRenderBg(const bool r) {
+    if(mRenderBg == r) return;
+    mRenderBg = r;
+    resetFrameCache();
+}
+
+void FramedButton::setNoBorder(const bool b) {
+    if(mNoBorder == b) return;
+    mNoBorder = b;
+    resetFrameCache();
+}
+
+void FramedButton::renderTargetsReset() {
+    eButton::renderTargetsReset();
+    resetFrameCache();
+}
+
+void FramedButton::resetFrameCache() {
+    mFrameCache.reset();
+    mHoverFrameCache.reset();
+}
+
+std::shared_ptr<Texture>& FramedButton::frameCache(const bool hover) {
+    return hover ? mHoverFrameCache : mFrameCache;
+}
+
 void FramedButton::paintEvent(ePainter& p) {
     if(!enabled()) {
         if(mRenderBg) renderBg(p);
@@ -42,8 +68,18 @@ void FramedButton::paintEvent(ePainter& p) {
         }
         return;
     }
-    if(mRenderBg) renderBg(p);
     if(mNoBorder) { eButton::paintEvent(p); return; }
+
+    renderFrameCache(p, hovered());
+    eButton::paintEvent(p);
+}
+
+void FramedButton::renderFrameCache(ePainter& p, const bool hover) {
+    auto& cache = frameCache(hover);
+    if(cache && cache->width() == width() && cache->height() == height()) {
+        cache->render(p.renderer(), p.x(), p.y());
+        return;
+    }
 
     int iRes;
     double mult;
@@ -52,8 +88,20 @@ void FramedButton::paintEvent(ePainter& p) {
     const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
+    auto next = std::make_shared<Texture>();
+    const auto r = p.renderer();
+    if(!next->create(r, width(), height())) return;
+    SDL_SetTextureBlendMode(next->tex(), SDL_BLENDMODE_NONE);
+    const auto prevTarget = SDL_GetRenderTarget(r);
+    next->setAsRenderTarget(r);
+    SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
+    SDL_RenderClear(r);
+    ePainter cachePainter(r);
+
+    if(mRenderBg) renderBg(cachePainter);
+
     const TextureCollection* coll = nullptr;
-    if(hovered()) {
+    if(hover) {
         coll = &intrfc.fButtonFrameHover;
     } else {
         coll = &intrfc.fButtonFrame;
@@ -100,10 +148,12 @@ void FramedButton::paintEvent(ePainter& p) {
             if(texId == -1) continue;
             const auto& tex = coll->getTexture(texId);
             const int y = j == jMax - 1 ? lastY : dim*j;
-            p.drawTexture(x, y, tex);
+            cachePainter.drawTexture(x, y, tex);
         }
     }
-    eButton::paintEvent(p);
+    SDL_SetRenderTarget(r, prevTarget);
+    cache = next;
+    cache->render(r, p.x(), p.y());
 }
 
 void FramedButton::renderBg(ePainter& p) {
