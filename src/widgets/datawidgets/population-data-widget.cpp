@@ -87,7 +87,9 @@ void PopulationDataWidget::initialize() {
     mPeopleDirectionSeparator = l2;
 
     {
+        const int textW = iw - 4*pp;
         const auto il1 = new eLabel(window());
+        il1->setWrapWidth(textW);
         il1->setWrapAlignment(Alignment::hcenter);
         il1->setFontSizeXS();
         il1->setNoPadding();
@@ -95,6 +97,7 @@ void PopulationDataWidget::initialize() {
 
         const auto makeReasonLabel = [&]() {
             const auto label = new eLabel(window());
+            label->setWrapWidth(textW);
             label->setWrapAlignment(Alignment::hcenter);
             label->setYellowFontColor();
             label->setFontSizeXS();
@@ -121,6 +124,7 @@ void PopulationDataWidget::initialize() {
         mImiLimitedW = new eWidget(window());
         mImiLimitedW->setNoPadding();
         mImiLimitedW->setWidth(iw - 2*pp);
+        mImiLimitedW->setX(pp);
         mImiLimitedW->addWidget(mImiLimitedTitleW);
         mImiLimitedW->addWidget(mImiLimitedReasonW1);
         mImiLimitedW->addWidget(mImiLimitedReasonW2);
@@ -233,6 +237,7 @@ void PopulationDataWidget::paintEvent(ePainter& p) {
             const auto setupLine = [&](eWidget* const w, eLabel* const label,
                                        const std::string& text, const int y) {
                 label->setText(text);
+                label->setWrapWidth(mImiLimitedW->width());
                 label->fitContent();
                 label->align(Alignment::hcenter);
                 w->setHeight(label->height());

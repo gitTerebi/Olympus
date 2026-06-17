@@ -4,7 +4,7 @@
 #include "engine/eworlddirection.h"
 
 #include <functional>
-#include <set>
+#include <vector>
 
 class eBuilding;
 class BuildingTextures;
@@ -43,6 +43,6 @@ void drawSanctuaryRealBuildingPart(
     int colorModGreen,
     int colorModBlue,
     const SanctuaryDrawXY& drawXY,
-    std::set<eMonument*>& drawnTempleWoman);
+    std::vector<eMonument*>& drawnTempleWoman);
 
 #endif // SANCTUARY_REAL_DRAW_H

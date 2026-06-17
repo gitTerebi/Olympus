@@ -52,7 +52,6 @@
 #include <cmath>
 #include <cstdio>
 #include <map>
-#include <set>
 #include <string>
 
 class GameBoardRegisterLock
@@ -193,7 +192,8 @@ void GameWidget::paintEvent(ePainter &p)
 
     const bool terrainEditing = mTem->visible();
     const bool fogOfWar = !terrainEditing && mBoard->fogOfWar();
-    std::set<eMonument*> drawnTempleWoman;
+    auto& drawnTempleWoman = mDrawnTempleWomen;
+    drawnTempleWoman.clear();
     const auto drawTerrain = [&](eTile *const tile)
     {
         const int worldTileX = tile->x();
