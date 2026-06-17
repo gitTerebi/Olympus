@@ -2490,25 +2490,32 @@ void GameWidget::paintEvent(ePainter &p)
     if(postprocessIsPlainCopy()) {
         SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
     } else {
-        if(!mWorldShaderTex ||
-           mWorldShaderTex->width() != srcW ||
-           mWorldShaderTex->height() != srcH) {
-            mWorldShaderTex = std::make_shared<Texture>();
-            mWorldShaderTex->create(r, srcW, srcH);
-            SDL_SetTextureScaleMode(mWorldShaderTex->tex(), SDL_ScaleModeNearest);
-            SDL_SetTextureBlendMode(mWorldShaderTex->tex(), SDL_BLENDMODE_NONE);
-        }
-        mWorldShaderTex->setAsRenderTarget(r);
-        SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
-        SDL_RenderClear(r);
-        const SDL_Rect shaderDstRect{0, 0, srcW, srcH};
-        const int copyWorldResult = SDL_RenderCopy(
-            r, mWorldTex->tex(), &srcRect, &shaderDstRect);
-        SDL_RenderFlush(r);
-        SDL_SetRenderTarget(r, prevTarget);
-        if(copyWorldResult != 0 ||
-           !applyTexturePostprocess(r, mWorldShaderTex->tex(), srcW, srcH, true)) {
-            SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
+        const bool fullSource = srcX == 0 && srcY == 0 &&
+                                srcW == w && srcH == h;
+        if(fullSource &&
+           applyTexturePostprocess(r, mWorldTex->tex(), w, h, true)) {
+            // The shader wrote the city straight to the backbuffer.
+        } else {
+            if(!mWorldShaderTex ||
+               mWorldShaderTex->width() != srcW ||
+               mWorldShaderTex->height() != srcH) {
+                mWorldShaderTex = std::make_shared<Texture>();
+                mWorldShaderTex->create(r, srcW, srcH);
+                SDL_SetTextureScaleMode(mWorldShaderTex->tex(), SDL_ScaleModeNearest);
+                SDL_SetTextureBlendMode(mWorldShaderTex->tex(), SDL_BLENDMODE_NONE);
+            }
+            mWorldShaderTex->setAsRenderTarget(r);
+            SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+            SDL_RenderClear(r);
+            const SDL_Rect shaderDstRect{0, 0, srcW, srcH};
+            const int copyWorldResult = SDL_RenderCopy(
+                r, mWorldTex->tex(), &srcRect, &shaderDstRect);
+            SDL_RenderFlush(r);
+            SDL_SetRenderTarget(r, prevTarget);
+            if(copyWorldResult != 0 ||
+               !applyTexturePostprocess(r, mWorldShaderTex->tex(), srcW, srcH, true)) {
+                SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
+            }
         }
     }
 
