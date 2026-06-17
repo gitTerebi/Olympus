@@ -96,6 +96,7 @@ private:
     eTopWidget *mUnemployedWidget = nullptr;
     eLabel *mDateLabel = nullptr;
     int mTime = 0;
+    int mLastContentUpdateMs = 0;
 };
 
 #endif // ETOPBARWIDGET_H

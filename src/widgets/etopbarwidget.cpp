@@ -84,6 +84,7 @@ void eTopBarWidget::initialize() {
 
 void eTopBarWidget::setBoard(GameBoard* const board) {
     mBoard = board;
+    mLastContentUpdateMs = 0;
 }
 
 void eTopBarWidget::setGameWidget(GameWidget* const gw) {
@@ -124,54 +125,58 @@ void eTopBarWidget::layoutContent() {
 void eTopBarWidget::paintEvent(ePainter& p) {
     // const bool update = (++mTime % 60) == 0;
     if(mBoard) {
-        bool contentChanged = false;
-        const auto cid = mGW->viewedCity();
-        const auto pid = mBoard->personPlayer();
-//        const auto pid = mBoard->cityIdToPlayerId(cid);
-        const auto& wb = mBoard->world();
-        const auto c = wb.cityWithId(cid);
+        const int now = SDL_GetTicks();
+        if(mLastContentUpdateMs == 0 || now - mLastContentUpdateMs >= 100) {
+            mLastContentUpdateMs = now;
+            bool contentChanged = false;
+            const auto cid = mGW->viewedCity();
+            const auto pid = mBoard->personPlayer();
+//            const auto pid = mBoard->cityIdToPlayerId(cid);
+            const auto& wb = mBoard->world();
+            const auto c = wb.cityWithId(cid);
 
-        const auto label = c ? c->name() : "-";
-        if(mCityLabel->text() != label) {
-            mCityLabel->setText(label);
-            mCityLabel->fitContent();
-            contentChanged = true;
-        }
+            const auto label = c ? c->name() : "-";
+            if(mCityLabel->text() != label) {
+                mCityLabel->setText(label);
+                mCityLabel->fitContent();
+                contentChanged = true;
+            }
 
-        const auto popData = mBoard->populationData(cid);
-        if(popData) {
-            const int pop = popData->population();
-            const auto emplData = mBoard->employmentData(cid);
-            if(emplData) {
-                contentChanged |= mPopulationWidget->setText(populationText(pop, *emplData));
-                const std::string uText = unemployedText(*emplData);
-                contentChanged |= mUnemployedWidget->setText(uText);
-                if(emplData->unemployed() > 0) {
-                    contentChanged |= mUnemployedWidget->setIconColor(0, 255, 0); // green
-                } else if(emplData->freeJobVacancies() > 0) {
-                    contentChanged |= mUnemployedWidget->setIconColor(255, 0, 0); // red
+            const auto popData = mBoard->populationData(cid);
+            if(popData) {
+                const int pop = popData->population();
+                const auto emplData = mBoard->employmentData(cid);
+                if(emplData) {
+                    contentChanged |= mPopulationWidget->setText(populationText(pop, *emplData));
+                    const std::string uText = unemployedText(*emplData);
+                    contentChanged |= mUnemployedWidget->setText(uText);
+                    if(emplData->unemployed() > 0) {
+                        contentChanged |= mUnemployedWidget->setIconColor(0, 255, 0); // green
+                    } else if(emplData->freeJobVacancies() > 0) {
+                        contentChanged |= mUnemployedWidget->setIconColor(255, 0, 0); // red
+                    } else {
+                        contentChanged |= mUnemployedWidget->setIconColor(255, 255, 255); // white
+                    }
                 } else {
-                    contentChanged |= mUnemployedWidget->setIconColor(255, 255, 255); // white
+                    contentChanged |= mPopulationWidget->setText(std::to_string(pop));
+                    contentChanged |= mUnemployedWidget->setText("");
                 }
             } else {
-                contentChanged |= mPopulationWidget->setText(std::to_string(pop));
+                contentChanged |= mPopulationWidget->setText("-");
                 contentChanged |= mUnemployedWidget->setText("");
             }
-        } else {
-            contentChanged |= mPopulationWidget->setText("-");
-            contentChanged |= mUnemployedWidget->setText("");
-        }
 
-        const int d = mBoard->drachmas(pid);
-        contentChanged |= mDrachmasWidget->setText(std::to_string(d));
+            const int d = mBoard->drachmas(pid);
+            contentChanged |= mDrachmasWidget->setText(std::to_string(d));
 
-        const auto dateText = mBoard->date().shortString();
-        if(mDateLabel->text() != dateText) {
-            mDateLabel->setText(dateText);
-            mDateLabel->fitContent();
-            contentChanged = true;
+            const auto dateText = mBoard->date().shortString();
+            if(mDateLabel->text() != dateText) {
+                mDateLabel->setText(dateText);
+                mDateLabel->fitContent();
+                contentChanged = true;
+            }
+            if(contentChanged) layoutContent();
         }
-        if(contentChanged) layoutContent();
 
         int iRes;
         double mult;
