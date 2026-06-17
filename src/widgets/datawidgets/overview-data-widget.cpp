@@ -5,6 +5,7 @@
 #include "widgets/game-widget.h"
 #include "widgets/framed-button.h"
 #include "widgets/escrollwidget.h"
+#include "widgets/esmallupbutton.h"
 
 #include "language.h"
 #include "engine/game-board.h"
@@ -21,6 +22,35 @@ namespace {
 std::string trimmedString(const std::string& str, const size_t maxLen = 10) {
     if (str.length() <= maxLen) return str;
     return str.substr(0, maxLen) + ".";
+}
+
+int scrollButtonGutter(MainWindow* const window) {
+    const auto button = new eSmallUpButton(window);
+    const int w = button->width();
+    button->deleteLater();
+    return w + 2;
+}
+
+void setChildWidths(eWidget* const widget, const int width) {
+    for(const auto child : widget->children()) {
+        child->setWidth(width);
+    }
+}
+
+int stackedChildrenHeight(eWidget* const widget) {
+    int h = 0;
+    for(const auto child : widget->children()) {
+        h += child->height();
+    }
+    return h;
+}
+
+void fitScrollAreaToButtons(eScrollWidget* const scroll,
+                            eWidget* const scrollArea) {
+    if(scrollArea->height() <= scroll->height()) return;
+    const int w = scroll->width() - scrollButtonGutter(scroll->window());
+    scrollArea->setWidth(w);
+    setChildWidths(scrollArea, w);
 }
 }
 
@@ -133,7 +163,8 @@ void OverviewDataWidget::initialize() {
 
     mQuestButtons = new eScrollWidget(window());
     mQuestButtons->setWidth(innerW);
-    mQuestButtons->setHeight(140); // fixed height for scrolling
+    const int requestListH = inner->height() - stackedChildrenHeight(inner);
+    mQuestButtons->setHeight(std::max(0, requestListH));
     mQuestButtons->initializeButtons();
     inner->addWidget(mQuestButtons);
 
@@ -357,11 +388,12 @@ void OverviewDataWidget::updateRequestButtons() {
     const auto sa = new eWidget(window());
     sa->setNoPadding();
     sa->setWidth(mQuestButtons->width());
-    mQuestButtons->setScrollArea(sa);
     addGodQuests(sa);
     addCityRequests(sa);
     sa->stackVertically();
     sa->fitHeight();
+    fitScrollAreaToButtons(mQuestButtons, sa);
+    mQuestButtons->setScrollArea(sa);
 }
 
 void OverviewDataWidget::setMap(eMiniMap* const map) {

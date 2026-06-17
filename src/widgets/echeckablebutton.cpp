@@ -46,9 +46,9 @@ void eCheckableButton::paintEvent(ePainter& p) {
     if(mCheckedTexture) {
         if(mChecked) {
             if(mCheckedHoverTexture && hovered()) {
-                paintTexture(p, mCheckedHoverTexture, Alignment::center);
+                paintTexture(p, mCheckedHoverTexture, textAlignment());
             } else {
-                paintTexture(p, mCheckedTexture, Alignment::center);
+                paintTexture(p, mCheckedTexture, textAlignment());
             }
         } else eButton::paintEvent(p);
     } else {

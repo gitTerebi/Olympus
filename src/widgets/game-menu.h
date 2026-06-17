@@ -87,7 +87,7 @@ protected:
     bool mousePressEvent(const eMouseEvent& e);
 private:
     using eButtonsDataVec = std::vector<eSubButtonData>;
-    eWidget* createSubButtons(const int resoltuionMult,
+    eWidget* createSubButtons(double resoltuionMult,
                               const eButtonsDataVec& buttons);
     eBuildButton* createBuildButton(const eSPR& c);
     eBuildButton* createTradeBuildButton(const eSPR& c,

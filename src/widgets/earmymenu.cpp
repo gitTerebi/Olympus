@@ -10,6 +10,8 @@
 #include "game-widget.h"
 #include "characters/soldier-banner.h"
 
+#include <cmath>
+
 std::vector<SoldierBanner*> eArmyMenu::selectedPlayerBanners() const {
     std::vector<SoldierBanner*> result;
     if (!mBoard) return result;
@@ -28,7 +30,7 @@ void eArmyMenu::initialize(GameBoard &b)
     mBoard = &b;
 
     int iRes;
-    int mult;
+    double mult;
     topSidebarIResAndMult(iRes, mult);
 
     const auto &intrfc = GameTextures::interface();
@@ -41,13 +43,13 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto wid = new eWidget(window());
     wid->setNoPadding();
-    wid->move(mult * 11.5, mult * 13);
-    wid->resize(mult * 71, mult * 216);
+    wid->move(std::round(mult * 11.5), std::round(mult * 13));
+    wid->resize(std::round(mult * 71), std::round(mult * 216));
     addWidget(wid);
 
     mMiniMap = new eMiniMap(window());
     wid->addWidget(mMiniMap);
-    mMiniMap->resize(wid->width(), mult * 56);
+    mMiniMap->resize(wid->width(), std::round(mult * 56));
     mMiniMap->setBoard(&b);
 
     const auto status = new eLabel(window());
@@ -56,20 +58,35 @@ void eArmyMenu::initialize(GameBoard &b)
     status->setTexture(coll.fArmyStatus);
     status->fitContent();
     wid->addWidget(status);
-    status->resize(wid->width(), mult * 23);
-    status->setX(mult * 0.75);
-    status->setY(mult * 60.75);
+    status->resize(wid->width(), std::round(mult * 23));
+    status->setX(std::round(mult * 0.75));
+    status->setY(std::round(mult * 60.75));
 
-    const int xx = mult * 37.75;
-    const int dy = mult * 2.5;
-    int y = mult * 88.5;
+    const auto rowY = [&](const int sourceY) {
+        return std::round(topSidebarTextureScale() * sourceY) -
+               std::round(mult * 13);
+    };
+    const int y1 = rowY(203);
+    const int y2 = rowY(255);
+    const int y3 = rowY(307);
+    const auto applyArmyButtonScale = [this](eBasicButton* const button) {
+        button->setTextureDrawScale(topSidebarTextureScale());
+        const int scaleId = topSidebarScaleId();
+        if(scaleId >= 3) {
+            button->setTextureDrawBleed(4);
+        } else if(scaleId >= 2) {
+            button->setTextureDrawBleed(3);
+        } else {
+            button->setTextureDrawBleed(1);
+        }
+        button->fitContent();
+    };
 
     const auto t1 = &InterfaceTextures::fGoToCompany;
     const auto cou = new eBasicButton(t1, window());
-    cou->setTextureDrawScale(topSidebarTextureScale());
-    cou->fitContent();
+    applyArmyButtonScale(cou);
     wid->addWidget(cou);
-    cou->setY(y);
+    cou->setY(y1);
     cou->setTooltip(Language::zeusText(51, 70)); // Go To Company
     cou->setPressAction([this]()
                        {
@@ -86,21 +103,23 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t2 = &InterfaceTextures::fDefensiveTactics;
     const auto dt = new eBasicButton(t2, window());
-    dt->setTextureDrawScale(topSidebarTextureScale());
-    dt->fitContent();
+    applyArmyButtonScale(dt);
     wid->addWidget(dt);
-    dt->setY(y);
+    dt->setY(y1);
+    eBasicButton* ot = nullptr;
+    eBasicButton* st = nullptr;
+    const auto rightColumnX = [&]() {
+        return std::round(mult * 49) - std::round(mult * 11.5);
+    };
+    const int xx = rightColumnX();
     dt->setX(xx);
     dt->setTooltip(Language::zeusText(51, 73)); // Defensive Tactics
 
-    const int ddy = dy + cou->height();
-
     const auto t3 = &InterfaceTextures::fRotateCompany;
     const auto rc = new eBasicButton(t3, window());
-    rc->setTextureDrawScale(topSidebarTextureScale());
-    rc->fitContent();
+    applyArmyButtonScale(rc);
     wid->addWidget(rc);
-    rc->setY(y + ddy);
+    rc->setY(y2);
     rc->setTooltip(Language::zeusText(51, 76)); // Rotate Company
     rc->setPressAction([this]()
                        {
@@ -109,20 +128,18 @@ void eArmyMenu::initialize(GameBoard &b)
             mBoard->selectedSoldiers(), mBoard->personPlayer()); });
 
     const auto t4 = &InterfaceTextures::fOffensiveTactics;
-    const auto ot = new eBasicButton(t4, window());
-    ot->setTextureDrawScale(topSidebarTextureScale());
-    ot->fitContent();
+    ot = new eBasicButton(t4, window());
+    applyArmyButtonScale(ot);
     wid->addWidget(ot);
-    ot->setY(y + ddy);
+    ot->setY(y2);
     ot->setX(xx);
     ot->setTooltip(Language::zeusText(51, 74)); // Offensive Tactics
 
     const auto t5 = &InterfaceTextures::fGoToBanner;
     mGoToBanner = new eBasicButton(t5, window());
-    mGoToBanner->setTextureDrawScale(topSidebarTextureScale());
-    mGoToBanner->fitContent();
+    applyArmyButtonScale(mGoToBanner);
     wid->addWidget(mGoToBanner);
-    mGoToBanner->setY(y + 2 * ddy);
+    mGoToBanner->setY(y3);
     mGoToBanner->setTooltip(Language::zeusText(51, 25)); // Go To Banner (Muster)
     mGoToBanner->setPressAction([this]()
                                 {
@@ -131,10 +148,9 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t5_2 = &InterfaceTextures::fGoHome;
     mGoHome = new eBasicButton(t5_2, window());
-    mGoHome->setTextureDrawScale(topSidebarTextureScale());
-    mGoHome->fitContent();
+    applyArmyButtonScale(mGoHome);
     wid->addWidget(mGoHome);
-    mGoHome->setY(y + 2 * ddy);
+    mGoHome->setY(y3);
     mGoHome->setTooltip(Language::zeusText(51, 26)); // Go Home
     mGoHome->hide();
     mGoHome->setPressAction([this]()
@@ -143,19 +159,18 @@ void eArmyMenu::initialize(GameBoard &b)
         setSoldiersHome(true); });
 
     const auto t6 = &InterfaceTextures::fSpecialTactics;
-    const auto st = new eBasicButton(t6, window());
-    st->setTextureDrawScale(topSidebarTextureScale());
-    st->fitContent();
+    st = new eBasicButton(t6, window());
+    applyArmyButtonScale(st);
     wid->addWidget(st);
-    st->setY(y + 2 * ddy);
+    st->setY(y3);
     st->setX(xx);
     st->setTooltip(Language::zeusText(51, 75)); // Special Tactics
 
     const auto ww = new eFramedWidget(window());
     wid->addWidget(ww);
     ww->setType(eFrameType::inner);
-    ww->setY(y + 3 * ddy + mult * 2);
-    ww->resize(wid->width(), mult * 50);
+    ww->setY(y3 + cou->height() + std::round(mult * 2));
+    ww->resize(wid->width(), std::round(mult * 50));
 }
 
 void eArmyMenu::setSoldiersHome(const bool h)

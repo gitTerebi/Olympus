@@ -50,7 +50,7 @@ void eLabel::paintTexture(ePainter& p,
                           const std::shared_ptr<Texture>& tex,
                           const Alignment align) {
     if(!tex) return;
-    if(mTextureDrawScale == 1.0) {
+    if(mTextureDrawScale == 1.0 && mTextureDrawBleed == 0) {
         if(mR != 255 || mG != 255 || mB != 255) {
             tex->setColorMod(mR, mG, mB);
         }

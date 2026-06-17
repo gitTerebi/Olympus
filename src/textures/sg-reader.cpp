@@ -53,6 +53,27 @@ std::string lower(std::string s) {
     return s;
 }
 
+void applyInterfaceGreenMask(SDL_Surface* const surf) {
+    if(!surf || surf->format->format != SDL_PIXELFORMAT_RGBA32) return;
+    SDL_LockSurface(surf);
+    auto* const px = static_cast<uint8_t*>(surf->pixels);
+    for(int y = 0; y < surf->h; y++) {
+        auto* const row = reinterpret_cast<uint32_t*>(px + y * surf->pitch);
+        for(int x = 0; x < surf->w; x++) {
+            uint8_t r;
+            uint8_t g;
+            uint8_t b;
+            uint8_t a;
+            SDL_GetRGBA(row[x], surf->format, &r, &g, &b, &a);
+            if(a == 0) continue;
+            if(g >= 180 && r <= 40 && b <= 80 && g > r * 4 && g > b * 3) {
+                row[x] = SDL_MapRGBA(surf->format, r, g, b, 0);
+            }
+        }
+    }
+    SDL_UnlockSurface(surf);
+}
+
 uint16_t rd16(const std::vector<uint8_t>& d, const size_t p) {
     return uint16_t(d[p] | (d[p + 1] << 8));
 }
@@ -528,5 +549,8 @@ SDL_Surface* SgReader::loadComposite(const std::string& name,
     }
 
     (void)tileH; // rects are already zoom-specific; record is scaled into them
+    if(name == "interfaceNewParts") {
+        applyInterfaceGreenMask(strip);
+    }
     return strip;
 }
