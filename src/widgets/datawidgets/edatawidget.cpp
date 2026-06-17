@@ -5,6 +5,8 @@
 #include "language.h"
 #include "engine/game-board.h"
 
+#include <SDL2/SDL.h>
+
 eDataWidget::eDataWidget(GameBoard& b, MainWindow* const w) :
     eWidget(w), mBoard(b) {}
 
@@ -64,11 +66,11 @@ void eDataWidget::setGameWidget(GameWidget* const gw) {
 }
 
 void eDataWidget::shown() {
-    mTime = 0;
+    mLastRefreshMs = 0;
 }
 
 void eDataWidget::update() {
-    mTime = 0;
+    mLastRefreshMs = 0;
 }
 
 void eDataWidget::addViewButton(eViewModeButton* const b) {
@@ -101,4 +103,13 @@ eCityId eDataWidget::viewedCity() {
         setLastPersonCityId(cid);
     }
     return cid;
+}
+
+bool eDataWidget::refreshDue(const int intervalMs) {
+    const int now = SDL_GetTicks();
+    if(mLastRefreshMs == 0 || now - mLastRefreshMs >= intervalMs) {
+        mLastRefreshMs = now;
+        return true;
+    }
+    return false;
 }

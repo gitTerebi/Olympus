@@ -103,7 +103,7 @@ void eHusbandryDataWidget::initialize() {
 }
 
 void eHusbandryDataWidget::paintEvent(ePainter& p) {
-    const bool update = ((mTime++) % 20) == 0;
+    const bool update = refreshDue();
     if(update) {
         const auto cid = viewedCity();
         mBoard.updateResources(cid);
