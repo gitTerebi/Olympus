@@ -49,6 +49,8 @@ private:
     void viewAbsPix(const int px, const int py);
 
     int mTime = 0;
+    Uint32 mLastMaintenanceMs = 0;
+    Uint32 mMaintenanceAccumMs = 0;
     int mCityCounter = 0;
 
     int mMouseX = 0;
