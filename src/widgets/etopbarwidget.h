@@ -6,7 +6,6 @@
 
 class GameBoard;
 class GameWidget;
-class eButton;
 
 class eTopWidget : public eWidget
 {
@@ -85,7 +84,7 @@ private:
     eTopWidget *mDrachmasWidget = nullptr;
     eTopWidget *mPopulationWidget = nullptr;
     eTopWidget *mUnemployedWidget = nullptr;
-    eButton *mDateLabel = nullptr;
+    eLabel *mDateLabel = nullptr;
     int mTime = 0;
 };
 

@@ -4,8 +4,6 @@
 #include "engine/boardData/eemploymentdata.h"
 #include "engine/boardData/epopulationdata.h"
 #include "textures/game-textures.h"
-#include "ebutton.h"
-#include "edatewidget.h"
 #include "elayouthelpers.h"
 #include "game-widget.h"
 
@@ -59,24 +57,11 @@ void eTopBarWidget::initialize() {
     mUnemployedWidget = new eTopWidget(window());
     mUnemployedWidget->initialize(coll.fPopulationTopMenu, "-");
 
-    mDateLabel = new eButton(window());
-    mDateLabel->setTextureDrawScale(topSidebarTextureScale());
-    mDateLabel->setPressAction([this]() {
-        if(!mBoard) return;
-        const auto dw = new eDateWidget(window());
-        dw->initialize([this](const eDate& d) {
-            mBoard->setDate(d);
-            mDateLabel->setText(d.shortString());
-        }, false);
-        dw->setDate(mBoard->date());
-        window()->execDialog(dw);
-        dw->align(Alignment::center);
-    });
+    mDateLabel = new eLabel("-", window());
     const eDate date(30, eMonth::january, -1500);
     mDateLabel->setFontSizeS();
     mDateLabel->setText(date.shortString());
     mDateLabel->fitContent();
-    mDateLabel->setEnabled(false);
 
     setHeight(12*mult);
 
@@ -178,7 +163,6 @@ void eTopBarWidget::paintEvent(ePainter& p) {
 
         mDateLabel->setText(mBoard->date().shortString());
         mDateLabel->fitContent();
-        mDateLabel->setEnabled(mBoard->editorMode());
         layoutContent();
 
         int iRes;
@@ -200,7 +184,5 @@ void eTopBarWidget::paintEvent(ePainter& p) {
             flip = !flip;
         }
         p.setClipRect(nullptr);
-    } else {
-        mDateLabel->setEnabled(false);
     }
 }
