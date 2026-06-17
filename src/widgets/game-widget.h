@@ -567,6 +567,9 @@ private:
     std::shared_ptr<Texture> mWorldShaderTex;
     std::shared_ptr<Texture> mCompassTex;
     int mCompassDir = -1;
+    std::vector<std::pair<int, int>> mTrackingBoxes;
+    std::vector<std::pair<int, int>> mCartProblemBoxes;
+    std::vector<std::function<void()>> mDeferredEnemyBanners;
 
     int mUpdateRect = 0;
     std::vector<SDL_Rect> mUpdateRects;
