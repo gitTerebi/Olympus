@@ -5,6 +5,8 @@
 #include "engine/etile.h"
 #include "texture.h"
 #include "textures/game-textures.h"
+
+#include <algorithm>
 #include "textures/building-textures.h"
 #include "widgets/etilepainter.h"
 #include "widgets/paint/sanctuary-preview.h"
@@ -67,7 +69,7 @@ void drawTemple(
     const int colorModGreen,
     const int colorModBlue,
     const SanctuaryDrawXY& drawXY,
-    std::set<eMonument*>& drawnTempleWoman)
+    std::vector<eMonument*>& drawnTempleWoman)
 {
     const int stage = templeBuilding.progress() - 1;
     if(stage < 0) return;
@@ -93,8 +95,12 @@ void drawTemple(
     if(!textures.fWoman || !templeFrontVisible) return;
 
     auto* monument = templeBuilding.monument();
-    if(monument && drawnTempleWoman.count(monument)) return;
-    if(monument) drawnTempleWoman.insert(monument);
+    if(monument &&
+       std::find(drawnTempleWoman.begin(), drawnTempleWoman.end(), monument) !=
+           drawnTempleWoman.end()) {
+        return;
+    }
+    if(monument) drawnTempleWoman.push_back(monument);
 
     const auto& templeWorldRect = templeBuilding.tileRect();
     double womanDrawX;
@@ -226,7 +232,7 @@ void drawSanctuaryRealBuildingPart(
     const int colorModGreen,
     const int colorModBlue,
     const SanctuaryDrawXY& drawXY,
-    std::set<eMonument*>& drawnTempleWoman)
+    std::vector<eMonument*>& drawnTempleWoman)
 {
     if(!building) return;
 

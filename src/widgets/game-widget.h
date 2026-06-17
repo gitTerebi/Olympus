@@ -57,6 +57,7 @@ class FramedButton;
 class eFramedWidget;
 class eBuildingRenderer;
 class eTilePainter;
+class eMonument;
 
 enum class eAgoraOrientation;
 enum class GodType;
@@ -570,6 +571,7 @@ private:
     std::vector<std::pair<int, int>> mTrackingBoxes;
     std::vector<std::pair<int, int>> mCartProblemBoxes;
     std::vector<std::function<void()>> mDeferredEnemyBanners;
+    std::vector<eMonument*> mDrawnTempleWomen;
 
     int mUpdateRect = 0;
     std::vector<SDL_Rect> mUpdateRects;
