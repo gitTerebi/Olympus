@@ -401,7 +401,7 @@ void OverviewDataWidget::setMap(eMiniMap* const map) {
 }
 
 void OverviewDataWidget::paintEvent(ePainter& p) {
-    const bool update = ((mTime++) % 20) == 0;
+    const bool update = refreshDue();
     if(update) {
         const auto cid = viewedCity();
         {

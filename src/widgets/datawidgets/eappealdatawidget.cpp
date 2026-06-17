@@ -90,7 +90,7 @@ private:
 };
 
 void eAppealDataWidget::paintEvent(ePainter& p) {
-    const bool update = ((mTime++) % 20) == 0;
+    const bool update = refreshDue();
     if(update) {
         const auto cid = viewedCity();
         const auto& bs = mBoard.commemorativeBuildings(cid);

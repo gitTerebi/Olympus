@@ -170,7 +170,7 @@ void PopulationDataWidget::initialize() {
 }
 
 void PopulationDataWidget::paintEvent(ePainter& p) {
-    const bool update = ((mTime++) % 20) == 0;
+    const bool update = refreshDue();
     if(update) {
         const int pp = spacing();
         const auto cid = viewedCity();

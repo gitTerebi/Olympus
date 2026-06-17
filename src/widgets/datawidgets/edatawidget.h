@@ -34,9 +34,10 @@ protected:
     static int sCoverageToText(const int c);
 
     eCityId viewedCity();
+    bool refreshDue(int intervalMs = 250);
 
     GameBoard& mBoard;
-    int mTime = 0;
+    int mLastRefreshMs = 0;
 private:
     eCityId mLastPersonCityId = eCityId::neutralFriendly;
     GameWidget* mGW = nullptr;

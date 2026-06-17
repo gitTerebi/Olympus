@@ -98,7 +98,7 @@ void eHygieneSafetyDataWidget::initialize() {
 }
 
 void eHygieneSafetyDataWidget::paintEvent(ePainter& p) {
-    const bool update = ((mTime++) % 20) == 0;
+    const bool update = refreshDue();
     if(update) {
         const auto cid = viewedCity();
         const int hygiene = mBoard.health(cid);
