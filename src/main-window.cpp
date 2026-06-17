@@ -858,6 +858,7 @@ int MainWindow::exec() {
     int fpsVal = 0;
     bool resetRenderTargets = false;
     auto nextMusicPoll = high_resolution_clock::now();
+    auto nextTooltipPoll = high_resolution_clock::now();
     const duration<double, std::milli> frameDt(capRenderFps ? 1000./fpsClamp : 0.);
     auto nextFrame = high_resolution_clock::now();
     while(!mQuit) {
@@ -991,7 +992,10 @@ int MainWindow::exec() {
         }
         if(mWidget) {
             mWidget->paint(p);
-            tooltip.update();
+            if(now >= nextTooltipPoll) {
+                tooltip.update();
+                nextTooltipPoll = now + 50ms;
+            }
             if(!tooltip.empty()) {
                 const auto& res = resolution();
                 const int pp = 25*res.multiplier();
