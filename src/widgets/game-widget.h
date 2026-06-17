@@ -4,6 +4,7 @@
 constexpr int kSimHz = 60;
 constexpr int kAnimFPS = 10;
 constexpr int kRenderFpsCap = 0;
+constexpr int kMaxSimTicksPerFrame = 20;
 constexpr double kSimStepMs = 1000.0 / kSimHz;
 constexpr double kAnimStepMs = 1000.0 / kAnimFPS;
 constexpr double kBaseRenderMs = 1000.0 / 60.0;
@@ -16,6 +17,7 @@ constexpr double kBaseRenderMs = 1000.0 / 60.0;
 #include "emainwidget.h"
 #include "eframedlabel.h"
 
+#include "engine/game-board.h"
 #include "engine/etile.h"
 #include "fileIO/save-archive.h"
 
@@ -121,6 +123,7 @@ public:
 
     void initialize();
     void reloadUi();
+    void reloadUiPreservingOverlays();
 
     void rebuildGameMenu();
 
@@ -300,8 +303,40 @@ private:
     int rightDragFacing() const;
     void rightDragFormationLine(int& dx, int& dy) const;
 
-    using eTileAction = std::function<void(eTile* const)>;
-    void iterateOverVisibleTiles(const eTileAction& a);
+    template <class Action>
+    void iterateOverVisibleTiles(Action&& a)
+    {
+        const int rw = mBoard->rotatedWidth();
+        const int rh = mBoard->rotatedHeight();
+
+        const int minX = std::clamp(-mDX / mTileW, 0, rw);
+        const int visWidth = citySourceWidth() - mGm->width();
+        const int maxX = std::clamp(minX + visWidth / mTileW, 0, rw);
+
+        const int minY = std::clamp(-2 * mDY / mTileH, 0, rh);
+        const int maxY = std::clamp(minY + 2 * citySourceHeight() / mTileH, 0, rh);
+
+        playVisibleAmbientSound(minX, maxX, minY, maxY);
+
+        const int bleedLeft = 6;
+        const int bleedRight = 9;
+        const int bleedTop = 9;
+        const int bleedBottom = 21;
+
+        const int eminX = std::clamp(minX - bleedLeft, 0, rw);
+        const int emaxX = std::clamp(maxX + bleedRight, 0, rw);
+
+        const int eminY = std::clamp(minY - bleedTop, 0, rh);
+        const int emaxY = std::clamp(maxY + bleedBottom, 0, rh);
+
+        for(int y = eminY; y < emaxY; y++) {
+            for(int x = eminX; x < emaxX; x++) {
+                const auto t = mBoard->rotateddtile(x, y);
+                if(!t) continue;
+                a(t);
+            }
+        }
+    }
     void playVisibleAmbientSound(const int minX, const int maxX,
                                  const int minY, const int maxY);
 

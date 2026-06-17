@@ -2481,28 +2481,32 @@ void GameWidget::paintEvent(ePainter &p)
     const SDL_Rect srcRect{srcX, srcY, srcW, srcH};
     const SDL_Rect dstRect{0, 0, outputW, outputH};
 
-    if(!mWorldShaderTex ||
-       mWorldShaderTex->width() != srcW ||
-       mWorldShaderTex->height() != srcH) {
-        mWorldShaderTex = std::make_shared<Texture>();
-        mWorldShaderTex->create(r, srcW, srcH);
-        SDL_SetTextureScaleMode(mWorldShaderTex->tex(), SDL_ScaleModeNearest);
-        SDL_SetTextureBlendMode(mWorldShaderTex->tex(), SDL_BLENDMODE_NONE);
-    }
-    mWorldShaderTex->setAsRenderTarget(r);
-    SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
-    SDL_RenderClear(r);
-    const SDL_Rect shaderDstRect{0, 0, srcW, srcH};
-    const int copyWorldResult = SDL_RenderCopy(
-        r, mWorldTex->tex(), &srcRect, &shaderDstRect);
-    SDL_RenderFlush(r);
-
     // Restore the frame target and blit the zoomed/scrolled city into it. The
     // postprocess belongs here so menus, labels, dialogs, and tooltips stay crisp.
     SDL_SetRenderTarget(r, prevTarget);
-    if(copyWorldResult != 0 ||
-       !applyTexturePostprocess(r, mWorldShaderTex->tex(), srcW, srcH, true)) {
+    if(postprocessIsPlainCopy()) {
         SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
+    } else {
+        if(!mWorldShaderTex ||
+           mWorldShaderTex->width() != srcW ||
+           mWorldShaderTex->height() != srcH) {
+            mWorldShaderTex = std::make_shared<Texture>();
+            mWorldShaderTex->create(r, srcW, srcH);
+            SDL_SetTextureScaleMode(mWorldShaderTex->tex(), SDL_ScaleModeNearest);
+            SDL_SetTextureBlendMode(mWorldShaderTex->tex(), SDL_BLENDMODE_NONE);
+        }
+        mWorldShaderTex->setAsRenderTarget(r);
+        SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+        SDL_RenderClear(r);
+        const SDL_Rect shaderDstRect{0, 0, srcW, srcH};
+        const int copyWorldResult = SDL_RenderCopy(
+            r, mWorldTex->tex(), &srcRect, &shaderDstRect);
+        SDL_RenderFlush(r);
+        SDL_SetRenderTarget(r, prevTarget);
+        if(copyWorldResult != 0 ||
+           !applyTexturePostprocess(r, mWorldShaderTex->tex(), srcW, srcH, true)) {
+            SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
+        }
     }
 
     {

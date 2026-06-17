@@ -38,22 +38,32 @@ public:
         mText->align(Alignment::vcenter);
     }
 
-    void setText(const std::string &text)
+    bool setText(const std::string &text)
     {
+        if(mText && mText->text() == text) return false;
         mText->setText(text);
         mText->fitContent();
         fitContent();
+        return true;
     }
 
-    void setIconColor(const Uint8 r, const Uint8 g, const Uint8 b)
+    bool setIconColor(const Uint8 r, const Uint8 g, const Uint8 b)
     {
-        if (mIcon)
-            mIcon->setTextureColorMod(r, g, b);
+        if(!mIcon) return false;
+        if(mIconR == r && mIconG == g && mIconB == b) return false;
+        mIconR = r;
+        mIconG = g;
+        mIconB = b;
+        mIcon->setTextureColorMod(r, g, b);
+        return true;
     }
 
 private:
     eScaledTextureLabel *mIcon = nullptr;
     eLabel *mText = nullptr;
+    Uint8 mIconR = 255;
+    Uint8 mIconG = 255;
+    Uint8 mIconB = 255;
 };
 
 class eTopBarWidget : public eWidget
