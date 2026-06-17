@@ -158,10 +158,13 @@ void GameWidget::paintEvent(ePainter &p)
     p.translate(mDX, mDY);
     eTilePainter tp(p, mTileSize, mTileW, mTileH);
     const auto &numbers = mNumbers[mTileSize];
-    std::vector<std::pair<int, int>> trackingBoxes;
+    auto& trackingBoxes = mTrackingBoxes;
+    trackingBoxes.clear();
     // enemy banners scheduled after all tiles so they sit on top of everything
-    std::vector<std::function<void()>> deferredEnemyBanners;
-    std::vector<std::pair<int, int>> cartProblemBoxes;
+    auto& deferredEnemyBanners = mDeferredEnemyBanners;
+    deferredEnemyBanners.clear();
+    auto& cartProblemBoxes = mCartProblemBoxes;
+    cartProblemBoxes.clear();
 
     const auto ppid = mBoard->personPlayer();
 
