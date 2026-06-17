@@ -4,7 +4,7 @@
 
 ePainter::ePainter(SDL_Renderer* const renderer) :
     mRenderer(renderer) {
-
+    mSaves.reserve(64);
 }
 
 void ePainter::save() {

@@ -857,6 +857,7 @@ int MainWindow::exec() {
     int c = 0;
     int fpsVal = 0;
     bool resetRenderTargets = false;
+    auto nextMusicPoll = high_resolution_clock::now();
     const duration<double, std::milli> frameDt(capRenderFps ? 1000./fpsClamp : 0.);
     auto nextFrame = high_resolution_clock::now();
     while(!mQuit) {
@@ -983,7 +984,11 @@ int MainWindow::exec() {
 
         ePainter p(mSdlRenderer);
 
-        eMusic::incTime();
+        const auto now = high_resolution_clock::now();
+        if(now >= nextMusicPoll) {
+            eMusic::incTime();
+            nextMusicPoll = now + 250ms;
+        }
         if(mWidget) {
             mWidget->paint(p);
             tooltip.update();
