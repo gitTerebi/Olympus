@@ -35,7 +35,7 @@ std::shared_ptr<Texture> gCharPortrait(
         return nullptr;
     const auto type = c->type();
     const auto uiScale = res.uiScale();
-    const int iRes = static_cast<int>(uiScale);
+    const int iRes = GameTextures::interfaceTextureId();
     const auto &intrfc = GameTextures::interface()[iRes];
     const auto &zp = intrfc.fZeusPortraits;
     const auto &zgp = intrfc.fZeusGodPortraits;

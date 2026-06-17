@@ -23,7 +23,7 @@ void eTradeTypesWidget::setTrade(const ePlayerId pid,
                                  const std::vector<eResourceTrade>& trade) {
     const auto uiScale = resolution().uiScale();
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
 
     const int h = mult*12;
@@ -73,7 +73,7 @@ void eTradeTypesWidget::setTrade(const ePlayerId pid,
 
 void eWorldTradeWidget::initialize(const std::string& name) {
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
 
     setWidth(mult*75);
@@ -114,7 +114,7 @@ void eWorldTradeWidget::setTrade(const ePlayerId pid,
 
 void eWorldGoodsWidget::initialize() {
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
     const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[iRes];

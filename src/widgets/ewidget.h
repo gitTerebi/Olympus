@@ -22,7 +22,12 @@ public:
 protected:
     virtual ~eWidget();
 
-    void iResAndMult(int& iRes, int& mult) const;
+    void iResAndMult(int& iRes, double& mult) const;
+    int topSidebarScaleId() const;
+    int topSidebarMult() const;
+    double topSidebarTextureScale() const;
+    int topSidebarTextureBleed() const;
+    void topSidebarIResAndMult(int& iRes, int& mult) const;
     int scalePx(double base) const;
 public:
     void move(const int x, const int y);

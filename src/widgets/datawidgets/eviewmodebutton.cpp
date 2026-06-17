@@ -17,10 +17,10 @@ eViewModeButton::eViewModeButton(const std::string& text,
     });
 
     const auto& intrfc = GameTextures::interface();
-    const auto res = resolution();
-    const int iRes = static_cast<int>(res.uiScale());
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes].fSeeButton;
 
+    setTextureDrawScale(topSidebarTextureScale());
     setTexture(texs.getTexture(0));
     setHoverTexture(texs.getTexture(1));
     setCheckedTexture(texs.getTexture(2));

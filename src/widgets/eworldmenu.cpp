@@ -18,7 +18,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
                             const eAction& openConquer,
                             const bool showText) {
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
 
     const auto& intrfc = GameTextures::interface();

@@ -19,6 +19,7 @@ public:
         setPadding(0);
         mIcon = new eScaledTextureLabel(window());
         mIcon->setPadding(0);
+        mIcon->setTextureDrawScale(topSidebarTextureScale());
         mIcon->setTexture(icon);
         mIcon->fitContent();
         const int iconShrink = resolution().uiScale() == eUIScale::tiny ? 1 : 2;

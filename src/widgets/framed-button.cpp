@@ -8,8 +8,8 @@ void FramedButton::paintEvent(ePainter& p) {
     if(!enabled()) {
         if(mRenderBg) renderBg(p);
         // draw border normally
-        int iRes; int mult; iResAndMult(iRes, mult);
-        const int dim = 8*mult;
+        int iRes; double mult; iResAndMult(iRes, mult);
+        const int dim = GameTextures::interfaceTileDim();
         const auto& intrfc = GameTextures::interface()[iRes];
         if(intrfc.fLoaded) {
             const auto& coll = intrfc.fButtonFrame;
@@ -46,9 +46,9 @@ void FramedButton::paintEvent(ePainter& p) {
     if(mNoBorder) { eButton::paintEvent(p); return; }
 
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
-    const int dim = 8*mult;
+    const int dim = GameTextures::interfaceTileDim();
     const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
@@ -108,9 +108,9 @@ void FramedButton::paintEvent(ePainter& p) {
 
 void FramedButton::renderBg(ePainter& p) {
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
-    const int dim = 8*mult;
+    const int dim = GameTextures::interfaceTileDim();
     const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 

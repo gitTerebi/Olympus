@@ -109,12 +109,17 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
         {"--- UI ---", {}, 0, nullptr},
         {
             "UI scale",
-            {"Tiny", "Small", "Medium", "Large"},
+            {"0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x"},
             static_cast<int>(settings.fUiScale),
             [window](const int v) { window->setUiScale(v); },
-            [window](const int v) {
-                return v != static_cast<int>(window->settings().fUiScale);
-            }
+            nullptr
+        },
+        {
+            "Top/sidebar factor",
+            {"1", "2", "3", "4"},
+            Settings::clampTopSidebarScale(settings.fTopSidebarScale),
+            [window](const int v) { window->setTopSidebarScale(v); },
+            nullptr
         },
         {"--- Resolution ---", {}, 0, nullptr}
     };

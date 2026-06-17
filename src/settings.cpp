@@ -38,6 +38,10 @@ int Settings::clampGameSpeed(const int speed) {
     return clamped < mid ? sMinGameSpeed : sMaxGameSpeed;
 }
 
+int Settings::clampTopSidebarScale(const int scale) {
+    return std::clamp(scale, 0, 3);
+}
+
 SDL_Scancode Settings::hotkey(const HotkeyId id) const {
     switch(id) {
     case HotkeyId::gameMenu: return fHotkeyGameMenu;
@@ -171,6 +175,8 @@ void Settings::write() const {
             std::to_string(fGameSpeed) << "\"" << "\n";
     file << "ui_scale" << " " << "\"" <<
             std::to_string(static_cast<int>(fUiScale)) << "\"" << "\n";
+    file << "top_sidebar_scale" << " " << "\"" <<
+            std::to_string(fTopSidebarScale) << "\"" << "\n";
     file << "interpolation" << " " << "\"" <<
             std::to_string(static_cast<int>(fInterpolation)) << "\"" << "\n";
     file << "upscale" << " " << "\"" <<
@@ -319,6 +325,10 @@ void Settings::read() {
            v <= static_cast<int>(eUIScale::large)) {
             fUiScale = static_cast<eUIScale>(v);
         }
+    }
+    const auto topSidebarScaleStr = settings["top_sidebar_scale"];
+    if(!topSidebarScaleStr.empty()) {
+        fTopSidebarScale = clampTopSidebarScale(std::stoi(topSidebarScaleStr));
     }
     const auto interpolationStr = settings["interpolation"];
     if(!interpolationStr.empty()) {

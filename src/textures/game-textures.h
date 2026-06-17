@@ -30,6 +30,10 @@ public:
     static const std::vector<DestructionTextures>& destrution() {
         return sDestructionTextures;
     }
+    static int interfaceTextureId() {
+        return 1;
+    }
+    static int interfaceTileDim();
 
     static void loadTexture(const std::function<void(int)>& func);
     static void loadInterfaceTexture(const std::function<void(int)>& func);

@@ -29,11 +29,12 @@ void eArmyMenu::initialize(GameBoard &b)
 
     int iRes;
     int mult;
-    iResAndMult(iRes, mult);
+    topSidebarIResAndMult(iRes, mult);
 
     const auto &intrfc = GameTextures::interface();
     const auto &coll = intrfc[iRes];
     const auto tex = coll.fGameArmyBackground;
+    setTextureDrawScale(topSidebarTextureScale());
     setTexture(tex);
     setPadding(0);
     fitContent();
@@ -51,6 +52,7 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto status = new eLabel(window());
     status->setNoPadding();
+    status->setTextureDrawScale(topSidebarTextureScale());
     status->setTexture(coll.fArmyStatus);
     status->fitContent();
     wid->addWidget(status);
@@ -64,6 +66,8 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t1 = &InterfaceTextures::fGoToCompany;
     const auto cou = new eBasicButton(t1, window());
+    cou->setTextureDrawScale(topSidebarTextureScale());
+    cou->fitContent();
     wid->addWidget(cou);
     cou->setY(y);
     cou->setTooltip(Language::zeusText(51, 70)); // Go To Company
@@ -82,6 +86,8 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t2 = &InterfaceTextures::fDefensiveTactics;
     const auto dt = new eBasicButton(t2, window());
+    dt->setTextureDrawScale(topSidebarTextureScale());
+    dt->fitContent();
     wid->addWidget(dt);
     dt->setY(y);
     dt->setX(xx);
@@ -91,6 +97,8 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t3 = &InterfaceTextures::fRotateCompany;
     const auto rc = new eBasicButton(t3, window());
+    rc->setTextureDrawScale(topSidebarTextureScale());
+    rc->fitContent();
     wid->addWidget(rc);
     rc->setY(y + ddy);
     rc->setTooltip(Language::zeusText(51, 76)); // Rotate Company
@@ -102,6 +110,8 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t4 = &InterfaceTextures::fOffensiveTactics;
     const auto ot = new eBasicButton(t4, window());
+    ot->setTextureDrawScale(topSidebarTextureScale());
+    ot->fitContent();
     wid->addWidget(ot);
     ot->setY(y + ddy);
     ot->setX(xx);
@@ -109,6 +119,8 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t5 = &InterfaceTextures::fGoToBanner;
     mGoToBanner = new eBasicButton(t5, window());
+    mGoToBanner->setTextureDrawScale(topSidebarTextureScale());
+    mGoToBanner->fitContent();
     wid->addWidget(mGoToBanner);
     mGoToBanner->setY(y + 2 * ddy);
     mGoToBanner->setTooltip(Language::zeusText(51, 25)); // Go To Banner (Muster)
@@ -119,6 +131,8 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t5_2 = &InterfaceTextures::fGoHome;
     mGoHome = new eBasicButton(t5_2, window());
+    mGoHome->setTextureDrawScale(topSidebarTextureScale());
+    mGoHome->fitContent();
     wid->addWidget(mGoHome);
     mGoHome->setY(y + 2 * ddy);
     mGoHome->setTooltip(Language::zeusText(51, 26)); // Go Home
@@ -130,6 +144,8 @@ void eArmyMenu::initialize(GameBoard &b)
 
     const auto t6 = &InterfaceTextures::fSpecialTactics;
     const auto st = new eBasicButton(t6, window());
+    st->setTextureDrawScale(topSidebarTextureScale());
+    st->fitContent();
     wid->addWidget(st);
     st->setY(y + 2 * ddy);
     st->setX(xx);

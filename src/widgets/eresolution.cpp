@@ -82,11 +82,16 @@ double eResolution::multiplier() const {
         return 0.75;
     case eUIScale::small:
         return 1.0;
+    case eUIScale::mediumSmall:
+        return 1.25;
     case eUIScale::medium:
         return 1.5;
+    case eUIScale::mediumLarge:
+        return 1.75;
     case eUIScale::large:
         return 2.0;
     }
+    return 1.0;
 }
 
 int eResolution::fontSizeXL() const {

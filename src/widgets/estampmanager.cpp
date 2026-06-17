@@ -153,7 +153,7 @@ void eStampManager::rebuildList()
 
     const auto res = resolution();
     const auto uiScale = res.uiScale();
-    const int icoll = static_cast<int>(uiScale);
+    const int icoll = GameTextures::interfaceTextureId();
     const auto& intrfc = GameTextures::interface()[icoll];
     const auto popIcon = intrfc.fPopulationTopMenu;
     const auto drachmaIcon = intrfc.fDrachmasTopMenu;

@@ -9,7 +9,7 @@
 void eEpisodeLostWidget::initialize(const eAction& proceedA) {
     const auto res = resolution();
     const auto& intrfc = GameTextures::interface();
-    const int iRes = static_cast<int>(res.uiScale());
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
     setTexture(texs.fDefeatImage);
 

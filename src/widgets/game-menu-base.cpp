@@ -5,20 +5,20 @@
 void GameMenuBase::initialize() {
     int x;
     int y;
-    switch(resolution().uiScale()) {
-    case eUIScale::tiny:
+    switch(topSidebarScaleId()) {
+    case 0:
         x = 2;
         y = 11;
         break;
-    case eUIScale::small:
+    case 1:
         x = 6;
         y = 22;
         break;
-    case eUIScale::medium:
+    case 2:
         x = 9;
         y = 33;
         break;
-    case eUIScale::large:
+    case 3:
     default:
         x = 12;
         y = 44;
@@ -41,6 +41,9 @@ eCheckableButton* GameMenuBase::addButton(
         const TextureCollection& texs,
         const eWid& w) {
     const auto b = eCheckableButton::sCreate(texs, window(), mButtonsWidget);
+    b->setTextureDrawScale(topSidebarTextureScale());
+    b->setTextureDrawBleed(topSidebarTextureBleed());
+    b->fitContent();
     mButtons.push_back(b);
     mWidgets.push_back(w);
     return b;
@@ -53,17 +56,17 @@ void GameMenuBase::connectAndLayoutButtons() {
 
 void GameMenuBase::layoutButtons() {
     double margin;
-    switch(resolution().uiScale()) {
-    case eUIScale::tiny:
+    switch(topSidebarScaleId()) {
+    case 0:
         margin = 1;
         break;
-    case eUIScale::small:
+    case 1:
         margin = 1;
         break;
-    case eUIScale::medium:
+    case 2:
         margin = 1.85;
         break;
-    case eUIScale::large:
+    case 3:
     default:
         margin = 2;
     }

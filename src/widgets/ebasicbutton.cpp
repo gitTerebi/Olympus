@@ -7,7 +7,7 @@ eBasicButton::eBasicButton(const eTex tex,
     const auto& intrfc = GameTextures::interface();
     const auto res = resolution();
     const auto uiScale = res.uiScale();
-    const int iRes = static_cast<int>(uiScale);
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
 
     setPadding(0);

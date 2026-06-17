@@ -266,14 +266,29 @@ void MainWindow::setUiScale(const int scale) {
     const int clamped = scale < 0 ? 0 :
         (scale > static_cast<int>(eUIScale::large) ?
              static_cast<int>(eUIScale::large) : scale);
+    const auto oldScale = mSettings.fUiScale;
     mSettings.fUiScale = static_cast<eUIScale>(clamped);
     mSettings.fRes = eResolution(mSettings.fRes.width(),
                                  mSettings.fRes.height(),
                                  mSettings.fUiScale);
     mSettings.write();
-    // New-scale interface textures load only via the menu-loading screen,
-    // and widgets must be rebuilt at the new scale. Both are driven by the
-    // caller through showMenuLoading() + setAfterMenuLoadingAction().
+    if(mSettings.fUiScale != oldScale && mGW) {
+        addSlot([this]() {
+            if(mGW) mGW->reloadUi();
+        });
+    }
+}
+
+void MainWindow::setTopSidebarScale(const int scale) {
+    const int clamped = Settings::clampTopSidebarScale(scale);
+    if(mSettings.fTopSidebarScale == clamped) return;
+    mSettings.fTopSidebarScale = clamped;
+    mSettings.write();
+    if(mGW) {
+        addSlot([this]() {
+            if(mGW) mGW->reloadUi();
+        });
+    }
 }
 
 void MainWindow::setDisplayMode(const int mode) {
@@ -704,9 +719,10 @@ void MainWindow::showMainMenu() {
 }
 
 void MainWindow::applyGraphicsSettings(const Settings& settings) {
-    const bool loadNeeded = settings.fUiScale != mSettings.fUiScale;
+    const bool loadNeeded = false;
     const bool reloadUiNeeded =
-        loadNeeded ||
+        settings.fUiScale != mSettings.fUiScale ||
+        settings.fTopSidebarScale != mSettings.fTopSidebarScale ||
         settings.fTinyTextures != mSettings.fTinyTextures ||
         settings.fSmallTextures != mSettings.fSmallTextures ||
         settings.fMediumTextures != mSettings.fMediumTextures ||

@@ -24,8 +24,7 @@ void eBitmapWidget::paintEvent(ePainter& p) {
 
 stdsptr<Texture> eBitmapWidget::texture() const {
     const auto res = resolution();
-    const auto uiScale = res.uiScale();
-    const int iRes = static_cast<int>(uiScale);
+    const int iRes = GameTextures::interfaceTextureId();
     const auto& intrfc = GameTextures::interface()[iRes];
     if(mBitmap == 0) {
         return intrfc.fLoadImage1;

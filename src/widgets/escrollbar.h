@@ -19,9 +19,9 @@ public:
 
 protected:
     void paintEvent(ePainter& p) override {
-        int iRes, mult;
+        int iRes; double mult;
         iResAndMult(iRes, mult);
-        const int dim = 8 * mult;
+        const int dim = GameTextures::interfaceTileDim();
         const auto& intrfc = GameTextures::interface()[iRes];
         if(!intrfc.fLoaded) return;
         const auto& coll = mDragging ? intrfc.fButtonFrameHover : intrfc.fButtonFrame;

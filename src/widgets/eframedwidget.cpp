@@ -10,9 +10,9 @@ void eFramedWidget::setType(const eFrameType type) {
 
 void eFramedWidget::paintEvent(ePainter& p) {
     int iRes;
-    int mult;
+    double mult;
     iResAndMult(iRes, mult);
-    const int dim = 8*mult;
+    const int dim = GameTextures::interfaceTileDim();
     const auto& intrfc = GameTextures::interface()[iRes];
     if(!intrfc.fLoaded) return;
 
