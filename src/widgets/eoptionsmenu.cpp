@@ -178,7 +178,9 @@ void clampButtonWidth(FramedButton* const button,
 bool rebuildsChoicePage(const std::string& label) {
     return label == "Aspect" ||
            label == "Resolution" ||
-           label == "Display";
+           label == "Display" ||
+           label == "UI scale" ||
+           label == "Top/sidebar factor";
 }
 }
 

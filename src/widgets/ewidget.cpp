@@ -51,19 +51,30 @@ int eWidget::topSidebarScaleId() const {
     return Settings::clampTopSidebarScale(window()->settings().fTopSidebarScale);
 }
 
-int eWidget::topSidebarMult() const {
-    return topSidebarScaleId() + 1;
+double eWidget::topSidebarScale() const {
+    switch(topSidebarScaleId()) {
+    case 0: return 1.0;
+    case 1: return 1.25;
+    case 2: return 1.5;
+    case 3:
+    default: return 1.75;
+    }
+}
+
+double eWidget::topSidebarMult() const {
+    return 2.0*topSidebarScale();
 }
 
 double eWidget::topSidebarTextureScale() const {
-    return 0.5*topSidebarMult();
+    return topSidebarScale();
 }
 
 int eWidget::topSidebarTextureBleed() const {
-    return topSidebarScaleId() == 2 ? 2 : 0;
+    const double scale = topSidebarScale();
+    return std::round(scale) == scale ? 0 : 2;
 }
 
-void eWidget::topSidebarIResAndMult(int& iRes, int& mult) const {
+void eWidget::topSidebarIResAndMult(int& iRes, double& mult) const {
     iRes = GameTextures::interfaceTextureId();
     mult = topSidebarMult();
 }

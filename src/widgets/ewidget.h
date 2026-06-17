@@ -24,10 +24,11 @@ protected:
 
     void iResAndMult(int& iRes, double& mult) const;
     int topSidebarScaleId() const;
-    int topSidebarMult() const;
+    double topSidebarScale() const;
+    double topSidebarMult() const;
     double topSidebarTextureScale() const;
     int topSidebarTextureBleed() const;
-    void topSidebarIResAndMult(int& iRes, int& mult) const;
+    void topSidebarIResAndMult(int& iRes, double& mult) const;
     int scalePx(double base) const;
 public:
     void move(const int x, const int y);

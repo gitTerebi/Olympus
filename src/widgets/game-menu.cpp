@@ -1,6 +1,7 @@
 ﻿#include "game-menu.h"
 
 #include <algorithm>
+#include <cmath>
 
 #include "textures/game-textures.h"
 #include "main-window.h"
@@ -200,13 +201,13 @@ eWidget *GameMenu::createPriceWidget(const InterfaceTextures &coll)
 }
 
 eWidget *GameMenu::createSubButtons(
-    const int resoltuionMult,
+    const double resoltuionMult,
     const eButtonsDataVec &buttons)
 {
     const auto result = new eWidget(window());
 
-    const int x = resoltuionMult * 35;
-    const int y = resoltuionMult * 28;
+    const int x = std::round(resoltuionMult * 35);
+    const int y = std::round(resoltuionMult * 28);
     const std::vector<std::pair<int, int>> poses =
         {{0, 0}, {x, 0}, {0, y}, {x, y}};
 
@@ -259,8 +260,8 @@ eBuildButton *GameMenu::createBuildButton(const eSPR &c)
     const auto mode = c.fMode;
     const auto t = eBuildingModeHelpers::toBuildingType(mode);
     const int cost = DifficultyHelpers::buildingCost(diff, t);
-    const int mult = topSidebarMult();
-    bb->initialize(c.fName, c.fMarbleCost, cost, 150 * mult);
+    const double mult = topSidebarMult();
+    bb->initialize(c.fName, c.fMarbleCost, cost, std::round(150 * mult));
     bb->setPressAction([this, c]()
                        {
         setMode(c.fMode);
@@ -573,7 +574,7 @@ void GameMenu::initialize(GameBoard *const b,
     GameMenuBase::initialize();
 
     int iRes;
-    int mult;
+    double mult;
     topSidebarIResAndMult(iRes, mult);
 
     const auto &intrfc = GameTextures::interface();
@@ -587,12 +588,12 @@ void GameMenu::initialize(GameBoard *const b,
     const int cmx = -padding();
     const int cmy = 5 * height() / 8;
 
-    const int dataWidWidth = 65 * mult;
-    const int dataWidHeight = 119 * mult;
+    const int dataWidWidth = std::round(65 * mult);
+    const int dataWidHeight = std::round(119 * mult);
 
-    const int wwHeight = 190 * mult;
-    const int wy = dataWidHeight + 31 * mult;
-    const int wx = 24 * mult;
+    const int wwHeight = std::round(190 * mult);
+    const int wy = dataWidHeight + std::round(31 * mult);
+    const int wx = std::round(24 * mult);
 
     const auto createDataWidgetBase =
         [&](eDataWidget *const dataW,
@@ -644,8 +645,8 @@ void GameMenu::initialize(GameBoard *const b,
     {
         const auto ww = new eWidget(window());
         ww->setNoPadding();
-        const int x = mult * 35;
-        const int y = mult * 28;
+        const int x = std::round(mult * 35);
+        const int y = std::round(mult * 28);
         const std::vector<std::pair<int, int>> poses =
             {{0, 0}, {x, 0}, {0, y}, {x, y}};
         for (const auto &p : poses)
@@ -658,7 +659,7 @@ void GameMenu::initialize(GameBoard *const b,
         ww->fitContent();
         addWidget(ww);
         ww->setX(wx);
-        ww->setY(wy + 32 * mult);
+        ww->setY(wy + std::round(32 * mult));
     }
 
     mPopDataW = new PopulationDataWidget(*b, window());
@@ -1245,7 +1246,7 @@ void GameMenu::initialize(GameBoard *const b,
 
     mOverDataW = new OverviewDataWidget(*b, window());
     mMiniMap = new eMiniMap(window());
-    mMiniMap->setTDim(1.25 * mult);
+    mMiniMap->setTDim(std::round(1.25 * mult));
     mOverDataW->setMap(mMiniMap);
     mMiniMap->resize(dataWidWidth, dataWidWidth * 0.85);
 
@@ -1268,7 +1269,7 @@ void GameMenu::initialize(GameBoard *const b,
     {
         const auto w = ww.fW;
         addWidget(w);
-        w->move(wx, 12 * mult);
+        w->move(wx, std::round(12 * mult));
         w->hide();
     }
 
@@ -1353,18 +1354,27 @@ void GameMenu::initialize(GameBoard *const b,
                           { setMode(eBuildingMode::erase); });
         mUndoButton = eButton::sCreate(coll.fUndo, window(), btmButtons);
         mUndoButton->setTextureDrawScale(topSidebarTextureScale());
-        mUndoButton->setTextureDrawBleed(topSidebarTextureBleed());
         mUndoButton->fitContent();
         mUndoButton->setPressAction([this]()
                                     {
             mBoard->undoLastAction();
             update(); });
 
-        const int x = mult * 24;
-        const int y = std::round(mult * 217.5);
-        btmButtons->resize(4 * b->width(), b->height());
+        const double textureScale = topSidebarTextureScale();
+        const int undoSlotW = std::round(textureScale * 185) -
+                              std::round(textureScale * 147);
+        mUndoButton->setTextureDrawBleed(std::max(0, undoSlotW - mUndoButton->width()));
+        mUndoButton->fitContent();
+
+        const int x = std::round(textureScale * 48);
+        const int y = std::round(textureScale * 435);
+        const int buildGap = 0;
+        rb->setX(b->width() + buildGap);
+        e->setX(rb->x() + rb->width() + buildGap);
+        mUndoButton->setX(e->x() + e->width() + buildGap);
+        const int buildButtonsW = mUndoButton->x() + mUndoButton->width();
+        btmButtons->resize(buildButtonsW, b->height());
         btmButtons->move(x, y);
-        btmButtons->layoutHorizontally();
         addWidget(btmButtons);
     }
 
@@ -1372,10 +1382,13 @@ void GameMenu::initialize(GameBoard *const b,
         const auto butts = new eWidget(window());
         const auto info = eCheckableButton::sCreate(coll.fShowInfo, window(), butts);
         const auto map = eCheckableButton::sCreate(coll.fShowMap, window(), butts);
-        info->setTextureDrawScale(topSidebarTextureScale());
+        const double mapScale = topSidebarTextureScale();
+        info->setTextAlignment(Alignment::left | Alignment::top);
+        info->setTextureDrawScale(mapScale);
         info->setTextureDrawBleed(topSidebarTextureBleed());
         info->fitContent();
-        map->setTextureDrawScale(topSidebarTextureScale());
+        map->setTextAlignment(Alignment::left | Alignment::top);
+        map->setTextureDrawScale(mapScale);
         map->setTextureDrawBleed(topSidebarTextureBleed());
         map->fitContent();
         info->setChecked(true);
@@ -1387,9 +1400,16 @@ void GameMenu::initialize(GameBoard *const b,
                             {
             if(!c) return map->setChecked(true);
             info->setChecked(false); });
-        butts->resize(info->width() + map->width(), info->height());
-        butts->layoutHorizontally();
-        butts->setX(mult * 26);
+        const double textureScale = topSidebarTextureScale();
+        const int mapGap = 0;
+        const int sourceLeftX = 52;
+        const int sourceRightX = 114;
+        const int pairX = std::round(textureScale * sourceLeftX);
+        const int mapX = std::round(textureScale * sourceRightX) - pairX +
+                         mapGap;
+        butts->resize(mapX + map->width(), info->height());
+        map->setX(mapX);
+        butts->setX(pairX);
         addWidget(butts);
     }
 
@@ -1411,7 +1431,7 @@ void GameMenu::initialize(GameBoard *const b,
                     mMsgListW->show();
                 }
             } });
-        mMessagesButton->move(mult * 73, mult * 239);
+        mMessagesButton->move(std::round(mult * 73), std::round(mult * 239));
 
         mMsgBadge = new eLabel(window());
         mMsgBadge->setFontSizeS();
@@ -1452,19 +1472,23 @@ void GameMenu::initialize(GameBoard *const b,
         mWorldButton->fitContent();
         mWorldButton->setTooltip(Language::zeusText(68, 17));
 
-        const int w = goals->width() + mRotateButton->width() + mWorldButton->width();
+        const double textureScale = topSidebarTextureScale();
+        const int pairX = std::round(textureScale * 11);
+        const int pairY = std::round(textureScale * 565);
+        mRotateButton->setX(std::round(textureScale * 45) - pairX);
+        mWorldButton->setX(std::round(textureScale * 115) - pairX);
+        const int w = mWorldButton->x() + mWorldButton->width();
         butts->resize(w, mWorldButton->height());
-        butts->layoutHorizontallyWithoutSpaces();
-        butts->setX(mult * 5.5);
-        butts->setY(std::round(mult * 282.5));
+        butts->setX(pairX);
+        butts->setY(pairY);
         addWidget(butts);
     }
 
     {
         mEventW = new eEventWidget(window());
         mEventW->setNoPadding();
-        mEventW->setX(mult * 5);
-        mEventW->setY(mult * 240);
+        mEventW->setX(std::round(mult * 5));
+        mEventW->setY(std::round(mult * 240));
         mEventW->setWidth(dataWidWidth);
         addWidget(mEventW);
     }

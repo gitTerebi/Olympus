@@ -2,27 +2,12 @@
 
 #include "datawidgets/edatawidget.h"
 
+#include <cmath>
+
 void GameMenuBase::initialize() {
-    int x;
-    int y;
-    switch(topSidebarScaleId()) {
-    case 0:
-        x = 2;
-        y = 11;
-        break;
-    case 1:
-        x = 6;
-        y = 22;
-        break;
-    case 2:
-        x = 9;
-        y = 33;
-        break;
-    case 3:
-    default:
-        x = 12;
-        y = 44;
-    }
+    const double textureScale = topSidebarTextureScale();
+    const int x = std::round(6*textureScale);
+    const int y = std::round(22*textureScale);
     mButtonsWidget = new eWidget(window());
     mButtonsWidget->setX(x);
     mButtonsWidget->setY(y);
@@ -55,26 +40,15 @@ void GameMenuBase::connectAndLayoutButtons() {
 }
 
 void GameMenuBase::layoutButtons() {
-    double margin;
-    switch(topSidebarScaleId()) {
-    case 0:
-        margin = 1;
-        break;
-    case 1:
-        margin = 1;
-        break;
-    case 2:
-        margin = 1.85;
-        break;
-    case 3:
-    default:
-        margin = 2;
-    }
     const int n = mButtons.size();
-    const int buttH = mButtons.front()->height();
-    const int h = n*(buttH + margin);
-    mButtonsWidget->setHeight(h);
-    mButtonsWidget->layoutVerticallyWithoutSpaces();
+    const double textureScale = topSidebarTextureScale();
+    const int originY = std::round(22*textureScale);
+    for(int i = 0; i < n; i++) {
+        const auto b = mButtons[i];
+        b->setY(std::round(textureScale*(22 + i*41)) - originY);
+    }
+    const auto last = mButtons.back();
+    mButtonsWidget->setHeight(last->y() + last->height());
     mButtonsWidget->fitContent();
 }
 
