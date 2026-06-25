@@ -3,8 +3,11 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 
+#include <algorithm>
 #include <string>
+#include <vector>
 
+#include "dev-launch.h"
 #include "main-window.h"
 #include "textures/game-textures.h"
 
@@ -123,8 +126,17 @@ bool getDisplayResolutions(std::vector<SDL_DisplayMode>& resolutions) {
     return true;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     installWindowsDumpHandler();
+    std::vector<std::string> args;
+    for(int i = 1; i < argc; i++) {
+        args.emplace_back(argv[i]);
+    }
+    DevLaunchOptions devOptions;
+    devOptions.fLoadRecent =
+        std::find(args.begin(), args.end(), "--dev-load-recent") != args.end();
+    devOptions.fCycleDirs =
+        std::find(args.begin(), args.end(), "--dev-cycle-dirs") != args.end();
 
     if(!init()) {
         printf("Failed to initialize!\n");
@@ -189,7 +201,10 @@ int main() {
         const bool e = GameTextures::initialize(w.renderer());
         Cursors::initialize();
 
-        if(e) r = w.exec();
+        if(e) {
+            applyDevLaunchOptions(w, devOptions);
+            r = w.exec();
+        }
         Cursors::destroy();
     }
 
