@@ -79,10 +79,15 @@ void drawTemple(
         templeBuilding.monument()->rotateId() : 0;
     const bool templeFrontVisible =
         sanctuaryTempleFrontFacing(templeRotateId, dir);
+    const auto sanctuary =
+        dynamic_cast<eSanctuary*>(templeBuilding.monument());
+    const bool longTemple =
+        sanctuary && isSanctuaryLongTempleGod(sanctuary->godType());
 
     GameTextures::loadZeusSanctuary();
     const auto textures = sanctuaryTempleGetTextures(
-        buildingTextures, templeRotateId, dir, animFrame, stage);
+        buildingTextures, templeRotateId, dir, animFrame, stage,
+        templeBuilding.id(), longTemple);
     drawAtTextureAnchor(
         tilePainter, textureSpace, textures.fBase,
         buildingDrawX, buildingDrawY,
@@ -92,6 +97,11 @@ void drawTemple(
         buildingDrawX, buildingDrawY,
         colorMod, colorModRed, colorModGreen, colorModBlue);
 
+    const bool longTempleContinuation =
+        longTemple &&
+        isSanctuaryLongTempleContinuation(
+            templeRotateId, templeBuilding.id());
+    if(longTempleContinuation) return;
     if(!textures.fWoman || !templeFrontVisible) return;
 
     auto* monument = templeBuilding.monument();

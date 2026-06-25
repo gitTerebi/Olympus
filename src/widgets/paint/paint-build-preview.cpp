@@ -2404,10 +2404,15 @@ void GameWidget::paintBuildPreview(
                     continue;
                 if (type == eBuildingType::temple)
                 {
+                    const auto temple =
+                        dynamic_cast<eTempleBuilding*>(eb.fB.get());
+                    const bool longTemple =
+                        isSanctuaryLongTempleGod(eb.fStatueGod);
                     drawSanctuaryTempleBuildingPreview(
                         *mBoard, tp, builTexs, eb.fTx, eb.fTy,
                         eb.fAltitude, eb.fTempleOverlayDirId,
-                        dir, mAnimFrame, canBuildPreview, 0);
+                        dir, mAnimFrame, canBuildPreview, 0,
+                        temple ? temple->id() : -1, longTemple);
                     continue;
                 }
                 if (type == eBuildingType::templeStatue)
