@@ -48,6 +48,11 @@ public:
                   const int w, const int h,
                   const SDL_Color& color) const;
 private:
+    void drawTexture(const double x, const double y,
+                     Texture* tex,
+                     const Alignment align) const;
+    void drawTexture(const double x, const double y,
+                     Texture* tex) const;
     void drawPositon(const double x, const double y,
                      int& pixX, int& pixY,
                      const double dx = 0, const double dy = 0) const;
@@ -60,7 +65,7 @@ private:
     struct eScheduledDraw {
         double fX;
         double fY;
-        std::shared_ptr<Texture> fTex;
+        Texture* fTex = nullptr;
         bool fHasAlign = false;
         Alignment fAlign = Alignment::top;
         bool fHasColorMod = false;

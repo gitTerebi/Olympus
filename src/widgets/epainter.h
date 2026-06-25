@@ -29,11 +29,16 @@ public:
     void drawTexture(const int x, const int y,
                      const std::shared_ptr<Texture>& tex,
                      const Alignment align) const;
+    void drawTexture(const int x, const int y,
+                     Texture* const tex,
+                     const Alignment align) const;
     void drawTexture(const SDL_Rect& rect,
                      const std::shared_ptr<Texture>& tex,
                      const Alignment align) const;
     void drawTexture(const int x, const int y,
                      const std::shared_ptr<Texture>& tex) const;
+    void drawTexture(const int x, const int y,
+                     Texture* const tex) const;
     void fillRect(const SDL_Rect& rect,
                   const SDL_Color& color) const;
     void drawRect(const SDL_Rect& rect,

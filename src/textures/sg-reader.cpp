@@ -549,7 +549,12 @@ SDL_Surface* SgReader::loadComposite(const std::string& name,
     }
 
     (void)tileH; // rects are already zoom-specific; record is scaled into them
-    if(name == "interfaceNewParts") {
+    if(name == "interfaceNewParts" ||
+       name == "interfaceMapEditor" ||
+       name == "interfaceWorldSide" ||
+       name == "zeusElevationTiles" ||
+       name == "zeusElevationTiles2" ||
+       name == "zeusElevationTiles2A") {
         applyInterfaceGreenMask(strip);
     }
     return strip;

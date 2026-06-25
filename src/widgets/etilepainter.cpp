@@ -4,7 +4,8 @@ eTilePainter::eTilePainter(ePainter& p,
                            const eTileSize size,
                            const int tw, const int th) :
     mP(p), mSize(size), mTileW(tw), mTileH(th) {
-
+    mScheduled.reserve(128);
+    mSaves.reserve(16);
 }
 
 void eTilePainter::save() {
@@ -30,6 +31,12 @@ void eTilePainter::translate(const double x, const double y) {
 void eTilePainter::drawTexture(const double x, const double y,
                                const std::shared_ptr<Texture>& tex,
                                const Alignment align) const {
+    drawTexture(x, y, tex.get(), align);
+}
+
+void eTilePainter::drawTexture(const double x, const double y,
+                               Texture* tex,
+                               const Alignment align) const {
     if(!tex) return;
     const double dx = mTileH*tex->offsetX()/30.;
     const double dy = mTileH*tex->offsetY()/30.;
@@ -41,6 +48,11 @@ void eTilePainter::drawTexture(const double x, const double y,
 
 void eTilePainter::drawTexture(const double x, const double y,
                                const std::shared_ptr<Texture>& tex) const {
+    drawTexture(x, y, tex.get());
+}
+
+void eTilePainter::drawTexture(const double x, const double y,
+                               Texture* tex) const {
     if(!tex) return;
     const double dx = mTileH*tex->offsetX()/30.;
     const double dy = mTileH*tex->offsetY()/30.;
@@ -55,7 +67,7 @@ void eTilePainter::scheduleDrawTexture(const double x, const double y,
     auto& s = mScheduled.emplace_back();
     s.fX = x;
     s.fY = y;
-    s.fTex = tex;
+    s.fTex = tex.get();
 }
 
 void eTilePainter::scheduleDrawTexture(const double x, const double y,
@@ -64,7 +76,7 @@ void eTilePainter::scheduleDrawTexture(const double x, const double y,
     auto& s = mScheduled.emplace_back();
     s.fX = x;
     s.fY = y;
-    s.fTex = tex;
+    s.fTex = tex.get();
     s.fHasAlign = true;
     s.fAlign = align;
 }
@@ -76,7 +88,7 @@ void eTilePainter::scheduleDrawTexture(const double x, const double y,
     auto& s = mScheduled.emplace_back();
     s.fX = x;
     s.fY = y;
-    s.fTex = tex;
+    s.fTex = tex.get();
     s.fHasAlign = true;
     s.fAlign = align;
     s.fHasColorMod = true;
