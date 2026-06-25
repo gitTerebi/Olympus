@@ -301,6 +301,28 @@ void GameWidget::paintEvent(ePainter &p)
 
         if (tex)
         {
+            if (mDrawElevation && tile->isElevationTile())
+            {
+                int baseDrawDim = 1;
+                const TextureCollection* baseColl = nullptr;
+                const auto baseTex = TileToTexture::get(
+                    tile, trrTexs, builTexs, mTileSize, false,
+                    baseDrawDim, &baseColl, dir);
+                stdsptr<Texture> base = baseTex;
+                if (!base && baseColl && baseColl->size() > 0)
+                {
+                    base = baseColl->getTexture(tile->seed() % baseColl->size());
+                }
+                if (base)
+                {
+                    double baseDrawX;
+                    double baseDrawY;
+                    drawXY(worldTileX, worldTileY, baseDrawX, baseDrawY,
+                           baseDrawDim, baseDrawDim, a);
+                    tp.drawTexture(baseDrawX, baseDrawY, base, Alignment::top);
+                }
+            }
+
             bool lavaCm = false;
             bool eraseCm = false;
             bool repairCm = false;
