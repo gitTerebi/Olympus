@@ -650,6 +650,7 @@ void BoardCity::saveEditorCityPlan() {
     mCityPlan = AICityPlan(mId);
     for(const auto b : mAllBuildings) {
         const int did = b->districtId();
+        if(did < 0) continue;
         while(did >= mCityPlan.districtCount()) {
             const int id = mCityPlan.districtCount();
             AIDistrict d;
