@@ -75,6 +75,8 @@ void adjustWomanDebugOffset(
 
 double sanctuaryWomanTileDX(int rotateId, int dirIdx);
 double sanctuaryWomanTileDY(int rotateId, int dirIdx);
+bool isSanctuaryLongTempleGod(GodType god);
+bool isSanctuaryLongTempleContinuation(int rotateId, int templeId);
 
 struct SanctuaryTempleTextures {
     std::shared_ptr<Texture> fBase;
@@ -87,7 +89,9 @@ SanctuaryTempleTextures sanctuaryTempleGetTextures(
     int rotateId,
     eWorldDirection dir,
     int animFrame,
-    int stage);
+    int stage,
+    int templeId = -1,
+    bool longTemple = false);
 
 std::shared_ptr<Texture> sanctuaryStatueGetTexture(
     const BuildingTextures& builTexs,
@@ -125,7 +129,9 @@ void drawSanctuaryTempleBuildingPreview(
     eWorldDirection dir,
     int animFrame,
     bool canBuild,
-    int stage = 2);
+    int stage = 2,
+    int templeId = -1,
+    bool longTemple = false);
 
 void drawSanctuaryStatuePreview(
     GameBoard &board,

@@ -12,11 +12,12 @@ public:
                     const eCityId cid);
 
     std::shared_ptr<Texture> getTexture(const eTileSize) const override { return nullptr; }
+    int id() const { return mId; }
 
 protected:
     void serializeFields(SaveArchive& ar) override;
 private:
-    int mId;
+    int mId = 0;
 };
 
 #endif // ETEMPLEBUILDING_H

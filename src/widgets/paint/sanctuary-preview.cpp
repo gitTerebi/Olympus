@@ -621,27 +621,95 @@ double sanctuaryWomanTileDY(const int rotateId, const int dirIdx) {
     return gWomanTileDY[rotateId % 4][dirIdx % 4];
 }
 
+bool isSanctuaryLongTempleGod(const GodType god)
+{
+    switch(god) {
+    case GodType::artemis:
+    case GodType::atlas:
+    case GodType::demeter:
+    case GodType::hades:
+    case GodType::hera:
+    case GodType::poseidon:
+    case GodType::zeus:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool isSanctuaryLongTempleContinuation(
+    const int rotateId,
+    const int templeId)
+{
+    static const int b3Ids[4] = {3, 2, 1, 0};
+    return templeId == b3Ids[rotateId % 4];
+}
+
+int sanctuaryTempleCollectionId(const int baseDirId)
+{
+    if(baseDirId == 1) return 1;
+    if(baseDirId == 0) return 2;
+    if(baseDirId == 2) return 0;
+    return 3;
+}
+
+bool sanctuaryLongTemplePieceCollections(
+    const int rotateId,
+    const int baseDirId,
+    const int templeId,
+    const bool frontFacing,
+    int& collectionId)
+{
+    static const int b1Ids[4] = {1, 0, 3, 2};
+    static const int b3Ids[4] = {3, 2, 1, 0};
+    const int r = rotateId % 4;
+    const int oldCollectionId = sanctuaryTempleCollectionId(baseDirId);
+    const int pairStart = oldCollectionId % 2;
+    const int b1Collection = frontFacing ? pairStart : pairStart + 2;
+    const int b3Collection = frontFacing ? pairStart + 2 : pairStart;
+    if(templeId == b1Ids[r]) {
+        collectionId = b1Collection;
+        return true;
+    }
+    if(templeId == b3Ids[r]) {
+        collectionId = b3Collection;
+        return true;
+    }
+    return false;
+}
+
 SanctuaryTempleTextures sanctuaryTempleGetTextures(
     const BuildingTextures& builTexs,
     const int rotateId,
     const eWorldDirection dir,
     const int animFrame,
-    const int stage)
+    const int stage,
+    const int templeId,
+    const bool longTemple)
 {
     const int baseDirId = sanctuaryTempleDirId(rotateId, dir);
-    SanctuaryTempleTextures result;
-    if(baseDirId == 1)
-        result.fBase = builTexs.fSanctuary[1].getTexture(stage);
-    else if(baseDirId == 0) {
-        result.fBase = builTexs.fSanctuary[2].getTexture(stage);
-        if(stage == 2) result.fFlip = builTexs.fSanctuaryFlippedSW.getTexture(0);
-    } else if(baseDirId == 2)
-        result.fBase = builTexs.fSanctuary[0].getTexture(stage);
-    else {
-        result.fBase = builTexs.fSanctuary[3].getTexture(stage);
-        if(stage == 2) result.fFlip = builTexs.fSanctuaryFlippedNW.getTexture(0);
+    const bool frontFacing = sanctuaryTempleFrontFacing(rotateId, dir);
+    int collectionId = -1;
+    if(longTemple && stage == 2) {
+        sanctuaryLongTemplePieceCollections(
+            rotateId, baseDirId, templeId, frontFacing, collectionId);
     }
-    if(stage == 2 && sanctuaryTempleFrontFacing(rotateId, dir) &&
+    SanctuaryTempleTextures result;
+    if(collectionId != -1) {
+        result.fBase = builTexs.fSanctuary[collectionId].getTexture(stage);
+    } else {
+        const int defaultCollectionId = sanctuaryTempleCollectionId(baseDirId);
+        result.fBase = builTexs.fSanctuary[
+            defaultCollectionId].getTexture(stage);
+        if(stage == 2) {
+            if(baseDirId == 0) {
+                result.fFlip = builTexs.fSanctuaryFlippedSW.getTexture(0);
+            } else if(baseDirId == 3) {
+                result.fFlip = builTexs.fSanctuaryFlippedNW.getTexture(0);
+            }
+        }
+    }
+    if(stage == 2 && frontFacing &&
        (baseDirId == 0 || baseDirId == 1)) {
         if(baseDirId == 0) {
             const auto& coll = builTexs.fSanctuaryHOverlay;
@@ -737,7 +805,9 @@ void drawSanctuaryTempleBuildingPreview(
     const eWorldDirection dir,
     const int animFrame,
     const bool canBuild,
-    const int stage)
+    const int stage,
+    const int templeId,
+    const bool longTemple)
 {
     if(placementRotateId < 0) {
         return;
@@ -755,7 +825,8 @@ void drawSanctuaryTempleBuildingPreview(
         tex->clearColorMod();
     };
 
-    const auto t = sanctuaryTempleGetTextures(builTexs, rotateId, dir, animFrame, stage);
+    const auto t = sanctuaryTempleGetTextures(
+        builTexs, rotateId, dir, animFrame, stage, templeId, longTemple);
     drawLayer(t.fBase);
     drawLayer(t.fFlip);
     if(t.fWoman) {
