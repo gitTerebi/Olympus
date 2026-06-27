@@ -23,13 +23,14 @@ public:
     MainWindow();
     ~MainWindow();
 
-    bool initialize(const Settings& settings);
+    bool initialize(const Settings& settings, bool offscreen = false);
 public:
 
     void setWidget(eWidget* const w);
     eWidget* takeWidget();
 
     int exec();
+    void quit() { mQuit = true; }
 
     void addSlot(const eSlot& slot);
 

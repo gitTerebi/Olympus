@@ -76,20 +76,30 @@ bool writeGameSaveFile(const std::string& path,
 MainWindow::MainWindow() {}
 
 MainWindow::~MainWindow() {
-    if(mSdlWindow) SDL_DestroyWindow(mSdlWindow);
-    if(mSdlRenderer) SDL_DestroyRenderer(mSdlRenderer);
     setWidget(nullptr);
+    clearWidgets();
+    while(!mSlots.empty()) {
+        std::vector<eSlot> slots;
+        std::swap(slots, mSlots);
+        for(const auto& s : slots) {
+            s();
+        }
+    }
+    if(mSdlRenderer) SDL_DestroyRenderer(mSdlRenderer);
+    if(mSdlWindow) SDL_DestroyWindow(mSdlWindow);
 }
 
-bool MainWindow::initialize(const Settings& settings) {
+bool MainWindow::initialize(const Settings& settings, const bool offscreen) {
     const auto& res = settings.fRes;
     const int w = res.width();
     const int h = res.height();
+    const int windowX = offscreen ? -32000 : SDL_WINDOWPOS_UNDEFINED;
+    const int windowY = offscreen ? -32000 : SDL_WINDOWPOS_UNDEFINED;
     // Resizable so the user can maximize the window past the configured resolution;
     // the bicubic pass upscales the fixed-resolution frame to fill it.
     const auto window = SDL_CreateWindow("eZeus",
-                                         SDL_WINDOWPOS_UNDEFINED,
-                                         SDL_WINDOWPOS_UNDEFINED,
+                                         windowX,
+                                         windowY,
                                          w, h,
                                          SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
@@ -120,7 +130,11 @@ bool MainWindow::initialize(const Settings& settings) {
     setDisplayMode(settings.fDisplayMode);
     mSettings = settings;
     applyPostprocessFilters();
-    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    if(offscreen) {
+        SDL_SetWindowPosition(window, -32000, -32000);
+    } else {
+        SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    }
 
     const std::string icoPath = GameDir::path("zeus.ico");
     const auto icon = IMG_Load(icoPath.c_str());

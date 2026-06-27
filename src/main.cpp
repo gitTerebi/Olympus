@@ -137,6 +137,17 @@ int main(int argc, char* argv[]) {
         std::find(args.begin(), args.end(), "--dev-load-recent") != args.end();
     devOptions.fCycleDirs =
         std::find(args.begin(), args.end(), "--dev-cycle-dirs") != args.end();
+    devOptions.fWorldMap =
+        std::find(args.begin(), args.end(), "--dev-world-map") != args.end();
+    const auto worldMapShot =
+        std::find(args.begin(), args.end(), "--dev-world-map-shot");
+    if(worldMapShot != args.end()) {
+        devOptions.fWorldMap = true;
+        const auto pathArg = worldMapShot + 1;
+        if(pathArg != args.end()) {
+            devOptions.fWorldMapShotPath = *pathArg;
+        }
+    }
 
     if(!init()) {
         printf("Failed to initialize!\n");
@@ -196,7 +207,8 @@ int main(int argc, char* argv[]) {
         eMusic music;
         eSounds sounds;
         MainWindow w;
-        const bool i = w.initialize(settings);
+        const bool offscreen = !devOptions.fWorldMapShotPath.empty();
+        const bool i = w.initialize(settings, offscreen);
         if(!i) return 1;
         const bool e = GameTextures::initialize(w.renderer());
         Cursors::initialize();
