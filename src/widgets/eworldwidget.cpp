@@ -28,6 +28,9 @@
 
 #include "buildings/eheroshall.h"
 
+#include <algorithm>
+#include <cmath>
+
 void eWorldWidget::initialize() {
     mWM = new eWorldMenu(window());
     const auto requestFunc = [this]() {
@@ -205,9 +208,6 @@ void eWorldWidget::initialize() {
         setMap(m);
     });
 
-    const int x = width() - mWM->width() - p - mMapButton->width();
-    mMapButton->move(x, p);
-
     mAddCityButton = new FramedButton(window());
     mAddCityButton->setUnderline(false);
     mAddCityButton->setRenderBg(true);
@@ -228,8 +228,6 @@ void eWorldWidget::initialize() {
         mWorldBoard->moveCityToPlayer(cid, pid);
         mWMW->updateWidgets();
     });
-    const int xx = width() - mWM->width() - p - mAddCityButton->width();
-    mAddCityButton->move(xx, mMapButton->y() + mMapButton->height() + p);
 
     mSettingsButton = new FramedButton(window());
     mSettingsButton->setUnderline(false);
@@ -246,8 +244,30 @@ void eWorldWidget::initialize() {
         window()->execDialog(d);
         d->align(Alignment::center);
     });
-    const int xxx = width() - mWM->width() - p - mSettingsButton->width();
-    mSettingsButton->move(xxx, mAddCityButton->y() + mAddCityButton->height() + p);
+
+    layoutControls();
+}
+
+void eWorldWidget::layoutControls() {
+    const int p = padding();
+
+    mWM->align(Alignment::right | Alignment::top);
+
+    mMapButton->move(width() - mWM->width() - p - mMapButton->width(), p);
+    mAddCityButton->move(
+        width() - mWM->width() - p - mAddCityButton->width(),
+        mMapButton->y() + mMapButton->height() + p);
+    mSettingsButton->move(
+        width() - mWM->width() - p - mSettingsButton->width(),
+        mAddCityButton->y() + mAddCityButton->height() + p);
+
+    if(mWorldBoard) setMap(mWorldBoard->map());
+}
+
+void eWorldWidget::windowSizeChanged(const int w, const int h) {
+    eMainWidget::windowSizeChanged(w, h);
+    layoutControls();
+    mWMW->updateWidgets();
 }
 
 void eWorldWidget::setBoard(GameBoard* const board) {
@@ -271,6 +291,18 @@ void eWorldWidget::setWorldBoard(WorldBoard* const board) {
 
 void eWorldWidget::update() {
     mWMW->updateWidgets();
+}
+
+bool eWorldWidget::selectCityByName(const std::string& name) {
+    if(!mWorldBoard) return false;
+    const auto& cities = mWorldBoard->cities();
+    for(const auto& c : cities) {
+        if(c->name() != name) continue;
+        mCity = c;
+        mWM->setCity(c);
+        return true;
+    }
+    return false;
 }
 
 void eWorldWidget::openEnlistForcesDialog(
@@ -446,9 +478,30 @@ void eWorldWidget::openGiftDialog() {
 }
 
 void eWorldWidget::setMap(const eWorldMap map) {
-    mWMW->setMap(map);
-    mWMW->align(Alignment::center);
+    // Reset any prior scale so fitContent() inside setMap() sizes the widget
+    // to the true native texture size, not the previously scaled size.
+    mWMW->setTextureDrawScale(1.0);
+    mWMW->setMap(map); // sizes mWMW to the native texture size
+
+    const int texW = mWMW->width();
+    const int texH = mWMW->height();
+    if(texW > 0 && texH > 0) {
+        const int p = padding();
+        const int availW = width() - mWM->width() - 2*p;
+        const int availH = height() - 2*p;
+        if(availW > 0 && availH > 0) {
+            const double scale = std::min(static_cast<double>(availW)/texW,
+                                          static_cast<double>(availH)/texH);
+            mWMW->setTextureDrawScale(scale);
+            mWMW->setIconScale(scale);
+            const int dw = std::round(texW*scale);
+            const int dh = std::round(texH*scale);
+            mWMW->resize(dw, dh);
+        }
+    }
+
     mWMW->setX((width() - mWM->width() - mWMW->width())/2);
+    mWMW->setY((height() - mWMW->height())/2);
 }
 
 void eWorldWidget::openDialog(eWidget* const d) {

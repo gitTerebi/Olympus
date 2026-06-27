@@ -21,6 +21,9 @@ public:
 
     void update();
 
+    // dev: select a city as if clicked, so its status panel shows
+    bool selectCityByName(const std::string& name);
+
     using eEnlistAction = eEnlistForcesDialog::eEnlistAction;
     void openEnlistForcesDialog(
         const eEnlistAction& a,
@@ -37,7 +40,9 @@ public:
     void openDialog(eWidget* const d) override;
 protected:
     bool keyPressEvent(const eKeyPressEvent& e) override;
+    void windowSizeChanged(int w, int h) override;
 private:
+    void layoutControls();
     void openRequestDialog();
     void openFulfillDialog();
     void openGiftDialog();

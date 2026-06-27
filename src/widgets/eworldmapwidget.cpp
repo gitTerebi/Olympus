@@ -36,6 +36,37 @@ void eWorldMapWidget::setWorldBoard(WorldBoard* const b) {
     updateWidgets();
 }
 
+void eWorldMapWidget::setIconScale(const double s) {
+    const double ns = std::max(0.1, s);
+    if(ns == mIconScale) return;
+    mIconScale = ns;
+    mNames.clear(); // regenerate name textures at the new font size
+    updateWidgets();
+}
+
+void eWorldMapWidget::drawScaled(ePainter& p, const int x, const int y,
+                                 const stdsptr<Texture>& tex,
+                                 const Alignment align) {
+    if(!tex) return;
+    const int dw = std::round(tex->width()*mIconScale);
+    const int dh = std::round(tex->height()*mIconScale);
+    int xx = x;
+    if(static_cast<bool>(align & Alignment::left)) {
+        xx -= dw;
+    } else if(static_cast<bool>(align & Alignment::hcenter)) {
+        xx -= dw/2;
+    }
+    int yy = y;
+    if(static_cast<bool>(align & Alignment::top)) {
+        yy -= dh;
+    } else if(static_cast<bool>(align & Alignment::vcenter)) {
+        yy -= dh/2;
+    }
+    const SDL_Rect srcRect{tex->x(), tex->y(), tex->width(), tex->height()};
+    const SDL_Rect dstRect{p.x() + xx, p.y() + yy, dw, dh};
+    tex->render(p.renderer(), srcRect, dstRect);
+}
+
 void eWorldMapWidget::setSelectCityAction(const eSelectCityAction& s) {
     mSelectCityAction = s;
 }
@@ -187,7 +218,8 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
         if(nameFind == mNames.end()) {
             nameTex = std::make_shared<Texture>();
             const auto res = resolution();
-            const int fontSize = res.fontSizeS();
+            const int fontSize = std::max(1,
+                static_cast<int>(std::round(res.fontSizeS()*mIconScale)));
             const auto font = eFonts::defaultFont(fontSize);
             nameTex->loadText(renderer(), name, FontColor::region, *font);
             mNames[name] = nameTex;
@@ -303,20 +335,23 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
 
         const int x = ct->x()*width();
         const int y = ct->y()*height();
-        p.drawTexture(x, y, tex, Alignment::center);
+        drawScaled(p, x, y, tex, Alignment::center);
+
+        const int texW = std::round(tex->width()*mIconScale);
+        const int texH = std::round(tex->height()*mIconScale);
 
         const auto flagAl = Alignment::hcenter | Alignment::top;
-        const int flagX = x + tex->width()/2;
-        const int flagY = y + tex->height()/2;
+        const int flagX = x + texW/2;
+        const int flagY = y + texH/2;
         if(ct->isParentCity()) {
-            p.drawTexture(flagX, flagY, texs.fMainCityFlag, flagAl);
+            drawScaled(p, flagX, flagY, texs.fMainCityFlag, flagAl);
         } else if(ct->isVassal() || (ct->isColony() && ct->active())) {
-            p.drawTexture(flagX, flagY, texs.fEmpireCityFlag, flagAl);
+            drawScaled(p, flagX, flagY, texs.fEmpireCityFlag, flagAl);
         } else if(ct->isAlly()) {
             const auto& coll = texs.fAllyCityFlag;
             const int cs = coll.size();
             const auto& tex = coll.getTexture(mFrame % cs);
-            p.drawTexture(flagX, flagY, tex, flagAl);
+            drawScaled(p, flagX, flagY, tex, flagAl);
         }
 
         const auto hc = mWorldBoard->currentCity();
@@ -331,22 +366,22 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
                                    ct->shields();
             const int a = std::clamp(s, 1, 5);
             const int w = std::clamp(ct->wealth(), 1, 5);
-            const int lp = res.paddingL();
-            const int hp = res.paddingXL();
+            const int lp = std::round(res.paddingL()*mIconScale);
+            const int hp = std::round(res.paddingXL()*mIconScale);
             int xx = x - hp;
             const int yy = y - hp;
             const auto& aTex = aColl.getTexture(a - 1);
-            p.drawTexture(xx, yy, aTex, Alignment::top);
-            xx += lp + aTex->width()/2;
+            drawScaled(p, xx, yy, aTex, Alignment::top);
+            xx += lp + std::round(aTex->width()*mIconScale)/2;
             const auto& wTex = wColl.getTexture(w - 1);
-            p.drawTexture(xx, yy, wTex, Alignment::top);
+            drawScaled(p, xx, yy, wTex, Alignment::top);
         }
 
         if(ct->rebellion() || ct->conqueredByRival()) {
             const auto& coll = texs.fCityRebellion;
             const int cs = coll.size();
             const auto tex = coll.getTexture(mFrame % cs);
-            p.drawTexture(x, y, tex);
+            drawScaled(p, x, y, tex);
         }
 
         {
@@ -356,7 +391,8 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             if(nameFind == mNames.end()) {
                 nameTex = std::make_shared<Texture>();
                 const auto res = resolution();
-                const int fontSize = res.fontSizeS();
+                const int fontSize = std::max(1,
+                    static_cast<int>(std::round(res.fontSizeS()*mIconScale)));
                 const auto font = eFonts::defaultFont(fontSize);
                 nameTex->loadText(renderer(), name, FontColor::light, *font);
                 mNames[name] = nameTex;
@@ -368,20 +404,20 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             const auto place = ct->namePlace();
             switch(place) {
             case eNamePlace::left:
-                dx -= tex->width()/2 + nameTex->width();
+                dx -= texW/2 + nameTex->width();
                 dy -= nameTex->height()/2;
                 break;
             case eNamePlace::top:
                 dx -= nameTex->width()/2;
-                dy -= (tex->height() + nameTex->height())/2;
+                dy -= (texH + nameTex->height())/2;
                 break;
             case eNamePlace::right:
-                dx += tex->width()/2;
+                dx += texW/2;
                 dy -= nameTex->height()/2;
                 break;
             case eNamePlace::bottom:
                 dx -= nameTex->width()/2;
-                dy += tex->height()/2;
+                dy += texH/2;
                 break;
             }
 
@@ -430,7 +466,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             int x;
             int y;
             armyDrawXY(*army.fTravelFrom, *army.fTravelTo, army.fTravelFrac, x, y);
-            const int dx = res.paddingL();
+            const int dx = std::round(res.paddingL()*mIconScale);
             if(army.fArmySize != 0) {
                 const int n = std::clamp(army.fArmySize - 1, 0, 2);
                 const TextureCollection* coll = nullptr;
@@ -446,7 +482,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
                     coll = cityFigures(nat);
                 }
                 const auto& tex = coll->getTexture(n);
-                p.drawTexture(x, y, tex, Alignment::center);
+                drawScaled(p, x, y, tex, Alignment::center);
                 x += dx;
             }
 
@@ -479,7 +515,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
                     break;
                 }
 
-                p.drawTexture(x, y, tex, Alignment::center);
+                drawScaled(p, x, y, tex, Alignment::center);
                 x += dx;
             }
         }
@@ -588,8 +624,8 @@ void eWorldMapWidget::updateWidgets() {
     const int iRes = GameTextures::interfaceTextureId();
     const auto& texs = intrfc[iRes];
     const auto& tex = texs.fZeusMainCity;
-    const int w = tex->width();
-    const int h = tex->height();
+    const int w = std::round(tex->width()*mIconScale);
+    const int h = std::round(tex->height()*mIconScale);
     const int w2 = 2*w;
     const int h2 = 2*h;
 
