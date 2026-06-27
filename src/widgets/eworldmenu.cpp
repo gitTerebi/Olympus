@@ -19,11 +19,19 @@ void eWorldMenu::initialize(const eAction& openRequest,
                             const bool showText) {
     int iRes;
     double mult;
-    iResAndMult(iRes, mult);
+    topSidebarIResAndMult(iRes, mult);
+
+    const auto scaleBtn = [this](eButton* const b) {
+        b->setTextureDrawScale(topSidebarTextureScale());
+        b->setTextureDrawBleed(topSidebarTextureBleed());
+        b->fitContent();
+    };
 
     const auto& intrfc = GameTextures::interface();
     const auto& coll = intrfc[iRes];
     const auto tex = coll.fWorldMenuBackground;
+    setTextureDrawScale(topSidebarTextureScale());
+    setTextureDrawBleed(topSidebarTextureBleed());
     setTexture(tex);
     setPadding(0);
     fitContent();
@@ -32,6 +40,10 @@ void eWorldMenu::initialize(const eAction& openRequest,
         mLeftArrowButton = eButton::sCreate(coll.fWorldLeftArrowButton, window(), this);
         const auto whb = eButton::sCreate(coll.fWorldHistoryButton, window(), this);
         mRightArrowButton = eButton::sCreate(coll.fWorldRightArrowButton, window(), this);
+
+        scaleBtn(mLeftArrowButton);
+        scaleBtn(whb);
+        scaleBtn(mRightArrowButton);
 
         const int xwlab = std::round(5.5*mult);
         const int xwhb = std::round(34.5*mult);
@@ -62,6 +74,12 @@ void eWorldMenu::initialize(const eAction& openRequest,
         mRaidButton->setTooltip(Language::zeusText(44, 312));
         mConquerButton = eButton::sCreate(coll.fConquerButton, window(), this);
         mConquerButton->setTooltip(Language::zeusText(44, 313));
+
+        scaleBtn(mRequestButton);
+        scaleBtn(mFulfillButton);
+        scaleBtn(mGiftButton);
+        scaleBtn(mRaidButton);
+        scaleBtn(mConquerButton);
 
         const int xwrb = std::round(6.5*mult);
         const int xwfb = 35*mult;
@@ -116,6 +134,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
         });
 
         const auto wh = eButton::sCreate(coll.fHelpButton, window(), this);
+        scaleBtn(wh);
         const int whx = 6*mult;
         const int why = 286*mult;
 
@@ -124,6 +143,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
 
         if(showText) {
             const auto wgw = eButton::sCreate(coll.fWorldSmallButton, window(), this);
+            scaleBtn(wgw);
             wgw->setPressAction([this](){
                 const bool editor = mBoard && mBoard->editorMode();
                 if(editor) return;
@@ -145,6 +165,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
         }
 
         const auto wat = eButton::sCreate(coll.fWorldBigButton, window(), this);
+        scaleBtn(wat);
 
         mAttitudeLabel = new eLabel("unknown", window());
         mAttitudeLabel->setTooltip(Language::zeusText(44, 333));
