@@ -839,12 +839,17 @@ void GameWidget::initialize()
 
 int GameWidget::citySourceWidth() const
 {
-    return window()->resolution().width();
+    // Use the live widget size so the city view fills the window at any size
+    // (it draws more tiles rather than stretching). Fall back to the
+    // configured resolution if the widget has no size yet.
+    const int w = width();
+    return w > 0 ? w : window()->resolution().width();
 }
 
 int GameWidget::citySourceHeight() const
 {
-    return window()->resolution().height();
+    const int h = height();
+    return h > 0 ? h : window()->resolution().height();
 }
 
 int GameWidget::windowToCityX(const int x) const
