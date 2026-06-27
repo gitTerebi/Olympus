@@ -5,6 +5,7 @@
 #include "main-window.h"
 #include "widgets/game-widget.h"
 #include "widgets/erosterofleaders.h"
+#include "widgets/eworldwidget.h"
 
 #include <SDL2/SDL_image.h>
 
@@ -144,15 +145,26 @@ bool saveRendererShot(MainWindow& window, const std::string& path)
     return true;
 }
 
-void saveWorldShotWhenReady(MainWindow& window, const std::string& path)
+void saveWorldShotWhenReady(MainWindow& window, const std::string& path,
+                            const std::string& clickCity)
 {
     struct ShotState {
         int fFramesAfterWorld = 0;
+        bool fClicked = false;
     };
     const auto state = std::make_shared<ShotState>();
     const auto tick = std::make_shared<eSlot>();
-    *tick = [&window, path, state, tick]() {
-        if(window.worldWidget()) {
+    *tick = [&window, path, clickCity, state, tick]() {
+        const auto ww = window.worldWidget();
+        if(ww) {
+            if(!state->fClicked && !clickCity.empty()) {
+                state->fClicked = ww->selectCityByName(clickCity);
+                if(!state->fClicked) {
+                    printf("dev-click-city: '%s' not found\n",
+                           clickCity.c_str());
+                    state->fClicked = true; // do not retry forever
+                }
+            }
             state->fFramesAfterWorld++;
         }
         if(state->fFramesAfterWorld >= 3) {
@@ -188,7 +200,8 @@ void applyDevLaunchOptions(MainWindow& window,
             showWorldWhenReady(window);
         }
         if(!options.fWorldMapShotPath.empty()) {
-            saveWorldShotWhenReady(window, options.fWorldMapShotPath);
+            saveWorldShotWhenReady(window, options.fWorldMapShotPath,
+                                   options.fClickCity);
         }
         if(options.fCycleDirs) {
             startDirectionCycle(window);

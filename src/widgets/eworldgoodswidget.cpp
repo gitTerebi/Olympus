@@ -71,12 +71,13 @@ void eTradeTypesWidget::setTrade(const ePlayerId pid,
     }
 }
 
-void eWorldTradeWidget::initialize(const std::string& name) {
+void eWorldTradeWidget::initialize(const std::string& name,
+                                   const int fullWidth) {
     int iRes;
     double mult;
     iResAndMult(iRes, mult);
 
-    setWidth(mult*75);
+    setWidth(fullWidth > 0 ? fullWidth : static_cast<int>(mult*75));
 
     mNameLabel = new eLabel(window());
     mNameLabel->setPaddingXS();
@@ -140,11 +141,11 @@ void eWorldGoodsWidget::initialize() {
     mOrdersButton->setY(mGoodsLabel->y() + mGoodsLabel->height());
 
     mBuysWidget = new eWorldTradeWidget(window());
-    mBuysWidget->initialize(Language::zeusText(47, 1));
+    mBuysWidget->initialize(Language::zeusText(47, 1), width());
     addWidget(mBuysWidget);
 
     mSellsWidget = new eWorldTradeWidget(window());
-    mSellsWidget->initialize(Language::zeusText(47, 2));
+    mSellsWidget->initialize(Language::zeusText(47, 2), width());
     addWidget(mSellsWidget);
 
     updateTradeY();

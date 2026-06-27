@@ -24,7 +24,7 @@ class eWorldTradeWidget : public eWidget {
 public:
     using eWidget::eWidget;
 
-    void initialize(const std::string& name);
+    void initialize(const std::string& name, const int fullWidth = 0);
     void setName(const std::string& name);
     void setTrade(const ePlayerId pid,
                   std::vector<eResourceTrade>* const trade);

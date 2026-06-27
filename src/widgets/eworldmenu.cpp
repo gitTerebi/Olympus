@@ -226,10 +226,10 @@ void eWorldMenu::initialize(const eAction& openRequest,
     {
         mGoodsWidget = new eWorldGoodsWidget(window());
         addWidget(mGoodsWidget);
-        mGoodsWidget->setX(mult*10);
+        mGoodsWidget->setX(mult*9);
         mGoodsWidget->setY(mult*90);
 
-        mGoodsWidget->setWidth(mult*75);
+        mGoodsWidget->setWidth(mult*80);
         mGoodsWidget->setHeight(mult*105);
 
         mGoodsWidget->initialize();

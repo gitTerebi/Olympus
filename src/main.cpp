@@ -148,6 +148,14 @@ int main(int argc, char* argv[]) {
             devOptions.fWorldMapShotPath = *pathArg;
         }
     }
+    const auto clickCity =
+        std::find(args.begin(), args.end(), "--dev-click-city");
+    if(clickCity != args.end()) {
+        const auto nameArg = clickCity + 1;
+        if(nameArg != args.end()) {
+            devOptions.fClickCity = *nameArg;
+        }
+    }
 
     if(!init()) {
         printf("Failed to initialize!\n");

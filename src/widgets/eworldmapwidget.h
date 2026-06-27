@@ -23,10 +23,17 @@ public:
     void updateWidgets();
 
     void setMap(const eWorldMap map);
+
+    void setIconScale(const double s);
+    double iconScale() const { return mIconScale; }
 protected:
     void paintEvent(ePainter& p);
     bool mousePressEvent(const eMouseEvent& e);
 private:
+    void drawScaled(ePainter& p, const int x, const int y,
+                    const stdsptr<Texture>& tex,
+                    const Alignment align = Alignment::none);
+
     void armyDrawXY(WorldCity& c1, WorldCity& c2,
                     const double frac, int& x, int& y);
 
@@ -39,6 +46,7 @@ private:
     GameBoard* mGameBoard = nullptr;
     WorldBoard* mWorldBoard = nullptr;
     int mFrame = 0;
+    double mIconScale = 1.0;
 
     std::map<std::string, stdsptr<Texture>> mNames;
 

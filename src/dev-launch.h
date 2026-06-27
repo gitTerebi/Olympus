@@ -10,6 +10,7 @@ struct DevLaunchOptions {
     bool fCycleDirs = false;
     bool fWorldMap = false;
     std::string fWorldMapShotPath;
+    std::string fClickCity; // dev: select this city before the shot
 };
 
 void applyDevLaunchOptions(MainWindow& window,

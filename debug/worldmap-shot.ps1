@@ -3,6 +3,7 @@ param(
   [string]$Exe = "G:\games\eZeus\olympus\Bin\Olympus.exe",
   [string]$Out = "$PSScriptRoot\worldmap.png",
   [string]$Log = "$PSScriptRoot\worldmap.log",
+  [string]$City = "",
   [int]$WaitSec = 11
 )
 
@@ -16,11 +17,15 @@ Add-Content -Path $Log -Value "worldmap-shot: out=$Out"
 
 Add-Type -AssemblyName System.Drawing
 
-$args = @("--dev-world-map-shot", $Out)
+$exeArgs = @("--dev-world-map-shot", $Out)
+if($City -ne "") {
+  $exeArgs += @("--dev-click-city", $City)
+  Add-Content -Path $Log -Value "worldmap-shot: city=$City"
+}
 $p = Start-Process `
   -FilePath $Exe `
   -WorkingDirectory $ExeDir `
-  -ArgumentList $args `
+  -ArgumentList $exeArgs `
   -WindowStyle Hidden `
   -RedirectStandardOutput $LogOut `
   -RedirectStandardError $LogErr `
