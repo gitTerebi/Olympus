@@ -8,20 +8,10 @@
 #include "load-text-helper.h"
 
 std::vector<eTileSize> Settings::availableSizes() const {
-    std::vector<eTileSize> sizes;
-    if(fTinyTextures) {
-        sizes.push_back(eTileSize::s15);
-    }
-    if(fSmallTextures) {
-        sizes.push_back(eTileSize::s30);
-    }
-    if(fMediumTextures) {
-        sizes.push_back(eTileSize::s45);
-    }
-    if(fLargeTextures) {
-        sizes.push_back(eTileSize::s60);
-    }
-    return sizes;
+    // Only the s30 tile texture set ships. The tiny/medium/large flags don't
+    // correspond to real assets, and honoring them made the tile draw size
+    // change (and seam) depending on which flags happened to be enabled.
+    return { eTileSize::s30 };
 }
 
 int Settings::clampKeyScrollSpeed(const int speed) {

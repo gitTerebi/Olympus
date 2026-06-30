@@ -25,6 +25,7 @@ enum class Upscale {
     scalenx = 3,
     eagle   = 4,
     xsal    = 5,
+    xbrz_xsal = 6, // xBRZ 2x, then an xSal pass (smoothing at x2, scaling at x4)
     count
 };
 

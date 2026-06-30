@@ -1,0 +1,7 @@
+{
+    {eBuildingType::maintenanceOffice, 0, 0},
+    {eBuildingType::cardingShed, 0, 2},
+    {eBuildingType::cardingShed, 0, 4},
+    {eBuildingType::cardingShed, 0, 6},
+    {eBuildingType::cardingShed, 0, 8},
+}

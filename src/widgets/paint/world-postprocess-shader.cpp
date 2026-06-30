@@ -935,7 +935,58 @@ bool applySrvPostprocess(SDL_Renderer* const r,
     int interpH = texH;
     int factor = gFactor;
     int nativeFactor = 1;
-    const char* upSrc = applyUpscale ?
+
+    // Hybrid: xBRZ 2x, then an xSal pass. At factor 2 the xSal pass smooths in
+    // place (stays 2x); at factor 4 it doubles again (4x total).
+    const bool hybridXbrzXsal = applyUpscale && gUpscale == 6;
+    if(hybridXbrzXsal) {
+        ID3D11PixelShader* const xbrzPs = getPs(s, kXbrz2Ps);
+        ID3D11PixelShader* const xsalPs = getPs(s, kXSalPs);
+        const int midW = texW * 2;
+        const int midH = texH * 2;
+        const int outFactor = factor >= 4 ? 4 : 2;
+        const int mid2W = texW * outFactor;
+        const int mid2H = texH * outFactor;
+        if(xbrzPs && xsalPs && ensureMid(s, midW, midH) &&
+           ensureMid2(s, mid2W, mid2H)) {
+            // pass A: xBRZ frame -> mid (2x)
+            setCb(s, texW, texH);
+            D3D11_VIEWPORT vpA{};
+            vpA.Width = float(midW);
+            vpA.Height = float(midH);
+            vpA.MaxDepth = 1.f;
+            ctx->RSSetViewports(1, &vpA);
+            ctx->OMSetRenderTargets(1, &s.fMidRtv, nullptr);
+            ctx->PSSetShader(xbrzPs, nullptr, 0);
+            ctx->PSSetSamplers(0, 1, &s.fSampPoint);
+            ctx->PSSetShaderResources(0, 1, &frameSrv);
+            ctx->Draw(3, 0);
+            ctx->PSSetShaderResources(0, 1, &nullSrv);
+            ctx->OMSetRenderTargets(0, nullptr, nullptr);
+
+            // pass B: xSal mid -> mid2 (same size at x2, doubled at x4)
+            setCb(s, midW, midH);
+            D3D11_VIEWPORT vpB{};
+            vpB.Width = float(mid2W);
+            vpB.Height = float(mid2H);
+            vpB.MaxDepth = 1.f;
+            ctx->RSSetViewports(1, &vpB);
+            ctx->OMSetRenderTargets(1, &s.fMid2Rtv, nullptr);
+            ctx->PSSetShader(xsalPs, nullptr, 0);
+            ctx->PSSetSamplers(0, 1, &s.fSampPoint);
+            ctx->PSSetShaderResources(0, 1, &s.fMidSrv);
+            ctx->Draw(3, 0);
+            ctx->PSSetShaderResources(0, 1, &nullSrv);
+            ctx->OMSetRenderTargets(0, nullptr, nullptr);
+
+            interpSrc = s.fMid2Srv;
+            interpW = mid2W;
+            interpH = mid2H;
+            factor = outFactor;
+        }
+    }
+
+    const char* upSrc = (applyUpscale && !hybridXbrzXsal) ?
         upscalePs(gUpscale, factor, nativeFactor) : nullptr;
     if(upSrc) {
         ID3D11PixelShader* const upPs = getPs(s, upSrc);
