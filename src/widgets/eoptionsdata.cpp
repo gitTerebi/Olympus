@@ -111,15 +111,13 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
             "UI scale",
             {"0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x"},
             static_cast<int>(settings.fUiScale),
-            [window](const int v) { window->setUiScale(v); },
-            nullptr
+            [window](const int v) { window->setUiScale(v); }
         },
         {
             "Top/sidebar factor",
             {"1", "2", "3", "4"},
             Settings::clampTopSidebarScale(settings.fTopSidebarScale),
-            [window](const int v) { window->setTopSidebarScale(v); },
-            nullptr
+            [window](const int v) { window->setTopSidebarScale(v); }
         },
         {"--- Resolution ---", {}, 0, nullptr}
     };
@@ -170,7 +168,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
     });
     displayChoices.push_back({
         "Upscale",
-        {"None", "xBRZ", "ScaleHQ", "ScaleNx", "Eagle", "xSal"},
+        {"None", "xBRZ", "ScaleHQ", "ScaleNx", "Eagle", "xSal", "xBRZ+xSal"},
         static_cast<int>(settings.fUpscale),
         [window](const int v) { window->setUpscale(v); }
     });

@@ -175,12 +175,19 @@ void clampButtonWidth(FramedButton* const button,
     if(button->width() > maxW) button->setWidth(maxW);
 }
 
+// Changing UI scale rescales widgets that are built once (e.g. main menu
+// buttons), so the whole menu must be torn down and reopened, not just the
+// options dialog rebuilt in place.
+bool reopensMenu(const std::string& label) {
+    return label == "UI scale" ||
+           label == "Top/sidebar factor";
+}
+
 bool rebuildsChoicePage(const std::string& label) {
     return label == "Aspect" ||
            label == "Resolution" ||
            label == "Display" ||
-           label == "UI scale" ||
-           label == "Top/sidebar factor";
+           reopensMenu(label);
 }
 }
 
@@ -524,20 +531,18 @@ void eOptionsMenu::showPage(const int id) {
         clampButtonWidth(button, minControlW, maxControlW);
         const auto options = item.fOptions;
         const auto set = item.fSet;
-        const auto reloadsUiScale = item.fReloadsUiScale;
+        const bool reopenOnSet = reopensMenu(item.fLabel);
         const bool rebuildOnSet = rebuildsChoicePage(item.fLabel);
         button->setPressAction([this, button, options, set, rebuildOnSet,
-                                reloadsUiScale, minControlW, maxControlW]() {
+                                reopenOnSet, minControlW, maxControlW]() {
             const auto choose = new eChooseButton(window());
             const auto act = [this, button, options, set, rebuildOnSet,
-                              reloadsUiScale, minControlW, maxControlW](const int val) {
-                bool reloadNeeded = false;
-                if(reloadsUiScale) reloadNeeded = reloadsUiScale(val);
+                              reopenOnSet, minControlW, maxControlW](const int val) {
                 if(val >= 0 && val < int(options.size())) {
                     button->setText(options[val]);
                     clampButtonWidth(button, minControlW, maxControlW);
                 }
-                if(reloadNeeded && mReopenPage) {
+                if(reopenOnSet && mReopenPage) {
                     const int page = mCurrentPage;
                     const auto reopen = mReopenPage;
                     window()->setAfterMenuLoadingAction([reopen, page]() {
