@@ -85,15 +85,7 @@ public:
 
             const auto pi = new eLabel(window());
             const auto& intrfs = GameTextures::interface();
-            int icoll;
-            switch(res.uiScale()) {
-            case eUIScale::tiny:
-            case eUIScale::small:
-                icoll = 1;
-                break;
-            default:
-                icoll = 2;
-            }
+            const int icoll = GameTextures::interfaceTextureId();
             pi->setTexture(intrfs[icoll].fDrachmasUnit);
             pi->setNoPadding();
             pi->fitContent();
