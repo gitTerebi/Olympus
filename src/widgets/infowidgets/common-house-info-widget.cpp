@@ -17,7 +17,7 @@
 CommonHouseInfoWidget::CommonHouseInfoWidget(
         MainWindow* const window,
         eMainWidget* const mw) :
-    eInfoWidget(window, mw, true, true) {}
+    eInfoWidget(window, mw, true, false) {}
 
 void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
     const int people = house->people();
@@ -62,7 +62,7 @@ void CommonHouseInfoWidget::initialize(eHouseBase* const house) {
     addCentralWidget();
 
     const int p = padding();
-    const auto fw = addFramedWidget(16*p);
+    const auto fw = addFramedWidget(20*p);
 
     if(people <= 0) return;
 
