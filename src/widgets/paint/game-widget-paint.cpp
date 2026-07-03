@@ -1399,13 +1399,6 @@ void GameWidget::paintEvent(ePainter &p)
                 for(const auto& c : chars) {
                     if(!c->visible()) continue;
                     const auto ct = c->type();
-                    if(ct == eCharacterType::cartTransporter ||
-                       ct == eCharacterType::ox ||
-                       ct == eCharacterType::trailer) {
-                        if(eBuilding::sSanctuaryBuilding(tileBuildingType)) {
-                            continue;
-                        }
-                    }
                     const bool cbig = ct == eCharacterType::scylla ||
                                       ct == eCharacterType::kraken ||
                                       ct == eCharacterType::enemyBoat ||
