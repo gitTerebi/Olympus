@@ -57,6 +57,7 @@ void SpriteLoader::buildSpriteAtlas() {
 
     const auto atlas = std::make_shared<Texture>();
     if(!atlas->create(mRenderer, atlasW, atlasH)) return;
+    if(mLinear) SDL_SetTextureScaleMode(atlas->tex(), SDL_ScaleModeLinear);
 
     const auto prevTarget = SDL_GetRenderTarget(mRenderer);
     SDL_BlendMode prevBlendMode;
@@ -259,6 +260,9 @@ void SpriteLoader::loadTex(const int i) {
         const std::string dir = GameDir::texturesDir() + mSize + "/";
         const auto path = dir + mName + "_" + std::to_string(i) + ".png";
         tex->load(mRenderer, path);
+    }
+    if(mLinear && tex && tex->tex()) {
+        SDL_SetTextureScaleMode(tex->tex(), SDL_ScaleModeLinear);
     }
     mTexs[i] = tex;
 }

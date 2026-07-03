@@ -292,7 +292,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eInterfaceBannersSpriteData30;
         SpriteLoader loader(fTileH, "interfaceBanners", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         for(int i = 147; i < 167; i++) {
             loader.load(147, i, fInterfaceBanners);
@@ -306,7 +306,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eInterfaceNewBbuttonsSpriteData30;
         SpriteLoader loader(fTileH, "interfaceNewBbuttons", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
         for(int i = 4; i < 7; i++) {
             loader.load(1, i, fCommonHousing);
         }
@@ -435,7 +435,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eInterfacePartsSpriteData30;
         SpriteLoader loader(fTileH, "interfaceParts", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
         fArmyStatus = loader.load(1, 2);
 
         for(int i = 11; i < 15; i++) {
@@ -469,7 +469,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eInterfaceNewPartsSpriteData30;
         SpriteLoader loader(fTileH, "interfaceNewParts", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         fGameTopBar = loader.load(1, 1);
         fGameMenuBackground = loader.load(1, 2);
@@ -643,7 +643,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eInterfaceWorldSideSpriteData30;
         SpriteLoader loader(fTileH, "interfaceWorldSide", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
         fWorldMenuBackground = loader.load(1, 1);
 
         loader.load(1, 40, fLargeCheckBox);
@@ -689,7 +689,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eInterfaceMapEditorSpriteData30;
         SpriteLoader loader(fTileH, "interfaceMapEditor", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         fMapEditMenuBackground = loader.load(1, 1);
 
@@ -740,7 +740,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eEmpireBitsSpriteData30;
         SpriteLoader loader(fTileH, "empireBits", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         fZeusMainCity = loader.load(1, 1);
         fZeusCollony = loader.load(1, 2);
@@ -787,7 +787,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eEmpireFiguresSpriteData30;
         SpriteLoader loader(fTileH, "empireFigures", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         for(int i = 1; i < 4; i++) {
             loader.load(1, i, fZeusPlayerArmy);
@@ -819,7 +819,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = ePoseidonInterfaceSpriteData30;
         SpriteLoader loader(fTileH, "poseidonInterface", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         for(int i = 1; i < 4; i++) {
             loader.load(1, i, fBibliotheke);
@@ -902,7 +902,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = ePanelingSpriteData30;
         SpriteLoader loader(fTileH, "paneling", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         for(int i = 0; i < 2; i++) {
             fComboBox.emplace_back(fRenderer);
@@ -1058,7 +1058,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eInterfaceRadarSpriteData30;
         SpriteLoader loader(fTileH, "interfaceRadar", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         for(int i = 262; i < 267; i++) {
             loader.load(262, i, fDiamond);
@@ -1138,7 +1138,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = ePoseidonUnitsSpriteData30;
         SpriteLoader loader(fTileH, "poseidonUnits", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         fOrangesUnit = loader.load(114, 114);
         fOrichalcUnit = loader.load(114, 115);
@@ -1148,7 +1148,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = ePoseidonQuestButtonsSpriteData30;
         SpriteLoader loader(fTileH, "poseidonQuestButtons", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         fAtlasQuestIcon = loader.load(129, 129);
         fHeraQuestIcon = loader.load(129, 130);
@@ -1157,7 +1157,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eInterface_stor_baysSpriteData30;
         SpriteLoader loader(fTileH, "interface_stor_bays", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         fUrchinUnit = loader.load(117, 117);
         fFishUnit = loader.load(117, 118);
@@ -1219,7 +1219,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eZeusPortraitsSpriteData30;
         SpriteLoader loader(fTileH, "zeusPortraits", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         for(int i = 1; i < 122; i++) {
             loader.load(1, i, fZeusPortraits);
@@ -1228,7 +1228,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = eZeusGodPortraitsSpriteData30;
         SpriteLoader loader(fTileH, "zeusGodPortraits", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         for(int i = 1; i < 33; i++) {
             loader.load(1, i, fZeusGodPortraits);
@@ -1237,7 +1237,7 @@ void InterfaceTextures::load() {
     {
         const auto& sds = ePoseidonPortraitsSpriteData30;
         SpriteLoader loader(fTileH, "poseidonPortraits", sds,
-                             nullptr, fRenderer);
+                             nullptr, fRenderer, true);
 
         for(int i = 1; i < 46; i++) {
             loader.load(1, i, fPoseidonPortraits);
@@ -1412,7 +1412,7 @@ void InterfaceTextures::loadPoseidonCampaign1() {
     fPoseidonCampaign1Loaded = true;
     const auto& sds = ePoseidonCampaign1SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign1", sds,
-                         nullptr, fRenderer);
+                         nullptr, fRenderer, true);
 
     fPoseidonCampaign1 = loader.load(1, 1);
 }
@@ -1422,7 +1422,7 @@ void InterfaceTextures::loadPoseidonCampaign2() {
     fPoseidonCampaign2Loaded = true;
     const auto& sds = ePoseidonCampaign2SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign2", sds,
-                         nullptr, fRenderer);
+                         nullptr, fRenderer, true);
 
     fPoseidonCampaign2 = loader.load(2, 2);
 }
@@ -1432,7 +1432,7 @@ void InterfaceTextures::loadPoseidonCampaign3() {
     fPoseidonCampaign3Loaded = true;
     const auto& sds = ePoseidonCampaign3SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign3", sds,
-                         nullptr, fRenderer);
+                         nullptr, fRenderer, true);
 
     fPoseidonCampaign3 = loader.load(3, 3);
 }
@@ -1442,7 +1442,7 @@ void InterfaceTextures::loadPoseidonCampaign4() {
     fPoseidonCampaign4Loaded = true;
     const auto& sds = ePoseidonCampaign4SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign4", sds,
-                         nullptr, fRenderer);
+                         nullptr, fRenderer, true);
 
     fPoseidonCampaign4 = loader.load(4, 4);
 }
@@ -1452,7 +1452,7 @@ void InterfaceTextures::loadPoseidonCampaign5() {
     fPoseidonCampaign5Loaded = true;
     const auto& sds = ePoseidonCampaign5SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign5", sds,
-                         nullptr, fRenderer);
+                         nullptr, fRenderer, true);
 
     fPoseidonCampaign5 = loader.load(5, 5);
 }
@@ -1462,7 +1462,7 @@ void InterfaceTextures::loadPoseidonCampaign6() {
     fPoseidonCampaign6Loaded = true;
     const auto& sds = ePoseidonCampaign6SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign6", sds,
-                         nullptr, fRenderer);
+                         nullptr, fRenderer, true);
 
     fPoseidonCampaign6 = loader.load(6, 6);
 }
