@@ -2,65 +2,29 @@
 
 #include "textures/sprite-loader.h"
 
-#include "spriteData/zeusLand115.h"
 #include "spriteData/zeusLand130.h"
-#include "spriteData/zeusLand145.h"
-#include "spriteData/zeusLand160.h"
 
-#include "spriteData/zeusOverlay15.h"
 #include "spriteData/zeusOverlay30.h"
-#include "spriteData/zeusOverlay45.h"
-#include "spriteData/zeusOverlay60.h"
 
-#include "spriteData/zeusElevationTiles15.h"
 #include "spriteData/zeusElevationTiles30.h"
-#include "spriteData/zeusElevationTiles45.h"
-#include "spriteData/zeusElevationTiles60.h"
 
-#include "spriteData/zeusElevationTiles215.h"
 #include "spriteData/zeusElevationTiles230.h"
-#include "spriteData/zeusElevationTiles245.h"
-#include "spriteData/zeusElevationTiles260.h"
 
-#include "spriteData/zeusElevationTiles2A15.h"
 #include "spriteData/zeusElevationTiles2A30.h"
-#include "spriteData/zeusElevationTiles2A45.h"
-#include "spriteData/zeusElevationTiles2A60.h"
 
-#include "spriteData/zeusLand315.h"
 #include "spriteData/zeusLand330.h"
-#include "spriteData/zeusLand345.h"
-#include "spriteData/zeusLand360.h"
 
-#include "spriteData/zeusTrees15.h"
 #include "spriteData/zeusTrees30.h"
-#include "spriteData/zeusTrees45.h"
-#include "spriteData/zeusTrees60.h"
 
-#include "spriteData/zeusQuarryTileSet15.h"
 #include "spriteData/zeusQuarryTileSet30.h"
-#include "spriteData/zeusQuarryTileSet45.h"
-#include "spriteData/zeusQuarryTileSet60.h"
 
-#include "spriteData/zeusStairs15.h"
 #include "spriteData/zeusStairs30.h"
-#include "spriteData/zeusStairs45.h"
-#include "spriteData/zeusStairs60.h"
 
-#include "spriteData/blackMarbleTerrain15.h"
 #include "spriteData/blackMarbleTerrain30.h"
-#include "spriteData/blackMarbleTerrain45.h"
-#include "spriteData/blackMarbleTerrain60.h"
 
-#include "spriteData/orichalcTerrain15.h"
 #include "spriteData/orichalcTerrain30.h"
-#include "spriteData/orichalcTerrain45.h"
-#include "spriteData/orichalcTerrain60.h"
 
-#include "spriteData/poseidonTrees15.h"
 #include "spriteData/poseidonTrees30.h"
-#include "spriteData/poseidonTrees45.h"
-#include "spriteData/poseidonTrees60.h"
 
 TerrainTextures::TerrainTextures(const int tileW, const int tileH,
                                    SDL_Renderer* const renderer) :
@@ -193,11 +157,7 @@ void loadStones(int i0, TextureCollection& result,
 
 void TerrainTextures::load() {
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusLand1SpriteData15,
-                                     eZeusLand1SpriteData30,
-                                     eZeusLand1SpriteData45,
-                                     eZeusLand1SpriteData60);
+        const auto& sds = eZeusLand1SpriteData30;
         SpriteLoader loader(fTileH, "zeusLand1", sds,
                              nullptr, fRenderer);
 
@@ -258,11 +218,7 @@ void TerrainTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusOverlaySpriteData15,
-                                     eZeusOverlaySpriteData30,
-                                     eZeusOverlaySpriteData45,
-                                     eZeusOverlaySpriteData60);
+        const auto& sds = eZeusOverlaySpriteData30;
         SpriteLoader loader(fTileH, "zeusOverlay", sds,
                              nullptr, fRenderer);
 
@@ -291,11 +247,7 @@ void TerrainTextures::load() {
 
     {
         {
-            const auto& sds = spriteData(fTileH,
-                                         eZeusElevationTilesSpriteData15,
-                                         eZeusElevationTilesSpriteData30,
-                                         eZeusElevationTilesSpriteData45,
-                                         eZeusElevationTilesSpriteData60);
+            const auto& sds = eZeusElevationTilesSpriteData30;
             SpriteLoader loader(fTileH, "zeusElevationTiles", sds,
                                  nullptr, fRenderer);
 
@@ -313,11 +265,7 @@ void TerrainTextures::load() {
         }
 
         {
-            const auto& sds = spriteData(fTileH,
-                                         eZeusElevationTiles2SpriteData15,
-                                         eZeusElevationTiles2SpriteData30,
-                                         eZeusElevationTiles2SpriteData45,
-                                         eZeusElevationTiles2SpriteData60);
+            const auto& sds = eZeusElevationTiles2SpriteData30;
             SpriteLoader loader(fTileH, "zeusElevationTiles2", sds,
                                  nullptr, fRenderer);
 
@@ -326,11 +274,7 @@ void TerrainTextures::load() {
             }
         }
         {
-            const auto& sds = spriteData(fTileH,
-                                         eZeusElevationTiles2ASpriteData15,
-                                         eZeusElevationTiles2ASpriteData30,
-                                         eZeusElevationTiles2ASpriteData45,
-                                         eZeusElevationTiles2ASpriteData60);
+            const auto& sds = eZeusElevationTiles2ASpriteData30;
             SpriteLoader loader(fTileH, "zeusElevationTiles2A", sds,
                                  nullptr, fRenderer);
 
@@ -341,11 +285,7 @@ void TerrainTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusLand3SpriteData15,
-                                     eZeusLand3SpriteData30,
-                                     eZeusLand3SpriteData45,
-                                     eZeusLand3SpriteData60);
+        const auto& sds = eZeusLand3SpriteData30;
         SpriteLoader loader(fTileH, "zeusLand3", sds,
                              nullptr, fRenderer);
 
@@ -411,11 +351,7 @@ void TerrainTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusTreesSpriteData15,
-                                     eZeusTreesSpriteData30,
-                                     eZeusTreesSpriteData45,
-                                     eZeusTreesSpriteData60);
+        const auto& sds = eZeusTreesSpriteData30;
         SpriteLoader loader(fTileH, "zeusTrees", sds,
                              nullptr, fRenderer);
 
@@ -465,11 +401,7 @@ void TerrainTextures::load() {
 
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusQuarryTileSetSpriteData15,
-                                     eZeusQuarryTileSetSpriteData30,
-                                     eZeusQuarryTileSetSpriteData45,
-                                     eZeusQuarryTileSetSpriteData60);
+        const auto& sds = eZeusQuarryTileSetSpriteData30;
         SpriteLoader loader(fTileH, "zeusQuarryTileSet", sds,
                              nullptr, fRenderer);
 
@@ -491,11 +423,7 @@ void TerrainTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusStairsSpriteData15,
-                                     eZeusStairsSpriteData30,
-                                     eZeusStairsSpriteData45,
-                                     eZeusStairsSpriteData60);
+        const auto& sds = eZeusStairsSpriteData30;
         SpriteLoader loader(fTileH, "zeusStairs", sds,
                              nullptr, fRenderer);
 
@@ -508,11 +436,7 @@ void TerrainTextures::load() {
 void TerrainTextures::loadPoseidonTrees() {
     if(fPoseidonTreesLoaded) return;
     fPoseidonTreesLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePoseidonTreesSpriteData15,
-                                 ePoseidonTreesSpriteData30,
-                                 ePoseidonTreesSpriteData45,
-                                 ePoseidonTreesSpriteData60);
+    const auto& sds = ePoseidonTreesSpriteData30;
     SpriteLoader loader(fTileH, "poseidonTrees", sds,
                          nullptr, fRenderer);
 
@@ -541,11 +465,7 @@ void TerrainTextures::loadBlackMarble() {
     if(fBlackMarbleLoaded) return;
     fBlackMarbleLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eBlackMarbleTerrainSpriteData15,
-                                 eBlackMarbleTerrainSpriteData30,
-                                 eBlackMarbleTerrainSpriteData45,
-                                 eBlackMarbleTerrainSpriteData60);
+    const auto& sds = eBlackMarbleTerrainSpriteData30;
     SpriteLoader loader(fTileH, "blackMarbleTerrain", sds,
                          nullptr, fRenderer);
 
@@ -570,11 +490,7 @@ void TerrainTextures::loadOrichalc() {
     if(fOrichalcLoaded) return;
     fOrichalcLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eOrichalcTerrainSpriteData15,
-                                 eOrichalcTerrainSpriteData30,
-                                 eOrichalcTerrainSpriteData45,
-                                 eOrichalcTerrainSpriteData60);
+    const auto& sds = eOrichalcTerrainSpriteData30;
     SpriteLoader loader(fTileH, "orichalcTerrain", sds,
                          nullptr, fRenderer);
 

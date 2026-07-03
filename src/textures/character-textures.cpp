@@ -6,280 +6,115 @@
 #include "offsets/Zeus_Greek.h"
 #include "offsets/SprAmbient.h"
 
-#include "spriteData/peddler15.h"
 #include "spriteData/peddler30.h"
-#include "spriteData/peddler45.h"
-#include "spriteData/peddler60.h"
 
-#include "spriteData/actor15.h"
 #include "spriteData/actor30.h"
-#include "spriteData/actor45.h"
-#include "spriteData/actor60.h"
 
-#include "spriteData/ox15.h"
 #include "spriteData/ox30.h"
-#include "spriteData/ox45.h"
-#include "spriteData/ox60.h"
 
-#include "spriteData/porter15.h"
 #include "spriteData/porter30.h"
-#include "spriteData/porter45.h"
-#include "spriteData/porter60.h"
 
-#include "spriteData/oxHandler15.h"
 #include "spriteData/oxHandler30.h"
-#include "spriteData/oxHandler45.h"
-#include "spriteData/oxHandler60.h"
 
-#include "spriteData/trailer15.h"
 #include "spriteData/trailer30.h"
-#include "spriteData/trailer45.h"
-#include "spriteData/trailer60.h"
 
-#include "spriteData/settlers115.h"
 #include "spriteData/settlers130.h"
-#include "spriteData/settlers145.h"
-#include "spriteData/settlers160.h"
 
-#include "spriteData/settlers215.h"
 #include "spriteData/settlers230.h"
-#include "spriteData/settlers245.h"
-#include "spriteData/settlers260.h"
 
-#include "spriteData/fireFighter15.h"
 #include "spriteData/fireFighter30.h"
-#include "spriteData/fireFighter45.h"
-#include "spriteData/fireFighter60.h"
 
-#include "spriteData/watchman15.h"
 #include "spriteData/watchman30.h"
-#include "spriteData/watchman45.h"
-#include "spriteData/watchman60.h"
 
-#include "spriteData/goatherd15.h"
 #include "spriteData/goatherd30.h"
-#include "spriteData/goatherd45.h"
-#include "spriteData/goatherd60.h"
 
-#include "spriteData/priest15.h"
 #include "spriteData/priest30.h"
-#include "spriteData/priest45.h"
-#include "spriteData/priest60.h"
 
-#include "spriteData/bronzeMiner15.h"
 #include "spriteData/bronzeMiner30.h"
-#include "spriteData/bronzeMiner45.h"
-#include "spriteData/bronzeMiner60.h"
 
-#include "spriteData/artisan15.h"
 #include "spriteData/artisan30.h"
-#include "spriteData/artisan45.h"
-#include "spriteData/artisan60.h"
 
-#include "spriteData/foodVendor15.h"
 #include "spriteData/foodVendor30.h"
-#include "spriteData/foodVendor45.h"
-#include "spriteData/foodVendor60.h"
 
-#include "spriteData/fleeceVendor15.h"
 #include "spriteData/fleeceVendor30.h"
-#include "spriteData/fleeceVendor45.h"
-#include "spriteData/fleeceVendor60.h"
 
-#include "spriteData/oilVendor15.h"
 #include "spriteData/oilVendor30.h"
-#include "spriteData/oilVendor45.h"
-#include "spriteData/oilVendor60.h"
 
-#include "spriteData/wineVendor15.h"
 #include "spriteData/wineVendor30.h"
-#include "spriteData/wineVendor45.h"
-#include "spriteData/wineVendor60.h"
 
-#include "spriteData/armsVendor15.h"
 #include "spriteData/armsVendor30.h"
-#include "spriteData/armsVendor45.h"
-#include "spriteData/armsVendor60.h"
 
-#include "spriteData/horseVendor15.h"
 #include "spriteData/horseVendor30.h"
-#include "spriteData/horseVendor45.h"
-#include "spriteData/horseVendor60.h"
 
-#include "spriteData/fleecedSheep15.h"
 #include "spriteData/fleecedSheep30.h"
-#include "spriteData/fleecedSheep45.h"
-#include "spriteData/fleecedSheep60.h"
 
-#include "spriteData/horse15.h"
 #include "spriteData/horse30.h"
-#include "spriteData/horse45.h"
-#include "spriteData/horse60.h"
 
-#include "spriteData/shepherd15.h"
 #include "spriteData/shepherd30.h"
-#include "spriteData/shepherd45.h"
-#include "spriteData/shepherd60.h"
 
-#include "spriteData/marbleMiner15.h"
 #include "spriteData/marbleMiner30.h"
-#include "spriteData/marbleMiner45.h"
-#include "spriteData/marbleMiner60.h"
 
-#include "spriteData/silverMiner15.h"
 #include "spriteData/silverMiner30.h"
-#include "spriteData/silverMiner45.h"
-#include "spriteData/silverMiner60.h"
 
-#include "spriteData/archer15.h"
 #include "spriteData/archer30.h"
-#include "spriteData/archer45.h"
-#include "spriteData/archer60.h"
 
-#include "spriteData/lumberjack15.h"
 #include "spriteData/lumberjack30.h"
-#include "spriteData/lumberjack45.h"
-#include "spriteData/lumberjack60.h"
 
-#include "spriteData/taxCollector15.h"
 #include "spriteData/taxCollector30.h"
-#include "spriteData/taxCollector45.h"
-#include "spriteData/taxCollector60.h"
 
-#include "spriteData/transporter15.h"
 #include "spriteData/transporter30.h"
-#include "spriteData/transporter45.h"
-#include "spriteData/transporter60.h"
 
-#include "spriteData/grower15.h"
 #include "spriteData/grower30.h"
-#include "spriteData/grower45.h"
-#include "spriteData/grower60.h"
 
-#include "spriteData/trader15.h"
 #include "spriteData/trader30.h"
-#include "spriteData/trader45.h"
-#include "spriteData/trader60.h"
 
-#include "spriteData/waterDistributor15.h"
 #include "spriteData/waterDistributor30.h"
-#include "spriteData/waterDistributor45.h"
-#include "spriteData/waterDistributor60.h"
 
-#include "spriteData/rockThrower15.h"
 #include "spriteData/rockThrower30.h"
-#include "spriteData/rockThrower45.h"
-#include "spriteData/rockThrower60.h"
 
-#include "spriteData/hoplite15.h"
 #include "spriteData/hoplite30.h"
-#include "spriteData/hoplite45.h"
-#include "spriteData/hoplite60.h"
 
-#include "spriteData/horseman15.h"
 #include "spriteData/horseman30.h"
-#include "spriteData/horseman45.h"
-#include "spriteData/horseman60.h"
 
-#include "spriteData/healer15.h"
 #include "spriteData/healer30.h"
-#include "spriteData/healer45.h"
-#include "spriteData/healer60.h"
 
-#include "spriteData/nudeSheep15.h"
 #include "spriteData/nudeSheep30.h"
-#include "spriteData/nudeSheep45.h"
-#include "spriteData/nudeSheep60.h"
 
-#include "spriteData/cart15.h"
 #include "spriteData/cart30.h"
-#include "spriteData/cart45.h"
-#include "spriteData/cart60.h"
 
-#include "spriteData/boar15.h"
 #include "spriteData/boar30.h"
-#include "spriteData/boar45.h"
-#include "spriteData/boar60.h"
 
-#include "spriteData/gymnast15.h"
 #include "spriteData/gymnast30.h"
-#include "spriteData/gymnast45.h"
-#include "spriteData/gymnast60.h"
 
-#include "spriteData/competitor15.h"
 #include "spriteData/competitor30.h"
-#include "spriteData/competitor45.h"
-#include "spriteData/competitor60.h"
 
-#include "spriteData/goat15.h"
 #include "spriteData/goat30.h"
-#include "spriteData/goat45.h"
-#include "spriteData/goat60.h"
 
-#include "spriteData/wolf15.h"
 #include "spriteData/wolf30.h"
-#include "spriteData/wolf45.h"
-#include "spriteData/wolf60.h"
 
-#include "spriteData/hunter15.h"
 #include "spriteData/hunter30.h"
-#include "spriteData/hunter45.h"
-#include "spriteData/hunter60.h"
 
-#include "spriteData/philosopher15.h"
 #include "spriteData/philosopher30.h"
-#include "spriteData/philosopher45.h"
-#include "spriteData/philosopher60.h"
 
-#include "spriteData/fishingBoat15.h"
 #include "spriteData/fishingBoat30.h"
-#include "spriteData/fishingBoat45.h"
-#include "spriteData/fishingBoat60.h"
 
-#include "spriteData/urchinGatherer15.h"
 #include "spriteData/urchinGatherer30.h"
-#include "spriteData/urchinGatherer45.h"
-#include "spriteData/urchinGatherer60.h"
 
-#include "spriteData/tradeBoat15.h"
 #include "spriteData/tradeBoat30.h"
-#include "spriteData/tradeBoat45.h"
-#include "spriteData/tradeBoat60.h"
 
-#include "spriteData/greekHoplite15.h"
 #include "spriteData/greekHoplite30.h"
-#include "spriteData/greekHoplite45.h"
-#include "spriteData/greekHoplite60.h"
 
-#include "spriteData/greekHorseman15.h"
 #include "spriteData/greekHorseman30.h"
-#include "spriteData/greekHorseman45.h"
-#include "spriteData/greekHorseman60.h"
 
-#include "spriteData/greekRockThrower15.h"
 #include "spriteData/greekRockThrower30.h"
-#include "spriteData/greekRockThrower45.h"
-#include "spriteData/greekRockThrower60.h"
 
-#include "spriteData/foodCart15.h"
 #include "spriteData/foodCart30.h"
-#include "spriteData/foodCart45.h"
-#include "spriteData/foodCart60.h"
 
-#include "spriteData/donkey15.h"
 #include "spriteData/donkey30.h"
-#include "spriteData/donkey45.h"
-#include "spriteData/donkey60.h"
 
-#include "spriteData/banners15.h"
 #include "spriteData/banners30.h"
-#include "spriteData/banners45.h"
-#include "spriteData/banners60.h"
 
-#include "spriteData/poseidonBannerTops15.h"
 #include "spriteData/poseidonBannerTops30.h"
-#include "spriteData/poseidonBannerTops45.h"
-#include "spriteData/poseidonBannerTops60.h"
 
 #include "sprite-loader.h"
 
@@ -613,11 +448,7 @@ void loadBasicTexture(BasicCharacterTextures& tex,
 void CharacterTextures::loadPeddler() {
     if(fPeddlerLoaded) return;
     fPeddlerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePeddlerSpriteData15,
-                                 ePeddlerSpriteData30,
-                                 ePeddlerSpriteData45,
-                                 ePeddlerSpriteData60);
+    const auto& sds = ePeddlerSpriteData30;
     SpriteLoader loader(fTileH, "peddler", sds,
                          &eSprMainOffset, fRenderer);
     loadBasicTexture(fPeddler, 1, loader);
@@ -626,11 +457,7 @@ void CharacterTextures::loadPeddler() {
 void CharacterTextures::loadPriest() {
     if(fPriestLoaded) return;
     fPriestLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePriestSpriteData15,
-                                 ePriestSpriteData30,
-                                 ePriestSpriteData45,
-                                 ePriestSpriteData60);
+    const auto& sds = ePriestSpriteData30;
     SpriteLoader loader(fTileH, "priest", sds,
                          &eSprMainOffset, fRenderer);
     loadBasicTexture(fPriest, 8105, loader);
@@ -639,11 +466,7 @@ void CharacterTextures::loadPriest() {
 void CharacterTextures::loadActor() {
     if(fActorLoaded) return;
     fActorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eActorSpriteData15,
-                                 eActorSpriteData30,
-                                 eActorSpriteData45,
-                                 eActorSpriteData60);
+    const auto& sds = eActorSpriteData30;
     SpriteLoader loader(fTileH, "actor", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -654,11 +477,7 @@ void CharacterTextures::loadOx() {
     if(fOxLoaded) return;
     fOxLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eOxSpriteData15,
-                                 eOxSpriteData30,
-                                 eOxSpriteData45,
-                                 eOxSpriteData60);
+    const auto& sds = eOxSpriteData30;
     SpriteLoader loader(fTileH, "ox", sds,
                          &eSprMainOffset, fRenderer);
     loader.loadSkipFlipped(209, 209, 305, fOx.fWalk);
@@ -681,11 +500,7 @@ void CharacterTextures::loadPorter() {
     if(fPorterLoaded) return;
     fPorterLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 ePorterSpriteData15,
-                                 ePorterSpriteData30,
-                                 ePorterSpriteData45,
-                                 ePorterSpriteData60);
+    const auto& sds = ePorterSpriteData30;
     SpriteLoader loader(fTileH, "porter", sds,
                          &eSprMainOffset, fRenderer);
     loadBasicTexture(fPorter, 1233, loader);
@@ -695,11 +510,7 @@ void CharacterTextures::loadOxHandler() {
     if(fOxHandlerLoaded) return;
     fOxHandlerLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eOxHandlerSpriteData15,
-                                 eOxHandlerSpriteData30,
-                                 eOxHandlerSpriteData45,
-                                 eOxHandlerSpriteData60);
+    const auto& sds = eOxHandlerSpriteData30;
     SpriteLoader loader(fTileH, "oxHandler", sds,
                          &eSprMainOffset, fRenderer);
     loadBasicTexture(fOxHandler, 1337, loader);
@@ -708,11 +519,7 @@ void CharacterTextures::loadOxHandler() {
 void CharacterTextures::loadTrailer() {
     if(fTrailerLoaded) return;
     fTrailerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTrailerSpriteData15,
-                                 eTrailerSpriteData30,
-                                 eTrailerSpriteData45,
-                                 eTrailerSpriteData60);
+    const auto& sds = eTrailerSpriteData30;
     SpriteLoader loader(fTileH, "trailer", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -732,21 +539,13 @@ void CharacterTextures::loadSettlers() {
     if(fSettlersLoaded) return;
     fSettlersLoaded = true;
     {
-        const auto& sds = spriteData(fTileH,
-                                     eSettlers1SpriteData15,
-                                     eSettlers1SpriteData30,
-                                     eSettlers1SpriteData45,
-                                     eSettlers1SpriteData60);
+        const auto& sds = eSettlers1SpriteData30;
         SpriteLoader loader(fTileH, "settlers1", sds,
                              &eSprMainOffset, fRenderer);
         loadBasicTexture(fSettlers1, 505, loader);
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eSettlers2SpriteData15,
-                                     eSettlers2SpriteData30,
-                                     eSettlers2SpriteData45,
-                                     eSettlers2SpriteData60);
+        const auto& sds = eSettlers2SpriteData30;
         SpriteLoader loader(fTileH, "settlers2", sds,
                              &eSprMainOffset, fRenderer);
         loadBasicTexture(fSettlers2, 1793, loader);
@@ -756,11 +555,7 @@ void CharacterTextures::loadSettlers() {
 void CharacterTextures::loadFireFighter() {
     if(fFireFighterLoaded) return;
     fFireFighterLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eFireFighterSpriteData15,
-                                 eFireFighterSpriteData30,
-                                 eFireFighterSpriteData45,
-                                 eFireFighterSpriteData60);
+    const auto& sds = eFireFighterSpriteData30;
     SpriteLoader loader(fTileH, "fireFighter", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -779,11 +574,7 @@ void CharacterTextures::loadFireFighter() {
 void CharacterTextures::loadWatchman() {
     if(fWatchmanLoaded) return;
     fWatchmanLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eWatchmanSpriteData15,
-                                 eWatchmanSpriteData30,
-                                 eWatchmanSpriteData45,
-                                 eWatchmanSpriteData60);
+    const auto& sds = eWatchmanSpriteData30;
     SpriteLoader loader(fTileH, "watchman", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -798,11 +589,7 @@ void CharacterTextures::loadWatchman() {
 void CharacterTextures::loadGoatherd() {
     if(fGoatherdLoaded) return;
     fGoatherdLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eGoatherdSpriteData15,
-                                 eGoatherdSpriteData30,
-                                 eGoatherdSpriteData45,
-                                 eGoatherdSpriteData60);
+    const auto& sds = eGoatherdSpriteData30;
     SpriteLoader loader(fTileH, "goatherd", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -823,11 +610,7 @@ void CharacterTextures::loadGoatherd() {
 void CharacterTextures::loadBronzeMiner() {
     if(fBronzeMinerLoaded) return;
     fBronzeMinerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eBronzeMinerSpriteData15,
-                                 eBronzeMinerSpriteData30,
-                                 eBronzeMinerSpriteData45,
-                                 eBronzeMinerSpriteData60);
+    const auto& sds = eBronzeMinerSpriteData30;
     SpriteLoader loader(fTileH, "bronzeMiner", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -843,11 +626,7 @@ void CharacterTextures::loadBronzeMiner() {
 void CharacterTextures::loadArtisan() {
     if(fArtisanLoaded) return;
     fArtisanLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eArtisanSpriteData15,
-                                 eArtisanSpriteData30,
-                                 eArtisanSpriteData45,
-                                 eArtisanSpriteData60);
+    const auto& sds = eArtisanSpriteData30;
     SpriteLoader loader(fTileH, "artisan", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -863,11 +642,7 @@ void CharacterTextures::loadArtisan() {
 void CharacterTextures::loadFoodVendor() {
     if(fFoodVendorLoaded) return;
     fFoodVendorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eFoodVendorSpriteData15,
-                                 eFoodVendorSpriteData30,
-                                 eFoodVendorSpriteData45,
-                                 eFoodVendorSpriteData60);
+    const auto& sds = eFoodVendorSpriteData30;
     SpriteLoader loader(fTileH, "foodVendor", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -877,11 +652,7 @@ void CharacterTextures::loadFoodVendor() {
 void CharacterTextures::loadFleeceVendor() {
     if(fFleeceVendorLoaded) return;
     fFleeceVendorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eFleeceVendorSpriteData15,
-                                 eFleeceVendorSpriteData30,
-                                 eFleeceVendorSpriteData45,
-                                 eFleeceVendorSpriteData60);
+    const auto& sds = eFleeceVendorSpriteData30;
     SpriteLoader loader(fTileH, "fleeceVendor", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -891,11 +662,7 @@ void CharacterTextures::loadFleeceVendor() {
 void CharacterTextures::loadOilVendor() {
     if(fOilVendorLoaded) return;
     fOilVendorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eOilVendorSpriteData15,
-                                 eOilVendorSpriteData30,
-                                 eOilVendorSpriteData45,
-                                 eOilVendorSpriteData60);
+    const auto& sds = eOilVendorSpriteData30;
     SpriteLoader loader(fTileH, "oilVendor", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -905,11 +672,7 @@ void CharacterTextures::loadOilVendor() {
 void CharacterTextures::loadWineVendor() {
     if(fWineVendorLoaded) return;
     fWineVendorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eWineVendorSpriteData15,
-                                 eWineVendorSpriteData30,
-                                 eWineVendorSpriteData45,
-                                 eWineVendorSpriteData60);
+    const auto& sds = eWineVendorSpriteData30;
     SpriteLoader loader(fTileH, "wineVendor", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -919,11 +682,7 @@ void CharacterTextures::loadWineVendor() {
 void CharacterTextures::loadArmsVendor() {
     if(fArmsVendorLoaded) return;
     fArmsVendorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eArmsVendorSpriteData15,
-                                 eArmsVendorSpriteData30,
-                                 eArmsVendorSpriteData45,
-                                 eArmsVendorSpriteData60);
+    const auto& sds = eArmsVendorSpriteData30;
     SpriteLoader loader(fTileH, "armsVendor", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -933,11 +692,7 @@ void CharacterTextures::loadArmsVendor() {
 void CharacterTextures::loadHorseVendor() {
     if(fHorseVendorLoaded) return;
     fHorseVendorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eHorseVendorSpriteData15,
-                                 eHorseVendorSpriteData30,
-                                 eHorseVendorSpriteData45,
-                                 eHorseVendorSpriteData60);
+    const auto& sds = eHorseVendorSpriteData30;
     SpriteLoader loader(fTileH, "horseVendor", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -949,11 +704,7 @@ void CharacterTextures::loadSheep() {
     fSheepLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eFleecedSheepSpriteData15,
-                                     eFleecedSheepSpriteData30,
-                                     eFleecedSheepSpriteData45,
-                                     eFleecedSheepSpriteData60);
+        const auto& sds = eFleecedSheepSpriteData30;
         SpriteLoader loader(fTileH, "fleecedSheep", sds,
                              &eSprMainOffset, fRenderer);
         loader.loadSkipFlipped(3183, 3183, 3279, fFleecedSheep.fWalk);
@@ -966,11 +717,7 @@ void CharacterTextures::loadSheep() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eNudeSheepSpriteData15,
-                                     eNudeSheepSpriteData30,
-                                     eNudeSheepSpriteData45,
-                                     eNudeSheepSpriteData60);
+        const auto& sds = eNudeSheepSpriteData30;
         SpriteLoader loader(fTileH, "nudeSheep", sds,
                              &eSprMainOffset, fRenderer);
         loader.loadSkipFlipped(7873, 7873, 7969, fNudeSheep.fWalk);
@@ -986,11 +733,7 @@ void CharacterTextures::loadSheep() {
 void CharacterTextures::loadHorse() {
     if(fHorseLoaded) return;
     fHorseLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eHorseSpriteData15,
-                                 eHorseSpriteData30,
-                                 eHorseSpriteData45,
-                                 eHorseSpriteData60);
+    const auto& sds = eHorseSpriteData30;
     SpriteLoader loader(fTileH, "horse", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1005,11 +748,7 @@ void CharacterTextures::loadHorse() {
 void CharacterTextures::loadShepherd() {
     if(fShepherdLoaded) return;
     fShepherdLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eShepherdSpriteData15,
-                                 eShepherdSpriteData30,
-                                 eShepherdSpriteData45,
-                                 eShepherdSpriteData60);
+    const auto& sds = eShepherdSpriteData30;
     SpriteLoader loader(fTileH, "shepherd", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1030,11 +769,7 @@ void CharacterTextures::loadShepherd() {
 void CharacterTextures::loadMarbleMiner() {
     if(fMarbleMinerLoaded) return;
     fMarbleMinerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eMarbleMinerSpriteData15,
-                                 eMarbleMinerSpriteData30,
-                                 eMarbleMinerSpriteData45,
-                                 eMarbleMinerSpriteData60);
+    const auto& sds = eMarbleMinerSpriteData30;
     SpriteLoader loader(fTileH, "marbleMiner", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1049,11 +784,7 @@ void CharacterTextures::loadMarbleMiner() {
 void CharacterTextures::loadSilverMiner() {
     if(fSilverMinerLoaded) return;
     fSilverMinerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eSilverMinerSpriteData15,
-                                 eSilverMinerSpriteData30,
-                                 eSilverMinerSpriteData45,
-                                 eSilverMinerSpriteData60);
+    const auto& sds = eSilverMinerSpriteData30;
     SpriteLoader loader(fTileH, "silverMiner", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1069,11 +800,7 @@ void CharacterTextures::loadSilverMiner() {
 void CharacterTextures::loadArcher() {
     if(fArcherLoaded) return;
     fArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eArcherSpriteData15,
-                                 eArcherSpriteData30,
-                                 eArcherSpriteData45,
-                                 eArcherSpriteData60);
+    const auto& sds = eArcherSpriteData30;
     SpriteLoader loader(fTileH, "archer", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1089,11 +816,7 @@ void CharacterTextures::loadArcher() {
 void CharacterTextures::loadLumberjack() {
     if(fLumberjackLoaded) return;
     fLumberjackLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eLumberjackSpriteData15,
-                                 eLumberjackSpriteData30,
-                                 eLumberjackSpriteData45,
-                                 eLumberjackSpriteData60);
+    const auto& sds = eLumberjackSpriteData30;
     SpriteLoader loader(fTileH, "lumberjack", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1109,11 +832,7 @@ void CharacterTextures::loadLumberjack() {
 void CharacterTextures::loadTaxCollector() {
     if(fTaxCollectorLoaded) return;
     fTaxCollectorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTaxCollectorSpriteData15,
-                                 eTaxCollectorSpriteData30,
-                                 eTaxCollectorSpriteData45,
-                                 eTaxCollectorSpriteData60);
+    const auto& sds = eTaxCollectorSpriteData30;
     SpriteLoader loader(fTileH, "taxCollector", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1123,11 +842,7 @@ void CharacterTextures::loadTaxCollector() {
 void CharacterTextures::loadTransporter() {
     if(fTransporterLoaded) return;
     fTransporterLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTransporterSpriteData15,
-                                 eTransporterSpriteData30,
-                                 eTransporterSpriteData45,
-                                 eTransporterSpriteData60);
+    const auto& sds = eTransporterSpriteData30;
     SpriteLoader loader(fTileH, "transporter", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1138,11 +853,7 @@ void CharacterTextures::loadGrower() {
     if(fGrowerLoaded) return;
     fGrowerLoaded = true;
     {
-        const auto& sds = spriteData(fTileH,
-                                     eGrowerSpriteData15,
-                                     eGrowerSpriteData30,
-                                     eGrowerSpriteData45,
-                                     eGrowerSpriteData60);
+        const auto& sds = eGrowerSpriteData30;
         SpriteLoader loader(fTileH, "grower", sds,
                              &eSprMainOffset, fRenderer);
 
@@ -1162,11 +873,7 @@ void CharacterTextures::loadGrower() {
 void CharacterTextures::loadTrader() {
     if(fTraderLoaded) return;
     fTraderLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTraderSpriteData15,
-                                 eTraderSpriteData30,
-                                 eTraderSpriteData45,
-                                 eTraderSpriteData60);
+    const auto& sds = eTraderSpriteData30;
     SpriteLoader loader(fTileH, "trader", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1176,11 +883,7 @@ void CharacterTextures::loadTrader() {
 void CharacterTextures::loadWaterDistributor() {
     if(fWaterDistributorLoaded) return;
     fWaterDistributorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eWaterDistributorSpriteData15,
-                                 eWaterDistributorSpriteData30,
-                                 eWaterDistributorSpriteData45,
-                                 eWaterDistributorSpriteData60);
+    const auto& sds = eWaterDistributorSpriteData30;
     SpriteLoader loader(fTileH, "waterDistributor", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1190,11 +893,7 @@ void CharacterTextures::loadWaterDistributor() {
 void CharacterTextures::loadRockThrower() {
     if(fRockThrowerLoaded) return;
     fRockThrowerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eRockThrowerSpriteData15,
-                                 eRockThrowerSpriteData30,
-                                 eRockThrowerSpriteData45,
-                                 eRockThrowerSpriteData60);
+    const auto& sds = eRockThrowerSpriteData30;
     SpriteLoader loader(fTileH, "rockThrower", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1209,11 +908,7 @@ void CharacterTextures::loadRockThrower() {
 
 void CharacterTextures::loadHoplite() {
     if(fHopliteLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eHopliteSpriteData15,
-                                 eHopliteSpriteData30,
-                                 eHopliteSpriteData45,
-                                 eHopliteSpriteData60);
+    const auto& sds = eHopliteSpriteData30;
     fHopliteLoaded = true;
     SpriteLoader loader(fTileH, "hoplite", sds,
                          &eSprMainOffset, fRenderer);
@@ -1230,11 +925,7 @@ void CharacterTextures::loadHorseman() {
     if(fHorsemanLoaded) return;
     fHorsemanLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eHorsemanSpriteData15,
-                                 eHorsemanSpriteData30,
-                                 eHorsemanSpriteData45,
-                                 eHorsemanSpriteData60);
+    const auto& sds = eHorsemanSpriteData30;
     SpriteLoader loader(fTileH, "horseman", sds,
                          &eSprMainOffset, fRenderer);
     loader.loadSkipFlipped(7273, 7273, 7369, fHorseman.fWalk);
@@ -1248,11 +939,7 @@ void CharacterTextures::loadHorseman() {
 void CharacterTextures::loadHealer() {
     if(fHealerLoaded) return;
     fHealerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eHealerSpriteData15,
-                                 eHealerSpriteData30,
-                                 eHealerSpriteData45,
-                                 eHealerSpriteData60);
+    const auto& sds = eHealerSpriteData30;
     SpriteLoader loader(fTileH, "healer", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1263,11 +950,7 @@ void CharacterTextures::loadCart() {
     if(fCartLoaded) return;
     fCartLoaded = true;
     {
-        const auto& sds = spriteData(fTileH,
-                                     eCartSpriteData15,
-                                     eCartSpriteData30,
-                                     eCartSpriteData45,
-                                     eCartSpriteData60);
+        const auto& sds = eCartSpriteData30;
         SpriteLoader loader(fTileH, "cart", sds,
                              &eSprMainOffset, fRenderer);
 
@@ -1294,11 +977,7 @@ void CharacterTextures::loadCart() {
 void CharacterTextures::loadBoar() {
     if(fBoarLoaded) return;
     fBoarLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eBoarSpriteData15,
-                                 eBoarSpriteData30,
-                                 eBoarSpriteData45,
-                                 eBoarSpriteData60);
+    const auto& sds = eBoarSpriteData30;
     SpriteLoader loader(fTileH, "boar", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1315,11 +994,7 @@ void CharacterTextures::loadGymnast() {
     if(fGymnastLoaded) return;
     fGymnastLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGymnastSpriteData15,
-                                 eGymnastSpriteData30,
-                                 eGymnastSpriteData45,
-                                 eGymnastSpriteData60);
+    const auto& sds = eGymnastSpriteData30;
     SpriteLoader loader(fTileH, "gymnast", sds,
                          &eSprMainOffset, fRenderer);
     loadBasicTexture(fGymnast, 10588, loader);
@@ -1329,11 +1004,7 @@ void CharacterTextures::loadCompetitor() {
     if(fCompetitorLoaded) return;
     fCompetitorLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eCompetitorSpriteData15,
-                                 eCompetitorSpriteData30,
-                                 eCompetitorSpriteData45,
-                                 eCompetitorSpriteData60);
+    const auto& sds = eCompetitorSpriteData30;
     SpriteLoader loader(fTileH, "competitor", sds,
                          &eSprMainOffset, fRenderer);
     loadBasicTexture(fCompetitor, 10692, loader);
@@ -1343,11 +1014,7 @@ void CharacterTextures::loadGoat() {
     if(fGoatLoaded) return;
     fGoatLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGoatSpriteData15,
-                                 eGoatSpriteData30,
-                                 eGoatSpriteData45,
-                                 eGoatSpriteData60);
+    const auto& sds = eGoatSpriteData30;
     SpriteLoader loader(fTileH, "goat", sds,
                          &eSprMainOffset, fRenderer);
     loader.loadSkipFlipped(11228, 11228, 11324, fGoat.fWalk);
@@ -1363,11 +1030,7 @@ void CharacterTextures::loadWolf() {
     if(fWolfLoaded) return;
     fWolfLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eWolfSpriteData15,
-                                 eWolfSpriteData30,
-                                 eWolfSpriteData45,
-                                 eWolfSpriteData60);
+    const auto& sds = eWolfSpriteData30;
     SpriteLoader loader(fTileH, "wolf", sds,
                          &eSprMainOffset, fRenderer);
     loader.loadSkipFlipped(11524, 11524, 11620, fWolf.fWalk);
@@ -1384,11 +1047,7 @@ void CharacterTextures::loadHunter() {
     fHunterLoaded = true;
     {
 
-        const auto& sds = spriteData(fTileH,
-                                     eHunterSpriteData15,
-                                     eHunterSpriteData30,
-                                     eHunterSpriteData45,
-                                     eHunterSpriteData60);
+        const auto& sds = eHunterSpriteData30;
         SpriteLoader loader(fTileH, "hunter", sds,
                              &eSprMainOffset, fRenderer);
         loader.loadSkipFlipped(11820, 11820, 11916, fHunter.fWalk);
@@ -1406,11 +1065,7 @@ void CharacterTextures::loadPhilosopher() {
     if(fPhilosopherLoaded) return;
     fPhilosopherLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 ePhilosopherSpriteData15,
-                                 ePhilosopherSpriteData30,
-                                 ePhilosopherSpriteData45,
-                                 ePhilosopherSpriteData60);
+    const auto& sds = ePhilosopherSpriteData30;
     SpriteLoader loader(fTileH, "philosopher", sds,
                          &eSprMainOffset, fRenderer);
     loadBasicTexture(fPhilosopher, 12128, loader);
@@ -1420,11 +1075,7 @@ void CharacterTextures::loadUrchinGatherer() {
     if(fUrchinGathererLoaded) return;
     fUrchinGathererLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eUrchinGathererSpriteData15,
-                                 eUrchinGathererSpriteData30,
-                                 eUrchinGathererSpriteData45,
-                                 eUrchinGathererSpriteData60);
+    const auto& sds = eUrchinGathererSpriteData30;
     SpriteLoader loader(fTileH, "urchinGatherer", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1441,11 +1092,7 @@ void CharacterTextures::loadFishingBoat() {
     if(fFishingBoatLoaded) return;
     fFishingBoatLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eFishingBoatSpriteData15,
-                                 eFishingBoatSpriteData30,
-                                 eFishingBoatSpriteData45,
-                                 eFishingBoatSpriteData60);
+    const auto& sds = eFishingBoatSpriteData30;
     SpriteLoader loader(fTileH, "fishingBoat", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1459,11 +1106,7 @@ void CharacterTextures::loadTradeBoat() {
     if(fTradeBoatLoaded) return;
     fTradeBoatLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eTradeBoatSpriteData15,
-                                 eTradeBoatSpriteData30,
-                                 eTradeBoatSpriteData45,
-                                 eTradeBoatSpriteData60);
+    const auto& sds = eTradeBoatSpriteData30;
     SpriteLoader loader(fTileH, "tradeBoat", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -1476,11 +1119,7 @@ void CharacterTextures::loadGreekRockThrower() {
     if(fGreekRockThrowerLoaded) return;
     fGreekRockThrowerLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGreekRockThrowerSpriteData15,
-                                 eGreekRockThrowerSpriteData30,
-                                 eGreekRockThrowerSpriteData45,
-                                 eGreekRockThrowerSpriteData60);
+    const auto& sds = eGreekRockThrowerSpriteData30;
     SpriteLoader loader(fTileH, "greekRockThrower", sds,
                          &eZeus_GreekOffset, fRenderer);
     loader.loadSkipFlipped(369, 369, 465, fGreekRockThrower.fWalk);
@@ -1496,11 +1135,7 @@ void CharacterTextures::loadGreekHoplite() {
     if(fGreekHopliteLoaded) return;
     fGreekHopliteLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGreekHopliteSpriteData15,
-                                 eGreekHopliteSpriteData30,
-                                 eGreekHopliteSpriteData45,
-                                 eGreekHopliteSpriteData60);
+    const auto& sds = eGreekHopliteSpriteData30;
     SpriteLoader loader(fTileH, "greekHoplite", sds,
                          &eZeus_GreekOffset, fRenderer);
     loader.loadSkipFlipped(1, 1, 97, fGreekHoplite.fWalk);
@@ -1515,11 +1150,7 @@ void CharacterTextures::loadGreekHorseman() {
     if(fGreekHorsemanLoaded) return;
     fGreekHorsemanLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGreekHorsemanSpriteData15,
-                                 eGreekHorsemanSpriteData30,
-                                 eGreekHorsemanSpriteData45,
-                                 eGreekHorsemanSpriteData60);
+    const auto& sds = eGreekHorsemanSpriteData30;
     SpriteLoader loader(fTileH, "greekHorseman", sds,
                          &eZeus_GreekOffset, fRenderer);
     loader.loadSkipFlipped(169, 169, 265, fGreekHorseman.fWalk);
@@ -1534,11 +1165,7 @@ void CharacterTextures::loadDonkey() {
     if(fDonkeyLoaded) return;
     fDonkeyLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eDonkeySpriteData15,
-                                 eDonkeySpriteData30,
-                                 eDonkeySpriteData45,
-                                 eDonkeySpriteData60);
+    const auto& sds = eDonkeySpriteData30;
     SpriteLoader loader(fTileH, "donkey", sds,
                          &eSprAmbientOffset, fRenderer);
     loadBasicTexture(fDonkey, 529, loader);
@@ -1549,11 +1176,7 @@ void CharacterTextures::loadBanners() {
     fBannersLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eBannersSpriteData15,
-                                     eBannersSpriteData30,
-                                     eBannersSpriteData45,
-                                     eBannersSpriteData60);
+        const auto& sds = eBannersSpriteData30;
         SpriteLoader loader(fTileH, "banners", sds,
                              nullptr, fRenderer);
 
@@ -1575,11 +1198,7 @@ void CharacterTextures::loadBanners() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePoseidonBannerTopsSpriteData15,
-                                     ePoseidonBannerTopsSpriteData30,
-                                     ePoseidonBannerTopsSpriteData45,
-                                     ePoseidonBannerTopsSpriteData60);
+        const auto& sds = ePoseidonBannerTopsSpriteData30;
         SpriteLoader loader(fTileH, "poseidonBannerTops", sds,
                              nullptr, fRenderer);
 

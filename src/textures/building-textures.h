@@ -724,10 +724,7 @@ private:
     bool fFisheryOverlayLoaded = false;
     void loadFisheryOverlay();
 
-    void loadGodMonuments(const std::vector<eSpriteData>& sd15,
-                          const std::vector<eSpriteData>& sd30,
-                          const std::vector<eSpriteData>& sd45,
-                          const std::vector<eSpriteData>& sd60,
+    void loadGodMonuments(const std::vector<eSpriteData>& sd,
                           const std::string& name,
                           TextureCollection& coll);
     void generateFlipped(const TextureCollection& src,

@@ -89,7 +89,11 @@ struct GameWidgetSettings {
         ar.field("speed", fSpeed);
         ar.field("dx", fDX);
         ar.field("dy", fDY);
-        ar.field("tileSize", fTileSize);
+        // legacy field: old 4-size enum stored s30 as ordinal 1;
+        // write 1 for old-binary compat, ignore on read
+        int legacyTileSize = 1;
+        ar.field("tileSize", legacyTileSize);
+        fTileSize = eTileSize::s30;
         ar.field("direction", fDir);
         if(ar.reading()) {
             fBookmarks.clear();
@@ -624,7 +628,7 @@ private:
 
     std::deque<eTip> mTips;
 
-    std::map<eTileSize, std::vector<stdsptr<Texture>>> mNumbers;
+    std::vector<stdsptr<Texture>> mNumbers;
     std::vector<eTile*> mInflTiles;
     std::vector<eTile*> mHoverTiles;
 

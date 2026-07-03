@@ -1326,1467 +1326,372 @@ HEADERS += \
     spawners/sea-invasion-point.h \
     spawners/spawner.h \
     spawners/wolf-spawner.h \
-    spriteData/achilles15.h \
     spriteData/achilles30.h \
-    spriteData/achilles45.h \
-    spriteData/achilles60.h \
-    spriteData/actor15.h \
     spriteData/actor30.h \
-    spriteData/actor45.h \
-    spriteData/actor60.h \
-    spriteData/agora15.h \
     spriteData/agora30.h \
-    spriteData/agora45.h \
-    spriteData/agora60.h \
-    spriteData/altarBullOverlay15.h \
     spriteData/altarBullOverlay30.h \
-    spriteData/altarBullOverlay45.h \
-    spriteData/altarBullOverlay60.h \
-    spriteData/altarGoodsOverlay15.h \
     spriteData/altarGoodsOverlay30.h \
-    spriteData/altarGoodsOverlay45.h \
-    spriteData/altarGoodsOverlay60.h \
-    spriteData/altarSheepOverlay15.h \
     spriteData/altarSheepOverlay30.h \
-    spriteData/altarSheepOverlay45.h \
-    spriteData/altarSheepOverlay60.h \
-    spriteData/amazonArcher15.h \
     spriteData/amazonArcher30.h \
-    spriteData/amazonArcher45.h \
-    spriteData/amazonArcher60.h \
-    spriteData/amazonSpear15.h \
     spriteData/amazonSpear30.h \
-    spriteData/amazonSpear45.h \
-    spriteData/amazonSpear60.h \
-    spriteData/aphrodite15.h \
     spriteData/aphrodite30.h \
-    spriteData/aphrodite45.h \
-    spriteData/aphrodite60.h \
-    spriteData/aphroditeStatue15.h \
     spriteData/aphroditeStatue30.h \
-    spriteData/aphroditeStatue45.h \
-    spriteData/aphroditeStatue60.h \
-    spriteData/apollo15.h \
     spriteData/apollo30.h \
-    spriteData/apollo45.h \
-    spriteData/apollo60.h \
-    spriteData/apolloStatue15.h \
     spriteData/apolloStatue30.h \
-    spriteData/apolloStatue45.h \
-    spriteData/apolloStatue60.h \
-    spriteData/archer15.h \
     spriteData/archer30.h \
-    spriteData/archer45.h \
-    spriteData/archer60.h \
-    spriteData/archerPoseidon15.h \
     spriteData/archerPoseidon30.h \
-    spriteData/archerPoseidon45.h \
-    spriteData/archerPoseidon60.h \
-    spriteData/ares15.h \
     spriteData/ares30.h \
-    spriteData/ares45.h \
-    spriteData/ares60.h \
-    spriteData/aresStatue15.h \
     spriteData/aresStatue30.h \
-    spriteData/aresStatue45.h \
-    spriteData/aresStatue60.h \
-    spriteData/aresWarrior15.h \
     spriteData/aresWarrior30.h \
-    spriteData/aresWarrior45.h \
-    spriteData/aresWarrior60.h \
-    spriteData/armory15.h \
     spriteData/armory30.h \
-    spriteData/armory45.h \
-    spriteData/armory60.h \
-    spriteData/armsVendor15.h \
     spriteData/armsVendor30.h \
-    spriteData/armsVendor45.h \
-    spriteData/armsVendor60.h \
-    spriteData/arrow15.h \
     spriteData/arrow30.h \
-    spriteData/arrow45.h \
-    spriteData/arrow60.h \
-    spriteData/artemis15.h \
     spriteData/artemis30.h \
-    spriteData/artemis45.h \
-    spriteData/artemis60.h \
-    spriteData/artemisStatue15.h \
     spriteData/artemisStatue30.h \
-    spriteData/artemisStatue45.h \
-    spriteData/artemisStatue60.h \
-    spriteData/artisan15.h \
     spriteData/artisan30.h \
-    spriteData/artisan45.h \
-    spriteData/artisan60.h \
-    spriteData/artisansGuild15.h \
     spriteData/artisansGuild30.h \
-    spriteData/artisansGuild45.h \
-    spriteData/artisansGuild60.h \
-    spriteData/astronomer15.h \
     spriteData/astronomer30.h \
-    spriteData/astronomer45.h \
-    spriteData/astronomer60.h \
-    spriteData/atalanta15.h \
     spriteData/atalanta30.h \
-    spriteData/atalanta45.h \
-    spriteData/atalanta60.h \
-    spriteData/athena15.h \
     spriteData/athena30.h \
-    spriteData/athena45.h \
-    spriteData/athena60.h \
-    spriteData/athenaStatue15.h \
     spriteData/athenaStatue30.h \
-    spriteData/athenaStatue45.h \
-    spriteData/athenaStatue60.h \
-    spriteData/atlanteanArcher15.h \
     spriteData/atlanteanArcher30.h \
-    spriteData/atlanteanArcher45.h \
-    spriteData/atlanteanArcher60.h \
-    spriteData/atlanteanChariot15.h \
     spriteData/atlanteanChariot30.h \
-    spriteData/atlanteanChariot45.h \
-    spriteData/atlanteanChariot60.h \
-    spriteData/atlanteanHoplite15.h \
     spriteData/atlanteanHoplite30.h \
-    spriteData/atlanteanHoplite45.h \
-    spriteData/atlanteanHoplite60.h \
-    spriteData/atlas15.h \
     spriteData/atlas30.h \
-    spriteData/atlas45.h \
-    spriteData/atlas60.h \
-    spriteData/atlasStatue15.h \
     spriteData/atlasStatue30.h \
-    spriteData/atlasStatue45.h \
-    spriteData/atlasStatue60.h \
-    spriteData/avenue15.h \
     spriteData/avenue30.h \
-    spriteData/avenue45.h \
-    spriteData/avenue60.h \
-    spriteData/banners15.h \
     spriteData/banners30.h \
-    spriteData/banners45.h \
-    spriteData/banners60.h \
-    spriteData/baths15.h \
     spriteData/baths30.h \
-    spriteData/baths45.h \
-    spriteData/baths60.h \
-    spriteData/bellerophon15.h \
     spriteData/bellerophon30.h \
-    spriteData/bellerophon45.h \
-    spriteData/bellerophon60.h \
-    spriteData/bench15.h \
     spriteData/bench30.h \
-    spriteData/bench45.h \
-    spriteData/bench60.h \
-    spriteData/bibliotheke15.h \
     spriteData/bibliotheke30.h \
-    spriteData/bibliotheke45.h \
-    spriteData/bibliotheke60.h \
-    spriteData/birdBath15.h \
     spriteData/birdBath30.h \
-    spriteData/birdBath45.h \
-    spriteData/birdBath60.h \
-    spriteData/blackArrow15.h \
     spriteData/blackArrow30.h \
-    spriteData/blackArrow45.h \
-    spriteData/blackArrow60.h \
-    spriteData/blackMarbleTerrain15.h \
     spriteData/blackMarbleTerrain30.h \
-    spriteData/blackMarbleTerrain45.h \
-    spriteData/blackMarbleTerrain60.h \
-    spriteData/blackMarbleTrailer15.h \
     spriteData/blackMarbleTrailer30.h \
-    spriteData/blackMarbleTrailer45.h \
-    spriteData/blackMarbleTrailer60.h \
-    spriteData/blackMarbleWorkshop15.h \
     spriteData/blackMarbleWorkshop30.h \
-    spriteData/blackMarbleWorkshop45.h \
-    spriteData/blackMarbleWorkshop60.h \
-    spriteData/blackSpear15.h \
     spriteData/blackSpear30.h \
-    spriteData/blackSpear45.h \
-    spriteData/blackSpear60.h \
-    spriteData/blankStatue15.h \
     spriteData/blankStatue30.h \
-    spriteData/blankStatue45.h \
-    spriteData/blankStatue60.h \
-    spriteData/bless15.h \
     spriteData/bless30.h \
-    spriteData/bless45.h \
-    spriteData/bless60.h \
-    spriteData/blessed15.h \
     spriteData/blessed30.h \
-    spriteData/blessed45.h \
-    spriteData/blessed60.h \
-    spriteData/boar15.h \
     spriteData/boar30.h \
-    spriteData/boar45.h \
-    spriteData/boar60.h \
-    spriteData/bridge15.h \
     spriteData/bridge30.h \
-    spriteData/bridge45.h \
-    spriteData/bridge60.h \
-    spriteData/bronzeMiner15.h \
     spriteData/bronzeMiner30.h \
-    spriteData/bronzeMiner45.h \
-    spriteData/bronzeMiner60.h \
-    spriteData/bull15.h \
     spriteData/bull30.h \
-    spriteData/bull45.h \
-    spriteData/bull60.h \
-    spriteData/butcher15.h \
     spriteData/butcher30.h \
-    spriteData/butcher45.h \
-    spriteData/butcher60.h \
-    spriteData/calydonianBoar15.h \
     spriteData/calydonianBoar30.h \
-    spriteData/calydonianBoar45.h \
-    spriteData/calydonianBoar60.h \
-    spriteData/cardingShed15.h \
     spriteData/cardingShed30.h \
-    spriteData/cardingShed45.h \
-    spriteData/cardingShed60.h \
-    spriteData/cart15.h \
     spriteData/cart30.h \
-    spriteData/cart45.h \
-    spriteData/cart60.h \
-    spriteData/cattle115.h \
     spriteData/cattle130.h \
-    spriteData/cattle145.h \
-    spriteData/cattle160.h \
-    spriteData/cattle215.h \
     spriteData/cattle230.h \
-    spriteData/cattle245.h \
-    spriteData/cattle260.h \
-    spriteData/cattle315.h \
     spriteData/cattle330.h \
-    spriteData/cattle345.h \
-    spriteData/cattle360.h \
-    spriteData/centaurArcher15.h \
     spriteData/centaurArcher30.h \
-    spriteData/centaurArcher45.h \
-    spriteData/centaurArcher60.h \
-    spriteData/centaurHorseman15.h \
     spriteData/centaurHorseman30.h \
-    spriteData/centaurHorseman45.h \
-    spriteData/centaurHorseman60.h \
-    spriteData/cerberus15.h \
     spriteData/cerberus30.h \
-    spriteData/cerberus45.h \
-    spriteData/cerberus60.h \
-    spriteData/chariot15.h \
     spriteData/chariot30.h \
-    spriteData/chariot45.h \
-    spriteData/chariot60.h \
-    spriteData/chariotFactory15.h \
     spriteData/chariotFactory30.h \
-    spriteData/chariotFactory45.h \
-    spriteData/chariotFactory60.h \
-    spriteData/chariotFactoryHorses15.h \
     spriteData/chariotFactoryHorses30.h \
-    spriteData/chariotFactoryHorses45.h \
-    spriteData/chariotFactoryHorses60.h \
-    spriteData/chariotFactoryOverlay115.h \
     spriteData/chariotFactoryOverlay130.h \
-    spriteData/chariotFactoryOverlay145.h \
-    spriteData/chariotFactoryOverlay160.h \
-    spriteData/chariotPoseidon15.h \
     spriteData/chariotPoseidon30.h \
-    spriteData/chariotPoseidon45.h \
-    spriteData/chariotPoseidon60.h \
-    spriteData/chariotVendor15.h \
     spriteData/chariotVendor30.h \
-    spriteData/chariotVendor45.h \
-    spriteData/chariotVendor60.h \
-    spriteData/chariotVendorCharacter15.h \
     spriteData/chariotVendorCharacter30.h \
-    spriteData/chariotVendorCharacter45.h \
-    spriteData/chariotVendorCharacter60.h \
-    spriteData/chariotVendorOverlay15.h \
     spriteData/chariotVendorOverlay30.h \
-    spriteData/chariotVendorOverlay45.h \
-    spriteData/chariotVendorOverlay60.h \
-    spriteData/chimera15.h \
     spriteData/chimera30.h \
-    spriteData/chimera45.h \
-    spriteData/chimera60.h \
-    spriteData/college15.h \
     spriteData/college30.h \
-    spriteData/college45.h \
-    spriteData/college60.h \
-    spriteData/columns15.h \
     spriteData/columns30.h \
-    spriteData/columns45.h \
-    spriteData/columns60.h \
-    spriteData/commemorative15.h \
     spriteData/commemorative30.h \
-    spriteData/commemorative45.h \
-    spriteData/commemorative60.h \
-    spriteData/commonHouse15.h \
     spriteData/commonHouse30.h \
-    spriteData/commonHouse45.h \
-    spriteData/commonHouse60.h \
-    spriteData/competitor15.h \
     spriteData/competitor30.h \
-    spriteData/competitor45.h \
-    spriteData/competitor60.h \
-    spriteData/corral15.h \
     spriteData/corral30.h \
-    spriteData/corral45.h \
-    spriteData/corral60.h \
-    spriteData/corralCattleOverlay15.h \
     spriteData/corralCattleOverlay30.h \
-    spriteData/corralCattleOverlay45.h \
-    spriteData/corralCattleOverlay60.h \
-    spriteData/corralProcessingOverlay15.h \
     spriteData/corralProcessingOverlay30.h \
-    spriteData/corralProcessingOverlay45.h \
-    spriteData/corralProcessingOverlay60.h \
-    spriteData/curator15.h \
     spriteData/curator30.h \
-    spriteData/curator45.h \
-    spriteData/curator60.h \
-    spriteData/curse15.h \
     spriteData/curse30.h \
-    spriteData/curse45.h \
-    spriteData/curse60.h \
-    spriteData/cursed15.h \
     spriteData/cursed30.h \
-    spriteData/cursed45.h \
-    spriteData/cursed60.h \
-    spriteData/cyclops15.h \
     spriteData/cyclops30.h \
-    spriteData/cyclops45.h \
-    spriteData/cyclops60.h \
-    spriteData/dairy15.h \
     spriteData/dairy30.h \
-    spriteData/dairy45.h \
-    spriteData/dairy60.h \
-    spriteData/deer15.h \
     spriteData/deer30.h \
-    spriteData/deer45.h \
-    spriteData/deer60.h \
-    spriteData/deerHunter15.h \
     spriteData/deerHunter30.h \
-    spriteData/deerHunter45.h \
-    spriteData/deerHunter60.h \
-    spriteData/deerTop15.h \
     spriteData/deerTop30.h \
-    spriteData/deerTop45.h \
-    spriteData/deerTop60.h \
-    spriteData/demeter15.h \
     spriteData/demeter30.h \
-    spriteData/demeter45.h \
-    spriteData/demeter60.h \
-    spriteData/demeterStatue15.h \
     spriteData/demeterStatue30.h \
-    spriteData/demeterStatue45.h \
-    spriteData/demeterStatue60.h \
-    spriteData/dionysus15.h \
     spriteData/dionysus30.h \
-    spriteData/dionysus45.h \
-    spriteData/dionysus60.h \
-    spriteData/dionysusStatue15.h \
     spriteData/dionysusStatue30.h \
-    spriteData/dionysusStatue45.h \
-    spriteData/dionysusStatue60.h \
-    spriteData/disgruntled15.h \
     spriteData/disgruntled30.h \
-    spriteData/disgruntled45.h \
-    spriteData/disgruntled60.h \
-    spriteData/dolphinSculpture15.h \
     spriteData/dolphinSculpture30.h \
-    spriteData/dolphinSculpture45.h \
-    spriteData/dolphinSculpture60.h \
-    spriteData/donkey15.h \
     spriteData/donkey30.h \
-    spriteData/donkey45.h \
-    spriteData/donkey60.h \
-    spriteData/dragon15.h \
     spriteData/dragon30.h \
-    spriteData/dragon45.h \
-    spriteData/dragon60.h \
-    spriteData/dramaSchool15.h \
     spriteData/dramaSchool30.h \
-    spriteData/dramaSchool45.h \
-    spriteData/dramaSchool60.h \
-    spriteData/dust15.h \
     spriteData/dust30.h \
-    spriteData/dust45.h \
-    spriteData/dust60.h \
-    spriteData/echidna15.h \
     spriteData/echidna30.h \
-    spriteData/echidna45.h \
-    spriteData/echidna60.h \
-    spriteData/egyptianArcher15.h \
     spriteData/egyptianArcher30.h \
-    spriteData/egyptianArcher45.h \
-    spriteData/egyptianArcher60.h \
-    spriteData/egyptianChariot15.h \
     spriteData/egyptianChariot30.h \
-    spriteData/egyptianChariot45.h \
-    spriteData/egyptianChariot60.h \
-    spriteData/egyptianHoplite15.h \
     spriteData/egyptianHoplite30.h \
-    spriteData/egyptianHoplite45.h \
-    spriteData/egyptianHoplite60.h \
-    spriteData/elephant15.h \
     spriteData/elephant30.h \
-    spriteData/elephant45.h \
-    spriteData/elephant60.h \
-    spriteData/eliteCitizen15.h \
     spriteData/eliteCitizen30.h \
-    spriteData/eliteCitizen45.h \
-    spriteData/eliteCitizen60.h \
-    spriteData/eliteHouse15.h \
     spriteData/eliteHouse30.h \
-    spriteData/eliteHouse45.h \
-    spriteData/eliteHouse60.h \
-    spriteData/empireBits15.h \
     spriteData/empireBits30.h \
-    spriteData/empireBits45.h \
-    spriteData/empireBits60.h \
-    spriteData/empireFigures15.h \
     spriteData/empireFigures30.h \
-    spriteData/empireFigures45.h \
-    spriteData/empireFigures60.h \
-    spriteData/enemyBoat15.h \
     spriteData/enemyBoat30.h \
-    spriteData/enemyBoat45.h \
-    spriteData/enemyBoat60.h \
     spriteData/espritedata.h \
-    spriteData/fire115.h \
     spriteData/fire130.h \
-    spriteData/fire145.h \
-    spriteData/fire160.h \
-    spriteData/fireFighter15.h \
     spriteData/fireFighter30.h \
-    spriteData/fireFighter45.h \
-    spriteData/fireFighter60.h \
-    spriteData/fish15.h \
     spriteData/fish30.h \
-    spriteData/fish45.h \
-    spriteData/fish60.h \
-    spriteData/fishPond15.h \
     spriteData/fishPond30.h \
-    spriteData/fishPond45.h \
-    spriteData/fishPond60.h \
-    spriteData/fishPondOverlay15.h \
     spriteData/fishPondOverlay30.h \
-    spriteData/fishPondOverlay45.h \
-    spriteData/fishPondOverlay60.h \
-    spriteData/fishery15.h \
     spriteData/fishery30.h \
-    spriteData/fishery45.h \
-    spriteData/fishery60.h \
-    spriteData/fisheryBoatBuilding15.h \
     spriteData/fisheryBoatBuilding30.h \
-    spriteData/fisheryBoatBuilding45.h \
-    spriteData/fisheryBoatBuilding60.h \
-    spriteData/fisheryOverlay15.h \
     spriteData/fisheryOverlay30.h \
-    spriteData/fisheryOverlay45.h \
-    spriteData/fisheryOverlay60.h \
-    spriteData/fisheryUnpackingOverlay15.h \
     spriteData/fisheryUnpackingOverlay30.h \
-    spriteData/fisheryUnpackingOverlay45.h \
-    spriteData/fisheryUnpackingOverlay60.h \
-    spriteData/fishingBoat15.h \
     spriteData/fishingBoat30.h \
-    spriteData/fishingBoat45.h \
-    spriteData/fishingBoat60.h \
-    spriteData/fleeceVendor15.h \
     spriteData/fleeceVendor30.h \
-    spriteData/fleeceVendor45.h \
-    spriteData/fleeceVendor60.h \
-    spriteData/fleecedSheep15.h \
     spriteData/fleecedSheep30.h \
-    spriteData/fleecedSheep45.h \
-    spriteData/fleecedSheep60.h \
-    spriteData/flowerGarden15.h \
     spriteData/flowerGarden30.h \
-    spriteData/flowerGarden45.h \
-    spriteData/flowerGarden60.h \
-    spriteData/foodCart15.h \
     spriteData/foodCart30.h \
-    spriteData/foodCart45.h \
-    spriteData/foodCart60.h \
-    spriteData/foodVendor15.h \
     spriteData/foodVendor30.h \
-    spriteData/foodVendor45.h \
-    spriteData/foodVendor60.h \
-    spriteData/foundry15.h \
     spriteData/foundry30.h \
-    spriteData/foundry45.h \
-    spriteData/foundry60.h \
-    spriteData/fountain15.h \
     spriteData/fountain30.h \
-    spriteData/fountain45.h \
-    spriteData/fountain60.h \
-    spriteData/gatehouseAndTower15.h \
     spriteData/gatehouseAndTower30.h \
-    spriteData/gatehouseAndTower45.h \
-    spriteData/gatehouseAndTower60.h \
-    spriteData/gazebo15.h \
     spriteData/gazebo30.h \
-    spriteData/gazebo45.h \
-    spriteData/gazebo60.h \
-    spriteData/goat15.h \
     spriteData/goat30.h \
-    spriteData/goat45.h \
-    spriteData/goat60.h \
-    spriteData/goatherd15.h \
     spriteData/goatherd30.h \
-    spriteData/goatherd45.h \
-    spriteData/goatherd60.h \
-    spriteData/godBlueArrow15.h \
     spriteData/godBlueArrow30.h \
-    spriteData/godBlueArrow45.h \
-    spriteData/godBlueArrow60.h \
-    spriteData/godBlueMissile15.h \
     spriteData/godBlueMissile30.h \
-    spriteData/godBlueMissile45.h \
-    spriteData/godBlueMissile60.h \
-    spriteData/godGreenMissile15.h \
     spriteData/godGreenMissile30.h \
-    spriteData/godGreenMissile45.h \
-    spriteData/godGreenMissile60.h \
-    spriteData/godOrangeArrow15.h \
     spriteData/godOrangeArrow30.h \
-    spriteData/godOrangeArrow45.h \
-    spriteData/godOrangeArrow60.h \
-    spriteData/godOrangeMissile15.h \
     spriteData/godOrangeMissile30.h \
-    spriteData/godOrangeMissile45.h \
-    spriteData/godOrangeMissile60.h \
-    spriteData/godPinkMissile15.h \
     spriteData/godPinkMissile30.h \
-    spriteData/godPinkMissile45.h \
-    spriteData/godPinkMissile60.h \
-    spriteData/godPurpleMissile15.h \
     spriteData/godPurpleMissile30.h \
-    spriteData/godPurpleMissile45.h \
-    spriteData/godPurpleMissile60.h \
-    spriteData/godRedMissile15.h \
     spriteData/godRedMissile30.h \
-    spriteData/godRedMissile45.h \
-    spriteData/godRedMissile60.h \
-    spriteData/granary15.h \
     spriteData/granary30.h \
-    spriteData/granary45.h \
-    spriteData/granary60.h \
-    spriteData/greekHoplite15.h \
     spriteData/greekHoplite30.h \
-    spriteData/greekHoplite45.h \
-    spriteData/greekHoplite60.h \
-    spriteData/greekHorseman15.h \
     spriteData/greekHorseman30.h \
-    spriteData/greekHorseman45.h \
-    spriteData/greekHorseman60.h \
-    spriteData/greekRockThrower15.h \
     spriteData/greekRockThrower30.h \
-    spriteData/greekRockThrower45.h \
-    spriteData/greekRockThrower60.h \
-    spriteData/grower15.h \
     spriteData/grower30.h \
-    spriteData/grower45.h \
-    spriteData/grower60.h \
-    spriteData/growersLodge15.h \
     spriteData/growersLodge30.h \
-    spriteData/growersLodge45.h \
-    spriteData/growersLodge60.h \
-    spriteData/gymnasium15.h \
     spriteData/gymnasium30.h \
-    spriteData/gymnasium45.h \
-    spriteData/gymnasium60.h \
-    spriteData/gymnast15.h \
     spriteData/gymnast30.h \
-    spriteData/gymnast45.h \
-    spriteData/gymnast60.h \
-    spriteData/hades15.h \
     spriteData/hades30.h \
-    spriteData/hades45.h \
-    spriteData/hades60.h \
-    spriteData/hadesStatue15.h \
     spriteData/hadesStatue30.h \
-    spriteData/hadesStatue45.h \
-    spriteData/hadesStatue60.h \
-    spriteData/harpie15.h \
     spriteData/harpie30.h \
-    spriteData/harpie45.h \
-    spriteData/harpie60.h \
-    spriteData/healer15.h \
     spriteData/healer30.h \
-    spriteData/healer45.h \
-    spriteData/healer60.h \
-    spriteData/hector15.h \
     spriteData/hector30.h \
-    spriteData/hector45.h \
-    spriteData/hector60.h \
-    spriteData/hedgeMaze15.h \
     spriteData/hedgeMaze30.h \
-    spriteData/hedgeMaze45.h \
-    spriteData/hedgeMaze60.h \
-    spriteData/hephaestus15.h \
     spriteData/hephaestus30.h \
-    spriteData/hephaestus45.h \
-    spriteData/hephaestus60.h \
-    spriteData/hephaestusStatue15.h \
     spriteData/hephaestusStatue30.h \
-    spriteData/hephaestusStatue45.h \
-    spriteData/hephaestusStatue60.h \
-    spriteData/hera15.h \
     spriteData/hera30.h \
-    spriteData/hera45.h \
-    spriteData/hera60.h \
-    spriteData/heraStatue15.h \
     spriteData/heraStatue30.h \
-    spriteData/heraStatue45.h \
-    spriteData/heraStatue60.h \
-    spriteData/heracles15.h \
     spriteData/heracles30.h \
-    spriteData/heracles45.h \
-    spriteData/heracles60.h \
-    spriteData/hermes15.h \
     spriteData/hermes30.h \
-    spriteData/hermes45.h \
-    spriteData/hermes60.h \
-    spriteData/hermesStatue15.h \
     spriteData/hermesStatue30.h \
-    spriteData/hermesStatue45.h \
-    spriteData/hermesStatue60.h \
-    spriteData/hippodrome15.h \
     spriteData/hippodrome30.h \
-    spriteData/hippodrome45.h \
-    spriteData/hippodrome60.h \
-    spriteData/hippodromeBeer15.h \
     spriteData/hippodromeBeer30.h \
-    spriteData/hippodromeBeer45.h \
-    spriteData/hippodromeBeer60.h \
-    spriteData/hippodromeFeces15.h \
     spriteData/hippodromeFeces30.h \
-    spriteData/hippodromeFeces45.h \
-    spriteData/hippodromeFeces60.h \
-    spriteData/hippodromeFinish15.h \
     spriteData/hippodromeFinish30.h \
-    spriteData/hippodromeFinish45.h \
-    spriteData/hippodromeFinish60.h \
-    spriteData/hippodromeHorse115.h \
     spriteData/hippodromeHorse130.h \
-    spriteData/hippodromeHorse145.h \
-    spriteData/hippodromeHorse160.h \
-    spriteData/hippodromeHorse215.h \
     spriteData/hippodromeHorse230.h \
-    spriteData/hippodromeHorse245.h \
-    spriteData/hippodromeHorse260.h \
-    spriteData/hippodromeHorse315.h \
     spriteData/hippodromeHorse330.h \
-    spriteData/hippodromeHorse345.h \
-    spriteData/hippodromeHorse360.h \
-    spriteData/hippodromeHorse415.h \
     spriteData/hippodromeHorse430.h \
-    spriteData/hippodromeHorse445.h \
-    spriteData/hippodromeHorse460.h \
-    spriteData/hippodromeHotDogs15.h \
     spriteData/hippodromeHotDogs30.h \
-    spriteData/hippodromeHotDogs45.h \
-    spriteData/hippodromeHotDogs60.h \
-    spriteData/hippodromeSpectators15.h \
     spriteData/hippodromeSpectators30.h \
-    spriteData/hippodromeSpectators45.h \
-    spriteData/hippodromeSpectators60.h \
-    spriteData/hippodromeStand15.h \
     spriteData/hippodromeStand30.h \
-    spriteData/hippodromeStand45.h \
-    spriteData/hippodromeStand60.h \
-    spriteData/homeless15.h \
     spriteData/homeless30.h \
-    spriteData/homeless45.h \
-    spriteData/homeless60.h \
-    spriteData/hoplite15.h \
     spriteData/hoplite30.h \
-    spriteData/hoplite45.h \
-    spriteData/hoplite60.h \
-    spriteData/hoplitePoseidon15.h \
     spriteData/hoplitePoseidon30.h \
-    spriteData/hoplitePoseidon45.h \
-    spriteData/hoplitePoseidon60.h \
-    spriteData/horse15.h \
     spriteData/horse30.h \
-    spriteData/horse45.h \
-    spriteData/horse60.h \
-    spriteData/horseRanch15.h \
     spriteData/horseRanch30.h \
-    spriteData/horseRanch45.h \
-    spriteData/horseRanch60.h \
-    spriteData/horseRanchEnclosure15.h \
     spriteData/horseRanchEnclosure30.h \
-    spriteData/horseRanchEnclosure45.h \
-    spriteData/horseRanchEnclosure60.h \
-    spriteData/horseVendor15.h \
     spriteData/horseVendor30.h \
-    spriteData/horseVendor45.h \
-    spriteData/horseVendor60.h \
-    spriteData/horseman15.h \
     spriteData/horseman30.h \
-    spriteData/horseman45.h \
-    spriteData/horseman60.h \
-    spriteData/hospital15.h \
     spriteData/hospital30.h \
-    spriteData/hospital45.h \
-    spriteData/hospital60.h \
-    spriteData/hunter15.h \
     spriteData/hunter30.h \
-    spriteData/hunter45.h \
-    spriteData/hunter60.h \
-    spriteData/huntingLodge15.h \
     spriteData/huntingLodge30.h \
-    spriteData/huntingLodge45.h \
-    spriteData/huntingLodge60.h \
-    spriteData/hydra15.h \
     spriteData/hydra30.h \
-    spriteData/hydra45.h \
-    spriteData/hydra60.h \
-    spriteData/interfaceBanners15.h \
     spriteData/interfaceBanners30.h \
-    spriteData/interfaceBanners45.h \
-    spriteData/interfaceBanners60.h \
-    spriteData/interfaceMapEditor15.h \
     spriteData/interfaceMapEditor30.h \
-    spriteData/interfaceMapEditor45.h \
-    spriteData/interfaceMapEditor60.h \
-    spriteData/interfaceNewBbuttons15.h \
     spriteData/interfaceNewBbuttons30.h \
-    spriteData/interfaceNewBbuttons45.h \
-    spriteData/interfaceNewBbuttons60.h \
-    spriteData/interfaceNewParts15.h \
     spriteData/interfaceNewParts30.h \
-    spriteData/interfaceNewParts45.h \
-    spriteData/interfaceNewParts60.h \
-    spriteData/interfaceParts15.h \
     spriteData/interfaceParts30.h \
-    spriteData/interfaceParts45.h \
-    spriteData/interfaceParts60.h \
-    spriteData/interfaceRadar15.h \
     spriteData/interfaceRadar30.h \
-    spriteData/interfaceRadar45.h \
-    spriteData/interfaceRadar60.h \
-    spriteData/interfaceSprites15.h \
     spriteData/interfaceSprites30.h \
-    spriteData/interfaceSprites45.h \
-    spriteData/interfaceSprites60.h \
-    spriteData/interfaceWorldSide15.h \
     spriteData/interfaceWorldSide30.h \
-    spriteData/interfaceWorldSide45.h \
-    spriteData/interfaceWorldSide60.h \
-    spriteData/interface_stor_bays15.h \
     spriteData/interface_stor_bays30.h \
-    spriteData/interface_stor_bays45.h \
-    spriteData/interface_stor_bays60.h \
-    spriteData/inventor15.h \
     spriteData/inventor30.h \
-    spriteData/inventor45.h \
-    spriteData/inventor60.h \
-    spriteData/inventorsWorkshop15.h \
     spriteData/inventorsWorkshop30.h \
-    spriteData/inventorsWorkshop45.h \
-    spriteData/inventorsWorkshop60.h \
-    spriteData/jason15.h \
     spriteData/jason30.h \
-    spriteData/jason45.h \
-    spriteData/jason60.h \
-    spriteData/kraken15.h \
     spriteData/kraken30.h \
-    spriteData/kraken45.h \
-    spriteData/kraken60.h \
-    spriteData/laboratory15.h \
     spriteData/laboratory30.h \
-    spriteData/laboratory45.h \
-    spriteData/laboratory60.h \
-    spriteData/lava15.h \
     spriteData/lava30.h \
-    spriteData/lava45.h \
-    spriteData/lava60.h \
-    spriteData/lumberjack15.h \
     spriteData/lumberjack30.h \
-    spriteData/lumberjack45.h \
-    spriteData/lumberjack60.h \
-    spriteData/maenads15.h \
     spriteData/maenads30.h \
-    spriteData/maenads45.h \
-    spriteData/maenads60.h \
-    spriteData/maintenanceOffice15.h \
     spriteData/maintenanceOffice30.h \
-    spriteData/maintenanceOffice45.h \
-    spriteData/maintenanceOffice60.h \
-    spriteData/marbleMiner15.h \
     spriteData/marbleMiner30.h \
-    spriteData/marbleMiner45.h \
-    spriteData/marbleMiner60.h \
-    spriteData/masonryShop15.h \
     spriteData/masonryShop30.h \
-    spriteData/masonryShop45.h \
-    spriteData/masonryShop60.h \
-    spriteData/masonryShopOverlays15.h \
     spriteData/masonryShopOverlays30.h \
-    spriteData/masonryShopOverlays45.h \
-    spriteData/masonryShopOverlays60.h \
-    spriteData/mayanArcher15.h \
     spriteData/mayanArcher30.h \
-    spriteData/mayanArcher45.h \
-    spriteData/mayanArcher60.h \
-    spriteData/mayanHoplite15.h \
     spriteData/mayanHoplite30.h \
-    spriteData/mayanHoplite45.h \
-    spriteData/mayanHoplite60.h \
-    spriteData/medusa15.h \
     spriteData/medusa30.h \
-    spriteData/medusa45.h \
-    spriteData/medusa60.h \
-    spriteData/minotaur15.h \
     spriteData/minotaur30.h \
-    spriteData/minotaur45.h \
-    spriteData/minotaur60.h \
-    spriteData/mint15.h \
     spriteData/mint30.h \
-    spriteData/mint45.h \
-    spriteData/mint60.h \
-    spriteData/monsterMissile15.h \
     spriteData/monsterMissile30.h \
-    spriteData/monsterMissile45.h \
-    spriteData/monsterMissile60.h \
-    spriteData/mun_Palace15.h \
     spriteData/mun_Palace30.h \
-    spriteData/mun_Palace45.h \
-    spriteData/mun_Palace60.h \
-    spriteData/museum15.h \
     spriteData/museum30.h \
-    spriteData/museum45.h \
-    spriteData/museum60.h \
-    spriteData/nudeSheep15.h \
     spriteData/nudeSheep30.h \
-    spriteData/nudeSheep45.h \
-    spriteData/nudeSheep60.h \
-    spriteData/observatory15.h \
     spriteData/observatory30.h \
-    spriteData/observatory45.h \
-    spriteData/observatory60.h \
-    spriteData/oceanidHoplite15.h \
     spriteData/oceanidHoplite30.h \
-    spriteData/oceanidHoplite45.h \
-    spriteData/oceanidHoplite60.h \
-    spriteData/oceanidSpearthrower15.h \
     spriteData/oceanidSpearthrower30.h \
-    spriteData/oceanidSpearthrower45.h \
-    spriteData/oceanidSpearthrower60.h \
-    spriteData/odysseus15.h \
     spriteData/odysseus30.h \
-    spriteData/odysseus45.h \
-    spriteData/odysseus60.h \
-    spriteData/oilVendor15.h \
     spriteData/oilVendor30.h \
-    spriteData/oilVendor45.h \
-    spriteData/oilVendor60.h \
-    spriteData/olivePress15.h \
     spriteData/olivePress30.h \
-    spriteData/olivePress45.h \
-    spriteData/olivePress60.h \
-    spriteData/oliveTree15.h \
     spriteData/oliveTree30.h \
-    spriteData/oliveTree45.h \
-    spriteData/oliveTree60.h \
-    spriteData/orangeTender15.h \
     spriteData/orangeTender30.h \
-    spriteData/orangeTender45.h \
-    spriteData/orangeTender60.h \
-    spriteData/orangeTendersLodge15.h \
     spriteData/orangeTendersLodge30.h \
-    spriteData/orangeTendersLodge45.h \
-    spriteData/orangeTendersLodge60.h \
-    spriteData/orangesCart15.h \
     spriteData/orangesCart30.h \
-    spriteData/orangesCart45.h \
-    spriteData/orangesCart60.h \
-    spriteData/orichalcArcher15.h \
     spriteData/orichalcArcher30.h \
-    spriteData/orichalcArcher45.h \
-    spriteData/orichalcArcher60.h \
-    spriteData/orichalcCart15.h \
     spriteData/orichalcCart30.h \
-    spriteData/orichalcCart45.h \
-    spriteData/orichalcCart60.h \
-    spriteData/orichalcExplosion15.h \
     spriteData/orichalcExplosion30.h \
-    spriteData/orichalcExplosion45.h \
-    spriteData/orichalcExplosion60.h \
-    spriteData/orichalcMiner15.h \
     spriteData/orichalcMiner30.h \
-    spriteData/orichalcMiner45.h \
-    spriteData/orichalcMiner60.h \
-    spriteData/orichalcMissile15.h \
     spriteData/orichalcMissile30.h \
-    spriteData/orichalcMissile45.h \
-    spriteData/orichalcMissile60.h \
-    spriteData/orichalcTerrain15.h \
     spriteData/orichalcTerrain30.h \
-    spriteData/orichalcTerrain45.h \
-    spriteData/orichalcTerrain60.h \
-    spriteData/orichalcTowerOverlay15.h \
     spriteData/orichalcTowerOverlay30.h \
-    spriteData/orichalcTowerOverlay45.h \
-    spriteData/orichalcTowerOverlay60.h \
-    spriteData/orrery15.h \
     spriteData/orrery30.h \
-    spriteData/orrery45.h \
-    spriteData/orrery60.h \
-    spriteData/ox15.h \
     spriteData/ox30.h \
-    spriteData/ox45.h \
-    spriteData/ox60.h \
-    spriteData/oxHandler15.h \
     spriteData/oxHandler30.h \
-    spriteData/oxHandler45.h \
-    spriteData/oxHandler60.h \
-    spriteData/palaceOverlay15.h \
     spriteData/palaceOverlay30.h \
-    spriteData/palaceOverlay45.h \
-    spriteData/palaceOverlay60.h \
-    spriteData/palaceTiles15.h \
     spriteData/palaceTiles30.h \
-    spriteData/palaceTiles45.h \
-    spriteData/palaceTiles60.h \
-    spriteData/paneling15.h \
     spriteData/paneling30.h \
-    spriteData/paneling45.h \
-    spriteData/paneling60.h \
-    spriteData/park15.h \
     spriteData/park30.h \
-    spriteData/park45.h \
-    spriteData/park60.h \
-    spriteData/peddler15.h \
     spriteData/peddler30.h \
-    spriteData/peddler45.h \
-    spriteData/peddler60.h \
-    spriteData/perseus15.h \
     spriteData/perseus30.h \
-    spriteData/perseus45.h \
-    spriteData/perseus60.h \
-    spriteData/persianArcher15.h \
     spriteData/persianArcher30.h \
-    spriteData/persianArcher45.h \
-    spriteData/persianArcher60.h \
-    spriteData/persianHoplite15.h \
     spriteData/persianHoplite30.h \
-    spriteData/persianHoplite45.h \
-    spriteData/persianHoplite60.h \
-    spriteData/persianHorseman15.h \
     spriteData/persianHorseman30.h \
-    spriteData/persianHorseman45.h \
-    spriteData/persianHorseman60.h \
-    spriteData/philosopher15.h \
     spriteData/philosopher30.h \
-    spriteData/philosopher45.h \
-    spriteData/philosopher60.h \
-    spriteData/phoenicianArcher15.h \
     spriteData/phoenicianArcher30.h \
-    spriteData/phoenicianArcher45.h \
-    spriteData/phoenicianArcher60.h \
-    spriteData/phoenicianHorseman15.h \
     spriteData/phoenicianHorseman30.h \
-    spriteData/phoenicianHorseman45.h \
-    spriteData/phoenicianHorseman60.h \
-    spriteData/pier115.h \
     spriteData/pier130.h \
-    spriteData/pier145.h \
-    spriteData/pier160.h \
-    spriteData/pier215.h \
     spriteData/pier230.h \
-    spriteData/pier245.h \
-    spriteData/pier260.h \
-    spriteData/plague15.h \
     spriteData/plague30.h \
-    spriteData/plague45.h \
-    spriteData/plague60.h \
-    spriteData/plantation15.h \
     spriteData/plantation30.h \
-    spriteData/plantation45.h \
-    spriteData/plantation60.h \
-    spriteData/podium15.h \
     spriteData/podium30.h \
-    spriteData/podium45.h \
-    spriteData/podium60.h \
-    spriteData/porter15.h \
     spriteData/porter30.h \
-    spriteData/porter45.h \
-    spriteData/porter60.h \
-    spriteData/poseidon15.h \
     spriteData/poseidon30.h \
-    spriteData/poseidon45.h \
-    spriteData/poseidon60.h \
-    spriteData/poseidonBannerTops15.h \
     spriteData/poseidonBannerTops30.h \
-    spriteData/poseidonBannerTops45.h \
-    spriteData/poseidonBannerTops60.h \
-    spriteData/poseidonBridge15.h \
     spriteData/poseidonBridge30.h \
-    spriteData/poseidonBridge45.h \
-    spriteData/poseidonBridge60.h \
-    spriteData/poseidonCampaign115.h \
     spriteData/poseidonCampaign130.h \
-    spriteData/poseidonCampaign145.h \
-    spriteData/poseidonCampaign160.h \
-    spriteData/poseidonCampaign215.h \
     spriteData/poseidonCampaign230.h \
-    spriteData/poseidonCampaign245.h \
-    spriteData/poseidonCampaign260.h \
-    spriteData/poseidonCampaign315.h \
     spriteData/poseidonCampaign330.h \
-    spriteData/poseidonCampaign345.h \
-    spriteData/poseidonCampaign360.h \
-    spriteData/poseidonCampaign415.h \
     spriteData/poseidonCampaign430.h \
-    spriteData/poseidonCampaign445.h \
-    spriteData/poseidonCampaign460.h \
-    spriteData/poseidonCampaign515.h \
     spriteData/poseidonCampaign530.h \
-    spriteData/poseidonCampaign545.h \
-    spriteData/poseidonCampaign560.h \
-    spriteData/poseidonCampaign615.h \
     spriteData/poseidonCampaign630.h \
-    spriteData/poseidonCampaign645.h \
-    spriteData/poseidonCampaign660.h \
-    spriteData/poseidonCommonHouse15.h \
     spriteData/poseidonCommonHouse30.h \
-    spriteData/poseidonCommonHouse45.h \
-    spriteData/poseidonCommonHouse60.h \
-    spriteData/poseidonEliteHouse15.h \
     spriteData/poseidonEliteHouse30.h \
-    spriteData/poseidonEliteHouse45.h \
-    spriteData/poseidonEliteHouse60.h \
-    spriteData/poseidonHerosHall15.h \
-    spriteData/poseidonHerosHall215.h \
     spriteData/poseidonHerosHall230.h \
-    spriteData/poseidonHerosHall245.h \
-    spriteData/poseidonHerosHall260.h \
     spriteData/poseidonHerosHall30.h \
-    spriteData/poseidonHerosHall45.h \
-    spriteData/poseidonHerosHall60.h \
-    spriteData/poseidonInterface15.h \
     spriteData/poseidonInterface30.h \
-    spriteData/poseidonInterface45.h \
-    spriteData/poseidonInterface60.h \
-    spriteData/poseidonPortraits15.h \
     spriteData/poseidonPortraits30.h \
-    spriteData/poseidonPortraits45.h \
-    spriteData/poseidonPortraits60.h \
-    spriteData/poseidonPyramid15.h \
-    spriteData/poseidonPyramid215.h \
     spriteData/poseidonPyramid230.h \
-    spriteData/poseidonPyramid245.h \
-    spriteData/poseidonPyramid260.h \
     spriteData/poseidonPyramid30.h \
-    spriteData/poseidonPyramid45.h \
-    spriteData/poseidonPyramid60.h \
-    spriteData/poseidonQuestButtons15.h \
     spriteData/poseidonQuestButtons30.h \
-    spriteData/poseidonQuestButtons45.h \
-    spriteData/poseidonQuestButtons60.h \
-    spriteData/poseidonSanctuary15.h \
     spriteData/poseidonSanctuary30.h \
-    spriteData/poseidonSanctuary45.h \
-    spriteData/poseidonSanctuary60.h \
-    spriteData/poseidonStatue15.h \
     spriteData/poseidonStatue30.h \
-    spriteData/poseidonStatue45.h \
-    spriteData/poseidonStatue60.h \
-    spriteData/poseidonStatues115.h \
     spriteData/poseidonStatues130.h \
-    spriteData/poseidonStatues145.h \
-    spriteData/poseidonStatues160.h \
-    spriteData/poseidonStatues215.h \
     spriteData/poseidonStatues230.h \
-    spriteData/poseidonStatues245.h \
-    spriteData/poseidonStatues260.h \
-    spriteData/poseidonTowerArcher15.h \
     spriteData/poseidonTowerArcher30.h \
-    spriteData/poseidonTowerArcher45.h \
-    spriteData/poseidonTowerArcher60.h \
-    spriteData/poseidonTrees15.h \
     spriteData/poseidonTrees30.h \
-    spriteData/poseidonTrees45.h \
-    spriteData/poseidonTrees60.h \
-    spriteData/poseidonUnits15.h \
     spriteData/poseidonUnits30.h \
-    spriteData/poseidonUnits45.h \
-    spriteData/poseidonUnits60.h \
-    spriteData/priest15.h \
     spriteData/priest30.h \
-    spriteData/priest45.h \
-    spriteData/priest60.h \
-    spriteData/refinery15.h \
     spriteData/refinery30.h \
-    spriteData/refinery45.h \
-    spriteData/refinery60.h \
-    spriteData/roadblock15.h \
     spriteData/roadblock30.h \
-    spriteData/roadblock45.h \
-    spriteData/roadblock60.h \
-    spriteData/rock15.h \
     spriteData/rock30.h \
-    spriteData/rock45.h \
-    spriteData/rock60.h \
-    spriteData/rockThrower15.h \
     spriteData/rockThrower30.h \
-    spriteData/rockThrower45.h \
-    spriteData/rockThrower60.h \
-    spriteData/sanctuaryFire15.h \
     spriteData/sanctuaryFire30.h \
-    spriteData/sanctuaryFire45.h \
-    spriteData/sanctuaryFire60.h \
-    spriteData/sanctuaryOverlay15.h \
     spriteData/sanctuaryOverlay30.h \
-    spriteData/sanctuaryOverlay45.h \
-    spriteData/sanctuaryOverlay60.h \
-    spriteData/satyr15.h \
     spriteData/satyr30.h \
-    spriteData/satyr45.h \
-    spriteData/satyr60.h \
-    spriteData/scholar15.h \
     spriteData/scholar30.h \
-    spriteData/scholar45.h \
-    spriteData/scholar60.h \
-    spriteData/sculptureStudio15.h \
     spriteData/sculptureStudio30.h \
-    spriteData/sculptureStudio45.h \
-    spriteData/sculptureStudio60.h \
-    spriteData/scylla15.h \
     spriteData/scylla30.h \
-    spriteData/scylla45.h \
-    spriteData/scylla60.h \
-    spriteData/settlers115.h \
     spriteData/settlers130.h \
-    spriteData/settlers145.h \
-    spriteData/settlers160.h \
-    spriteData/settlers215.h \
     spriteData/settlers230.h \
-    spriteData/settlers245.h \
-    spriteData/settlers260.h \
-    spriteData/shellGarden15.h \
     spriteData/shellGarden30.h \
-    spriteData/shellGarden45.h \
-    spriteData/shellGarden60.h \
-    spriteData/shepherd15.h \
     spriteData/shepherd30.h \
-    spriteData/shepherd45.h \
-    spriteData/shepherd60.h \
-    spriteData/shortObelisk15.h \
     spriteData/shortObelisk30.h \
-    spriteData/shortObelisk45.h \
-    spriteData/shortObelisk60.h \
-    spriteData/sick15.h \
     spriteData/sick30.h \
-    spriteData/sick45.h \
-    spriteData/sick60.h \
-    spriteData/silverMiner15.h \
     spriteData/silverMiner30.h \
-    spriteData/silverMiner45.h \
-    spriteData/silverMiner60.h \
-    spriteData/spear15.h \
     spriteData/spear30.h \
-    spriteData/spear45.h \
-    spriteData/spear60.h \
-    spriteData/sphinx15.h \
     spriteData/sphinx30.h \
-    spriteData/sphinx45.h \
-    spriteData/sphinx60.h \
-    spriteData/spring15.h \
     spriteData/spring30.h \
-    spriteData/spring45.h \
-    spriteData/spring60.h \
-    spriteData/stadium15.h \
     spriteData/stadium30.h \
-    spriteData/stadium45.h \
-    spriteData/stadium60.h \
-    spriteData/stadiumOverlays115.h \
     spriteData/stadiumOverlays130.h \
-    spriteData/stadiumOverlays145.h \
-    spriteData/stadiumOverlays160.h \
-    spriteData/stadiumOverlays215.h \
     spriteData/stadiumOverlays230.h \
-    spriteData/stadiumOverlays245.h \
-    spriteData/stadiumOverlays260.h \
-    spriteData/stoneCircle15.h \
     spriteData/stoneCircle30.h \
-    spriteData/stoneCircle45.h \
-    spriteData/stoneCircle60.h \
-    spriteData/storNDist15.h \
     spriteData/storNDist30.h \
-    spriteData/storNDist45.h \
-    spriteData/storNDist60.h \
-    spriteData/stor_bays15.h \
     spriteData/stor_bays30.h \
-    spriteData/stor_bays45.h \
-    spriteData/stor_bays60.h \
-    spriteData/storage15.h \
     spriteData/storage30.h \
-    spriteData/storage45.h \
-    spriteData/storage60.h \
-    spriteData/sundial15.h \
     spriteData/sundial30.h \
-    spriteData/sundial45.h \
-    spriteData/sundial60.h \
-    spriteData/supplies15.h \
     spriteData/supplies30.h \
-    spriteData/supplies45.h \
-    spriteData/supplies60.h \
-    spriteData/tallObelisk15.h \
     spriteData/tallObelisk30.h \
-    spriteData/tallObelisk45.h \
-    spriteData/tallObelisk60.h \
-    spriteData/talos15.h \
     spriteData/talos30.h \
-    spriteData/talos45.h \
-    spriteData/talos60.h \
-    spriteData/taxCollector15.h \
     spriteData/taxCollector30.h \
-    spriteData/taxCollector45.h \
-    spriteData/taxCollector60.h \
-    spriteData/taxOffice15.h \
     spriteData/taxOffice30.h \
-    spriteData/taxOffice45.h \
-    spriteData/taxOffice60.h \
-    spriteData/theater15.h \
     spriteData/theater30.h \
-    spriteData/theater45.h \
-    spriteData/theater60.h \
-    spriteData/theaterOverlay15.h \
     spriteData/theaterOverlay30.h \
-    spriteData/theaterOverlay45.h \
-    spriteData/theaterOverlay60.h \
-    spriteData/theseus15.h \
     spriteData/theseus30.h \
-    spriteData/theseus45.h \
-    spriteData/theseus60.h \
-    spriteData/timberMill15.h \
     spriteData/timberMill30.h \
-    spriteData/timberMill45.h \
-    spriteData/timberMill60.h \
-    spriteData/topiary15.h \
     spriteData/topiary30.h \
-    spriteData/topiary45.h \
-    spriteData/topiary60.h \
-    spriteData/tradeBoat15.h \
     spriteData/tradeBoat30.h \
-    spriteData/tradeBoat45.h \
-    spriteData/tradeBoat60.h \
-    spriteData/trader15.h \
     spriteData/trader30.h \
-    spriteData/trader45.h \
-    spriteData/trader60.h \
-    spriteData/tradingPost15.h \
     spriteData/tradingPost30.h \
-    spriteData/tradingPost45.h \
-    spriteData/tradingPost60.h \
-    spriteData/tradingPostOverlay15.h \
     spriteData/tradingPostOverlay30.h \
-    spriteData/tradingPostOverlay45.h \
-    spriteData/tradingPostOverlay60.h \
-    spriteData/trailer15.h \
     spriteData/trailer30.h \
-    spriteData/trailer45.h \
-    spriteData/trailer60.h \
-    spriteData/transporter15.h \
     spriteData/transporter30.h \
-    spriteData/transporter45.h \
-    spriteData/transporter60.h \
-    spriteData/trireme15.h \
     spriteData/trireme30.h \
-    spriteData/trireme45.h \
-    spriteData/trireme60.h \
-    spriteData/triremeOverlay15.h \
     spriteData/triremeOverlay30.h \
-    spriteData/triremeOverlay45.h \
-    spriteData/triremeOverlay60.h \
-    spriteData/triremeWharf15.h \
     spriteData/triremeWharf30.h \
-    spriteData/triremeWharf45.h \
-    spriteData/triremeWharf60.h \
-    spriteData/triremeWharfOverlay115.h \
     spriteData/triremeWharfOverlay130.h \
-    spriteData/triremeWharfOverlay145.h \
-    spriteData/triremeWharfOverlay160.h \
-    spriteData/triremeWharfOverlay215.h \
     spriteData/triremeWharfOverlay230.h \
-    spriteData/triremeWharfOverlay245.h \
-    spriteData/triremeWharfOverlay260.h \
-    spriteData/trojanHoplite15.h \
     spriteData/trojanHoplite30.h \
-    spriteData/trojanHoplite45.h \
-    spriteData/trojanHoplite60.h \
-    spriteData/trojanHorseman15.h \
     spriteData/trojanHorseman30.h \
-    spriteData/trojanHorseman45.h \
-    spriteData/trojanHorseman60.h \
-    spriteData/trojanSpearthrower15.h \
     spriteData/trojanSpearthrower30.h \
-    spriteData/trojanSpearthrower45.h \
-    spriteData/trojanSpearthrower60.h \
-    spriteData/university15.h \
     spriteData/university30.h \
-    spriteData/university45.h \
-    spriteData/university60.h \
-    spriteData/urchin15.h \
     spriteData/urchin30.h \
-    spriteData/urchin45.h \
-    spriteData/urchin60.h \
-    spriteData/urchinGatherer15.h \
     spriteData/urchinGatherer30.h \
-    spriteData/urchinGatherer45.h \
-    spriteData/urchinGatherer60.h \
-    spriteData/urchinQuay15.h \
     spriteData/urchinQuay30.h \
-    spriteData/urchinQuay45.h \
-    spriteData/urchinQuay60.h \
-    spriteData/urchinUnpackingOverlay15.h \
     spriteData/urchinUnpackingOverlay30.h \
-    spriteData/urchinUnpackingOverlay45.h \
-    spriteData/urchinUnpackingOverlay60.h \
-    spriteData/vendorOverlays15.h \
     spriteData/vendorOverlays30.h \
-    spriteData/vendorOverlays45.h \
-    spriteData/vendorOverlays60.h \
-    spriteData/vine15.h \
     spriteData/vine30.h \
-    spriteData/vine45.h \
-    spriteData/vine60.h \
-    spriteData/waitingOverlay15.h \
     spriteData/waitingOverlay30.h \
-    spriteData/waitingOverlay45.h \
-    spriteData/waitingOverlay60.h \
-    spriteData/wall15.h \
     spriteData/wall30.h \
-    spriteData/wall45.h \
-    spriteData/wall60.h \
-    spriteData/warehouse15.h \
     spriteData/warehouse30.h \
-    spriteData/warehouse45.h \
-    spriteData/warehouse60.h \
-    spriteData/warehouseOverlay15.h \
     spriteData/warehouseOverlay30.h \
-    spriteData/warehouseOverlay45.h \
-    spriteData/warehouseOverlay60.h \
-    spriteData/watchPostOverlay15.h \
     spriteData/watchPostOverlay30.h \
-    spriteData/watchPostOverlay45.h \
-    spriteData/watchPostOverlay60.h \
-    spriteData/watchman15.h \
     spriteData/watchman30.h \
-    spriteData/watchman45.h \
-    spriteData/watchman60.h \
-    spriteData/watchpost15.h \
     spriteData/watchpost30.h \
-    spriteData/watchpost45.h \
-    spriteData/watchpost60.h \
-    spriteData/waterDistributor15.h \
     spriteData/waterDistributor30.h \
-    spriteData/waterDistributor45.h \
-    spriteData/waterDistributor60.h \
-    spriteData/waterPark15.h \
     spriteData/waterPark30.h \
-    spriteData/waterPark45.h \
-    spriteData/waterPark60.h \
-    spriteData/wave15.h \
     spriteData/wave30.h \
-    spriteData/wave45.h \
-    spriteData/wave60.h \
-    spriteData/wineVendor15.h \
     spriteData/wineVendor30.h \
-    spriteData/wineVendor45.h \
-    spriteData/wineVendor60.h \
-    spriteData/wineVendorOverlay15.h \
     spriteData/wineVendorOverlay30.h \
-    spriteData/wineVendorOverlay45.h \
-    spriteData/wineVendorOverlay60.h \
-    spriteData/winery15.h \
     spriteData/winery30.h \
-    spriteData/winery45.h \
-    spriteData/winery60.h \
-    spriteData/wolf15.h \
     spriteData/wolf30.h \
-    spriteData/wolf45.h \
-    spriteData/wolf60.h \
-    spriteData/zeus15.h \
     spriteData/zeus30.h \
-    spriteData/zeus45.h \
-    spriteData/zeus60.h \
-    spriteData/zeusElevationTiles15.h \
-    spriteData/zeusElevationTiles215.h \
     spriteData/zeusElevationTiles230.h \
-    spriteData/zeusElevationTiles245.h \
-    spriteData/zeusElevationTiles260.h \
-    spriteData/zeusElevationTiles2A15.h \
     spriteData/zeusElevationTiles2A30.h \
-    spriteData/zeusElevationTiles2A45.h \
-    spriteData/zeusElevationTiles2A60.h \
     spriteData/zeusElevationTiles30.h \
-    spriteData/zeusElevationTiles45.h \
-    spriteData/zeusElevationTiles60.h \
-    spriteData/zeusGodPortraits15.h \
     spriteData/zeusGodPortraits30.h \
-    spriteData/zeusGodPortraits45.h \
-    spriteData/zeusGodPortraits60.h \
-    spriteData/zeusHerosHall15.h \
     spriteData/zeusHerosHall30.h \
-    spriteData/zeusHerosHall45.h \
-    spriteData/zeusHerosHall60.h \
-    spriteData/zeusLand115.h \
     spriteData/zeusLand130.h \
-    spriteData/zeusLand145.h \
-    spriteData/zeusLand160.h \
-    spriteData/zeusLand315.h \
     spriteData/zeusLand330.h \
-    spriteData/zeusLand345.h \
-    spriteData/zeusLand360.h \
-    spriteData/zeusOverlay15.h \
     spriteData/zeusOverlay30.h \
-    spriteData/zeusOverlay45.h \
-    spriteData/zeusOverlay60.h \
-    spriteData/zeusPortraits15.h \
     spriteData/zeusPortraits30.h \
-    spriteData/zeusPortraits45.h \
-    spriteData/zeusPortraits60.h \
-    spriteData/zeusQuarryTileSet15.h \
     spriteData/zeusQuarryTileSet30.h \
-    spriteData/zeusQuarryTileSet45.h \
-    spriteData/zeusQuarryTileSet60.h \
-    spriteData/zeusSanctuary115.h \
     spriteData/zeusSanctuary130.h \
-    spriteData/zeusSanctuary145.h \
-    spriteData/zeusSanctuary160.h \
-    spriteData/zeusSanctuary215.h \
     spriteData/zeusSanctuary230.h \
-    spriteData/zeusSanctuary245.h \
-    spriteData/zeusSanctuary260.h \
-    spriteData/zeusSanctuary315.h \
     spriteData/zeusSanctuary330.h \
-    spriteData/zeusSanctuary345.h \
-    spriteData/zeusSanctuary360.h \
-    spriteData/zeusSanctuaryElements15.h \
     spriteData/zeusSanctuaryElements30.h \
-    spriteData/zeusSanctuaryElements45.h \
-    spriteData/zeusSanctuaryElements60.h \
-    spriteData/zeusStairs15.h \
     spriteData/zeusStairs30.h \
-    spriteData/zeusStairs45.h \
-    spriteData/zeusStairs60.h \
-    spriteData/zeusStatue15.h \
     spriteData/zeusStatue30.h \
-    spriteData/zeusStatue45.h \
-    spriteData/zeusStatue60.h \
-    spriteData/zeusTrees15.h \
     spriteData/zeusTrees30.h \
-    spriteData/zeusTrees45.h \
-    spriteData/zeusTrees60.h \
     textures/beach-to-dry.h \
     textures/building-textures.h \
     textures/character-textures.h \

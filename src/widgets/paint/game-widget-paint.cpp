@@ -156,7 +156,7 @@ void GameWidget::paintEvent(ePainter &p)
     p.setFont(eFonts::defaultFont(resolution()));
     p.translate(mDX, mDY);
     eTilePainter tp(p, mTileSize, mTileW, mTileH);
-    const auto &numbers = mNumbers[mTileSize];
+    const auto &numbers = mNumbers;
     auto& trackingBoxes = mTrackingBoxes;
     trackingBoxes.clear();
     // enemy banners scheduled after all tiles so they sit on top of everything

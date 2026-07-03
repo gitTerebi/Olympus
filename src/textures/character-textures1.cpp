@@ -4,44 +4,22 @@
 
 #include "offsets/PoseidonImps.h"
 
-#include "spriteData/deerHunter15.h"
 #include "spriteData/deerHunter30.h"
-#include "spriteData/deerHunter45.h"
-#include "spriteData/deerHunter60.h"
 
-#include "spriteData/deer15.h"
 #include "spriteData/deer30.h"
-#include "spriteData/deer45.h"
-#include "spriteData/deer60.h"
 
-#include "spriteData/orangesCart15.h"
 #include "spriteData/orangesCart30.h"
-#include "spriteData/orangesCart45.h"
-#include "spriteData/orangesCart60.h"
 
-#include "spriteData/orichalcCart15.h"
 #include "spriteData/orichalcCart30.h"
-#include "spriteData/orichalcCart45.h"
-#include "spriteData/orichalcCart60.h"
 
-#include "spriteData/orangeTender15.h"
 #include "spriteData/orangeTender30.h"
-#include "spriteData/orangeTender45.h"
-#include "spriteData/orangeTender60.h"
 
-#include "spriteData/blackMarbleTrailer15.h"
 #include "spriteData/blackMarbleTrailer30.h"
-#include "spriteData/blackMarbleTrailer45.h"
-#include "spriteData/blackMarbleTrailer60.h"
 
 void CharacterTextures::loadBlackMarbleTrailer() {
     if(fBlackMarbleTrailerLoaded) return;
     fBlackMarbleTrailerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eBlackMarbleTrailerSpriteData15,
-                                 eBlackMarbleTrailerSpriteData30,
-                                 eBlackMarbleTrailerSpriteData45,
-                                 eBlackMarbleTrailerSpriteData60);
+    const auto& sds = eBlackMarbleTrailerSpriteData30;
     SpriteLoader loader(fTileH, "blackMarbleTrailer", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -53,11 +31,7 @@ void CharacterTextures::loadBlackMarbleTrailer() {
 void CharacterTextures::loadOrangeTender() {
     if(fOrangeTenderLoded) return;
     fOrangeTenderLoded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eOrangeTenderSpriteData15,
-                                 eOrangeTenderSpriteData30,
-                                 eOrangeTenderSpriteData45,
-                                 eOrangeTenderSpriteData60);
+    const auto& sds = eOrangeTenderSpriteData30;
     SpriteLoader loader(fTileH, "orangeTender", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -73,11 +47,7 @@ void CharacterTextures::loadOrangeTender() {
 void CharacterTextures::loadOrangesCart() {
     if(fOrangesCartLoaded) return;
     fOrangesCartLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eOrangesCartSpriteData15,
-                                 eOrangesCartSpriteData30,
-                                 eOrangesCartSpriteData45,
-                                 eOrangesCartSpriteData60);
+    const auto& sds = eOrangesCartSpriteData30;
     SpriteLoader loader(fTileH, "orangesCart", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -87,11 +57,7 @@ void CharacterTextures::loadOrangesCart() {
 void CharacterTextures::loadOrichalcCart() {
     if(fOrichalcCartLoaded) return;
     fOrichalcCartLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eOrichalcCartSpriteData15,
-                                 eOrichalcCartSpriteData30,
-                                 eOrichalcCartSpriteData45,
-                                 eOrichalcCartSpriteData60);
+    const auto& sds = eOrichalcCartSpriteData30;
     SpriteLoader loader(fTileH, "orichalcCart", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -101,11 +67,7 @@ void CharacterTextures::loadOrichalcCart() {
 void CharacterTextures::loadDeerHunter() {
     if(fDeerHunterLoaded) return;
     fDeerHunterLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eDeerHunterSpriteData15,
-                                 eDeerHunterSpriteData30,
-                                 eDeerHunterSpriteData45,
-                                 eDeerHunterSpriteData60);
+    const auto& sds = eDeerHunterSpriteData30;
 
     SpriteLoader loader(fTileH, "deerHunter", sds,
                          &ePoseidonImpsOffset, fRenderer);
@@ -122,11 +84,7 @@ void CharacterTextures::loadDeer() {
     if(fDeerLoaded) return;
     fDeerLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eDeerSpriteData15,
-                                 eDeerSpriteData30,
-                                 eDeerSpriteData45,
-                                 eDeerSpriteData60);
+    const auto& sds = eDeerSpriteData30;
     SpriteLoader loader(fTileH, "deer", sds,
                          &ePoseidonImpsOffset, fRenderer);
     loader.loadSkipFlipped(531, 531, 627, fDeer.fWalk);

@@ -7,33 +7,17 @@
 #include "offsets/zeus_perseus.h"
 #include "offsets/zeus_theseus.h"
 
-#include "spriteData/jason15.h"
 #include "spriteData/jason30.h"
-#include "spriteData/jason45.h"
-#include "spriteData/jason60.h"
 
-#include "spriteData/odysseus15.h"
 #include "spriteData/odysseus30.h"
-#include "spriteData/odysseus45.h"
-#include "spriteData/odysseus60.h"
 
-#include "spriteData/perseus15.h"
 #include "spriteData/perseus30.h"
-#include "spriteData/perseus45.h"
-#include "spriteData/perseus60.h"
 
-#include "spriteData/theseus15.h"
 #include "spriteData/theseus30.h"
-#include "spriteData/theseus45.h"
-#include "spriteData/theseus60.h"
 
 void CharacterTextures::loadJason() {
     if(fJasonLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eJasonSpriteData15,
-                                 eJasonSpriteData30,
-                                 eJasonSpriteData45,
-                                 eJasonSpriteData60);
+    const auto& sds = eJasonSpriteData30;
     fJasonLoaded = true;
     SpriteLoader loader(fTileH, "jason", sds,
                          &eZeus_jasonOffset, fRenderer);
@@ -45,11 +29,7 @@ void CharacterTextures::loadJason() {
 
 void CharacterTextures::loadOdysseus() {
     if(fOdysseusLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eOdysseusSpriteData15,
-                                 eOdysseusSpriteData30,
-                                 eOdysseusSpriteData45,
-                                 eOdysseusSpriteData60);
+    const auto& sds = eOdysseusSpriteData30;
     fOdysseusLoaded = true;
     SpriteLoader loader(fTileH, "odysseus", sds,
                          &eZeus_odysseusOffset, fRenderer);
@@ -61,11 +41,7 @@ void CharacterTextures::loadOdysseus() {
 
 void CharacterTextures::loadPerseus() {
     if(fPerseusLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 ePerseusSpriteData15,
-                                 ePerseusSpriteData30,
-                                 ePerseusSpriteData45,
-                                 ePerseusSpriteData60);
+    const auto& sds = ePerseusSpriteData30;
     fPerseusLoaded = true;
     SpriteLoader loader(fTileH, "perseus", sds,
                          &eZeus_perseusOffset, fRenderer);
@@ -77,11 +53,7 @@ void CharacterTextures::loadPerseus() {
 
 void CharacterTextures::loadTheseus() {
     if(fTheseusLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eTheseusSpriteData15,
-                                 eTheseusSpriteData30,
-                                 eTheseusSpriteData45,
-                                 eTheseusSpriteData60);
+    const auto& sds = eTheseusSpriteData30;
     fTheseusLoaded = true;
     SpriteLoader loader(fTileH, "theseus", sds,
                          &eZeus_theseusOffset, fRenderer);

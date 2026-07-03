@@ -12,58 +12,27 @@
 #include "offsets/zeus_talos.h"
 #include "offsets/zeus_satyr.h"
 
-#include "spriteData/hydra15.h"
 #include "spriteData/hydra30.h"
-#include "spriteData/hydra45.h"
-#include "spriteData/hydra60.h"
 
-#include "spriteData/kraken15.h"
 #include "spriteData/kraken30.h"
-#include "spriteData/kraken45.h"
-#include "spriteData/kraken60.h"
 
-#include "spriteData/maenads15.h"
 #include "spriteData/maenads30.h"
-#include "spriteData/maenads45.h"
-#include "spriteData/maenads60.h"
 
-#include "spriteData/medusa15.h"
 #include "spriteData/medusa30.h"
-#include "spriteData/medusa45.h"
-#include "spriteData/medusa60.h"
 
-#include "spriteData/minotaur15.h"
 #include "spriteData/minotaur30.h"
-#include "spriteData/minotaur45.h"
-#include "spriteData/minotaur60.h"
 
-#include "spriteData/scylla15.h"
 #include "spriteData/scylla30.h"
-#include "spriteData/scylla45.h"
-#include "spriteData/scylla60.h"
 
-#include "spriteData/sphinx15.h"
 #include "spriteData/sphinx30.h"
-#include "spriteData/sphinx45.h"
-#include "spriteData/sphinx60.h"
 
-#include "spriteData/talos15.h"
 #include "spriteData/talos30.h"
-#include "spriteData/talos45.h"
-#include "spriteData/talos60.h"
 
-#include "spriteData/satyr15.h"
 #include "spriteData/satyr30.h"
-#include "spriteData/satyr45.h"
-#include "spriteData/satyr60.h"
 
 void CharacterTextures::loadHydra() {
     if(fHydraLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eHydraSpriteData15,
-                                 eHydraSpriteData30,
-                                 eHydraSpriteData45,
-                                 eHydraSpriteData60);
+    const auto& sds = eHydraSpriteData30;
     fHydraLoaded = true;
     SpriteLoader loader(fTileH, "hydra", sds,
                          &eZeus_hydraOffset, fRenderer);
@@ -76,11 +45,7 @@ void CharacterTextures::loadHydra() {
 
 void CharacterTextures::loadKraken() {
     if(fKrakenLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eKrakenSpriteData15,
-                                 eKrakenSpriteData30,
-                                 eKrakenSpriteData45,
-                                 eKrakenSpriteData60);
+    const auto& sds = eKrakenSpriteData30;
     fKrakenLoaded = true;
     SpriteLoader loader(fTileH, "kraken", sds,
                          &eZeus_krakenOffset, fRenderer);
@@ -95,11 +60,7 @@ void CharacterTextures::loadKraken() {
 
 void CharacterTextures::loadMaenads() {
     if(fMaenadsLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eMaenadsSpriteData15,
-                                 eMaenadsSpriteData30,
-                                 eMaenadsSpriteData45,
-                                 eMaenadsSpriteData60);
+    const auto& sds = eMaenadsSpriteData30;
     fMaenadsLoaded = true;
     SpriteLoader loader(fTileH, "maenads", sds,
                          &eZeus_maenadsOffset, fRenderer);
@@ -112,11 +73,7 @@ void CharacterTextures::loadMaenads() {
 
 void CharacterTextures::loadMedusa() {
     if(fMedusaLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eMedusaSpriteData15,
-                                 eMedusaSpriteData30,
-                                 eMedusaSpriteData45,
-                                 eMedusaSpriteData60);
+    const auto& sds = eMedusaSpriteData30;
     fMedusaLoaded = true;
     SpriteLoader loader(fTileH, "medusa", sds,
                          &eZeus_medusaOffset, fRenderer);
@@ -129,11 +86,7 @@ void CharacterTextures::loadMedusa() {
 
 void CharacterTextures::loadMinotaur() {
     if(fMinotaurLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eMinotaurSpriteData15,
-                                 eMinotaurSpriteData30,
-                                 eMinotaurSpriteData45,
-                                 eMinotaurSpriteData60);
+    const auto& sds = eMinotaurSpriteData30;
     fMinotaurLoaded = true;
     SpriteLoader loader(fTileH, "minotaur", sds,
                          &eZeus_minotaurOffset, fRenderer);
@@ -146,11 +99,7 @@ void CharacterTextures::loadMinotaur() {
 
 void CharacterTextures::loadScylla() {
     if(fScyllaLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eScyllaSpriteData15,
-                                 eScyllaSpriteData30,
-                                 eScyllaSpriteData45,
-                                 eScyllaSpriteData60);
+    const auto& sds = eScyllaSpriteData30;
     fScyllaLoaded = true;
     SpriteLoader loader(fTileH, "scylla", sds,
                          &eZeus_scyllaOffset, fRenderer);
@@ -165,11 +114,7 @@ void CharacterTextures::loadScylla() {
 
 void CharacterTextures::loadSphinx() {
     if(fSphinxLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eSphinxSpriteData15,
-                                 eSphinxSpriteData30,
-                                 eSphinxSpriteData45,
-                                 eSphinxSpriteData60);
+    const auto& sds = eSphinxSpriteData30;
     fSphinxLoaded = true;
     SpriteLoader loader(fTileH, "sphinx", sds,
                          &ePoseidon_SphinxOffset, fRenderer);
@@ -182,11 +127,7 @@ void CharacterTextures::loadSphinx() {
 
 void CharacterTextures::loadTalos() {
     if(fTalosLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eTalosSpriteData15,
-                                 eTalosSpriteData30,
-                                 eTalosSpriteData45,
-                                 eTalosSpriteData60);
+    const auto& sds = eTalosSpriteData30;
     fTalosLoaded = true;
     SpriteLoader loader(fTileH, "talos", sds,
                          &eZeus_talosOffset, fRenderer);
@@ -199,11 +140,7 @@ void CharacterTextures::loadTalos() {
 
 void CharacterTextures::loadSatyr() {
     if(fSatyrLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eSatyrSpriteData15,
-                                 eSatyrSpriteData30,
-                                 eSatyrSpriteData45,
-                                 eSatyrSpriteData60);
+    const auto& sds = eSatyrSpriteData30;
     fSatyrLoaded = true;
     SpriteLoader loader(fTileH, "satyr", sds,
                          &eZeus_satyrOffset, fRenderer);

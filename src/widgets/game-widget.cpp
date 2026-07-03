@@ -358,34 +358,14 @@ void GameWidget::setSettings(const GameWidgetSettings &s)
 void GameWidget::initializeNumbers()
 {
     mNumbers.clear();
-    for (const auto size : {eTileSize::s15, eTileSize::s30,
-                            eTileSize::s45, eTileSize::s60})
+    const int fs = 20;
+    const auto font = eFonts::defaultFont(fs);
+    const auto r = window()->renderer();
+    for (int i = 0; i < 10; i++)
     {
-        auto &numbers = mNumbers[size];
-        int fs;
-        switch (size)
-        {
-        case eTileSize::s15:
-            fs = 10;
-            break;
-        case eTileSize::s30:
-            fs = 20;
-            break;
-        case eTileSize::s45:
-            fs = 30;
-            break;
-        case eTileSize::s60:
-            fs = 40;
-            break;
-        }
-        const auto font = eFonts::defaultFont(fs);
-        const auto r = window()->renderer();
-        for (int i = 0; i < 10; i++)
-        {
-            const auto tex = std::make_shared<Texture>();
-            tex->loadText(r, std::to_string(i), FontColor::light, *font);
-            numbers.push_back(tex);
-        }
+        const auto tex = std::make_shared<Texture>();
+        tex->loadText(r, std::to_string(i), FontColor::light, *font);
+        mNumbers.push_back(tex);
     }
 }
 
@@ -832,9 +812,7 @@ void GameWidget::initialize()
         buyCityWidget->hide();
     }
 
-    const auto &setts = window()->settings();
-    const auto sizes = setts.availableSizes();
-    setTileSize(sizes.front());
+    setTileSize(eTileSize::s30);
 }
 
 int GameWidget::citySourceWidth() const
@@ -3631,16 +3609,8 @@ void GameWidget::updateCitiesOnBoard()
 
 void GameWidget::setTileSize(const eTileSize size)
 {
-    const auto &setts = window()->settings();
-    const auto sizes = setts.availableSizes();
-    if (VectorHelpers::contains(sizes, size))
-    {
-        mTileSize = size;
-    }
-    else
-    {
-        mTileSize = sizes[0];
-    }
+    (void)size;
+    mTileSize = eTileSize::s30; // only shipped tile size
     const int tid = static_cast<int>(mTileSize);
     const auto &trrTexs = GameTextures::terrain().at(tid);
     const int newW = trrTexs.fTileW;

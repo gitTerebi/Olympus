@@ -2,65 +2,29 @@
 
 #include "sprite-loader.h"
 
-#include "spriteData/egyptianHoplite15.h"
 #include "spriteData/egyptianHoplite30.h"
-#include "spriteData/egyptianHoplite45.h"
-#include "spriteData/egyptianHoplite60.h"
 
-#include "spriteData/egyptianArcher15.h"
 #include "spriteData/egyptianArcher30.h"
-#include "spriteData/egyptianArcher45.h"
-#include "spriteData/egyptianArcher60.h"
 
-#include "spriteData/egyptianChariot15.h"
 #include "spriteData/egyptianChariot30.h"
-#include "spriteData/egyptianChariot45.h"
-#include "spriteData/egyptianChariot60.h"
 
-#include "spriteData/atlanteanHoplite15.h"
 #include "spriteData/atlanteanHoplite30.h"
-#include "spriteData/atlanteanHoplite45.h"
-#include "spriteData/atlanteanHoplite60.h"
 
-#include "spriteData/atlanteanArcher15.h"
 #include "spriteData/atlanteanArcher30.h"
-#include "spriteData/atlanteanArcher45.h"
-#include "spriteData/atlanteanArcher60.h"
 
-#include "spriteData/atlanteanChariot15.h"
 #include "spriteData/atlanteanChariot30.h"
-#include "spriteData/atlanteanChariot45.h"
-#include "spriteData/atlanteanChariot60.h"
 
-#include "spriteData/mayanHoplite15.h"
 #include "spriteData/mayanHoplite30.h"
-#include "spriteData/mayanHoplite45.h"
-#include "spriteData/mayanHoplite60.h"
 
-#include "spriteData/mayanArcher15.h"
 #include "spriteData/mayanArcher30.h"
-#include "spriteData/mayanArcher45.h"
-#include "spriteData/mayanArcher60.h"
 
-#include "spriteData/oceanidHoplite15.h"
 #include "spriteData/oceanidHoplite30.h"
-#include "spriteData/oceanidHoplite45.h"
-#include "spriteData/oceanidHoplite60.h"
 
-#include "spriteData/oceanidSpearthrower15.h"
 #include "spriteData/oceanidSpearthrower30.h"
-#include "spriteData/oceanidSpearthrower45.h"
-#include "spriteData/oceanidSpearthrower60.h"
 
-#include "spriteData/phoenicianHorseman15.h"
 #include "spriteData/phoenicianHorseman30.h"
-#include "spriteData/phoenicianHorseman45.h"
-#include "spriteData/phoenicianHorseman60.h"
 
-#include "spriteData/phoenicianArcher15.h"
 #include "spriteData/phoenicianArcher30.h"
-#include "spriteData/phoenicianArcher45.h"
-#include "spriteData/phoenicianArcher60.h"
 
 #include "offsets/Poseidon_Egyptian.h"
 #include "offsets/Poseidon_Atlantean.h"
@@ -71,11 +35,7 @@
 void CharacterTextures::loadAtlanteanChariot() {
     if(fAtlanteanChariotLoaded) return;
     fAtlanteanChariotLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eAtlanteanChariotSpriteData15,
-                                 eAtlanteanChariotSpriteData30,
-                                 eAtlanteanChariotSpriteData45,
-                                 eAtlanteanChariotSpriteData60);
+    const auto& sds = eAtlanteanChariotSpriteData30;
     SpriteLoader loader(fTileH, "atlanteanChariot", sds,
                          &ePoseidon_AtlanteanOffset, fRenderer);
 
@@ -87,11 +47,7 @@ void CharacterTextures::loadAtlanteanChariot() {
 void CharacterTextures::loadAtlanteanArcher() {
     if(fAtlanteanArcherLoaded) return;
     fAtlanteanArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eAtlanteanArcherSpriteData15,
-                                 eAtlanteanArcherSpriteData30,
-                                 eAtlanteanArcherSpriteData45,
-                                 eAtlanteanArcherSpriteData60);
+    const auto& sds = eAtlanteanArcherSpriteData30;
     SpriteLoader loader(fTileH, "atlanteanArcher", sds,
                          &ePoseidon_AtlanteanOffset, fRenderer);
 
@@ -106,11 +62,7 @@ void CharacterTextures::loadAtlanteanArcher() {
 void CharacterTextures::loadAtlanteanHoplite() {
     if(fAtlanteanHopliteLoaded) return;
     fAtlanteanHopliteLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eAtlanteanHopliteSpriteData15,
-                                 eAtlanteanHopliteSpriteData30,
-                                 eAtlanteanHopliteSpriteData45,
-                                 eAtlanteanHopliteSpriteData60);
+    const auto& sds = eAtlanteanHopliteSpriteData30;
     SpriteLoader loader(fTileH, "atlanteanHoplite", sds,
                          &ePoseidon_AtlanteanOffset, fRenderer);
 
@@ -125,11 +77,7 @@ void CharacterTextures::loadAtlanteanHoplite() {
 void CharacterTextures::loadEgyptianHoplite() {
     if(fEgyptianHopliteLoaded) return;
     fEgyptianHopliteLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eEgyptianHopliteSpriteData15,
-                                 eEgyptianHopliteSpriteData30,
-                                 eEgyptianHopliteSpriteData45,
-                                 eEgyptianHopliteSpriteData60);
+    const auto& sds = eEgyptianHopliteSpriteData30;
     SpriteLoader loader(fTileH, "egyptianHoplite", sds,
                          &ePoseidon_EgyptianOffset, fRenderer);
 
@@ -144,11 +92,7 @@ void CharacterTextures::loadEgyptianHoplite() {
 void CharacterTextures::loadEgyptianChariot() {
     if(fEgyptianChariotLoaded) return;
     fEgyptianChariotLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eEgyptianChariotSpriteData15,
-                                 eEgyptianChariotSpriteData30,
-                                 eEgyptianChariotSpriteData45,
-                                 eEgyptianChariotSpriteData60);
+    const auto& sds = eEgyptianChariotSpriteData30;
     SpriteLoader loader(fTileH, "egyptianChariot", sds,
                          &ePoseidon_EgyptianOffset, fRenderer);
 
@@ -160,11 +104,7 @@ void CharacterTextures::loadEgyptianChariot() {
 void CharacterTextures::loadEgyptianArcher() {
     if(fEgyptianArcherLoaded) return;
     fEgyptianArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eEgyptianArcherSpriteData15,
-                                 eEgyptianArcherSpriteData30,
-                                 eEgyptianArcherSpriteData45,
-                                 eEgyptianArcherSpriteData60);
+    const auto& sds = eEgyptianArcherSpriteData30;
     SpriteLoader loader(fTileH, "egyptianArcher", sds,
                          &ePoseidon_EgyptianOffset, fRenderer);
 
@@ -179,11 +119,7 @@ void CharacterTextures::loadEgyptianArcher() {
 void CharacterTextures::loadMayanHoplite() {
     if(fMayanHopliteLoaded) return;
     fMayanHopliteLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eMayanHopliteSpriteData15,
-                                 eMayanHopliteSpriteData30,
-                                 eMayanHopliteSpriteData45,
-                                 eMayanHopliteSpriteData60);
+    const auto& sds = eMayanHopliteSpriteData30;
     SpriteLoader loader(fTileH, "mayanHoplite", sds,
                          &ePoseidon_MayanOffset, fRenderer);
 
@@ -198,11 +134,7 @@ void CharacterTextures::loadMayanHoplite() {
 void CharacterTextures::loadMayanArcher() {
     if(fMayanArcherLoaded) return;
     fMayanArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eMayanArcherSpriteData15,
-                                 eMayanArcherSpriteData30,
-                                 eMayanArcherSpriteData45,
-                                 eMayanArcherSpriteData60);
+    const auto& sds = eMayanArcherSpriteData30;
     SpriteLoader loader(fTileH, "mayanArcher", sds,
                          &ePoseidon_MayanOffset, fRenderer);
 
@@ -217,11 +149,7 @@ void CharacterTextures::loadMayanArcher() {
 void CharacterTextures::loadPhoenicianHorseman() {
     if(fPhoenicianHorsemanLoaded) return;
     fPhoenicianHorsemanLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePhoenicianHorsemanSpriteData15,
-                                 ePhoenicianHorsemanSpriteData30,
-                                 ePhoenicianHorsemanSpriteData45,
-                                 ePhoenicianHorsemanSpriteData60);
+    const auto& sds = ePhoenicianHorsemanSpriteData30;
     SpriteLoader loader(fTileH, "phoenicianHorseman", sds,
                          &ePoseidon_PhoenicianOffset, fRenderer);
 
@@ -236,11 +164,7 @@ void CharacterTextures::loadPhoenicianHorseman() {
 void CharacterTextures::loadPhoenicianArcher() {
     if(fPhoenicianArcherLoaded) return;
     fPhoenicianArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePhoenicianArcherSpriteData15,
-                                 ePhoenicianArcherSpriteData30,
-                                 ePhoenicianArcherSpriteData45,
-                                 ePhoenicianArcherSpriteData60);
+    const auto& sds = ePhoenicianArcherSpriteData30;
     SpriteLoader loader(fTileH, "phoenicianArcher", sds,
                          &ePoseidon_PhoenicianOffset, fRenderer);
 
@@ -255,11 +179,7 @@ void CharacterTextures::loadPhoenicianArcher() {
 void CharacterTextures::loadOceanidHoplite() {
     if(fOceanidHopliteLoaded) return;
     fOceanidHopliteLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eOceanidHopliteSpriteData15,
-                                 eOceanidHopliteSpriteData30,
-                                 eOceanidHopliteSpriteData45,
-                                 eOceanidHopliteSpriteData60);
+    const auto& sds = eOceanidHopliteSpriteData30;
     SpriteLoader loader(fTileH, "oceanidHoplite", sds,
                          &ePoseidon_OceanidOffset, fRenderer);
 
@@ -274,11 +194,7 @@ void CharacterTextures::loadOceanidHoplite() {
 void CharacterTextures::loadOceanidSpearthrower() {
     if(fOceanidSpearthrowerLoaded) return;
     fOceanidSpearthrowerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eOceanidSpearthrowerSpriteData15,
-                                 eOceanidSpearthrowerSpriteData30,
-                                 eOceanidSpearthrowerSpriteData45,
-                                 eOceanidSpearthrowerSpriteData60);
+    const auto& sds = eOceanidSpearthrowerSpriteData30;
     SpriteLoader loader(fTileH, "oceanidSpearthrower", sds,
                          &ePoseidon_OceanidOffset, fRenderer);
 

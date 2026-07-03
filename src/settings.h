@@ -84,10 +84,6 @@ struct Settings {
     static constexpr int sMaxGameSpeed = 200;
     static constexpr int sDefaultGameSpeed = 100;
 
-    bool fTinyTextures = true;
-    bool fSmallTextures = true;
-    bool fMediumTextures = true;
-    bool fLargeTextures = true;
     DisplayMode fDisplayMode = DisplayMode::window;
     bool fWarehouseDefaultAcceptNone = false;
     bool fDoubleCartCapacity = false;
@@ -152,7 +148,6 @@ struct Settings {
     SDL_Scancode fHotkeyMenuTab10 = SDL_SCANCODE_0;
     SDL_Scancode fHotkeyMenuTab11 = SDL_SCANCODE_MINUS;
 
-    std::vector<eTileSize> availableSizes() const;
     static int clampKeyScrollSpeed(const int speed);
     static int clampVolume(const int volume);
     static int clampGameSpeed(const int speed);

@@ -1,19 +1,10 @@
 #include "building-textures.h"
 
-#include "spriteData/hippodromeFinish15.h"
 #include "spriteData/hippodromeFinish30.h"
-#include "spriteData/hippodromeFinish45.h"
-#include "spriteData/hippodromeFinish60.h"
 
-#include "spriteData/hippodromeSpectators15.h"
 #include "spriteData/hippodromeSpectators30.h"
-#include "spriteData/hippodromeSpectators45.h"
-#include "spriteData/hippodromeSpectators60.h"
 
-#include "spriteData/hippodromeFeces15.h"
 #include "spriteData/hippodromeFeces30.h"
-#include "spriteData/hippodromeFeces45.h"
-#include "spriteData/hippodromeFeces60.h"
 
 #include "offsets/PoseidonImps2.h"
 
@@ -23,11 +14,7 @@ void BuildingTextures::loadHippodromeSpectators() {
     if(fHippodromeSpectatorsLoaded) return;
     fHippodromeSpectatorsLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eHippodromeSpectatorsSpriteData15,
-                                 eHippodromeSpectatorsSpriteData30,
-                                 eHippodromeSpectatorsSpriteData45,
-                                 eHippodromeSpectatorsSpriteData60);
+    const auto& sds = eHippodromeSpectatorsSpriteData30;
     SpriteLoader loader(fTileH, "hippodromeSpectators", sds,
                          &ePoseidonImps2Offset, fRenderer);
 
@@ -43,11 +30,7 @@ void BuildingTextures::loadHippodromeFeces() {
     if(fHippodromeFecesLoaded) return;
     fHippodromeFecesLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eHippodromeFecesSpriteData15,
-                                 eHippodromeFecesSpriteData30,
-                                 eHippodromeFecesSpriteData45,
-                                 eHippodromeFecesSpriteData60);
+    const auto& sds = eHippodromeFecesSpriteData30;
     SpriteLoader loader(fTileH, "hippodromeFeces", sds,
                          &ePoseidonImps2Offset, fRenderer);
 
@@ -82,11 +65,7 @@ void BuildingTextures::loadHippodromeFinish() {
     if(fHippodromeFinishLoaded) return;
     fHippodromeFinishLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eHippodromeFinishSpriteData15,
-                                 eHippodromeFinishSpriteData30,
-                                 eHippodromeFinishSpriteData45,
-                                 eHippodromeFinishSpriteData60);
+    const auto& sds = eHippodromeFinishSpriteData30;
     SpriteLoader loader(fTileH, "hippodromeFinish", sds,
                          &ePoseidonImps2Offset, fRenderer);
 
