@@ -146,7 +146,7 @@ void PopulationDataWidget::initialize() {
         cw4->addWidget(mNewcomersLabel);
 
         const auto il1 = new eLabel(window());
-        il1->setWrapWidth(iw);
+        il1->setWrapWidth(iw - 2*pp);
         il1->setWrapAlignment(Alignment::hcenter);
         il1->setFontSizeXS();
         il1->setNoPadding();
