@@ -17,6 +17,7 @@ void WarehouseBase::getSpaceOverlay(const eTileSize size,
     o.fX = xy.first;
     o.fY = xy.second;
     o.fAlignTop = true;
+    o.fClipToTileColumn = true;
     if(type == eResourceType::none || count <= 0) {
         o.fTex = texs.fWarehouseEmpty;
         return;

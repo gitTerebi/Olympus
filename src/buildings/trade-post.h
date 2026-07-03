@@ -23,6 +23,9 @@ public:
     eTextureSpace getTextureSpace(const int tx, const int ty,
                                   const eTileSize size) const override;
     std::vector<Overlay> getOverlays(const eTileSize size) const override;
+    std::vector<Overlay> getOverlaysAtTile(const eTileSize size,
+                                           const int tx,
+                                           const int ty) const override;
 
     void timeChanged(const int by) override;
 

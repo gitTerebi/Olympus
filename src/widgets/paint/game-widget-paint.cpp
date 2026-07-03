@@ -933,15 +933,19 @@ void GameWidget::paintEvent(ePainter &p)
             const int textureFitTileX = textureViewRect.x + textureViewRect.w - 1;
             const bool isTextureFitTileX = viewTileX == textureFitTileX;
             const bool isTextureFitTileY = viewTileY == textureFitTileY;
+            const bool drawTextureSlice = isTextureFitTileX || isTextureFitTileY;
+            const bool drawOverlaysAtEveryTile =
+                buildingType == eBuildingType::warehouse ||
+                buildingType == eBuildingType::tradePost;
             double dx;
             double dy;
             getDisplacement(textureWorldRect.w, textureWorldRect.h, dx, dy);
             const double buildingDrawX = textureFitTileX + dx + 1 - da * 0.5;
             const double buildingDrawY = textureFitTileY + dy + 1 - da * 0.5;
-            if (isTextureFitTileX || isTextureFitTileY)
+            if (drawTextureSlice || drawOverlaysAtEveryTile)
             {
                 const bool last = isTextureFitTileX && isTextureFitTileY;
-                if (textureSpace.fClamp)
+                if (drawTextureSlice && textureSpace.fClamp)
                 {
                     SDL_Rect clipRect;
                     clipRect.y = -10000;
@@ -1085,7 +1089,17 @@ void GameWidget::paintEvent(ePainter &p)
                         return;
                     }
 
-                    const auto overlays = building->getOverlays(size);
+                    const auto overlays = building->getOverlaysAtTile(
+                        size, worldTileX, worldTileY);
+                    const auto setStorageTileClip = [&]() {
+                        SDL_Rect clipRect;
+                        clipRect.y = -10000;
+                        clipRect.h = 20000;
+                        clipRect.x = mDX + (viewTileX - viewTileY - 1) *
+                            mTileW / 2;
+                        clipRect.w = mTileW;
+                        SDL_RenderSetClipRect(p.renderer(), &clipRect);
+                    };
                     for (const auto &o : overlays)
                     {
                         const auto &tex = o.fTex;
@@ -1112,6 +1126,8 @@ void GameWidget::paintEvent(ePainter &p)
                         if (colorMod)
                             tex->setColorMod(cred, cgreen, cblue);
                         if (alphaMod) tex->setAlpha(64);
+                        if (o.fClipToTileColumn)
+                            setStorageTileClip();
                         if (o.fAlignTop)
                         {
                             tp.drawTexture(buildingDrawX + textureSpace.fX + o.fX, buildingDrawY + textureSpace.fY + o.fY,
@@ -1121,6 +1137,8 @@ void GameWidget::paintEvent(ePainter &p)
                         {
                             tp.drawTexture(buildingDrawX + textureSpace.fX + o.fX, buildingDrawY + textureSpace.fY + o.fY, tex);
                         }
+                        if (o.fClipToTileColumn)
+                            SDL_RenderSetClipRect(p.renderer(), nullptr);
                         if (colorMod)
                             tex->clearColorMod();
                         if (alphaMod) tex->clearAlphaMod();
@@ -1174,7 +1192,7 @@ void GameWidget::paintEvent(ePainter &p)
                         drawnTempleWoman);
                 }
                 const auto &tex = textureSpace.fTex;
-                if (tex && !isSancPart)
+                if (drawTextureSlice && tex && !isSancPart)
                 {
                     drawBuildingTexture(tex);
                 }
