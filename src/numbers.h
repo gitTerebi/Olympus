@@ -18,6 +18,7 @@ struct Numbers {
     static int sAIInvasionMonthsBreak;
     static int sInvasionAppearAtPlaces;
     static double sArmyStrengthHorsemanMult;
+    static double sArmyStrengthTriremeMult;
 
     static int sRabbleDivisor;
     static int sSoldiersPerBanner;

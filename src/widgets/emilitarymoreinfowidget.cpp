@@ -157,7 +157,8 @@ public:
                 stdsptr<Texture> tex;
                 bool valid = false;
                 if(atlantean && type != eBannerType::amazon &&
-                   type != eBannerType::aresWarrior) {
+                   type != eBannerType::aresWarrior &&
+                   type != eBannerType::trireme) {
                     const auto& tops = coll.fPoseidonInterfaceBannerTops;
                     int topId = 0;
                     switch(type) {
@@ -194,6 +195,10 @@ public:
                         break;
                     case eBannerType::rockThrower:
                         topId = 2;
+                        valid = true;
+                        break;
+                    case eBannerType::trireme:
+                        topId = 3;
                         valid = true;
                         break;
                     case eBannerType::amazon:
@@ -343,6 +348,13 @@ void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
         mythicalBanners.push_back(b);
     }
 
+    std::vector<stdsptr<SoldierBanner>> triremeBanners;
+    for(const auto& b : banners) {
+        const auto type = b->type();
+        if(type != eBannerType::trireme) continue;
+        triremeBanners.push_back(b);
+    }
+
     if(!horsemenBanners.empty()) {
         const auto horsemen = new eArmySection(window());
         horsemen->setWidth(ww);
@@ -388,7 +400,7 @@ void eMilitaryMoreInfoWidget::initialize(GameBoard& board,
 
     const auto navy = new eArmySection(window());
     navy->setWidth(ww);
-    navy->initialize("", {}, atlantean);
+    navy->initialize("", triremeBanners, atlantean);
     rightW->addWidget(navy);
 
     const auto otherForesL = new eLabel(window());

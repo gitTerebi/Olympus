@@ -305,6 +305,9 @@ public:
     int countBanners(const eBannerType bt) const;
     int countSoldiers(const eBannerType bt) const;
     int countWorkingTriremes() const;
+    int countCrewedTriremes() const;
+    bool triremesCrewed() const;
+    void setTriremesCrewed(const bool crewed);
     const std::vector<eSanctuary*>& sanctuaries() const
     { return mSanctuaries; }
     const std::vector<eHerosHall*>& heroHalls() const
@@ -342,8 +345,7 @@ public:
     void removeInvasionHandler(eInvasionHandler* const i);
     bool hasActiveInvasions() const;
 
-    const std::vector<stdsptr<SoldierBanner>>& banners() const
-    { return mSoldierBanners; }
+    std::vector<stdsptr<SoldierBanner>> banners() const;
     Banner* banner(const BannerTypeS type, const int id = 0) const;
     eTile* entryPoint() const;
     eTile* exitPoint() const;
@@ -453,6 +455,7 @@ private:
     int countAnimalCharacters(const eBuildingType t) const;
 
     void setFriendlyGods(const std::vector<GodType>& gods);
+    void updateTriremeBanners() const;
 
     void payPensions();
     bool replace3By3AestheticByCommemorative();
@@ -582,6 +585,7 @@ private:
 
     std::vector<stdsptr<SoldierBanner>> mSoldierBanners;
     std::vector<stdsptr<SoldierBanner>> mPalacSoldierBanners;
+    mutable std::vector<stdsptr<SoldierBanner>> mTriremeBanners;
 
     std::vector<stdsptr<eMilitaryAid>> mMilitaryAid;
 

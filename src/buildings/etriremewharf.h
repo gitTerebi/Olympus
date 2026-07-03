@@ -30,8 +30,12 @@ public:
     void triremeCameBack();
     void triremeLeaving();
     bool abroad() const { return mAbroad; }
+    eTrireme* trireme() const;
     bool hasTrireme() const;
     bool isAtWharf() const;
+    bool isBuildingTrireme() const;
+    int triremeBuildProgress() const;
+    void dockTrireme(eTrireme* const trireme) const;
 
     eTile* triremeTile() const;
 protected:

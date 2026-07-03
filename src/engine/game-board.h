@@ -643,6 +643,9 @@ public:
 
     void musterAllSoldiers(const eCityId cid);
     void sendAllSoldiersHome(const eCityId cid);
+    int countCrewedTriremes(const eCityId cid) const;
+    bool triremesCrewed(const eCityId cid) const;
+    void setTriremesCrewed(const eCityId cid, const bool crewed);
 
     void scheduleDistributeEmployees();
 

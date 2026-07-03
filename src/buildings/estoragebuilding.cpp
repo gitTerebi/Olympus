@@ -309,7 +309,6 @@ std::vector<eCartTask> eStorageBuilding::pushCartTasks() const {
             if(c <= 0 || t == eResourceType::none) continue;
             if(!pushAllows(t)) continue;
             if(city && city->isStockpiled(t)) continue;
-            if(static_cast<bool>(mGet & t)) continue;
             if(static_cast<bool>(mEmpty & t)) continue;
             // trade post may push imports into storehouses too, like vanilla
             const bool toStorage = type() == eBuildingType::tradePost;

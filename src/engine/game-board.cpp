@@ -3839,6 +3839,30 @@ int GameBoard::countWorkingTriremes(const eCityId cid) const
     return c->countWorkingTriremes();
 }
 
+int GameBoard::countCrewedTriremes(const eCityId cid) const
+{
+    const auto c = boardCityWithId(cid);
+    if (!c)
+        return 0;
+    return c->countCrewedTriremes();
+}
+
+bool GameBoard::triremesCrewed(const eCityId cid) const
+{
+    const auto c = boardCityWithId(cid);
+    if (!c)
+        return false;
+    return c->triremesCrewed();
+}
+
+void GameBoard::setTriremesCrewed(const eCityId cid, const bool crewed)
+{
+    const auto c = boardCityWithId(cid);
+    if (!c)
+        return;
+    c->setTriremesCrewed(crewed);
+}
+
 void GameBoard::startEpisode(eEpisode *const e,
                               const eWC &lastPlayedColony)
 {

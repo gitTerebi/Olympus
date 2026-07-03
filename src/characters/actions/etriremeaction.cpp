@@ -21,6 +21,13 @@ void eTriremeAction::increment(const int by) {
     const auto r = lookForEnemy(by);
     if(r == LookForEnemyState::dead) return;
     eComplexAction::increment(by);
+    if(!currentAction() &&
+       mHome && !mHome->abroad() && mHome->isAtWharf()) {
+        const auto c = character();
+        c->setActionType(eCharacterActionType::stand);
+        mHome->dockTrireme(static_cast<eTrireme*>(c));
+        mStage = eTriremeActionStage::idle;
+    }
 }
 
 void eTriremeAction::serializeFields(SaveArchive& ar) {

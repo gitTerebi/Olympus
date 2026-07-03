@@ -9,7 +9,9 @@
 #include "widgets/ebasicbutton.h"
 #include "widgets/emilitarymoreinfowidget.h"
 #include "widgets/escrollwidget.h"
+#include "buildings/etriremewharf.h"
 #include "characters/soldier-banner.h"
+#include "characters/etrireme.h"
 
 void eForcesWidget::initialize(const std::string& title) {
     setNoPadding();
@@ -68,7 +70,8 @@ void eForcesWidget::setBanners(const SoldierBanners& ss,
             const auto sType = s->type();
             const bool p = s->atlantean();
             if(!p || sType == eBannerType::amazon ||
-               sType == eBannerType::aresWarrior) {
+               sType == eBannerType::aresWarrior ||
+               sType == eBannerType::trireme) {
                 switch(sType) {
                 case eBannerType::horseman:
                     topId = 0;
@@ -78,6 +81,9 @@ void eForcesWidget::setBanners(const SoldierBanners& ss,
                     break;
                 case eBannerType::rockThrower:
                     topId = 2;
+                    break;
+                case eBannerType::trireme:
+                    topId = 3;
                     break;
                 case eBannerType::amazon:
                     topId = 4;
@@ -291,11 +297,25 @@ void eMilitaryDataWidget::updateWidgets() {
             inCity.push_back(s);
         }
     }
-    const auto act = [this](const eSB& s) {
+    const auto act = [this, cid](const eSB& s) {
         mBoard.clearBannerSelection();
+        mBoard.clearTriremeSelection();
+        const auto gw = gameWidget();
+        if(s->type() == eBannerType::trireme) {
+            eTile* view = nullptr;
+            const auto wharves = mBoard.buildings(cid, eBuildingType::triremeWharf);
+            for(const auto building : wharves) {
+                const auto wharf = static_cast<eTriremeWharf*>(building);
+                const auto trireme = wharf->trireme();
+                if(!trireme || !trireme->selectable()) continue;
+                mBoard.selectTrireme(trireme);
+                if(!view) view = trireme->tile();
+            }
+            if(view) gw->viewTile(view);
+            return;
+        }
         mBoard.selectBanner(s.get());
         const auto t = s->tile();
-        const auto gw = gameWidget();
         gw->viewTile(t);
     };
     mAbroad->setBanners(abroad, act);
@@ -359,6 +379,35 @@ void eMilitaryDataWidget::updateWidgets() {
         mNoTowers->setTooltip(Language::zeusText(68, 175)); // click to man
         mNoTowers->setPressAction([this, cid]() {
             mBoard.setManTowers(cid, true);
+            updateWidgets();
+        });
+    }
+
+    const int triremes = mBoard.countWorkingTriremes(cid);
+    const int crewed = mBoard.countCrewedTriremes(cid);
+    if(triremes <= 0) {
+        mNoShips->setText(Language::zeusText(51, 83)); // no ships
+        mNoShips->setTooltip(Language::zeusText(68, 38)); // no ships to crew
+        mNoShips->setPressAction(nullptr);
+    } else if(crewed == triremes) {
+        mNoShips->setText(Language::zeusText(51, 4)); // all crewed
+        mNoShips->setTooltip(Language::zeusText(68, 172)); // send crews home
+        mNoShips->setPressAction([this, cid]() {
+            mBoard.setTriremesCrewed(cid, false);
+            updateWidgets();
+        });
+    } else if(crewed > 0) {
+        mNoShips->setText(Language::zeusText(51, 3)); // crewing all
+        mNoShips->setTooltip(Language::zeusText(68, 172)); // send crews home
+        mNoShips->setPressAction([this, cid]() {
+            mBoard.setTriremesCrewed(cid, false);
+            updateWidgets();
+        });
+    } else {
+        mNoShips->setText(Language::zeusText(51, 5)); // crew all
+        mNoShips->setTooltip(Language::zeusText(68, 173)); // summon crews
+        mNoShips->setPressAction([this, cid]() {
+            mBoard.setTriremesCrewed(cid, true);
             updateWidgets();
         });
     }
