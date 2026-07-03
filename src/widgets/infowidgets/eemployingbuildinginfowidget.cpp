@@ -33,18 +33,21 @@ void eEmployingBuildingInfoWidget::addEmploymentWidget(
         bool centerText) {
     const int p = padding();
 
-    const bool hasInfo = !infoStr.empty();
-    const bool hasPre = !preInfoStr.empty();
-    const int frameH = (!hasInfo && !hasPre) ? 6*p : (hasInfo && hasPre) ? 20*p : 10*p;
-    const auto wid = addFramedWidget(frameH);
+    std::string blessStr;
+    if(b->blessed()) {
+        blessStr = Language::zeusText(69, 12); // "This building has been blessed!"
+    } else if(b->cursed()) {
+        blessStr = Language::zeusText(69, 10); // "Nothing functions properly while it's cursed!"
+    }
 
+    const int w = widgetWidth() - 2*p;
     const auto makeLbl = [&](const std::string& txt) {
         const auto lbl = new eLabel(txt, window());
         lbl->setFontSizeS();
         lbl->setPaddingS();
-        lbl->setWrapWidth(wid->width());
+        lbl->setWrapWidth(w);
         lbl->fitContent();
-        lbl->setWidth(wid->width());
+        lbl->setWidth(w);
         lbl->setTextAlignment(Alignment::hcenter);
         return lbl;
     };
@@ -56,11 +59,19 @@ void eEmployingBuildingInfoWidget::addEmploymentWidget(
 
     std::vector<eLayoutHelpers::eFlexItem> items;
     items.push_back({makeLbl(emplStr)});
-    if(hasPre) items.push_back({makeLbl(preInfoStr)});
-    if(hasInfo) items.push_back({makeLbl(infoStr)});
+    if(!preInfoStr.empty()) items.push_back({makeLbl(preInfoStr)});
+    if(!infoStr.empty()) items.push_back({makeLbl(infoStr)});
+    if(!blessStr.empty()) items.push_back({makeLbl(blessStr)});
+
+    int contentH = p*(static_cast<int>(items.size()) - 1);
+    for(const auto& i : items) {
+        contentH += i.widget->height();
+    }
+    const int frameH = contentH + 4*p;
+    const auto wid = addFramedWidget(frameH);
 
     const auto col = eLayoutHelpers::createFlexContainer(
-                         window(), wid->width(), frameH,
+                         window(), wid->width(), wid->height(),
                          eLayoutHelpers::eFlexDirection::column,
                          items,
                          {.gap = p,
