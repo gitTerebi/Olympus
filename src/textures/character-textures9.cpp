@@ -2,31 +2,18 @@
 
 #include "sprite-loader.h"
 
-#include "spriteData/trireme15.h"
 #include "spriteData/trireme30.h"
-#include "spriteData/trireme45.h"
-#include "spriteData/trireme60.h"
 
-#include "spriteData/enemyBoat15.h"
 #include "spriteData/enemyBoat30.h"
-#include "spriteData/enemyBoat45.h"
-#include "spriteData/enemyBoat60.h"
 
-#include "spriteData/eliteCitizen15.h"
 #include "spriteData/eliteCitizen30.h"
-#include "spriteData/eliteCitizen45.h"
-#include "spriteData/eliteCitizen60.h"
 
 #include "offsets/SprMain.h"
 
 void CharacterTextures::loadTrireme() {
     if(fTriremeLoaded) return;
     fTriremeLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTriremeSpriteData15,
-                                 eTriremeSpriteData30,
-                                 eTriremeSpriteData45,
-                                 eTriremeSpriteData60);
+    const auto& sds = eTriremeSpriteData30;
     SpriteLoader loader(fTileH, "trireme", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -38,11 +25,7 @@ void CharacterTextures::loadTrireme() {
 void CharacterTextures::loadEnemyBoat() {
     if(fEnemyBoatLoaded) return;
     fEnemyBoatLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eEnemyBoatSpriteData15,
-                                 eEnemyBoatSpriteData30,
-                                 eEnemyBoatSpriteData45,
-                                 eEnemyBoatSpriteData60);
+    const auto& sds = eEnemyBoatSpriteData30;
     SpriteLoader loader(fTileH, "enemyBoat", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -54,11 +37,7 @@ void CharacterTextures::loadEnemyBoat() {
 void CharacterTextures::loadEliteCitizen() {
     if(fEliteCitizenLoaded) return;
     fEliteCitizenLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eEliteCitizenSpriteData15,
-                                 eEliteCitizenSpriteData30,
-                                 eEliteCitizenSpriteData45,
-                                 eEliteCitizenSpriteData60);
+    const auto& sds = eEliteCitizenSpriteData30;
     SpriteLoader loader(fTileH, "eliteCitizen", sds,
                          &eSprMainOffset, fRenderer);
 

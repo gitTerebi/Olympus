@@ -116,11 +116,6 @@ resume_game "Resume adventure"
 
 resolution "Resolution"
 
-tiny_textures "Tiny textures"
-small_textures "Small textures"
-medium_textures "Medium textures"
-large_textures "Large textures"
-
 clear "Clear"
 restore "Restore"
 cancel "Cancel"

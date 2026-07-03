@@ -2,75 +2,33 @@
 
 #include "sprite-loader.h"
 
-#include "spriteData/amazonSpear15.h"
 #include "spriteData/amazonSpear30.h"
-#include "spriteData/amazonSpear45.h"
-#include "spriteData/amazonSpear60.h"
 
-#include "spriteData/amazonArcher15.h"
 #include "spriteData/amazonArcher30.h"
-#include "spriteData/amazonArcher45.h"
-#include "spriteData/amazonArcher60.h"
 
-#include "spriteData/aresWarrior15.h"
 #include "spriteData/aresWarrior30.h"
-#include "spriteData/aresWarrior45.h"
-#include "spriteData/aresWarrior60.h"
 
-#include "spriteData/disgruntled15.h"
 #include "spriteData/disgruntled30.h"
-#include "spriteData/disgruntled45.h"
-#include "spriteData/disgruntled60.h"
 
-#include "spriteData/sick15.h"
 #include "spriteData/sick30.h"
-#include "spriteData/sick45.h"
-#include "spriteData/sick60.h"
 
-#include "spriteData/homeless15.h"
 #include "spriteData/homeless30.h"
-#include "spriteData/homeless45.h"
-#include "spriteData/homeless60.h"
 
-#include "spriteData/trojanHoplite15.h"
 #include "spriteData/trojanHoplite30.h"
-#include "spriteData/trojanHoplite45.h"
-#include "spriteData/trojanHoplite60.h"
 
-#include "spriteData/trojanSpearthrower15.h"
 #include "spriteData/trojanSpearthrower30.h"
-#include "spriteData/trojanSpearthrower45.h"
-#include "spriteData/trojanSpearthrower60.h"
 
-#include "spriteData/trojanHorseman15.h"
 #include "spriteData/trojanHorseman30.h"
-#include "spriteData/trojanHorseman45.h"
-#include "spriteData/trojanHorseman60.h"
 
-#include "spriteData/centaurHorseman15.h"
 #include "spriteData/centaurHorseman30.h"
-#include "spriteData/centaurHorseman45.h"
-#include "spriteData/centaurHorseman60.h"
 
-#include "spriteData/centaurArcher15.h"
 #include "spriteData/centaurArcher30.h"
-#include "spriteData/centaurArcher45.h"
-#include "spriteData/centaurArcher60.h"
 
-#include "spriteData/persianHoplite15.h"
 #include "spriteData/persianHoplite30.h"
-#include "spriteData/persianHoplite45.h"
-#include "spriteData/persianHoplite60.h"
 
-#include "spriteData/persianHorseman15.h"
 #include "spriteData/persianHorseman30.h"
-#include "spriteData/persianHorseman45.h"
-#include "spriteData/persianHorseman60.h"
 
-#include "spriteData/persianArcher15.h"
 #include "spriteData/persianArcher30.h"
-#include "spriteData/persianArcher45.h"
-#include "spriteData/persianArcher60.h"
 
 #include "offsets/Zeus_amazon.h"
 #include "offsets/Zeus_AresWarriors.h"
@@ -82,11 +40,7 @@
 void CharacterTextures::loadDisgruntled() {
     if(fDisgruntledLoaded) return;
     fDisgruntledLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eDisgruntledSpriteData15,
-                                 eDisgruntledSpriteData30,
-                                 eDisgruntledSpriteData45,
-                                 eDisgruntledSpriteData60);
+    const auto& sds = eDisgruntledSpriteData30;
     SpriteLoader loader(fTileH, "disgruntled", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -101,11 +55,7 @@ void CharacterTextures::loadDisgruntled() {
 void CharacterTextures::loadSick() {
     if(fSickLoaded) return;
     fSickLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eSickSpriteData15,
-                                 eSickSpriteData30,
-                                 eSickSpriteData45,
-                                 eSickSpriteData60);
+    const auto& sds = eSickSpriteData30;
     SpriteLoader loader(fTileH, "sick", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -120,11 +70,7 @@ void CharacterTextures::loadSick() {
 void CharacterTextures::loadHomeless() {
     if(fHomelessLoaded) return;
     fHomelessLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eHomelessSpriteData15,
-                                 eHomelessSpriteData30,
-                                 eHomelessSpriteData45,
-                                 eHomelessSpriteData60);
+    const auto& sds = eHomelessSpriteData30;
     SpriteLoader loader(fTileH, "homeless", sds,
                          &eSprMainOffset, fRenderer);
 
@@ -138,11 +84,7 @@ void CharacterTextures::loadHomeless() {
 void CharacterTextures::loadPersianHoplite() {
     if(fPersianHopliteLoaded) return;
     fPersianHopliteLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePersianHopliteSpriteData15,
-                                 ePersianHopliteSpriteData30,
-                                 ePersianHopliteSpriteData45,
-                                 ePersianHopliteSpriteData60);
+    const auto& sds = ePersianHopliteSpriteData30;
     SpriteLoader loader(fTileH, "persianHoplite", sds,
                          &eZeus_persianOffset, fRenderer);
 
@@ -157,11 +99,7 @@ void CharacterTextures::loadPersianHoplite() {
 void CharacterTextures::loadPersianArcher() {
     if(fPersianArcherLoaded) return;
     fPersianArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePersianArcherSpriteData15,
-                                 ePersianArcherSpriteData30,
-                                 ePersianArcherSpriteData45,
-                                 ePersianArcherSpriteData60);
+    const auto& sds = ePersianArcherSpriteData30;
     SpriteLoader loader(fTileH, "persianArcher", sds,
                          &eZeus_persianOffset, fRenderer);
 
@@ -176,11 +114,7 @@ void CharacterTextures::loadPersianArcher() {
 void CharacterTextures::loadPersianHorseman() {
     if(fPersianHorsemanLoaded) return;
     fPersianHorsemanLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePersianHorsemanSpriteData15,
-                                 ePersianHorsemanSpriteData30,
-                                 ePersianHorsemanSpriteData45,
-                                 ePersianHorsemanSpriteData60);
+    const auto& sds = ePersianHorsemanSpriteData30;
     SpriteLoader loader(fTileH, "persianHorseman", sds,
                          &eZeus_persianOffset, fRenderer);
 
@@ -195,11 +129,7 @@ void CharacterTextures::loadPersianHorseman() {
 void CharacterTextures::loadTrojanHoplite() {
     if(fTrojanHopliteLoaded) return;
     fTrojanHopliteLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTrojanHopliteSpriteData15,
-                                 eTrojanHopliteSpriteData30,
-                                 eTrojanHopliteSpriteData45,
-                                 eTrojanHopliteSpriteData60);
+    const auto& sds = eTrojanHopliteSpriteData30;
     SpriteLoader loader(fTileH, "trojanHoplite", sds,
                          &eZeus_trojanOffset, fRenderer);
 
@@ -214,11 +144,7 @@ void CharacterTextures::loadTrojanHoplite() {
 void CharacterTextures::loadTrojanSpearthrower() {
     if(fTrojanSpearthrowerLoaded) return;
     fTrojanSpearthrowerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTrojanSpearthrowerSpriteData15,
-                                 eTrojanSpearthrowerSpriteData30,
-                                 eTrojanSpearthrowerSpriteData45,
-                                 eTrojanSpearthrowerSpriteData60);
+    const auto& sds = eTrojanSpearthrowerSpriteData30;
     SpriteLoader loader(fTileH, "trojanSpearthrower", sds,
                          &eZeus_trojanOffset, fRenderer);
 
@@ -233,11 +159,7 @@ void CharacterTextures::loadTrojanSpearthrower() {
 void CharacterTextures::loadTrojanHorseman() {
     if(fTrojanHorsemanLoaded) return;
     fTrojanHorsemanLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTrojanHorsemanSpriteData15,
-                                 eTrojanHorsemanSpriteData30,
-                                 eTrojanHorsemanSpriteData45,
-                                 eTrojanHorsemanSpriteData60);
+    const auto& sds = eTrojanHorsemanSpriteData30;
     SpriteLoader loader(fTileH, "trojanHorseman", sds,
                          &eZeus_trojanOffset, fRenderer);
 
@@ -252,11 +174,7 @@ void CharacterTextures::loadTrojanHorseman() {
 void CharacterTextures::loadCentaurHorseman() {
     if(fCentaurHorsemanLoaded) return;
     fCentaurHorsemanLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eCentaurHorsemanSpriteData15,
-                                 eCentaurHorsemanSpriteData30,
-                                 eCentaurHorsemanSpriteData45,
-                                 eCentaurHorsemanSpriteData60);
+    const auto& sds = eCentaurHorsemanSpriteData30;
     SpriteLoader loader(fTileH, "centaurHorseman", sds,
                          &eZeus_centaurOffset, fRenderer);
 
@@ -271,11 +189,7 @@ void CharacterTextures::loadCentaurHorseman() {
 void CharacterTextures::loadCentaurArcher() {
     if(fCentaurArcherLoaded) return;
     fCentaurArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eCentaurArcherSpriteData15,
-                                 eCentaurArcherSpriteData30,
-                                 eCentaurArcherSpriteData45,
-                                 eCentaurArcherSpriteData60);
+    const auto& sds = eCentaurArcherSpriteData30;
     SpriteLoader loader(fTileH, "centaurArcher", sds,
                          &eZeus_centaurOffset, fRenderer);
 
@@ -290,11 +204,7 @@ void CharacterTextures::loadCentaurArcher() {
 void CharacterTextures::loadAmazonSpear() {
     if(fAmazonSpearLoaded) return;
     fAmazonSpearLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eAmazonSpearSpriteData15,
-                                 eAmazonSpearSpriteData30,
-                                 eAmazonSpearSpriteData45,
-                                 eAmazonSpearSpriteData60);
+    const auto& sds = eAmazonSpearSpriteData30;
     SpriteLoader loader(fTileH, "amazonSpear", sds,
                          &eZeus_amazonOffset, fRenderer);
 
@@ -309,11 +219,7 @@ void CharacterTextures::loadAmazonSpear() {
 void CharacterTextures::loadAmazonArcher() {
     if(fAmazonArcherLoaded) return;
     fAmazonArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eAmazonArcherSpriteData15,
-                                 eAmazonArcherSpriteData30,
-                                 eAmazonArcherSpriteData45,
-                                 eAmazonArcherSpriteData60);
+    const auto& sds = eAmazonArcherSpriteData30;
     SpriteLoader loader(fTileH, "amazonArcher", sds,
                          &eZeus_amazonOffset, fRenderer);
 
@@ -328,11 +234,7 @@ void CharacterTextures::loadAmazonArcher() {
 void CharacterTextures::loadAresWarrior() {
     if(fAresWarriorLoaded) return;
     fAresWarriorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eAresWarriorSpriteData15,
-                                 eAresWarriorSpriteData30,
-                                 eAresWarriorSpriteData45,
-                                 eAresWarriorSpriteData60);
+    const auto& sds = eAresWarriorSpriteData30;
     SpriteLoader loader(fTileH, "aresWarrior", sds,
                          &eZeus_AresWarriorsOffset, fRenderer);
 

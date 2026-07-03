@@ -41,21 +41,11 @@ std::vector<eLoader> gMenuLoaders;
 std::vector<eLoader> gGameLoaders;
 
 void GameTextures::loadTexture(const std::function<void(int)>& func) {
-    for(int i = 0; i < 4; i++) {
-        if(i == 0 && !sSettings.fTinyTextures) continue;
-        if(i == 1 && !sSettings.fSmallTextures) continue;
-        if(i == 2 && !sSettings.fMediumTextures) continue;
-        if(i == 3 && !sSettings.fLargeTextures) continue;
-        func(i);
-    }
+    func(0); // single texture set
 }
 
 void GameTextures::loadInterfaceTexture(const std::function<void(int)>& func) {
-    (void)sSettings;
-    for(int i = 0; i < 4; i++) {
-        if(i != interfaceTextureId()) continue;
-        func(i);
-    }
+    func(interfaceTextureId());
 }
 
 void GameTextures::loadPriest() {
@@ -2320,59 +2310,30 @@ bool GameTextures::initialize(SDL_Renderer* const r) {
                path.c_str());
         return false;
     }
-    int i = 0;
-    for(const auto& s : {std::pair<int, int>{30, 15},
-                         std::pair<int, int>{60, 30},
-                         std::pair<int, int>{90, 45},
-                         std::pair<int, int>{120, 60}}) {
-        sTerrainTextures.emplace_back(s.first, s.second, r);
-        sGodTextures.emplace_back(s.first, s.second, r);
-        sBuildingTextures.emplace_back(s.first, s.second, r);
-        sCharacterTextures.emplace_back(s.first, s.second, r);
-        sInterfaceTextures.emplace_back(s.first, s.second, r);
-        sDestructionTextures.emplace_back(s.first, s.second, r);
+    // single texture set: 60x30 px tiles
+    const int tileW = 60;
+    const int tileH = 30;
+    sTerrainTextures.emplace_back(tileW, tileH, r);
+    sGodTextures.emplace_back(tileW, tileH, r);
+    sBuildingTextures.emplace_back(tileW, tileH, r);
+    sCharacterTextures.emplace_back(tileW, tileH, r);
+    sInterfaceTextures.emplace_back(tileW, tileH, r);
+    sDestructionTextures.emplace_back(tileW, tileH, r);
 
-        gGameLoaders.emplace_back([i](std::string& text) {
-            sTerrainTextures[i].load();
-            if(i == 0) {
-                text = "Loading tiny terrain textures...";
-            } else if(i == 1) {
-                text = "Loading small terrain textures...";
-            } else if(i == 2) {
-                text = "Loading medium terrain textures...";
-            } else if(i == 3) {
-                text = "Loading large terrain textures...";
-            }
-        }, i);
+    gGameLoaders.emplace_back([](std::string& text) {
+        sTerrainTextures[0].load();
+        text = "Loading terrain textures...";
+    }, 0);
 
-        gGameLoaders.emplace_back([i](std::string& text) {
-            sBuildingTextures[i].load();
-            if(i == 0) {
-                text = "Loading tiny building textures...";
-            } else if(i == 1) {
-                text = "Loading small building textures...";
-            } else if(i == 2) {
-                text = "Loading medium building textures...";
-            } else if(i == 3) {
-                text = "Loading large building textures...";
-            }
-        }, i);
+    gGameLoaders.emplace_back([](std::string& text) {
+        sBuildingTextures[0].load();
+        text = "Loading building textures...";
+    }, 0);
 
-        gMenuLoaders.emplace_back([i](std::string& text) {
-            sInterfaceTextures[i].load();
-            if(i == 0) {
-                text = "Loading tiny interface textures...";
-            } else if(i == 1) {
-                text = "Loading small interface textures...";
-            } else if(i == 2) {
-                text = "Loading medium interface textures...";
-            } else if(i == 3) {
-                text = "Loading large interface textures...";
-            }
-        }, i);
-
-        i++;
-    }
+    gMenuLoaders.emplace_back([](std::string& text) {
+        sInterfaceTextures[0].load();
+        text = "Loading interface textures...";
+    }, 0);
 
     sInitialized = true;
 
@@ -2399,17 +2360,10 @@ bool GameTextures::loadNextMenu(const Settings& settings,
 bool GameTextures::loadNextGame(const Settings& settings,
                                  std::string& text) {
     const int iMax = gGameLoaders.size();
+    (void)settings;
     for(int i = 0; i < iMax; i++) {
         auto& g = gGameLoaders[i];
         if(g.fFinished) continue;
-        if(!settings.fTinyTextures &&
-           g.fSize == 0) continue;
-        if(!settings.fSmallTextures &&
-           g.fSize == 1) continue;
-        if(!settings.fMediumTextures &&
-           g.fSize == 2) continue;
-        if(!settings.fLargeTextures &&
-           g.fSize == 3) continue;
         g.fFunc(text);
         g.fFinished = true;
         return false;
@@ -2419,19 +2373,12 @@ bool GameTextures::loadNextGame(const Settings& settings,
 }
 
 int GameTextures::gameSize(const Settings& settings) {
+    (void)settings;
     int result = 0;
     const int iMax = gGameLoaders.size();
     for(int i = 0; i < iMax; i++) {
         auto& g = gGameLoaders[i];
         if(g.fFinished) continue;
-        if(!settings.fTinyTextures &&
-           g.fSize == 0) continue;
-        if(!settings.fSmallTextures &&
-           g.fSize == 1) continue;
-        if(!settings.fMediumTextures &&
-           g.fSize == 2) continue;
-        if(!settings.fLargeTextures &&
-           g.fSize == 3) continue;
         result++;
     }
     return result;

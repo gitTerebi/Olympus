@@ -31,7 +31,7 @@ public:
         return sDestructionTextures;
     }
     static int interfaceTextureId() {
-        return 1;
+        return 0; // single texture set (60x30 tiles)
     }
     static int interfaceTileDim();
 

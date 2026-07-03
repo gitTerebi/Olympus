@@ -3,620 +3,251 @@
 #include "binary-image-loader.h"
 #include "offsets/SprAmbient.h"
 
-#include "spriteData/palaceTiles15.h"
 #include "spriteData/palaceTiles30.h"
-#include "spriteData/palaceTiles45.h"
-#include "spriteData/palaceTiles60.h"
 
-#include "spriteData/commonHouse15.h"
 #include "spriteData/commonHouse30.h"
-#include "spriteData/commonHouse45.h"
-#include "spriteData/commonHouse60.h"
 
-#include "spriteData/eliteHouse15.h"
 #include "spriteData/eliteHouse30.h"
-#include "spriteData/eliteHouse45.h"
-#include "spriteData/eliteHouse60.h"
 
-#include "spriteData/college15.h"
 #include "spriteData/college30.h"
-#include "spriteData/college45.h"
-#include "spriteData/college60.h"
 
-#include "spriteData/gymnasium15.h"
 #include "spriteData/gymnasium30.h"
-#include "spriteData/gymnasium45.h"
-#include "spriteData/gymnasium60.h"
 
-#include "spriteData/dramaSchool15.h"
 #include "spriteData/dramaSchool30.h"
-#include "spriteData/dramaSchool45.h"
-#include "spriteData/dramaSchool60.h"
 
-#include "spriteData/podium15.h"
 #include "spriteData/podium30.h"
-#include "spriteData/podium45.h"
-#include "spriteData/podium60.h"
 
-#include "spriteData/theater15.h"
 #include "spriteData/theater30.h"
-#include "spriteData/theater45.h"
-#include "spriteData/theater60.h"
 
-#include "spriteData/stadium15.h"
 #include "spriteData/stadium30.h"
-#include "spriteData/stadium45.h"
-#include "spriteData/stadium60.h"
 
-#include "spriteData/fountain15.h"
 #include "spriteData/fountain30.h"
-#include "spriteData/fountain45.h"
-#include "spriteData/fountain60.h"
 
-#include "spriteData/hospital15.h"
 #include "spriteData/hospital30.h"
-#include "spriteData/hospital45.h"
-#include "spriteData/hospital60.h"
 
-#include "spriteData/oliveTree15.h"
 #include "spriteData/oliveTree30.h"
-#include "spriteData/oliveTree45.h"
-#include "spriteData/oliveTree60.h"
 
-#include "spriteData/vine15.h"
 #include "spriteData/vine30.h"
-#include "spriteData/vine45.h"
-#include "spriteData/vine60.h"
 
-#include "spriteData/plantation15.h"
 #include "spriteData/plantation30.h"
-#include "spriteData/plantation45.h"
-#include "spriteData/plantation60.h"
 
-#include "spriteData/huntingLodge15.h"
 #include "spriteData/huntingLodge30.h"
-#include "spriteData/huntingLodge45.h"
-#include "spriteData/huntingLodge60.h"
 
-#include "spriteData/fishery15.h"
 #include "spriteData/fishery30.h"
-#include "spriteData/fishery45.h"
-#include "spriteData/fishery60.h"
 
-#include "spriteData/urchinQuay15.h"
 #include "spriteData/urchinQuay30.h"
-#include "spriteData/urchinQuay45.h"
-#include "spriteData/urchinQuay60.h"
 
-#include "spriteData/cardingShed15.h"
 #include "spriteData/cardingShed30.h"
-#include "spriteData/cardingShed45.h"
-#include "spriteData/cardingShed60.h"
 
-#include "spriteData/dairy15.h"
 #include "spriteData/dairy30.h"
-#include "spriteData/dairy45.h"
-#include "spriteData/dairy60.h"
 
-#include "spriteData/growersLodge15.h"
 #include "spriteData/growersLodge30.h"
-#include "spriteData/growersLodge45.h"
-#include "spriteData/growersLodge60.h"
 
-#include "spriteData/timberMill15.h"
 #include "spriteData/timberMill30.h"
-#include "spriteData/timberMill45.h"
-#include "spriteData/timberMill60.h"
 
-#include "spriteData/masonryShop15.h"
 #include "spriteData/masonryShop30.h"
-#include "spriteData/masonryShop45.h"
-#include "spriteData/masonryShop60.h"
 
-#include "spriteData/mint15.h"
 #include "spriteData/mint30.h"
-#include "spriteData/mint45.h"
-#include "spriteData/mint60.h"
 
-#include "spriteData/foundry15.h"
 #include "spriteData/foundry30.h"
-#include "spriteData/foundry45.h"
-#include "spriteData/foundry60.h"
 
-#include "spriteData/artisansGuild15.h"
 #include "spriteData/artisansGuild30.h"
-#include "spriteData/artisansGuild45.h"
-#include "spriteData/artisansGuild60.h"
 
-#include "spriteData/olivePress15.h"
 #include "spriteData/olivePress30.h"
-#include "spriteData/olivePress45.h"
-#include "spriteData/olivePress60.h"
 
-#include "spriteData/winery15.h"
 #include "spriteData/winery30.h"
-#include "spriteData/winery45.h"
-#include "spriteData/winery60.h"
 
-#include "spriteData/sculptureStudio15.h"
 #include "spriteData/sculptureStudio30.h"
-#include "spriteData/sculptureStudio45.h"
-#include "spriteData/sculptureStudio60.h"
 
-#include "spriteData/triremeWharf15.h"
 #include "spriteData/triremeWharf30.h"
-#include "spriteData/triremeWharf45.h"
-#include "spriteData/triremeWharf60.h"
 
-#include "spriteData/triremeWharfOverlay115.h"
 #include "spriteData/triremeWharfOverlay130.h"
-#include "spriteData/triremeWharfOverlay145.h"
-#include "spriteData/triremeWharfOverlay160.h"
 
-#include "spriteData/triremeWharfOverlay215.h"
 #include "spriteData/triremeWharfOverlay230.h"
-#include "spriteData/triremeWharfOverlay245.h"
-#include "spriteData/triremeWharfOverlay260.h"
 
-#include "spriteData/horseRanch15.h"
 #include "spriteData/horseRanch30.h"
-#include "spriteData/horseRanch45.h"
-#include "spriteData/horseRanch60.h"
 
-#include "spriteData/horseRanchEnclosure15.h"
 #include "spriteData/horseRanchEnclosure30.h"
-#include "spriteData/horseRanchEnclosure45.h"
-#include "spriteData/horseRanchEnclosure60.h"
 
-#include "spriteData/armory15.h"
 #include "spriteData/armory30.h"
-#include "spriteData/armory45.h"
-#include "spriteData/armory60.h"
 
-#include "spriteData/gatehouseAndTower15.h"
 #include "spriteData/gatehouseAndTower30.h"
-#include "spriteData/gatehouseAndTower45.h"
-#include "spriteData/gatehouseAndTower60.h"
 
-#include "spriteData/wall15.h"
 #include "spriteData/wall30.h"
-#include "spriteData/wall45.h"
-#include "spriteData/wall60.h"
 
-#include "spriteData/maintenanceOffice15.h"
 #include "spriteData/maintenanceOffice30.h"
-#include "spriteData/maintenanceOffice45.h"
-#include "spriteData/maintenanceOffice60.h"
 
-#include "spriteData/taxOffice15.h"
 #include "spriteData/taxOffice30.h"
-#include "spriteData/taxOffice45.h"
-#include "spriteData/taxOffice60.h"
 
-#include "spriteData/watchpost15.h"
 #include "spriteData/watchpost30.h"
-#include "spriteData/watchpost45.h"
-#include "spriteData/watchpost60.h"
 
-#include "spriteData/roadblock15.h"
 #include "spriteData/roadblock30.h"
-#include "spriteData/roadblock45.h"
-#include "spriteData/roadblock60.h"
 
-#include "spriteData/bridge15.h"
 #include "spriteData/bridge30.h"
-#include "spriteData/bridge45.h"
-#include "spriteData/bridge60.h"
 
-#include "spriteData/mun_Palace15.h"
 #include "spriteData/mun_Palace30.h"
-#include "spriteData/mun_Palace45.h"
-#include "spriteData/mun_Palace60.h"
 
-#include "spriteData/zeusSanctuaryElements15.h"
 #include "spriteData/zeusSanctuaryElements30.h"
-#include "spriteData/zeusSanctuaryElements45.h"
-#include "spriteData/zeusSanctuaryElements60.h"
 
-#include "spriteData/zeusHerosHall15.h"
 #include "spriteData/zeusHerosHall30.h"
-#include "spriteData/zeusHerosHall45.h"
-#include "spriteData/zeusHerosHall60.h"
 
-#include "spriteData/poseidonHerosHall15.h"
 #include "spriteData/poseidonHerosHall30.h"
-#include "spriteData/poseidonHerosHall45.h"
-#include "spriteData/poseidonHerosHall60.h"
 
-#include "spriteData/poseidonStatues115.h"
 #include "spriteData/poseidonStatues130.h"
-#include "spriteData/poseidonStatues145.h"
-#include "spriteData/poseidonStatues160.h"
 
-#include "spriteData/poseidonStatues215.h"
 #include "spriteData/poseidonStatues230.h"
-#include "spriteData/poseidonStatues245.h"
-#include "spriteData/poseidonStatues260.h"
 
-#include "spriteData/stor_bays15.h"
 #include "spriteData/stor_bays30.h"
-#include "spriteData/stor_bays45.h"
-#include "spriteData/stor_bays60.h"
 
-#include "spriteData/tallObelisk15.h"
 #include "spriteData/tallObelisk30.h"
-#include "spriteData/tallObelisk45.h"
-#include "spriteData/tallObelisk60.h"
 
-#include "spriteData/avenue15.h"
 #include "spriteData/avenue30.h"
-#include "spriteData/avenue45.h"
-#include "spriteData/avenue60.h"
 
-#include "spriteData/columns15.h"
 #include "spriteData/columns30.h"
-#include "spriteData/columns45.h"
-#include "spriteData/columns60.h"
 
-#include "spriteData/commemorative15.h"
 #include "spriteData/commemorative30.h"
-#include "spriteData/commemorative45.h"
-#include "spriteData/commemorative60.h"
 
-#include "spriteData/fishPond15.h"
 #include "spriteData/fishPond30.h"
-#include "spriteData/fishPond45.h"
-#include "spriteData/fishPond60.h"
 
-#include "spriteData/hedgeMaze15.h"
 #include "spriteData/hedgeMaze30.h"
-#include "spriteData/hedgeMaze45.h"
-#include "spriteData/hedgeMaze60.h"
 
-#include "spriteData/gazebo15.h"
 #include "spriteData/gazebo30.h"
-#include "spriteData/gazebo45.h"
-#include "spriteData/gazebo60.h"
 
-#include "spriteData/flowerGarden15.h"
 #include "spriteData/flowerGarden30.h"
-#include "spriteData/flowerGarden45.h"
-#include "spriteData/flowerGarden60.h"
 
-#include "spriteData/bench15.h"
 #include "spriteData/bench30.h"
-#include "spriteData/bench45.h"
-#include "spriteData/bench60.h"
 
-#include "spriteData/park15.h"
 #include "spriteData/park30.h"
-#include "spriteData/park45.h"
-#include "spriteData/park60.h"
 
-#include "spriteData/sundial15.h"
 #include "spriteData/sundial30.h"
-#include "spriteData/sundial45.h"
-#include "spriteData/sundial60.h"
 
-#include "spriteData/topiary15.h"
 #include "spriteData/topiary30.h"
-#include "spriteData/topiary45.h"
-#include "spriteData/topiary60.h"
 
-#include "spriteData/spring15.h"
 #include "spriteData/spring30.h"
-#include "spriteData/spring45.h"
-#include "spriteData/spring60.h"
 
-#include "spriteData/stoneCircle15.h"
 #include "spriteData/stoneCircle30.h"
-#include "spriteData/stoneCircle45.h"
-#include "spriteData/stoneCircle60.h"
 
-#include "spriteData/dolphinSculpture15.h"
 #include "spriteData/dolphinSculpture30.h"
-#include "spriteData/dolphinSculpture45.h"
-#include "spriteData/dolphinSculpture60.h"
 
-#include "spriteData/orrery15.h"
 #include "spriteData/orrery30.h"
-#include "spriteData/orrery45.h"
-#include "spriteData/orrery60.h"
 
-#include "spriteData/shellGarden15.h"
 #include "spriteData/shellGarden30.h"
-#include "spriteData/shellGarden45.h"
-#include "spriteData/shellGarden60.h"
 
-#include "spriteData/storage15.h"
 #include "spriteData/storage30.h"
-#include "spriteData/storage45.h"
-#include "spriteData/storage60.h"
 
-#include "spriteData/tradingPostOverlay15.h"
 #include "spriteData/tradingPostOverlay30.h"
-#include "spriteData/tradingPostOverlay45.h"
-#include "spriteData/tradingPostOverlay60.h"
 
-#include "spriteData/warehouseOverlay15.h"
 #include "spriteData/warehouseOverlay30.h"
-#include "spriteData/warehouseOverlay45.h"
-#include "spriteData/warehouseOverlay60.h"
 
-#include "spriteData/fish15.h"
 #include "spriteData/fish30.h"
-#include "spriteData/fish45.h"
-#include "spriteData/fish60.h"
 
-#include "spriteData/urchin15.h"
 #include "spriteData/urchin30.h"
-#include "spriteData/urchin45.h"
-#include "spriteData/urchin60.h"
 
-#include "spriteData/theaterOverlay15.h"
 #include "spriteData/theaterOverlay30.h"
-#include "spriteData/theaterOverlay45.h"
-#include "spriteData/theaterOverlay60.h"
 
-#include "spriteData/fisheryBoatBuilding15.h"
 #include "spriteData/fisheryBoatBuilding30.h"
-#include "spriteData/fisheryBoatBuilding45.h"
-#include "spriteData/fisheryBoatBuilding60.h"
 
-#include "spriteData/fisheryOverlay15.h"
 #include "spriteData/fisheryOverlay30.h"
-#include "spriteData/fisheryOverlay45.h"
-#include "spriteData/fisheryOverlay60.h"
 
-#include "spriteData/urchinUnpackingOverlay15.h"
 #include "spriteData/urchinUnpackingOverlay30.h"
-#include "spriteData/urchinUnpackingOverlay45.h"
-#include "spriteData/urchinUnpackingOverlay60.h"
 
-#include "spriteData/fisheryUnpackingOverlay15.h"
 #include "spriteData/fisheryUnpackingOverlay30.h"
-#include "spriteData/fisheryUnpackingOverlay45.h"
-#include "spriteData/fisheryUnpackingOverlay60.h"
 
-#include "spriteData/stadiumOverlays115.h"
 #include "spriteData/stadiumOverlays130.h"
-#include "spriteData/stadiumOverlays145.h"
-#include "spriteData/stadiumOverlays160.h"
 
-#include "spriteData/sanctuaryOverlay15.h"
 #include "spriteData/sanctuaryOverlay30.h"
-#include "spriteData/sanctuaryOverlay45.h"
-#include "spriteData/sanctuaryOverlay60.h"
 
-#include "spriteData/stadiumOverlays215.h"
 #include "spriteData/stadiumOverlays230.h"
-#include "spriteData/stadiumOverlays245.h"
-#include "spriteData/stadiumOverlays260.h"
 
-#include "spriteData/sanctuaryFire15.h"
 #include "spriteData/sanctuaryFire30.h"
-#include "spriteData/sanctuaryFire45.h"
-#include "spriteData/sanctuaryFire60.h"
 
-#include "spriteData/masonryShopOverlays15.h"
 #include "spriteData/masonryShopOverlays30.h"
-#include "spriteData/masonryShopOverlays45.h"
-#include "spriteData/masonryShopOverlays60.h"
 
-#include "spriteData/waitingOverlay15.h"
 #include "spriteData/waitingOverlay30.h"
-#include "spriteData/waitingOverlay45.h"
-#include "spriteData/waitingOverlay60.h"
 
-#include "spriteData/vendorOverlays15.h"
 #include "spriteData/vendorOverlays30.h"
-#include "spriteData/vendorOverlays45.h"
-#include "spriteData/vendorOverlays60.h"
 
-#include "spriteData/wineVendorOverlay15.h"
 #include "spriteData/wineVendorOverlay30.h"
-#include "spriteData/wineVendorOverlay45.h"
-#include "spriteData/wineVendorOverlay60.h"
 
-#include "spriteData/fishPondOverlay15.h"
 #include "spriteData/fishPondOverlay30.h"
-#include "spriteData/fishPondOverlay45.h"
-#include "spriteData/fishPondOverlay60.h"
 
-#include "spriteData/watchPostOverlay15.h"
 #include "spriteData/watchPostOverlay30.h"
-#include "spriteData/watchPostOverlay45.h"
-#include "spriteData/watchPostOverlay60.h"
 
-#include "spriteData/palaceOverlay15.h"
 #include "spriteData/palaceOverlay30.h"
-#include "spriteData/palaceOverlay45.h"
-#include "spriteData/palaceOverlay60.h"
 
-#include "spriteData/zeusStatue15.h"
 #include "spriteData/zeusStatue30.h"
-#include "spriteData/zeusStatue45.h"
-#include "spriteData/zeusStatue60.h"
 
-#include "spriteData/poseidonStatue15.h"
 #include "spriteData/poseidonStatue30.h"
-#include "spriteData/poseidonStatue45.h"
-#include "spriteData/poseidonStatue60.h"
 
-#include "spriteData/hadesStatue15.h"
 #include "spriteData/hadesStatue30.h"
-#include "spriteData/hadesStatue45.h"
-#include "spriteData/hadesStatue60.h"
 
-#include "spriteData/demeterStatue15.h"
 #include "spriteData/demeterStatue30.h"
-#include "spriteData/demeterStatue45.h"
-#include "spriteData/demeterStatue60.h"
 
-#include "spriteData/athenaStatue15.h"
 #include "spriteData/athenaStatue30.h"
-#include "spriteData/athenaStatue45.h"
-#include "spriteData/athenaStatue60.h"
 
-#include "spriteData/artemisStatue15.h"
 #include "spriteData/artemisStatue30.h"
-#include "spriteData/artemisStatue45.h"
-#include "spriteData/artemisStatue60.h"
 
-#include "spriteData/apolloStatue15.h"
 #include "spriteData/apolloStatue30.h"
-#include "spriteData/apolloStatue45.h"
-#include "spriteData/apolloStatue60.h"
 
-#include "spriteData/aresStatue15.h"
 #include "spriteData/aresStatue30.h"
-#include "spriteData/aresStatue45.h"
-#include "spriteData/aresStatue60.h"
 
-#include "spriteData/hephaestusStatue15.h"
 #include "spriteData/hephaestusStatue30.h"
-#include "spriteData/hephaestusStatue45.h"
-#include "spriteData/hephaestusStatue60.h"
 
-#include "spriteData/aphroditeStatue15.h"
 #include "spriteData/aphroditeStatue30.h"
-#include "spriteData/aphroditeStatue45.h"
-#include "spriteData/aphroditeStatue60.h"
 
-#include "spriteData/hermesStatue15.h"
 #include "spriteData/hermesStatue30.h"
-#include "spriteData/hermesStatue45.h"
-#include "spriteData/hermesStatue60.h"
 
-#include "spriteData/dionysusStatue15.h"
 #include "spriteData/dionysusStatue30.h"
-#include "spriteData/dionysusStatue45.h"
-#include "spriteData/dionysusStatue60.h"
 
-#include "spriteData/blankStatue15.h"
 #include "spriteData/blankStatue30.h"
-#include "spriteData/blankStatue45.h"
-#include "spriteData/blankStatue60.h"
 
-#include "spriteData/atlasStatue15.h"
 #include "spriteData/atlasStatue30.h"
-#include "spriteData/atlasStatue45.h"
-#include "spriteData/atlasStatue60.h"
 
-#include "spriteData/heraStatue15.h"
 #include "spriteData/heraStatue30.h"
-#include "spriteData/heraStatue45.h"
-#include "spriteData/heraStatue60.h"
 
-#include "spriteData/zeusSanctuary115.h"
 #include "spriteData/zeusSanctuary130.h"
-#include "spriteData/zeusSanctuary145.h"
-#include "spriteData/zeusSanctuary160.h"
 
-#include "spriteData/zeusSanctuary215.h"
 #include "spriteData/zeusSanctuary230.h"
-#include "spriteData/zeusSanctuary245.h"
-#include "spriteData/zeusSanctuary260.h"
 
-#include "spriteData/zeusSanctuary315.h"
 #include "spriteData/zeusSanctuary330.h"
-#include "spriteData/zeusSanctuary345.h"
-#include "spriteData/zeusSanctuary360.h"
 
-#include "spriteData/orangeTendersLodge15.h"
 #include "spriteData/orangeTendersLodge30.h"
-#include "spriteData/orangeTendersLodge45.h"
-#include "spriteData/orangeTendersLodge60.h"
 
-#include "spriteData/waterPark15.h"
 #include "spriteData/waterPark30.h"
-#include "spriteData/waterPark45.h"
-#include "spriteData/waterPark60.h"
 
-#include "spriteData/baths15.h"
 #include "spriteData/baths30.h"
-#include "spriteData/baths45.h"
-#include "spriteData/baths60.h"
 
-#include "spriteData/birdBath15.h"
 #include "spriteData/birdBath30.h"
-#include "spriteData/birdBath45.h"
-#include "spriteData/birdBath60.h"
 
-#include "spriteData/shortObelisk15.h"
 #include "spriteData/shortObelisk30.h"
-#include "spriteData/shortObelisk45.h"
-#include "spriteData/shortObelisk60.h"
 
-#include "spriteData/agora15.h"
 #include "spriteData/agora30.h"
-#include "spriteData/agora45.h"
-#include "spriteData/agora60.h"
 
-#include "spriteData/granary15.h"
 #include "spriteData/granary30.h"
-#include "spriteData/granary45.h"
-#include "spriteData/granary60.h"
 
-#include "spriteData/pier115.h"
 #include "spriteData/pier130.h"
-#include "spriteData/pier145.h"
-#include "spriteData/pier160.h"
 
-#include "spriteData/pier215.h"
 #include "spriteData/pier230.h"
-#include "spriteData/pier245.h"
-#include "spriteData/pier260.h"
 
-#include "spriteData/warehouse15.h"
 #include "spriteData/warehouse30.h"
-#include "spriteData/warehouse45.h"
-#include "spriteData/warehouse60.h"
 
-#include "spriteData/tradingPost15.h"
 #include "spriteData/tradingPost30.h"
-#include "spriteData/tradingPost45.h"
-#include "spriteData/tradingPost60.h"
 
-#include "spriteData/chariotVendor15.h"
 #include "spriteData/chariotVendor30.h"
-#include "spriteData/chariotVendor45.h"
-#include "spriteData/chariotVendor60.h"
 
-#include "spriteData/chariotVendorOverlay15.h"
 #include "spriteData/chariotVendorOverlay30.h"
-#include "spriteData/chariotVendorOverlay45.h"
-#include "spriteData/chariotVendorOverlay60.h"
 
-#include "spriteData/interfaceSprites15.h"
 #include "spriteData/interfaceSprites30.h"
-#include "spriteData/interfaceSprites45.h"
-#include "spriteData/interfaceSprites60.h"
 
-#include "spriteData/deerTop15.h"
 #include "spriteData/deerTop30.h"
-#include "spriteData/deerTop45.h"
-#include "spriteData/deerTop60.h"
 
-#include "spriteData/altarSheepOverlay15.h"
 #include "spriteData/altarSheepOverlay30.h"
-#include "spriteData/altarSheepOverlay45.h"
-#include "spriteData/altarSheepOverlay60.h"
 
-#include "spriteData/altarGoodsOverlay15.h"
 #include "spriteData/altarGoodsOverlay30.h"
-#include "spriteData/altarGoodsOverlay45.h"
-#include "spriteData/altarGoodsOverlay60.h"
 
-#include "spriteData/supplies15.h"
 #include "spriteData/supplies30.h"
-#include "spriteData/supplies45.h"
-#include "spriteData/supplies60.h"
 
-#include "spriteData/hippodrome15.h"
 #include "spriteData/hippodrome30.h"
-#include "spriteData/hippodrome45.h"
-#include "spriteData/hippodrome60.h"
 
 #include "offsets/PoseidonImps.h"
 
@@ -996,11 +627,7 @@ void BuildingTextures::loadAltarSheepOverlay() {
     if(fAltarSheepOverlayLoaded) return;
     fAltarSheepOverlayLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eAltarSheepOverlaySpriteData15,
-                                 eAltarSheepOverlaySpriteData30,
-                                 eAltarSheepOverlaySpriteData45,
-                                 eAltarSheepOverlaySpriteData60);
+    const auto& sds = eAltarSheepOverlaySpriteData30;
     SpriteLoader loader(fTileH, "altarSheepOverlay", sds,
                          nullptr, fRenderer);
 
@@ -1014,11 +641,7 @@ void BuildingTextures::loadAltarGoodsOverlay() {
     if(fAltarGoodsOverlayLoaded) return;
     fAltarGoodsOverlayLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eAltarGoodsOverlaySpriteData15,
-                                 eAltarGoodsOverlaySpriteData30,
-                                 eAltarGoodsOverlaySpriteData45,
-                                 eAltarGoodsOverlaySpriteData60);
+    const auto& sds = eAltarGoodsOverlaySpriteData30;
     SpriteLoader loader(fTileH, "altarGoodsOverlay", sds,
                          nullptr, fRenderer);
 
@@ -1032,11 +655,7 @@ void BuildingTextures::loadCommonHouse() {
     if(fCommonHouseLoaded) return;
     fCommonHouseLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eCommonHouseSpriteData15,
-                                 eCommonHouseSpriteData30,
-                                 eCommonHouseSpriteData45,
-                                 eCommonHouseSpriteData60);
+    const auto& sds = eCommonHouseSpriteData30;
     SpriteLoader loader(fTileH, "commonHouse", sds,
                          nullptr, fRenderer);
 
@@ -1052,11 +671,7 @@ void BuildingTextures::loadCommonHouse() {
 void BuildingTextures::loadEliteHouse() {
     if(fEliteHouseLoaded) return;
     fEliteHouseLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eEliteHouseSpriteData15,
-                                 eEliteHouseSpriteData30,
-                                 eEliteHouseSpriteData45,
-                                 eEliteHouseSpriteData60);
+    const auto& sds = eEliteHouseSpriteData30;
     SpriteLoader loader(fTileH, "eliteHouse", sds,
                          nullptr, fRenderer);
 
@@ -1076,11 +691,7 @@ void BuildingTextures::loadCollege() {
     if(fCollegeLoaded) return;
     fCollegeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eCollegeSpriteData15,
-                                 eCollegeSpriteData30,
-                                 eCollegeSpriteData45,
-                                 eCollegeSpriteData60);
+    const auto& sds = eCollegeSpriteData30;
     SpriteLoader loader(fTileH, "college", sds,
                          nullptr, fRenderer);
     fCollege = loader.load(1, 1);
@@ -1094,11 +705,7 @@ void BuildingTextures::loadGymnasium() {
     if(fGymnasiumLoaded) return;
     fGymnasiumLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGymnasiumSpriteData15,
-                                 eGymnasiumSpriteData30,
-                                 eGymnasiumSpriteData45,
-                                 eGymnasiumSpriteData60);
+    const auto& sds = eGymnasiumSpriteData30;
     SpriteLoader loader(fTileH, "gymnasium", sds,
                          nullptr, fRenderer);
 
@@ -1113,11 +720,7 @@ void BuildingTextures::loadDramaSchool() {
     if(fDramaSchoolLoaded) return;
     fDramaSchoolLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eDramaSchoolSpriteData15,
-                                 eDramaSchoolSpriteData30,
-                                 eDramaSchoolSpriteData45,
-                                 eDramaSchoolSpriteData60);
+    const auto& sds = eDramaSchoolSpriteData30;
     SpriteLoader loader(fTileH, "dramaSchool", sds,
                          nullptr, fRenderer);
     fDramaSchool = loader.load(59, 59);
@@ -1131,11 +734,7 @@ void BuildingTextures::loadPodium() {
     if(fPodiumLoaded) return;
     fPodiumLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 ePodiumSpriteData15,
-                                 ePodiumSpriteData30,
-                                 ePodiumSpriteData45,
-                                 ePodiumSpriteData60);
+    const auto& sds = ePodiumSpriteData30;
     SpriteLoader loader(fTileH, "podium", sds,
                          nullptr, fRenderer);
     fPodium = loader.load(84, 84);
@@ -1150,11 +749,7 @@ void BuildingTextures::loadTheater() {
     fTheaterLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eTheaterSpriteData15,
-                                     eTheaterSpriteData30,
-                                     eTheaterSpriteData45,
-                                     eTheaterSpriteData60);
+        const auto& sds = eTheaterSpriteData30;
         SpriteLoader loader(fTileH, "theater", sds,
                              nullptr, fRenderer);
         fTheater = loader.load(109, 109);
@@ -1162,11 +757,7 @@ void BuildingTextures::loadTheater() {
 
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eTheaterOverlaySpriteData15,
-                                     eTheaterOverlaySpriteData30,
-                                     eTheaterOverlaySpriteData45,
-                                     eTheaterOverlaySpriteData60);
+        const auto& sds = eTheaterOverlaySpriteData30;
         SpriteLoader loader(fTileH, "theaterOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1181,11 +772,7 @@ void BuildingTextures::loadStadium() {
     fStadiumLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eStadiumSpriteData15,
-                                     eStadiumSpriteData30,
-                                     eStadiumSpriteData45,
-                                     eStadiumSpriteData60);
+        const auto& sds = eStadiumSpriteData30;
         SpriteLoader loader(fTileH, "stadium", sds,
                              nullptr, fRenderer);
         fStadium2H = loader.load(110, 110);
@@ -1195,11 +782,7 @@ void BuildingTextures::loadStadium() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eStadiumOverlays1SpriteData15,
-                                     eStadiumOverlays1SpriteData30,
-                                     eStadiumOverlays1SpriteData45,
-                                     eStadiumOverlays1SpriteData60);
+        const auto& sds = eStadiumOverlays1SpriteData30;
         SpriteLoader loader(fTileH, "stadiumOverlays1", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1246,11 +829,7 @@ void BuildingTextures::loadStadium() {
     }
     {
 
-        const auto& sds = spriteData(fTileH,
-                                     eStadiumOverlays2SpriteData15,
-                                     eStadiumOverlays2SpriteData30,
-                                     eStadiumOverlays2SpriteData45,
-                                     eStadiumOverlays2SpriteData60);
+        const auto& sds = eStadiumOverlays2SpriteData30;
         SpriteLoader loader(fTileH, "stadiumOverlays2", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1273,11 +852,7 @@ void BuildingTextures::loadFountain() {
     if(fFountainLoaded) return;
     fFountainLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eFountainSpriteData15,
-                                 eFountainSpriteData30,
-                                 eFountainSpriteData45,
-                                 eFountainSpriteData60);
+    const auto& sds = eFountainSpriteData30;
     SpriteLoader loader(fTileH, "fountain", sds,
                          nullptr, fRenderer);
 
@@ -1291,11 +866,7 @@ void BuildingTextures::loadHospital() {
     if(fHospitalLoaded) return;
     fHospitalLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eHospitalSpriteData15,
-                                 eHospitalSpriteData30,
-                                 eHospitalSpriteData45,
-                                 eHospitalSpriteData60);
+    const auto& sds = eHospitalSpriteData30;
     SpriteLoader loader(fTileH, "hospital", sds,
                          nullptr, fRenderer);
     fHospital = loader.load(8, 8);
@@ -1308,11 +879,7 @@ void BuildingTextures::loadOliveTree() {
     if(fOliveTreeLoaded) return;
     fOliveTreeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eOliveTreeSpriteData15,
-                                 eOliveTreeSpriteData30,
-                                 eOliveTreeSpriteData45,
-                                 eOliveTreeSpriteData60);
+    const auto& sds = eOliveTreeSpriteData30;
     SpriteLoader loader(fTileH, "oliveTree", sds,
                          nullptr, fRenderer);
 
@@ -1325,11 +892,7 @@ void BuildingTextures::loadVine() {
     if(fVineLoaded) return;
     fVineLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eVineSpriteData15,
-                                 eVineSpriteData30,
-                                 eVineSpriteData45,
-                                 eVineSpriteData60);
+    const auto& sds = eVineSpriteData30;
     SpriteLoader loader(fTileH, "vine", sds,
                          nullptr, fRenderer);
 
@@ -1342,11 +905,7 @@ void BuildingTextures::loadPlantation() {
     if(fPlantationLoaded) return;
     fPlantationLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 ePlantationSpriteData15,
-                                 ePlantationSpriteData30,
-                                 ePlantationSpriteData45,
-                                 ePlantationSpriteData60);
+    const auto& sds = ePlantationSpriteData30;
     SpriteLoader loader(fTileH, "plantation", sds,
                          nullptr, fRenderer);
 
@@ -1369,11 +928,7 @@ void BuildingTextures::loadHuntingLodge() {
     if(fHuntingLodgeLoaded) return;
     fHuntingLodgeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eHuntingLodgeSpriteData15,
-                                 eHuntingLodgeSpriteData30,
-                                 eHuntingLodgeSpriteData45,
-                                 eHuntingLodgeSpriteData60);
+    const auto& sds = eHuntingLodgeSpriteData30;
     SpriteLoader loader(fTileH, "huntingLodge", sds,
                          nullptr, fRenderer);
 
@@ -1388,11 +943,7 @@ void BuildingTextures::loadFishery() {
     fFisheryLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eFisherySpriteData15,
-                                     eFisherySpriteData30,
-                                     eFisherySpriteData45,
-                                     eFisherySpriteData60);
+        const auto& sds = eFisherySpriteData30;
         SpriteLoader loader(fTileH, "fishery", sds,
                              nullptr, fRenderer);
 
@@ -1401,11 +952,7 @@ void BuildingTextures::loadFishery() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eFisheryBoatBuildingSpriteData15,
-                                     eFisheryBoatBuildingSpriteData30,
-                                     eFisheryBoatBuildingSpriteData45,
-                                     eFisheryBoatBuildingSpriteData60);
+        const auto& sds = eFisheryBoatBuildingSpriteData30;
         SpriteLoader loader(fTileH, "fisheryBoatBuilding", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1417,11 +964,7 @@ void BuildingTextures::loadFishery() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eFisheryUnpackingOverlaySpriteData15,
-                                     eFisheryUnpackingOverlaySpriteData30,
-                                     eFisheryUnpackingOverlaySpriteData45,
-                                     eFisheryUnpackingOverlaySpriteData60);
+        const auto& sds = eFisheryUnpackingOverlaySpriteData30;
         SpriteLoader loader(fTileH, "fisheryUnpackingOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1449,11 +992,7 @@ void BuildingTextures::loadFisheryOverlay() {
     if(fFisheryOverlayLoaded) return;
     fFisheryOverlayLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eFisheryOverlaySpriteData15,
-                                 eFisheryOverlaySpriteData30,
-                                 eFisheryOverlaySpriteData45,
-                                 eFisheryOverlaySpriteData60);
+    const auto& sds = eFisheryOverlaySpriteData30;
     SpriteLoader loader(fTileH, "fisheryOverlay", sds,
                          &eSprAmbientOffset, fRenderer);
 
@@ -1484,11 +1023,7 @@ void BuildingTextures::loadUrchinQuay() {
     fUrchinQuayLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eUrchinQuaySpriteData15,
-                                     eUrchinQuaySpriteData30,
-                                     eUrchinQuaySpriteData45,
-                                     eUrchinQuaySpriteData60);
+        const auto& sds = eUrchinQuaySpriteData30;
         SpriteLoader loader(fTileH, "urchinQuay", sds,
                              nullptr, fRenderer);
 
@@ -1497,11 +1032,7 @@ void BuildingTextures::loadUrchinQuay() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eUrchinUnpackingOverlaySpriteData15,
-                                     eUrchinUnpackingOverlaySpriteData30,
-                                     eUrchinUnpackingOverlaySpriteData45,
-                                     eUrchinUnpackingOverlaySpriteData60);
+        const auto& sds = eUrchinUnpackingOverlaySpriteData30;
         SpriteLoader loader(fTileH, "urchinUnpackingOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1529,11 +1060,7 @@ void BuildingTextures::loadCardingShed() {
     if(fCardingShedLoaded) return;
     fCardingShedLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eCardingShedSpriteData15,
-                                 eCardingShedSpriteData30,
-                                 eCardingShedSpriteData45,
-                                 eCardingShedSpriteData60);
+    const auto& sds = eCardingShedSpriteData30;
     SpriteLoader loader(fTileH, "cardingShed", sds,
                          nullptr, fRenderer);
 
@@ -1547,11 +1074,7 @@ void BuildingTextures::loadDairy() {
     if(fDairyLoaded) return;
     fDairyLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eDairySpriteData15,
-                                 eDairySpriteData30,
-                                 eDairySpriteData45,
-                                 eDairySpriteData60);
+    const auto& sds = eDairySpriteData30;
     SpriteLoader loader(fTileH, "dairy", sds,
                          nullptr, fRenderer);
 
@@ -1565,11 +1088,7 @@ void BuildingTextures::loadGrowersLodge() {
     if(fGrowersLodgeLoaded) return;
     fGrowersLodgeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGrowersLodgeSpriteData15,
-                                 eGrowersLodgeSpriteData30,
-                                 eGrowersLodgeSpriteData45,
-                                 eGrowersLodgeSpriteData60);
+    const auto& sds = eGrowersLodgeSpriteData30;
     SpriteLoader loader(fTileH, "growersLodge", sds,
                          nullptr, fRenderer);
 
@@ -1583,11 +1102,7 @@ void BuildingTextures::loadTimberMill() {
     if(fTimberMillLoaded) return;
     fTimberMillLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eTimberMillSpriteData15,
-                                 eTimberMillSpriteData30,
-                                 eTimberMillSpriteData45,
-                                 eTimberMillSpriteData60);
+    const auto& sds = eTimberMillSpriteData30;
     SpriteLoader loader(fTileH, "timberMill", sds,
                          nullptr, fRenderer);
 
@@ -1601,11 +1116,7 @@ void BuildingTextures::loadMasonryShop() {
     if(fMasonryShopLoaded) return;
     fMasonryShopLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eMasonryShopSpriteData15,
-                                 eMasonryShopSpriteData30,
-                                 eMasonryShopSpriteData45,
-                                 eMasonryShopSpriteData60);
+    const auto& sds = eMasonryShopSpriteData30;
     SpriteLoader loader(fTileH, "masonryShop", sds,
                          nullptr, fRenderer);
 
@@ -1621,11 +1132,7 @@ void BuildingTextures::loadMasonryShopOverlays() {
     if(fMasonryShopOverlaysLoaded) return;
     fMasonryShopOverlaysLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eMasonryShopOverlaysSpriteData15,
-                                 eMasonryShopOverlaysSpriteData30,
-                                 eMasonryShopOverlaysSpriteData45,
-                                 eMasonryShopOverlaysSpriteData60);
+    const auto& sds = eMasonryShopOverlaysSpriteData30;
     SpriteLoader loader(fTileH, "masonryShopOverlays", sds,
                          &eSprAmbientOffset, fRenderer);
 
@@ -1637,11 +1144,7 @@ void BuildingTextures::loadMint() {
     if(fMintLoaded) return;
     fMintLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eMintSpriteData15,
-                                 eMintSpriteData30,
-                                 eMintSpriteData45,
-                                 eMintSpriteData60);
+    const auto& sds = eMintSpriteData30;
     SpriteLoader loader(fTileH, "mint", sds,
                          nullptr, fRenderer);
 
@@ -1655,11 +1158,7 @@ void BuildingTextures::loadFoundry() {
     if(fFoundryLoaded) return;
     fFoundryLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eFoundrySpriteData15,
-                                 eFoundrySpriteData30,
-                                 eFoundrySpriteData45,
-                                 eFoundrySpriteData60);
+    const auto& sds = eFoundrySpriteData30;
     SpriteLoader loader(fTileH, "foundry", sds,
                          nullptr, fRenderer);
 
@@ -1673,11 +1172,7 @@ void BuildingTextures::loadArtisansGuild() {
     if(fArtisansGuildLoaded) return;
     fArtisansGuildLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eArtisansGuildSpriteData15,
-                                 eArtisansGuildSpriteData30,
-                                 eArtisansGuildSpriteData45,
-                                 eArtisansGuildSpriteData60);
+    const auto& sds = eArtisansGuildSpriteData30;
     SpriteLoader loader(fTileH, "artisansGuild", sds,
                          nullptr, fRenderer);
 
@@ -1691,11 +1186,7 @@ void BuildingTextures::loadOlivePress() {
     if(fOlivePressLoaded) return;
     fOlivePressLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eOlivePressSpriteData15,
-                                 eOlivePressSpriteData30,
-                                 eOlivePressSpriteData45,
-                                 eOlivePressSpriteData60);
+    const auto& sds = eOlivePressSpriteData30;
     SpriteLoader loader(fTileH, "olivePress", sds,
                          nullptr, fRenderer);
 
@@ -1709,11 +1200,7 @@ void BuildingTextures::loadWinery() {
     if(fWineryLoaded) return;
     fWineryLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eWinerySpriteData15,
-                                 eWinerySpriteData30,
-                                 eWinerySpriteData45,
-                                 eWinerySpriteData60);
+    const auto& sds = eWinerySpriteData30;
     SpriteLoader loader(fTileH, "winery", sds,
                          nullptr, fRenderer);
 
@@ -1726,11 +1213,7 @@ void BuildingTextures::loadWinery() {
 void BuildingTextures::loadSculptureStudio() {
     if(fSculptureStudioLoaded) return;
     fSculptureStudioLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eSculptureStudioSpriteData15,
-                                 eSculptureStudioSpriteData30,
-                                 eSculptureStudioSpriteData45,
-                                 eSculptureStudioSpriteData60);
+    const auto& sds = eSculptureStudioSpriteData30;
     SpriteLoader loader(fTileH, "sculptureStudio", sds,
                          nullptr, fRenderer);
 
@@ -1745,11 +1228,7 @@ void BuildingTextures::loadTriremeWharf() {
     fTriremeWharfLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eTriremeWharfSpriteData15,
-                                     eTriremeWharfSpriteData30,
-                                     eTriremeWharfSpriteData45,
-                                     eTriremeWharfSpriteData60);
+        const auto& sds = eTriremeWharfSpriteData30;
         SpriteLoader loader(fTileH, "triremeWharf", sds,
                              nullptr, fRenderer);
 
@@ -1758,11 +1237,7 @@ void BuildingTextures::loadTriremeWharf() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eTriremeWharfOverlay1SpriteData15,
-                                     eTriremeWharfOverlay1SpriteData30,
-                                     eTriremeWharfOverlay1SpriteData45,
-                                     eTriremeWharfOverlay1SpriteData60);
+        const auto& sds = eTriremeWharfOverlay1SpriteData30;
         SpriteLoader loader(fTileH, "triremeWharfOverlay1", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1780,11 +1255,7 @@ void BuildingTextures::loadTriremeWharf() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eTriremeWharfOverlay2SpriteData15,
-                                     eTriremeWharfOverlay2SpriteData30,
-                                     eTriremeWharfOverlay2SpriteData45,
-                                     eTriremeWharfOverlay2SpriteData60);
+        const auto& sds = eTriremeWharfOverlay2SpriteData30;
         SpriteLoader loader(fTileH, "triremeWharfOverlay2", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1808,11 +1279,7 @@ void BuildingTextures::loadHorseRanch() {
     fHorseRanchLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eHorseRanchSpriteData15,
-                                     eHorseRanchSpriteData30,
-                                     eHorseRanchSpriteData45,
-                                     eHorseRanchSpriteData60);
+        const auto& sds = eHorseRanchSpriteData30;
         SpriteLoader loader(fTileH, "horseRanch", sds,
                              nullptr, fRenderer);
 
@@ -1822,11 +1289,7 @@ void BuildingTextures::loadHorseRanch() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     HorseRanchEnclosureSpriteData15,
-                                     HorseRanchEnclosureSpriteData30,
-                                     HorseRanchEnclosureSpriteData45,
-                                     HorseRanchEnclosureSpriteData60);
+        const auto& sds = HorseRanchEnclosureSpriteData30;
         SpriteLoader loader(fTileH, "horseRanchEnclosure", sds,
                              nullptr, fRenderer);
 
@@ -1838,11 +1301,7 @@ void BuildingTextures::loadArmory() {
     if(fArmoryLoaded) return;
     fArmoryLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eArmorySpriteData15,
-                                 eArmorySpriteData30,
-                                 eArmorySpriteData45,
-                                 eArmorySpriteData60);
+    const auto& sds = eArmorySpriteData30;
     SpriteLoader loader(fTileH, "armory", sds,
                          nullptr, fRenderer);
 
@@ -1856,11 +1315,7 @@ void BuildingTextures::loadGatehouseAndTower() {
     if(fGatehouseAndTowerLoaded) return;
     fGatehouseAndTowerLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGatehouseAndTowerSpriteData15,
-                                 eGatehouseAndTowerSpriteData30,
-                                 eGatehouseAndTowerSpriteData45,
-                                 eGatehouseAndTowerSpriteData60);
+    const auto& sds = eGatehouseAndTowerSpriteData30;
     SpriteLoader loader(fTileH, "gatehouseAndTower", sds,
                          nullptr, fRenderer);
 
@@ -1881,11 +1336,7 @@ void BuildingTextures::loadWall() {
     if(fWallLoaded) return;
     fWallLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eWallSpriteData15,
-                                 eWallSpriteData30,
-                                 eWallSpriteData45,
-                                 eWallSpriteData60);
+    const auto& sds = eWallSpriteData30;
     SpriteLoader loader(fTileH, "wall", sds,
                          nullptr, fRenderer);
 
@@ -1898,11 +1349,7 @@ void BuildingTextures::loadMaintenanceOffice() {
     if(fMaintenanceOfficeLoaded) return;
     fMaintenanceOfficeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eMaintenanceOfficeSpriteData15,
-                                 eMaintenanceOfficeSpriteData30,
-                                 eMaintenanceOfficeSpriteData45,
-                                 eMaintenanceOfficeSpriteData60);
+    const auto& sds = eMaintenanceOfficeSpriteData30;
     SpriteLoader loader(fTileH, "maintenanceOffice", sds,
                          nullptr, fRenderer);
 
@@ -1916,11 +1363,7 @@ void BuildingTextures::loadTaxOffice() {
     if(fTaxOfficeLoaded) return;
     fTaxOfficeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eTaxOfficeSpriteData15,
-                                 eTaxOfficeSpriteData30,
-                                 eTaxOfficeSpriteData45,
-                                 eTaxOfficeSpriteData60);
+    const auto& sds = eTaxOfficeSpriteData30;
     SpriteLoader loader(fTileH, "taxOffice", sds,
                          nullptr, fRenderer);
 
@@ -1935,11 +1378,7 @@ void BuildingTextures::loadWatchpost() {
     fWatchpostLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eWatchpostSpriteData15,
-                                     eWatchpostSpriteData30,
-                                     eWatchpostSpriteData45,
-                                     eWatchpostSpriteData60);
+        const auto& sds = eWatchpostSpriteData30;
         SpriteLoader loader(fTileH, "watchpost", sds,
                              nullptr, fRenderer);
 
@@ -1947,11 +1386,7 @@ void BuildingTextures::loadWatchpost() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eWatchPostOverlaySpriteData15,
-                                     eWatchPostOverlaySpriteData30,
-                                     eWatchPostOverlaySpriteData45,
-                                     eWatchPostOverlaySpriteData60);
+        const auto& sds = eWatchPostOverlaySpriteData30;
         SpriteLoader loader(fTileH, "watchPostOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -1965,11 +1400,7 @@ void BuildingTextures::loadRoadblock() {
     if(fRoadblockLoaded) return;
     fRoadblockLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eRoadblockSpriteData15,
-                                 eRoadblockSpriteData30,
-                                 eRoadblockSpriteData45,
-                                 eRoadblockSpriteData60);
+    const auto& sds = eRoadblockSpriteData30;
     SpriteLoader loader(fTileH, "roadblock", sds,
                          nullptr, fRenderer);
 
@@ -1980,11 +1411,7 @@ void BuildingTextures::loadBridge() {
     if(fBridgeLoaded) return;
     fBridgeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eBridgeSpriteData15,
-                                 eBridgeSpriteData30,
-                                 eBridgeSpriteData45,
-                                 eBridgeSpriteData60);
+    const auto& sds = eBridgeSpriteData30;
     SpriteLoader loader(fTileH, "bridge", sds,
                          nullptr, fRenderer);
 
@@ -1997,11 +1424,7 @@ void BuildingTextures::loadPalaceTiles() {
     if(fPalaceTilesLoaded) return;
     fPalaceTilesLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 ePalaceTilesSpriteData15,
-                                 ePalaceTilesSpriteData30,
-                                 ePalaceTilesSpriteData45,
-                                 ePalaceTilesSpriteData60);
+    const auto& sds = ePalaceTilesSpriteData30;
     SpriteLoader loader(fTileH, "palaceTiles", sds,
                          nullptr, fRenderer);
 
@@ -2016,11 +1439,7 @@ void BuildingTextures::loadPalace() {
     loadPalaceTiles();
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eMun_PalaceSpriteData15,
-                                     eMun_PalaceSpriteData30,
-                                     eMun_PalaceSpriteData45,
-                                     eMun_PalaceSpriteData60);
+        const auto& sds = eMun_PalaceSpriteData30;
         SpriteLoader loader(fTileH, "mun_Palace", sds,
                              nullptr, fRenderer);
 
@@ -2031,11 +1450,7 @@ void BuildingTextures::loadPalace() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePalaceOverlaySpriteData15,
-                                     ePalaceOverlaySpriteData30,
-                                     ePalaceOverlaySpriteData45,
-                                     ePalaceOverlaySpriteData60);
+        const auto& sds = ePalaceOverlaySpriteData30;
         SpriteLoader loader(fTileH, "palaceOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -2052,11 +1467,7 @@ void BuildingTextures::loadSanctuary() {
     fSanctuaryLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusSanctuaryElementsSpriteData15,
-                                     eZeusSanctuaryElementsSpriteData30,
-                                     eZeusSanctuaryElementsSpriteData45,
-                                     eZeusSanctuaryElementsSpriteData60);
+        const auto& sds = eZeusSanctuaryElementsSpriteData30;
         SpriteLoader loader(fTileH, "zeusSanctuaryElements", sds,
                              nullptr, fRenderer);
 
@@ -2100,11 +1511,7 @@ void BuildingTextures::loadSanctuary() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePoseidonStatues1SpriteData15,
-                                     ePoseidonStatues1SpriteData30,
-                                     ePoseidonStatues1SpriteData45,
-                                     ePoseidonStatues1SpriteData60);
+        const auto& sds = ePoseidonStatues1SpriteData30;
         SpriteLoader loader(fTileH, "poseidonStatues1", sds,
                              nullptr, fRenderer);
 
@@ -2119,11 +1526,7 @@ void BuildingTextures::loadSanctuary() {
         loadStatues(fAtlasStatues);
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePoseidonStatues2SpriteData15,
-                                     ePoseidonStatues2SpriteData30,
-                                     ePoseidonStatues2SpriteData45,
-                                     ePoseidonStatues2SpriteData60);
+        const auto& sds = ePoseidonStatues2SpriteData30;
         SpriteLoader loader(fTileH, "poseidonStatues2", sds,
                              nullptr, fRenderer);
 
@@ -2137,11 +1540,7 @@ void BuildingTextures::loadSanctuary() {
         loadStatues(fPoseidonStatues);
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eSanctuaryFireSpriteData15,
-                                     eSanctuaryFireSpriteData30,
-                                     eSanctuaryFireSpriteData45,
-                                     eSanctuaryFireSpriteData60);
+        const auto& sds = eSanctuaryFireSpriteData30;
         SpriteLoader loader(fTileH, "sanctuaryFire", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -2152,11 +1551,7 @@ void BuildingTextures::loadSanctuary() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eSanctuaryOverlaySpriteData15,
-                                     eSanctuaryOverlaySpriteData30,
-                                     eSanctuaryOverlaySpriteData45,
-                                     eSanctuaryOverlaySpriteData60);
+        const auto& sds = eSanctuaryOverlaySpriteData30;
         SpriteLoader loader(fTileH, "sanctuaryOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -2168,11 +1563,7 @@ void BuildingTextures::loadSanctuary() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eBlankStatueSpriteData15,
-                                     eBlankStatueSpriteData30,
-                                     eBlankStatueSpriteData45,
-                                     eBlankStatueSpriteData60);
+        const auto& sds = eBlankStatueSpriteData30;
         SpriteLoader loader(fTileH, "blankStatue", sds,
                              nullptr, fRenderer);
 
@@ -2180,11 +1571,7 @@ void BuildingTextures::loadSanctuary() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusSanctuary1SpriteData15,
-                                     eZeusSanctuary1SpriteData30,
-                                     eZeusSanctuary1SpriteData45,
-                                     eZeusSanctuary1SpriteData60);
+        const auto& sds = eZeusSanctuary1SpriteData30;
         SpriteLoader loader(fTileH, "zeusSanctuary1", sds,
                              nullptr, fRenderer);
 
@@ -2196,11 +1583,7 @@ void BuildingTextures::loadSanctuary() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusSanctuary2SpriteData15,
-                                     eZeusSanctuary2SpriteData30,
-                                     eZeusSanctuary2SpriteData45,
-                                     eZeusSanctuary2SpriteData60);
+        const auto& sds = eZeusSanctuary2SpriteData30;
         SpriteLoader loader(fTileH, "zeusSanctuary2", sds,
                              nullptr, fRenderer);
 
@@ -2217,11 +1600,7 @@ void BuildingTextures::loadZeusSanctuary() {
 
     if(fSanctuary.empty()) loadSanctuary();
 
-    const auto& sds = spriteData(fTileH,
-                                 eZeusSanctuary3SpriteData15,
-                                 eZeusSanctuary3SpriteData30,
-                                 eZeusSanctuary3SpriteData45,
-                                 eZeusSanctuary3SpriteData60);
+    const auto& sds = eZeusSanctuary3SpriteData30;
     SpriteLoader loader(fTileH, "zeusSanctuary3", sds,
                          nullptr, fRenderer);
 
@@ -2246,11 +1625,7 @@ void BuildingTextures::loadHerosHall() {
     fHerosHallLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusHerosHallSpriteData15,
-                                     eZeusHerosHallSpriteData30,
-                                     eZeusHerosHallSpriteData45,
-                                     eZeusHerosHallSpriteData60);
+        const auto& sds = eZeusHerosHallSpriteData30;
         SpriteLoader loader(fTileH, "zeusHerosHall", sds,
                              nullptr, fRenderer);
 
@@ -2260,11 +1635,7 @@ void BuildingTextures::loadHerosHall() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePoseidonHerosHallSpriteData15,
-                                     ePoseidonHerosHallSpriteData30,
-                                     ePoseidonHerosHallSpriteData45,
-                                     ePoseidonHerosHallSpriteData60);
+        const auto& sds = ePoseidonHerosHallSpriteData30;
         SpriteLoader loader(fTileH, "poseidonHerosHall", sds,
                              nullptr, fRenderer);
 
@@ -2278,11 +1649,7 @@ void BuildingTextures::loadWaitingOverlay() {
     if(fWaitingOverlayLoaded) return;
     fWaitingOverlayLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eWaitingOverlaySpriteData15,
-                                 eWaitingOverlaySpriteData30,
-                                 eWaitingOverlaySpriteData45,
-                                 eWaitingOverlaySpriteData60);
+    const auto& sds = eWaitingOverlaySpriteData30;
     SpriteLoader loader(fTileH, "waitingOverlay", sds,
                          &eSprAmbientOffset, fRenderer);
 
@@ -2294,11 +1661,7 @@ void BuildingTextures::loadOrangeTendersLodge() {
     if(fOrangeTendersLodgeLoaded) return;
     fOrangeTendersLodgeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eOrangeTendersLodgeSpriteData15,
-                                 eOrangeTendersLodgeSpriteData30,
-                                 eOrangeTendersLodgeSpriteData45,
-                                 eOrangeTendersLodgeSpriteData60);
+    const auto& sds = eOrangeTendersLodgeSpriteData30;
     SpriteLoader loader(fTileH, "orangeTendersLodge", sds,
                          nullptr, fRenderer);
 
@@ -2313,11 +1676,7 @@ void BuildingTextures::loadWaterPark() {
     if(fWaterParkLoaded) return;
     fWaterParkLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eWaterParkSpriteData15,
-                                 eWaterParkSpriteData30,
-                                 eWaterParkSpriteData45,
-                                 eWaterParkSpriteData60);
+    const auto& sds = eWaterParkSpriteData30;
     SpriteLoader loader(fTileH, "waterPark", sds,
                          nullptr, fRenderer);
 
@@ -2345,11 +1704,7 @@ void BuildingTextures::loadBaths() {
     if(fBathsLoaded) return;
     fBathsLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eBathsSpriteData15,
-                                 eBathsSpriteData30,
-                                 eBathsSpriteData45,
-                                 eBathsSpriteData60);
+    const auto& sds = eBathsSpriteData30;
     SpriteLoader loader(fTileH, "baths", sds,
                          nullptr, fRenderer);
 
@@ -2364,11 +1719,7 @@ void BuildingTextures::loadShellGarden() {
     fShellGardenLoaded = true;
 
 
-    const auto& sds = spriteData(fTileH,
-                                 eShellGardenSpriteData15,
-                                 eShellGardenSpriteData30,
-                                 eShellGardenSpriteData45,
-                                 eShellGardenSpriteData60);
+    const auto& sds = eShellGardenSpriteData30;
     SpriteLoader loader(fTileH, "shellGarden", sds,
                          nullptr, fRenderer);
 
@@ -2379,11 +1730,7 @@ void BuildingTextures::loadOrrery() {
     if(fOrreryLoaded) return;
     fOrreryLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eOrrerySpriteData15,
-                                 eOrrerySpriteData30,
-                                 eOrrerySpriteData45,
-                                 eOrrerySpriteData60);
+    const auto& sds = eOrrerySpriteData30;
     SpriteLoader loader(fTileH, "orrery", sds,
                          nullptr, fRenderer);
 
@@ -2394,11 +1741,7 @@ void BuildingTextures::loadDolphinSculpture() {
     if(fDolphinSculptureLoaded) return;
     fDolphinSculptureLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eDolphinSculptureSpriteData15,
-                                 eDolphinSculptureSpriteData30,
-                                 eDolphinSculptureSpriteData45,
-                                 eDolphinSculptureSpriteData60);
+    const auto& sds = eDolphinSculptureSpriteData30;
     SpriteLoader loader(fTileH, "dolphinSculpture", sds,
                          nullptr, fRenderer);
 
@@ -2409,11 +1752,7 @@ void BuildingTextures::loadStoneCircle() {
     if(fStoneCircleLoaded) return;
     fStoneCircleLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eStoneCircleSpriteData15,
-                                 eStoneCircleSpriteData30,
-                                 eStoneCircleSpriteData45,
-                                 eStoneCircleSpriteData60);
+    const auto& sds = eStoneCircleSpriteData30;
     SpriteLoader loader(fTileH, "stoneCircle", sds,
                          nullptr, fRenderer);
 
@@ -2427,11 +1766,7 @@ void BuildingTextures::loadSpring() {
     if(fSpringLoaded) return;
     fSpringLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eSpringSpriteData15,
-                                 eSpringSpriteData30,
-                                 eSpringSpriteData45,
-                                 eSpringSpriteData60);
+    const auto& sds = eSpringSpriteData30;
     SpriteLoader loader(fTileH, "spring", sds,
                          nullptr, fRenderer);
 
@@ -2444,11 +1779,7 @@ void BuildingTextures::loadTopiary() {
     if(fTopiaryLoaded) return;
     fTopiaryLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eTopiarySpriteData15,
-                                 eTopiarySpriteData30,
-                                 eTopiarySpriteData45,
-                                 eTopiarySpriteData60);
+    const auto& sds = eTopiarySpriteData30;
     SpriteLoader loader(fTileH, "topiary", sds,
                          nullptr, fRenderer);
 
@@ -2459,11 +1790,7 @@ void BuildingTextures::loadSundial() {
     if(fSundialLoaded) return;
     fSundialLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eSundialSpriteData15,
-                                 eSundialSpriteData30,
-                                 eSundialSpriteData45,
-                                 eSundialSpriteData60);
+    const auto& sds = eSundialSpriteData30;
     SpriteLoader loader(fTileH, "sundial", sds,
                          nullptr, fRenderer);
 
@@ -2474,11 +1801,7 @@ void BuildingTextures::loadTallObelisk() {
     if(fTallObeliskLoaded) return;
     fTallObeliskLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eTallObeliskSpriteData15,
-                                 eTallObeliskSpriteData30,
-                                 eTallObeliskSpriteData45,
-                                 eTallObeliskSpriteData60);
+    const auto& sds = eTallObeliskSpriteData30;
     SpriteLoader loader(fTileH, "tallObelisk", sds,
                          nullptr, fRenderer);
 
@@ -2489,11 +1812,7 @@ void BuildingTextures::loadAvenue() {
     if(fAvenueLoaded) return;
     fAvenueLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eAvenueSpriteData15,
-                                 eAvenueSpriteData30,
-                                 eAvenueSpriteData45,
-                                 eAvenueSpriteData60);
+    const auto& sds = eAvenueSpriteData30;
     SpriteLoader loader(fTileH, "avenue", sds,
                          nullptr, fRenderer);
 
@@ -2531,11 +1850,7 @@ void BuildingTextures::loadColumns() {
     if(fColumnsLoaded) return;
     fColumnsLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eColumnsSpriteData15,
-                                 eColumnsSpriteData30,
-                                 eColumnsSpriteData45,
-                                 eColumnsSpriteData60);
+    const auto& sds = eColumnsSpriteData30;
     SpriteLoader loader(fTileH, "columns", sds,
                          nullptr, fRenderer);
 
@@ -2551,11 +1866,7 @@ void BuildingTextures::loadCommemorative() {
     if(fCommemorativeLoaded) return;
     fCommemorativeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eCommemorativeSpriteData15,
-                                 eCommemorativeSpriteData30,
-                                 eCommemorativeSpriteData45,
-                                 eCommemorativeSpriteData60);
+    const auto& sds = eCommemorativeSpriteData30;
     SpriteLoader loader(fTileH, "commemorative", sds,
                          nullptr, fRenderer);
 
@@ -2569,11 +1880,7 @@ void BuildingTextures::loadFishPond() {
     fFishPondLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eFishPondSpriteData15,
-                                     eFishPondSpriteData30,
-                                     eFishPondSpriteData45,
-                                     eFishPondSpriteData60);
+        const auto& sds = eFishPondSpriteData30;
         SpriteLoader loader(fTileH, "fishPond", sds,
                              nullptr, fRenderer);
 
@@ -2581,11 +1888,7 @@ void BuildingTextures::loadFishPond() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eFishPondOverlaySpriteData15,
-                                     eFishPondOverlaySpriteData30,
-                                     eFishPondOverlaySpriteData45,
-                                     eFishPondOverlaySpriteData60);
+        const auto& sds = eFishPondOverlaySpriteData30;
         SpriteLoader loader(fTileH, "fishPondOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -2599,11 +1902,7 @@ void BuildingTextures::loadHedgeMaze() {
     if(fHedgeMazeLoaded) return;
     fHedgeMazeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eHedgeMazeSpriteData15,
-                                 eHedgeMazeSpriteData30,
-                                 eHedgeMazeSpriteData45,
-                                 eHedgeMazeSpriteData60);
+    const auto& sds = eHedgeMazeSpriteData30;
     SpriteLoader loader(fTileH, "hedgeMaze", sds,
                          nullptr, fRenderer);
 
@@ -2614,11 +1913,7 @@ void BuildingTextures::loadGazebo() {
     if(fGazeboLoaded) return;
     fGazeboLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGazeboSpriteData15,
-                                 eGazeboSpriteData30,
-                                 eGazeboSpriteData45,
-                                 eGazeboSpriteData60);
+    const auto& sds = eGazeboSpriteData30;
     SpriteLoader loader(fTileH, "gazebo", sds,
                          nullptr, fRenderer);
 
@@ -2629,11 +1924,7 @@ void BuildingTextures::loadFlowerGarden() {
     if(fFlowerGardenLoaded) return;
     fFlowerGardenLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eFlowerGardenSpriteData15,
-                                 eFlowerGardenSpriteData30,
-                                 eFlowerGardenSpriteData45,
-                                 eFlowerGardenSpriteData60);
+    const auto& sds = eFlowerGardenSpriteData30;
     SpriteLoader loader(fTileH, "flowerGarden", sds,
                          nullptr, fRenderer);
 
@@ -2644,11 +1935,7 @@ void BuildingTextures::loadBench() {
     if(fBenchLoaded) return;
     fBenchLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eBenchSpriteData15,
-                                 eBenchSpriteData30,
-                                 eBenchSpriteData45,
-                                 eBenchSpriteData60);
+    const auto& sds = eBenchSpriteData30;
     SpriteLoader loader(fTileH, "bench", sds,
                          nullptr, fRenderer);
 
@@ -2659,11 +1946,7 @@ void BuildingTextures::loadPark() {
     if(fParkLoaded) return;
     fParkLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eParkSpriteData15,
-                                 eParkSpriteData30,
-                                 eParkSpriteData45,
-                                 eParkSpriteData60);
+    const auto& sds = eParkSpriteData30;
     SpriteLoader loader(fTileH, "park", sds,
                          nullptr, fRenderer);
 
@@ -2680,11 +1963,7 @@ void BuildingTextures::loadHippodrome() {
     if(fHippodromeLoaded) return;
     fHippodromeLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eHippodromeSpriteData15,
-                                 eHippodromeSpriteData30,
-                                 eHippodromeSpriteData45,
-                                 eHippodromeSpriteData60);
+    const auto& sds = eHippodromeSpriteData30;
     SpriteLoader loader(fTileH, "hippodrome", sds,
                          nullptr, fRenderer);
 
@@ -2697,11 +1976,7 @@ void BuildingTextures::loadBirdBath() {
     if(fBirdBathLoaded) return;
     fBirdBathLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eBirdBathSpriteData15,
-                                 eBirdBathSpriteData30,
-                                 eBirdBathSpriteData45,
-                                 eBirdBathSpriteData60);
+    const auto& sds = eBirdBathSpriteData30;
     SpriteLoader loader(fTileH, "birdBath", sds,
                          nullptr, fRenderer);
 
@@ -2715,11 +1990,7 @@ void BuildingTextures::loadShortObelisk() {
     if(fShortObeliskLoaded) return;
     fShortObeliskLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eShortObeliskSpriteData15,
-                                 eShortObeliskSpriteData30,
-                                 eShortObeliskSpriteData45,
-                                 eShortObeliskSpriteData60);
+    const auto& sds = eShortObeliskSpriteData30;
     SpriteLoader loader(fTileH, "shortObelisk", sds,
                          nullptr, fRenderer);
 
@@ -2729,10 +2000,7 @@ void BuildingTextures::loadShortObelisk() {
 void BuildingTextures::loadZeusMonuments() {
     if(fZeusMonumentsLoaded) return;
     fZeusMonumentsLoaded = true;
-    loadGodMonuments(eZeusStatueSpriteData15,
-                     eZeusStatueSpriteData30,
-                     eZeusStatueSpriteData45,
-                     eZeusStatueSpriteData60,
+    loadGodMonuments(eZeusStatueSpriteData30,
                      "zeusStatue",
                      fZeusMonuments);
 }
@@ -2740,10 +2008,7 @@ void BuildingTextures::loadZeusMonuments() {
 void BuildingTextures::loadPoseidonMonuments() {
     if(fPoseidonMonumentsLoaded) return;
     fPoseidonMonumentsLoaded = true;
-    loadGodMonuments(ePoseidonStatueSpriteData15,
-                     ePoseidonStatueSpriteData30,
-                     ePoseidonStatueSpriteData45,
-                     ePoseidonStatueSpriteData60,
+    loadGodMonuments(ePoseidonStatueSpriteData30,
                      "poseidonStatue",
                      fPoseidonMonuments);
 }
@@ -2751,10 +2016,7 @@ void BuildingTextures::loadPoseidonMonuments() {
 void BuildingTextures::loadHadesMonuments() {
     if(fHadesMonumentsLoaded) return;
     fHadesMonumentsLoaded = true;
-    loadGodMonuments(eHadesStatueSpriteData15,
-                     eHadesStatueSpriteData30,
-                     eHadesStatueSpriteData45,
-                     eHadesStatueSpriteData60,
+    loadGodMonuments(eHadesStatueSpriteData30,
                      "hadesStatue",
                      fHadesMonuments);
 }
@@ -2762,10 +2024,7 @@ void BuildingTextures::loadHadesMonuments() {
 void BuildingTextures::loadDemeterMonuments() {
     if(fDemeterMonumentsLoaded) return;
     fDemeterMonumentsLoaded = true;
-    loadGodMonuments(eDemeterStatueSpriteData15,
-                     eDemeterStatueSpriteData30,
-                     eDemeterStatueSpriteData45,
-                     eDemeterStatueSpriteData60,
+    loadGodMonuments(eDemeterStatueSpriteData30,
                      "demeterStatue",
                      fDemeterMonuments);
 }
@@ -2773,10 +2032,7 @@ void BuildingTextures::loadDemeterMonuments() {
 void BuildingTextures::loadAthenaMonuments() {
     if(fAthenaMonumentsLoaded) return;
     fAthenaMonumentsLoaded = true;
-    loadGodMonuments(eAthenaStatueSpriteData15,
-                     eAthenaStatueSpriteData30,
-                     eAthenaStatueSpriteData45,
-                     eAthenaStatueSpriteData60,
+    loadGodMonuments(eAthenaStatueSpriteData30,
                      "athenaStatue",
                      fAthenaMonuments);
 }
@@ -2784,10 +2040,7 @@ void BuildingTextures::loadAthenaMonuments() {
 void BuildingTextures::loadArtemisMonuments() {
     if(fArtemisMonumentsLoaded) return;
     fArtemisMonumentsLoaded = true;
-    loadGodMonuments(eArtemisStatueSpriteData15,
-                     eArtemisStatueSpriteData30,
-                     eArtemisStatueSpriteData45,
-                     eArtemisStatueSpriteData60,
+    loadGodMonuments(eArtemisStatueSpriteData30,
                      "artemisStatue",
                      fArtemisMonuments);
 }
@@ -2795,10 +2048,7 @@ void BuildingTextures::loadArtemisMonuments() {
 void BuildingTextures::loadApolloMonuments() {
     if(fApolloMonumentsLoaded) return;
     fApolloMonumentsLoaded = true;
-    loadGodMonuments(eApolloStatueSpriteData15,
-                     eApolloStatueSpriteData30,
-                     eApolloStatueSpriteData45,
-                     eApolloStatueSpriteData60,
+    loadGodMonuments(eApolloStatueSpriteData30,
                      "apolloStatue",
                      fApolloMonuments);
 }
@@ -2806,10 +2056,7 @@ void BuildingTextures::loadApolloMonuments() {
 void BuildingTextures::loadAresMonuments() {
     if(fAresMonumentsLoaded) return;
     fAresMonumentsLoaded = true;
-    loadGodMonuments(eAresStatueSpriteData15,
-                     eAresStatueSpriteData30,
-                     eAresStatueSpriteData45,
-                     eAresStatueSpriteData60,
+    loadGodMonuments(eAresStatueSpriteData30,
                      "aresStatue",
                      fAresMonuments);
 }
@@ -2817,10 +2064,7 @@ void BuildingTextures::loadAresMonuments() {
 void BuildingTextures::loadHephaestusMonuments() {
     if(fHephaestusMonumentsLoaded) return;
     fHephaestusMonumentsLoaded = true;
-    loadGodMonuments(eHephaestusStatueSpriteData15,
-                     eHephaestusStatueSpriteData30,
-                     eHephaestusStatueSpriteData45,
-                     eHephaestusStatueSpriteData60,
+    loadGodMonuments(eHephaestusStatueSpriteData30,
                      "hephaestusStatue",
                      fHephaestusMonuments);
 }
@@ -2828,10 +2072,7 @@ void BuildingTextures::loadHephaestusMonuments() {
 void BuildingTextures::loadAphroditeMonuments() {
     if(fAphroditeMonumentsLoaded) return;
     fAphroditeMonumentsLoaded = true;
-    loadGodMonuments(eAphroditeStatueSpriteData15,
-                     eAphroditeStatueSpriteData30,
-                     eAphroditeStatueSpriteData45,
-                     eAphroditeStatueSpriteData60,
+    loadGodMonuments(eAphroditeStatueSpriteData30,
                      "aphroditeStatue",
                      fAphroditeMonuments);
 }
@@ -2839,10 +2080,7 @@ void BuildingTextures::loadAphroditeMonuments() {
 void BuildingTextures::loadHermesMonuments() {
     if(fHermesMonumentsLoaded) return;
     fHermesMonumentsLoaded = true;
-    loadGodMonuments(eHermesStatueSpriteData15,
-                     eHermesStatueSpriteData30,
-                     eHermesStatueSpriteData45,
-                     eHermesStatueSpriteData60,
+    loadGodMonuments(eHermesStatueSpriteData30,
                      "hermesStatue",
                      fHermesMonuments);
 }
@@ -2850,10 +2088,7 @@ void BuildingTextures::loadHermesMonuments() {
 void BuildingTextures::loadDionysusMonuments() {
     if(fDionysusMonumentsLoaded) return;
     fDionysusMonumentsLoaded = true;
-    loadGodMonuments(eDionysusStatueSpriteData15,
-                     eDionysusStatueSpriteData30,
-                     eDionysusStatueSpriteData45,
-                     eDionysusStatueSpriteData60,
+    loadGodMonuments(eDionysusStatueSpriteData30,
                      "dionysusStatue",
                      fDionysusMonuments);
 }
@@ -2861,10 +2096,7 @@ void BuildingTextures::loadDionysusMonuments() {
 void BuildingTextures::loadAtlasMonuments() {
     if(fAtlasMonumentsLoaded) return;
     fAtlasMonumentsLoaded = true;
-    loadGodMonuments(eAtlasStatueSpriteData15,
-                     eAtlasStatueSpriteData30,
-                     eAtlasStatueSpriteData45,
-                     eAtlasStatueSpriteData60,
+    loadGodMonuments(eAtlasStatueSpriteData30,
                      "atlasStatue",
                      fAtlasMonuments);
 }
@@ -2872,10 +2104,7 @@ void BuildingTextures::loadAtlasMonuments() {
 void BuildingTextures::loadHeraMonuments() {
     if(fHeraMonumentsLoaded) return;
     fHeraMonumentsLoaded = true;
-    loadGodMonuments(eHeraStatueSpriteData15,
-                     eHeraStatueSpriteData30,
-                     eHeraStatueSpriteData45,
-                     eHeraStatueSpriteData60,
+    loadGodMonuments(eHeraStatueSpriteData30,
                      "heraStatue",
                      fHeraMonuments);
 }
@@ -2885,11 +2114,7 @@ void BuildingTextures::loadAgora() {
     fAgoraLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eAgoraSpriteData15,
-                                     eAgoraSpriteData30,
-                                     eAgoraSpriteData45,
-                                     eAgoraSpriteData60);
+        const auto& sds = eAgoraSpriteData30;
         SpriteLoader loader(fTileH, "agora", sds,
                              nullptr, fRenderer);
 
@@ -2914,11 +2139,7 @@ void BuildingTextures::loadAgora() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eVendorOverlaysSpriteData15,
-                                     eVendorOverlaysSpriteData30,
-                                     eVendorOverlaysSpriteData45,
-                                     eVendorOverlaysSpriteData60);
+        const auto& sds = eVendorOverlaysSpriteData30;
         SpriteLoader loader(fTileH, "vendorOverlays", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -2948,11 +2169,7 @@ void BuildingTextures::loadChariotVendor() {
     if(fChariotVendorLoaded) return;
     fChariotVendorLoaded = true;
     {
-        const auto& sds = spriteData(fTileH,
-                                     eChariotVendorSpriteData15,
-                                     eChariotVendorSpriteData30,
-                                     eChariotVendorSpriteData45,
-                                     eChariotVendorSpriteData60);
+        const auto& sds = eChariotVendorSpriteData30;
         SpriteLoader loader(fTileH, "chariotVendor", sds,
                              nullptr, fRenderer);
 
@@ -2960,11 +2177,7 @@ void BuildingTextures::loadChariotVendor() {
         fChariotVendorOverlay = loader.load(49, 50);
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eChariotVendorOverlaySpriteData15,
-                                     eChariotVendorOverlaySpriteData30,
-                                     eChariotVendorOverlaySpriteData45,
-                                     eChariotVendorOverlaySpriteData60);
+        const auto& sds = eChariotVendorOverlaySpriteData30;
         SpriteLoader loader(fTileH, "chariotVendorOverlay", sds,
                              &ePoseidonImpsOffset, fRenderer);
 
@@ -2977,11 +2190,7 @@ void BuildingTextures::loadChariotVendor() {
 void BuildingTextures::loadWineVendor() {
     if(fWineVendorLoaded) return;
     fWineVendorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eWineVendorOverlaySpriteData15,
-                                 eWineVendorOverlaySpriteData30,
-                                 eWineVendorOverlaySpriteData45,
-                                 eWineVendorOverlaySpriteData60);
+    const auto& sds = eWineVendorOverlaySpriteData30;
     SpriteLoader loader(fTileH, "wineVendorOverlay", sds,
                          &eSprAmbientOffset, fRenderer);
 
@@ -2994,11 +2203,7 @@ void BuildingTextures::loadGranary() {
     if(fGranaryLoaded) return;
     fGranaryLoaded = true;
 
-    const auto& sds = spriteData(fTileH,
-                                 eGranarySpriteData15,
-                                 eGranarySpriteData30,
-                                 eGranarySpriteData45,
-                                 eGranarySpriteData60);
+    const auto& sds = eGranarySpriteData30;
     SpriteLoader loader(fTileH, "granary", sds,
                          nullptr, fRenderer);
 
@@ -3023,11 +2228,7 @@ void BuildingTextures::loadPier() {
     fPierLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePier1SpriteData15,
-                                     ePier1SpriteData30,
-                                     ePier1SpriteData45,
-                                     ePier1SpriteData60);
+        const auto& sds = ePier1SpriteData30;
         SpriteLoader loader(fTileH, "pier1", sds,
                              nullptr, fRenderer);
 
@@ -3037,11 +2238,7 @@ void BuildingTextures::loadPier() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePier2SpriteData15,
-                                     ePier2SpriteData30,
-                                     ePier2SpriteData45,
-                                     ePier2SpriteData60);
+        const auto& sds = ePier2SpriteData30;
         SpriteLoader loader(fTileH, "pier2", sds,
                              nullptr, fRenderer);
 
@@ -3050,7 +2247,7 @@ void BuildingTextures::loadPier() {
         fPier2->setOffset(-88, 90);
     }
 
-    if(fTileH == 30) {
+    {
         auto loadFrame = [&](const int i) -> std::shared_ptr<Texture> {
             char buf[64];
             snprintf(buf, sizeof(buf), "SprAmbient_%05d.png", i);
@@ -3127,11 +2324,7 @@ void BuildingTextures::loadTradingPost() {
     fTradingPostLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eTradingPostOverlaySpriteData15,
-                                     eTradingPostOverlaySpriteData30,
-                                     eTradingPostOverlaySpriteData45,
-                                     eTradingPostOverlaySpriteData60);
+        const auto& sds = eTradingPostOverlaySpriteData30;
         SpriteLoader loader(fTileH, "tradingPostOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -3140,11 +2333,7 @@ void BuildingTextures::loadTradingPost() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eTradingPostSpriteData15,
-                                     eTradingPostSpriteData30,
-                                     eTradingPostSpriteData45,
-                                     eTradingPostSpriteData60);
+        const auto& sds = eTradingPostSpriteData30;
         SpriteLoader loader(fTileH, "tradingPost", sds,
                              nullptr, fRenderer);
 
@@ -3158,11 +2347,7 @@ void BuildingTextures::load() {
     fLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eWarehouseOverlaySpriteData15,
-                                     eWarehouseOverlaySpriteData30,
-                                     eWarehouseOverlaySpriteData45,
-                                     eWarehouseOverlaySpriteData60);
+        const auto& sds = eWarehouseOverlaySpriteData30;
         SpriteLoader loader(fTileH, "warehouseOverlay", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -3171,11 +2356,7 @@ void BuildingTextures::load() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eFishSpriteData15,
-                                     eFishSpriteData30,
-                                     eFishSpriteData45,
-                                     eFishSpriteData60);
+        const auto& sds = eFishSpriteData30;
         SpriteLoader loader(fTileH, "fish", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -3184,11 +2365,7 @@ void BuildingTextures::load() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eUrchinSpriteData15,
-                                     eUrchinSpriteData30,
-                                     eUrchinSpriteData45,
-                                     eUrchinSpriteData60);
+        const auto& sds = eUrchinSpriteData30;
         SpriteLoader loader(fTileH, "urchin", sds,
                              &eSprAmbientOffset, fRenderer);
 
@@ -3198,11 +2375,7 @@ void BuildingTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eStor_baysSpriteData15,
-                                     eStor_baysSpriteData30,
-                                     eStor_baysSpriteData45,
-                                     eStor_baysSpriteData60);
+        const auto& sds = eStor_baysSpriteData30;
         SpriteLoader loader(fTileH, "stor_bays", sds,
                              nullptr, fRenderer);
 
@@ -3286,11 +2459,7 @@ void BuildingTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eWarehouseSpriteData15,
-                                     eWarehouseSpriteData30,
-                                     eWarehouseSpriteData45,
-                                     eWarehouseSpriteData60);
+        const auto& sds = eWarehouseSpriteData30;
         SpriteLoader loader(fTileH, "warehouse", sds,
                              nullptr, fRenderer);
 
@@ -3299,11 +2468,7 @@ void BuildingTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eStorageSpriteData15,
-                                     eStorageSpriteData30,
-                                     eStorageSpriteData45,
-                                     eStorageSpriteData60);
+        const auto& sds = eStorageSpriteData30;
         SpriteLoader loader(fTileH, "storage", sds,
                              nullptr, fRenderer);
 
@@ -3341,11 +2506,7 @@ void BuildingTextures::load() {
 
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterfaceSpritesSpriteData15,
-                                     eInterfaceSpritesSpriteData30,
-                                     eInterfaceSpritesSpriteData45,
-                                     eInterfaceSpritesSpriteData60);
+        const auto& sds = eInterfaceSpritesSpriteData30;
         SpriteLoader loader(fTileH, "interfaceSprites", sds,
                              nullptr, fRenderer);
 
@@ -3384,11 +2545,7 @@ void BuildingTextures::load() {
 
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eDeerTopSpriteData15,
-                                     eDeerTopSpriteData30,
-                                     eDeerTopSpriteData45,
-                                     eDeerTopSpriteData60);
+        const auto& sds = eDeerTopSpriteData30;
         SpriteLoader loader(fTileH, "deerTop", sds,
                              nullptr, fRenderer);
 
@@ -3397,11 +2554,7 @@ void BuildingTextures::load() {
 
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eSuppliesSpriteData15,
-                                     eSuppliesSpriteData30,
-                                     eSuppliesSpriteData45,
-                                     eSuppliesSpriteData60);
+        const auto& sds = eSuppliesSpriteData30;
         SpriteLoader loader(fTileH, "supplies", sds,
                              nullptr, fRenderer);
 
@@ -3425,14 +2578,10 @@ void BuildingTextures::load() {
 }
 
 void BuildingTextures::loadGodMonuments(
-        const std::vector<eSpriteData>& sd15,
-        const std::vector<eSpriteData>& sd30,
-        const std::vector<eSpriteData>& sd45,
-        const std::vector<eSpriteData>& sd60,
+        const std::vector<eSpriteData>& sd,
         const std::string& name,
         TextureCollection& coll) {
-    const auto& sds = spriteData(fTileH, sd15, sd30, sd45, sd60);
-    SpriteLoader loader(fTileH, name, sds, nullptr, fRenderer);
+    SpriteLoader loader(fTileH, name, sd, nullptr, fRenderer);
     for(int i = 1; i < 5; i++) {
         loader.load(1, i, coll);
     }
@@ -3443,7 +2592,7 @@ void BuildingTextures::generateFlipped(const TextureCollection& src,
     for(int i = 0; i < src.size(); i++) {
         auto& tex = dst.addTexture();
         const auto& srcTex = src.getTexture(i);
-        const int w = std::round(srcTex->width()*30./fTileH);
+        const int w = srcTex->width();
         const int ox = srcTex->offsetX();
         const int oy = srcTex->offsetY();
         tex->setOffset(w - ox, oy);

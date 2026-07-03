@@ -11,53 +11,25 @@
 #include "offsets/Poseidon_Harpie.h"
 #include "offsets/zeus_hector.h"
 
-#include "spriteData/calydonianBoar15.h"
 #include "spriteData/calydonianBoar30.h"
-#include "spriteData/calydonianBoar45.h"
-#include "spriteData/calydonianBoar60.h"
 
-#include "spriteData/cerberus15.h"
 #include "spriteData/cerberus30.h"
-#include "spriteData/cerberus45.h"
-#include "spriteData/cerberus60.h"
 
-#include "spriteData/chimera15.h"
 #include "spriteData/chimera30.h"
-#include "spriteData/chimera45.h"
-#include "spriteData/chimera60.h"
 
-#include "spriteData/cyclops15.h"
 #include "spriteData/cyclops30.h"
-#include "spriteData/cyclops45.h"
-#include "spriteData/cyclops60.h"
 
-#include "spriteData/dragon15.h"
 #include "spriteData/dragon30.h"
-#include "spriteData/dragon45.h"
-#include "spriteData/dragon60.h"
 
-#include "spriteData/echidna15.h"
 #include "spriteData/echidna30.h"
-#include "spriteData/echidna45.h"
-#include "spriteData/echidna60.h"
 
-#include "spriteData/harpie15.h"
 #include "spriteData/harpie30.h"
-#include "spriteData/harpie45.h"
-#include "spriteData/harpie60.h"
 
-#include "spriteData/hector15.h"
 #include "spriteData/hector30.h"
-#include "spriteData/hector45.h"
-#include "spriteData/hector60.h"
 
 void CharacterTextures::loadCalydonianBoar() {
     if(fCalydonianBoarLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eCalydonianBoarSpriteData15,
-                                 eCalydonianBoarSpriteData30,
-                                 eCalydonianBoarSpriteData45,
-                                 eCalydonianBoarSpriteData60);
+    const auto& sds = eCalydonianBoarSpriteData30;
     fCalydonianBoarLoaded = true;
     SpriteLoader loader(fTileH, "calydonianBoar", sds,
                          &eZeus_calydonianboarOffset, fRenderer);
@@ -70,11 +42,7 @@ void CharacterTextures::loadCalydonianBoar() {
 
 void CharacterTextures::loadCerberus() {
     if(fCerberusLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eCerberusSpriteData15,
-                                 eCerberusSpriteData30,
-                                 eCerberusSpriteData45,
-                                 eCerberusSpriteData60);
+    const auto& sds = eCerberusSpriteData30;
     fCerberusLoaded = true;
     SpriteLoader loader(fTileH, "cerberus", sds,
                          &eZeus_cerberusOffset, fRenderer);
@@ -87,11 +55,7 @@ void CharacterTextures::loadCerberus() {
 
 void CharacterTextures::loadChimera() {
     if(fChimeraLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eChimeraSpriteData15,
-                                 eChimeraSpriteData30,
-                                 eChimeraSpriteData45,
-                                 eChimeraSpriteData60);
+    const auto& sds = eChimeraSpriteData30;
     fChimeraLoaded = true;
     SpriteLoader loader(fTileH, "chimera", sds,
                          &ePoseidon_ChimeraOffset, fRenderer);
@@ -104,11 +68,7 @@ void CharacterTextures::loadChimera() {
 
 void CharacterTextures::loadCyclops() {
     if(fCyclopsLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eCyclopsSpriteData15,
-                                 eCyclopsSpriteData30,
-                                 eCyclopsSpriteData45,
-                                 eCyclopsSpriteData60);
+    const auto& sds = eCyclopsSpriteData30;
     fCyclopsLoaded = true;
     SpriteLoader loader(fTileH, "cyclops", sds,
                          &eZeus_cyclopsOffset, fRenderer);
@@ -121,11 +81,7 @@ void CharacterTextures::loadCyclops() {
 
 void CharacterTextures::loadDragon() {
     if(fDragonLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eDragonSpriteData15,
-                                 eDragonSpriteData30,
-                                 eDragonSpriteData45,
-                                 eDragonSpriteData60);
+    const auto& sds = eDragonSpriteData30;
     fDragonLoaded = true;
     SpriteLoader loader(fTileH, "dragon", sds,
                          &eZeus_dragonOffset, fRenderer);
@@ -138,11 +94,7 @@ void CharacterTextures::loadDragon() {
 
 void CharacterTextures::loadEchidna() {
     if(fEchidnaLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eEchidnaSpriteData15,
-                                 eEchidnaSpriteData30,
-                                 eEchidnaSpriteData45,
-                                 eEchidnaSpriteData60);
+    const auto& sds = eEchidnaSpriteData30;
     fEchidnaLoaded = true;
     SpriteLoader loader(fTileH, "echidna", sds,
                          &ePoseidon_EchidnaOffset, fRenderer);
@@ -155,11 +107,7 @@ void CharacterTextures::loadEchidna() {
 
 void CharacterTextures::loadHarpie() {
     if(fHarpieLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eHarpieSpriteData15,
-                                 eHarpieSpriteData30,
-                                 eHarpieSpriteData45,
-                                 eHarpieSpriteData60);
+    const auto& sds = eHarpieSpriteData30;
     fHarpieLoaded = true;
     SpriteLoader loader(fTileH, "harpie", sds,
                          &ePoseidon_HarpieOffset, fRenderer);
@@ -172,11 +120,7 @@ void CharacterTextures::loadHarpie() {
 
 void CharacterTextures::loadHector() {
     if(fHectorLoaded) return;
-    const auto& sds = spriteData(fTileH,
-                                 eHectorSpriteData15,
-                                 eHectorSpriteData30,
-                                 eHectorSpriteData45,
-                                 eHectorSpriteData60);
+    const auto& sds = eHectorSpriteData30;
     fHectorLoaded = true;
     SpriteLoader loader(fTileH, "hector", sds,
                          &eZeus_hectorOffset, fRenderer);

@@ -7,13 +7,6 @@
 #include "game-dir.h"
 #include "load-text-helper.h"
 
-std::vector<eTileSize> Settings::availableSizes() const {
-    // Only the s30 tile texture set ships. The tiny/medium/large flags don't
-    // correspond to real assets, and honoring them made the tile draw size
-    // change (and seam) depending on which flags happened to be enabled.
-    return { eTileSize::s30 };
-}
-
 int Settings::clampKeyScrollSpeed(const int speed) {
     return std::clamp(speed, sMinKeyScrollSpeed, sMaxKeyScrollSpeed);
 }
@@ -129,14 +122,6 @@ void Settings::write() const {
     const auto path = GameDir::settingsPath();
     std::ofstream file;
     file.open(path);
-    file << "tiny_textures" << " " <<
-            (fTinyTextures ? "\"true\"" : "\"false\"") << "\n";
-    file << "small_textures" << " " <<
-            (fSmallTextures ? "\"true\"" : "\"false\"") << "\n";
-    file << "medium_textures" << " " <<
-            (fMediumTextures ? "\"true\"" : "\"false\"") << "\n";
-    file << "large_textures" << " " <<
-            (fLargeTextures ? "\"true\"" : "\"false\"") << "\n";
     file << "display_mode" << " " << "\"" <<
             std::to_string(static_cast<int>(fDisplayMode)) << "\"" << "\n";
     file << "warehouse_default_accept_none" << " " <<
@@ -267,10 +252,6 @@ void Settings::read() {
     std::map<std::string, std::string> settings;
     const bool r = LoadTextHelper::load(path, settings);
     if(!r) return;
-    fTinyTextures = settings["tiny_textures"] == "true";
-    fSmallTextures = settings["small_textures"] == "true";
-    fMediumTextures = settings["medium_textures"] == "true";
-    fLargeTextures = settings["large_textures"] == "true";
     const auto displayModeStr = settings["display_mode"];
     if(!displayModeStr.empty()) {
         const int v = std::stoi(displayModeStr);

@@ -2,126 +2,56 @@
 
 #include "sprite-loader.h"
 
-#include "spriteData/scholar15.h"
 #include "spriteData/scholar30.h"
-#include "spriteData/scholar45.h"
-#include "spriteData/scholar60.h"
 
-#include "spriteData/astronomer15.h"
 #include "spriteData/astronomer30.h"
-#include "spriteData/astronomer45.h"
-#include "spriteData/astronomer60.h"
 
-#include "spriteData/inventor15.h"
 #include "spriteData/inventor30.h"
-#include "spriteData/inventor45.h"
-#include "spriteData/inventor60.h"
 
-#include "spriteData/curator15.h"
 #include "spriteData/curator30.h"
-#include "spriteData/curator45.h"
-#include "spriteData/curator60.h"
 
-#include "spriteData/hoplitePoseidon15.h"
 #include "spriteData/hoplitePoseidon30.h"
-#include "spriteData/hoplitePoseidon45.h"
-#include "spriteData/hoplitePoseidon60.h"
 
-#include "spriteData/chariotPoseidon15.h"
 #include "spriteData/chariotPoseidon30.h"
-#include "spriteData/chariotPoseidon45.h"
-#include "spriteData/chariotPoseidon60.h"
 
-#include "spriteData/archerPoseidon15.h"
 #include "spriteData/archerPoseidon30.h"
-#include "spriteData/archerPoseidon45.h"
-#include "spriteData/archerPoseidon60.h"
 
-#include "spriteData/cattle115.h"
 #include "spriteData/cattle130.h"
-#include "spriteData/cattle145.h"
-#include "spriteData/cattle160.h"
 
-#include "spriteData/cattle215.h"
 #include "spriteData/cattle230.h"
-#include "spriteData/cattle245.h"
-#include "spriteData/cattle260.h"
 
-#include "spriteData/cattle315.h"
 #include "spriteData/cattle330.h"
-#include "spriteData/cattle345.h"
-#include "spriteData/cattle360.h"
 
-#include "spriteData/bull15.h"
 #include "spriteData/bull30.h"
-#include "spriteData/bull45.h"
-#include "spriteData/bull60.h"
 
-#include "spriteData/butcher15.h"
 #include "spriteData/butcher30.h"
-#include "spriteData/butcher45.h"
-#include "spriteData/butcher60.h"
 
-#include "spriteData/chariotVendorCharacter15.h"
 #include "spriteData/chariotVendorCharacter30.h"
-#include "spriteData/chariotVendorCharacter45.h"
-#include "spriteData/chariotVendorCharacter60.h"
 
-#include "spriteData/chariot15.h"
 #include "spriteData/chariot30.h"
-#include "spriteData/chariot45.h"
-#include "spriteData/chariot60.h"
 
-#include "spriteData/elephant15.h"
 #include "spriteData/elephant30.h"
-#include "spriteData/elephant45.h"
-#include "spriteData/elephant60.h"
 
-#include "spriteData/poseidonTowerArcher15.h"
 #include "spriteData/poseidonTowerArcher30.h"
-#include "spriteData/poseidonTowerArcher45.h"
-#include "spriteData/poseidonTowerArcher60.h"
 
-#include "spriteData/triremeOverlay15.h"
 #include "spriteData/triremeOverlay30.h"
-#include "spriteData/triremeOverlay45.h"
-#include "spriteData/triremeOverlay60.h"
 
-#include "spriteData/orichalcMiner15.h"
 #include "spriteData/orichalcMiner30.h"
-#include "spriteData/orichalcMiner45.h"
-#include "spriteData/orichalcMiner60.h"
 
-#include "spriteData/hippodromeHorse115.h"
 #include "spriteData/hippodromeHorse130.h"
-#include "spriteData/hippodromeHorse145.h"
-#include "spriteData/hippodromeHorse160.h"
 
-#include "spriteData/hippodromeHorse215.h"
 #include "spriteData/hippodromeHorse230.h"
-#include "spriteData/hippodromeHorse245.h"
-#include "spriteData/hippodromeHorse260.h"
 
-#include "spriteData/hippodromeHorse315.h"
 #include "spriteData/hippodromeHorse330.h"
-#include "spriteData/hippodromeHorse345.h"
-#include "spriteData/hippodromeHorse360.h"
 
-#include "spriteData/hippodromeHorse415.h"
 #include "spriteData/hippodromeHorse430.h"
-#include "spriteData/hippodromeHorse445.h"
-#include "spriteData/hippodromeHorse460.h"
 
 #include "offsets/PoseidonImps.h"
 
 void CharacterTextures::loadOrichalcMiner() {
     if(fOrichalcMinerLoaded) return;
     fOrichalcMinerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eOrichalcMinerSpriteData15,
-                                 eOrichalcMinerSpriteData30,
-                                 eOrichalcMinerSpriteData45,
-                                 eOrichalcMinerSpriteData60);
+    const auto& sds = eOrichalcMinerSpriteData30;
     SpriteLoader loader(fTileH, "orichalcMiner", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -137,11 +67,7 @@ void CharacterTextures::loadOrichalcMiner() {
 void CharacterTextures::loadTriremeOverlay() {
     if(fTriremeOverlayLoaded) return;
     fTriremeOverlayLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eTriremeOverlaySpriteData15,
-                                 eTriremeOverlaySpriteData30,
-                                 eTriremeOverlaySpriteData45,
-                                 eTriremeOverlaySpriteData60);
+    const auto& sds = eTriremeOverlaySpriteData30;
     SpriteLoader loader(fTileH, "triremeOverlay", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -164,11 +90,7 @@ void CharacterTextures::loadTriremeOverlay() {
 void CharacterTextures::loadPoseidonTowerArcher() {
     if(fPoseidonTowerArcherLoaded) return;
     fPoseidonTowerArcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePoseidonTowerArcherSpriteData15,
-                                 ePoseidonTowerArcherSpriteData30,
-                                 ePoseidonTowerArcherSpriteData45,
-                                 ePoseidonTowerArcherSpriteData60);
+    const auto& sds = ePoseidonTowerArcherSpriteData30;
     SpriteLoader loader(fTileH, "poseidonTowerArcher", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -185,11 +107,7 @@ void CharacterTextures::loadPoseidonTowerArcher() {
 void CharacterTextures::loadElephant() {
     if(fElephantLoaded) return;
     fElephantLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eElephantSpriteData15,
-                                 eElephantSpriteData30,
-                                 eElephantSpriteData45,
-                                 eElephantSpriteData60);
+    const auto& sds = eElephantSpriteData30;
     SpriteLoader loader(fTileH, "elephant", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -203,11 +121,7 @@ void CharacterTextures::loadElephant() {
 void CharacterTextures::loadChariot() {
     if(fChariotLoaded) return;
     fChariotLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eChariotSpriteData15,
-                                 eChariotSpriteData30,
-                                 eChariotSpriteData45,
-                                 eChariotSpriteData60);
+    const auto& sds = eChariotSpriteData30;
     SpriteLoader loader(fTileH, "chariot", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -217,11 +131,7 @@ void CharacterTextures::loadChariot() {
 void CharacterTextures::loadChariotVendor() {
     if(fChariotVendorLoaded) return;
     fChariotVendorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eChariotVendorCharacterSpriteData15,
-                                 eChariotVendorCharacterSpriteData30,
-                                 eChariotVendorCharacterSpriteData45,
-                                 eChariotVendorCharacterSpriteData60);
+    const auto& sds = eChariotVendorCharacterSpriteData30;
     SpriteLoader loader(fTileH, "chariotVendorCharacter", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -247,33 +157,21 @@ void CharacterTextures::loadCattle() {
     if(fCattleLoaded) return;
     fCattleLoaded = true;
     {
-        const auto& sds = spriteData(fTileH,
-                                     eCattle1SpriteData15,
-                                     eCattle1SpriteData30,
-                                     eCattle1SpriteData45,
-                                     eCattle1SpriteData60);
+        const auto& sds = eCattle1SpriteData30;
         SpriteLoader loader(fTileH, "cattle1", sds,
                              &ePoseidonImpsOffset, fRenderer);
 
         sLoadCattle(loader, fCattle1, 2290);
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eCattle2SpriteData15,
-                                     eCattle2SpriteData30,
-                                     eCattle2SpriteData45,
-                                     eCattle2SpriteData60);
+        const auto& sds = eCattle2SpriteData30;
         SpriteLoader loader(fTileH, "cattle2", sds,
                              &ePoseidonImpsOffset, fRenderer);
 
         sLoadCattle(loader, fCattle2, 2490);
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eCattle3SpriteData15,
-                                     eCattle3SpriteData30,
-                                     eCattle3SpriteData45,
-                                     eCattle3SpriteData60);
+        const auto& sds = eCattle3SpriteData30;
         SpriteLoader loader(fTileH, "cattle3", sds,
                              &ePoseidonImpsOffset, fRenderer);
 
@@ -284,11 +182,7 @@ void CharacterTextures::loadCattle() {
 void CharacterTextures::loadBull() {
     if(fBullLoaded) return;
     fBullLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eBullSpriteData15,
-                                 eBullSpriteData30,
-                                 eBullSpriteData45,
-                                 eBullSpriteData60);
+    const auto& sds = eBullSpriteData30;
     SpriteLoader loader(fTileH, "bull", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -304,11 +198,7 @@ void CharacterTextures::loadBull() {
 void CharacterTextures::loadButcher() {
     if(fButcherLoaded) return;
     fButcherLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eButcherSpriteData15,
-                                 eButcherSpriteData30,
-                                 eButcherSpriteData45,
-                                 eButcherSpriteData60);
+    const auto& sds = eButcherSpriteData30;
     SpriteLoader loader(fTileH, "butcher", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -322,11 +212,7 @@ void CharacterTextures::loadButcher() {
 void CharacterTextures::loadScholar() {
     if(fScholarLoaded) return;
     fScholarLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eScholarSpriteData15,
-                                 eScholarSpriteData30,
-                                 eScholarSpriteData45,
-                                 eScholarSpriteData60);
+    const auto& sds = eScholarSpriteData30;
     SpriteLoader loader(fTileH, "scholar", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -340,11 +226,7 @@ void CharacterTextures::loadScholar() {
 void CharacterTextures::loadAstronomer() {
     if(fAstronomerLoaded) return;
     fAstronomerLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eAstronomerSpriteData15,
-                                 eAstronomerSpriteData30,
-                                 eAstronomerSpriteData45,
-                                 eAstronomerSpriteData60);
+    const auto& sds = eAstronomerSpriteData30;
     SpriteLoader loader(fTileH, "astronomer", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -358,11 +240,7 @@ void CharacterTextures::loadAstronomer() {
 void CharacterTextures::loadInventor() {
     if(fInventorLoaded) return;
     fInventorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eInventorSpriteData15,
-                                 eInventorSpriteData30,
-                                 eInventorSpriteData45,
-                                 eInventorSpriteData60);
+    const auto& sds = eInventorSpriteData30;
     SpriteLoader loader(fTileH, "inventor", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -376,11 +254,7 @@ void CharacterTextures::loadInventor() {
 void CharacterTextures::loadCurator() {
     if(fCuratorLoaded) return;
     fCuratorLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eCuratorSpriteData15,
-                                 eCuratorSpriteData30,
-                                 eCuratorSpriteData45,
-                                 eCuratorSpriteData60);
+    const auto& sds = eCuratorSpriteData30;
     SpriteLoader loader(fTileH, "curator", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -394,11 +268,7 @@ void CharacterTextures::loadCurator() {
 void CharacterTextures::loadChariotPoseidon() {
     if(fChariotPoseidonLoaded) return;
     fChariotPoseidonLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eChariotPoseidonSpriteData15,
-                                 eChariotPoseidonSpriteData30,
-                                 eChariotPoseidonSpriteData45,
-                                 eChariotPoseidonSpriteData60);
+    const auto& sds = eChariotPoseidonSpriteData30;
     SpriteLoader loader(fTileH, "chariotPoseidon", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -410,11 +280,7 @@ void CharacterTextures::loadChariotPoseidon() {
 void CharacterTextures::loadArcherPoseidon() {
     if(fArcherPoseidonLoaded) return;
     fArcherPoseidonLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eArcherPoseidonSpriteData15,
-                                 eArcherPoseidonSpriteData30,
-                                 eArcherPoseidonSpriteData45,
-                                 eArcherPoseidonSpriteData60);
+    const auto& sds = eArcherPoseidonSpriteData30;
     SpriteLoader loader(fTileH, "archerPoseidon", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -429,11 +295,7 @@ void CharacterTextures::loadArcherPoseidon() {
 void CharacterTextures::loadHoplitePoseidon() {
     if(fHoplitePoseidonLoaded) return;
     fHoplitePoseidonLoaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 eHoplitePoseidonSpriteData15,
-                                 eHoplitePoseidonSpriteData30,
-                                 eHoplitePoseidonSpriteData45,
-                                 eHoplitePoseidonSpriteData60);
+    const auto& sds = eHoplitePoseidonSpriteData30;
     SpriteLoader loader(fTileH, "hoplitePoseidon", sds,
                          &ePoseidonImpsOffset, fRenderer);
 
@@ -450,11 +312,7 @@ void CharacterTextures::loadRacingHorses() {
     fRacingHorsesLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eHippodromeHorse1SpriteData15,
-                                     eHippodromeHorse1SpriteData30,
-                                     eHippodromeHorse1SpriteData45,
-                                     eHippodromeHorse1SpriteData60);
+        const auto& sds = eHippodromeHorse1SpriteData30;
         SpriteLoader loader(fTileH, "hippodromeHorse1", sds,
                              &ePoseidonImpsOffset, fRenderer);
 
@@ -466,11 +324,7 @@ void CharacterTextures::loadRacingHorses() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eHippodromeHorse2SpriteData15,
-                                     eHippodromeHorse2SpriteData30,
-                                     eHippodromeHorse2SpriteData45,
-                                     eHippodromeHorse2SpriteData60);
+        const auto& sds = eHippodromeHorse2SpriteData30;
         SpriteLoader loader(fTileH, "hippodromeHorse2", sds,
                              &ePoseidonImpsOffset, fRenderer);
 
@@ -482,11 +336,7 @@ void CharacterTextures::loadRacingHorses() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eHippodromeHorse3SpriteData15,
-                                     eHippodromeHorse3SpriteData30,
-                                     eHippodromeHorse3SpriteData45,
-                                     eHippodromeHorse3SpriteData60);
+        const auto& sds = eHippodromeHorse3SpriteData30;
         SpriteLoader loader(fTileH, "hippodromeHorse3", sds,
                              &ePoseidonImpsOffset, fRenderer);
 
@@ -498,11 +348,7 @@ void CharacterTextures::loadRacingHorses() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eHippodromeHorse4SpriteData15,
-                                     eHippodromeHorse4SpriteData30,
-                                     eHippodromeHorse4SpriteData45,
-                                     eHippodromeHorse4SpriteData60);
+        const auto& sds = eHippodromeHorse4SpriteData30;
         SpriteLoader loader(fTileH, "hippodromeHorse4", sds,
                              &ePoseidonImpsOffset, fRenderer);
 

@@ -60,17 +60,4 @@ private:
     std::map<int, std::shared_ptr<Texture>> mTexs;
 };
 
-inline const std::vector<eSpriteData>& spriteData(
-        const int size,
-        const std::vector<eSpriteData>& s15,
-        const std::vector<eSpriteData>& s30,
-        const std::vector<eSpriteData>& s45,
-        const std::vector<eSpriteData>& s60) {
-    if(size == 15) return s15;
-    if(size == 30) return s30;
-    if(size == 45) return s45;
-    if(size == 60) return s60;
-    return s30;
-}
-
 #endif // SPRITE_LOADER_H

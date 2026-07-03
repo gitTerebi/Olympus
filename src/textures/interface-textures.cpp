@@ -1,119 +1,50 @@
 #include "interface-textures.h"
 
-#include "spriteData/interfaceBanners15.h"
 #include "spriteData/interfaceBanners30.h"
-#include "spriteData/interfaceBanners45.h"
-#include "spriteData/interfaceBanners60.h"
 
-#include "spriteData/interface_stor_bays15.h"
 #include "spriteData/interface_stor_bays30.h"
-#include "spriteData/interface_stor_bays45.h"
-#include "spriteData/interface_stor_bays60.h"
 
-#include "spriteData/paneling15.h"
 #include "spriteData/paneling30.h"
-#include "spriteData/paneling45.h"
-#include "spriteData/paneling60.h"
 
-#include "spriteData/empireBits15.h"
 #include "spriteData/empireBits30.h"
-#include "spriteData/empireBits45.h"
-#include "spriteData/empireBits60.h"
 
-#include "spriteData/empireFigures15.h"
 #include "spriteData/empireFigures30.h"
-#include "spriteData/empireFigures45.h"
-#include "spriteData/empireFigures60.h"
 
-#include "spriteData/poseidonInterface15.h"
 #include "spriteData/poseidonInterface30.h"
-#include "spriteData/poseidonInterface45.h"
-#include "spriteData/poseidonInterface60.h"
 
-#include "spriteData/interfaceNewBbuttons15.h"
 #include "spriteData/interfaceNewBbuttons30.h"
-#include "spriteData/interfaceNewBbuttons45.h"
-#include "spriteData/interfaceNewBbuttons60.h"
 
-#include "spriteData/interfaceNewParts15.h"
 #include "spriteData/interfaceNewParts30.h"
-#include "spriteData/interfaceNewParts45.h"
-#include "spriteData/interfaceNewParts60.h"
 
-#include "spriteData/interfaceParts15.h"
 #include "spriteData/interfaceParts30.h"
-#include "spriteData/interfaceParts45.h"
-#include "spriteData/interfaceParts60.h"
 
-#include "spriteData/interfaceWorldSide15.h"
 #include "spriteData/interfaceWorldSide30.h"
-#include "spriteData/interfaceWorldSide45.h"
-#include "spriteData/interfaceWorldSide60.h"
 
-#include "spriteData/interfaceMapEditor15.h"
 #include "spriteData/interfaceMapEditor30.h"
-#include "spriteData/interfaceMapEditor45.h"
-#include "spriteData/interfaceMapEditor60.h"
 
-#include "spriteData/poseidonUnits15.h"
 #include "spriteData/poseidonUnits30.h"
-#include "spriteData/poseidonUnits45.h"
-#include "spriteData/poseidonUnits60.h"
 
-#include "spriteData/poseidonQuestButtons15.h"
 #include "spriteData/poseidonQuestButtons30.h"
-#include "spriteData/poseidonQuestButtons45.h"
-#include "spriteData/poseidonQuestButtons60.h"
 
-#include "spriteData/interfaceRadar15.h"
 #include "spriteData/interfaceRadar30.h"
-#include "spriteData/interfaceRadar45.h"
-#include "spriteData/interfaceRadar60.h"
 
-#include "spriteData/poseidonCampaign115.h"
 #include "spriteData/poseidonCampaign130.h"
-#include "spriteData/poseidonCampaign145.h"
-#include "spriteData/poseidonCampaign160.h"
 
-#include "spriteData/poseidonCampaign215.h"
 #include "spriteData/poseidonCampaign230.h"
-#include "spriteData/poseidonCampaign245.h"
-#include "spriteData/poseidonCampaign260.h"
 
-#include "spriteData/poseidonCampaign315.h"
 #include "spriteData/poseidonCampaign330.h"
-#include "spriteData/poseidonCampaign345.h"
-#include "spriteData/poseidonCampaign360.h"
 
-#include "spriteData/poseidonCampaign415.h"
 #include "spriteData/poseidonCampaign430.h"
-#include "spriteData/poseidonCampaign445.h"
-#include "spriteData/poseidonCampaign460.h"
 
-#include "spriteData/poseidonCampaign515.h"
 #include "spriteData/poseidonCampaign530.h"
-#include "spriteData/poseidonCampaign545.h"
-#include "spriteData/poseidonCampaign560.h"
 
-#include "spriteData/poseidonCampaign615.h"
 #include "spriteData/poseidonCampaign630.h"
-#include "spriteData/poseidonCampaign645.h"
-#include "spriteData/poseidonCampaign660.h"
 
-#include "spriteData/zeusPortraits15.h"
 #include "spriteData/zeusPortraits30.h"
-#include "spriteData/zeusPortraits45.h"
-#include "spriteData/zeusPortraits60.h"
 
-#include "spriteData/zeusGodPortraits15.h"
 #include "spriteData/zeusGodPortraits30.h"
-#include "spriteData/zeusGodPortraits45.h"
-#include "spriteData/zeusGodPortraits60.h"
 
-#include "spriteData/poseidonPortraits15.h"
 #include "spriteData/poseidonPortraits30.h"
-#include "spriteData/poseidonPortraits45.h"
-#include "spriteData/poseidonPortraits60.h"
 
 #include "sprite-loader.h"
 
@@ -359,11 +290,7 @@ void InterfaceTextures::load() {
     fLoaded = true;
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterfaceBannersSpriteData15,
-                                     eInterfaceBannersSpriteData30,
-                                     eInterfaceBannersSpriteData45,
-                                     eInterfaceBannersSpriteData60);
+        const auto& sds = eInterfaceBannersSpriteData30;
         SpriteLoader loader(fTileH, "interfaceBanners", sds,
                              nullptr, fRenderer);
 
@@ -377,11 +304,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterfaceNewBbuttonsSpriteData15,
-                                     eInterfaceNewBbuttonsSpriteData30,
-                                     eInterfaceNewBbuttonsSpriteData45,
-                                     eInterfaceNewBbuttonsSpriteData60);
+        const auto& sds = eInterfaceNewBbuttonsSpriteData30;
         SpriteLoader loader(fTileH, "interfaceNewBbuttons", sds,
                              nullptr, fRenderer);
         for(int i = 4; i < 7; i++) {
@@ -510,11 +433,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterfacePartsSpriteData15,
-                                     eInterfacePartsSpriteData30,
-                                     eInterfacePartsSpriteData45,
-                                     eInterfacePartsSpriteData60);
+        const auto& sds = eInterfacePartsSpriteData30;
         SpriteLoader loader(fTileH, "interfaceParts", sds,
                              nullptr, fRenderer);
         fArmyStatus = loader.load(1, 2);
@@ -548,11 +467,7 @@ void InterfaceTextures::load() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterfaceNewPartsSpriteData15,
-                                     eInterfaceNewPartsSpriteData30,
-                                     eInterfaceNewPartsSpriteData45,
-                                     eInterfaceNewPartsSpriteData60);
+        const auto& sds = eInterfaceNewPartsSpriteData30;
         SpriteLoader loader(fTileH, "interfaceNewParts", sds,
                              nullptr, fRenderer);
 
@@ -726,11 +641,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterfaceWorldSideSpriteData15,
-                                     eInterfaceWorldSideSpriteData30,
-                                     eInterfaceWorldSideSpriteData45,
-                                     eInterfaceWorldSideSpriteData60);
+        const auto& sds = eInterfaceWorldSideSpriteData30;
         SpriteLoader loader(fTileH, "interfaceWorldSide", sds,
                              nullptr, fRenderer);
         fWorldMenuBackground = loader.load(1, 1);
@@ -776,11 +687,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterfaceMapEditorSpriteData15,
-                                     eInterfaceMapEditorSpriteData30,
-                                     eInterfaceMapEditorSpriteData45,
-                                     eInterfaceMapEditorSpriteData60);
+        const auto& sds = eInterfaceMapEditorSpriteData30;
         SpriteLoader loader(fTileH, "interfaceMapEditor", sds,
                              nullptr, fRenderer);
 
@@ -831,11 +738,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eEmpireBitsSpriteData15,
-                                     eEmpireBitsSpriteData30,
-                                     eEmpireBitsSpriteData45,
-                                     eEmpireBitsSpriteData60);
+        const auto& sds = eEmpireBitsSpriteData30;
         SpriteLoader loader(fTileH, "empireBits", sds,
                              nullptr, fRenderer);
 
@@ -882,11 +785,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eEmpireFiguresSpriteData15,
-                                     eEmpireFiguresSpriteData30,
-                                     eEmpireFiguresSpriteData45,
-                                     eEmpireFiguresSpriteData60);
+        const auto& sds = eEmpireFiguresSpriteData30;
         SpriteLoader loader(fTileH, "empireFigures", sds,
                              nullptr, fRenderer);
 
@@ -918,11 +817,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePoseidonInterfaceSpriteData15,
-                                     ePoseidonInterfaceSpriteData30,
-                                     ePoseidonInterfaceSpriteData45,
-                                     ePoseidonInterfaceSpriteData60);
+        const auto& sds = ePoseidonInterfaceSpriteData30;
         SpriteLoader loader(fTileH, "poseidonInterface", sds,
                              nullptr, fRenderer);
 
@@ -1005,11 +900,7 @@ void InterfaceTextures::load() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePanelingSpriteData15,
-                                     ePanelingSpriteData30,
-                                     ePanelingSpriteData45,
-                                     ePanelingSpriteData60);
+        const auto& sds = ePanelingSpriteData30;
         SpriteLoader loader(fTileH, "paneling", sds,
                              nullptr, fRenderer);
 
@@ -1165,11 +1056,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterfaceRadarSpriteData15,
-                                     eInterfaceRadarSpriteData30,
-                                     eInterfaceRadarSpriteData45,
-                                     eInterfaceRadarSpriteData60);
+        const auto& sds = eInterfaceRadarSpriteData30;
         SpriteLoader loader(fTileH, "interfaceRadar", sds,
                              nullptr, fRenderer);
 
@@ -1249,11 +1136,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePoseidonUnitsSpriteData15,
-                                     ePoseidonUnitsSpriteData30,
-                                     ePoseidonUnitsSpriteData45,
-                                     ePoseidonUnitsSpriteData60);
+        const auto& sds = ePoseidonUnitsSpriteData30;
         SpriteLoader loader(fTileH, "poseidonUnits", sds,
                              nullptr, fRenderer);
 
@@ -1263,11 +1146,7 @@ void InterfaceTextures::load() {
         fChariotUnit = loader.load(114, 117);
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePoseidonQuestButtonsSpriteData15,
-                                     ePoseidonQuestButtonsSpriteData30,
-                                     ePoseidonQuestButtonsSpriteData45,
-                                     ePoseidonQuestButtonsSpriteData60);
+        const auto& sds = ePoseidonQuestButtonsSpriteData30;
         SpriteLoader loader(fTileH, "poseidonQuestButtons", sds,
                              nullptr, fRenderer);
 
@@ -1276,11 +1155,7 @@ void InterfaceTextures::load() {
     }
 
     {
-        const auto& sds = spriteData(fTileH,
-                                     eInterface_stor_baysSpriteData15,
-                                     eInterface_stor_baysSpriteData30,
-                                     eInterface_stor_baysSpriteData45,
-                                     eInterface_stor_baysSpriteData60);
+        const auto& sds = eInterface_stor_baysSpriteData30;
         SpriteLoader loader(fTileH, "interface_stor_bays", sds,
                              nullptr, fRenderer);
 
@@ -1342,11 +1217,7 @@ void InterfaceTextures::load() {
         fPopulationTopMenu = loader.load(117, 186);
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusPortraitsSpriteData15,
-                                     eZeusPortraitsSpriteData30,
-                                     eZeusPortraitsSpriteData45,
-                                     eZeusPortraitsSpriteData60);
+        const auto& sds = eZeusPortraitsSpriteData30;
         SpriteLoader loader(fTileH, "zeusPortraits", sds,
                              nullptr, fRenderer);
 
@@ -1355,11 +1226,7 @@ void InterfaceTextures::load() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     eZeusGodPortraitsSpriteData15,
-                                     eZeusGodPortraitsSpriteData30,
-                                     eZeusGodPortraitsSpriteData45,
-                                     eZeusGodPortraitsSpriteData60);
+        const auto& sds = eZeusGodPortraitsSpriteData30;
         SpriteLoader loader(fTileH, "zeusGodPortraits", sds,
                              nullptr, fRenderer);
 
@@ -1368,11 +1235,7 @@ void InterfaceTextures::load() {
         }
     }
     {
-        const auto& sds = spriteData(fTileH,
-                                     ePoseidonPortraitsSpriteData15,
-                                     ePoseidonPortraitsSpriteData30,
-                                     ePoseidonPortraitsSpriteData45,
-                                     ePoseidonPortraitsSpriteData60);
+        const auto& sds = ePoseidonPortraitsSpriteData30;
         SpriteLoader loader(fTileH, "poseidonPortraits", sds,
                              nullptr, fRenderer);
 
@@ -1547,11 +1410,7 @@ void InterfaceTextures::loadPoseidonMap4() {
 void InterfaceTextures::loadPoseidonCampaign1() {
     if(fPoseidonCampaign1Loaded) return;
     fPoseidonCampaign1Loaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePoseidonCampaign1SpriteData15,
-                                 ePoseidonCampaign1SpriteData30,
-                                 ePoseidonCampaign1SpriteData45,
-                                 ePoseidonCampaign1SpriteData60);
+    const auto& sds = ePoseidonCampaign1SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign1", sds,
                          nullptr, fRenderer);
 
@@ -1561,11 +1420,7 @@ void InterfaceTextures::loadPoseidonCampaign1() {
 void InterfaceTextures::loadPoseidonCampaign2() {
     if(fPoseidonCampaign2Loaded) return;
     fPoseidonCampaign2Loaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePoseidonCampaign2SpriteData15,
-                                 ePoseidonCampaign2SpriteData30,
-                                 ePoseidonCampaign2SpriteData45,
-                                 ePoseidonCampaign2SpriteData60);
+    const auto& sds = ePoseidonCampaign2SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign2", sds,
                          nullptr, fRenderer);
 
@@ -1575,11 +1430,7 @@ void InterfaceTextures::loadPoseidonCampaign2() {
 void InterfaceTextures::loadPoseidonCampaign3() {
     if(fPoseidonCampaign3Loaded) return;
     fPoseidonCampaign3Loaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePoseidonCampaign3SpriteData15,
-                                 ePoseidonCampaign3SpriteData30,
-                                 ePoseidonCampaign3SpriteData45,
-                                 ePoseidonCampaign3SpriteData60);
+    const auto& sds = ePoseidonCampaign3SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign3", sds,
                          nullptr, fRenderer);
 
@@ -1589,11 +1440,7 @@ void InterfaceTextures::loadPoseidonCampaign3() {
 void InterfaceTextures::loadPoseidonCampaign4() {
     if(fPoseidonCampaign4Loaded) return;
     fPoseidonCampaign4Loaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePoseidonCampaign4SpriteData15,
-                                 ePoseidonCampaign4SpriteData30,
-                                 ePoseidonCampaign4SpriteData45,
-                                 ePoseidonCampaign4SpriteData60);
+    const auto& sds = ePoseidonCampaign4SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign4", sds,
                          nullptr, fRenderer);
 
@@ -1603,11 +1450,7 @@ void InterfaceTextures::loadPoseidonCampaign4() {
 void InterfaceTextures::loadPoseidonCampaign5() {
     if(fPoseidonCampaign5Loaded) return;
     fPoseidonCampaign5Loaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePoseidonCampaign5SpriteData15,
-                                 ePoseidonCampaign5SpriteData30,
-                                 ePoseidonCampaign5SpriteData45,
-                                 ePoseidonCampaign5SpriteData60);
+    const auto& sds = ePoseidonCampaign5SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign5", sds,
                          nullptr, fRenderer);
 
@@ -1617,11 +1460,7 @@ void InterfaceTextures::loadPoseidonCampaign5() {
 void InterfaceTextures::loadPoseidonCampaign6() {
     if(fPoseidonCampaign6Loaded) return;
     fPoseidonCampaign6Loaded = true;
-    const auto& sds = spriteData(fTileH,
-                                 ePoseidonCampaign6SpriteData15,
-                                 ePoseidonCampaign6SpriteData30,
-                                 ePoseidonCampaign6SpriteData45,
-                                 ePoseidonCampaign6SpriteData60);
+    const auto& sds = ePoseidonCampaign6SpriteData30;
     SpriteLoader loader(fTileH, "poseidonCampaign6", sds,
                          nullptr, fRenderer);
 

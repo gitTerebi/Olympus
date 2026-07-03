@@ -732,21 +732,11 @@ void MainWindow::applyGraphicsSettings(const Settings& settings) {
     const bool loadNeeded = false;
     const bool reloadUiNeeded =
         settings.fUiScale != mSettings.fUiScale ||
-        settings.fTopSidebarScale != mSettings.fTopSidebarScale ||
-        settings.fTinyTextures != mSettings.fTinyTextures ||
-        settings.fSmallTextures != mSettings.fSmallTextures ||
-        settings.fMediumTextures != mSettings.fMediumTextures ||
-        settings.fLargeTextures != mSettings.fLargeTextures;
+        settings.fTopSidebarScale != mSettings.fTopSidebarScale;
     setResolution(settings.fRes);
     setDisplayMode(settings.fDisplayMode);
     mSettings = settings;
     mSettings.write();
-    if(!mSettings.fTinyTextures &&
-       !mSettings.fSmallTextures &&
-       !mSettings.fMediumTextures &&
-       !mSettings.fLargeTextures) {
-        mSettings.fSmallTextures = true;
-    }
     GameTextures::setSettings(mSettings);
     if(loadNeeded) showMenuLoading();
     else if(reloadUiNeeded && mGW) {
