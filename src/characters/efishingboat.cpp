@@ -1,6 +1,23 @@
 #include "efishingboat.h"
 
+#include "engine/game-board.h"
 #include "textures/game-textures.h"
+
+namespace {
+std::shared_ptr<Texture> fishingBoatTexture(
+        const eFishingBoat& c,
+        const TextureCollection* const coll,
+        const bool wrap) {
+    if(!coll) return nullptr;
+    const int s = coll->size();
+    if(s == 0) return nullptr;
+
+    int t = c.getBoard().frame();
+    if(!wrap) t = std::clamp(t, 0, s - 1);
+    const int texId = ((t % s) + s) % s;
+    return coll->getTexture(texId);
+}
+}
 
 eFishingBoat::eFishingBoat(GameBoard& board) :
     eResourceCollectorBase(board, eCharacterType::fishingBoat) {
@@ -34,5 +51,5 @@ std::shared_ptr<Texture> eFishingBoat::getTexture(const eTileSize size) const {
         return nullptr;
     }
 
-    return eCharacter::getTexture(coll, wrap, false);
+    return fishingBoatTexture(*this, coll, wrap);
 }

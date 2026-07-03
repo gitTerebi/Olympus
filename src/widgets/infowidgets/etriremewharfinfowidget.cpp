@@ -4,6 +4,7 @@
 
 #include "engine/game-board.h"
 #include "language.h"
+#include "widgets/eprogressbar.h"
 #include "widgets/eswitchbutton.h"
 
 void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
@@ -34,6 +35,17 @@ void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
 
     addText(storedWood + " " + cwoodStr + " " + loads + "  " +
             storedArmor + " " + carmorStr + " " + loads);
+
+    if(b->isBuildingTrireme()) {
+        const int progress = b->triremeBuildProgress();
+        addText(Language::zeusText(175, 2) + " " +
+                std::to_string(progress) + "% " +
+                Language::zeusText(175, 3));
+        const auto bar = new eProgressBar(window());
+        bar->setRange(0, 100);
+        bar->setValue(progress);
+        addInfoWidget(bar, padding());
+    }
 
     const bool r = b->accessToRoad();
     if(!r) {

@@ -22,7 +22,10 @@
 #include "buildings/pyramids/epyramid.h"
 #include "buildings/sanctuaries/sanctuary.h"
 #include "characters/echaracter.h"
+#include "characters/soldier-banner.h"
+#include "characters/etrireme.h"
 #include "characters/actions/animal-action.h"
+#include "language.h"
 
 #include "vector-helpers.h"
 
@@ -2100,6 +2103,27 @@ bool BoardCity::unregisterSoldierBanner(const stdsptr<SoldierBanner>& b) {
     return VectorHelpers::remove(mSoldierBanners, b);
 }
 
+void BoardCity::updateTriremeBanners() const {
+    const int count = countWorkingTriremes();
+    while(static_cast<int>(mTriremeBanners.size()) < count) {
+        const auto b = e::make_shared<SoldierBanner>(eBannerType::trireme, mBoard);
+        b->setBothCityIds(mId);
+        b->setName(Language::zeusText(64, 57)); // trireme
+        b->incCount();
+        mTriremeBanners.push_back(b);
+    }
+    while(static_cast<int>(mTriremeBanners.size()) > count) {
+        mTriremeBanners.pop_back();
+    }
+}
+
+std::vector<stdsptr<SoldierBanner>> BoardCity::banners() const {
+    updateTriremeBanners();
+    auto result = mSoldierBanners;
+    result.insert(result.end(), mTriremeBanners.begin(), mTriremeBanners.end());
+    return result;
+}
+
 void BoardCity::repackPalaceBanners() {
     if(!mPalace) return;
     const auto ts = SoldierBanner::sFixedPalaceBannerPathTiles(*mPalace);
@@ -2179,6 +2203,7 @@ eHerosHall* BoardCity::heroHall(const eHeroType hero) const {
 }
 
 int BoardCity::countBanners(const eBannerType bt) const {
+    if(bt == eBannerType::trireme) return countWorkingTriremes();
     int c = 0;
     for(const auto& bn : mSoldierBanners) {
         if(bn->type() != bt) continue;
@@ -2188,6 +2213,7 @@ int BoardCity::countBanners(const eBannerType bt) const {
 }
 
 int BoardCity::countSoldiers(const eBannerType bt) const {
+    if(bt == eBannerType::trireme) return countWorkingTriremes();
     int c = 0;
     for(const auto& bn : mSoldierBanners) {
         if(bn->type() != bt) continue;
@@ -2205,6 +2231,38 @@ int BoardCity::countWorkingTriremes() const {
         if(tw->hasTrireme()) c++;
     }
     return c;
+}
+
+int BoardCity::countCrewedTriremes() const {
+    int c = 0;
+    for(const auto b : mTimedBuildings) {
+        const auto type = b->type();
+        if(type != eBuildingType::triremeWharf) continue;
+        const auto tw = static_cast<eTriremeWharf*>(b);
+        if(!tw->hasTrireme()) continue;
+        if(tw->shutDown()) continue;
+        c++;
+    }
+    return c;
+}
+
+bool BoardCity::triremesCrewed() const {
+    return countCrewedTriremes() > 0;
+}
+
+void BoardCity::setTriremesCrewed(const bool crewed) {
+    for(const auto b : mTimedBuildings) {
+        const auto type = b->type();
+        if(type != eBuildingType::triremeWharf) continue;
+        const auto tw = static_cast<eTriremeWharf*>(b);
+        if(!tw->hasTrireme()) continue;
+        tw->setShutDown(!crewed);
+        if(!crewed) {
+            const auto trireme = tw->trireme();
+            if(trireme) trireme->goHome();
+        }
+    }
+    distributeEmployees();
 }
 
 ePyramid* BoardCity::pyramid(const eBuildingType type) const {
@@ -2385,6 +2443,12 @@ eEnlistedForces BoardCity::getEnlistableForces() const {
         default:
             break;
         }
+    }
+
+    updateTriremeBanners();
+    for(const auto& s : mTriremeBanners) {
+        if(s->count() <= 0) continue;
+        result.fSoldiers.push_back(s);
     }
 
     for(const auto& h : mHeroHalls) {

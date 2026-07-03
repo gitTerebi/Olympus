@@ -1,6 +1,22 @@
 #include "eboatbase.h"
 
+#include "engine/game-board.h"
 #include "textures/game-textures.h"
+
+namespace {
+std::shared_ptr<Texture> boatTexture(const eCharacter& c,
+                                     const TextureCollection* const coll,
+                                     const bool wrap) {
+    if(!coll) return nullptr;
+    const int s = coll->size();
+    if(s == 0) return nullptr;
+
+    int t = c.getBoard().frame();
+    if(!wrap) t = std::clamp(t, 0, s - 1);
+    const int texId = ((t % s) + s) % s;
+    return coll->getTexture(texId);
+}
+}
 
 eBoatBase::eBoatBase(
         GameBoard& board, const eCharTexs charTexs,
@@ -32,5 +48,5 @@ std::shared_ptr<Texture> eBoatBase::getTexture(const eTileSize size) const {
         return nullptr;
     }
 
-    return eCharacter::getTexture(coll, wrap, false);
+    return boatTexture(*this, coll, wrap);
 }

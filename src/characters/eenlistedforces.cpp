@@ -111,6 +111,9 @@ int eEnlistedForces::strength() const {
         case eBannerType::horseman:
             mult = Numbers::sArmyStrengthHorsemanMult;
             break;
+        case eBannerType::trireme:
+            mult = Numbers::sArmyStrengthTriremeMult;
+            break;
         default:
             break;
         }

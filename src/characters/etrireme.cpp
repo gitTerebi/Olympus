@@ -41,8 +41,6 @@ void eTrireme::sPlace(std::vector<eTrireme*> bs,
         const int ty = cty + j;
         const auto tt = board.tile(tx, ty);
         if(!tt) return false;
-        const auto ttCid = tt->cityId();
-        if(ttCid != onCid) return false;
         const int dtx = tt->dx();
         const int dty = tt->dy();
         if(dtx < minDistFromEdge) return false;
@@ -118,7 +116,19 @@ Overlay eTrireme::getSecondaryTexture(const eTileSize size) const {
     const auto coll = &(*charTexs)[oid];
     const bool wrap = !die;
     const bool disappear = die;
-    const auto tex = eCharacter::getTexture(coll, wrap, disappear);
+    std::shared_ptr<Texture> tex;
+    if(wrap) {
+        const int s = coll->size();
+        if(s > 0) {
+            const auto ta = triremeAction();
+            const auto h = ta ? ta->home() : nullptr;
+            if(h && h->isAtWharf()) return {};
+            const int texId = getBoard().frame() % s;
+            tex = coll->getTexture(texId);
+        }
+    } else {
+        tex = eCharacter::getTexture(coll, wrap, disappear);
+    }
     return Overlay{0., 0., tex, false};
 }
 

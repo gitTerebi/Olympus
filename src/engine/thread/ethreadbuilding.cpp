@@ -12,6 +12,7 @@
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/pyramids/epyramidelement.h"
 #include "buildings/eprocessingbuilding.h"
+#include "buildings/etriremewharf.h"
 #include "buildings/trade-post.h"
 
 void eThreadBuilding::load(eBuilding* const src) {
@@ -148,6 +149,15 @@ void eThreadBuilding::load(eBuilding* const src) {
             mResourceCount[0] = b->chariotCount();
             mSpaceCount = 1;
         } break;
+        case eBuildingType::triremeWharf: {
+            const auto b = static_cast<eTriremeWharf*>(src);
+            mAccepts = eResourceType::wood | eResourceType::armor;
+            mResource[0] = eResourceType::wood;
+            mResourceCount[0] = b->spaceLeft(eResourceType::wood);
+            mResource[1] = eResourceType::armor;
+            mResourceCount[1] = b->spaceLeft(eResourceType::armor);
+            mSpaceCount = 2;
+        } break;
         case eBuildingType::vine:
         case eBuildingType::oliveTree:
         case eBuildingType::orangeTree: {
@@ -205,6 +215,11 @@ int eThreadBuilding::resourceCount(const eResourceType type) const {
 int eThreadBuilding::resourceSpaceLeft(const eResourceType type) const {
     const bool accepts = static_cast<bool>(mAccepts & type);
     if(!accepts) return 0;
+    if(mType == eBuildingType::triremeWharf) {
+        if(type == eResourceType::wood) return mResourceCount[0];
+        if(type == eResourceType::armor) return mResourceCount[1];
+        return 0;
+    }
     if(mType == eBuildingType::granary ||
        mType == eBuildingType::warehouse ||
        mType == eBuildingType::tradePost) {

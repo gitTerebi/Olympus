@@ -72,6 +72,10 @@ public:
                 topId = 1;
                 valid = true;
                 break;
+            case eEnlistType::navy:
+                topId = 3;
+                valid = true;
+                break;
             case eEnlistType::amazon:
                 topId = 4;
                 valid = true;
@@ -198,6 +202,9 @@ public:
                 break;
             case eBannerType::aresWarrior:
                 d.fType = eEnlistType::aresWarrior;
+                break;
+            case eBannerType::trireme:
+                d.fType = eEnlistType::navy;
                 break;
             default:
                 continue;
@@ -797,7 +804,8 @@ void eEnlistForcesDialog::initialize(
                         Language::zeusText(283, 14), true);
 
     navy->resize(colW, rightH);
-    navy->initialize(eEnlistedForces(), cids, {}, selectionChanged,
+    const auto navyEf = extractType(eBannerType::trireme, enlistable);
+    navy->initialize(navyEf, cids, {}, selectionChanged,
                      Language::zeusText(283, 6), false);
 
     heroes->resize(colW, rightH);
