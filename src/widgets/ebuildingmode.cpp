@@ -440,7 +440,6 @@ bool eBuildingModeHelpers::isCloneable(const eBuildingMode mode) {
     case eBuildingMode::bridge:
     case eBuildingMode::hippodromePiece:
     case eBuildingMode::crosswalk:
-    case eBuildingMode::triremeWharf:
     case eBuildingMode::stadium:
 
     case eBuildingMode::pyramidToThePantheon:
