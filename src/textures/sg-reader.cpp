@@ -34,6 +34,8 @@ struct SgRecord {
     uint16_t height = 0;
     bool compressed = false;
     bool isometric = false;    // type@50 == 30: footprint-diamond layout (terrain)
+    bool external = false;     // flag@52: pixels live in DATA/<bitmap>.555, offset-1
+    int bitmapId = -1;         // owning bitmap record (for external lookup)
     uint32_t alphaOffset = 0;  // v214: byte offset of RLE alpha mask in the .555 blob
     uint32_t alphaLength = 0;  // v214: alpha-mask byte length (0 = no mask)
 };
@@ -45,6 +47,10 @@ struct SgFile {
     // Sub-group name (bitmap, lowercased, ".bmp" stripped) -> global record start.
     // Composite templates reference records by 1-based index within a sub-group.
     std::map<std::string, int> fGroupStart;
+    // Bitmap table in file order: (first global record, name without extension).
+    std::vector<std::pair<int, std::string>> fBitmaps;
+    // Lazily loaded external .555 blobs, keyed by bitmapId (empty = load failed).
+    mutable std::map<int, std::vector<uint8_t>> fExtPixels;
     bool fValid = false;
 };
 
@@ -123,6 +129,27 @@ std::shared_ptr<SgFile> parseSg(const std::string& sgName) {
     // 72-byte record layouts (verified vs Zeus_Interface v213 + SprAmbient v214).
     const int compOff = 51;
 
+    for(uint32_t i = 0; i < numBitmaps; i++) {
+        const size_t b = size_t(kBitmapStart) + size_t(i) * kBitmapSize;
+        if(b + 132 > sg.size()) break;
+        std::string name;
+        for(size_t k = 0; k < 65 && sg[b + k]; k++) name += char(sg[b + k]);
+        const auto dot = name.find('.');
+        if(dot != std::string::npos) name = name.substr(0, dot); // strip .bmp
+        const int start = int(rd32(sg, b + 116 + 3 * 4)); // field [3] = first record
+        file->fGroupStart[lower(name)] = start;
+        file->fBitmaps.emplace_back(start, name);
+    }
+
+    // Owning bitmap for a record: last bitmap whose start <= record index.
+    const auto bitmapFor = [&](const uint32_t i) {
+        int bid = -1;
+        for(size_t k = 0; k < file->fBitmaps.size(); k++) {
+            if(uint32_t(file->fBitmaps[k].first) <= i) bid = int(k);
+        }
+        return bid;
+    };
+
     file->fRecords.resize(maxRecords + 1);
     for(uint32_t i = 0; i <= maxRecords; i++) {
         const size_t b = size_t(kRecordStart) + size_t(i) * recSz;
@@ -134,21 +161,12 @@ std::shared_ptr<SgFile> parseSg(const std::string& sgName) {
         r.height = rd16(sg, b + 22);
         r.compressed = sg[b + compOff] != 0;
         r.isometric = sg[b + 50] == 30; // IMAGE_TYPE_ISOMETRIC
+        r.external = sg[b + 52] != 0;   // pixels in DATA/<bitmap>.555, offset-1
+        if(r.external) r.bitmapId = bitmapFor(i);
         if(version >= 214) { // 72-byte record appends alpha-mask offset/length
             r.alphaOffset = rd32(sg, b + 64);
             r.alphaLength = rd32(sg, b + 68);
         }
-    }
-
-    for(uint32_t i = 0; i < numBitmaps; i++) {
-        const size_t b = size_t(kBitmapStart) + size_t(i) * kBitmapSize;
-        if(b + 132 > sg.size()) break;
-        std::string name;
-        for(size_t k = 0; k < 65 && sg[b + k]; k++) name += char(sg[b + k]);
-        const auto dot = name.find('.');
-        if(dot != std::string::npos) name = name.substr(0, dot); // strip .bmp
-        const int start = int(rd32(sg, b + 116 + 3 * 4)); // field [3] = first record
-        file->fGroupStart[lower(name)] = start;
     }
 
     file->fValid = true;
@@ -206,9 +224,33 @@ inline void to888(const uint16_t c, Uint8& r, Uint8& g, Uint8& b) {
     b = Uint8((bi << 3) | (bi >> 2));
 }
 
+// External records: the .sg3 marks images whose pixels ship in a standalone
+// DATA/<bitmap>.555 next to the main blob, with a 1-byte offset bias (the
+// classic Impressions external-image quirk; see citybuilding-tools SgImage).
+const std::vector<uint8_t>* externalPixels(const SgFile& f, const SgRecord& r) {
+    if(r.bitmapId < 0 || size_t(r.bitmapId) >= f.fBitmaps.size()) return nullptr;
+    const auto it = f.fExtPixels.find(r.bitmapId);
+    if(it != f.fExtPixels.end()) return it->second.empty() ? nullptr : &it->second;
+    auto& blob = f.fExtPixels[r.bitmapId];
+    const auto& name = f.fBitmaps[r.bitmapId].second;
+    const auto path = GameDir::path("DATA/" + name + ".555");
+    if(!readWhole(path, blob)) {
+        printf("SgReader: external '%s' missing\n", path.c_str());
+        blob.clear();
+    }
+    return blob.empty() ? nullptr : &blob;
+}
+
 SDL_Surface* decodeRecord(const SgFile& f, const SgRecord& r) {
     if(r.width == 0 || r.height == 0 || r.dataLength == 0) return nullptr;
-    if(size_t(r.offset) + r.dataLength > f.fPixels.size()) return nullptr;
+    const std::vector<uint8_t>* pixels = &f.fPixels;
+    uint32_t off = r.offset;
+    if(r.external) {
+        pixels = externalPixels(f, r);
+        if(!pixels) return nullptr;
+        off = r.offset - 1; // external offsets are biased by 1
+    }
+    if(size_t(off) + r.dataLength > pixels->size()) return nullptr;
 
     const auto surf = SDL_CreateRGBSurfaceWithFormat(
                           0, r.width, r.height, 32, SDL_PIXELFORMAT_RGBA32);
@@ -218,7 +260,7 @@ SDL_Surface* decodeRecord(const SgFile& f, const SgRecord& r) {
     const int total = r.width * r.height;
     memset(px, 0, size_t(total) * 4); // fully transparent default
 
-    const uint8_t* const buf = f.fPixels.data() + r.offset;
+    const uint8_t* const buf = pixels->data() + off;
     const uint32_t len = r.dataLength;
 
     // Shared RLE walk: ctrl 255 -> skip N indices (transparent run); else ctrl
@@ -343,9 +385,9 @@ SDL_Surface* decodeRecord(const SgFile& f, const SgRecord& r) {
     // ctrl 255 -> skip N transparent pixels; else N bytes, each 5-bit alpha.
     // Scales 5 bits to 8 (bvschaik citybuilding-tools SgImage::setAlphaPixel).
     if(r.alphaLength > 0) {
-        const size_t ab = size_t(r.offset) + r.dataLength;
-        if(ab + r.alphaLength <= f.fPixels.size()) {
-            const uint8_t* const abuf = f.fPixels.data() + ab;
+        const size_t ab = size_t(off) + r.dataLength;
+        if(ab + r.alphaLength <= pixels->size()) {
+            const uint8_t* const abuf = pixels->data() + ab;
             rle(abuf, r.alphaLength, total, 1, 0,
                 [&](const int i, const uint8_t* const p) {
                     const uint8_t c = *p;
