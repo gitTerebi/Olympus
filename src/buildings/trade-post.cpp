@@ -221,6 +221,58 @@ std::vector<Overlay> TradePost::getOverlays(const eTileSize size) const {
     return os;
 }
 
+std::vector<Overlay> TradePost::getOverlaysAtTile(const eTileSize size,
+                                                  const int tx,
+                                                  const int ty) const {
+    std::vector<Overlay> os;
+    const int sizeId = static_cast<int>(size);
+    const auto& blds = GameTextures::buildings();
+    const auto& texs = blds[sizeId];
+    const eWorldDirection dir = getBoard().direction();
+    const auto rect = tileRect();
+    const int boardW = getBoard().width();
+    const int boardH = getBoard().height();
+    SDL_Rect rotatedRect;
+    const auto doorSlot = sTradePostSlotFromRealTile(rect, dir, boardW,
+                                                     boardH, rotatedRect);
+    int viewX;
+    int viewY;
+    TileHelper::tileIdToRotatedTileId(tx, ty, viewX, viewY,
+                                       dir, boardW, boardH);
+    const auto tileSlot = sTradePostSlotFromLocalTile(viewX - rotatedRect.x,
+                                                      viewY - rotatedRect.y);
+    const auto doorSlotShift = sTradePostSlotShiftFromHome(doorSlot);
+    if(tileSlot.fX == doorSlot.fX && tileSlot.fY == doorSlot.fY) {
+        auto& door = os.emplace_back();
+        door.fTex = mType == eTradePostType::post ?
+                    texs.fTradingPost : texs.fPier2;
+        door.fX = doorSlotShift.first;
+        door.fY = doorSlotShift.second;
+        door.fAlignTop = true;
+        if(enabled() && mType == eTradePostType::post) {
+            const auto& coll = texs.fTradingPostOverlay;
+            const int texId = textureTime() % coll.size();
+            auto& man = os.emplace_back();
+            man.fTex = coll.getTexture(texId);
+            man.fX = doorSlotShift.first - 3.1;
+            man.fY = doorSlotShift.second - 7.2;
+        }
+        return os;
+    }
+
+    auto drawSlots = sTradePostStorageSlots(rect, rotatedRect, dir,
+                                            boardW, boardH);
+    for(const auto& slot : drawSlots) {
+        if(slot.fSlot.fX != tileSlot.fX || slot.fSlot.fY != tileSlot.fY) {
+            continue;
+        }
+        getSpaceOverlay(size, os, sTradePostSlotXY(slot.fSlot),
+                        slot.fStorageId);
+        break;
+    }
+    return os;
+}
+
 void TradePost::timeChanged(const int by) {
     mRouteTimer += by;
     if(mRouteTimer > Numbers::sTraderSpawnPeriod) {

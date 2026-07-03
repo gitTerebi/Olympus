@@ -285,6 +285,12 @@ public:
         (void)size;
         return std::vector<Overlay>();
     }
+    virtual std::vector<Overlay>
+    getOverlaysAtTile(const eTileSize size, const int tx, const int ty) const {
+        (void)tx;
+        (void)ty;
+        return getOverlays(size);
+    }
     // Characters/animals owned by this building but drawn after its texture.
     virtual std::vector<BuildingContainedActorDraw>
     getActorsDrawnAfterBuildingTexture(const eTileSize size) const {

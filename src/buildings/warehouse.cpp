@@ -177,3 +177,53 @@ std::vector<Overlay> Warehouse::getOverlays(const eTileSize size) const {
 
     return os;
 }
+
+std::vector<Overlay> Warehouse::getOverlaysAtTile(const eTileSize size,
+                                                  const int tx,
+                                                  const int ty) const {
+    std::vector<Overlay> os;
+    const int sizeId = static_cast<int>(size);
+    const auto& blds = GameTextures::buildings();
+    const auto& texs = blds[sizeId];
+    const eWorldDirection dir = getBoard().direction();
+    const auto rect = tileRect();
+    const int boardW = getBoard().width();
+    const int boardH = getBoard().height();
+    SDL_Rect rotatedRect;
+    const auto doorSlot = sSlotFromRealTile(rect, dir, boardW, boardH,
+                                            rotatedRect);
+    int viewX;
+    int viewY;
+    TileHelper::tileIdToRotatedTileId(tx, ty, viewX, viewY,
+                                       dir, boardW, boardH);
+    const auto tileSlot = sSlotFromLocalTile(viewX - rotatedRect.x,
+                                             viewY - rotatedRect.y);
+    const auto doorSlotShift = sSlotShiftFromHome(doorSlot);
+    if(tileSlot.fX == doorSlot.fX && tileSlot.fY == doorSlot.fY) {
+        auto& door = os.emplace_back();
+        door.fTex = texs.fWarehouseDoor;
+        door.fX = doorSlotShift.first;
+        door.fY = doorSlotShift.second;
+        door.fAlignTop = true;
+        if(enabled()) {
+            const auto& coll = texs.fWarehouseOverlay;
+            const int texId = textureTime() % coll.size();
+            auto& man = os.emplace_back();
+            man.fTex = coll.getTexture(texId);
+            man.fX = doorSlotShift.first - 1.24;
+            man.fY = doorSlotShift.second - 4.32;
+        }
+        return os;
+    }
+
+    auto drawSlots = sWarehouseStorageSlots(rect, rotatedRect, dir,
+                                            boardW, boardH);
+    for(const auto& slot : drawSlots) {
+        if(slot.fSlot.fX != tileSlot.fX || slot.fSlot.fY != tileSlot.fY) {
+            continue;
+        }
+        getSpaceOverlay(size, os, sSlotXY(slot.fSlot), slot.fStorageId);
+        break;
+    }
+    return os;
+}
