@@ -238,6 +238,7 @@ void BuildingTextures::loadAltarBullOverlay() {
     for(int i = 3650; i < 3674; i++) {
         loader.load(3650, i, fAltarBullOverlay);
     }
+    generateFlipped(fAltarBullOverlay, fAltarBullOverlayFlipped);
 }
 
 void BuildingTextures::loadPoseidonHerosHall() {
