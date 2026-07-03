@@ -1,5 +1,7 @@
 Olympus 0.1.0-rc.1
-A fork of eZeus, an open-source implementation of Zeus: Master of Olympus.
+A Zeus Poseidon open source remake project.
+A fork of eZeus, an open-source implementation of Zeus: Master of Olympus and
+the Poseidon expansion.
 
 To play Olympus you need the original game (Zeus: Master of Olympus base game +
 Poseidon expansion). English and Polish versions only (font glyph limits).

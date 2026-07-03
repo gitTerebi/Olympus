@@ -1,6 +1,12 @@
 # Olympus
 
-Olympus is a fork of eZeus, an open-source implementation of Zeus: Master of Olympus game. We thank the eZeus developers for their excellent work on the engine, which forms the foundation of this project. 
+Olympus is a Zeus Poseidon open source remake project: a fork of eZeus, an
+open-source implementation of Zeus: Master of Olympus and the Poseidon
+expansion. We thank the eZeus developers for their excellent work on the engine,
+which forms the foundation of this project.
+
+Keywords: Zeus Poseidon open source remake, Zeus: Master of Olympus open source,
+Poseidon expansion remake, city builder.
 
 Visit to read install directions:
 https://github.com/MaurycyLiebner/eZeus
