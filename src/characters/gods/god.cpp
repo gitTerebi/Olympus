@@ -481,83 +481,52 @@ int God::sGodAppearTime(const GodType gt) {
 
 bool God::sTarget(const GodType gt, const eBuildingType bt) {
     switch(gt) {
+    // sanctified-building lists match the original game:
+    // https://zeus.heavengames.com/gameinfo/sanctuaries/
     case GodType::aphrodite:
         return bt == eBuildingType::commonHouse ||
-               bt == eBuildingType::fountain ||
                bt == eBuildingType::eliteHousing;
     case GodType::apollo:
         return bt == eBuildingType::podium ||
-               bt == eBuildingType::college ||
-               bt == eBuildingType::dramaSchool ||
                bt == eBuildingType::theater ||
                bt == eBuildingType::stadium ||
                bt == eBuildingType::gymnasium ||
                bt == eBuildingType::bibliotheke ||
-               bt == eBuildingType::inventorsWorkshop ||
                bt == eBuildingType::laboratory ||
-               bt == eBuildingType::university ||
-               bt == eBuildingType::observatory ||
-               bt == eBuildingType::museum;
+               bt == eBuildingType::observatory;
     case GodType::ares:
         return false;
     case GodType::artemis:
-        return bt == eBuildingType::huntingLodge ||
-               bt == eBuildingType::granary;
+        return bt == eBuildingType::huntingLodge;
     case GodType::athena:
-        return bt == eBuildingType::growersLodge ||
-               bt == eBuildingType::oliveTree ||
-               bt == eBuildingType::olivePress ||
-               bt == eBuildingType::oilVendor;
+        return bt == eBuildingType::olivePress ||
+               bt == eBuildingType::cardingShed;
     case GodType::atlas:
-        return bt == eBuildingType::masonryShop ||
-               bt == eBuildingType::artisansGuild ||
-               bt == eBuildingType::timberMill ||
-               bt == eBuildingType::sculptureStudio;
+        return bt == eBuildingType::timberMill ||
+               bt == eBuildingType::refinery;
     case GodType::demeter:
         return bt == eBuildingType::wheatFarm ||
                bt == eBuildingType::onionsFarm ||
-               bt == eBuildingType::carrotsFarm ||
-               bt == eBuildingType::cardingShed ||
-               bt == eBuildingType::dairy ||
-               bt == eBuildingType::corral ||
-               bt == eBuildingType::growersLodge ||
-               bt == eBuildingType::orangeTendersLodge ||
-               bt == eBuildingType::foodVendor ||
-               bt == eBuildingType::granary;
+               bt == eBuildingType::carrotsFarm;
     case GodType::dionysus:
-        return bt == eBuildingType::growersLodge ||
-               bt == eBuildingType::vine ||
-               bt == eBuildingType::winery ||
-               bt == eBuildingType::wineVendor;
+        return bt == eBuildingType::winery;
     case GodType::hades:
+        // original also sanctified the tax office; taxes come from
+        // the palace here and the palace is not blessable
         return bt == eBuildingType::foundry ||
-               bt == eBuildingType::refinery ||
                bt == eBuildingType::mint;
     case GodType::hephaestus:
-        return bt == eBuildingType::foundry ||
-               bt == eBuildingType::refinery ||
-               bt == eBuildingType::blackMarbleWorkshop ||
-               bt == eBuildingType::mint ||
-               bt == eBuildingType::armory ||
+        return bt == eBuildingType::armory ||
                bt == eBuildingType::sculptureStudio;
     case GodType::hera:
-        return bt == eBuildingType::foodVendor ||
-               bt == eBuildingType::fleeceVendor ||
-               bt == eBuildingType::oilVendor ||
-               bt == eBuildingType::wineVendor ||
-               bt == eBuildingType::armsVendor ||
-               bt == eBuildingType::horseTrainer ||
-               bt == eBuildingType::chariotFactory ||
-               bt == eBuildingType::orangeTendersLodge ||
-               bt == eBuildingType::orangeTree;
+        return bt == eBuildingType::corral ||
+               bt == eBuildingType::orangeTendersLodge;
     case GodType::hermes:
-        return bt == eBuildingType::tradePost ||
-               bt == eBuildingType::pier;
+        return false;
     case GodType::poseidon:
         return bt == eBuildingType::urchinQuay ||
                bt == eBuildingType::fishery ||
-               bt == eBuildingType::pier ||
-               bt == eBuildingType::triremeWharf;
+               bt == eBuildingType::horseRanch;
     case GodType::zeus:
         return true;
     }

@@ -132,8 +132,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
                     aspectOptions[v],
                     window->settings().fRes);
                 if(resolution >= 0) window->setResolution(resolution);
-            },
-            nullptr
+            }
         });
     }
     displayChoices.push_back({
@@ -143,8 +142,7 @@ std::vector<eOptionsMenu::ePage> getOptionsPages(MainWindow* const window,
         [window, resolutionIndices](const int v) {
             if(v < 0 || v >= static_cast<int>(resolutionIndices.size())) return;
             window->setResolution(resolutionIndices[v]);
-        },
-        nullptr
+        }
     });
     displayChoices.push_back({
         "Display",
