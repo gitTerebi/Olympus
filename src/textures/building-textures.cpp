@@ -823,6 +823,9 @@ BuildingTextures::BuildingTextures(const int tileW, const int tileH,
     fAltarBullOverlay(renderer),
     fAltarSheepOverlay(renderer),
     fAltarGoodsOverlay(renderer),
+    fAltarBullOverlayFlipped(renderer),
+    fAltarSheepOverlayFlipped(renderer),
+    fAltarGoodsOverlayFlipped(renderer),
 
     fHeroStatues(renderer),
 
@@ -1004,6 +1007,7 @@ void BuildingTextures::loadAltarSheepOverlay() {
     for(int i = 493; i < 517; i++) {
         loader.load(493, i, fAltarSheepOverlay);
     }
+    generateFlipped(fAltarSheepOverlay, fAltarSheepOverlayFlipped);
 }
 
 void BuildingTextures::loadAltarGoodsOverlay() {
@@ -1021,6 +1025,7 @@ void BuildingTextures::loadAltarGoodsOverlay() {
     for(int i = 517; i < 529; i++) {
         loader.load(517, i, fAltarGoodsOverlay);
     }
+    generateFlipped(fAltarGoodsOverlay, fAltarGoodsOverlayFlipped);
 }
 
 void BuildingTextures::loadCommonHouse() {

@@ -22,24 +22,36 @@ eTempleAltarBuilding::eTempleAltarBuilding(GameBoard& board,
 std::vector<Overlay> eTempleAltarBuilding::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = GameTextures::buildings()[sizeId];
+    const auto s = monument();
+    // the altar base sprite is mirrored for odd rotations, so the
+    // sacrifice animation has to mirror and shift with it
+    const bool flipped = s && (s->rotateId() % 2 == 1);
     const TextureCollection* coll = nullptr;
-    if(mSacrifice == eSacrifice::sheep) {
+    switch(mSacrifice) {
+    case eSacrifice::sheep:
         GameTextures::loadAltarSheepOverlay();
-        coll = &blds.fAltarSheepOverlay;
-    } else if(mSacrifice == eSacrifice::goods) {
+        coll = flipped ? &blds.fAltarSheepOverlayFlipped :
+                         &blds.fAltarSheepOverlay;
+        break;
+    case eSacrifice::goods:
         GameTextures::loadAltarGoodsOverlay();
-        coll = &blds.fAltarGoodsOverlay;
-    } else if(mSacrifice == eSacrifice::bull) {
+        coll = flipped ? &blds.fAltarGoodsOverlayFlipped :
+                         &blds.fAltarGoodsOverlay;
+        break;
+    case eSacrifice::bull:
         GameTextures::loadAltarBullOverlay();
-        coll = &blds.fAltarBullOverlay;
-    } else {
+        coll = flipped ? &blds.fAltarBullOverlayFlipped :
+                         &blds.fAltarBullOverlay;
+        break;
+    default:
         return {};
     }
-    std::vector<Overlay> result;
     const int frame = textureTime();
     const auto& tex = coll->getTexture(frame % coll->size());
-    result.emplace_back(Overlay{-1.7, -3.4, tex, false});
-    return result;
+    // mirror of the even-rotation placement around the altar's center axis
+    const double x = flipped ? -1.4 : -1.7;
+    const double y = flipped ? -3.7 : -3.4;
+    return {Overlay{x, y, tex, false}};
 }
 
 void eTempleAltarBuilding::timeChanged(const int by) {

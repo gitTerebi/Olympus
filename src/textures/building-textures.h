@@ -629,6 +629,9 @@ public:
     TextureCollection fAltarBullOverlay;
     TextureCollection fAltarSheepOverlay;
     TextureCollection fAltarGoodsOverlay;
+    TextureCollection fAltarBullOverlayFlipped;
+    TextureCollection fAltarSheepOverlayFlipped;
+    TextureCollection fAltarGoodsOverlayFlipped;
 
     std::shared_ptr<Texture> fHeroHall;
     std::shared_ptr<Texture> fPoseidonHeroHall;
