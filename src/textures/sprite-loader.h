@@ -15,9 +15,11 @@ public:
                   const std::string& name,
                   const std::vector<eSpriteData>& sds,
                   const eOffsets* const offs,
-                  SDL_Renderer* const r) :
+                  SDL_Renderer* const r,
+                  const bool linear = false) :
         mSize(std::to_string(size)), mName(name),
-        mSds(sds), mOffs(offs), mRenderer(r) {}
+        mSds(sds), mOffs(offs), mRenderer(r),
+        mLinear(linear) {}
     ~SpriteLoader();
 
     void loadTrailer(const int doff,
@@ -57,6 +59,7 @@ private:
     const std::vector<eSpriteData> mSds;
     const eOffsets* const mOffs;
     SDL_Renderer* const mRenderer;
+    const bool mLinear;
     std::map<int, std::shared_ptr<Texture>> mTexs;
 };
 
