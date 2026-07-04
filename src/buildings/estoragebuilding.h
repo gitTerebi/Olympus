@@ -35,6 +35,10 @@ public:
     std::vector<eCartTask> cartTasks() const override;
     bool deliveryTargetExists(const eResourceType res,
                               const bool allowStorageTargets) const;
+    static bool sDeliveryTargetExists(const eBuildingWithResource* home,
+                                      const eResourceType res,
+                                      const bool allowStorageTargets,
+                                      const bool allowTradePostTargets);
     static bool acceptsInputDelivery(eBuildingWithResource* target,
                                      eResourceType res);
 
