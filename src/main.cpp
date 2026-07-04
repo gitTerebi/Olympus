@@ -135,6 +135,9 @@ int main(int argc, char* argv[]) {
     DevLaunchOptions devOptions;
     devOptions.fLoadRecent =
         std::find(args.begin(), args.end(), "--dev-load-recent") != args.end();
+    devOptions.fPerf =
+        std::find(args.begin(), args.end(), "--dev-perf") != args.end();
+    if(devOptions.fPerf) devOptions.fLoadRecent = true;
     devOptions.fCycleDirs =
         std::find(args.begin(), args.end(), "--dev-cycle-dirs") != args.end();
     devOptions.fWorldMap =

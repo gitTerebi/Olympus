@@ -7,6 +7,7 @@ class MainWindow;
 
 struct DevLaunchOptions {
     bool fLoadRecent = false;
+    bool fPerf = false;
     bool fCycleDirs = false;
     bool fWorldMap = false;
     std::string fWorldMapShotPath;

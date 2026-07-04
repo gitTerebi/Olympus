@@ -1,5 +1,11 @@
 #include "dev-launch.h"
 
+#include "debug/perf-probe.h"
+#include "buildings/ebuilding.h"
+
+#include <algorithm>
+#include <vector>
+
 #include "engine/eworlddirection.h"
 #include "language.h"
 #include "main-window.h"
@@ -71,6 +77,72 @@ void showWorldWhenReady(MainWindow& window)
             *done = true;
             window.showWorld();
             return;
+        }
+        window.addSlot(*tick);
+    };
+    window.addSlot(*tick);
+}
+
+void startPerfProbe(MainWindow& window)
+{
+    // phases: 0 warmup, 1 measure unpaused, 2 warmup paused, 3 measure paused
+    struct PerfState {
+        int fPhase = 0;
+        long long fPhaseStartFrame = -1;
+        std::string fUnpausedReport;
+    };
+    const auto state = std::make_shared<PerfState>();
+    const auto tick = std::make_shared<eSlot>();
+    *tick = [&window, state, tick]() {
+        const auto gameWidget =
+            dynamic_cast<GameWidget*>(window.currentWidget());
+        if(!gameWidget) {
+            window.addSlot(*tick);
+            return;
+        }
+        if(!PerfProbe::sEnabled) {
+            PerfProbe::sEnabled = true;
+            PerfProbe::reset();
+            if(gameWidget->gamePaused()) gameWidget->pauseGame();
+        }
+        constexpr long long warmupFrames = 180;
+        constexpr long long measureFrames = 900;
+        if(state->fPhaseStartFrame < 0) {
+            state->fPhaseStartFrame = PerfProbe::sFrames;
+        }
+        const auto inPhase = PerfProbe::sFrames - state->fPhaseStartFrame;
+        const bool warmup = state->fPhase == 0 || state->fPhase == 2;
+        const auto need = warmup ? warmupFrames : measureFrames;
+        if(inPhase >= need) {
+            if(state->fPhase == 1) {
+                state->fUnpausedReport =
+                    PerfProbe::report("dev-perf UNPAUSED");
+                std::vector<std::pair<double, int>> keys;
+                for(const auto& [k, s] : PerfProbe::sKeyMs) {
+                    keys.emplace_back(s.fMs, k);
+                }
+                std::sort(keys.rbegin(), keys.rend());
+                state->fUnpausedReport += "  top building types (total ms over measure):\n";
+                for(int i = 0; i < int(keys.size()) && i < 15; i++) {
+                    const auto& s = PerfProbe::sKeyMs[keys[i].second];
+                    char buf[256];
+                    snprintf(buf, sizeof(buf), "    %-24s %9.3f ms  %8lld calls\n",
+                             eBuilding::sNameForBuilding(
+                                 eBuildingType(keys[i].second)).c_str(),
+                             s.fMs, s.fCalls);
+                    state->fUnpausedReport += buf;
+                }
+                gameWidget->pauseGame();
+            } else if(state->fPhase == 3) {
+                printf("%s", state->fUnpausedReport.c_str());
+                printf("%s", PerfProbe::report("dev-perf PAUSED").c_str());
+                fflush(stdout);
+                window.quit();
+                return;
+            }
+            state->fPhase++;
+            PerfProbe::reset();
+            state->fPhaseStartFrame = 0;
         }
         window.addSlot(*tick);
     };
@@ -183,7 +255,7 @@ void applyDevLaunchOptions(MainWindow& window,
                            const DevLaunchOptions& options)
 {
     if(!options.fLoadRecent && !options.fCycleDirs &&
-       !options.fWorldMap) return;
+       !options.fWorldMap && !options.fPerf) return;
     const auto launch = std::make_shared<eSlot>();
     *launch = [&window, options, launch]() {
         if(!Language::loaded()) {
@@ -205,6 +277,9 @@ void applyDevLaunchOptions(MainWindow& window,
         }
         if(options.fCycleDirs) {
             startDirectionCycle(window);
+        }
+        if(options.fPerf && loaded) {
+            startPerfProbe(window);
         }
     };
     window.addSlot(*launch);

@@ -1,5 +1,7 @@
 ﻿#include "estoragebuilding.h"
 #include "fileIO/save-archive.h"
+#include "numbers.h"
+#include "rand.h"
 
 #include <algorithm>
 
@@ -34,6 +36,7 @@ eStorageBuilding::eStorageBuilding(GameBoard& board,
     }
     board.registerStorBuilding(this);
     setStashable(mCanAccept);
+    mCartTaskUpdate = Rand::rand() % Numbers::sDayLength;
 }
 
 eStorageBuilding::~eStorageBuilding() {
@@ -43,6 +46,9 @@ eStorageBuilding::~eStorageBuilding() {
 
 void eStorageBuilding::timeChanged(const int by) {
     eEmployingBuilding::timeChanged(by);
+    mCartTaskUpdate += by;
+    if(mCartTaskUpdate < Numbers::sDayLength) return;
+    mCartTaskUpdate = 0;
     if(enabled()) {
         const auto tasks = cartTasks();
         bool hasDeliverWork = false;
