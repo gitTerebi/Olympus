@@ -2,6 +2,7 @@
 #include "game-board.h"
 
 #include "e-city-attitude.h"
+#include "debug/perf-probe.h"
 
 #include <cstdio>
 #include <queue>
@@ -2826,6 +2827,7 @@ void GameBoard::incTime(const int by)
 {
     if (mEpisodeLost)
         return;
+    PerfProbe::Lap lap;
     mUndo.incTime(by);
     const int dayLen = Numbers::sDayLength;
     { // autosave
@@ -2915,10 +2917,14 @@ void GameBoard::incTime(const int by)
         }
     }
 
+    lap.lap(PerfProbe::BoardMisc);
+
     for (const auto &c : mActiveCitiesOnBoard)
     {
         c->incTime(by);
     }
+
+    lap.lap(PerfProbe::BoardCities);
 
     for (const auto &p : mPlayersOnBoard)
     {
@@ -3047,6 +3053,7 @@ void GameBoard::incTime(const int by)
             TributeHelpers::receiveTributeFromCity(*this, ppid, c, true);
         }
     }
+    lap.lap(PerfProbe::BoardPlayers);
     const auto chars = mCharacters;
     for (const auto c : chars)
     {
@@ -3059,18 +3066,32 @@ void GameBoard::incTime(const int by)
                 da->nextMonth();
         }
     }
+    lap.lap(PerfProbe::BoardChars);
     const auto solds = mSoldiers;
     for (const auto c : solds)
     {
         c->incTime(by);
     }
+    lap.lap(PerfProbe::BoardSoldiers);
     const auto build = mTimedBuildings;
     for (const auto b : build)
     {
-        b->incTime(by);
-        if (nextMonth)
-            b->nextMonth();
+        if (PerfProbe::sEnabled)
+        {
+            const auto t0 = PerfProbe::Clock::now();
+            b->incTime(by);
+            if (nextMonth)
+                b->nextMonth();
+            PerfProbe::addKey(int(b->type()), PerfProbe::msSince(t0));
+        }
+        else
+        {
+            b->incTime(by);
+            if (nextMonth)
+                b->nextMonth();
+        }
     }
+    lap.lap(PerfProbe::BoardBuildings);
     for (const auto s : mSpawners)
     {
         s->incTime(by);
@@ -3117,6 +3138,7 @@ void GameBoard::incTime(const int by)
     {
         c->incDistributeEmployees(by);
     }
+    lap.lap(PerfProbe::BoardRest);
 }
 
 void GameBoard::incFrame()

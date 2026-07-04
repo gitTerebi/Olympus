@@ -134,6 +134,9 @@ private:
     eResourceType mEmpty = eResourceType::none;
     eResourceType mAccept = mCanAccept; // includes get
     int mNextGetCartTask = 0;
+    // cart task re-evaluation throttled to once per game day;
+    // starts at a random phase so storehouses don't all check the same tick
+    int mCartTaskUpdate = 0;
 
     int mResourceCount[15] = {0};
     eResourceType mResource[15] = {eResourceType::none,

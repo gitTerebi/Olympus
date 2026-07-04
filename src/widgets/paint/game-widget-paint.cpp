@@ -28,6 +28,7 @@
 #include "widgets/paint/draw/draw-column.h"
 #include "widgets/paint/draw/dont-draw-appeal.h"
 #include "widgets/paint/world-postprocess-shader.h"
+#include "debug/perf-probe.h"
 #include "spawners/land-invasion-point.h"
 
 #include <algorithm>
@@ -1265,8 +1266,11 @@ void GameWidget::paintEvent(ePainter &p)
         }
     };
 
+    const auto tilesT0 = PerfProbe::Clock::now();
     iterateOverVisibleTiles([&](eTile *const tile)
                             {
+        if(PerfProbe::sEnabled) PerfProbe::sTiles++;
+        PerfProbe::Lap tileLap;
         const int worldTileX = tile->x();
         const int worldTileY = tile->y();
         int viewTileX;
@@ -1362,6 +1366,8 @@ void GameWidget::paintEvent(ePainter &p)
                                         const bool big,
                                         const bool crosswalk) {
             if(!tile) return;
+            // most tiles are empty; skip the rotation/altitude math for them
+            if(tile->characters().empty()) return;
             const int worldTileX = tile->x();
             const int worldTileY = tile->y();
             int viewTileX;
@@ -2171,6 +2177,7 @@ void GameWidget::paintEvent(ePainter &p)
             }
             return eCharRenderOrder::x1y1;
         };
+        tileLap.lap(PerfProbe::TileTerr);
         bool lastTile = false;
         if(dir == eWorldDirection::N) {
             lastTile = dty >= mBoard->height() - 2;
@@ -2227,6 +2234,7 @@ void GameWidget::paintEvent(ePainter &p)
             }
         }
 
+        tileLap.lap(PerfProbe::TileChars);
         drawBanners();
 
         buildingDrawer(tile);
@@ -2260,9 +2268,15 @@ void GameWidget::paintEvent(ePainter &p)
             const int h = abs(mPressedY - mHoverY);
             SDL_Rect selRect{x - mDX, y - mDY, w, h};
             p.drawRect(selRect, SDL_Color{0, 255, 0, 255}, 1);
-        } });
+        }
+        tileLap.lap(PerfProbe::TileBuild); });
+    PerfProbe::add(PerfProbe::PaintTiles, PerfProbe::msSince(tilesT0));
 
-    tp.handleScheduledDraw();
+    {
+        const auto t0 = PerfProbe::Clock::now();
+        tp.handleScheduledDraw();
+        PerfProbe::add(PerfProbe::PaintFlush, PerfProbe::msSince(t0));
+    }
 
     // enemy banners drawn after flush so they sit on top of everything
     for(const auto& d : deferredEnemyBanners) d();
@@ -2519,6 +2533,7 @@ void GameWidget::paintEvent(ePainter &p)
 
     // Restore the frame target and blit the zoomed/scrolled city into it. The
     // postprocess belongs here so menus, labels, dialogs, and tooltips stay crisp.
+    const auto postT0 = PerfProbe::Clock::now();
     SDL_SetRenderTarget(r, prevTarget);
     if(postprocessIsPlainCopy()) {
         SDL_RenderCopy(r, mWorldTex->tex(), &srcRect, &dstRect);
@@ -2567,6 +2582,7 @@ void GameWidget::paintEvent(ePainter &p)
                 mCompassDir = idx;
             }
         }
+        PerfProbe::add(PerfProbe::PaintPost, PerfProbe::msSince(postT0));
         if(mCompassTex) {
             const int sideW = mGm ? mGm->width() : 0;
             const int px = outputW - sideW - mCompassTex->width() - 20;

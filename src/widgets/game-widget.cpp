@@ -1,5 +1,6 @@
 #include "game-widget.h"
 #include "numbers.h"
+#include "debug/perf-probe.h"
 #include "buildtools/road-tool.h"
 #include "buildtools/column-tool.h"
 #include "buildtools/bridge-tool.h"
@@ -3706,6 +3707,10 @@ void GameWidget::updateBeforePaint()
     mLastPaintTp = nowTp;
     if(dtMs <= 0.0) dtMs = kBaseRenderMs;
     mLastDtMs = dtMs;
+    if(PerfProbe::sEnabled) {
+        PerfProbe::sFrames++;
+        PerfProbe::add(PerfProbe::FrameDt, dtMs);
+    }
     const double dtScale = dtMs / kBaseRenderMs;
 
     mFrame++;
@@ -3790,8 +3795,17 @@ void GameWidget::updateBeforePaint()
             } else {
                 const int timeBy = mSpeed * simTicks;
                 mTime += timeBy;
-                mBoard->incTime(timeBy);
-                mGm->update();
+                PerfProbe::sSimTicks += simTicks;
+                {
+                    const auto t0 = PerfProbe::Clock::now();
+                    mBoard->incTime(timeBy);
+                    PerfProbe::add(PerfProbe::IncTime, PerfProbe::msSince(t0));
+                }
+                {
+                    const auto t0 = PerfProbe::Clock::now();
+                    mGm->update();
+                    PerfProbe::add(PerfProbe::GmUpdate, PerfProbe::msSince(t0));
+                }
                 if(mDestinationBuilding) tickDestinationPath(mTime);
             }
         }

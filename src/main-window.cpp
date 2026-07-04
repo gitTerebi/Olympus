@@ -36,6 +36,7 @@
 #include "widgets/eeventbackground.h"
 
 #include "widgets/paint/world-postprocess-shader.h"
+#include "debug/perf-probe.h"
 
 namespace {
 bool writeGameSaveFile(const std::string& path,
@@ -971,7 +972,9 @@ int MainWindow::exec() {
             if(nextFrame < now - duration_cast<high_resolution_clock::duration>(5*frameDt)) {
                 nextFrame = now;
             } else {
+                const auto t0 = PerfProbe::Clock::now();
                 std::this_thread::sleep_until(nextFrame);
+                PerfProbe::add(PerfProbe::FrameSleep, PerfProbe::msSince(t0));
             }
         }
 
@@ -995,7 +998,9 @@ int MainWindow::exec() {
             nextMusicPoll = now + 250ms;
         }
         if(mWidget) {
+            const auto t0 = PerfProbe::Clock::now();
             mWidget->paint(p);
+            PerfProbe::add(PerfProbe::Paint, PerfProbe::msSince(t0));
             if(now >= nextTooltipPoll) {
                 tooltip.update();
                 nextTooltipPoll = now + 50ms;
@@ -1029,7 +1034,11 @@ int MainWindow::exec() {
             p.drawText(0, 0, std::to_string(fpsVal), FontColor::dark);
         }
 
-        SDL_RenderPresent(mSdlRenderer);
+        {
+            const auto t0 = PerfProbe::Clock::now();
+            SDL_RenderPresent(mSdlRenderer);
+            PerfProbe::add(PerfProbe::Present, PerfProbe::msSince(t0));
+        }
 
         std::vector<eSlot> slots;
         std::swap(slots, mSlots);
