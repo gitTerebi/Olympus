@@ -30,23 +30,19 @@ public:
 
 private:
     // transitions
-    void toLoading();
-    void toWaitOrIdle();
     void toFindTarget();
     void toAtOrReturn();
     void toLoadOrIdle();
 
     // actions
     void enterIdle();
-    void enterLoading();
-    void enterWaitOutside();
     void enterIdleOutside();
     void enterReturning();
 
     eDeliverState mDeliverState = eDeliverState::idle;
     int mFindRetry = 0;
     static const int kIdleWait = 1000;
-    static const int kMaxFindRetries = 250;
+    static const int kMaxFindRetries = 3;
     static const int kFindRetryWait = 1000;
     static const int kIdleOutsideWait = 1000;
 };

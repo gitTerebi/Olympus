@@ -11,45 +11,47 @@ eDeliverCartAction::eDeliverCartAction(eCharacter* const c,
 bool eDeliverCartAction::decide() {
     if(!building()) return true;
     switch(mDeliverState) {
-    case eDeliverState::idle:        toLoading();     break;
-    case eDeliverState::loading:     toWaitOrIdle();  break;
-    case eDeliverState::waitOutside: toFindTarget();  break;
-    case eDeliverState::findTarget:  toFindTarget();  break; // retry after sleep
-    case eDeliverState::moving:      toAtOrReturn();  break;
-    case eDeliverState::atTarget:    toAtOrReturn();  break;
-    case eDeliverState::idleOutside: toFindTarget();  break; // retry after sleep
-    case eDeliverState::returning:   toLoadOrIdle();  break;
+    case eDeliverState::idle:        toFindTarget(); break;
+    case eDeliverState::loading:     toFindTarget(); break; // legacy save
+    case eDeliverState::waitOutside: toFindTarget(); break; // legacy save
+    case eDeliverState::findTarget:  toFindTarget(); break; // retry after sleep
+    case eDeliverState::moving:      toAtOrReturn(); break;
+    case eDeliverState::atTarget:    toAtOrReturn(); break;
+    case eDeliverState::idleOutside: toFindTarget(); break; // retry after sleep
+    case eDeliverState::returning:   toLoadOrIdle(); break;
     }
     return true;
 }
 
 // ── transition helpers ────────────────────────────────────────────────────────
 
-void eDeliverCartAction::toLoading() {
-    enterLoading();
-}
-
-void eDeliverCartAction::toWaitOrIdle() {
-    const auto c = cart();
-    if(c->hasResource()) {
-        enterWaitOutside();
-    } else {
-        enterIdle();
-    }
-}
-
 void eDeliverCartAction::toFindTarget() {
     const auto c = cart();
+    mDeliverState = eDeliverState::findTarget;
     if(c->hasResource()) {
+        // mid-journey: re-run the same BFS with the cargo
         eCartTask task;
         task.fMaxCount = c->resCount();
         task.fResource = c->resType();
         task.fType = eCartActionType::deliver;
-        mDeliverState = eDeliverState::findTarget;
         findTarget(task);
-    } else {
-        enterReturning();
+        return;
     }
+    // at home: probe with the real road BFS before taking any stock —
+    // the BFS is the single judge of reachable targets, stock is only
+    // loaded in its found-callback (startResourceAction)
+    std::vector<eCartTask> dtasks;
+    const auto tasks = building()->cartTasks();
+    for(const auto& task : tasks) {
+        if(task.fType != eCartActionType::deliver) continue;
+        if(task.fMaxCount <= 0) continue;
+        dtasks.push_back(task);
+    }
+    if(dtasks.empty()) {
+        enterIdle();
+        return;
+    }
+    findTarget(dtasks);
 }
 
 void eDeliverCartAction::toAtOrReturn() {
@@ -71,6 +73,12 @@ void eDeliverCartAction::toLoadOrIdle() {
         const int count = c->resCount();
         const int added = building()->add(res, count);
         c->setResource(res, count - added);
+        // home full — stash leftover so cart frees up for other items
+        const int leftover = c->resCount();
+        if(leftover > 0) {
+            building()->stash(res, leftover);
+            c->take(res, leftover);
+        }
     }
     enterIdle();
 }
@@ -88,25 +96,6 @@ void eDeliverCartAction::enterIdle() {
     wait(kIdleWait);
 }
 
-void eDeliverCartAction::enterLoading() {
-    mDeliverState = eDeliverState::loading;
-    const auto c = cart();
-    // top-up: take as much deliver stock as possible
-    const auto tasks = building()->cartTasks();
-    for(const auto& task : tasks) {
-        if(task.fType != eCartActionType::deliver) continue;
-        startResourceAction(task);
-        if(c->resCount() > 0) return; // loaded — decide() will call toWaitOrIdle
-    }
-    // nothing taken — decide() will call toWaitOrIdle → enterIdle
-}
-
-void eDeliverCartAction::enterWaitOutside() {
-    mDeliverState = eDeliverState::waitOutside;
-    cart()->setVisible(true);
-    waitOutside(); // walk to road/adjacent tile; on arrive → spread() → decide()
-}
-
 void eDeliverCartAction::enterIdleOutside() {
     mDeliverState = eDeliverState::idleOutside;
     cart()->setVisible(true);
@@ -120,20 +109,27 @@ void eDeliverCartAction::enterReturning() {
     goBack();
 }
 
-// ── findTarget fail callback ──────────────────────────────────────────────────
-// called by base findTarget internals via throttleDropoffRetry / enterIdle paths
-// Override: use our own retry logic instead
+// ── findTarget callbacks ──────────────────────────────────────────────────────
 
 void eDeliverCartAction::onFindTargetFail() {
-    mFindRetry++;
-    if(mFindRetry >= kMaxFindRetries) {
-        enterReturning();
+    if(cart()->hasResource()) {
+        // mid-journey fail — brief retries for transient races, then home
+        mFindRetry++;
+        if(mFindRetry >= kMaxFindRetries) {
+            enterReturning();
+        } else {
+            wait(kFindRetryWait);
+        }
     } else {
-        wait(kFindRetryWait);
+        // home probe fail — nothing was loaded, stay in, retry later
+        enterIdle();
     }
 }
 
 void eDeliverCartAction::onFoundTarget() {
+    // stock gets loaded by the BFS found-callback; step out now
+    mFindRetry = 0;
+    cart()->setVisible(true);
     mDeliverState = eDeliverState::moving;
 }
 
@@ -156,11 +152,7 @@ void eDeliverCartAction::resumeFromSavedState() {
         enterIdle();
         break;
     case eDeliverState::loading:
-        toWaitOrIdle();
-        break;
     case eDeliverState::waitOutside:
-        enterWaitOutside();
-        break;
     case eDeliverState::findTarget:
     case eDeliverState::moving:
         toFindTarget();

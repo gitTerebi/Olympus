@@ -153,7 +153,7 @@ void eResourceBuilding::timeChanged(const int by) {
             wait *= Numbers::sTreeVineCursedRipePeriodMultiplier;
         }
     }
-    if((mWorkedOn || mRipe >= 5) && mNextRipe > wait) {
+    if((mWorkedOn || mSanctuary || mRipe >= 5) && mNextRipe > wait) {
         mNextRipe -= wait;
         if(mType != eResourceBuildingType::oliveTree) {
             mWorkedOn = false;

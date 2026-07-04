@@ -11,11 +11,13 @@ public:
     bool decide() override;
     int cartCapacity(const eResourceType res) const override;
 
+    void onFindTargetFail() override;
+    void onFoundTarget() override;
+
 private:
     void serializeFields(SaveArchive& ar) override;
     bool acceptsTargetForTask(const eCartTask& task,
                               const eThreadBuilding& target) const override;
-    bool hasDeliveryTarget(const eCartTask& task) const;
     void startResourceAction(const eCartTask& task) override;
 
     void enterStorageIdle();

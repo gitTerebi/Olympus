@@ -34,12 +34,8 @@ bool eStorageDeliveryCartAction::decide() {
             task.fResource = c->resType();
             task.fType = eCartActionType::deliver;
             task.fStoragePush = mTask.fStoragePush;
-            if(hasDeliveryTarget(task)) {
-                enterStorageMovingToTarget(task);
-            } else {
-                mWaitAfterNoDeliveryTarget = true;
-                enterStorageReturning();
-            }
+            // BFS is the single judge — fail lands in onFindTargetFail
+            enterStorageMovingToTarget(task);
         } else {
             enterStorageLoadingDeliver();
         }
@@ -74,16 +70,14 @@ bool eStorageDeliveryCartAction::decide() {
         break;
     }
     case eCartState::idleOutside: {
-        const auto tasks = building()->cartTasks();
-        bool hasDeliver = false;
-        for(const auto& task : tasks) {
-            if(task.fType != eCartActionType::deliver) continue;
-            if(hasDeliveryTarget(task)) { hasDeliver = true; break; }
-        }
-        if(hasDeliver) {
-            enterStorageLoadingDeliver();
+        if(c->hasResource()) {
+            eCartTask task;
+            task.fMaxCount = c->resCount();
+            task.fResource = c->resType();
+            task.fType = eCartActionType::deliver;
+            task.fStoragePush = mTask.fStoragePush;
+            enterStorageMovingToTarget(task);
         } else {
-            mWaitAfterNoDeliveryTarget = true;
             enterStorageReturning();
         }
         break;
@@ -102,17 +96,18 @@ bool eStorageDeliveryCartAction::decide() {
                 }
             }
             if(c->hasResource() && (support() & eCartActionTypeSupport::deliver)) {
-                eCartTask task;
-                task.fMaxCount = c->resCount();
-                task.fResource = c->resType();
-                task.fType = eCartActionType::deliver;
-                task.fStoragePush = mTask.fStoragePush;
-                if(hasDeliveryTarget(task)) {
+                if(!mWaitAfterNoDeliveryTarget) {
+                    // one BFS probe for the leftover cargo; fail sets the
+                    // flag in onFindTargetFail and comes back here
+                    eCartTask task;
+                    task.fMaxCount = c->resCount();
+                    task.fResource = c->resType();
+                    task.fType = eCartActionType::deliver;
+                    task.fStoragePush = mTask.fStoragePush;
                     enterStorageMovingToTarget(task);
                     break;
                 }
                 dumpStockAtHome();
-                mWaitAfterNoDeliveryTarget = true;
             }
         }
         if(mTask.fMaxCount > 0) {
@@ -151,37 +146,31 @@ bool eStorageDeliveryCartAction::acceptsTargetForTask(
            type != eBuildingType::granary;
 }
 
-bool eStorageDeliveryCartAction::hasDeliveryTarget(
-        const eCartTask& task) const {
-    if(!building()) return false;
-    if(task.fType != eCartActionType::deliver) return false;
-    if(task.fMaxCount <= 0) return false;
+void eStorageDeliveryCartAction::onFindTargetFail() {
+    const auto c = cart();
+    if(c->hasResource()) {
+        // no reachable target for the cargo — go home, dump it there
+        mWaitAfterNoDeliveryTarget = true;
+        enterStorageReturning();
+        return;
+    }
+    if(mState == eCartState::loadingGet) {
+        enterStorageIdle();
+        wait(kNoDeliveryTargetWait);
+        return;
+    }
+    // deliver probe failed with nothing loaded — cart never left home
+    if(support() & eCartActionTypeSupport::get) {
+        enterStorageLoadingGet();
+    } else {
+        enterStorageIdle();
+        wait(kNoDeliveryTargetWait);
+    }
+}
 
-    const auto res = task.fResource;
-    const auto cid = building()->cityId();
-    const bool storagePush = task.fStoragePush;
-    const auto targets = board().buildings(cid, [this, res, cid, storagePush](
-                                           eBuilding* const b) {
-        if(!b) return false;
-        if(b == building()) return false;
-        const auto type = b->type();
-        if(type == eBuildingType::tradePost) return false;
-        if(storagePush) {
-            if(type == eBuildingType::warehouse ||
-               type == eBuildingType::granary) return false;
-        }
-        const auto rb = dynamic_cast<eBuildingWithResource*>(b);
-        if(!rb) return false;
-        const auto storage = dynamic_cast<eStorageBuilding*>(rb);
-        if(storage && storage->empties(res)) return false;
-        if(storagePush && !eStorageBuilding::acceptsInputDelivery(rb, res)) {
-            return false;
-        }
-        const int reserved = eStorageBuilding::incomingReservedFor(
-            b, res, board(), cid);
-        return rb->spaceLeft(res) - reserved > 0;
-    });
-    return !targets.empty();
+void eStorageDeliveryCartAction::onFoundTarget() {
+    // stock was just loaded by the BFS found-callback; step out
+    character()->setVisible(true);
 }
 
 void eStorageDeliveryCartAction::startResourceAction(const eCartTask& task) {
@@ -212,30 +201,18 @@ void eStorageDeliveryCartAction::enterStorageLoadingDeliver() {
     mWaitAfterNoDeliveryTarget = false;
     mState = eCartState::loadingDeliver;
     mTarget = nullptr;
-    const auto c = cart();
+    // probe with the real road BFS — stock is only taken in its
+    // found-callback (startResourceAction), so a failed probe never
+    // leaves the building
+    std::vector<eCartTask> dtasks;
     const auto tasks = building()->cartTasks();
-    bool blockedDeliver = false;
-    bool hasGet = false;
     for(const auto& task : tasks) {
-        if(task.fType == eCartActionType::get && task.fMaxCount > 0) {
-            hasGet = true;
-            continue;
-        }
         if(task.fType != eCartActionType::deliver) continue;
-        if(!hasDeliveryTarget(task)) {
-            blockedDeliver = blockedDeliver || task.fMaxCount > 0;
-            continue;
-        }
-        startResourceAction(task);
-        mTask = task;
-        if(c->resCount() > 0) {
-            enterStorageWaitOutside();
-            return;
-        }
+        if(task.fMaxCount <= 0) continue;
+        dtasks.push_back(task);
     }
-    if(blockedDeliver && !hasGet) {
-        enterStorageIdle();
-        wait(kNoDeliveryTargetWait);
+    if(!dtasks.empty()) {
+        findTarget(dtasks);
         return;
     }
     if(support() & eCartActionTypeSupport::get) {

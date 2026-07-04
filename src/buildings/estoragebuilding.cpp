@@ -358,16 +358,28 @@ bool eStorageBuilding::getTargetExists(const eResourceType res) const {
 bool eStorageBuilding::deliveryTargetExists(
         const eResourceType res,
         const bool allowStorageTargets) const {
-    const auto cid = cityId();
-    const auto& board = getBoard();
-    const auto targets = board.buildings(cid, [this, res, cid, &board,
-                                               allowStorageTargets](
+    return sDeliveryTargetExists(this, res, allowStorageTargets, false);
+}
+
+bool eStorageBuilding::sDeliveryTargetExists(
+        const eBuildingWithResource* const home,
+        const eResourceType res,
+        const bool allowStorageTargets,
+        const bool allowTradePostTargets) {
+    if(!home) return false;
+    const auto cid = home->cityId();
+    const auto& board = home->getBoard();
+    const auto targets = board.buildings(cid, [home, res, cid, &board,
+                                               allowStorageTargets,
+                                               allowTradePostTargets](
                                               eBuilding* const b) {
         if(!b) return false;
-        if(b == this) return false;
+        if(b == home) return false;
 
         const auto type = b->type();
-        if(type == eBuildingType::tradePost) return false;
+        if(type == eBuildingType::tradePost && !allowTradePostTargets) {
+            return false;
+        }
         const bool storageTarget = type == eBuildingType::warehouse ||
                                    type == eBuildingType::granary;
         if(storageTarget && !allowStorageTargets) return false;

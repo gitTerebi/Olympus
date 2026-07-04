@@ -476,7 +476,9 @@ void CartTransporterAction::findTarget(const std::vector<eCartTask>& tasks,
                 return 64;
             });
         }
-        const auto w = getWalkableForTask(true, scanType);
+        // include home rect: deliver probes start from inside the home
+        // building, before any stock is taken
+        const auto w = getWalkableForTask(false, scanType);
         setCurrentAction(a);
         a->start(finalTile, w);
     };
