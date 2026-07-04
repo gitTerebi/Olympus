@@ -1,6 +1,7 @@
 #include "ebuildbutton.h"
 
 #include <algorithm>
+#include <cmath>
 
 #include "textures/game-textures.h"
 #include "elabel.h"
@@ -16,15 +17,23 @@ void eBuildButton::initialize(const std::string& name,
 
     const int width = customWidth > 0 ? customWidth : 190*mult;
 
-    setWidth(width);
-    setHeight(10*mult);
-
     const auto& coll = intrfc[iRes];
+
+    int height = 10*mult;
+    const auto btnTex = coll.fBuildingButton.getTexture(0);
+    if(btnTex) {
+        const int th = std::round(btnTex->height()*mult/2.0);
+        if(th > height) height = th;
+    }
+
+    setWidth(width);
+    setHeight(height);
 
     {
         const auto nameWidget = new eWidget(window());
 
         addWidget(nameWidget);
+        nameWidget->setHeight(height);
         nameWidget->align(Alignment::vcenter);
 
         const auto nameLabel = new eLabel(name, window());
@@ -66,7 +75,7 @@ void eBuildButton::initialize(const std::string& name,
         drachmaIcon->setNoPadding();
         drachmaIcon->fitContent();
         drachmaIcon->setFitToDrawSize(true);
-        drachmaIcon->setMaxDrawHeight(10*mult);
+        drachmaIcon->setMaxDrawHeight(height);
 
         const auto cstr = std::to_string(cost);
         const auto drachmaText = new eLabel(cstr, window());
