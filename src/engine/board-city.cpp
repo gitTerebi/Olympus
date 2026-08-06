@@ -2487,7 +2487,6 @@ eEnlistedForces BoardCity::getEnlistableForces() const {
     for(const auto& h : mHeroHalls) {
         const auto s = h->stage();
         if(s != eHeroSummoningStage::arrived) continue;
-        if(h->heroOnQuest()) continue;
         const auto ht = h->heroType();
         result.fHeroes.push_back({mId, ht});
     }
