@@ -16,6 +16,8 @@
 #include "vector-helpers.h"
 #include "numbers.h"
 
+#include <set>
+
 eWorldMapWidget::eWorldMapWidget(MainWindow* const window) :
     eLabel(window) {}
 
@@ -98,6 +100,7 @@ std::vector<eMapArmy> getArmies(GameBoard& board) {
     const auto& world = board.world();
     const auto date = board.date();
     const auto& cs = board.armyEvents();
+    std::set<eHeroType> drawnHeroes;
     for(const auto c : cs) {
         const auto& forces = c->forces();
         const auto splitForces = forces.splitIntoCities();
@@ -152,6 +155,7 @@ std::vector<eMapArmy> getArmies(GameBoard& board) {
             }
 
             for(const auto& h : forces.fHeroes) {
+                if(!drawnHeroes.insert(h.second).second) continue;
                 army.fHeroes.push_back(h.second);
             }
         }

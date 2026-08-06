@@ -144,12 +144,12 @@ public:
     eEnlistType type() const { return mType; }
 
     void setSelected(const bool b) {
-        mSelected = b;
+        mSelected = b && !mAbroad;
         for(const auto l : mLabels) {
-            if(b) l->setYellowFontColor();
+            if(mSelected) l->setYellowFontColor();
             else l->setLightFontColor();
         }
-        mEnlistedLabel->setVisible(b);
+        mEnlistedLabel->setVisible(mSelected || mAbroad);
     }
 
     bool selected() const { return mSelected; }
@@ -486,6 +486,10 @@ void eEnlistForcesDialog::initialize(
         const std::vector<eHeroType>& heroesAbroad,
         const eEnlistAction& action,
         const std::vector<eResourceType>& plunderResources) {
+    mSelected.clear();
+    mSelectedPlunder = eResourceType::none;
+    mTips.clear();
+
     const auto r = resolution();
 
     setType(eFrameType::message);
@@ -747,7 +751,7 @@ void eEnlistForcesDialog::initialize(
         dispatchButt->setUnderline(false);
         dispatchButt->setText(Language::zeusText(283, 21));
         dispatchButt->fitContent();
-        const auto dispatchAct = [this, action]() {
+        const auto dispatchAct = [this, action, clearAllAct]() {
             if(mSelected.fHeroes.empty() && mSelected.fSoldiers.empty()) {
                 const auto msgb = new eFramedLabel(window());
                 msgb->setType(eFrameType::message);
@@ -765,8 +769,12 @@ void eEnlistForcesDialog::initialize(
                 mTips.push_back(etip);
                 updateTipPositions();
             } else {
-                if(action) action(mSelected, mSelectedPlunder);
+                const auto selected = mSelected;
+                const auto selectedPlunder = mSelectedPlunder;
+                clearAllAct();
+                mSelectedPlunder = eResourceType::none;
                 deleteLater();
+                if(action) action(selected, selectedPlunder);
             }
         };
         dispatchButt->setPressAction(dispatchAct);

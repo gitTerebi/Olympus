@@ -91,6 +91,7 @@ void ArmyReturnEvent::trigger() {
     for(const auto h : mForces.fHeroes) {
         const auto hh = board->heroHall(h.first, h.second);
         if(!hh) continue;
+        if(!hh->heroOnQuest()) continue;
         hh->setHeroOnQuest(false);
         if(!entryPoint) continue;
         const auto hero = hh->spawnHero();

@@ -1793,12 +1793,13 @@ GameBoard::eArmyEvents GameBoard::armyEvents() const
 
 void GameBoard::addArmyEvent(ArmyEventBase *const q)
 {
+    if(VectorHelpers::contains(mArmyEvents, q)) return;
     mArmyEvents.push_back(q);
 }
 
 void GameBoard::removeArmyEvent(ArmyEventBase *const q)
 {
-    VectorHelpers::remove(mArmyEvents, q);
+    VectorHelpers::removeAll(mArmyEvents, q);
 }
 
 std::vector<eMonster *> GameBoard::monsters(const eCityId cid) const
@@ -3538,13 +3539,17 @@ void GameBoard::requestForces(const eEnlistAction &action,
             }
         }
         std::vector<eHeroType> heroesAbroad;
-        for (const auto h : f.fHeroes)
-        {
+        auto& heroes = f.fHeroes;
+        const auto heroesEnd = std::remove_if(heroes.begin(), heroes.end(),
+            [this, &heroesAbroad](const auto h) {
             const auto hh = heroHall(h.first, h.second);
             const bool abroad = !hh ? true : hh->heroOnQuest();
-            if (abroad)
+            if (abroad) {
                 heroesAbroad.push_back(h.second);
-        }
+            }
+            return abroad;
+        });
+        heroes.erase(heroesEnd, heroes.end());
         for (const auto &e : exclude)
         {
             VectorHelpers::remove(f.fAllies, e);
