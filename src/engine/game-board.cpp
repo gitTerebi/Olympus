@@ -12,6 +12,7 @@
 #include "tribute.h"
 #include "characters/echaracter.h"
 #include "characters/actions/esettleraction.h"
+#include "characters/actions/etriremeaction.h"
 #include "characters/edomesticatedanimal.h"
 #include "characters/esheep.h"
 #include "characters/egoat.h"
@@ -20,6 +21,7 @@
 #include "spawners/spawner.h"
 
 #include "buildings/estoragebuilding.h"
+#include "buildings/etriremewharf.h"
 
 #include "characters/esoldier.h"
 #include "characters/soldier-banner.h"
@@ -376,11 +378,59 @@ void GameBoard::updateAppealMapIfNeeded()
     }
 }
 
+namespace {
+
+eTriremeWharf* findAvailableTriremeWharf(
+        GameBoard& board,
+        const eCityId cid,
+        std::vector<eTriremeWharf*>& used) {
+    const auto wharves = board.buildings(cid, eBuildingType::triremeWharf);
+    for(const auto b : wharves) {
+        const auto wharf = static_cast<eTriremeWharf*>(b);
+        if(!wharf->hasTrireme() || wharf->abroad() || wharf->shutDown()) continue;
+        if(std::find(used.begin(), used.end(), wharf) != used.end()) continue;
+        if(!wharf->trireme()) continue;
+        used.push_back(wharf);
+        return wharf;
+    }
+    return nullptr;
+}
+
+void sendTriremeBannerAbroad(GameBoard& board,
+                             SoldierBanner& banner,
+                             std::vector<eTriremeWharf*>& usedWharves) {
+    const auto wharf = findAvailableTriremeWharf(
+        board, banner.cityId(), usedWharves);
+    if(!wharf) {
+        printf("[trireme-enlist] no available trireme wharf for city=%i banner=%i\n",
+               static_cast<int>(banner.cityId()), banner.id());
+        return;
+    }
+
+    const auto trireme = wharf->trireme();
+    const auto action = trireme ? trireme->triremeAction() : nullptr;
+    if(!action) {
+        printf("[trireme-enlist] trireme missing action for city=%i banner=%i\n",
+               static_cast<int>(banner.cityId()), banner.id());
+        return;
+    }
+
+    banner.goAbroad();
+    action->goAbroad();
+}
+
+}
+
 void GameBoard::enlistForces(const eEnlistedForces &forces)
 {
+    std::vector<eTriremeWharf*> usedTriremeWharves;
     for (const auto &b : forces.fSoldiers)
     {
-        b->goAbroad();
+        if(b->type() == eBannerType::trireme) {
+            sendTriremeBannerAbroad(*this, *b, usedTriremeWharves);
+        } else {
+            b->goAbroad();
+        }
     }
     const auto cids = citiesOnBoard();
     for (const auto h : forces.fHeroes)

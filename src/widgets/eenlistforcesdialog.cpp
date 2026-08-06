@@ -187,6 +187,7 @@ public:
                     const std::vector<eHeroType>& heroesAbroad,
                     const eAction& selectionChanged) {
         mAll = e;
+        mSelectAll.clear();
         std::vector<eEnlistData> data;
         for(const auto& s : e.fSoldiers) {
             auto& d = data.emplace_back();
@@ -214,6 +215,7 @@ public:
             d.fTitle = s->name();
             d.fId = s->id();
             d.fTroops = s->count();
+            if(!d.fAbroad) mSelectAll.fSoldiers.push_back(s);
             d.fAction = [this, s, selectionChanged]() {
                 const bool selected = VectorHelpers::contains(
                                           mSelected.fSoldiers, s);
@@ -235,6 +237,7 @@ public:
             d.fTitle = eHero::sHeroName(h.second);
             d.fId = static_cast<int>(h.second);
             d.fTroops = -1;
+            if(!d.fAbroad) mSelectAll.fHeroes.push_back(h);
             d.fAction = [this, h, selectionChanged]() {
                 const bool selected = VectorHelpers::contains(
                                           mSelected.fHeroes, h);
@@ -254,6 +257,8 @@ public:
             d.fTitle = "Ares";
             d.fId = -1;
             d.fTroops = -1;
+            mSelectAll.fAres = true;
+            mSelectAll.fAresCity = e.fAresCity;
             d.fAction = [this, selectionChanged, aresCity = e.fAresCity]() {
                 mSelected.fAres = !mSelected.fAres;
                 mSelected.fAresCity = aresCity;
@@ -261,6 +266,7 @@ public:
             };
         }
 
+        bool selectAllAllyAdded = false;
         for(const auto& a : e.fAllies) {
             auto& d = data.emplace_back();
             d.fAbroad = a->abroad();
@@ -268,6 +274,10 @@ public:
             d.fTitle = a->name();
             d.fId = -1;
             d.fTroops = -1;
+            if(!d.fAbroad && !selectAllAllyAdded) {
+                mSelectAll.fAllies.push_back(a);
+                selectAllAllyAdded = true;
+            }
             d.fAction = [this, a, selectionChanged]() {
                 const bool selected = VectorHelpers::contains(
                                           mSelected.fAllies, a);
@@ -311,22 +321,16 @@ public:
     }
 
     void selectAll() {
-        mSelected = mAll;
-        auto& allies = mSelected.fAllies;
-        if(!allies.empty()) {
-            allies.clear();
-            for(const auto& a : mAll.fAllies) {
-                const bool abroad = a->abroad();
-                if(abroad) continue;
-                allies.push_back(a);
-                break;
-            }
-        }
+        mSelected = mSelectAll;
         bool citySelected = false;
         for(const auto b : mButtons) {
             const auto t = b->type();
             const bool isAlly = t == eEnlistType::ally;
             const bool isAbroad = b->abroad();
+            if(isAbroad) {
+                b->setSelected(false);
+                continue;
+            }
             if(isAlly && !isAbroad) {
                 if(citySelected) {
                     b->setSelected(false);
@@ -344,6 +348,7 @@ public:
     }
 private:
     eEnlistedForces mAll;
+    eEnlistedForces mSelectAll;
     eEnlistedForces mSelected;
     std::vector<eEnlistButton*> mButtons;
 };

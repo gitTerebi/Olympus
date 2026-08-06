@@ -2104,7 +2104,15 @@ bool BoardCity::unregisterSoldierBanner(const stdsptr<SoldierBanner>& b) {
 }
 
 void BoardCity::updateTriremeBanners() const {
-    const int count = countWorkingTriremes();
+    std::vector<eTriremeWharf*> wharves;
+    for(const auto b : mTimedBuildings) {
+        const auto type = b->type();
+        if(type != eBuildingType::triremeWharf) continue;
+        const auto tw = static_cast<eTriremeWharf*>(b);
+        if(tw->hasTrireme()) wharves.push_back(tw);
+    }
+
+    const int count = wharves.size();
     while(static_cast<int>(mTriremeBanners.size()) < count) {
         const auto b = e::make_shared<SoldierBanner>(eBannerType::trireme, mBoard);
         b->setBothCityIds(mId);
@@ -2114,6 +2122,19 @@ void BoardCity::updateTriremeBanners() const {
     }
     while(static_cast<int>(mTriremeBanners.size()) > count) {
         mTriremeBanners.pop_back();
+    }
+    for(int i = 0; i < count; i++) {
+        const auto wharf = wharves[i];
+        const auto& banner = mTriremeBanners[i];
+        if(wharf->abroad()) {
+            banner->goAbroad();
+        } else {
+            if(banner->isAbroad()) {
+                int wait = 0;
+                banner->backFromAbroad(wait);
+            }
+            if(banner->isHome()) banner->backFromHome();
+        }
     }
 }
 
@@ -2240,6 +2261,7 @@ int BoardCity::countCrewedTriremes() const {
         if(type != eBuildingType::triremeWharf) continue;
         const auto tw = static_cast<eTriremeWharf*>(b);
         if(!tw->hasTrireme()) continue;
+        if(tw->abroad()) continue;
         if(tw->shutDown()) continue;
         c++;
     }
@@ -2256,6 +2278,7 @@ void BoardCity::setTriremesCrewed(const bool crewed) {
         if(type != eBuildingType::triremeWharf) continue;
         const auto tw = static_cast<eTriremeWharf*>(b);
         if(!tw->hasTrireme()) continue;
+        if(tw->abroad()) continue;
         tw->setShutDown(!crewed);
         if(!crewed) {
             const auto trireme = tw->trireme();
@@ -2446,7 +2469,17 @@ eEnlistedForces BoardCity::getEnlistableForces() const {
     }
 
     updateTriremeBanners();
-    for(const auto& s : mTriremeBanners) {
+    int triremeBannerId = 0;
+    for(const auto b : mTimedBuildings) {
+        const auto type = b->type();
+        if(type != eBuildingType::triremeWharf) continue;
+        const auto tw = static_cast<eTriremeWharf*>(b);
+        if(!tw->hasTrireme()) continue;
+        if(tw->abroad() || tw->shutDown() || !tw->trireme()) {
+            triremeBannerId++;
+            continue;
+        }
+        const auto& s = mTriremeBanners[triremeBannerId++];
         if(s->count() <= 0) continue;
         result.fSoldiers.push_back(s);
     }

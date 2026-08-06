@@ -8,6 +8,45 @@
 #include "buildings/eheroshall.h"
 #include "characters/actions/eheroaction.h"
 #include "characters/gods/actions/god-worshipped-action.h"
+#include "buildings/etriremewharf.h"
+
+#include <algorithm>
+#include <cstdio>
+
+namespace {
+
+eTriremeWharf* findReturningTriremeWharf(
+        GameBoard& board,
+        const eCityId cid,
+        std::vector<eTriremeWharf*>& used) {
+    const auto wharves = board.buildings(cid, eBuildingType::triremeWharf);
+    for(const auto b : wharves) {
+        const auto wharf = static_cast<eTriremeWharf*>(b);
+        if(!wharf->abroad()) continue;
+        if(std::find(used.begin(), used.end(), wharf) != used.end()) continue;
+        used.push_back(wharf);
+        return wharf;
+    }
+    return nullptr;
+}
+
+void returnTriremeBanner(GameBoard& board,
+                         SoldierBanner& banner,
+                         int& wait,
+                         std::vector<eTriremeWharf*>& usedWharves) {
+    const auto wharf = findReturningTriremeWharf(
+        board, banner.cityId(), usedWharves);
+    if(!wharf) {
+        printf("[trireme-return] no abroad trireme wharf for city=%i banner=%i\n",
+               static_cast<int>(banner.cityId()), banner.id());
+        return;
+    }
+
+    banner.backFromAbroad(wait);
+    wharf->triremeCameBack();
+}
+
+}
 
 ArmyReturnEvent::ArmyReturnEvent(
         const eCityId cid,
@@ -63,10 +102,15 @@ void ArmyReturnEvent::trigger() {
         wait += 150;
     }
 
+    std::vector<eTriremeWharf*> returnedTriremeWharves;
     for(const auto& s : mForces.fSoldiers) {
         s->killAll();
         s->setBothCityIds(cid);
-        s->backFromAbroad(wait);
+        if(s->type() == eBannerType::trireme) {
+            returnTriremeBanner(*board, *s, wait, returnedTriremeWharves);
+        } else {
+            s->backFromAbroad(wait);
+        }
     }
 
     for(const auto& a : mForces.fAllies) {

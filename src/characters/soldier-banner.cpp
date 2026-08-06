@@ -382,6 +382,10 @@ void SoldierBanner::backFromAbroad(int& wait) {
         mBoard.unregisterSoldierBanner(tptr);
         return;
     }
+    if(mType == eBannerType::trireme) {
+        mAbroad = false;
+        return;
+    }
     mAbroad = false;
     moveToPalace();
     const auto cid = cityId();

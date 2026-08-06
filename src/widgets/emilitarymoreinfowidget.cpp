@@ -14,6 +14,18 @@ eMilitaryMoreInfoWidget::eMilitaryMoreInfoWidget(
 
 void sArmySectionButtonUpdate(const stdsptr<SoldierBanner>& b,
                               eMicroButton* const mb) {
+    if(b->type() == eBannerType::trireme) {
+        if(b->isAbroad()) {
+            mb->setText(Language::zeusText(51, 24));
+            mb->setTooltip(Language::zeusText(51, 31));
+        } else {
+            mb->setText(Language::zeusText(51, 19));
+            mb->setTooltip("");
+        }
+        mb->setPressAction(nullptr);
+        return;
+    }
+
     if(b->isAbroad()) { // abroad
         mb->setText(Language::zeusText(51, 24));
         mb->setTooltip(Language::zeusText(51, 31));
