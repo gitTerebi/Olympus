@@ -68,6 +68,7 @@ public:
 
     void closeBuildWidget();
     void setBuildWidget(eBuildWidget* const bw);
+    int openTradeBuildMenuForDev();
 
     void updateButtonsVisibility();
     void viewedCityChanged();

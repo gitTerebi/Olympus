@@ -131,6 +131,7 @@ public:
     void reloadUiPreservingOverlays();
 
     void rebuildGameMenu();
+    int openTradeBuildMenuForDev();
 
     void syncBannerCursor();
     // Central cursor sync for the current build mode: erase/repair/stamp get

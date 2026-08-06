@@ -98,6 +98,7 @@ public:
     void showWorld();
 
     eWidget* currentWidget() const { return mWidget; }
+    GameWidget* gameWidget() const { return mGW; }
     eWorldWidget* worldWidget() const { return mWW; }
 
     const Settings& settings() const { return mSettings; }

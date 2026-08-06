@@ -151,6 +151,15 @@ int main(int argc, char* argv[]) {
             devOptions.fWorldMapShotPath = *pathArg;
         }
     }
+    const auto tradeMenuShot =
+        std::find(args.begin(), args.end(), "--dev-trade-menu-shot");
+    if(tradeMenuShot != args.end()) {
+        devOptions.fLoadRecent = true;
+        const auto pathArg = tradeMenuShot + 1;
+        if(pathArg != args.end()) {
+            devOptions.fTradeMenuShotPath = *pathArg;
+        }
+    }
     const auto clickCity =
         std::find(args.begin(), args.end(), "--dev-click-city");
     if(clickCity != args.end()) {

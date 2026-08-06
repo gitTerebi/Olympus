@@ -32,6 +32,7 @@
 #include "engine/eresourcetype.h"
 
 #include "ebuildwidget.h"
+#include "elabel.h"
 #include "elayouthelpers.h"
 #include "ebasicbutton.h"
 #include "erotatebutton.h"
@@ -283,20 +284,44 @@ eBuildButton *GameMenu::createTradeBuildButton(
     const auto t = eBuildingModeHelpers::toBuildingType(mode);
     const int cost = DifficultyHelpers::buildingCost(diff, t);
     bb->initialize(c.fName, 0, 0);
-    int x = 10;
+    const int normalHeight = bb->height();
+    const int mult = std::max(1, normalHeight / 10);
+    const int verticalMargin = std::max(1, 3 * mult);
+    const int rowGap = 0;
+    const int rowHeight = std::max(6 * mult, normalHeight - 5 * mult);
+    bb->setHeight(2 * rowHeight + rowGap + 2 * verticalMargin);
+
+    const int topRowY = verticalMargin;
+    const int topRowHeight = rowHeight;
+    const int tradeRowY = topRowY + topRowHeight + rowGap;
+    const int tradeRowHeight = rowHeight;
+    const auto centerTopRow = [topRowY, topRowHeight](eWidget* const w) {
+        w->setY(topRowY + (topRowHeight - w->height()) / 2);
+    };
+    if(!bb->children().empty()) {
+        const auto nameWidget = bb->children().front();
+        nameWidget->setHeight(topRowHeight);
+        nameWidget->setY(topRowY);
+    }
+
+    int costX = 10 * mult;
     {
         const auto &wrld = mBoard->world();
         const auto &cities = wrld.cities();
         if (c.fCity >= 0 && c.fCity < cities.size())
         {
             const auto city = cities[c.fCity];
-            const int mult = bb->height() / 10;
-            const int maxTradeWidth = 250 * mult;
+            const int maxTradeWidth = 210 * mult;
             const int defaultGap = 2 * mult;
             int gap = defaultGap;
-            const int endPadding = 10 * mult;
-            auto scale = resolution().uiScale();
-            x += 100 * mult;
+            const int leftPadding = 14 * mult;
+            const int rightPadding = 14 * mult;
+            const int tradeAvailableWidth = maxTradeWidth -
+                leftPadding - rightPadding;
+            const int buyColumnWidth = tradeAvailableWidth / 2;
+            const int sellColumnWidth = tradeAvailableWidth - buyColumnWidth;
+            const auto defaultScale = resolution().uiScale();
+            auto scale = defaultScale;
             // Buys label
             const auto buysLabel = new eLabel("Buys:", window());
             buysLabel->setFontSizeS();
@@ -308,11 +333,8 @@ eBuildButton *GameMenu::createTradeBuildButton(
             sellsLabel->setNoPadding();
             sellsLabel->fitContent();
 
-            const auto tradeWidth = [&](const eUIScale iconScale,
-                                        const int iconGap)
+            const auto iconSlotWidth = [&](const eUIScale iconScale)
             {
-                int result = x;
-                result += buysLabel->width() + iconGap;
                 int iconWidth = 0;
                 for (const auto &buy : city->buys())
                 {
@@ -326,47 +348,53 @@ eBuildButton *GameMenu::createTradeBuildButton(
                     if (tex)
                         iconWidth = std::max(iconWidth, tex->width());
                 }
-                result += static_cast<int>(city->buys().size()) * (iconWidth + iconGap);
-                result += sellsLabel->width() + iconGap;
-                result += static_cast<int>(city->sells().size()) * (iconWidth + iconGap);
-                return result + endPadding;
+                return iconWidth;
             };
 
-            const auto iconSlotWidth = [&]()
+            const auto groupWidth = [&](const eUIScale iconScale,
+                                        const int iconGap,
+                                        const int labelWidth,
+                                        const int iconCount)
             {
-                int result = 0;
-                for (const auto &buy : city->buys())
-                {
-                    const auto tex = eResourceTypeHelpers::icon(scale, buy.fType);
-                    if (tex)
-                        result = std::max(result, tex->width());
-                }
-                for (const auto &sell : city->sells())
-                {
-                    const auto tex = eResourceTypeHelpers::icon(scale, sell.fType);
-                    if (tex)
-                        result = std::max(result, tex->width());
-                }
-                return result;
+                const int iconWidth = iconSlotWidth(iconScale);
+                return labelWidth + iconGap + iconCount * (iconWidth + iconGap);
             };
 
-            if (tradeWidth(scale, gap) > maxTradeWidth)
+            const auto tradeRowFits = [&](const eUIScale iconScale,
+                                          const int iconGap)
+            {
+                const int buyWidth = groupWidth(
+                    iconScale, iconGap, buysLabel->width(),
+                    static_cast<int>(city->buys().size()));
+                const int sellWidth = groupWidth(
+                    iconScale, iconGap, sellsLabel->width(),
+                    static_cast<int>(city->sells().size()));
+                return buyWidth <= buyColumnWidth &&
+                    sellWidth <= sellColumnWidth;
+            };
+
+            if (!tradeRowFits(scale, gap))
             {
                 scale = eUIScale::tiny;
                 gap = std::max(1, mult / 2);
             }
 
             bb->setWidth(maxTradeWidth);
+            if(!bb->children().empty()) {
+                const auto nameWidget = bb->children().front();
+                nameWidget->setX(leftPadding);
+                nameWidget->setWidth(maxTradeWidth - leftPadding - 55 * mult);
+                if(!nameWidget->children().empty()) {
+                    const auto nameLabel = nameWidget->children().front();
+                    nameLabel->align(Alignment::vcenter | Alignment::left);
+                }
+            }
             const int iconWidth = std::max(
-                tradeIconWidth > 0 ? tradeIconWidth : iconSlotWidth(),
+                scale == defaultScale && tradeIconWidth > 0 ?
+                    tradeIconWidth : iconSlotWidth(scale),
                 8 * mult);
-            const int buyLabelX = 105 * mult;
-            const int tradeSlots = 2;
-            const int buyIconsX = buyLabelX + buysLabel->width() + gap;
-            const int sellLabelX = buyIconsX + tradeSlots * (iconWidth + gap);
-            const int sellIconsX = sellLabelX + sellsLabel->width() + gap;
-            const int costX = maxTradeWidth - 35 * mult;
-            const int iconDrawHeight = std::max(1, 10 * mult);
+            costX = maxTradeWidth - 35 * mult;
+            const int iconDrawHeight = std::max(1, 6 * mult);
             const auto createTradeIcon = [&](const eResourceType type)
             {
                 const auto icon = new eScaledTextureLabel(window());
@@ -374,47 +402,39 @@ eBuildButton *GameMenu::createTradeBuildButton(
                 icon->setNoPadding();
                 icon->fitContent();
                 icon->setMaxDrawHeight(iconDrawHeight);
-                icon->resize(iconWidth, bb->height());
+                icon->resize(iconWidth, tradeRowHeight);
                 return icon;
             };
 
-            bb->addWidget(buysLabel);
-            buysLabel->align(Alignment::vcenter);
-            buysLabel->setX(buyLabelX);
-            x = buyIconsX;
-            // Buy icons
-            for (const auto &buy : city->buys())
-            {
-                const auto icon = createTradeIcon(buy.fType);
-                bb->addWidget(icon);
-                icon->align(Alignment::vcenter);
-                icon->setX(x);
-                x += iconWidth + gap;
-            }
-            bb->addWidget(sellsLabel);
-            sellsLabel->align(Alignment::vcenter);
-            sellsLabel->setX(sellLabelX);
-            x = sellIconsX;
-            // Sell icons
-            for (const auto &sell : city->sells())
-            {
-                const auto icon = createTradeIcon(sell.fType);
-                bb->addWidget(icon);
-                icon->align(Alignment::vcenter);
-                icon->setX(x);
-                x += iconWidth + gap;
-            }
-            x = costX;
+            const auto addTradeGroup = [&](eLabel* const label,
+                                           const std::vector<eResourceTrade>& trades,
+                                           const int groupX) {
+                bb->addWidget(label);
+                label->setX(groupX);
+                label->setY(tradeRowY + (tradeRowHeight - label->height()) / 2);
+                int x = groupX + label->width() + gap;
+                for(const auto& trade : trades) {
+                    const auto icon = createTradeIcon(trade.fType);
+                    bb->addWidget(icon);
+                    icon->setX(x);
+                    icon->setY(tradeRowY);
+                    x += iconWidth + gap;
+                }
+            };
+
+            addTradeGroup(buysLabel, city->buys(), leftPadding);
+            addTradeGroup(sellsLabel, city->sells(),
+                          leftPadding + buyColumnWidth);
         }
     }
 
     // Add costs
     if (c.fMarbleCost > 0 || cost > 0)
     {
-        const int mult = bb->height() / 10;
         const int iRes = GameTextures::interfaceTextureId();
         const auto &intrfc = GameTextures::interface();
         const auto &coll = intrfc[iRes];
+        int x = costX;
         if (c.fMarbleCost > 0)
         {
             const auto marbleIcon = new eLabel(window());
@@ -428,8 +448,8 @@ eBuildButton *GameMenu::createTradeBuildButton(
             marbleText->fitContent();
             bb->addWidget(marbleIcon);
             bb->addWidget(marbleText);
-            marbleIcon->align(Alignment::vcenter);
-            marbleText->align(Alignment::vcenter);
+            centerTopRow(marbleIcon);
+            centerTopRow(marbleText);
             marbleIcon->setX(x);
             marbleText->setX(marbleIcon->x() + marbleIcon->width());
             x += marbleText->x() + marbleText->width() - x + 10;
@@ -447,8 +467,8 @@ eBuildButton *GameMenu::createTradeBuildButton(
             drachmaText->fitContent();
             bb->addWidget(drachmaIcon);
             bb->addWidget(drachmaText);
-            drachmaIcon->align(Alignment::vcenter);
-            drachmaText->align(Alignment::vcenter);
+            centerTopRow(drachmaIcon);
+            centerTopRow(drachmaText);
             drachmaIcon->setX(x);
             drachmaText->setX(drachmaIcon->x() + drachmaIcon->width());
             x = drachmaText->x() + drachmaText->width() + 10 * mult;
@@ -508,10 +528,77 @@ void GameMenu::openBuildWidget(const int cmx, const int cmy,
     }
     if (ws.empty())
         return;
+    closeBuildWidget();
     const auto bw = new eBuildWidget(window());
     bw->initialize(ws);
     bw->exec(cmx - bw->width(), cmy - bw->height(), this);
-    setBuildWidget(bw);
+    mBuildWidget = bw;
+}
+
+int GameMenu::openTradeBuildMenuForDev()
+{
+    if(!mBoard) return -1;
+    std::vector<eSPR> cs;
+    auto cid = mGW ? mGW->viewedCity() : eCityId::neutralFriendly;
+    tradePosts(cid, cs, *mBoard, mShowAllPossibleBuildings);
+    if(cs.empty()) {
+        const auto cids = mBoard->personPlayerCitiesOnBoard();
+        if(!cids.empty()) {
+            cid = cids.front();
+            tradePosts(cid, cs, *mBoard, true);
+        }
+    }
+    if(cs.empty()) {
+        int i = -1;
+        for(const auto& city : mBoard->world().cities()) {
+            i++;
+            if(city->cityId() == cid) continue;
+            if(city->buys().empty() && city->sells().empty()) continue;
+            const auto name = city->waterTrade(cid) ?
+                Language::zeusText(28, 60) + " " + city->name() :
+                Language::zeusText(28, 62) + " " + city->name();
+            const auto mode = city->waterTrade(cid) ?
+                eBuildingMode::pier : eBuildingMode::tradePost;
+            cs.push_back({mode, name, 0, i});
+            if(cs.size() >= 7) break;
+        }
+    }
+    printf("dev-trade-menu: city=%i entries=%i\n",
+           static_cast<int>(cid), static_cast<int>(cs.size()));
+    if(cs.empty()) return 0;
+
+    std::vector<eBuildButton*> ws;
+    int tradeIconWidth = 0;
+    const auto scale = resolution().uiScale();
+    const auto& cities = mBoard->world().cities();
+    for(const auto& c : cs) {
+        if(c.fCity < 0 || c.fCity >= static_cast<int>(cities.size())) continue;
+        const auto city = cities[c.fCity];
+        for(const auto& buy : city->buys()) {
+            const auto tex = eResourceTypeHelpers::icon(scale, buy.fType);
+            if(tex) tradeIconWidth = std::max(tradeIconWidth, tex->width());
+        }
+        for(const auto& sell : city->sells()) {
+            const auto tex = eResourceTypeHelpers::icon(scale, sell.fType);
+            if(tex) tradeIconWidth = std::max(tradeIconWidth, tex->width());
+        }
+    }
+    for(const auto& c : cs) {
+        ws.push_back(createTradeBuildButton(c, tradeIconWidth));
+    }
+    if(ws.empty()) return 0;
+
+    const auto bw = new eBuildWidget(window());
+    bw->initialize(ws);
+    const int parentWidth = mGW ? mGW->width() : window()->width();
+    const int menuWidth = std::max(width(), 240);
+    bw->move(std::max(20, parentWidth - menuWidth - bw->width()), 160);
+    if(mGW) {
+        mGW->addWidget(bw);
+    } else {
+        lastAncestor()->addWidget(bw);
+    }
+    return static_cast<int>(cs.size());
 }
 
 void GameMenu::setModeChangedAction(const eAction &func)

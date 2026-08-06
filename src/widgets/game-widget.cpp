@@ -445,6 +445,12 @@ void GameWidget::rebuildGameMenu()
     createGameMenu();
 }
 
+int GameWidget::openTradeBuildMenuForDev()
+{
+    if(!mGm) return -1;
+    return mGm->openTradeBuildMenuForDev();
+}
+
 void GameWidget::reloadUi()
 {
     const bool armyVisible = mAm && mAm->visible();

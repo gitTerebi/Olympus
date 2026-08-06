@@ -249,13 +249,41 @@ void saveWorldShotWhenReady(MainWindow& window, const std::string& path,
     window.addSlot(*tick);
 }
 
+void saveTradeMenuShotWhenReady(MainWindow& window, const std::string& path)
+{
+    struct ShotState {
+        int fFramesAfterOpen = 0;
+        bool fOpened = false;
+    };
+    const auto state = std::make_shared<ShotState>();
+    const auto tick = std::make_shared<eSlot>();
+    *tick = [&window, path, state, tick]() {
+        const auto gameWidget = window.gameWidget();
+        if(gameWidget) {
+            if(!state->fOpened) {
+                gameWidget->openTradeBuildMenuForDev();
+                state->fOpened = true;
+            }
+            state->fFramesAfterOpen++;
+        }
+        if(state->fFramesAfterOpen >= 3) {
+            saveRendererShot(window, path);
+            window.quit();
+            return;
+        }
+        window.addSlot(*tick);
+    };
+    window.addSlot(*tick);
+}
+
 }
 
 void applyDevLaunchOptions(MainWindow& window,
                            const DevLaunchOptions& options)
 {
     if(!options.fLoadRecent && !options.fCycleDirs &&
-       !options.fWorldMap && !options.fPerf) return;
+       !options.fWorldMap && !options.fPerf &&
+       options.fTradeMenuShotPath.empty()) return;
     const auto launch = std::make_shared<eSlot>();
     *launch = [&window, options, launch]() {
         if(!Language::loaded()) {
@@ -274,6 +302,9 @@ void applyDevLaunchOptions(MainWindow& window,
         if(!options.fWorldMapShotPath.empty()) {
             saveWorldShotWhenReady(window, options.fWorldMapShotPath,
                                    options.fClickCity);
+        }
+        if(!options.fTradeMenuShotPath.empty()) {
+            saveTradeMenuShotWhenReady(window, options.fTradeMenuShotPath);
         }
         if(options.fCycleDirs) {
             startDirectionCycle(window);
