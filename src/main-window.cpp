@@ -803,6 +803,10 @@ void MainWindow::showGame(GameBoard* b,
     mBoard = b;
     if(mBoard) mBoard->setDoubleCartCapacity(mSettings.fDoubleCartCapacity);
     if(mBoard) mBoard->setAgorasTakeFromTradingPosts(mSettings.fAgorasTakeFromTradingPosts);
+    if(mBoard) {
+        mBoard->updateAppealMapIfNeeded();
+        mBoard->waitUntilFinished();
+    }
 
     eMusic::playRandomMusic();
     mGW = new GameWidget(this);
