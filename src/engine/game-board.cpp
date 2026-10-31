@@ -2364,7 +2364,7 @@ int GameBoard::taxesCoverage(const eCityId cid) const
     const auto city = boardCityWithId(cid);
     if (!city)
         return 0;
-    return city->philosophyResearchCoverage();
+    return city->taxesCoverage();
 }
 
 int GameBoard::unrest(const eCityId cid) const
