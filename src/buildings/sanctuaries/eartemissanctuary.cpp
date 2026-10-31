@@ -20,6 +20,17 @@ eAresSanctuary::eAresSanctuary(
     eSanctuaryWithWarriors(board, eBuildingType::templeAres,
                            sw, sh, 60, cid) {}
 
+void eSanctuaryWithWarriors::erase() {
+    eSanctuary::erase();
+    const auto& board = getBoard();
+    const auto cid = cityId();
+    const auto city = board.boardCityWithId(cid);
+    if(!city) return;
+    for(const auto& s : mSoldierBanners) {
+        city->unregisterSoldierBanner(s);
+    }
+}
+
 void eSanctuaryWithWarriors::timeChanged(const int by) {
     if(finished()) {
         int id = 0;
