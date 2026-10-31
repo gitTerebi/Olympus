@@ -2,6 +2,7 @@ $ErrorActionPreference = "Stop"
 $depsDir  = "$PSScriptRoot\build-deps"
 $sdlDir   = "$depsDir\SDL2"
 $llvmDir  = "$depsDir\llvm-mingw"
+$ninjaDir = "$depsDir\ninja"
 $tmp      = $env:TEMP
 
 $downloads = @(
@@ -10,6 +11,7 @@ $downloads = @(
     @{ url = "https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.22.0/SDL2_ttf-devel-2.22.0-mingw.zip";   out = "SDL2_ttf-2.22.0.zip";   dest = $sdlDir }
     @{ url = "https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.0/SDL2_mixer-devel-2.8.0-mingw.zip"; out = "SDL2_mixer-2.8.0.zip";  dest = $sdlDir }
     @{ url = "https://github.com/mstorsjo/llvm-mingw/releases/download/20241119/llvm-mingw-20241119-ucrt-x86_64.zip";    out = "llvm-mingw.zip";        dest = $depsDir }
+    @{ url = "https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-win.zip";                            out = "ninja-win.zip";         dest = $ninjaDir }
 )
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -17,7 +19,9 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 Write-Host "Removing old deps..."
 Remove-Item -Recurse -Force $sdlDir  -ErrorAction SilentlyContinue
 Remove-Item -Recurse -Force $llvmDir -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force $ninjaDir -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $sdlDir | Out-Null
+New-Item -ItemType Directory -Force $ninjaDir | Out-Null
 
 foreach ($d in $downloads) {
     $zip = "$tmp\$($d.out)"
