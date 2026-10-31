@@ -211,11 +211,13 @@ void eHippodrome::updatePaths() {
     const auto& r = current->fPtr->tileRect();
     mPath1.push_back(PathPoint{r.x + 1., (double)r.y, 0.});
     mPath2.push_back(PathPoint{r.x + 2., (double)r.y, 0.});
+    const bool goThrough = current->fO == eDiagonalOrientation::bottomRight;
     while(current) {
-        next();
+        if(!goThrough) next();
         const auto ptr = current->fPtr;
         ptr->progressPath(mPath1);
         ptr->progressPath(mPath2);
+        if(goThrough) next();
         if(current == start) break;
     }
 }
