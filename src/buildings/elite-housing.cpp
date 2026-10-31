@@ -222,7 +222,7 @@ int EliteHousing::provide(const eProvide p, const int n) {
         return eBuilding::provide(p, n);
     }
     int add = 0;
-    if(value) {
+    if(value && max > *value) {
         add = std::clamp(n, 0, max - *value);
         *value += add;
     }
