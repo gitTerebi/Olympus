@@ -86,3 +86,4 @@ Thumbs.db
 /debug/*.dmp
 /debug/*.txt
 Adventures/*.pak
+/dist/

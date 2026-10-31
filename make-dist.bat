@@ -10,11 +10,21 @@ set "ROOT=%ROOT:~0,-1%"
 set "BUILD_DIR=%ROOT%\build-ninja"
 set "VER=0.1.0-rc.1"
 set "DIST=%ROOT%\dist\Olympus-%VER%"
-set "LIVE=G:\games\eZeus\olympus"
+set "ASSETS=%ROOT%\dist-assets"
+set "REDIST=%ROOT%\build-deps\VC_redist.x64.exe"
 
 if not exist "%BUILD_DIR%\Olympus.exe" (
     echo Olympus.exe not found in %BUILD_DIR%. Run build.bat first.
     exit /b 1
+)
+
+if not exist "%REDIST%" (
+    echo Downloading VC_redist.x64.exe ...
+    curl -L -f -s -o "%REDIST%" https://aka.ms/vs/17/release/vc_redist.x64.exe
+    if errorlevel 1 (
+        echo Failed to download VC_redist.x64.exe
+        exit /b 1
+    )
 )
 
 echo Cleaning %DIST% ...
@@ -29,14 +39,9 @@ copy /Y "%BUILD_DIR%\SDL2_mixer.dll"   "%DIST%\Bin\" >nul
 copy /Y "%BUILD_DIR%\SDL2_ttf.dll"     "%DIST%\Bin\" >nul
 copy /Y "%BUILD_DIR%\libc++.dll"       "%DIST%\Bin\" >nul
 copy /Y "%BUILD_DIR%\libunwind.dll"    "%DIST%\Bin\" >nul
-if exist "%LIVE%\Bin\upscaled_icon.ico" copy /Y "%LIVE%\Bin\upscaled_icon.ico" "%DIST%\Bin\" >nul
 
 echo Copying support assets ...
-xcopy /E /I /Y /Q "%LIVE%\cursors"      "%DIST%\cursors"      >nul
-xcopy /E /I /Y /Q "%LIVE%\Sanctuaries"  "%DIST%\Sanctuaries"  >nul
-xcopy /E /I /Y /Q "%LIVE%\stamps"       "%DIST%\stamps"       >nul
-mkdir "%DIST%\Text" >nul 2>&1
-copy /Y "%LIVE%\Text\language.txt"      "%DIST%\Text\"        >nul
+xcopy /E /I /Y /Q "%ASSETS%"            "%DIST%"              >nul
 mkdir "%DIST%\Adventures" >nul 2>&1
 mkdir "%DIST%\Save"       >nul 2>&1
 
@@ -46,7 +51,7 @@ copy /Y "%ROOT%\fonts\Zeus.ttf"         "%DIST%\Fonts\"       >nul
 
 echo Copying docs / redist ...
 if exist "%ROOT%\dist-README.txt"     copy /Y "%ROOT%\dist-README.txt"     "%DIST%\README.txt" >nul
-if exist "%LIVE%\VC_redist.x64.exe"   copy /Y "%LIVE%\VC_redist.x64.exe"   "%DIST%\" >nul
+copy /Y "%REDIST%"                    "%DIST%\" >nul
 
 echo.
 echo Dist ready: %DIST%
