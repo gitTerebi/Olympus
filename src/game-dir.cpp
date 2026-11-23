@@ -3,6 +3,11 @@
 #include <SDL2/SDL_filesystem.h>
 #include <cstdio>
 #include <fstream>
+#ifdef __unix__
+#include <filesystem>
+#include <algorithm>
+#include <cctype>
+#endif
 
 std::string GameDir::sPath;
 
@@ -22,12 +27,59 @@ void GameDir::initialize() {
                sPath.c_str(), zp.c_str());
         return;
     }
-    sPath = exeDir() + str;
+    const bool absolute = !str.empty() &&
+                          (str[0] == '/' || str[0] == '\\' ||
+                           (str.size() > 1 && str[1] == ':'));
+    sPath = absolute ? str : exeDir() + str;
     printf("Game data path: %s (from %s)\n", sPath.c_str(), zp.c_str());
 }
 
+#ifdef __unix__
+// The game data was made for case-insensitive Windows, so match each path
+// part ignoring case when the exact name does not exist.
+static std::string sLower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return s;
+}
+
+static std::string sResolveCase(const std::string& base,
+                                const std::string& rel) {
+    namespace fs = std::filesystem;
+    std::error_code ec;
+    fs::path cur(base);
+    size_t pos = 0;
+    while(pos < rel.size()) {
+        auto end = rel.find('/', pos);
+        if(end == std::string::npos) end = rel.size();
+        const std::string part = rel.substr(pos, end - pos);
+        pos = end + 1;
+        if(part.empty()) continue;
+        fs::path next = cur / part;
+        if(!fs::exists(next, ec)) {
+            const auto lower = sLower(part);
+            for(const auto& e : fs::directory_iterator(cur, ec)) {
+                if(sLower(e.path().filename().string()) == lower) {
+                    next = e.path();
+                    break;
+                }
+            }
+        }
+        cur = next;
+    }
+    return cur.string();
+}
+#endif
+
 std::string GameDir::path(const std::string& path) {
+#ifdef __unix__
+    const auto exact = sPath + path;
+    std::error_code ec;
+    if(std::filesystem::exists(exact, ec)) return exact;
+    return sResolveCase(sPath, path);
+#else
     return sPath + path;
+#endif
 }
 
 std::string GameDir::settingsPath() {

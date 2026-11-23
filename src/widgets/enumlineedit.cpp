@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "enumlineedit.h"
 
 eNumLineEdit::eNumLineEdit(MainWindow* const window) :

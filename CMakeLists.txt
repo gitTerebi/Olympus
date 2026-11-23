@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(Olympus)
 
-enable_language(RC)
-set(CMAKE_RC_COMPILER_INIT windres)
+if(WIN32)
+    enable_language(RC)
+    set(CMAKE_RC_COMPILER_INIT windres)
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -798,6 +800,14 @@ set(SOURCES
     src/widgets/moreinfo/storage-distribution-widget.cpp
 )
 
+if(UNIX)
+    list(REMOVE_ITEM SOURCES src/app.rc)
+    set(SDL2_LIBRARY SDL2)
+    set(SDL2_IMAGE_LIBRARY SDL2_image)
+    set(SDL2_TTF_LIBRARY SDL2_ttf)
+    set(SDL2_MIXER_LIBRARY SDL2_mixer)
+endif()
+
 # Add executable
 add_executable(Olympus ${SOURCES})
 
@@ -827,6 +837,7 @@ if(EZEUS_BUILD_TESTS)
     add_test(NAME resource-transport-size-test COMMAND resource-transport-size-test)
 endif()
 
+if(WIN32)
 set(RUNTIME_DLLS
     "${SDL2_DIR}/SDL2-2.30.8/x86_64-w64-mingw32/bin/SDL2.dll"
     "${SDL2_DIR}/SDL2_image-2.8.2/x86_64-w64-mingw32/bin/SDL2_image.dll"
@@ -851,6 +862,8 @@ add_custom_command(TARGET Olympus POST_BUILD
         "${EZEUS_DEPLOY_DIR}"
 )
 
+endif()
+
 # Include directories
 target_include_directories(Olympus PRIVATE
     .
@@ -865,7 +878,10 @@ target_compile_definitions(Olympus PRIVATE
     EZEUS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_compile_options(Olympus PRIVATE -g -Werror=inconsistent-missing-override)
+target_compile_options(Olympus PRIVATE -g)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(Olympus PRIVATE -Werror=inconsistent-missing-override)
+endif()
 target_link_options(Olympus PRIVATE -g)
 
 # Link libraries
