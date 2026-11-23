@@ -87,3 +87,11 @@ Thumbs.db
 /debug/*.txt
 Adventures/*.pak
 /dist/
+
+# Local Linux run setup
+/Save/
+/zeus_path.txt
+/cursors
+/stamps
+/Text
+/Sanctuaries

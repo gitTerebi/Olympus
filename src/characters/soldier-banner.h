@@ -8,6 +8,7 @@
 #include "pointers/estdpointer.h"
 #include "fileIO/streams.h"
 #include "engine/ecityid.h"
+#include "buildings/ebuilding.h"
 
 class eSoldier;
 class eCharacter;

@@ -1,3 +1,4 @@
+#include <cmath>
 #include "numbers.h"
 
 #include "game-dir.h"

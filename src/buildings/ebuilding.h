@@ -1,6 +1,7 @@
 #ifndef EBUILDING_H
 #define EBUILDING_H
 
+#include <functional>
 #include "pointers/eobject.h"
 
 #include "overlay.h"

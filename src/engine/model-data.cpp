@@ -13,8 +13,7 @@ ModelData& ModelData::instance() {
 }
 
 std::string ModelData::modelDir() {
-    // Path is correct: Model dir sits two levels above exe (build/bin/).
-    return GameDir::exeDir() + "../../Model/";
+    return GameDir::path("Model") + "/";
 }
 
 int ModelData::diffIndex(Difficulty d) {
@@ -225,12 +224,12 @@ bool ModelData::load() {
         "VeryEasy", "Easy", "Normal", "Hard", "Impossible"
     };
     for(int i = 0; i < 5; i++) {
-        const std::string fp = dir + "Figure_model_" + figNames[i] + ".txt";
+        const std::string fp = GameDir::path("Model/Figure_model_" + figNames[i] + ".txt");
         if(!loadFigureFile(fp, mSets[i])) {
             fprintf(stderr, "ModelData: missing %s\n", fp.c_str());
             ok = false;
         }
-        const std::string zp = dir + "Zeus_Model_" + zeusNames[i] + ".txt";
+        const std::string zp = GameDir::path("Model/Zeus_Model_" + zeusNames[i] + ".txt");
         if(!loadZeusFile(zp, mSets[i])) {
             fprintf(stderr, "ModelData: missing %s\n", zp.c_str());
         }

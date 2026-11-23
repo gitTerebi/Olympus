@@ -2,8 +2,8 @@
 
 #ifdef __unix__
 
-#include <libnoise/noise.h>
-#include <libnoise/module/perlin.h>
+#include <noise/noise.h>
+#include <noise/module/perlin.h>
 using namespace noise;
 
 #include "spawners/boar-spawner.h"
